@@ -133,8 +133,12 @@ public final class MethodCall extends CallableOperation {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof MethodCall)) return false;
-    if (this == o) return true;
+    if (!(o instanceof MethodCall)) {
+      return false;
+    }
+    if (this == o) {
+      return true;
+    }
     MethodCall other = (MethodCall) o;
     return this.method.equals(other.method);
   }

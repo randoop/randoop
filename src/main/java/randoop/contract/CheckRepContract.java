@@ -29,8 +29,12 @@ public final class CheckRepContract implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) return false;
-    if (o == this) return true;
+    if (o == null) {
+      return false;
+    }
+    if (o == this) {
+      return true;
+    }
     if (!(o instanceof CheckRepContract)) {
       return false; // I collected the results of get_value()
     }

@@ -8,7 +8,9 @@ public class SubjectTest{
   private static final List seededClasses= Arrays.asList(Integer.class, Boolean.class, Float.class, Character.class, Double.class, Long.class, Short.class, Byte.class, String.class, boolean.class, byte.class, char.class, double.class, float.class, int.class, long.class, short.class);
 
  private List findValues(Class clazz) {
-     if (Object.class.equals(clazz)) return values;
+     if (Object.class.equals(clazz)) {
+       return values;
+     }
      List retval = new ArrayList();
      for (Object val : values) {
        if (!(clazz.isInstance(val))) continue;
@@ -28,7 +30,9 @@ public class SubjectTest{
 //Call to Subject.get()
  private boolean call_0() throws Throwable{ 
     List possibleInputs_palulu_UniversalJPFDriverTest_Subject = findValues(palulu.UniversalJPFDriverTest.Subject.class);
-    if (possibleInputs_palulu_UniversalJPFDriverTest_Subject.isEmpty()) return false;
+    if (possibleInputs_palulu_UniversalJPFDriverTest_Subject.isEmpty()) {
+      return false;
+    }
     palulu.UniversalJPFDriverTest.Subject input0 = (palulu.UniversalJPFDriverTest.Subject)random(possibleInputs_palulu_UniversalJPFDriverTest_Subject);
 
     Verify.beginAtomic();
@@ -40,11 +44,15 @@ public class SubjectTest{
 //Call to Subject.set(int)
  private boolean call_1() throws Throwable{ 
     List possibleInputs_palulu_UniversalJPFDriverTest_Subject = findValues(palulu.UniversalJPFDriverTest.Subject.class);
-    if (possibleInputs_palulu_UniversalJPFDriverTest_Subject.isEmpty()) return false;
+    if (possibleInputs_palulu_UniversalJPFDriverTest_Subject.isEmpty()) {
+      return false;
+    }
     palulu.UniversalJPFDriverTest.Subject input0 = (palulu.UniversalJPFDriverTest.Subject)random(possibleInputs_palulu_UniversalJPFDriverTest_Subject);
 
     List possibleInputs_int = findValues(java.lang.Integer.class);
-    if (possibleInputs_int.isEmpty()) return false;
+    if (possibleInputs_int.isEmpty()) {
+      return false;
+    }
     java.lang.Integer input1 = (java.lang.Integer)random(possibleInputs_int);
 
     Verify.beginAtomic();

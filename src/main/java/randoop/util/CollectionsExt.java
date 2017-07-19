@@ -44,7 +44,9 @@ public final class CollectionsExt {
    * @return the concatenated string of object strings as lines
    */
   static String toStringInLines(Collection<?> c) {
-    if (c.isEmpty()) return "";
+    if (c.isEmpty()) {
+      return "";
+    }
     return UtilMDE.join(toStringLines(c), Globals.lineSep) + Globals.lineSep;
   }
 

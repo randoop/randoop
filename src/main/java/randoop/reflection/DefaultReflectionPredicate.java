@@ -237,7 +237,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     if (m.getName().equals("fillInStackTrace")) {
       return "Randoop avoids exploring Exception class methods.";
     }
-    if (m.getName().equals("getCause")) return "Randoop avoids exploring Exception class methods.";
+    if (m.getName().equals("getCause")) {
+      return "Randoop avoids exploring Exception class methods.";
+    }
     if (m.getName().equals("getLocalizedMessage")) {
       return "Randoop avoids exploring Exception class methods.";
     }
@@ -247,7 +249,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     if (m.getName().equals("getStackTrace")) {
       return "Randoop avoids exploring Exception class methods.";
     }
-    if (m.getName().equals("initCause")) return "Randoop avoids exploring Exception class methods.";
+    if (m.getName().equals("initCause")) {
+      return "Randoop avoids exploring Exception class methods.";
+    }
     if (m.getName().equals("printStackTrace")) {
       return "Randoop avoids exploring Exception class methods.";
     }

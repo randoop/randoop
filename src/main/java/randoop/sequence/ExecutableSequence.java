@@ -513,7 +513,9 @@ public class ExecutableSequence {
 
   public int getNonNormalExecutionIndex() {
     for (int i = 0; i < this.sequence.size(); i++) {
-      if (!isNormalExecution(i)) return i;
+      if (!isNormalExecution(i)) {
+        return i;
+      }
     }
     return -1;
   }
@@ -531,11 +533,14 @@ public class ExecutableSequence {
     if (exceptionClass == null) {
       throw new IllegalArgumentException("exceptionClass<?> cannot be null");
     }
-    for (int i = 0; i < this.sequence.size(); i++)
+    for (int i = 0; i < this.sequence.size(); i++) {
       if ((getResult(i) instanceof ExceptionalExecution)) {
         ExceptionalExecution e = (ExceptionalExecution) getResult(i);
-        if (exceptionClass.isAssignableFrom(e.getException().getClass())) return i;
+        if (exceptionClass.isAssignableFrom(e.getException().getClass())) {
+          return i;
+        }
       }
+    }
     return -1;
   }
 
@@ -567,8 +572,11 @@ public class ExecutableSequence {
   public int getNonExecutedIndex() {
     // Starting from the end of the sequence is always faster to find
     // non-executed statements.
-    for (int i = this.sequence.size() - 1; i >= 0; i--)
-      if (getResult(i) instanceof NotExecuted) return i;
+    for (int i = this.sequence.size() - 1; i >= 0; i--) {
+      if (getResult(i) instanceof NotExecuted) {
+        return i;
+      }
+    }
     return -1;
   }
 
@@ -579,10 +587,16 @@ public class ExecutableSequence {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof ExecutableSequence)) return false;
+    if (!(obj instanceof ExecutableSequence)) {
+      return false;
+    }
     ExecutableSequence that = (ExecutableSequence) obj;
-    if (!this.sequence.equals(that.sequence)) return false;
-    if (this.checks == null) return (that.checks == null);
+    if (!this.sequence.equals(that.sequence)) {
+      return false;
+    }
+    if (this.checks == null) {
+      return (that.checks == null);
+    }
     return this.checks.equals(that.checks);
   }
 
