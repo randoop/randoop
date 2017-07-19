@@ -5,8 +5,12 @@ import java.util.List;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
-/** Exception for compilation of java class given as a list of {@code File} objects */
+/**
+ * Exception for errors during compilation using {@link FileCompiler}, which compiles classes from
+ * Java source files.
+ */
 public class FileCompilerException extends Throwable {
+
   private static final long serialVersionUID = 8362158619216912395L;
 
   /** The list of source files for the compilation */
@@ -16,8 +20,8 @@ public class FileCompilerException extends Throwable {
   private final DiagnosticCollector<JavaFileObject> diagnostics;
 
   /**
-   * Creates a {@link FileCompilerException} with a message, list of source classes and compiler
-   * diagnostics.
+   * Creates a {@link FileCompilerException} with the error message, the list of source classes and
+   * compiler diagnostics from the compilation.
    *
    * @param message the exception message
    * @param sourceFiles the list of source files
@@ -30,10 +34,20 @@ public class FileCompilerException extends Throwable {
     this.diagnostics = diagnostics;
   }
 
+  /**
+   * Returns the list of source files used in the compilation that generated this error.
+   *
+   * @return the list of source files for which compilation generated this exception
+   */
   public List<File> getSourceFiles() {
     return sourceFiles;
   }
 
+  /**
+   * Returns the compiler diagnostics for the compilation that generated this exception.
+   *
+   * @return the compiler diagnostics for the compilation that generated this exception
+   */
   public DiagnosticCollector<JavaFileObject> getDiagnostics() {
     return diagnostics;
   }
