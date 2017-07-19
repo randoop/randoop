@@ -8,6 +8,8 @@ public class EmptyTest extends TestCase {
     if (o == null) throw new RuntimeException("null reference passed.");
     o.toString();
     o.hashCode();
-    if (o.equals(o) == false) throw new RuntimeException("violated o.equals(o)==true");
+    if (o.equals(o) == false) {
+      throw new RuntimeException("violated o.equals(o)==true");
+    }
   }
 }

@@ -53,7 +53,9 @@ public class VisibilityBridgeTest {
 
     @Override
     public boolean equals(Object obj) {
-      if (!(obj instanceof FormalMethod)) return false;
+      if (!(obj instanceof FormalMethod)) {
+        return false;
+      }
       FormalMethod m = (FormalMethod) obj;
       return this.returnType.equals(m.returnType)
           && this.name.equals(m.name)

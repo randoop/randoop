@@ -80,7 +80,9 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     }
     int previousListSize = 0;
     for (int i = 0; i < this.cumulativeSize.length; i++) {
-      if (index < this.cumulativeSize[i]) return this.lists.get(i).get(index - previousListSize);
+      if (index < this.cumulativeSize[i]) {
+        return this.lists.get(i).get(index - previousListSize);
+      }
       previousListSize = this.cumulativeSize[i];
     }
     throw new BugInRandoopException("Indexing error in ListOfLists");
