@@ -27,6 +27,7 @@ import randoop.main.OptionsCache;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
@@ -381,7 +382,7 @@ public class TestClassificationTest {
           OperationModel.createModel(
               visibility,
               predicate,
-              GenInputsAbstract.omitmethods,
+              new OmitMethodsPredicate(GenInputsAbstract.omitmethods),
               classnames,
               new HashSet<String>(),
               new HashSet<String>(),

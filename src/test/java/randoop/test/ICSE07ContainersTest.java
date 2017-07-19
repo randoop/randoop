@@ -22,6 +22,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
@@ -91,7 +92,7 @@ public class ICSE07ContainersTest {
               classType,
               model,
               new DefaultReflectionPredicate(excludeNames),
-              omitMethodPatterns,
+              new OmitMethodsPredicate(omitMethodPatterns),
               visibility),
           c);
     }

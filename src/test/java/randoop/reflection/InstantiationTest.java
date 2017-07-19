@@ -13,11 +13,9 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 import org.junit.Test;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
-import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.intersectiontypes.AccessibleInterval;
@@ -299,13 +297,13 @@ public class InstantiationTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              new ArrayList<Pattern>(),
+              new OmitMethodsPredicate(),
               names,
               coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());

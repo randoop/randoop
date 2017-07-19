@@ -26,9 +26,11 @@ import randoop.main.ThrowClassNameError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.SignatureParseException;
 import randoop.reflection.TypeNames;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -190,19 +192,24 @@ public class CoveredClassTest {
     Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
+    OmitMethodsPredicate omitMethodsPredicate =
+        (GenInputsAbstract.omitmethods == null)
+            ? new OmitMethodsPredicate()
+            : new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
+
     OperationModel operationModel = null;
     try {
       operationModel =
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              GenInputsAbstract.omitmethods,
+              omitMethodsPredicate,
               classnames,
               coveredClassnames,
               methodSignatures,
               classNameErrorHandler,
               GenInputsAbstract.literals_file);
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       fail("operation parse exception thrown: " + e);
     } catch (NoSuchMethodException e) {
       fail("Method not found: " + e);

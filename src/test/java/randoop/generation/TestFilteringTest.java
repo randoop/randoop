@@ -19,6 +19,7 @@ import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
@@ -229,11 +230,13 @@ public class TestFilteringTest {
     ReflectionPredicate predicate = new DefaultReflectionPredicate(omitfields);
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final List<TypedOperation> model = new ArrayList<>();
+    OmitMethodsPredicate omitMethodsPredicate =
+        (GenInputsAbstract.omitmethods == null)
+            ? new OmitMethodsPredicate()
+            : new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
     ReflectionManager manager = new ReflectionManager(visibility);
     manager.apply(
-        new OperationExtractor(
-            classType, model, predicate, GenInputsAbstract.omitmethods, visibility),
-        c);
+        new OperationExtractor(classType, model, predicate, omitMethodsPredicate, visibility), c);
     Collection<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     ComponentManager componentMgr = new ComponentManager(components);

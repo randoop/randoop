@@ -26,6 +26,7 @@ import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
@@ -69,13 +70,19 @@ public class SpecialCoveredClassTest {
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.methodlist, "Error while reading method list file");
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
+
+    OmitMethodsPredicate omitMethodsPredicate =
+        (GenInputsAbstract.omitmethods == null)
+            ? new OmitMethodsPredicate()
+            : new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
+
     OperationModel operationModel = null;
     try {
       operationModel =
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              GenInputsAbstract.omitmethods,
+              omitMethodsPredicate,
               classnames,
               coveredClassnames,
               methodSignatures,

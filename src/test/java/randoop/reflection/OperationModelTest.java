@@ -15,14 +15,12 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
 import randoop.main.WarnOnBadClassName;
-import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.supertypetest.InheritedEnum;
@@ -48,13 +46,13 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              new ArrayList<Pattern>(),
+              new OmitMethodsPredicate(),
               classnames,
               coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
@@ -103,13 +101,13 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibilityPredicate,
               reflectionPredicate,
-              new ArrayList<Pattern>(),
+              new OmitMethodsPredicate(),
               classnames,
               coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
@@ -177,7 +175,7 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibilityPredicate,
               reflectionPredicate,
-              new ArrayList<Pattern>(),
+              new OmitMethodsPredicate(),
               classnames,
               coveredClassnames,
               methodSignatures,
@@ -185,7 +183,7 @@ public class OperationModelTest {
               literalsFileList);
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     }
     assert model != null : "model was not initialized";
@@ -360,13 +358,13 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibilityPredicate,
               reflectionPredicate,
-              new ArrayList<Pattern>(),
+              new OmitMethodsPredicate(),
               classnames,
               coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());

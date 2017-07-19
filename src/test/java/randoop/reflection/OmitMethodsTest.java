@@ -161,6 +161,7 @@ public class OmitMethodsTest {
   private Set<TypedOperation> getOperations(ClassOrInterfaceType type, Pattern omitpattern) {
     List<Pattern> omitList = new ArrayList<>();
     omitList.add(omitpattern);
+    OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(omitList);
 
     Set<TypedOperation> operations = new TreeSet<>();
 
@@ -168,7 +169,8 @@ public class OmitMethodsTest {
     ReflectionManager mgr = new ReflectionManager(visibility);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     mgr.apply(
-        new OperationExtractor(type, operations, reflectionPredicate, omitList, visibility),
+        new OperationExtractor(
+            type, operations, reflectionPredicate, omitMethodsPredicate, visibility),
         type.getRuntimeClass());
     return operations;
   }

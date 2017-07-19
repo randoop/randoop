@@ -13,12 +13,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 import org.junit.Test;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
 import randoop.field.SubclassWithFields;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
@@ -94,7 +94,7 @@ public class FieldReflectionTest {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor =
         new OperationExtractor(
-            classType, operations, predicate, new ArrayList<Pattern>(), visibilityPredicate);
+            classType, operations, predicate, new OmitMethodsPredicate(), visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.apply(extractor, c);
     return operations;

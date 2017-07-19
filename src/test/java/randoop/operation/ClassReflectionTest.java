@@ -3,13 +3,12 @@ package randoop.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 import org.junit.Test;
 import randoop.Globals;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
@@ -44,7 +43,7 @@ public class ClassReflectionTest {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor =
         new OperationExtractor(
-            classType, operations, predicate, new ArrayList<Pattern>(), visibilityPredicate);
+            classType, operations, predicate, new OmitMethodsPredicate(), visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.apply(extractor, c);
     return operations;
