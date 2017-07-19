@@ -58,7 +58,9 @@ public class FailingTestFilter implements CodeWriter {
   }
 
   /**
-   * {@inheritDoc} Inserts comments in place of assertions that fail when the test is run.
+   * {@inheritDoc}
+   *
+   * <p>Inserts comments in place of assertions that fail when the test is run.
    *
    * <p>May be sensitive to changes in JUnit runner output.
    */
@@ -69,7 +71,7 @@ public class FailingTestFilter implements CodeWriter {
     File testFile = javaFileWriter.writeClass(packageName, classname, classString);
     sourceList.add(testFile);
 
-    String qualifiedClassname = ((!packageName.isEmpty()) ? packageName + "." : "") + classname;
+    String qualifiedClassname = (packageName.isEmpty() ? "" : packageName + ".") + classname;
 
     int pass = 0;
     boolean passing = false;
@@ -110,7 +112,8 @@ public class FailingTestFilter implements CodeWriter {
           totalFailures = Integer.parseInt(messageMatcher.group(1));
         }
       }
-      assert lineIterator.hasNext() : "JUnit has non-zero exit status, should be a failure";
+      assert lineIterator.hasNext()
+          : "JUnit has non-zero exit status, but we didn't find a failure";
 
       /*
        * Then read the rest of the file to find each failure.
@@ -119,7 +122,7 @@ public class FailingTestFilter implements CodeWriter {
       Pattern failureHeaderPattern =
           Pattern.compile("\\d+\\)\\s+(" + ID_STRING + ")\\(" + classname + "\\)");
 
-      // split the class text string so that we can match the line number for the assertion with the code
+      // Split the class text string so that we can match the line number for the assertion with the code.
       String[] classLines =
           classString.split(Globals.lineSep); //use same line break as used to write file
 
@@ -182,7 +185,7 @@ public class FailingTestFilter implements CodeWriter {
   }
 
   /**
-   * Compiles the java files in the list of files and writes the resulting class files to the
+   * Compiles the Java files in the list of files and writes the resulting class files to the
    * directory.
    *
    * <p>Calls {@code System.exit()} if the file does not compile.
