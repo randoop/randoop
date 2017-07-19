@@ -3,14 +3,15 @@ package randoop.reflection;
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 import java.io.IOException;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 import randoop.Globals;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
@@ -29,7 +30,6 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
-import randoop.operation.OperationParser;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -111,7 +111,7 @@ public class OperationModel {
    *     members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
-   * @param omitPatterns the patterns for operations that should be omitted
+   * @param omitPredicate the patterns for operations that should be omitted
    * @param classnames the names of classes under test
    * @param coveredClassnames the names of classes to be tested by covered class heuristic
    * @param methodSignatures the signatures of methods to be added to the model
@@ -119,19 +119,19 @@ public class OperationModel {
    * @param literalsFileList the list of literals file names @return the operation model for the
    *     parameters
    * @return the {@link OperationModel} constructed with the given arguments
-   * @throws OperationParseException if a method signature is ill-formed
+   * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   public static OperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      List<Pattern> omitPatterns,
+      OmitMethodsPredicate omitPredicate,
       Set<String> classnames,
       Set<String> coveredClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
-      throws OperationParseException, NoSuchMethodException {
+      throws SignatureParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
 
@@ -143,8 +143,10 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    model.addOperations(model.classTypes, visibility, reflectionPredicate, omitPatterns);
-    model.addOperations(methodSignatures);
+    model.addOperationsFromClasses(
+        model.classTypes, visibility, reflectionPredicate, omitPredicate);
+    model.addOperationsUsingSignatures(
+        methodSignatures, visibility, reflectionPredicate, omitPredicate);
     model.addObjectConstructor();
 
     return model;
@@ -381,41 +383,57 @@ public class OperationModel {
   }
 
   /**
-   * Iterates through a set of simple and instantiated class types and uses reflection to extract
-   * the operations that satisfy both the visibility and reflection predicates, and then adds them
-   * to the operation set of this model.
+   * Adds operations to this {@link OperationModel} from all of the classes in the given set of
+   * classes.
    *
-   * @param concreteClassTypes the declaring class types for the operations
+   * @param classTypes the set of declaring class types for the operations, must be non-null
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
-   * @param omitPatterns the patterns for omitting operations
+   * @param omitPredicate the predicate for omitting operations
    */
-  private void addOperations(
-      Set<ClassOrInterfaceType> concreteClassTypes,
+  private void addOperationsFromClasses(
+      Set<ClassOrInterfaceType> classTypes,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      List<Pattern> omitPatterns) {
+      OmitMethodsPredicate omitPredicate) {
     ReflectionManager mgr = new ReflectionManager(visibility);
-    for (ClassOrInterfaceType classType : concreteClassTypes) {
+    for (ClassOrInterfaceType classType : classTypes) {
       mgr.apply(
           new OperationExtractor(
-              classType, operations, reflectionPredicate, omitPatterns, visibility),
+              classType, operations, reflectionPredicate, omitPredicate, visibility),
           classType.getRuntimeClass());
     }
   }
 
   /**
-   * Create operations obtained by parsing method signatures and add each to this model.
+   * Adds an operation to this {@link OperationModel} for each of the method signatures.
    *
-   * @param methodSignatures the set of method signatures
-   * @throws OperationParseException if any signature is invalid
+   * @param methodSignatures the set of signatures, must be non-null
+   * @param visibility the visibility predicate
+   * @param reflectionPredicate the reflection predicate
+   * @param omitPredicate the predicate for omitting operations
+   * @throws SignatureParseException if any signature is invalid
    */
-  // TODO collect input types from added methods
-  // TODO add operation conditions
-  private void addOperations(Set<String> methodSignatures) throws OperationParseException {
+  private void addOperationsUsingSignatures(
+      Set<String> methodSignatures,
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      OmitMethodsPredicate omitPredicate)
+      throws SignatureParseException {
     for (String sig : methodSignatures) {
-      TypedOperation operation = OperationParser.parse(sig);
-      operations.add(operation);
+      AccessibleObject accessibleObject = null;
+      accessibleObject = SignatureParser.parse(sig, visibility, reflectionPredicate);
+      if (accessibleObject != null) {
+        TypedClassOperation operation;
+        if (accessibleObject instanceof Constructor) {
+          operation = TypedOperation.forConstructor((Constructor) accessibleObject);
+        } else {
+          operation = TypedOperation.forMethod((Method) accessibleObject);
+        }
+        if (!omitPredicate.shouldOmit(operation)) {
+          operations.add(operation);
+        }
+      }
     }
   }
 

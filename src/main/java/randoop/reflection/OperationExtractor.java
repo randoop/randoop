@@ -4,14 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
-import java.util.regex.Pattern;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.MethodCall;
@@ -20,12 +13,10 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
-import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
-import randoop.util.Log;
 
 /**
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of {@link Operation}
@@ -50,51 +41,48 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The type of the declaring class for the collected operations */
   private ClassOrInterfaceType classType;
 
-  /** The list of {@code Pattern} objects to omit matching operations */
-  private List<Pattern> omitPatterns;
+  /** The predicate to test whether to omit an operation */
+  private OmitMethodsPredicate omitPredicate;
 
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
-   * members of the class satisfying the given predicates and that don't match the omit patterns.
+   * members of the class satisfying the given visibility and reflection predicates and that don't
+   * violate the omit method predicate.
    *
    * @param classType the declaring class for collected operations
    * @param operations the collection of operations, will be side-effected
    * @param predicate the reflection predicate
-   * @param omitPatterns the list of {@code Pattern} objects for omitting methods, may be null
+   * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param visibilityPredicate the predicate for test visibility
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
       Collection<TypedOperation> operations,
       ReflectionPredicate predicate,
-      List<Pattern> omitPatterns,
+      OmitMethodsPredicate omitPredicate,
       VisibilityPredicate visibilityPredicate) {
     this.classType = classType;
     this.operations = operations;
     this.predicate = predicate;
     this.visibilityPredicate = visibilityPredicate;
-    if (omitPatterns == null) {
-      this.omitPatterns = new ArrayList<>();
-    } else {
-      this.omitPatterns = omitPatterns;
-    }
+    this.omitPredicate = omitPredicate;
   }
 
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
-   * members of the class and satisfying the given predicates.
+   * members of the class satisfying the given visibility and reflection predicates.
    *
    * @param classType the declaring class for collected operations
    * @param operations the collection of operations, will be side-effected
    * @param predicate the reflection predicate
-   * @param visibilityPredicate the predicate for testing visibility
+   * @param visibilityPredicate the predicate for test visibility
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
       Collection<TypedOperation> operations,
       ReflectionPredicate predicate,
       VisibilityPredicate visibilityPredicate) {
-    this(classType, operations, predicate, new ArrayList<Pattern>(), visibilityPredicate);
+    this(classType, operations, predicate, new OmitMethodsPredicate(), visibilityPredicate);
   }
 
   /**
@@ -139,7 +127,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       return;
     }
     TypedClassOperation operation = TypedOperation.forConstructor(constructor);
-    if (!shouldOmit(operation)) {
+    if (!omitPredicate.shouldOmit(operation)) {
       addOperation(operation);
     }
   }
@@ -161,10 +149,13 @@ public class OperationExtractor extends DefaultClassVisitor {
       int declaringClassMods =
           method.getDeclaringClass().getModifiers() & Modifier.classModifiers();
       if (!Modifier.isPublic(declaringClassMods)) {
-        operation = getOperationForType(operation, classType);
+        operation = operation.getOperationForType(classType);
       }
     }
-    if (!shouldOmit(classType, operation, method)) {
+    if (operation == null) {
+      System.out.println("null operation for " + classType + " method " + method.getName());
+    }
+    if (!omitPredicate.shouldOmit(classType, operation, method)) {
       addOperation(operation);
     }
   }
@@ -221,196 +212,5 @@ public class OperationExtractor extends DefaultClassVisitor {
     assert !enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);
     addOperation(new TypedClassOperation(op, enumType, new TypeTuple(), enumType));
-  }
-
-  /**
-   * Indicates whether some omit pattern matches the {@link TypedClassOperation#getRawSignature()}
-   * for the given operation.
-   *
-   * @param operation the constructor or method call to match against the omit patterns of this
-   *     extractor
-   * @return true if the signature matches an omit pattern, and false otherwise.
-   */
-  private boolean shouldOmit(TypedClassOperation operation) {
-    String signature = operation.getRawSignature();
-    for (Pattern pattern : omitPatterns) {
-      boolean result = pattern.matcher(signature).find();
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            String.format(
-                "Comparing '%s' against pattern '%s' = %b%n", signature, pattern, result));
-      }
-      if (result) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Indicates whether an omit pattern matches the raw signature of the method in either the
-   * declaring class of the method or a supertype.
-   *
-   * <p>Needs to search all supertypes of {@code classType} that have a declared member
-   * corresponding to the method. The type {@code classType} is a subtype of or equal to the
-   * declaring class of the operation. If non-equal, it is necessary to search all types in the
-   * interval between {@code classType} and {@code operation.getDeclaringType()}. Since the method
-   * may be an override in the declaring class, it is also necessary to search for superclasses of
-   * the declaring class that have the method.
-   *
-   * @param classType the type to which the method belongs
-   * @param operation the operation for the method
-   * @param method the reflection object for the method
-   * @return true if the signature of the method in the current class or a super class matches an
-   *     omit pattern, false otherwise
-   */
-  private boolean shouldOmit(
-      ClassOrInterfaceType classType, final TypedClassOperation operation, final Method method) {
-    // done if there are no patterns
-    if (omitPatterns.isEmpty()) {
-      return false;
-    }
-
-    // check whether the operation matches an omit pattern directly
-    if (shouldOmit(operation)) {
-      return true;
-    }
-
-    final ClassOrInterfaceType declaringType = operation.getDeclaringType();
-
-    // XXX these two searches are similar, but generalization is awkward.
-
-    /*
-     * Search in the interval from classType to declaringType.  These types all have the method.
-     */
-    Set<ClassOrInterfaceType> visited = new HashSet<>();
-    Queue<ClassOrInterfaceType> typeQueue = new LinkedList<>();
-    typeQueue.add(classType);
-    while (!typeQueue.isEmpty()) {
-      ClassOrInterfaceType type = typeQueue.remove();
-      if (visited.contains(type)) {
-        continue;
-      }
-
-      // all subtypes of declaringType have the method
-      TypedClassOperation superTypeOperation = getOperationForType(operation, type);
-      if (shouldOmit(superTypeOperation)) {
-        return true;
-      }
-
-      typeQueue.addAll(getBoundSupertypes(type, declaringType));
-      visited.add(type);
-    }
-
-    /*
-     * Search supertypes of declaringType that have the method.
-     */
-    visited = new HashSet<>();
-    typeQueue = new LinkedList<>();
-    typeQueue.add(declaringType);
-    while (!typeQueue.isEmpty()) {
-      ClassOrInterfaceType type = typeQueue.remove();
-      if (visited.contains(type)) {
-        continue;
-      }
-
-      Method superclassMethod =
-          getMethod(method.getName(), method.getParameterTypes(), type.getRuntimeClass());
-      if (superclassMethod != null) {
-        TypedClassOperation supertypeOperation = getOperationForType(operation, type);
-        if (shouldOmit(supertypeOperation)) {
-          return true;
-        }
-        typeQueue.addAll(getSupertypes(type));
-      }
-
-      visited.add(type);
-    }
-
-    return false;
-  }
-
-  /**
-   * Returns the set of supertypes for the given class including the superclass and interfaces of
-   * the type restricted to those that are a subtype of the upper bound type.
-   *
-   * @param type the type for which supertypes are collected
-   * @param upperBoundType the upper bound type
-   * @return the set of immediate supertypes that are subtypes of {@code upperBoundType}
-   */
-  private static Set<ClassOrInterfaceType> getBoundSupertypes(
-      ClassOrInterfaceType type, ClassOrInterfaceType upperBoundType) {
-    Set<ClassOrInterfaceType> boundedSet = new HashSet<>();
-
-    if (type.equals(upperBoundType) || !type.isSubtypeOf(upperBoundType)) {
-      return boundedSet;
-    }
-
-    ClassOrInterfaceType supertype = type.getSuperclass();
-    if (supertype.isSubtypeOf(upperBoundType)) {
-      boundedSet.add(supertype);
-    }
-    for (ClassOrInterfaceType interfaceType : type.getInterfaces()) {
-      if (interfaceType.isSubtypeOf(upperBoundType)) {
-        boundedSet.add(interfaceType);
-      }
-    }
-    return boundedSet;
-  }
-
-  /**
-   * Returns the set of supertypes for the given class obtained by collecting the superclass and
-   * interfaces of the type. (Rather than all supertypes returned by {@link
-   * ClassOrInterfaceType#getSuperTypes()}.
-   *
-   * @param type the type for which supertypes are collected
-   * @return the set of immediate supertypes.
-   */
-  private static Set<ClassOrInterfaceType> getSupertypes(ClassOrInterfaceType type) {
-    Set<ClassOrInterfaceType> supertypes = new HashSet<>();
-
-    if (type.equals(JavaTypes.OBJECT_TYPE)) {
-      return supertypes;
-    }
-
-    supertypes.add(type.getSuperclass());
-    supertypes.addAll(type.getInterfaces());
-
-    return supertypes;
-  }
-
-  /**
-   * Creates an operation with the same name, input types and output type as the given operation,
-   * but having the given type as the owning class. This is a valid object as long as type is a
-   * subtype of the declaring class of the operation.
-   *
-   * @param operation the original operation, non-null
-   * @param type a subtype of the declaring class of the operation to substitute into the operation,
-   *     non-null
-   * @return a new operation with {@code type} substituted for the declaring type of {@code
-   *     operation}
-   */
-  private static TypedClassOperation getOperationForType(
-      TypedClassOperation operation, ClassOrInterfaceType type) {
-    return new TypedClassOperation(
-        operation.getOperation(), type, operation.getInputTypes(), operation.getOutputType());
-  }
-
-  /**
-   * Returns the {@code java.lang.reflect.Method} with the name and arguments in the given class.
-   *
-   * @param methodName the method name
-   * @param parameterTypes the parameter types of the method
-   * @param typeClass the {@code Class} of the method
-   * @return the {@code Method} object with the name and parameter types from {@code typeClass},
-   *     null if there is no such method
-   */
-  private static Method getMethod(
-      String methodName, Class<?>[] parameterTypes, Class<?> typeClass) {
-    try {
-      return typeClass.getMethod(methodName, parameterTypes);
-    } catch (NoSuchMethodException e) {
-      return null;
-    }
   }
 }

@@ -37,11 +37,13 @@ import randoop.operation.TypedOperation;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.SignatureParseException;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -248,7 +250,7 @@ public class GenTests extends GenInputsAbstract {
       visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
 
-    extendOmitMethods(omitmethods);
+    OmitMethodsPredicate omitPredicate = createOmissionPredicate(omitmethods);
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
@@ -266,13 +268,13 @@ public class GenTests extends GenInputsAbstract {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              omitmethods,
+              omitPredicate,
               classnames,
               coveredClassnames,
               methodSignatures,
               classNameErrorHandler,
               GenInputsAbstract.literals_file);
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       System.out.printf("%nError: parse exception thrown %s%n", e);
       System.out.println("Exiting Randoop.");
       System.exit(1);
@@ -541,7 +543,7 @@ public class GenTests extends GenInputsAbstract {
    * @return a {@code SimpleLog} object that writes to the location indicated by {@code filename}
    */
   private static SimpleLog getSimpleLog(String filename) {
-    SimpleLog logger = null;
+    SimpleLog logger;
     if (filename.equals("-")) {
       logger = new SimpleLog(true);
     } else {
@@ -551,12 +553,15 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Adds patterns for methods to be omitted to the given list. Reads from the {@link
+   * Adds patterns for methods to be omitted to the given list and returns an {@link
+   * OmitMethodsPredicate} using the pattern list. Reads from the {@link
    * GenInputsAbstract#omitmethods_list} file.
    *
    * @param omitmethods the list of {@code Pattern} objects to add new patterns to, must not be null
+   * @return the {@link OmitMethodsPredicate} for the omit patterns from both {@link
+   *     GenInputsAbstract#omitmethods} and {@link GenInputsAbstract#omitmethods_list}.
    */
-  private void extendOmitMethods(List<Pattern> omitmethods) {
+  private OmitMethodsPredicate createOmissionPredicate(List<Pattern> omitmethods) {
     // Read method omissions from user provided file
     if (omitmethods_list != null) {
       try (EntryReader er = new EntryReader(omitmethods_list, "^#.*", null)) {
@@ -572,6 +577,7 @@ public class GenTests extends GenInputsAbstract {
         System.exit(1);
       }
     }
+    return new OmitMethodsPredicate(omitmethods);
   }
 
   /**

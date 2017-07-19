@@ -194,7 +194,7 @@ public class TypedClassOperation extends TypedOperation {
       TypeTuple typeTuple = getInputTypes();
       for (int i = 0; i < typeTuple.size(); i++) {
         // for non-static method, don't include the receiver in the raw signature
-        if (i == 0 && !this.isStatic()) {
+        if (i == 0 && this.isMethodCall() && !this.isStatic()) {
           continue;
         }
         Type type = typeTuple.get(i);
@@ -209,5 +209,23 @@ public class TypedClassOperation extends TypedOperation {
       rawSignature = methodName + "(" + UtilMDE.join(inputTypes, ",") + ")";
     }
     return rawSignature;
+  }
+
+  /**
+   * Creates an operation with the same name, input types and output type as this operation, but
+   * having the given type as the owning class.
+   *
+   * <p>Note: this is only a valid object if {@code type} has the method. This is definitely the
+   * case if {@code type} is a subtype of the declaring type of the operation, but this method does
+   * not force that check because we sometimes want to create the operation for superclasses.
+   *
+   * @param type a subtype of the declaring class of this operation to substitute into the
+   *     operation, non-null
+   * @return a new operation with {@code type} substituted for the declaring type of this operation.
+   *     This object will be invalid if {@code type} does not have the method.
+   */
+  public TypedClassOperation getOperationForType(ClassOrInterfaceType type) {
+    return new TypedClassOperation(
+        this.getOperation(), type, this.getInputTypes(), this.getOutputType());
   }
 }

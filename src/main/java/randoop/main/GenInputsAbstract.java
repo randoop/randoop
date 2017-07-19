@@ -61,22 +61,22 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // A relative URL like <a href="#specifying-methods"> works when this
   // Javadoc is pasted into the manual, but not in Javadoc proper.
   /**
-   * File that lists methods to test.
+   * A file containing a list of methods and constructors to test, each given as a fully-qualified
+   * signature on a separate line:
    *
-   * <p>In the file, each method under test is specified on a separate line. The list of methods
-   * given by this argument augment any methods determined via the <code>--testclass</code> or
-   * <code>--classlist</code> option.
+   * <ul>
+   *   <li>{@code package-name.classname.method-name(argument-list)} for a method, or
+   *   <li>{@code package-name.classname(argument-list)} for a constructor
+   * </ul>
    *
-   * <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
-   * {@code <init>}, and the constructor's parameter types enclosed in parentheses. Methods are
-   * specified in a similar way. For example:
+   * <p>where {@code package-name} is a period-separated list of identifiers, and {@code
+   * argument-list} is a comma-separated (spaces allowed) list of fully-qualified Java raw types.
    *
-   * <pre>{@code
-   * cons : Type0.<init>(Type1, Type2, ..., TypeN)
-   * method : Type0.method_name(Type1, Type2, ..., TypeN)
-   * }</pre>
+   * <p>These methods augment any methods from classes given by the <code>--testclass</code> or
+   * <code>--classlist</code> options.
    *
-   * <p>Each <code>Type<i>i</i></code> must be fully-qualified (include package names).
+   * <p>This option also overrides any conflicting method omission from {@code --omitmethods} or
+   * {@code --omitmethods-list}.
    *
    * <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">
    * example</a>.
