@@ -1,32 +1,28 @@
 package randoop.execution;
 
-import static org.apache.commons.codec.CharEncoding.UTF_8;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import plume.TimeLimitProcess;
+import randoop.util.StreamUtils;
 
 /**
- * Class to hold the return status from running a command assuming that it is run in a process where
- * stderr and stdout are linked. Includes the exit status, and the list of output lines.
+ * Class providing the {@link #run(List, File, long)} method to run a command in a separate process.
  */
-class RunEnvironment {
+public class RunCommand {
 
   /**
-   * Runs the given command in a new process using the given timeout.
+   * Runs the given command in the working directory in a new process using the given timeout. If
+   * returns normally, returns a {@link Status} object capturing the command, exit status, and
+   * output from the process.
    *
    * @param command the command to be run in the process
    * @param workingDirectory the working directory for this command
-   * @param timeout the timeout for executing the process
-   * @return the {@link RunEnvironment} capturing the outcome of executing the command
+   * @param timeout the timeout in milliseconds for executing the process
+   * @return the {@link Status} capturing the outcome of executing the command
    * @throws ProcessException if there is an error running the command
    */
-  static RunStatus run(List<String> command, File workingDirectory, long timeout)
+  static Status run(List<String> command, File workingDirectory, long timeout)
       throws ProcessException {
     ProcessBuilder processBuilder = new ProcessBuilder(command);
     processBuilder.directory(workingDirectory);
@@ -48,14 +44,14 @@ class RunEnvironment {
 
     List<String> standardOutputLines;
     try {
-      standardOutputLines = captureLinesFromStream(p.getInputStream());
+      standardOutputLines = StreamUtils.captureLinesFromStream(p.getInputStream());
     } catch (IOException e) {
       throw new ProcessException("Exception getting process stream output", e);
     }
 
     List<String> errorOutputLines;
     try {
-      errorOutputLines = captureLinesFromStream(p.getErrorStream());
+      errorOutputLines = StreamUtils.captureLinesFromStream(p.getErrorStream());
     } catch (IOException e) {
       throw new ProcessException("Error getting process error output", e);
     }
@@ -67,25 +63,44 @@ class RunEnvironment {
       assert !p.timed_out() : "Process timed out after " + p.timeout_msecs() + " msecs";
     }
 
-    return new RunStatus(command, exitValue, standardOutputLines, errorOutputLines);
+    return new Status(command, exitValue, standardOutputLines, errorOutputLines);
   }
 
   /**
-   * Captures output from the stream as a {@code List<String>}.
-   *
-   * @param stream the stream to read from
-   * @return the list of lines read from the stream
-   * @throws IOException if there is an error reading from the stream
+   * Represents the status of a process that has been executed. Captures the command, exit status,
+   * and lines written to standard output and error.
    */
-  private static List<String> captureLinesFromStream(InputStream stream) throws IOException {
-    List<String> outputLines = new ArrayList<>();
-    try (BufferedReader rdr = new BufferedReader(new InputStreamReader(stream, UTF_8))) {
-      String line = rdr.readLine();
-      while (line != null) {
-        outputLines.add(line);
-        line = rdr.readLine();
-      }
+  public static class Status {
+
+    /** The command executed. */
+    public final List<String> command;
+
+    /** The exit status of the command */
+    public final int exitStatus;
+
+    /** The output from running the command. */
+    public final List<String> standardOutputLines;
+
+    /** The error output from running the command */
+    public final List<String> errorOutputLines;
+
+    /**
+     * Creates a {@link Status} object for the command with captured exit status, and output.
+     *
+     * @param command the command
+     * @param exitStatus the exit status
+     * @param standardOutputLines the lines of process output
+     * @param errorOutputLines the lines of process output to standard error
+     */
+    Status(
+        List<String> command,
+        int exitStatus,
+        List<String> standardOutputLines,
+        List<String> errorOutputLines) {
+      this.command = command;
+      this.exitStatus = exitStatus;
+      this.standardOutputLines = standardOutputLines;
+      this.errorOutputLines = errorOutputLines;
     }
-    return outputLines;
   }
 }

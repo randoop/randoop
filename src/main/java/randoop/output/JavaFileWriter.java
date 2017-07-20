@@ -3,6 +3,7 @@ package randoop.output;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import randoop.Globals;
 
 /**
  * A {@link CodeWriter} that writes JUnit4 test class source text to a .java file with annotations
@@ -23,32 +24,42 @@ public class JavaFileWriter implements CodeWriter {
   }
 
   /**
-   * writeClass writes a code sequence as a JUnit4 test class to a .java file. Tests are executed in
-   * ascending alphabetical order by test method name.
+   * writeClassCode writes a code sequence as a JUnit4 test class to a .java file. Tests are
+   * executed in ascending alphabetical order by test method name.
    *
    * @param packageName the package name for the class
    * @param className the name of the class
-   * @param testClassText the source text of the test class
+   * @param classCode the source text of the test class
    * @return the File object for generated java file
    */
   @Override
-  public File writeClass(String packageName, String className, String testClassText) {
+  public File writeClassCode(String packageName, String className, String classCode) {
     File dir = createOutputDir(packageName);
     File file = new File(dir, className + ".java");
-    PrintStream out = createTextOutputStream(file);
 
-    try {
-      out.println(testClassText);
-    } finally {
-      if (out != null) out.close();
+    try (PrintStream out = createTextOutputStream(file)) {
+      out.println(classCode);
     }
 
     return file;
   }
 
   @Override
-  public File writeUnmodifiedClass(String packageName, String classname, String classString) {
-    return writeClass(packageName, classname, classString);
+  public File writeUnmodifiedClassLines(
+      String packageName, String className, String[] sourceLines) {
+    File dir = createOutputDir(packageName);
+    File file = new File(dir, className + ".java");
+    try (PrintStream out = createTextOutputStream(file)) {
+      for (String line : sourceLines) {
+        out.print(line + Globals.lineSep);
+      }
+    }
+    return file;
+  }
+
+  @Override
+  public File writeUnmodifiedClassCode(String packageName, String classname, String classCode) {
+    return writeClassCode(packageName, classname, classCode);
   }
 
   /**

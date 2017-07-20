@@ -3,18 +3,35 @@ package randoop.output;
 import java.io.File;
 import randoop.main.Minimize;
 
-/** Created by bjkeller on 7/3/17. */
+/**
+ * A {@link CodeWriter} that for an error-revealing test class, writes both the original and
+ * minimized class. Minimizes the methods of the test class using {@link Minimize#mainMinimize(File,
+ * String, int, boolean)}.
+ */
 public class MinimizerWriter implements CodeWriter {
+
+  /** The {@link JavaFileWriter} used to write classes */
   private final JavaFileWriter javaFileWriter;
 
+  /**
+   * Creates a {@link MinimizerWriter} using the given {@link JavaFileWriter}.
+   *
+   * @param javaFileWriter the {@link JavaFileWriter} for writing the classes
+   */
   public MinimizerWriter(JavaFileWriter javaFileWriter) {
     this.javaFileWriter = javaFileWriter;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Writes both the original class and the minimized class.
+   */
   @Override
-  public File writeClass(String packageName, String classname, String classString) {
+  public File writeClassCode(String packageName, String classname, String classCode) {
 
-    File testFile = javaFileWriter.writeClass(packageName, classname, classString);
+    // Write the original class
+    File testFile = javaFileWriter.writeClassCode(packageName, classname, classCode);
 
     // Minimize the error-revealing test that has been output.
     Minimize.mainMinimize(
@@ -24,7 +41,13 @@ public class MinimizerWriter implements CodeWriter {
   }
 
   @Override
-  public File writeUnmodifiedClass(String packageName, String classname, String classString) {
-    return javaFileWriter.writeClass(packageName, classname, classString);
+  public File writeUnmodifiedClassLines(
+      String packageName, String classname, String[] sourceLines) {
+    return javaFileWriter.writeUnmodifiedClassLines(packageName, classname, sourceLines);
+  }
+
+  @Override
+  public File writeUnmodifiedClassCode(String packageName, String classname, String classCode) {
+    return javaFileWriter.writeClassCode(packageName, classname, classCode);
   }
 }

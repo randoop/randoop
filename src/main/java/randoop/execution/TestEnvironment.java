@@ -3,7 +3,7 @@ package randoop.execution;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,13 +11,13 @@ import java.util.Map;
 public class TestEnvironment {
 
   /** The process timeout in milliseconds. Set initially to 15 minutes. */
-  private long timeout = 900000; //15 minutes
+  private long timeout = 900000;
 
   /** The classpath for the tests */
   private final String testClasspath;
 
   /** The map from javaagent jar path to argument string */
-  private final Map<Path, String> agentMap;
+  private final LinkedHashMap<Path, String> agentMap;
 
   /**
    * Creates a test environment with the given classpath and an empty agent map.
@@ -26,11 +26,12 @@ public class TestEnvironment {
    */
   public TestEnvironment(String testClasspath) {
     this.testClasspath = testClasspath;
-    this.agentMap = new HashMap<>();
+    this.agentMap = new LinkedHashMap<>();
   }
 
   /**
-   * Adds a javaagent to the agent map. These agents will be included in the command.
+   * Adds the path for a javaagent jar file to the agent map. These agents will be included in the
+   * command in the order they are added.
    *
    * @param agentPath the path to the Javaagent jar file
    * @param agentArgumentString the argument string for the agent
@@ -42,7 +43,7 @@ public class TestEnvironment {
   /**
    * Set the test execution timeout.
    *
-   * @param timeout the time in microseconds that a test is allowed to run before being terminated.
+   * @param timeout the time in milliseconds that a test is allowed to run before being terminated.
    */
   public void setTimeout(long timeout) {
     this.timeout = timeout;
@@ -53,13 +54,14 @@ public class TestEnvironment {
    *
    * @param testClassName the fully-qualified JUnit test class
    * @param workingDirectory the working directory for executing the test
-   * @return the {@link RunStatus} object for the execution of the test class
+   * @return the {@link RunCommand.Status} object for the execution of the test class
    * @throws ProcessException if there is an error running the test command
    */
-  public RunStatus runTest(String testClassName, File workingDirectory) throws ProcessException {
+  public RunCommand.Status runTest(String testClassName, File workingDirectory)
+      throws ProcessException {
     List<String> command = buildCommandPrefix();
     command.add(testClassName);
-    return RunEnvironment.run(command, workingDirectory, timeout);
+    return RunCommand.run(command, workingDirectory, timeout);
   }
 
   /**
@@ -73,15 +75,13 @@ public class TestEnvironment {
     command.add("java");
 
     for (Map.Entry<Path, String> entry : agentMap.entrySet()) {
-      if (entry.getKey() != null) {
-        String agentPath = entry.getKey().toString();
-        String agent = "-javaagent:" + agentPath;
-        String args = entry.getValue();
-        if (args != null) {
-          agent = agent + "=" + args;
-        }
-        command.add(agent);
+      String agentPath = entry.getKey().toString();
+      String agent = "-javaagent:" + agentPath;
+      String args = entry.getValue();
+      if (args != null) {
+        agent = agent + "=" + args;
       }
+      command.add(agent);
     }
 
     command.add("-ea");

@@ -333,7 +333,7 @@ public class JUnitCreator {
    * @param testClassNames the set of names of the test classes in the suite
    * @return the {@code String} with the declaration for the suite class
    */
-  public String createSuiteClass(String suiteClassName, Set<String> testClassNames) {
+  public String createTestSuite(String suiteClassName, Set<String> testClassNames) {
     CompilationUnit cu = new CompilationUnit();
     if (packageName != null && !packageName.isEmpty()) {
       cu.setPackage(new PackageDeclaration(new NameExpr(packageName)));
@@ -351,12 +351,12 @@ public class JUnitCreator {
     StringBuilder classList = new StringBuilder();
     Iterator<String> testIterator = testClassNames.iterator();
     if (testIterator.hasNext()) {
-      String classString = testIterator.next() + ".class";
+      String classCode = testIterator.next() + ".class";
       while (testIterator.hasNext()) {
-        classList.append(classString).append(", ");
-        classString = testIterator.next() + ".class";
+        classList.append(classCode).append(", ");
+        classCode = testIterator.next() + ".class";
       }
-      classList.append(classString);
+      classList.append(classCode);
     }
     annotations.add(
         new SingleMemberAnnotationExpr(

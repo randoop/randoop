@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Exception representing an error that occured while running a process with {@link
- * RunEnvironment#run(List, File, long)}.
+ * RunCommand#run(List, File, long)}.
  */
 public class ProcessException extends Throwable {
 

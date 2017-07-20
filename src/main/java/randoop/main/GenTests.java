@@ -583,7 +583,7 @@ public class GenTests extends GenInputsAbstract {
    * @return a {@code SimpleLog} object that writes to the location indicated by {@code filename}
    */
   private static SimpleLog getSimpleLog(String filename) {
-    SimpleLog logger = null;
+    SimpleLog logger;
     if (filename.equals("-")) {
       logger = new SimpleLog(true);
     } else {
@@ -759,24 +759,26 @@ public class GenTests extends GenInputsAbstract {
       CodeWriter codeWriter) {
     List<File> testFiles = new ArrayList<>();
 
-    // create and write test classes
-    Map<String, CompilationUnit> testMap = getTestASTMap(namePrefix, sequences, jUnitCreator);
+    // Create and write test classes.
+    LinkedHashMap<String, CompilationUnit> testMap =
+        getTestASTMap(namePrefix, sequences, jUnitCreator);
     for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
       String classname = entry.getKey();
-      String classString = entry.getValue().toString();
-      testFiles.add(codeWriter.writeClass(packageName, classname, classString));
+      String classSource = entry.getValue().toString();
+      testFiles.add(codeWriter.writeClassCode(packageName, classname, classSource));
     }
 
-    // create and write driver
-    String driverName = namePrefix;
+    // Create and write suite or driver class.
+    String driverName;
     String classSource;
     if (GenInputsAbstract.junit_reflection_allowed) {
-      classSource = jUnitCreator.createSuiteClass(driverName, testMap.keySet());
+      driverName = namePrefix;
+      classSource = jUnitCreator.createTestSuite(driverName, testMap.keySet());
     } else {
-      driverName += "Driver";
+      driverName = namePrefix + "Driver";
       classSource = jUnitCreator.createTestDriver(driverName, testMap.keySet());
     }
-    testFiles.add(codeWriter.writeUnmodifiedClass(packageName, driverName, classSource));
+    testFiles.add(codeWriter.writeUnmodifiedClassCode(packageName, driverName, classSource));
     return testFiles;
   }
 
@@ -800,9 +802,7 @@ public class GenTests extends GenInputsAbstract {
   private void logTestFiles(List<File> files) {
     System.out.println();
     for (File f : files) {
-      if (f != null) {
-        System.out.println("Created file: " + f.getAbsolutePath());
-      }
+      System.out.println("Created file: " + f.getAbsolutePath());
     }
   }
 
@@ -814,16 +814,16 @@ public class GenTests extends GenInputsAbstract {
    * @param junitCreator the JUnit creator to create the abstract syntax trees for the test classes
    * @return mapping from a class name to the abstract syntax tree for the class
    */
-  private Map<String, CompilationUnit> getTestASTMap(
+  private LinkedHashMap<String, CompilationUnit> getTestASTMap(
       String junitPrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
 
     List<List<ExecutableSequence>> sequencePartition =
         CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
 
-    Map<String, CompilationUnit> testMap = new LinkedHashMap<>();
+    LinkedHashMap<String, CompilationUnit> testMap = new LinkedHashMap<>();
     for (int i = 0; i < sequencePartition.size(); i++) {
       List<ExecutableSequence> partition = sequencePartition.get(i);
-      String testClassName = createTestClassname(junitPrefix, i);
+      String testClassName = junitPrefix + i;
       CompilationUnit classAST =
           junitCreator.createTestClass(testClassName, TEST_METHOD_NAME_PREFIX, partition);
       if (classAST != null) {
@@ -831,17 +831,6 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     return testMap;
-  }
-
-  /**
-   * Creates the test class name by appending the counter value to the class name prefix.
-   *
-   * @param testClassnamePrefix the test classname prefix
-   * @param counter the counter value to append to the classname prefix
-   * @return the class name with prefix followed by the counter value
-   */
-  private String createTestClassname(String testClassnamePrefix, int counter) {
-    return String.format(testClassnamePrefix + "%d", counter);
   }
 
   /**
@@ -864,17 +853,17 @@ public class GenTests extends GenInputsAbstract {
       MultiMap<Type, TypedOperation> observerMap,
       Set<TypedOperation> excludeAsObservers) {
 
-    // start with checking for invalid exceptions
+    // Start with checking for invalid exceptions.
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
     TestCheckGenerator testGen =
         new ValidityCheckingVisitor(isInvalid, !GenInputsAbstract.ignore_flaky_tests);
 
-    // extend with contract checker
+    // Extend with contract checker.
     ExceptionPredicate isError = new ExceptionBehaviorPredicate(BehaviorType.ERROR);
     ContractCheckingVisitor contractVisitor = new ContractCheckingVisitor(contracts, isError);
     testGen = new ExtendGenerator(testGen, contractVisitor);
 
-    // and, generate regression tests, unless user says not to
+    // And, generate regression tests, unless user says not to.
     if (!GenInputsAbstract.no_regression_tests) {
       ExceptionPredicate isExpected = new AlwaysFalseExceptionPredicate();
       boolean includeAssertions = true;
@@ -897,7 +886,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Print out usage error and stack trace and then exit
+   * Print out usage error and stack trace and then exit.
    *
    * @param format the string format
    * @param args the arguments
