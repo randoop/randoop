@@ -48,14 +48,14 @@ class RunEnvironment {
 
     List<String> standardOutputLines;
     try {
-      standardOutputLines = captureProcessOutput(p.getInputStream());
+      standardOutputLines = captureLinesFromStream(p.getInputStream());
     } catch (IOException e) {
       throw new ProcessException("Exception getting process stream output", e);
     }
 
     List<String> errorOutputLines;
     try {
-      errorOutputLines = captureProcessOutput(p.getErrorStream());
+      errorOutputLines = captureLinesFromStream(p.getErrorStream());
     } catch (IOException e) {
       throw new ProcessException("Error getting process error output", e);
     }
@@ -77,7 +77,7 @@ class RunEnvironment {
    * @return the list of lines read from the stream
    * @throws IOException if there is an error reading from the stream
    */
-  private static List<String> captureProcessOutput(InputStream stream) throws IOException {
+  private static List<String> captureLinesFromStream(InputStream stream) throws IOException {
     List<String> outputLines = new ArrayList<>();
     try (BufferedReader rdr = new BufferedReader(new InputStreamReader(stream, UTF_8))) {
       String line = rdr.readLine();

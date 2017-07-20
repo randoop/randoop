@@ -10,7 +10,7 @@ import java.util.Map;
 /** Provides the environment for running JUnit tests. */
 public class TestEnvironment {
 
-  /** The process timeout. Set initially to 15 minutes. */
+  /** The process timeout in milliseconds. Set initially to 15 minutes. */
   private long timeout = 900000; //15 minutes
 
   /** The classpath for the tests */
