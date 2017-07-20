@@ -9,6 +9,10 @@ public class BugInRandoopException extends RuntimeException {
     super();
   }
 
+  public BugInRandoopException(String message, Throwable exception) {
+    super(message, exception);
+  }
+
   public BugInRandoopException(String message) {
     super(message);
   }
