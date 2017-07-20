@@ -2,9 +2,14 @@ package randoop.operation;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
-/** Method {@link #parse} parses a string representing a {@link Operation}. */
+/**
+ * Parser for text serialization of operations. See {@link #parse} for format details.
+ *
+ * @see randoop.sequence.Sequence#parse(List)
+ */
 public class OperationParser {
 
   private OperationParser() {
