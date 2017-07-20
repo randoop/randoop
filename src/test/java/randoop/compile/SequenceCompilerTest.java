@@ -30,7 +30,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 import org.junit.Test;
 
@@ -39,19 +38,23 @@ public class SequenceCompilerTest {
   @Test
   public void compilableTest() {
 
-    SequenceCompiler compiler = getSequenceCompiler();
+    SequenceClassLoader classLoader = new SequenceClassLoader(getClass().getClassLoader());
+    SequenceCompiler compiler = getSequenceCompiler(classLoader);
 
     String simpleClass = createCompilableClass();
 
     Class<?> compiledClass = null;
     try {
-      compiledClass = compiler.compile("", "Simple", simpleClass);
+      compiler.compile("", "Simple", simpleClass);
+      compiledClass = classLoader.loadClass("Simple");
     } catch (SequenceCompilerException e) {
       System.out.print(e.getMessage());
       if (e.getCause() != null) System.out.print(": " + e.getCause().getMessage());
       System.out.println();
       printDiagnostics(System.out, e.getDiagnostics().getDiagnostics());
       fail("compilation failed");
+    } catch (ClassNotFoundException e) {
+      fail("couldn't load class");
     }
 
     try {
@@ -95,7 +98,8 @@ public class SequenceCompilerTest {
 
   @Test
   public void uncompilableTest() {
-    SequenceCompiler compiler = getSequenceCompiler();
+    SequenceClassLoader classLoader = new SequenceClassLoader(getClass().getClassLoader());
+    SequenceCompiler compiler = getSequenceCompiler(classLoader);
     String classSource = createUncompilableClass();
     try {
       compiler.compile("", "SimplyBad", classSource);
@@ -172,9 +176,7 @@ public class SequenceCompilerTest {
     return cu.toString();
   }
 
-  private SequenceCompiler getSequenceCompiler() {
-    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-    SequenceClassLoader classLoader = new SequenceClassLoader(getClass().getClassLoader());
+  private SequenceCompiler getSequenceCompiler(SequenceClassLoader classLoader) {
     List<String> options = new ArrayList<>();
     // These are javac options
     options.add("-Xmaxerrs");

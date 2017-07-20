@@ -52,56 +52,65 @@ public class SequenceCompiler {
   }
 
   /**
-   * Compiles the given class and returns the {@code Class<?>} object for the class.
+   * Indicates whether the given class is compilable.
+   *
+   * @param packageName the package name for the class
+   * @param classname the (unqualified) name of the class
+   * @param classSource the source test of the class
+   * @return true if class source was successfully compiled, false otherwise
+   */
+  public boolean compileCheck(
+      final String packageName, final String classname, final String classSource) {
+    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+    return compile(packageName, classname, classSource, diagnostics);
+  }
+
+  /**
+   * Compiles the given class. If this method returns normally, compilation was successful.
    *
    * @param packageName the package of the class
    * @param classname the (unqualified) name of the class
    * @param classSource the source text of the class
-   * @param <T> the type of the class (use a wildcard if you aren't sure)
-   * @return the {@code Class<T>} object for the class
-   * @throws SequenceCompilerException if the compilation fails or the class cannot be loaded
+   * @throws SequenceCompilerException if the compilation fails.
    */
-  public <T> Class<T> compile(
-      final String packageName, final String classname, final String classSource)
+  public void compile(final String packageName, final String classname, final String classSource)
       throws SequenceCompilerException {
 
-    String classFileName = classname + CompileUtil.JAVA_EXTENSION;
-    List<JavaFileObject> sources = new ArrayList<>();
-    JavaFileObject source = new SequenceJavaFileObject(classFileName, classSource);
-    sources.add(source);
-    fileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, classFileName, source);
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
-    JavaCompiler.CompilationTask task =
-        compiler.getTask(null, fileManager, diagnostics, options, null, sources);
-    Boolean succeeded = task.call();
-    if (succeeded == null || !succeeded) {
+    boolean success = compile(packageName, classname, classSource, diagnostics);
+    if (!success) {
       throw new SequenceCompilerException("Compilation failed.", classSource, diagnostics);
     }
-
-    Class<T> compiledClass;
-    try {
-      compiledClass = loadClass(packageName, classname);
-    } catch (ClassNotFoundException e) {
-      throw new SequenceCompilerException(
-          "Could not load compiled class.", e, classSource, diagnostics);
-    }
-
-    return compiledClass;
   }
 
-  public boolean compileCheck(
-      final String packageName, final String classname, final String classSource) {
+  /**
+   * A helper method for the {@link #compile(String, String, String)} and {@link
+   * #compileCheck(String, String, String)} methods: compiles the given class using the diagnostics
+   * collector.
+   *
+   * <p>Always use a new diagnostics collector each compilation to avoid accumulating errors.
+   *
+   * @param packageName the package of the class
+   * @param classname the (unqualified) name of the class
+   * @param classSource the source text of the class
+   * @param diagnostics the {@code DiagnosticsCollector} object to use for the compilation
+   * @return true if the class source is successfully compiled, false otherwise
+   */
+  private boolean compile(
+      final String packageName,
+      final String classname,
+      final String classSource,
+      DiagnosticCollector<JavaFileObject> diagnostics) {
     String classFileName = classname + CompileUtil.JAVA_EXTENSION;
     List<JavaFileObject> sources = new ArrayList<>();
     JavaFileObject source = new SequenceJavaFileObject(classFileName, classSource);
     sources.add(source);
     fileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, classFileName, source);
-    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     JavaCompiler.CompilationTask task =
         compiler.getTask(null, fileManager, diagnostics, options, null, sources);
     Boolean succeeded = task.call();
-    return !(succeeded == null || !succeeded);
+    return (succeeded != null && succeeded);
   }
 
   /**
