@@ -77,8 +77,12 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   @Override
   public String toString() {
     String ret = "Call to " + constructor + " args:" + Arrays.toString(inputs);
-    if (hasRunAlready()) return ret + " not run yet";
-    else if (exceptionThrown == null) return ret + " returned:" + ret;
-    else return ret + " threw:" + exceptionThrown;
+    if (hasRunAlready()) {
+      return ret + " not run yet";
+    } else if (exceptionThrown == null) {
+      return ret + " returned:" + ret;
+    } else {
+      return ret + " threw:" + exceptionThrown;
+    }
   }
 }
