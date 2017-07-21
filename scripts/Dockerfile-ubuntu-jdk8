@@ -12,7 +12,7 @@ RUN apt-get -qqy update \
 && apt-get -qqy install \
   git \
   gradle \
-  default-jdk \
   xvfb \
+  default-jdk \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*

@@ -57,7 +57,9 @@ public class SequenceCollection {
   private int sequenceCount = 0;
 
   private void checkRep() {
-    if (!GenInputsAbstract.debug_checks) return;
+    if (!GenInputsAbstract.debug_checks) {
+      return;
+    }
     if (sequenceMap.size() != typeSet.size()) {
       String b =
           "activesequences types="

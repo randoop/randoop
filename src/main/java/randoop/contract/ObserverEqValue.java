@@ -32,8 +32,12 @@ public final class ObserverEqValue implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) return false;
-    if (o == this) return true;
+    if (o == null) {
+      return false;
+    }
+    if (o == this) {
+      return true;
+    }
     if (!(o instanceof ObserverEqValue)) {
       return false;
     }

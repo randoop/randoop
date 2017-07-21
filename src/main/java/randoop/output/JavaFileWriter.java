@@ -54,13 +54,18 @@ public class JavaFileWriter {
 
   private File getDir(String packageName) {
     File dir;
-    if (dirName == null || dirName.length() == 0) dir = new File(System.getProperty("user.dir"));
-    else dir = new File(dirName);
+    if (dirName == null || dirName.length() == 0) {
+      dir = new File(System.getProperty("user.dir"));
+    } else {
+      dir = new File(dirName);
+    }
     if (packageName == null) {
       return dir;
     }
 
-    if (packageName.length() == 0) return dir;
+    if (packageName.length() == 0) {
+      return dir;
+    }
     String[] split = packageName.split("\\.");
     for (String s : split) {
       dir = new File(dir, s);
