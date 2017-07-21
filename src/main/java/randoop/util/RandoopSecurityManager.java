@@ -212,7 +212,9 @@ public class RandoopSecurityManager extends SecurityManager {
   @SuppressWarnings("deprecation")
   @Override
   public boolean checkTopLevelWindow(Object window) {
-    if (status == Status.OFF) return true;
+    if (status == Status.OFF) {
+      return true;
+    }
     if (window == null) throw new NullPointerException();
     throw new SecurityException(
         "checkTopLevelWindow(Object): Randoop does not allow this operation by tested code");
