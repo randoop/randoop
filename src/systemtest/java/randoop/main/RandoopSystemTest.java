@@ -1028,6 +1028,12 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
+  /**
+   * Tests pre-conditions that throw exceptions. The methods in the class under test with failing
+   * preconditions should not be covered by the generated tests.
+   *
+   * <p>The generation limits are set carefully, since only a few sequences are generated.
+   */
   @Test
   public void runConditionWithExceptionTest() {
     TestEnvironment testEnvironment =
@@ -1039,9 +1045,16 @@ public class RandoopSystemTest {
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
-    options.setOption("generatedLimit", "500");
+    options.setOption("attemptedLimit", "12");
 
-    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+
+    // These methods should not be called because the pre-conditions throw exceptions
+    coverageChecker.exclude("randoop.condition.ConditionWithException.getOne()");
+    coverageChecker.exclude("randoop.condition.ConditionWithException.getZero()");
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   @Test
@@ -1106,7 +1119,7 @@ public class RandoopSystemTest {
 
   /**
    * recreate problem with tests over Google Guava where value from private enum returned by public
-   * method and value used in {@link randoop.test.ObjectCheck} surfaces in test code, creating
+   * method and value used in {@code randoop.test.ObjectCheck} surfaces in test code, creating
    * uncompilable code.
    */
   @Test
