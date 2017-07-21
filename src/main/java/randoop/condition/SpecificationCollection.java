@@ -1,14 +1,16 @@
 package randoop.condition;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -246,7 +248,7 @@ public class SpecificationCollection {
     Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
     TypeToken<List<OperationSpecification>> typeToken =
         (new TypeToken<List<OperationSpecification>>() {});
-    try (BufferedReader reader = new BufferedReader(new FileReader(specificationFile))) {
+    try (BufferedReader reader = Files.newBufferedReader(specificationFile.toPath(), UTF_8)) {
       specificationList.addAll(
           (List<OperationSpecification>) gson.fromJson(reader, typeToken.getType()));
     }
