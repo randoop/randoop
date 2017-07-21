@@ -36,6 +36,7 @@ public class PostSpecification extends Specification {
   private final Property property;
 
   /** Default constructor for Gson serialization. */
+  @SuppressWarnings("unused")
   private PostSpecification() {
     super();
     this.property = null;
@@ -59,7 +60,11 @@ public class PostSpecification extends Specification {
       return false;
     }
     PostSpecification other = (PostSpecification) object;
-    return super.equals(other) && this.property.equals(other.property);
+    return super.equals(other)
+        && ((this.property != null
+                && other.property != null
+                && this.property.equals(other.property))
+            || (this.property == null && other.property == null));
   }
 
   @Override

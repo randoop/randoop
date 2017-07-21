@@ -3,8 +3,8 @@ package randoop.condition.specification;
 import java.util.Objects;
 
 /**
- * Conditions that can be attached to methods and constructors are given in the form of {@link
- * Specification} objects.
+ * Abstract class for representations of conditions that can be attached to methods and
+ * constructors.
  */
 public abstract class Specification {
 

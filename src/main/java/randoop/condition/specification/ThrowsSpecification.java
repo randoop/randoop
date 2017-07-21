@@ -4,8 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
 
 /**
- * The specification for a {@link ThrowsSpecification} that specifies that an exception should be
- * thrown.
+ * A specification that an exception should be thrown.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
@@ -30,6 +29,8 @@ public class ThrowsSpecification extends Specification {
   @SerializedName("exception")
   private final String exceptionType;
 
+  /** Gson serialization requires that classes have a default constructor. */
+  @SuppressWarnings("unused")
   private ThrowsSpecification() {
     super();
     this.exceptionType = "";

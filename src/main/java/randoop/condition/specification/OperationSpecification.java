@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A specification of a constructor or method, aka, an operation. Consists of the {@code
+ * A specification of a constructor or method, aka, an <i>operation</i>. Consists of the {@code
  * java.lang.reflect.AccessibleObject} for the operation, and lists of {@link ThrowsSpecification},
  * {@link PostSpecification}, and {@link PreSpecification} objects that describe contracts on the
  * operation.
@@ -69,6 +69,7 @@ public class OperationSpecification {
   private final List<PreSpecification> preSpecifications;
 
   /** Default constructor is needed for Gson serialization */
+  @SuppressWarnings("unused")
   private OperationSpecification() {
     this.operation = null;
     this.identifiers = new Identifiers();

@@ -45,6 +45,7 @@ public class Operation {
   private final List<String> parameterTypes;
 
   /** A default constructor is expected for Gson serialization. */
+  @SuppressWarnings("unused")
   private Operation() {
     this.classname = "";
     this.name = "";
@@ -53,16 +54,44 @@ public class Operation {
 
   /**
    * Create an {@link Operation} object given the names of the declaring class, method or
-   * constructor, the parameter types, parameter names, receiver name and return value name.
+   * constructor, the parameter types.
    *
    * @param classname the fully-qualified name of the declaring class
    * @param name the name of the method or constructor
    * @param parameterTypes the list of fully-qualified parameter type names
    */
-  public Operation(String classname, String name, List<String> parameterTypes) {
+  private Operation(String classname, String name, List<String> parameterTypes) {
     this.classname = classname;
     this.name = name;
     this.parameterTypes = parameterTypes;
+  }
+
+  /**
+   * Create a {@link Operation} for the constructor of the class with the parameter types. The name
+   * of the constructor is the same as the class name.
+   *
+   * @param classname the fully-qualified name of the declaring class
+   * @param parameterTypes the list of fully-qualified parameter type names
+   * @return the {@link Operation} for a constructor of the declaring class with the parameter
+   *     types.
+   */
+  public static Operation forConstructorName(String classname, List<String> parameterTypes) {
+    return new Operation(classname, classname, parameterTypes);
+  }
+
+  /**
+   * Create a {@link Operation} for the method in the named class, with the method name and
+   * parameter types.
+   *
+   * @param classname the name of the declaring class
+   * @param name the name of the method
+   * @param parameterTypes the list of fully-qualified parameter type names
+   * @return the {@link Operation} for the named method in the declaring class, with the parameter
+   *     types
+   */
+  public static Operation forMethodName(
+      String classname, String name, List<String> parameterTypes) {
+    return new Operation(classname, name, parameterTypes);
   }
 
   /**
@@ -160,10 +189,22 @@ public class Operation {
     return parameterTypes;
   }
 
+  /**
+   * Indicates whether this {@link Operation} represents a constructor.
+   *
+   * @return {@code true} if this {@link Operation} represents a constructor, {@code false}
+   *     otherwise
+   */
   public boolean isConstructor() {
     return name.equals(classname);
   }
 
+  /**
+   * Indicates whether this {@link Operation} is a valid representation of a method or constructor.
+   *
+   * @return {@code true} if the class and operation names are both non-null, non-empty and the type
+   *     name list is non-null.
+   */
   public boolean isValid() {
     return classname != null
         && !classname.isEmpty()

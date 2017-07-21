@@ -18,7 +18,9 @@ import randoop.sequence.Variable;
 /** Represents the signature of a condition method for a particular {@code AccessibleObject}. */
 public class ConditionSignature {
 
+  /** The name of dummy variables used by {@link randoop.contract.ObjectContract}. */
   private static final String DUMMY_VARIABLE_NAME = "x";
+
   private final Map<String, String> replacements;
   private String preconditionSignature;
   private String postconditionSignature;
