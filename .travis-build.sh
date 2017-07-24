@@ -33,10 +33,10 @@ fi
 
 if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
   # need gui for running tests of replace call agent with Swing/AWT
-  export DISPLAY=:99.0
-  sh -e /etc/init.d/xvfb start
-  sleep 3 # give xvfb some time to start
-  
+  #export DISPLAY=:99.0
+  #sh -e /etc/init.d/xvfb start
+  #sleep 3 # give xvfb some time to start
+
   # ./gradlew --info check
   ./gradlew --info check
 fi
