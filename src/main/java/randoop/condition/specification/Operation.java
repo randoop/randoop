@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents an operation for an {@link OperationSpecification} so that the {@code java.lang.reflect.AccessibleObject} can be loaded.
+ * Represents an operation for an {@link OperationSpecification} so that the {@code
+ * java.lang.reflect.AccessibleObject} can be loaded.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
@@ -145,7 +146,8 @@ public class Operation {
   @Override
   public String toString() {
     return String.format(
-        "{%n \"classname\": \"%s\",%n \"name\": \"%s\",%n \"parameterTypes\": \"%s\"%n}", classname, name, parameterTypes);
+        "{%n \"classname\": \"%s\",%n \"name\": \"%s\",%n \"parameterTypes\": \"%s\"%n}",
+        classname, name, parameterTypes);
   }
 
   /**

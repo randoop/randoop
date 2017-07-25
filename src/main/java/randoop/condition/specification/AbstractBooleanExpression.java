@@ -1,7 +1,6 @@
 package randoop.condition.specification;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.util.Objects;
 
 /**
