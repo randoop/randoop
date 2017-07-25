@@ -60,7 +60,7 @@ public class PostConditionCheck implements Check {
   public String toString() {
     List<String> conditionStrings = new ArrayList<>();
     for (PostCondition condition : postConditions) {
-      conditionStrings.add(condition.getConditionString());
+      conditionStrings.add(condition.getConditionSource());
     }
     return UtilMDE.join(conditionStrings, "&&");
   }
@@ -76,7 +76,7 @@ public class PostConditionCheck implements Check {
     for (PostCondition postCondition : postConditions) {
       String conditionString =
           ObjectContractUtils.localizeContractCode(
-              postCondition.getConditionString(), inputVariables);
+              postCondition.getConditionSource(), inputVariables);
       builder
           .append("// Checks the post-condition: ")
           .append(postCondition.getComment())

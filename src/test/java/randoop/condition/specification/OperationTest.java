@@ -26,7 +26,7 @@ public class OperationTest {
     Operation operation = Operation.getOperation(constructor);
     assertTrue("operation is a constructor", operation.isConstructor());
 
-    assertThat("name", operation.getName(), is(equalTo("ClassWithConditions")));
+    assertThat("name", operation.getName(), is(equalTo("randoop.condition.ClassWithConditions")));
     assertThat(
         "classname",
         operation.getClassname(),

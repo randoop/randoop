@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import plume.Pair;
 import plume.UtilMDE;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
@@ -35,11 +34,19 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypeNames;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
+import randoop.util.MultiMap;
 
 /**
- * Represents a collection of preconditions and throws-conditions. Preconditions are represented by
- * {@link Condition} objects, while throws-conditions are represented by (condition, exception-type)
- * pairs.
+ * A collection of {@link OperationSpecification} objects that supports mapping an {@link
+ * AccessibleObject} reflection object to the {@link OperationConditions} for the corresponding
+ * {@link randoop.operation.TypedClassOperation}.
+ *
+ * <p>The {@link SpecificationCollection} should be constructed from the specification input before
+ * the {@link randoop.reflection.OperationModel} is created.
+ *
+ * <p>This class stores the {@link OperationSpecification} objects, and only constructs the
+ * corresponding {@link OperationConditions} on demand. This lazy-strategy avoids building
+ * conditions methods for specifications that are not used.
  */
 public class SpecificationCollection {
 
@@ -47,7 +54,7 @@ public class SpecificationCollection {
   private final Map<AccessibleObject, OperationSpecification> specificationMap;
 
   /** The map from method signatures to methods with that signature and specifications */
-  private final Map<Signature, Set<Method>> signatureMap;
+  private final MultiMap<Signature, Method> signatureMap;
 
   /** The map from reflection object to overridden method with specification */
   private final Map<AccessibleObject, Set<Method>> parentMap;
@@ -61,13 +68,16 @@ public class SpecificationCollection {
   /**
    * Creates a {@link SpecificationCollection} for the given specification map.
    *
+   * <p>This constructor is only accessible to allow testing. Randoop should use {@link
+   * #create(List)} instead.
+   *
    * @param specificationMap the map from reflection objects to {@link OperationSpecification}
-   * @param signatureMap the map from signatures to methods with specifications
+   * @param signatureMap the multimap from a signature to methods with with the signature
    * @param parentMap the map to overridden method with specification
    */
   SpecificationCollection(
       Map<AccessibleObject, OperationSpecification> specificationMap,
-      Map<Signature, Set<Method>> signatureMap,
+      MultiMap<Signature, Method> signatureMap,
       Map<AccessibleObject, Set<Method>> parentMap) {
     this.specificationMap = specificationMap;
     this.signatureMap = signatureMap;
@@ -89,9 +99,14 @@ public class SpecificationCollection {
     if (specificationFiles == null) {
       return null;
     }
-    Map<Signature, Set<Method>> sigMap = new LinkedHashMap<>();
-    Map<AccessibleObject, OperationSpecification> specMap = new LinkedHashMap<>();
+    MultiMap<Signature, Method> signatureMap = new MultiMap<>();
+    //Map<Signature, Set<Method>> signatureMap = new LinkedHashMap<>();
+    Map<AccessibleObject, OperationSpecification> specificationMap = new LinkedHashMap<>();
     for (File specificationFile : specificationFiles) {
+
+      /*
+       * Read the specifications from the file
+       */
       List<OperationSpecification> specificationList;
       try {
         specificationList = readSpecifications(specificationFile);
@@ -108,7 +123,9 @@ public class SpecificationCollection {
       for (OperationSpecification specification : specificationList) {
         AccessibleObject accessibleObject;
         Operation operation = specification.getOperation();
-        if (operation == null) {
+
+        // Check for bad input
+        if (operation == null) { // deserialization could result in null operation
           continue;
         }
         if (specification.getIdentifiers().hasNameConflict()) {
@@ -122,61 +139,40 @@ public class SpecificationCollection {
           }
           continue;
         }
-        try {
-          accessibleObject = getReflectionObject(operation);
-        } catch (ClassNotFoundException | NoClassDefFoundError e) {
-          String msg =
-              String.format(
-                  "Could not load specification operation: %n%s%n" + "Class not found: %s",
-                  specification.getOperation().toString(), e.getMessage());
 
-          if (Log.isLoggingOn()) {
-            Log.logLine(msg);
-          }
-          throw new RandoopConditionError(msg, e);
-        } catch (NoSuchMethodException e) {
-          String msg =
-              String.format(
-                  "Could not load specification operation: %n%s%n" + "No such method: %s",
-                  specification.getOperation().toString(), e.getMessage());
-          if (Log.isLoggingOn()) {
-            Log.logLine(msg);
-          }
-          throw new RandoopConditionError(msg, e);
-        } catch (ExceptionInInitializerError e) {
-          String msg =
-              String.format(
-                  "Could not load specification operation: %n%s%n"
-                      + "Exception thrown by initializer",
-                  specification.getOperation().toString());
-          if (Log.isLoggingOn()) {
-            Log.logLine(msg);
-          }
-          continue; //XXX should we throw exception or just discard spec?
-        }
-        specMap.put(accessibleObject, specification);
+        accessibleObject = getReflectionObject(operation);
+        specificationMap.put(accessibleObject, specification);
         if (accessibleObject instanceof Method) {
           Signature signature = Signature.create((Method) accessibleObject);
-          Set<Method> objectSet = sigMap.get(signature);
+          /*
+          Set<Method> objectSet = signatureMap.get(signature);
           if (objectSet == null) {
             objectSet = new HashSet<>();
           }
           objectSet.add((Method) accessibleObject);
-          sigMap.put(signature, objectSet);
+          signatureMap.put(signature, objectSet);
+          */
+          signatureMap.add(signature, (Method) accessibleObject);
         }
       }
     }
-    Map<AccessibleObject, Set<Method>> parentMap = buildParentMap(sigMap);
-    return new SpecificationCollection(specMap, sigMap, parentMap);
+    Map<AccessibleObject, Set<Method>> parentMap = buildParentMap(signatureMap);
+    return new SpecificationCollection(specificationMap, signatureMap, parentMap);
   }
 
+  /**
+   * Constructs a map between reflection objects representing override relationships among methods.
+   *
+   * @param signatureMap the map from a {@link Signature} to methods with that signature
+   * @return the map from an {@code AccessibleObject} to methods that it overrides
+   */
   private static Map<AccessibleObject, Set<Method>> buildParentMap(
-      Map<Signature, Set<Method>> sigMap) {
+      MultiMap<Signature, Method> signatureMap) {
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    for (Map.Entry<Signature, Set<Method>> entry : sigMap.entrySet()) {
-      for (Method method : entry.getValue()) {
+    for (Signature signature : signatureMap.keySet()) {
+      for (Method method : signatureMap.getValues(signature)) {
         Class<?> declaringClass = method.getDeclaringClass();
-        Set<Method> parents = findParents(declaringClass, entry.getValue());
+        Set<Method> parents = findParents(declaringClass, signatureMap.getValues(signature));
         if (!parents.isEmpty()) {
           parentMap.put(method, parents);
         }
@@ -212,23 +208,49 @@ public class SpecificationCollection {
    *
    * @param operation the {@link Operation}
    * @return the {@code java.lang.reflect.AccessibleObject} for the operation
-   * @throws ClassNotFoundException if a type in the operation cannot be loaded
-   * @throws NoSuchMethodException if there is method/constructor for the operation in the declaring
-   *     class
    */
-  private static AccessibleObject getReflectionObject(Operation operation)
-      throws ClassNotFoundException, NoSuchMethodException {
+  private static AccessibleObject getReflectionObject(Operation operation) {
     if (operation.isValid()) {
       List<String> paramTypeNames = operation.getParameterTypeNames();
       Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
-      for (int i = 0; i < argTypes.length; i++) {
-        argTypes[i] = TypeNames.getTypeForName(paramTypeNames.get(i));
-      }
-      Class<?> declaringClass = TypeNames.getTypeForName(operation.getClassname());
-      if (operation.isConstructor()) {
-        return declaringClass.getDeclaredConstructor(argTypes);
-      } else {
-        return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
+      try {
+        for (int i = 0; i < argTypes.length; i++) {
+          argTypes[i] = TypeNames.getTypeForName(paramTypeNames.get(i));
+        }
+        Class<?> declaringClass = TypeNames.getTypeForName(operation.getClassname());
+        if (operation.isConstructor()) {
+          return declaringClass.getDeclaredConstructor(argTypes);
+        } else {
+          return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
+        }
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
+        String msg =
+            String.format(
+                "Could not load specification operation: %n%s%n" + "Class not found: %s",
+                operation.toString(), e.getMessage());
+        if (Log.isLoggingOn()) {
+          Log.logLine(msg);
+        }
+        throw new RandoopConditionError(msg, e);
+      } catch (NoSuchMethodException e) {
+        String msg =
+            String.format(
+                "Could not load specification operation: %n%s%n" + "No such method: %s",
+                operation.toString(), e.getMessage());
+        if (Log.isLoggingOn()) {
+          Log.logLine(msg);
+        }
+        throw new RandoopConditionError(msg, e);
+      } catch (ExceptionInInitializerError e) {
+        String msg =
+            String.format(
+                "Could not load specification operation: %n%s%n"
+                    + "Exception thrown by initializer",
+                operation.toString());
+        if (Log.isLoggingOn()) {
+          Log.logLine(msg);
+        }
+        throw new RandoopConditionError(msg, e);
       }
     }
     return null;
@@ -282,7 +304,7 @@ public class SpecificationCollection {
       Method method = (Method) accessibleObject;
       Set<Method> parents = parentMap.get(accessibleObject);
       if (parents == null) {
-        Set<Method> sigSet = signatureMap.get(Signature.create(method));
+        Set<Method> sigSet = signatureMap.getValues(Signature.create(method));
         if (sigSet != null) {
           parents = findParents(method.getDeclaringClass(), sigSet);
         }
@@ -325,12 +347,12 @@ public class SpecificationCollection {
     }
 
     // translate the ReturnSpecifications to Condition-PostCondition pairs
-    ArrayList<Pair<Condition, PostCondition>> returnConditions = new ArrayList<>();
+    ArrayList<ConditionPair<PostCondition>> returnConditions = new ArrayList<>();
     for (PostSpecification postSpecification : specification.getPostSpecifications()) {
       try {
         Condition preCondition = createCondition(postSpecification.getGuard(), signature);
         PostCondition postCondition = createCondition(postSpecification.getProperty(), signature);
-        returnConditions.add(new Pair<>(preCondition, postCondition));
+        returnConditions.add(new ConditionPair<>(preCondition, postCondition));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;
@@ -340,7 +362,7 @@ public class SpecificationCollection {
     }
 
     // translate the ThrowsSpecifications to Condition-ExpectedExceptionGenerator pairs
-    LinkedHashMap<Condition, ExpectedException> throwsConditions = new LinkedHashMap<>();
+    ArrayList<ConditionPair<ThrowsClause>> throwsConditions = new ArrayList<>();
     for (ThrowsSpecification throwsSpecification : specification.getThrowsSpecifications()) {
       ClassOrInterfaceType exceptionType;
       try {
@@ -360,9 +382,9 @@ public class SpecificationCollection {
       }
       try {
         Condition guardCondition = createCondition(throwsSpecification.getGuard(), signature);
-        ExpectedException exception =
-            new ExpectedException(exceptionType, "// " + throwsSpecification.getDescription());
-        throwsConditions.put(guardCondition, exception);
+        ThrowsClause exception =
+            new ThrowsClause(exceptionType, "// " + throwsSpecification.getDescription());
+        throwsConditions.add(new ConditionPair<>(guardCondition, exception));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;

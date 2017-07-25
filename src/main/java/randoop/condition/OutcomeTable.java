@@ -13,7 +13,7 @@ import randoop.test.TestCheckGenerator;
 public class OutcomeTable {
   private boolean isEmpty = true;
   private boolean hasValid = false;
-  private final List<Set<ExpectedException>> exceptionSets;
+  private final List<Set<ThrowsClause>> exceptionSets;
   private final List<PostCondition> postConditions;
 
   public OutcomeTable() {
@@ -25,12 +25,12 @@ public class OutcomeTable {
    * Adds the outcome of checking the conditions of a specification.
    *
    * @param preconditionsSatisfied boolean value indicating whether all preconditions satisfied
-   * @param expectedExceptions set of exceptions expected in post-state
+   * @param throwsClauses set of exceptions expected in post-state
    * @param postCondition post-condition that must be true in post-state, null if none
    */
   void add(
       boolean preconditionsSatisfied,
-      Set<ExpectedException> expectedExceptions,
+      Set<ThrowsClause> throwsClauses,
       PostCondition postCondition) {
     isEmpty = false;
     if (preconditionsSatisfied) {
@@ -39,14 +39,17 @@ public class OutcomeTable {
       }
       hasValid = true;
     }
-    if (!expectedExceptions.isEmpty()) {
-      exceptionSets.add(expectedExceptions);
+    if (!throwsClauses.isEmpty()) {
+      exceptionSets.add(throwsClauses);
     }
   }
 
   /**
    * Indicate whether this set of results indicates a definitively invalid pre-state. Occurs when
    * all preconditions fail and there are no expected exceptions.
+   *
+   * <p>This method will evaluate the current state of the table, but should be called after all
+   * entries are added
    *
    * @return true if preconditions of all specifications are unsatisfied, and there are no expected
    *     exceptions; false, otherwise

@@ -36,6 +36,7 @@ import randoop.test.PostConditionCheckGenerator;
 import randoop.test.TestCheckGenerator;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
+import randoop.util.MultiMap;
 
 public class OperationConditionTest {
 
@@ -132,7 +133,7 @@ public class OperationConditionTest {
         assertEquals(
             "should check for ONE",
             "x2.equals(ClassWithConditions.Range.ONE)",
-            condition.getConditionString());
+            condition.getConditionSource());
       }
     }
 
@@ -148,7 +149,7 @@ public class OperationConditionTest {
         assertEquals(
             "should check for TWO",
             "x2.equals(ClassWithConditions.Range.TWO)",
-            condition.getConditionString());
+            condition.getConditionSource());
       }
     }
 
@@ -164,7 +165,7 @@ public class OperationConditionTest {
         assertEquals(
             "should check for THREE",
             "x2.equals(ClassWithConditions.Range.THREE)",
-            condition.getConditionString());
+            condition.getConditionSource());
       }
     }
 
@@ -180,7 +181,7 @@ public class OperationConditionTest {
         assertEquals(
             "should check for FOUR",
             "x2.equals(ClassWithConditions.Range.FOUR)",
-            condition.getConditionString());
+            condition.getConditionSource());
       }
     }
 
@@ -334,7 +335,7 @@ public class OperationConditionTest {
     specMap.put(method, spec);
 
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    Map<SpecificationCollection.Signature, Set<Method>> signatureMap = new HashMap<>();
+    MultiMap<SpecificationCollection.Signature, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(method);
@@ -368,7 +369,7 @@ public class OperationConditionTest {
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(constructor, spec);
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    Map<SpecificationCollection.Signature, Set<Method>> signatureMap = new HashMap<>();
+    MultiMap<SpecificationCollection.Signature, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(constructor);
@@ -397,7 +398,7 @@ public class OperationConditionTest {
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(method, spec);
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    Map<SpecificationCollection.Signature, Set<Method>> signatureMap = new HashMap<>();
+    MultiMap<SpecificationCollection.Signature, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(method);

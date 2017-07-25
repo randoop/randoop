@@ -21,11 +21,27 @@ public class ConditionSignature {
   /** The name of dummy variables used by {@link randoop.contract.ObjectContract}. */
   private static final String DUMMY_VARIABLE_NAME = "x";
 
+  /** The map of variable name replacements */
   private final Map<String, String> replacements;
+
+  /** The signature string for a precondition */
   private String preconditionSignature;
+
+  /** The signature string for a post-condition */
   private String postconditionSignature;
+
+  /** The package name for the condition method */
   private String packageName;
 
+  /**
+   * Creates a {@link ConditionSignature} object in the given package with the signature strings and
+   * variable replacements.
+   *
+   * @param packageName the package name for the condition
+   * @param preconditionSignature the signature string for a precondition
+   * @param postconditionSignature the signature
+   * @param replacements the map of variable replacements
+   */
   private ConditionSignature(
       String packageName,
       String preconditionSignature,
@@ -128,24 +144,25 @@ public class ConditionSignature {
    */
   String replaceWithDummyVariables(String conditionText) {
     // make sure that we are replacing from longer to shorter strings to avoid mangled replacement
-    Set<String> names =
-        new TreeSet<>(
-            new Comparator<String>() {
-              @Override
-              public int compare(String o1, String o2) {
-                if (o1.length() < o2.length()) {
-                  return 1; // shorter last
-                } else if (o1.length() > o2.length()) {
-                  return -1; // longer first
-                }
-                return o1.compareTo(o2);
-              }
-            });
+    Set<String> names = new TreeSet<>(new LengthComparator());
     names.addAll(replacements.keySet());
     for (String name : names) {
       String namePattern = "\\b" + name + "\\b";
       conditionText = conditionText.replaceAll(namePattern, replacements.get(name));
     }
     return conditionText;
+  }
+
+  /** Comparator to order strings by decreasing length. */
+  private static class LengthComparator implements Comparator<String> {
+    @Override
+    public int compare(String o1, String o2) {
+      if (o1.length() < o2.length()) {
+        return 1; // shorter last
+      } else if (o1.length() > o2.length()) {
+        return -1; // longer first
+      }
+      return o1.compareTo(o2);
+    }
   }
 }

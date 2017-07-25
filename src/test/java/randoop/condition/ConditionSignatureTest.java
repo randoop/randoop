@@ -1,5 +1,6 @@
 package randoop.condition;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -11,11 +12,11 @@ import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -199,7 +200,7 @@ public class ConditionSignatureTest {
     Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
     TypeToken<List<OperationSpecification>> typeToken =
         (new TypeToken<List<OperationSpecification>>() {});
-    try (BufferedReader reader = new BufferedReader(new FileReader(specFile))) {
+    try (BufferedReader reader = Files.newBufferedReader(specFile.toPath(), UTF_8)) {
       specificationList.addAll(
           (List<OperationSpecification>) gson.fromJson(reader, typeToken.getType()));
     } catch (FileNotFoundException e) {

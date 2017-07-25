@@ -37,7 +37,9 @@ public abstract class Specification {
       return false;
     }
     Specification other = (Specification) object;
-    return this.description.equals(other.description) && this.guard.equals(other.guard);
+    return this.description.equals(other.description)
+        && ((this.guard != null && this.guard.equals(other.guard))
+            || (this.guard == null && other.guard == null));
   }
 
   @Override
