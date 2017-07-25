@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import plume.UtilMDE;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
@@ -93,12 +94,18 @@ public class Identifiers {
 
   @Override
   public String toString() {
-    return "{ parameters: "
-        + parameters
-        + ", receiverName: "
+    return "{ \"parameters\": "
+        + "[ \""
+        + UtilMDE.join(parameters, "\", \"")
+        + "\"]"
+        + ", \"receiverName\": "
+        + "\""
         + receiverName
-        + ", returnName: "
+        + "\""
+        + ", \"returnName\": "
+        + "\""
         + returnName
+        + "\""
         + " }";
   }
 

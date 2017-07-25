@@ -2,7 +2,7 @@ package randoop.condition.specification;
 
 /**
  * The representation of a boolean expression over the values of parameters and receiver object of
- * an operation (e.g., a method or constructor). The identifiers refer to the values before the
+ * an operation (i.e., a method or constructor). The identifiers refer to the values before the
  * operation is called.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given

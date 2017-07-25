@@ -151,19 +151,19 @@ public class OperationSpecification {
 
   @Override
   public String toString() {
-    return "{ operation: "
+    return "{ \"operation\": "
         + this.operation.toString()
         + ", "
-        + "identifiers: "
+        + "\"identifiers\": "
         + this.identifiers
         + ", "
-        + "throwsSpecifications: "
+        + "\"throwsSpecifications\": "
         + this.throwsSpecifications
         + ", "
-        + "postSpecifications: "
+        + "\"postSpecifications\": "
         + this.postSpecifications
         + ", "
-        + "preSpecifications: "
+        + "\"preSpecifications\": "
         + this.preSpecifications
         + " }";
   }

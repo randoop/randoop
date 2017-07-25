@@ -37,6 +37,6 @@ public class PreSpecification extends Specification {
 
   @Override
   public String toString() {
-    return "{ guard: " + getGuard() + " }";
+    return "{ \"guard\": " + getGuard() + " }";
   }
 }

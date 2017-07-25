@@ -1,22 +1,28 @@
 package randoop.condition.specification;
 
 import com.google.gson.annotations.SerializedName;
+
 import java.util.Objects;
 
-/** Abstract representation of boolean expressions that occur in {@link Specification} objects. */
+/**
+ * Abstract class representing boolean expressions that occur in {@link Specification} objects.
+ *
+ * @see Guard
+ * @see Property
+ */
 public abstract class AbstractBooleanExpression {
 
   /** The text of the Java code for this expression */
   @SerializedName("condition")
-  private final String conditionText;
+  private final String conditionSource;
 
-  /** The description of the expression */
+  /** The description of the expression. Used in test assertions. */
   private final String description;
 
   /** A default constructor is expected for Gson serialization. */
   @SuppressWarnings("unused")
   private AbstractBooleanExpression() {
-    this.conditionText = "";
+    this.conditionSource = "";
     this.description = "";
   }
 
@@ -24,11 +30,11 @@ public abstract class AbstractBooleanExpression {
    * Creates a {@link AbstractBooleanExpression} with the given description and condition code.
    *
    * @param description the description of this boolean condition
-   * @param conditionText the text of the Java code for the created condition
+   * @param conditionSource the text of the Java code for the created condition
    */
-  AbstractBooleanExpression(String description, String conditionText) {
+  AbstractBooleanExpression(String description, String conditionSource) {
     this.description = description;
-    this.conditionText = conditionText;
+    this.conditionSource = conditionSource;
   }
 
   @Override
@@ -38,17 +44,21 @@ public abstract class AbstractBooleanExpression {
     }
     AbstractBooleanExpression other = (AbstractBooleanExpression) object;
     return this.description.equals(other.description)
-        && this.conditionText.equals(other.conditionText);
+        && this.conditionSource.equals(other.conditionSource);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.description, this.conditionText);
+    return Objects.hash(this.description, this.conditionSource);
   }
 
   @Override
   public String toString() {
-    return "{ description: " + description + ", conditionText: " + conditionText + " }";
+    return "{ \"description\": \""
+        + description
+        + "\", \"conditionSource\": \""
+        + conditionSource
+        + "\" }";
   }
 
   /**
@@ -65,7 +75,7 @@ public abstract class AbstractBooleanExpression {
    *
    * @return the Java text for this condition
    */
-  public String getConditionText() {
-    return conditionText;
+  public String getConditionSource() {
+    return conditionSource;
   }
 }

@@ -65,7 +65,7 @@ public class ThrowsSpecification extends Specification {
 
   @Override
   public String toString() {
-    return "{ guard: " + getGuard() + ", exceptionType: " + exceptionType + " }";
+    return "{ \"guard\": " + getGuard() + ", \"exceptionType\": " + exceptionType + " }";
   }
 
   /**

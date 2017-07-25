@@ -411,13 +411,13 @@ public class SpecificationCollection {
           ConditionMethodCreator.create(
               signature.getPackageName(),
               signature.getPreConditionSignature(),
-              guard.getConditionText(),
+              guard.getConditionSource(),
               compiler);
     } catch (RandoopConditionError e) {
-      throw new RandoopConditionError("guard condition " + guard.getConditionText(), e);
+      throw new RandoopConditionError("guard condition " + guard.getConditionSource(), e);
     }
     String comment = guard.getDescription();
-    String conditionText = signature.replaceWithDummyVariables(guard.getConditionText());
+    String conditionText = signature.replaceWithDummyVariables(guard.getConditionSource());
     return new Condition(conditionMethod, comment, conditionText);
   }
 
@@ -435,13 +435,13 @@ public class SpecificationCollection {
           ConditionMethodCreator.create(
               signature.getPackageName(),
               signature.getPostConditionSignature(),
-              property.getConditionText(),
+              property.getConditionSource(),
               compiler);
     } catch (RandoopConditionError e) {
-      throw new RandoopConditionError("property condition " + property.getConditionText(), e);
+      throw new RandoopConditionError("property condition " + property.getConditionSource(), e);
     }
     String comment = property.getDescription();
-    String conditionText = signature.replaceWithDummyVariables(property.getConditionText());
+    String conditionText = signature.replaceWithDummyVariables(property.getConditionSource());
     return new PostCondition(conditionMethod, comment, conditionText);
   }
 

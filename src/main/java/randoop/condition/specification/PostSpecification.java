@@ -74,7 +74,7 @@ public class PostSpecification extends Specification {
 
   @Override
   public String toString() {
-    return "{ guard: " + getGuard() + ", property: " + property + " }";
+    return "{ \"guard\": " + getGuard() + ", \"property\": " + property + " }";
   }
 
   /**
