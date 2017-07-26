@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Parser for text serialization of operations. See {@link #parse} for format details.
+ * Parser for text serialization (string representation) of {@link Operation}s. See {@link #parse}
+ * for format details.
  *
  * @see randoop.sequence.Sequence#parse(List)
  */

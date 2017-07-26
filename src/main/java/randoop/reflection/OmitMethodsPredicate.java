@@ -14,8 +14,8 @@ import randoop.types.JavaTypes;
 import randoop.util.Log;
 
 /**
- * Predicate to test whether operations match one of a set of patterns indicating that the operation
- * should be omitted from the operation set.
+ * Tests whether an operation matches a user-specified pattern, indicating that the operation should
+ * be omitted from the operation set.
  *
  * <p>An operation matches a pattern if the pattern matches the {@link
  * TypedClassOperation#getRawSignature()} of the operation or the inherited operation in a
@@ -24,15 +24,23 @@ import randoop.util.Log;
  */
 public class OmitMethodsPredicate {
 
+  /** An OmitMethodsPredicate that does no omission. */
+  public static OmitMethodsPredicate NO_OMISSION = new OmitMethodsPredicate(null);
+
   /** The list of {@code Pattern} objects to omit matching operations */
   private final List<Pattern> omitPatterns;
 
-  public OmitMethodsPredicate() {
-    this.omitPatterns = new ArrayList<>();
-  }
-
+  /**
+   * If {@code omitPatterns} is null, treat it as the empty list.
+   *
+   * @param omitPatterns a list of regular expressions for method signatures, or null
+   */
   public OmitMethodsPredicate(List<Pattern> omitPatterns) {
-    this.omitPatterns = omitPatterns;
+    if (omitPatterns == null) {
+      this.omitPatterns = new ArrayList<>();
+    } else {
+      this.omitPatterns = new ArrayList<>(omitPatterns);
+    }
   }
 
   /**
@@ -44,6 +52,10 @@ public class OmitMethodsPredicate {
    * @return true if the signature matches an omit pattern, and false otherwise.
    */
   boolean shouldOmit(TypedClassOperation operation) {
+    // done if there are no patterns
+    if (omitPatterns.isEmpty()) {
+      return false;
+    }
     String signature = operation.getRawSignature();
     for (Pattern pattern : omitPatterns) {
       boolean result = pattern.matcher(signature).find();

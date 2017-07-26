@@ -231,9 +231,7 @@ public class TestFilteringTest {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final List<TypedOperation> model = new ArrayList<>();
     OmitMethodsPredicate omitMethodsPredicate =
-        (GenInputsAbstract.omitmethods == null)
-            ? new OmitMethodsPredicate()
-            : new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
+        new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
     ReflectionManager manager = new ReflectionManager(visibility);
     manager.apply(
         new OperationExtractor(classType, model, predicate, omitMethodsPredicate, visibility), c);

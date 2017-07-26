@@ -72,9 +72,7 @@ public class SpecialCoveredClassTest {
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
 
     OmitMethodsPredicate omitMethodsPredicate =
-        (GenInputsAbstract.omitmethods == null)
-            ? new OmitMethodsPredicate()
-            : new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
+        new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
 
     OperationModel operationModel = null;
     try {
