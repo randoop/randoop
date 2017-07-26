@@ -537,6 +537,15 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     return operation.isUncheckedCast();
   }
 
+  /**
+   * Tests the conditions for this operation against the argument values and returns the {@link
+   * OutcomeTable} indicating the results of checking the pre-conditions of the specifications of
+   * the oepration.
+   *
+   * @param values the argument values
+   * @return the {@link OutcomeTable} indicating the results of checking the pre-conditions of the
+   *     specifications of the operation
+   */
   public OutcomeTable checkConditions(Object[] values) {
     if (conditions != null) {
       return conditions.check(addNullReceiver(values));

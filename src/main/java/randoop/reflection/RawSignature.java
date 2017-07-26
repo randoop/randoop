@@ -117,27 +117,52 @@ public class RawSignature {
   public String toString() {
     List<String> typeNames = new ArrayList<>();
     for (Class<?> type : parameterTypes) {
-      typeNames.add(type.getName());
+      typeNames.add(type.getCanonicalName());
     }
 
-    return ((classname.equals(name)) ? name : classname + "." + name)
+    return ((packageName.isEmpty()) ? "" : packageName + ".")
+        + ((classname.equals(name)) ? name : classname + "." + name)
         + "("
         + UtilMDE.join(typeNames, ",")
         + ")";
   }
 
+  /**
+   * Return package name for method in this signature.
+   *
+   * @return the package name for this signature
+   */
   public String getPackageName() {
     return packageName;
   }
 
+  /**
+   * Return the class name for method in this signature.
+   *
+   * @return the class name for this signature
+   */
   public String getClassname() {
     return classname;
   }
 
+  /**
+   * Return the method name for this signature.
+   *
+   * @return the method name for this signature
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Construct a parameter declaration string using the parameter names. This string contains
+   * type-parameter name pairs in the format needed for a method declaration and wrapped in
+   * parentheses.
+   *
+   * @param parameterNames the parameter names to use to create declaration, length should be the
+   *     same as the number of parameter types in this signature.
+   * @return the parameter declarations for this signature using the given parameter names
+   */
   public String getDeclarationArguments(List<String> parameterNames) {
     if (parameterNames.size() != parameterTypes.length) {
       throw new IllegalArgumentException(
@@ -151,6 +176,11 @@ public class RawSignature {
     return "(" + UtilMDE.join(paramDeclarations, ", ") + ")";
   }
 
+  /**
+   * Return the array of parameter types for this signature.
+   *
+   * @return the array of parameter types for this signature
+   */
   public Class<?>[] getParameterTypes() {
     return parameterTypes;
   }
