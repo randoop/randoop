@@ -10,8 +10,8 @@ import randoop.sequence.ExecutableSequence;
 import randoop.types.ClassOrInterfaceType;
 
 /**
- * A {@link TestCheckGenerator} that generates checks for exceptions that are expected at a
- * particular statement. Creates a {@link ExpectedExceptionCheck} that is returned in a {@link
+ * A {@link TestCheckGenerator} that generates checks for exceptions that are expected at the final
+ * statement of a sequence. Creates a {@link ExpectedExceptionCheck} that is returned in a {@link
  * RegressionChecks} collection if the exception occurs, or a {@link ErrorRevealingChecks}
  * collection if not.
  *
@@ -21,6 +21,12 @@ import randoop.types.ClassOrInterfaceType;
 public class ExpectedExceptionGenerator implements TestCheckGenerator {
   private final List<Set<ThrowsClause>> exceptionSets;
 
+  /**
+   * Creates an {@link ExpectedExceptionGenerator} for the list of sets of expected exceptions.
+   *
+   * @param exceptionSets a list of expected exceptions to be searched when testing an exception
+   *     thrown by the operation in the final statement of the sequence
+   */
   public ExpectedExceptionGenerator(List<Set<ThrowsClause>> exceptionSets) {
     this.exceptionSets = exceptionSets;
   }

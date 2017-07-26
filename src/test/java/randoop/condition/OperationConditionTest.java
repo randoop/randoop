@@ -39,7 +39,6 @@ import randoop.types.Type;
 import randoop.util.MultiMap;
 
 public class OperationConditionTest {
-
   @Test
   public void conditionTest() {
     Class<?> c = ClassWithConditions.class;
@@ -248,7 +247,6 @@ public class OperationConditionTest {
     variables.add(sequence.getVariable(sequence.size() - 2));
     variables.add(sequence.getVariable(sequence.size() - 1));
     sequence = sequence.extend(methodOp, variables);
-
     return new ExecutableSequence(sequence);
   }
 
@@ -289,7 +287,7 @@ public class OperationConditionTest {
     List<String> paramNames = new ArrayList<>();
     paramNames.add("value");
     OperationSpecification spec =
-        new OperationSpecification(Operation.getOperation(method), new Identifiers(paramNames));
+        new OperationSpecification(Operation.of(method), new Identifiers(paramNames));
 
     List<PreSpecification> preSpecifications = new ArrayList<>();
     Guard paramGuard = new Guard("positive", "value > 0");
@@ -298,7 +296,7 @@ public class OperationConditionTest {
     spec.addParamSpecifications(preSpecifications);
 
     List<ThrowsSpecification> throwsSpecifications = new ArrayList<>();
-    Guard throwsGuard = new Guard("greater than 4*getValue()", "value >= 4*receiver.getValue()");
+    Guard throwsGuard = new Guard("greater than 4*getValue()", "value > 4*receiver.getValue()");
     ThrowsSpecification throwsSpec =
         new ThrowsSpecification(
             "should be less than 4*getValue", throwsGuard, "java.lang.IllegalArgumentException");
@@ -335,7 +333,7 @@ public class OperationConditionTest {
     specMap.put(method, spec);
 
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    MultiMap<SpecificationCollection.Signature, Method> signatureMap = new MultiMap<>();
+    MultiMap<Operation, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(method);
@@ -349,8 +347,7 @@ public class OperationConditionTest {
     List<String> paramNames = new ArrayList<>();
     paramNames.add("value");
     OperationSpecification spec =
-        new OperationSpecification(
-            Operation.getOperation(constructor), new Identifiers(paramNames));
+        new OperationSpecification(Operation.of(constructor), new Identifiers(paramNames));
     List<PreSpecification> preSpecifications = new ArrayList<>();
     Guard paramGuard = new Guard("non-negative value", "value >= 0");
     PreSpecification paramSpec = new PreSpecification("must be non-negative", paramGuard);
@@ -369,7 +366,7 @@ public class OperationConditionTest {
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(constructor, spec);
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    MultiMap<SpecificationCollection.Signature, Method> signatureMap = new MultiMap<>();
+    MultiMap<Operation, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(constructor);
@@ -380,7 +377,7 @@ public class OperationConditionTest {
     paramNames.add("range");
     paramNames.add("value");
     OperationSpecification spec =
-        new OperationSpecification(Operation.getOperation(method), new Identifiers(paramNames));
+        new OperationSpecification(Operation.of(method), new Identifiers(paramNames));
     List<ThrowsSpecification> throwsSpecifications = new ArrayList<>();
     Guard throwsGuard = new Guard("non null", "range == null");
     ThrowsSpecification throwsSpecification =
@@ -398,7 +395,7 @@ public class OperationConditionTest {
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(method, spec);
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    MultiMap<SpecificationCollection.Signature, Method> signatureMap = new MultiMap<>();
+    MultiMap<Operation, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(method);

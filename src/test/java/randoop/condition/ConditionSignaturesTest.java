@@ -34,7 +34,7 @@ import randoop.test.DummyCheckGenerator;
 import randoop.test.PostConditionCheck;
 import randoop.types.JavaTypes;
 
-public class ConditionSignatureTest {
+public class ConditionSignaturesTest {
 
   //cases: static method, non-static method, check return, parameters, and receiver
 
@@ -44,25 +44,28 @@ public class ConditionSignatureTest {
     List<String> parameterList = new ArrayList<>();
     parameterList.add("c");
     Identifiers identifiers = new Identifiers(parameterList);
-    ConditionSignature sig = ConditionSignature.create(method, identifiers);
-
+    ConditionSignatures sig = ConditionSignatures.of(method, identifiers, null);
+    assert sig != null;
     assertThat(
         "presignature is just receiver and parameters",
-        sig.getPreConditionSignature(),
+        sig.getPreConditionDeclarations(),
         is(equalTo("(java.io.PrintWriter receiver, char c)")));
     assertThat(
         "postsignature is receiver, parameters and result",
-        sig.getPostConditionSignature(),
+        sig.getPostConditionDeclarations(),
         is(equalTo("(java.io.PrintWriter receiver, char c, java.io.PrintWriter result)")));
 
     assertThat(
-        "receiver should be x0", sig.replaceWithDummyVariables("receiver"), is(equalTo("x0")));
-    assertThat("param should be x1", sig.replaceWithDummyVariables("c"), is(equalTo("x1")));
-    assertThat("result should be x2", sig.replaceWithDummyVariables("result"), is(equalTo("x2")));
+        "receiver should be x0",
+        sig.getReplacementMap().replaceNames("receiver"),
+        is(equalTo("x0")));
+    assertThat("param should be x1", sig.getReplacementMap().replaceNames("c"), is(equalTo("x1")));
+    assertThat(
+        "result should be x2", sig.getReplacementMap().replaceNames("result"), is(equalTo("x2")));
 
     assertThat(
         "receiver and results should be replaced",
-        sig.replaceWithDummyVariables("result.equals(receiver)"),
+        sig.getReplacementMap().replaceNames("result.equals(receiver)"),
         is(equalTo("x2.equals(x0)")));
 
     String conditionText = "result.equals(receiver)";
@@ -78,7 +81,7 @@ public class ConditionSignatureTest {
   }
 
   private PostConditionCheck createCheck(
-      Sequence sequence, ConditionSignature sig, String conditionText) {
+      Sequence sequence, ConditionSignatures sig, String conditionText) {
     List<PostCondition> postConditions = new ArrayList<>();
     PostCondition condition = createPostCondition(sig, conditionText);
     postConditions.add(condition);
@@ -124,17 +127,20 @@ public class ConditionSignatureTest {
     return sequence;
   }
 
-  private PostCondition createPostCondition(ConditionSignature sig, String conditionText) {
-    Method conditionMethod = null;
+  private PostCondition createPostCondition(ConditionSignatures sig, String conditionText) {
+    Method conditionMethod;
     SequenceCompiler compiler =
         new SequenceCompiler(
             new SequenceClassLoader(getClass().getClassLoader()), new ArrayList<String>());
 
     conditionMethod =
         ConditionMethodCreator.create(
-            sig.getPackageName(), sig.getPostConditionSignature(), conditionText, compiler);
+            sig.getPostConditionSignature(),
+            sig.getPostConditionDeclarations(),
+            conditionText,
+            compiler);
     String comment = "returns this writer";
-    String postConditionText = sig.replaceWithDummyVariables(conditionText);
+    String postConditionText = sig.getReplacementMap().replaceNames(conditionText);
     return new PostCondition(conditionMethod, comment, postConditionText);
   }
 
@@ -157,24 +163,26 @@ public class ConditionSignatureTest {
     specList.add(specFile);
     OperationSpecification specification = readSpecifications(specFile);
     Method method = getPrintWriterAppendMethod();
-    ConditionSignature sig = ConditionSignature.create(method, specification.getIdentifiers());
-
+    ConditionSignatures sig = ConditionSignatures.of(method, specification.getIdentifiers(), null);
+    assert sig != null;
     assertThat(
         "presignature is just receiver and parameters",
-        sig.getPreConditionSignature(),
+        sig.getPreConditionDeclarations(),
         is(equalTo("(java.io.PrintWriter target, char c)")));
     assertThat(
         "postsignature is receiver, parameters and result",
-        sig.getPostConditionSignature(),
+        sig.getPostConditionDeclarations(),
         is(equalTo("(java.io.PrintWriter target, char c, java.io.PrintWriter result)")));
 
-    assertThat("receiver should be x0", sig.replaceWithDummyVariables("target"), is(equalTo("x0")));
-    assertThat("param should be x1", sig.replaceWithDummyVariables("c"), is(equalTo("x1")));
-    assertThat("result should be x2", sig.replaceWithDummyVariables("result"), is(equalTo("x2")));
+    assertThat(
+        "receiver should be x0", sig.getReplacementMap().replaceNames("target"), is(equalTo("x0")));
+    assertThat("param should be x1", sig.getReplacementMap().replaceNames("c"), is(equalTo("x1")));
+    assertThat(
+        "result should be x2", sig.getReplacementMap().replaceNames("result"), is(equalTo("x2")));
 
     assertThat(
         "receiver and results should be replaced",
-        sig.replaceWithDummyVariables("result.equals(target)"),
+        sig.getReplacementMap().replaceNames("result.equals(target)"),
         is(equalTo("x2.equals(x0)")));
 
     SpecificationCollection collection = SpecificationCollection.create(specList);

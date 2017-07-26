@@ -7,6 +7,7 @@ import java.util.Set;
 import plume.UtilMDE;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
+import randoop.Globals;
 import randoop.NotExecuted;
 import randoop.condition.ThrowsClause;
 import randoop.sequence.Execution;
@@ -49,6 +50,16 @@ public class MissingExceptionCheck implements Check {
   @Override
   public int hashCode() {
     return Objects.hash(this.expected, this.index);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder result =
+        new StringBuilder("MissingExceptionCheck at line " + index + Globals.lineSep);
+    for (Set<ThrowsClause> set : expected) {
+      result.append(set.toString()).append(Globals.lineSep);
+    }
+    return result.toString();
   }
 
   @Override

@@ -96,33 +96,50 @@ public class Operation {
   }
 
   /**
+   * Returns an {@link Operation} for a method given as a {@code java.lang.reflect.Method}.
+   *
+   * @param method the {@code Method} for which operation is to be created
+   * @return the {@link Operation} with the class, name and parameter types of {@code method}
+   */
+  public static Operation of(Method method) {
+    return new Operation(
+        method.getDeclaringClass().getName(),
+        method.getName(),
+        getTypeNames(method.getParameterTypes()));
+  }
+
+  /**
+   * Returns an {@link Operation} for a constructor given as a {@code
+   * java.lang.reflect.Constructor}.
+   *
+   * <p>Note: the name and classname of a constructor are equal
+   *
+   * @param constructor the {@code Constructor} for which an operation is to be created
+   * @return the {@link Operation} with the class and parameter types of {@code constructor}
+   */
+  public static Operation of(Constructor<?> constructor) {
+    return new Operation(
+        constructor.getDeclaringClass().getName(),
+        constructor.getName(),
+        getTypeNames(constructor.getParameterTypes()));
+  }
+
+  /**
    * Returns an operation for a method or constructor given as a {@code
    * java.lang.reflect.AccessibleObject}.
    *
    * @param op the method or constructor
    * @return an {@link Operation} if {@code op} is a constructor or method, null otherwise
    */
-  public static Operation getOperation(AccessibleObject op) {
+  public static Operation of(AccessibleObject op) {
     if (op instanceof Field) {
       return null;
     }
 
-    String classname = null;
-    String name = null;
-    List<String> parameterTypes = null;
     if (op instanceof Method) {
-      Method m = (Method) op;
-      classname = m.getDeclaringClass().getName();
-      name = m.getName();
-      parameterTypes = Operation.getTypeNames(m.getParameterTypes());
+      return of((Method) op);
     } else if (op instanceof Constructor) {
-      Constructor<?> constructor = (Constructor<?>) op;
-      classname = constructor.getDeclaringClass().getName();
-      name = constructor.getName();
-      parameterTypes = Operation.getTypeNames(constructor.getParameterTypes());
-    }
-    if (classname != null && name != null && parameterTypes != null) {
-      return new Operation(classname, name, parameterTypes);
+      return of((Constructor) op);
     }
     return null;
   }

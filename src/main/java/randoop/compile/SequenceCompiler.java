@@ -90,6 +90,14 @@ public class SequenceCompiler {
     return compiledClass;
   }
 
+  /**
+   * Indicates whether the given class can be compiled.
+   *
+   * @param packageName the package of the class
+   * @param classname the (unqualified) name of the class
+   * @param classSource the source text of the class
+   * @return true if the class compiles; false, otherwise
+   */
   public boolean compileCheck(
       final String packageName, final String classname, final String classSource) {
     String classFileName = classname + CompileUtil.JAVA_EXTENSION;
