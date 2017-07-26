@@ -7,10 +7,14 @@ import javax.tools.JavaFileObject;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
 import randoop.compile.SequenceCompilerException;
+import randoop.output.NameGenerator;
 import randoop.reflection.RawSignature;
 
 /** Defines the factory method for creating condition methods. */
 public class ConditionMethodCreator {
+
+  /** The name generator used to generate class names. */
+  private static final NameGenerator nameGenerator = new NameGenerator("RandoopConditionClass");
 
   /**
    * Creates the {@code java.lang.reflect.Method} to test the condition in the condition code.
@@ -28,17 +32,14 @@ public class ConditionMethodCreator {
       String parameterDeclaration,
       String conditionSource,
       SequenceCompiler compiler) {
-
     String packageName = signature.getPackageName();
-    String classname = signature.getClassname();
+    String classname = nameGenerator.next(); // ignore the class name in the signature
     String classText =
         createConditionClassSource(
             signature.getName(), conditionSource, parameterDeclaration, packageName, classname);
-    System.out.println("compiling\n" + classText);
     Class<?> conditionClass;
     try {
-      conditionClass =
-          compiler.compile(signature.getPackageName(), signature.getClassname(), classText);
+      conditionClass = compiler.compile(packageName, classname, classText);
     } catch (SequenceCompilerException e) {
       String msg = getCompilerErrorMessage(e.getDiagnostics().getDiagnostics(), classText);
       throw new RandoopConditionError(msg, e);

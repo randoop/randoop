@@ -52,7 +52,7 @@ public class SpecificationCollection {
   /** The compiler for creating conditionMethods */
   private final SequenceCompiler compiler;
 
-  /** Map for memoizing conditions for specifications coverted by parent search */
+  /** Map for memoizing conditions for specifications converted by parent search */
   private Map<AccessibleObject, OperationConditions> conditionMap;
 
   /**

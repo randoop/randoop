@@ -3,14 +3,12 @@ package randoop.condition;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
 import randoop.condition.specification.Property;
-import randoop.output.NameGenerator;
 import randoop.reflection.RawSignature;
 
 /** Represents the signature of a condition method for a particular {@code AccessibleObject}. */
@@ -21,9 +19,6 @@ public class ConditionSignatures {
 
   /** The name of dummy variables used by {@link randoop.contract.ObjectContract}. */
   private static final String DUMMY_VARIABLE_NAME = "x";
-
-  /** The name generator used to generate class names. */
-  private static final NameGenerator nameGenerator = new NameGenerator("RandoopConditionClass");
 
   /** The map of variable name replacements */
   private final NameReplacementMap replacementMap;
@@ -96,9 +91,6 @@ public class ConditionSignatures {
    * the pre- and post-conditions on the given {@code java.lang.reflect.Constructor} where the
    * condition expressions use the given identifiers.
    *
-   * @see #getPreConditionSignature()
-   * @see #getPostConditionSignature()
-   * @see #createReplacementMap(List)
    * @param constructor the {@code java.lang.reflect.Constructor}
    * @param identifiers the condition identifiers
    * @param compiler the {@link SequenceCompiler} for creating condition methods
@@ -138,9 +130,6 @@ public class ConditionSignatures {
    * the pre- and post-conditions on the given {@code java.lang.reflect.Method}, where the condition
    * expressions use the given identifiers.
    *
-   * @see #getPreConditionSignature()
-   * @see #getPostConditionSignature()
-   * @see #createReplacementMap(List)
    * @param method the {@code java.lang.reflect.Method}
    * @param identifiers the condition identifiers
    * @param compiler the {@link SequenceCompiler} for creating condition methods
@@ -157,36 +146,21 @@ public class ConditionSignatures {
     String preconditionDeclarations;
     String postconditionDeclarations;
     Class<?>[] parameterTypes = method.getParameterTypes();
-    if (!Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers())) {
-      int shift = 1; // need receiver, so shift the parameters
-      preconditionSignature =
-          getPreconditionSignature(packageName, declaringClass, parameterTypes, shift);
-      postconditionSignature =
-          getPostconditionSignature(
-              packageName, declaringClass, parameterTypes, method.getReturnType(), shift);
 
-      List<String> parameterNames = new ArrayList<>();
-      parameterNames.add(identifiers.getReceiverName());
-      parameterNames.addAll(identifiers.getParameterNames());
-      preconditionDeclarations = preconditionSignature.getDeclarationArguments(parameterNames);
-      parameterNames.add(identifiers.getReturnName());
-      postconditionDeclarations = postconditionSignature.getDeclarationArguments(parameterNames);
-      replacementMap = createReplacementMap(parameterNames);
-    } else {
-      int shift = 0; // don't need receiver - original method parameters start at 0
-      preconditionSignature =
-          getPreconditionSignature(packageName, declaringClass, parameterTypes, shift);
-      postconditionSignature =
-          getPostconditionSignature(
-              packageName, declaringClass, parameterTypes, method.getReturnType(), shift);
+    int shift = 1; // need receiver, so shift the parameters
+    preconditionSignature =
+        getPreconditionSignature(packageName, declaringClass, parameterTypes, shift);
+    postconditionSignature =
+        getPostconditionSignature(
+            packageName, declaringClass, parameterTypes, method.getReturnType(), shift);
 
-      List<String> parameterNames = new ArrayList<>();
-      parameterNames.addAll(identifiers.getParameterNames());
-      preconditionDeclarations = preconditionSignature.getDeclarationArguments(parameterNames);
-      parameterNames.add(identifiers.getReturnName());
-      postconditionDeclarations = postconditionSignature.getDeclarationArguments(parameterNames);
-      replacementMap = createReplacementMap(parameterNames);
-    }
+    List<String> parameterNames = new ArrayList<>();
+    parameterNames.add(identifiers.getReceiverName());
+    parameterNames.addAll(identifiers.getParameterNames());
+    preconditionDeclarations = preconditionSignature.getDeclarationArguments(parameterNames);
+    parameterNames.add(identifiers.getReturnName());
+    postconditionDeclarations = postconditionSignature.getDeclarationArguments(parameterNames);
+    replacementMap = createReplacementMap(parameterNames);
 
     return new ConditionSignatures(
         preconditionSignature,
@@ -223,9 +197,6 @@ public class ConditionSignatures {
    * first, followed by the parameter types. Otherwise, the condition method parameter types are
    * just the parameter types.
    *
-   * <p>The condition class name is is generated using {@link #nameGenerator}, and the method name
-   * is {@link #CONDITION_METHOD_NAME}.
-   *
    * @param packageName the package name for the condition class
    * @param receiverType the declaring class of the method or constructor, used as receiver type if
    *     {@code shift == 1}
@@ -242,9 +213,8 @@ public class ConditionSignatures {
       conditionParameterTypes[0] = receiverType;
     }
     System.arraycopy(parameterTypes, 0, conditionParameterTypes, shift, parameterTypes.length);
-    String conditionClassName = nameGenerator.next();
     return new RawSignature(
-        packageName, conditionClassName, CONDITION_METHOD_NAME, conditionParameterTypes);
+        packageName, "RandoopPreConditionClass", CONDITION_METHOD_NAME, conditionParameterTypes);
   }
 
   /**
@@ -253,9 +223,6 @@ public class ConditionSignatures {
    * <p>if {@code shift == 1}, the parameter types for the condition method have the receiver type
    * first, followed by the parameter types. Otherwise, the condition method parameter types are
    * just the parameter types.
-   *
-   * <p>The condition class name is is generated using {@link #nameGenerator}, and the method name
-   * is {@link #CONDITION_METHOD_NAME}.
    *
    * @param packageName the package name for the condition class
    * @param receiverType the declaring class of the method or constructor, used as receiver type if
@@ -279,9 +246,8 @@ public class ConditionSignatures {
     }
     conditionParameterTypes[conditionParameterTypes.length - 1] = returnType;
     System.arraycopy(parameterTypes, 0, conditionParameterTypes, shift, parameterTypes.length);
-    String conditionClassName = nameGenerator.next();
     return new RawSignature(
-        packageName, conditionClassName, CONDITION_METHOD_NAME, conditionParameterTypes);
+        packageName, "RandoopPostConditionClass", CONDITION_METHOD_NAME, conditionParameterTypes);
   }
 
   /**
@@ -298,27 +264,6 @@ public class ConditionSignatures {
       replacementMap.put(parameterName, DUMMY_VARIABLE_NAME + count++);
     }
     return replacementMap;
-  }
-
-  /**
-   * Returns the pre-condition method signature from this object. If this object is a method, this
-   * signature includes the receiver type, and parameter types. If this object is a constructor,
-   * this signature includes the parameter types.
-   *
-   * @return the pre-condition signature for this object
-   */
-  RawSignature getPreConditionSignature() {
-    return preConditionSignature;
-  }
-
-  /**
-   * Returns the post-condition method signature from this object. This signature includes the
-   * parameters of the pre-condition signature, plus the return type.
-   *
-   * @return the post-condition signature for this object
-   */
-  RawSignature getPostConditionSignature() {
-    return postConditionSignature;
   }
 
   /**
@@ -376,6 +321,18 @@ public class ConditionSignatures {
    */
   String getPostConditionDeclarations() {
     return postConditionDeclarations;
+  }
+
+  /**
+   * Returns the post-condition method signature from this object. This signature includes the
+   * parameters of the pre-condition signature, plus the return type.
+   *
+   * <p>Used for testing.
+   *
+   * @return the post-condition signature for this object
+   */
+  RawSignature getPostConditionSignature() {
+    return postConditionSignature;
   }
 
   /**
