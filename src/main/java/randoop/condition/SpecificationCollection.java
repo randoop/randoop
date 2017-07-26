@@ -12,27 +12,17 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import plume.UtilMDE;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
-import randoop.condition.specification.Guard;
 import randoop.condition.specification.Operation;
 import randoop.condition.specification.OperationSpecification;
-import randoop.condition.specification.PostSpecification;
-import randoop.condition.specification.PreSpecification;
-import randoop.condition.specification.Property;
-import randoop.condition.specification.ThrowsSpecification;
-import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypeNames;
-import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 
@@ -54,7 +44,7 @@ public class SpecificationCollection {
   private final Map<AccessibleObject, OperationSpecification> specificationMap;
 
   /** The map from method signatures to methods with that signature and specifications */
-  private final MultiMap<Signature, Method> signatureMap;
+  private final MultiMap<Operation, Method> signatureMap;
 
   /** The map from reflection object to overridden method with specification */
   private final Map<AccessibleObject, Set<Method>> parentMap;
@@ -77,7 +67,7 @@ public class SpecificationCollection {
    */
   SpecificationCollection(
       Map<AccessibleObject, OperationSpecification> specificationMap,
-      MultiMap<Signature, Method> signatureMap,
+      MultiMap<Operation, Method> signatureMap,
       Map<AccessibleObject, Set<Method>> parentMap) {
     this.specificationMap = specificationMap;
     this.signatureMap = signatureMap;
@@ -99,8 +89,7 @@ public class SpecificationCollection {
     if (specificationFiles == null) {
       return null;
     }
-    MultiMap<Signature, Method> signatureMap = new MultiMap<>();
-    //Map<Signature, Set<Method>> signatureMap = new LinkedHashMap<>();
+    MultiMap<Operation, Method> signatureMap = new MultiMap<>();
     Map<AccessibleObject, OperationSpecification> specificationMap = new LinkedHashMap<>();
     for (File specificationFile : specificationFiles) {
 
@@ -140,18 +129,10 @@ public class SpecificationCollection {
           continue;
         }
 
-        accessibleObject = getReflectionObject(operation);
+        accessibleObject = getAccessibleObject(operation);
         specificationMap.put(accessibleObject, specification);
         if (accessibleObject instanceof Method) {
-          Signature signature = Signature.create((Method) accessibleObject);
-          /*
-          Set<Method> objectSet = signatureMap.get(signature);
-          if (objectSet == null) {
-            objectSet = new HashSet<>();
-          }
-          objectSet.add((Method) accessibleObject);
-          signatureMap.put(signature, objectSet);
-          */
+          Operation signature = Operation.of(accessibleObject);
           signatureMap.add(signature, (Method) accessibleObject);
         }
       }
@@ -163,13 +144,13 @@ public class SpecificationCollection {
   /**
    * Constructs a map between reflection objects representing override relationships among methods.
    *
-   * @param signatureMap the map from a {@link Signature} to methods with that signature
+   * @param signatureMap the map from a {@link Operation} to methods with that signature
    * @return the map from an {@code AccessibleObject} to methods that it overrides
    */
   private static Map<AccessibleObject, Set<Method>> buildParentMap(
-      MultiMap<Signature, Method> signatureMap) {
+      MultiMap<Operation, Method> signatureMap) {
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    for (Signature signature : signatureMap.keySet()) {
+    for (Operation signature : signatureMap.keySet()) {
       for (Method method : signatureMap.getValues(signature)) {
         Class<?> declaringClass = method.getDeclaringClass();
         Set<Method> parents = findParents(declaringClass, signatureMap.getValues(signature));
@@ -209,7 +190,7 @@ public class SpecificationCollection {
    * @param operation the {@link Operation}
    * @return the {@code java.lang.reflect.AccessibleObject} for the operation
    */
-  private static AccessibleObject getReflectionObject(Operation operation) {
+  private static AccessibleObject getAccessibleObject(Operation operation) {
     if (operation.isValid()) {
       List<String> paramTypeNames = operation.getParameterTypeNames();
       Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
@@ -293,9 +274,9 @@ public class SpecificationCollection {
 
     OperationSpecification specification = specificationMap.get(accessibleObject);
     if (specification != null) {
-      ConditionSignature signature =
-          ConditionSignature.create(accessibleObject, specification.getIdentifiers());
-      conditions = createConditions(specification, signature);
+      ConditionSignatures conditionSignatures =
+          ConditionSignatures.of(accessibleObject, specification.getIdentifiers(), compiler);
+      conditions = OperationConditions.createConditions(specification, conditionSignatures);
     } else {
       conditions = new OperationConditions();
     }
@@ -304,7 +285,7 @@ public class SpecificationCollection {
       Method method = (Method) accessibleObject;
       Set<Method> parents = parentMap.get(accessibleObject);
       if (parents == null) {
-        Set<Method> sigSet = signatureMap.getValues(Signature.create(method));
+        Set<Method> sigSet = signatureMap.getValues(Operation.of(method));
         if (sigSet != null) {
           parents = findParents(method.getDeclaringClass(), sigSet);
         }
@@ -321,179 +302,5 @@ public class SpecificationCollection {
       conditionMap.put(accessibleObject, conditions);
     }
     return conditions;
-  }
-
-  /**
-   * Create the {@link OperationConditions} object for the given {@link OperationSpecification}
-   * using the {@link ConditionSignature}.
-   *
-   * @param specification the specification from which the conditions are to be created
-   * @param signature the declarations to be used in the conditions
-   * @return the {@link OperationConditions} for the given specification
-   */
-  private OperationConditions createConditions(
-      OperationSpecification specification, ConditionSignature signature) {
-    OperationConditions conditions; // translate the ParamSpecifications to Condition objects
-    List<Condition> paramConditions = new ArrayList<>();
-    for (PreSpecification preSpecification : specification.getPreSpecifications()) {
-      try {
-        paramConditions.add(createCondition(preSpecification.getGuard(), signature));
-      } catch (RandoopConditionError e) {
-        if (GenInputsAbstract.fail_on_condition_error) {
-          throw e;
-        }
-        System.out.println("Warning: discarded uncompilable precondition: " + e.getMessage());
-      }
-    }
-
-    // translate the ReturnSpecifications to Condition-PostCondition pairs
-    ArrayList<ConditionPair<PostCondition>> returnConditions = new ArrayList<>();
-    for (PostSpecification postSpecification : specification.getPostSpecifications()) {
-      try {
-        Condition preCondition = createCondition(postSpecification.getGuard(), signature);
-        PostCondition postCondition = createCondition(postSpecification.getProperty(), signature);
-        returnConditions.add(new ConditionPair<>(preCondition, postCondition));
-      } catch (RandoopConditionError e) {
-        if (GenInputsAbstract.fail_on_condition_error) {
-          throw e;
-        }
-        System.out.println("Warning: discarding uncompilable postcondition: " + e.getMessage());
-      }
-    }
-
-    // translate the ThrowsSpecifications to Condition-ExpectedExceptionGenerator pairs
-    ArrayList<ConditionPair<ThrowsClause>> throwsConditions = new ArrayList<>();
-    for (ThrowsSpecification throwsSpecification : specification.getThrowsSpecifications()) {
-      ClassOrInterfaceType exceptionType;
-      try {
-        exceptionType =
-            (ClassOrInterfaceType)
-                ClassOrInterfaceType.forName(throwsSpecification.getExceptionTypeName());
-      } catch (ClassNotFoundException e) {
-        String msg =
-            "Error in specification "
-                + throwsSpecification
-                + ". Cannot find exception type: "
-                + e.getMessage();
-        if (Log.isLoggingOn()) {
-          Log.logLine(msg);
-        }
-        continue;
-      }
-      try {
-        Condition guardCondition = createCondition(throwsSpecification.getGuard(), signature);
-        ThrowsClause exception =
-            new ThrowsClause(exceptionType, "// " + throwsSpecification.getDescription());
-        throwsConditions.add(new ConditionPair<>(guardCondition, exception));
-      } catch (RandoopConditionError e) {
-        if (GenInputsAbstract.fail_on_condition_error) {
-          throw e;
-        }
-        System.out.println("Warning: discarding uncompilable throws-condition: " + e.getMessage());
-      }
-    }
-
-    conditions = new OperationConditions(paramConditions, returnConditions, throwsConditions);
-    return conditions;
-  }
-
-  /**
-   * Creates the {@link Condition} object for a given {@link Guard}.
-   *
-   * @param guard the guard to be converted to a {@link Condition}
-   * @param signature the declarations for the specification the guard belongs to
-   * @return the {@link Condition} object for the given {@link Guard}
-   */
-  private Condition createCondition(Guard guard, ConditionSignature signature) {
-    Method conditionMethod;
-    try {
-      conditionMethod =
-          ConditionMethodCreator.create(
-              signature.getPackageName(),
-              signature.getPreConditionSignature(),
-              guard.getConditionSource(),
-              compiler);
-    } catch (RandoopConditionError e) {
-      throw new RandoopConditionError("guard condition " + guard.getConditionSource(), e);
-    }
-    String comment = guard.getDescription();
-    String conditionText = signature.replaceWithDummyVariables(guard.getConditionSource());
-    return new Condition(conditionMethod, comment, conditionText);
-  }
-
-  /**
-   * Creates the {@link PostCondition} object for a given {@link Property}.
-   *
-   * @param property the property to be converted
-   * @param signature the declarations for the specification the guard belongs to
-   * @return the {@link PostCondition} object for the given {@link Property}
-   */
-  private PostCondition createCondition(Property property, ConditionSignature signature) {
-    Method conditionMethod;
-    try {
-      conditionMethod =
-          ConditionMethodCreator.create(
-              signature.getPackageName(),
-              signature.getPostConditionSignature(),
-              property.getConditionSource(),
-              compiler);
-    } catch (RandoopConditionError e) {
-      throw new RandoopConditionError("property condition " + property.getConditionSource(), e);
-    }
-    String comment = property.getDescription();
-    String conditionText = signature.replaceWithDummyVariables(property.getConditionSource());
-    return new PostCondition(conditionMethod, comment, conditionText);
-  }
-
-  /**
-   * Represents a method signature. Used to manage groups of methods likely to have
-   * override/implementation relationships.
-   */
-  static class Signature {
-    private final String name;
-    private final Class<?>[] parameterTypes;
-
-    Signature(String name, Class<?>[] parameterTypes) {
-      this.name = name;
-      this.parameterTypes = parameterTypes;
-    }
-
-    public static Signature create(Method method) {
-      return new Signature(method.getName(), method.getParameterTypes());
-    }
-
-    @Override
-    public boolean equals(Object object) {
-      if (!(object instanceof Signature)) {
-        return false;
-      }
-      Signature signature = (Signature) object;
-      if (!this.name.equals(signature.name)) {
-        return false;
-      }
-      if (this.parameterTypes.length != signature.parameterTypes.length) {
-        return false;
-      }
-      for (int i = 0; i < parameterTypes.length; i++) {
-        if (!this.parameterTypes[i].equals(signature.parameterTypes[i])) {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(name, Arrays.hashCode(parameterTypes));
-    }
-
-    @Override
-    public String toString() {
-      List<String> typeNames = new ArrayList<>();
-      for (Class<?> type : parameterTypes) {
-        typeNames.add(type.getName());
-      }
-      return name + "(" + UtilMDE.join(typeNames, ",") + ")";
-    }
   }
 }

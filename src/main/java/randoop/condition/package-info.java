@@ -36,7 +36,7 @@
  * <p><i>Before call</i>:
  *
  * <ol>
- *   <li> For each specification of method, create a table entry, with the following:
+ *   <li> For each specification of method, of a table entry, with the following:
  *       <ol>
  *         <li>Whether the preconditions of the specification fail or are satisfied. The
  *             preconditions fail if the Boolean expression of any precondition in the specification

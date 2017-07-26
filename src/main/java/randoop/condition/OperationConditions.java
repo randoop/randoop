@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import randoop.condition.specification.OperationSpecification;
+import randoop.condition.specification.PostSpecification;
+import randoop.condition.specification.PreSpecification;
+import randoop.condition.specification.ThrowsSpecification;
+import randoop.main.GenInputsAbstract;
+import randoop.types.ClassOrInterfaceType;
+import randoop.util.Log;
 
 /**
  * Represents all conditions on an operation including pre-, post- and throws-conditions defined on
@@ -43,7 +50,7 @@ public class OperationConditions {
    * @param returnConditions the return-conditions
    * @param throwsConditions the throws-conditions
    */
-  OperationConditions(
+  private OperationConditions(
       List<Condition> preconditions,
       List<ConditionPair<PostCondition>> returnConditions,
       List<ConditionPair<ThrowsClause>> throwsConditions) {
@@ -51,6 +58,80 @@ public class OperationConditions {
     this.returnConditions = returnConditions;
     this.throwsConditions = throwsConditions;
     this.parentList = new ArrayList<>();
+  }
+
+  /**
+   * Create the {@link OperationConditions} object for the given {@link OperationSpecification}
+   * using the {@link ConditionSignatures}.
+   *
+   * @param specification the specification from which the conditions are to be created
+   * @param conditionSignatures the declarations to be used in the conditions
+   * @return the {@link OperationConditions} for the given specification
+   */
+  static OperationConditions createConditions(
+      OperationSpecification specification, ConditionSignatures conditionSignatures) {
+    OperationConditions conditions; // translate the ParamSpecifications to Condition objects
+    List<Condition> paramConditions = new ArrayList<>();
+    for (PreSpecification preSpecification : specification.getPreSpecifications()) {
+      try {
+        paramConditions.add(conditionSignatures.create(preSpecification.getGuard()));
+      } catch (RandoopConditionError e) {
+        if (GenInputsAbstract.fail_on_condition_error) {
+          throw e;
+        }
+        System.out.println("Warning: discarded uncompilable precondition: " + e.getMessage());
+      }
+    }
+
+    // translate the ReturnSpecifications to Condition-PostCondition pairs
+    ArrayList<ConditionPair<PostCondition>> returnConditions = new ArrayList<>();
+    for (PostSpecification postSpecification : specification.getPostSpecifications()) {
+      try {
+        Condition preCondition = conditionSignatures.create(postSpecification.getGuard());
+        PostCondition postCondition = conditionSignatures.create(postSpecification.getProperty());
+        returnConditions.add(new ConditionPair<>(preCondition, postCondition));
+      } catch (RandoopConditionError e) {
+        if (GenInputsAbstract.fail_on_condition_error) {
+          throw e;
+        }
+        System.out.println("Warning: discarding uncompilable postcondition: " + e.getMessage());
+      }
+    }
+
+    // translate the ThrowsSpecifications to Condition-ExpectedExceptionGenerator pairs
+    ArrayList<ConditionPair<ThrowsClause>> throwsConditions = new ArrayList<>();
+    for (ThrowsSpecification throwsSpecification : specification.getThrowsSpecifications()) {
+      ClassOrInterfaceType exceptionType;
+      try {
+        exceptionType =
+            (ClassOrInterfaceType)
+                ClassOrInterfaceType.forName(throwsSpecification.getExceptionTypeName());
+      } catch (ClassNotFoundException e) {
+        String msg =
+            "Error in specification "
+                + throwsSpecification
+                + ". Cannot find exception type: "
+                + e.getMessage();
+        if (Log.isLoggingOn()) {
+          Log.logLine(msg);
+        }
+        continue;
+      }
+      try {
+        Condition guardCondition = conditionSignatures.create(throwsSpecification.getGuard());
+        ThrowsClause exception =
+            new ThrowsClause(exceptionType, "// " + throwsSpecification.getDescription());
+        throwsConditions.add(new ConditionPair<>(guardCondition, exception));
+      } catch (RandoopConditionError e) {
+        if (GenInputsAbstract.fail_on_condition_error) {
+          throw e;
+        }
+        System.out.println("Warning: discarding uncompilable throws-condition: " + e.getMessage());
+      }
+    }
+
+    conditions = new OperationConditions(paramConditions, returnConditions, throwsConditions);
+    return conditions;
   }
 
   /**

@@ -7,49 +7,48 @@ import javax.tools.JavaFileObject;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
 import randoop.compile.SequenceCompilerException;
-import randoop.output.NameGenerator;
+import randoop.reflection.RawSignature;
 
 /** Defines the factory method for creating condition methods. */
 public class ConditionMethodCreator {
-
-  /** The name of the condition method. */
-  private static final String CONDITION_METHOD_NAME = "test";
-
-  /** The name generator used to generate class names. */
-  private static final NameGenerator nameGenerator = new NameGenerator("RandoopConditionClass");
 
   /**
    * Creates the {@code java.lang.reflect.Method} to test the condition in the condition code.
    *
    * <p>Generates the Java source for a class with the method and then
    *
-   * @param packageName the package name for the condition class
    * @param signature the signature string for the condition method
+   * @param parameterDeclaration the parameter declaration string, includes parentheses
    * @param conditionSource the source code for the condition
    * @param compiler the compiler used to compile the condition class
    * @return the {@code Method} object for the condition method of the created class
    */
   public static Method create(
-      String packageName, String signature, String conditionSource, SequenceCompiler compiler) {
-    String conditionClassName = nameGenerator.next();
+      RawSignature signature,
+      String parameterDeclaration,
+      String conditionSource,
+      SequenceCompiler compiler) {
+
+    String packageName = signature.getPackageName();
+    String classname = signature.getClassname();
     String classText =
-        createConditionClassSource(conditionSource, signature, packageName, conditionClassName);
+        createConditionClassSource(
+            signature.getName(), conditionSource, parameterDeclaration, packageName, classname);
+    System.out.println("compiling\n" + classText);
     Class<?> conditionClass;
     try {
-      conditionClass = compiler.compile(packageName, conditionClassName, classText);
+      conditionClass =
+          compiler.compile(signature.getPackageName(), signature.getClassname(), classText);
     } catch (SequenceCompilerException e) {
       String msg = getCompilerErrorMessage(e.getDiagnostics().getDiagnostics(), classText);
       throw new RandoopConditionError(msg, e);
     }
-    //XXX this is ugly: should get the method directly
-    Method[] methods = conditionClass.getDeclaredMethods();
-    for (Method method : methods) {
-      if (method.getName().equals(CONDITION_METHOD_NAME)) {
-        return method;
-      }
+
+    try {
+      return conditionClass.getDeclaredMethod(signature.getName(), signature.getParameterTypes());
+    } catch (NoSuchMethodException e) {
+      throw new RandoopConditionError("Failed to load condition method", e);
     }
-    assert false : "didn't manage to create condition method";
-    return null;
   }
 
   /**
@@ -84,13 +83,17 @@ public class ConditionMethodCreator {
    * Create the source code for the condition class.
    *
    * @param conditionText the condition source code
-   * @param signature the signature string for the condition method
+   * @param parameterDeclarations the signature string for the condition method
    * @param packageName the package of the condition class
    * @param conditionClassName the name of the condition class
    * @return the Java source code for the condition class
    */
   private static String createConditionClassSource(
-      String conditionText, String signature, String packageName, String conditionClassName) {
+      String methodName,
+      String conditionText,
+      String parameterDeclarations,
+      String packageName,
+      String conditionClassName) {
     String classSource = "";
     if (packageName != null && !packageName.isEmpty()) {
       classSource = "package " + packageName + ";" + Globals.lineSep;
@@ -102,8 +105,8 @@ public class ConditionMethodCreator {
         + " {"
         + Globals.lineSep
         + "  public static boolean "
-        + CONDITION_METHOD_NAME
-        + signature
+        + methodName
+        + parameterDeclarations
         + " throws Throwable {"
         + Globals.lineSep
         + "    return "
