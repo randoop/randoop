@@ -335,7 +335,10 @@ public class OperationModel {
           System.out.println(
               "Ignoring non-visible " + c + " specified via --classlist or --testclass.");
         } else if (c.isInterface()) {
-          System.out.println("Ignoring " + c + " specified via --classlist or --testclass.");
+          System.out.println(
+              "Ignoring "
+                  + c
+                  + " specified via --classlist or --testclass; provide classes, not interfaces.");
         } else {
           if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
             System.out.println(
