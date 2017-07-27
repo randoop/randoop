@@ -942,7 +942,7 @@ public class RandoopSystemTest {
 
   /**
    * recreate problem with tests over Google Guava where value from private enum returned by public
-   * method and value used in {@link randoop.test.ObjectCheck} surfaces in test code, creating
+   * method and value used in {@code randoop.test.ObjectCheck} surfaces in test code, creating
    * uncompilable code.
    */
   @Test
