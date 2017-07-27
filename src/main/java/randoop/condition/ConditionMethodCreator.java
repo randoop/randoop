@@ -13,8 +13,14 @@ import randoop.reflection.RawSignature;
 /** Defines the factory method for creating condition methods. */
 public class ConditionMethodCreator {
 
+  /** The basename for the condition class name. */
+  private static final String CONDITION_CLASS_BASENAME = "RandoopConditionClass";
+
+  /** The name of the condition method. */
+  private static final String CONDITION_METHOD_NAME = "test";
+
   /** The name generator used to generate class names. */
-  private static final NameGenerator nameGenerator = new NameGenerator("RandoopConditionClass");
+  private static final NameGenerator nameGenerator = new NameGenerator(CONDITION_CLASS_BASENAME);
 
   /**
    * Creates the {@code java.lang.reflect.Method} to test the condition in the condition code.
@@ -118,5 +124,73 @@ public class ConditionMethodCreator {
         + Globals.lineSep
         + "}"
         + Globals.lineSep;
+  }
+
+  /**
+   * Creates the {@link RawSignature} for the precondition method.
+   *
+   * <p>if {@code shift == 1}, the parameter types for the condition method have the receiver type
+   * first, followed by the parameter types. Otherwise, the condition method parameter types are
+   * just the parameter types.
+   *
+   * <p>Note that these signatures may be used more than once for different condition methods, and
+   * so {@link #create(RawSignature, String, String, SequenceCompiler)} replaces the classname to
+   * ensure a unique name.
+   *
+   * @param packageName the package name for the condition class
+   * @param receiverType the declaring class of the method or constructor, used as receiver type if
+   *     {@code shift == 1}
+   * @param parameterTypes the parameter types for the original method
+   * @param shift starting position of {@code parameterTypes} in condition method parameter list,
+   *     either 0 or 1
+   * @return the constructed pre-condition method signature
+   */
+  static RawSignature getPreconditionSignature(
+      String packageName, Class<?> receiverType, Class<?>[] parameterTypes, int shift) {
+    assert shift == 0 || shift == 1;
+    Class<?>[] conditionParameterTypes = new Class<?>[parameterTypes.length + shift];
+    if (shift == 1) {
+      conditionParameterTypes[0] = receiverType;
+    }
+    System.arraycopy(parameterTypes, 0, conditionParameterTypes, shift, parameterTypes.length);
+    return new RawSignature(
+        packageName, CONDITION_CLASS_BASENAME, CONDITION_METHOD_NAME, conditionParameterTypes);
+  }
+
+  /**
+   * Creates the {@link RawSignature} for the post-condition method.
+   *
+   * <p>if {@code shift == 1}, the parameter types for the condition method have the receiver type
+   * first, followed by the parameter types. Otherwise, the condition method parameter types are
+   * just the parameter types.
+   *
+   * <p>Note that these signatures may be used more than once for different condition methods, and
+   * so {@link #create(RawSignature, String, String, SequenceCompiler)} replaces the classname to
+   * ensure a unique name.
+   *
+   * @param packageName the package name for the condition class
+   * @param receiverType the declaring class of the method or constructor, used as receiver type if
+   *     {@code shift == 1}
+   * @param parameterTypes the parameter types for the original method or constructor
+   * @param returnType the return type for the method, or the declaring class for a constructor
+   * @param shift starting position of {@code parameterTypes} in condition method parameter list,
+   *     either 0 or 1
+   * @return the constructed post-condition method signature
+   */
+  static RawSignature getPostconditionSignature(
+      String packageName,
+      Class<?> receiverType,
+      Class<?>[] parameterTypes,
+      Class<?> returnType,
+      int shift) {
+    assert shift == 0 || shift == 1;
+    Class<?>[] conditionParameterTypes = new Class<?>[parameterTypes.length + shift + 1];
+    if (shift == 1) {
+      conditionParameterTypes[0] = receiverType;
+    }
+    conditionParameterTypes[conditionParameterTypes.length - 1] = returnType;
+    System.arraycopy(parameterTypes, 0, conditionParameterTypes, shift, parameterTypes.length);
+    return new RawSignature(
+        packageName, CONDITION_CLASS_BASENAME, CONDITION_METHOD_NAME, conditionParameterTypes);
   }
 }

@@ -267,17 +267,23 @@ public class SpecificationCollection {
    *     constructor, {@code null} if there is none
    */
   public OperationConditions getOperationConditions(AccessibleObject accessibleObject) {
+
+    // Check if accessibleObject already has an OperationConditions object
     OperationConditions conditions = conditionMap.get(accessibleObject);
     if (conditions != null) {
       return conditions;
     }
 
+    // Otherwise, build a new one.
     OperationSpecification specification = specificationMap.get(accessibleObject);
     if (specification != null) {
-      ConditionSignatures conditionSignatures =
-          ConditionSignatures.of(accessibleObject, specification.getIdentifiers(), compiler);
-      conditions = OperationConditions.createConditions(specification, conditionSignatures);
-    } else {
+      SpecificationTranslator translator =
+          SpecificationTranslator.createTranslator(
+              accessibleObject, specification.getIdentifiers(), compiler);
+      conditions = translator.createConditions(specification);
+    }
+
+    if (conditions == null) {
       conditions = new OperationConditions();
     }
 
