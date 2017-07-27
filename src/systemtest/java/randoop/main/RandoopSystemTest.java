@@ -1024,6 +1024,7 @@ public class RandoopSystemTest {
     generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
+  /** Uses methodlist input example {@code src/docs/manual/method_list_example.txt} as input. */
   @Test
   public void runMethodListTest() {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("method-list");
