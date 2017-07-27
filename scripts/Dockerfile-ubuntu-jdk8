@@ -16,3 +16,12 @@ RUN apt-get -qqy update \
   default-jdk \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
+
+# environment variable for X11
+ENV DISPLAY :99
+
+# Install Xvfb init script
+ADD xvfb_init /etc/init.d/xvfb
+RUN chmod a+x /etc/init.d/xvfb
+ADD xvfb-daemon-run /usr/bin/xvfb-daemon-run
+RUN chmod a+x /usr/bin/xvfb-daemon-run
