@@ -193,9 +193,7 @@ public class CoveredClassTest {
         GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
     OmitMethodsPredicate omitMethodsPredicate =
-        (GenInputsAbstract.omitmethods == null)
-            ? new OmitMethodsPredicate()
-            : new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
+        new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
 
     OperationModel operationModel = null;
     try {

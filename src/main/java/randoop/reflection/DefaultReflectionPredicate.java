@@ -197,66 +197,59 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     return Modifier.isPublic(c.getModifiers() & Modifier.classModifiers());
   }
 
+  /**
+   * Indicates methods for which this predicate should return false. See inline comments for
+   * details. This is a main place that Randoop controls which methods are methods under test.
+   *
+   * @param m the method to accept or reject for inclusion in methods under test
+   * @return a non-null string giving a reason the method should be skipped, or null to not skip it
+   */
+  @SuppressWarnings("ReferenceEquality")
   private String doNotUseSpecialCase(Method m) {
 
+    String mName = m.getName().intern();
+    Class<?> mClass = m.getDeclaringClass();
+
     // Special case 1:
-    // We're skipping compareTo method in enums - you can call it only with the
-    // same type as receiver
-    // but the signature does not tell you that
-    if (!m.getDeclaringClass().isAnonymousClass()
-        && m.getDeclaringClass().getCanonicalName().equals("java.lang.Enum")
-        && m.getName().equals("compareTo")
+    // Skip compareTo method in enums -- you can call it only with the
+    // same type as receiver, but the signature does not tell you that.
+    if (!mClass.isAnonymousClass()
+        && mClass.getCanonicalName().equals("java.lang.Enum")
+        && mName == "compareTo" // interned
         && m.getParameterTypes().length == 1
         && m.getParameterTypes()[0].equals(Enum.class))
-      return "We're skipping compareTo method in enums";
+      return "Enum compareTo method has restrictions on argument types";
 
-    // Special case 2:
-    if (m.getName().equals("randomUUID")) {
-      return "We're skipping this to get reproducibility when running java.util tests.";
+    // Special case 2: Nondeterminism
+
+    if (mName == "randomUUID") { // interned
+      return "randomUUID() is nondeterministic";
     }
-
-    // Special case 2:
-    // hashCode is bad in general but String.hashCode is fair game
-    if (m.getName().equals("hashCode") && !m.getDeclaringClass().equals(String.class)) {
-      return "hashCode";
+    // hashCode is nondeterministic in general, but String.hashCode is deterministic.
+    if (mName == "hashCode" // interned
+        && !mClass.equals(String.class)) {
+      return "hashCode is nondeterministic";
     }
-
-    // Special case 3: (just clumps together a bunch of hashCodes, so skip it)
-    if (m.getName().equals("deepHashCode") && m.getDeclaringClass().equals(Arrays.class)) {
-      return "deepHashCode";
+    if (mName == "deepHashCode" // interned
+        && mClass.equals(Arrays.class)) {
+      return "deepHashCode is nondeterministic because hashCode() is";
     }
-
-    // Special case 4: (differs too much between JDK installations)
-    if (m.getName().equals("getAvailableLocales")) {
-      return "getAvailableLocales";
+    if (mName == "getAvailableLocales") { // interned
+      return "getAvailableLocales differs too much between JDK installations";
     }
 
-    // During experimentation, we observed that exception-related
-    // methods can cause lots of nonterminating runs of Randoop. So we
-    // don't explore them.
-    if (m.getName().equals("fillInStackTrace")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("getCause")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("getLocalizedMessage")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("getMessage")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("getStackTrace")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("initCause")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("printStackTrace")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("setStackTrace")) {
-      return "Randoop avoids exploring Exception class methods.";
+    // Special case 3:
+    // During experimentation, we observed that exception-related methods can
+    // cause lots of nonterminating runs of Randoop. So we don't explore them.
+    if ((mName == "fillInStackTrace") // interned
+        || (mName == "getCause") // interned
+        || (mName == "getLocalizedMessage") // interned
+        || (mName == "getMessage") // interned
+        || (mName == "getStackTrace") // interned
+        || (mName == "initCause") // interned
+        || (mName == "printStackTrace") // interned
+        || (mName == "setStackTrace")) { // interned
+      return "Randoop avoids exploring Exception class methods, to avoid nontermination.";
     }
 
     return null;

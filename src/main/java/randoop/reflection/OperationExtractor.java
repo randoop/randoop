@@ -82,7 +82,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       Collection<TypedOperation> operations,
       ReflectionPredicate predicate,
       VisibilityPredicate visibilityPredicate) {
-    this(classType, operations, predicate, new OmitMethodsPredicate(), visibilityPredicate);
+    this(classType, operations, predicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
   }
 
   /**

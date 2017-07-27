@@ -13,6 +13,7 @@ import plume.Option;
 import plume.OptionGroup;
 import plume.Options;
 import plume.Unpublicized;
+import randoop.Globals;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
@@ -61,22 +62,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // A relative URL like <a href="#specifying-methods"> works when this
   // Javadoc is pasted into the manual, but not in Javadoc proper.
   /**
-   * A file containing a list of methods and constructors to test, each given as a fully-qualified
-   * signature on a separate line:
-   *
-   * <ul>
-   *   <li>{@code package-name.classname.method-name(argument-list)} for a method, or
-   *   <li>{@code package-name.classname(argument-list)} for a constructor
-   * </ul>
-   *
-   * <p>where {@code package-name} is a period-separated list of identifiers, and {@code
-   * argument-list} is a comma-separated (spaces allowed) list of fully-qualified Java raw types.
+   * A file containing a list of methods and constructors to test, each given as a <a
+   * href="#fully-qualified-signature">fully-qualified signature</a> on a separate line.
    *
    * <p>These methods augment any methods from classes given by the <code>--testclass</code> or
    * <code>--classlist</code> options.
    *
-   * <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">
-   * example</a>.
+   * <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
+   * file</a>.
    */
   @Option("File that lists methods under test")
   public static File methodlist = null;
@@ -85,15 +78,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A regex that indicates methods that should not be called directly in generated tests. This does
    * not prevent indirect calls to such methods from other, allowed methods.
    *
-   * <p>Randoop will not directly call a method whose fully-qualified signature matches the regular
-   * expression, or a method inherited from a superclass or interface for which the method matches
-   * the regular expression.
+   * <p>Randoop will not directly call a method whose <a
+   * href="#fully-qualified-signature">fully-qualified signature</a> matches the regular expression,
+   * or a method inherited from a superclass or interface whose signature matches the regular
+   * expression.
    *
-   * <p>The signature has the form {@code package-name.classname.method-name(argument-list)} where
-   * {@code package-name} is a period-separated list of identifiers, and {@code argument-list} is a
-   * comma-separated (with no spaces) list of fully-qualified Java raw types. If the regular
-   * expression contains anchors "{@code ^}" and "{@code $}", they refer to the beginning and the
-   * end (respectively) of the signature string.
+   * <p>If the regular expression contains anchors "{@code ^}" and "{@code $}", they refer to the
+   * beginning and the end of the signature string.
    */
   @Option("Do not call methods that match regular expression <string>")
   public static List<Pattern> omitmethods = null;
@@ -661,16 +652,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public void checkOptionsValid() {
 
     if (alias_ratio < 0 || alias_ratio > 1) {
-      throw new RuntimeException("Alias ratio must be between 0 and 1, inclusive.");
+      throw new RuntimeException("--alias-ratio must be between 0 and 1, inclusive.");
     }
 
     if (null_ratio < 0 || null_ratio > 1) {
-      throw new RuntimeException("Null ratio must be between 0 and 1, inclusive.");
+      throw new RuntimeException("--null-ratio must be between 0 and 1, inclusive.");
     }
 
     if (maxsize <= 0) {
       throw new RuntimeException(
-          "Maximum sequence size must be greater than zero but was " + maxsize);
+          "Maximum sequence size --maxsize must be greater than zero but was " + maxsize);
     }
 
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
@@ -696,6 +687,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
           String.format(
               "Unlikely parameter combination: --timeLimit=%s --attemptedLimit=%s --generatedLimit=%s --outputLimit=%s",
               timeLimit, attemptedLimit, generatedLimit, outputLimit));
+    }
+
+    if (classlist == null && methodlist == null && testclass.isEmpty()) {
+      throw new RuntimeException(
+          "You must specify some classes or methods to test."
+              + Globals.lineSep
+              + "Use the --classlist, --testclass, or --methodlist options.");
     }
   }
 

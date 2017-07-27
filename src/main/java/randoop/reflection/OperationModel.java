@@ -116,8 +116,7 @@ public class OperationModel {
    * @param coveredClassnames the names of classes to be tested by covered class heuristic
    * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
-   * @param literalsFileList the list of literals file names @return the operation model for the
-   *     parameters
+   * @param literalsFileList the list of literals file names
    * @return the {@link OperationModel} constructed with the given arguments
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method

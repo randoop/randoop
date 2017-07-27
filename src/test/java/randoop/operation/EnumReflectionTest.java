@@ -327,7 +327,11 @@ public class EnumReflectionTest {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor =
         new OperationExtractor(
-            classType, operations, predicate, new OmitMethodsPredicate(), visibilityPredicate);
+            classType,
+            operations,
+            predicate,
+            OmitMethodsPredicate.NO_OMISSION,
+            visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.apply(extractor, c);
     return operations;

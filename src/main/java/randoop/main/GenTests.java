@@ -161,13 +161,6 @@ public class GenTests extends GenInputsAbstract {
 
     checkOptionsValid();
 
-    // Check that there are classes to test
-    if (classlist == null && methodlist == null && testclass.isEmpty()) {
-      System.out.println("You must specify some classes or methods to test.");
-      System.out.println("Use the --classlist, --testclass, or --methodlist options.");
-      System.exit(1);
-    }
-
     Randomness.setSeed(randomseed);
     if (GenInputsAbstract.selection_log != null) {
       Randomness.selectionLog = getSimpleLog(GenInputsAbstract.selection_log);
@@ -197,28 +190,28 @@ public class GenTests extends GenInputsAbstract {
       afterAllFixtureBody =
           JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_all));
     } catch (ParseException e) {
-      System.out.println("Error in after-all fixture text at token " + e.currentToken);
+      System.out.println("Parse error in after-all fixture text at token " + e.currentToken);
       badFixtureText = true;
     }
     try {
       afterEachFixtureBody =
           JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_each));
     } catch (ParseException e) {
-      System.out.println("Error in after-each fixture text at token " + e.currentToken);
+      System.out.println("Parse error in after-each fixture text at token " + e.currentToken);
       badFixtureText = true;
     }
     try {
       beforeAllFixtureBody =
           JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_all));
     } catch (ParseException e) {
-      System.out.println("Error in before-all fixture text at token " + e.currentToken);
+      System.out.println("Parse error in before-all fixture text at token " + e.currentToken);
       badFixtureText = true;
     }
     try {
       beforeEachFixtureBody =
           JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_each));
     } catch (ParseException e) {
-      System.out.println("Error in before-each fixture text at token " + e.currentToken);
+      System.out.println("Parse error in before-each fixture text at token " + e.currentToken);
       badFixtureText = true;
     }
     if (badFixtureText) {
