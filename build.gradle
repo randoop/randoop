@@ -211,6 +211,11 @@ compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
  *
  * Only works in Java 8+.
  */
+// TODO: once we run the Interning Checker on Randoop
+// tasks.withType(JavaCompile) {
+//   options.compilerArgs += [ '-Xep:ReferenceEquality:OFF' ]
+// }
+
 import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
 tasks.withType(JavaCompile).each { t ->
