@@ -37,7 +37,6 @@ import randoop.operation.TypedOperation;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.PublicVisibilityPredicate;
@@ -221,15 +220,18 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Setup model of classes under test
      */
-    // get names of classes under test
+    // Get names of classes under test
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
 
-    // get names of classes that must be covered by output tests
+    // Get names of classes that must be covered by output tests
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
             require_covered_classes, "Unable to read coverage class names");
 
-    // get names of fields to be omitted
+    // Add methods to omitmethods from --omitmethods_file
+    extendOmitMethods(omitmethods);
+
+    // Get names of fields to be omitted
     Set<String> omitFields =
         GenInputsAbstract.getStringSetFromFile(omit_field_list, "Error reading field file");
     omitFields.addAll(omit_field);
@@ -242,8 +244,6 @@ public class GenTests extends GenInputsAbstract {
     } else {
       visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
-
-    OmitMethodsPredicate omitPredicate = createOmissionPredicate(omitmethods);
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
@@ -261,7 +261,7 @@ public class GenTests extends GenInputsAbstract {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              omitPredicate,
+              omitmethods,
               classnames,
               coveredClassnames,
               methodSignatures,
@@ -299,11 +299,6 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
     assert operationModel != null;
-
-    if (!operationModel.hasClasses()) {
-      System.out.println("No classes to test");
-      System.exit(1);
-    }
 
     List<TypedOperation> operations = operationModel.getOperations();
 
@@ -546,15 +541,12 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Adds patterns for methods to be omitted to the given list and returns an {@link
-   * OmitMethodsPredicate} using the pattern list. Reads from the {@link
+   * Adds patterns for methods to be omitted to the {@code omitmethods} list. Reads from the {@link
    * GenInputsAbstract#omitmethods_list} file.
    *
    * @param omitmethods the list of {@code Pattern} objects to add new patterns to, must not be null
-   * @return the {@link OmitMethodsPredicate} for the omit patterns from both {@link
-   *     GenInputsAbstract#omitmethods} and {@link GenInputsAbstract#omitmethods_list}.
    */
-  private OmitMethodsPredicate createOmissionPredicate(List<Pattern> omitmethods) {
+  private void extendOmitMethods(List<Pattern> omitmethods) {
     // Read method omissions from user provided file
     if (omitmethods_list != null) {
       try (EntryReader er = new EntryReader(omitmethods_list, "^#.*", null)) {
@@ -570,7 +562,6 @@ public class GenTests extends GenInputsAbstract {
         System.exit(1);
       }
     }
-    return new OmitMethodsPredicate(omitmethods);
   }
 
   /**

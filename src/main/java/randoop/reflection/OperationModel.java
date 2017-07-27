@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import randoop.Globals;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
@@ -111,7 +112,7 @@ public class OperationModel {
    *     members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
-   * @param omitPredicate the patterns for operations that should be omitted
+   * @param omitmethods the patterns for operations that should be omitted
    * @param classnames the names of classes under test
    * @param coveredClassnames the names of classes to be tested by covered class heuristic
    * @param methodSignatures the signatures of methods to be added to the model
@@ -124,7 +125,7 @@ public class OperationModel {
   public static OperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate,
+      List<Pattern> omitmethods,
       Set<String> classnames,
       Set<String> coveredClassnames,
       Set<String> methodSignatures,
@@ -141,6 +142,8 @@ public class OperationModel {
         coveredClassnames,
         errorHandler,
         literalsFileList);
+
+    OmitMethodsPredicate omitPredicate = new OmitMethodsPredicate(omitmethods);
 
     model.addOperationsFromClasses(
         model.classTypes, visibility, reflectionPredicate, omitPredicate);
@@ -247,14 +250,10 @@ public class OperationModel {
   }
 
   /**
-   * Indicate whether the model has class types.
+   * Return the operations of this model as a list.
    *
-   * @return true if the model has class types, and false if the class type set is empty
+   * @return the operations of this model
    */
-  public boolean hasClasses() {
-    return classCount > 0;
-  }
-
   public List<TypedOperation> getOperations() {
     return new ArrayList<>(operations);
   }

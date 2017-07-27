@@ -46,7 +46,7 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              OmitMethodsPredicate.NO_OMISSION,
+              null,
               classnames,
               coveredClassnames,
               methodSignatures,
@@ -101,7 +101,7 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibilityPredicate,
               reflectionPredicate,
-              OmitMethodsPredicate.NO_OMISSION,
+              null,
               classnames,
               coveredClassnames,
               methodSignatures,
@@ -175,7 +175,7 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibilityPredicate,
               reflectionPredicate,
-              OmitMethodsPredicate.NO_OMISSION,
+              null,
               classnames,
               coveredClassnames,
               methodSignatures,
@@ -358,7 +358,7 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibilityPredicate,
               reflectionPredicate,
-              OmitMethodsPredicate.NO_OMISSION,
+              null,
               classnames,
               coveredClassnames,
               methodSignatures,
