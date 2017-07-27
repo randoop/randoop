@@ -34,7 +34,7 @@ import randoop.test.DummyCheckGenerator;
 import randoop.test.PostConditionCheck;
 import randoop.types.JavaTypes;
 
-public class ConditionSignaturesTest {
+public class SpecificationTranslatorTest {
 
   //cases: static method, non-static method, check return, parameters, and receiver
 
@@ -44,8 +44,9 @@ public class ConditionSignaturesTest {
     List<String> parameterList = new ArrayList<>();
     parameterList.add("c");
     Identifiers identifiers = new Identifiers(parameterList);
-    ConditionSignatures sig = ConditionSignatures.of(method, identifiers, null);
-    assert sig != null;
+    SpecificationTranslator sig =
+        SpecificationTranslator.createTranslator(method, identifiers, null);
+
     assertThat(
         "presignature is just receiver and parameters",
         sig.getPreConditionDeclarations(),
@@ -81,7 +82,7 @@ public class ConditionSignaturesTest {
   }
 
   private PostConditionCheck createCheck(
-      Sequence sequence, ConditionSignatures sig, String conditionText) {
+      Sequence sequence, SpecificationTranslator sig, String conditionText) {
     List<PostCondition> postConditions = new ArrayList<>();
     PostCondition condition = createPostCondition(sig, conditionText);
     postConditions.add(condition);
@@ -127,7 +128,7 @@ public class ConditionSignaturesTest {
     return sequence;
   }
 
-  private PostCondition createPostCondition(ConditionSignatures sig, String conditionText) {
+  private PostCondition createPostCondition(SpecificationTranslator sig, String conditionText) {
     Method conditionMethod;
     SequenceCompiler compiler =
         new SequenceCompiler(
@@ -163,8 +164,9 @@ public class ConditionSignaturesTest {
     specList.add(specFile);
     OperationSpecification specification = readSpecifications(specFile);
     Method method = getPrintWriterAppendMethod();
-    ConditionSignatures sig = ConditionSignatures.of(method, specification.getIdentifiers(), null);
-    assert sig != null;
+    SpecificationTranslator sig =
+        SpecificationTranslator.createTranslator(method, specification.getIdentifiers(), null);
+
     assertThat(
         "presignature is just receiver and parameters",
         sig.getPreConditionDeclarations(),
