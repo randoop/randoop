@@ -1024,6 +1024,17 @@ public class RandoopSystemTest {
     generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
+  @Test
+  public void runMethodListTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("method-list");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setOption("methodlist", "resources/systemTest/method_list_example.txt");
+    options.setOption("generatedLimit", "200");
+    options.setOption("outputLimit", "200");
+
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
