@@ -82,16 +82,25 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     }
 
     boolean equals(String name, Type[] arg_types) {
-      if (!name.equals(this.name)) return false;
-      if (this.arg_types.length != arg_types.length) return false;
-      for (int ii = 0; ii < arg_types.length; ii++)
-        if (!arg_types[ii].equals(this.arg_types[ii])) return (false);
+      if (!name.equals(this.name)) {
+        return false;
+      }
+      if (this.arg_types.length != arg_types.length) {
+        return false;
+      }
+      for (int ii = 0; ii < arg_types.length; ii++) {
+        if (!arg_types[ii].equals(this.arg_types[ii])) {
+          return (false);
+        }
+      }
       return (true);
     }
 
     @Override
     public boolean equals(Object obj) {
-      if (!(obj instanceof MethodDef)) return false;
+      if (!(obj instanceof MethodDef)) {
+        return false;
+      }
       MethodDef md = (MethodDef) obj;
       return equals(md.name, md.arg_types);
     }

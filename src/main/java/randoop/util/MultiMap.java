@@ -78,7 +78,9 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
   @Override
   public Set<T2> getValues(T1 key) {
     Set<T2> values = map.get(key);
-    if (values == null) return Collections.emptySet();
+    if (values == null) {
+      return Collections.emptySet();
+    }
     return values;
   }
 

@@ -60,7 +60,9 @@ public class KeyToMultiSet<T1, T2> {
 
   public Set<T2> getVariables(T1 key) {
     MultiSet<T2> values = map.get(key);
-    if (values == null) return Collections.emptySet();
+    if (values == null) {
+      return Collections.emptySet();
+    }
     return values.getElements();
   }
 

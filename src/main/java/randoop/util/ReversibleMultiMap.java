@@ -137,7 +137,9 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   public Set<T2> getValues(T1 key) {
     if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     Set<T2> values = map.get(key);
-    if (values == null) return Collections.emptySet();
+    if (values == null) {
+      return Collections.emptySet();
+    }
     return values;
   }
 

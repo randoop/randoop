@@ -567,10 +567,14 @@ public final class Sequence implements WeightedElement {
       }
       for (int i = 0; i < statementWithInputs.inputs.size(); i++) {
         int index = statementWithInputs.inputs.get(i).index;
-        if (index >= 0) throw new IllegalStateException();
+        if (index >= 0) {
+          throw new IllegalStateException();
+        }
         Type newRefConstraint =
             statements.get(si + statementWithInputs.inputs.get(i).index).getOutputType();
-        if (newRefConstraint == null) throw new IllegalStateException();
+        if (newRefConstraint == null) {
+          throw new IllegalStateException();
+        }
         if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
           throw new IllegalArgumentException(
               i
@@ -594,8 +598,12 @@ public final class Sequence implements WeightedElement {
   @SuppressWarnings("ReferenceEquality")
   @Override
   public final boolean equals(Object o) {
-    if (!(o instanceof Sequence)) return false;
-    if (o == this) return true;
+    if (!(o instanceof Sequence)) {
+      return false;
+    }
+    if (o == this) {
+      return true;
+    }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
       return GenInputsAbstract.debug_checks && verifyFalse("size", other);
@@ -676,7 +684,9 @@ public final class Sequence implements WeightedElement {
         possibleIndices.add(i);
       }
     }
-    if (possibleIndices.isEmpty()) return null;
+    if (possibleIndices.isEmpty()) {
+      return null;
+    }
     return Randomness.randomMember(possibleIndices);
   }
 
