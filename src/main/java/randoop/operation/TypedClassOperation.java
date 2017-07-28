@@ -117,7 +117,7 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Produces a Java source code representation of this statement and append it to the given
+   * Produces a Java source code representation of this statement and appends it to the given
    * StringBuilder.
    *
    * @param inputVars the list of variables that are inputs to operation
@@ -131,10 +131,10 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Returns a string representation of this Operation, which can be read by static parse method for
-   * class. For a class C implementing the Operation interface, this method should return a String s
-   * such that parsing the string returns an object equivalent to this object, i.e.
-   * C.parse(this.s).equals(this).
+   * Returns a string representation of this Operation, which can be read by the static {@code
+   * parse} method for an Operation class. For a class C implementing the Operation interface, this
+   * method should return a String s such that parsing the string returns an object equivalent to
+   * this object, i.e., C.parse(this.s).equals(this).
    *
    * @return string descriptor of {@link Operation} object
    */
@@ -145,13 +145,15 @@ public class TypedClassOperation extends TypedOperation {
 
   @Override
   public String toString() {
-    StringBuilder b = new StringBuilder();
     if (this.isGeneric()) {
+      StringBuilder b = new StringBuilder();
       b.append("<");
       b.append(UtilMDE.join(this.getTypeParameters(), ","));
       b.append(">").append(" ");
+      return b.toString() + super.toString();
+    } else {
+      return super.toString();
     }
-    return b.toString() + super.toString();
   }
 
   @Override
@@ -213,7 +215,7 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Creates an operation with the same name, input types and output type as this operation, but
+   * Creates an operation with the same name, input types, and output type as this operation, but
    * having the given type as the owning class.
    *
    * <p>Note: this is only a valid object if {@code type} has the method. This is definitely the
