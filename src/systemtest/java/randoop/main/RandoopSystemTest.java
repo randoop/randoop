@@ -804,14 +804,15 @@ public class RandoopSystemTest {
     options.addClassList("resources/systemTest/emptyclasslist.txt");
     options.setOption("attemptedLimit", "20");
 
-    RandoopRunStatus result = generateAndCompile(testEnvironment, options, true);
+    ProcessStatus result = generate(testEnvironment, options);
 
-    Iterator<String> it = result.processStatus.outputLines.iterator();
+    Iterator<String> it = result.outputLines.iterator();
     String line = "";
-    while (!line.contains("No classes to test") && it.hasNext()) {
+    while (!line.contains("There are no methods to test") && it.hasNext()) {
       line = it.next();
     }
-    assertTrue("should fail to find class names in file", line.contains("No classes to test"));
+    assertTrue(
+        "should fail to find class names in file", line.contains("There are no methods to test"));
   }
 
   /**
@@ -1210,5 +1211,20 @@ public class RandoopSystemTest {
       prevLineIsBlank = line.isEmpty();
     }
     return runStatus;
+  }
+
+  private ProcessStatus generate(TestEnvironment testEnvironment, RandoopOptions options) {
+    ProcessStatus status = RandoopRunStatus.generate(testEnvironment, options);
+
+    System.out.println("Randoop:");
+    boolean prevLineIsBlank = false;
+    for (String line : status.outputLines) {
+      if ((line.isEmpty() && !prevLineIsBlank)
+          || (!line.isEmpty() && !line.startsWith("Progress update:"))) {
+        System.out.println(line);
+      }
+      prevLineIsBlank = line.isEmpty();
+    }
+    return status;
   }
 }

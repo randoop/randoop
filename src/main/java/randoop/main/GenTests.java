@@ -302,7 +302,10 @@ public class GenTests extends GenInputsAbstract {
 
     List<TypedOperation> operations = operationModel.getOperations();
 
-    if (operations.isEmpty()) {
+    /*
+     * Stop if there no more than 1 operation. This will be Object().
+     */
+    if (operations.size() <= 1) {
       System.out.println("There are no methods to test. Exiting.");
       System.exit(1);
     }
