@@ -53,7 +53,7 @@
  *       </ol>
  *
  *   <li>If for each table entry, the preconditions failed and the expected exception set is empty,
- *       then classify as <b>Invalid</b> and don’t make the call. This avoids making a call on
+ *       then classify as <b>Invalid</b> and don't make the call. This avoids making a call on
  *       invalid arguments unless the specification indicates that exceptions should be thrown.
  * </ol>
  *
