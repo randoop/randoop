@@ -15,10 +15,8 @@ import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
 
 /**
- * Represents a type decoration for an operation that has a declaring class, such as method call or
- * field access.
- *
- * <p>The representation is the operation plus the declaring class.
+ * Represents a TypedOperation and its declaring class. Examples of TypedOperations that have a
+ * declaring class are a method call or field access.
  */
 public class TypedClassOperation extends TypedOperation {
   /** The declaring type for this operation. */
