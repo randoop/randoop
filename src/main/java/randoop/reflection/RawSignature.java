@@ -54,17 +54,11 @@ public class RawSignature {
    * @return the {@link RawSignature} object for {@code method}
    */
   public static RawSignature of(Method method) {
-    Package methodPackage = method.getDeclaringClass().getPackage();
-    String packageName = "";
-    if (methodPackage != null) {
-      packageName = methodPackage.getName();
-    }
+    Package classPackage = method.getDeclaringClass().getPackage();
+    String packageName = (classPackage != null) ? classPackage.getName() : "";
+    String classname = method.getDeclaringClass().getName().substring(packageName.length() + 1);
 
-    return new RawSignature(
-        packageName,
-        method.getDeclaringClass().getName(),
-        method.getName(),
-        method.getParameterTypes());
+    return new RawSignature(packageName, classname, method.getName(), method.getParameterTypes());
   }
 
   /**
@@ -74,17 +68,13 @@ public class RawSignature {
    * @return the {@link RawSignature} object for {@code constructor}
    */
   public static RawSignature of(Constructor<?> constructor) {
-    Package constructorPackage = constructor.getDeclaringClass().getPackage();
-    String packageName = "";
-    if (constructorPackage != null) {
-      packageName = constructorPackage.getName();
-    }
+    Package classPackage = constructor.getDeclaringClass().getPackage();
+    String packageName = (classPackage != null) ? classPackage.getName() : "";
+    String classname =
+        constructor.getDeclaringClass().getName().substring(packageName.length() + 1);
+    String name = constructor.getName().substring(packageName.length() + 1);
 
-    return new RawSignature(
-        constructor.getDeclaringClass().getPackage().getName(),
-        constructor.getDeclaringClass().getName(),
-        constructor.getName(),
-        constructor.getParameterTypes());
+    return new RawSignature(packageName, classname, name, constructor.getParameterTypes());
   }
 
   @Override
@@ -115,6 +105,12 @@ public class RawSignature {
     return Objects.hash(classname, name, Arrays.hashCode(parameterTypes));
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns the string representation of this signature in the format read by {@link
+   * SignatureParser#parse(String, VisibilityPredicate, ReflectionPredicate)}.
+   */
   @Override
   public String toString() {
     List<String> typeNames = new ArrayList<>();
