@@ -2,8 +2,8 @@ package randoop.instrument;
 
 /**
  * Exception class specializing {@code ClassNotFoundException} to represent when the {@code Class}
- * for an argument type of a {@link MethodDef} is not found during a conversion to a reflection
- * object.
+ * for an argument type of a {@link MethodSignature} is not found during a conversion to a
+ * reflection object.
  */
 class ArgumentClassNotFoundException extends ClassNotFoundException {
   /**

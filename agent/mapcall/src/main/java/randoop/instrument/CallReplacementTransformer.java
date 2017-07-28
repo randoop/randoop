@@ -48,7 +48,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
           MapCallsAgent.debugPath + File.separator + "method_mapping.txt", MapCallsAgent.debug);
 
   /** Map from a method to its replacement. */
-  private final ConcurrentHashMap<MethodDef, MethodDef> replacementMap;
+  private final ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap;
 
   /** The list of package prefixes (package name + ".") to exclude from transformation */
   private final Set<String> excludedPackagePrefixes;
@@ -65,7 +65,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * @param replacementMap the concurrent hash map with method replacements
    */
   CallReplacementTransformer(
-      Set<String> excludedPackagePrefixes, ConcurrentHashMap<MethodDef, MethodDef> replacementMap) {
+      Set<String> excludedPackagePrefixes,
+      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap) {
     this.excludedPackagePrefixes = excludedPackagePrefixes;
     this.replacementMap = replacementMap;
   }
@@ -304,9 +305,9 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     }
 
     InvokeInstruction invocation = (InvokeInstruction) inst;
-    MethodDef orig = MethodDef.of(invocation, pgen);
+    MethodSignature orig = MethodSignature.of(invocation, pgen);
 
-    MethodDef call = replacementMap.get(orig);
+    MethodSignature call = replacementMap.get(orig);
     if (call == null) {
       debug_transform.log(
           "%s.%s: No replacement for %s%n", mg.getClassName(), mg.getName(), orig.toString());
@@ -371,7 +372,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       if (replacementMap.isEmpty()) {
         debug_map.log("no method replacements");
       } else {
-        for (Map.Entry<MethodDef, MethodDef> entry : replacementMap.entrySet()) {
+        for (Map.Entry<MethodSignature, MethodSignature> entry : replacementMap.entrySet()) {
           debug_map.log("Method: %s (%d): %s", entry.getKey(), entry.hashCode(), entry.getValue());
         }
       }

@@ -123,7 +123,7 @@ public class MapCallsAgent {
       }
     }
 
-    ConcurrentHashMap<MethodDef, MethodDef> replacementMap = new ConcurrentHashMap<>();
+    ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap = new ConcurrentHashMap<>();
 
     // Read the default replacement file
     inputStream = MapCallsAgent.class.getResourceAsStream("/default-replacements.txt");
@@ -155,7 +155,7 @@ public class MapCallsAgent {
 
     // Communicate the list of replaced methods to Randoop
     List<String> signatureList = new ArrayList<>();
-    for (MethodDef def : replacementMap.keySet()) {
+    for (MethodSignature def : replacementMap.keySet()) {
       signatureList.add(def.toString());
     }
     MethodReplacements.addReplacedMethods(signatureList);

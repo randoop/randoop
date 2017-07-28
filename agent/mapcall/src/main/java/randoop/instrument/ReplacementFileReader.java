@@ -75,7 +75,7 @@ class ReplacementFileReader {
    * @throws IOException if there is an error reading the file
    * @return the method replacement map constructed from the file
    */
-  static ConcurrentHashMap<MethodDef, MethodDef> readReplacements(File map_file)
+  static ConcurrentHashMap<MethodSignature, MethodSignature> readReplacements(File map_file)
       throws IOException, ReplacementFileException {
     return readReplacements(new FileReader(map_file), map_file.getName());
   }
@@ -97,9 +97,9 @@ class ReplacementFileReader {
    * @throws IOException if there is an error reading from the file
    * @return the method replacement map constructed from the file
    */
-  static ConcurrentHashMap<MethodDef, MethodDef> readReplacements(Reader in, String filename)
-      throws IOException, ReplacementFileException {
-    ConcurrentHashMap<MethodDef, MethodDef> replacementMap = new ConcurrentHashMap<>();
+  static ConcurrentHashMap<MethodSignature, MethodSignature> readReplacements(
+      Reader in, String filename) throws IOException, ReplacementFileException {
+    ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap = new ConcurrentHashMap<>();
     try (EntryReader reader = new EntryReader(in, filename, "//.*$", null)) {
       for (String line : reader) {
         String trimmed = line.trim();
@@ -140,7 +140,7 @@ class ReplacementFileReader {
    * reflection to check that the replacement method signature is well-formed and corresponds to a
    * method that exists.
    *
-   * <p>See {@link MethodDef#of(String)} for details on expected format of a method signature.
+   * <p>See {@link MethodSignature#of(String)} for details on expected format of a method signature.
    *
    * @param replacementMap the map from a method to a replacement method to which replacement is
    *     added
@@ -150,22 +150,22 @@ class ReplacementFileReader {
    *     class is not found, or the method does not exist
    */
   private static void addMethodReplacement(
-      ConcurrentHashMap<MethodDef, MethodDef> replacementMap,
+      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
       String originalSignature,
       String replacementSignature)
       throws ReplacementException {
 
-    MethodDef originalDef;
+    MethodSignature originalDef;
     try {
-      originalDef = MethodDef.of(originalSignature);
+      originalDef = MethodSignature.of(originalSignature);
     } catch (IllegalArgumentException e) {
       String msg = String.format("Bad original signature: %s", e.getMessage());
       throw new ReplacementException(msg);
     }
 
-    MethodDef replacementDef;
+    MethodSignature replacementDef;
     try {
-      replacementDef = MethodDef.of(replacementSignature);
+      replacementDef = MethodSignature.of(replacementSignature);
     } catch (IllegalArgumentException e) {
       String msg = String.format("Bad replacement signature: %s", e.getMessage());
       throw new ReplacementException(msg);
@@ -220,7 +220,9 @@ class ReplacementFileReader {
    *     the classpath
    */
   private static void discoverClassOrPackageReplacements(
-      ConcurrentHashMap<MethodDef, MethodDef> replacementMap, String original, String replacement)
+      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      String original,
+      String replacement)
       throws ReplacementException {
 
     // Check whether the replacement string corresponds to a class (that can be loaded)
@@ -263,7 +265,7 @@ class ReplacementFileReader {
    * @param replacementClass the {@code Class<>} for the replacement class
    */
   private static void addClassReplacements(
-      ConcurrentHashMap<MethodDef, MethodDef> replacementMap,
+      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
       String originalClassname,
       Class<?> replacementClass)
       throws ReplacementException {
@@ -281,9 +283,9 @@ class ReplacementFileReader {
         continue;
       }
 
-      MethodDef replacementDef = MethodDef.of(method);
+      MethodSignature replacementDef = MethodSignature.of(method);
 
-      MethodDef originalDef = replacementDef.substituteClassname(originalClassname);
+      MethodSignature originalDef = replacementDef.substituteClassname(originalClassname);
       if (originalDef.exists()) {
         // If there is already a replacement, do not overwrite it
         if (replacementMap.get(originalDef) != null) {
@@ -335,7 +337,9 @@ class ReplacementFileReader {
    * @throws ReplacementException if no package corresponding to the replacement is found
    */
   private static void discoverPackageReplacements(
-      ConcurrentHashMap<MethodDef, MethodDef> replacementMap, String original, String replacement)
+      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      String original,
+      String replacement)
       throws ReplacementException {
     String bootpathString = System.getProperty("sun.boot.class.path");
     String javaHome = System.getProperty("java.home");
@@ -390,7 +394,7 @@ class ReplacementFileReader {
    * @throws ReplacementException if no package corresponding to replacement is found
    */
   private static void discoverPackageReplacements(
-      ConcurrentHashMap<MethodDef, MethodDef> replacementMap,
+      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
       String original,
       String replacement,
       ClassLoader loader)
@@ -448,7 +452,7 @@ class ReplacementFileReader {
    *     to {@code replacementMap}, false otherwise
    */
   private static boolean addPackageReplacements(
-      ConcurrentHashMap<MethodDef, MethodDef> replacementMap,
+      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
       String original,
       String replacement,
       JarFile jarFile)
@@ -495,7 +499,7 @@ class ReplacementFileReader {
    * @param replacementDirectory the directory for the replacement package, must be non-null
    */
   private static void addPackageReplacements(
-      ConcurrentHashMap<MethodDef, MethodDef> replacementMap,
+      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
       String original,
       String replacement,
       File replacementDirectory)

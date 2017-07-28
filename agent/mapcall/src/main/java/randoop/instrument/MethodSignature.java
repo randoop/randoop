@@ -12,8 +12,11 @@ import plume.UtilMDE;
 /**
  * Defines a method in a way that can be used to substitute method calls using BCEL. A method is
  * represented by its fully-qualified name and parameter types as BCEL {@code Type}.
+ *
+ * <p>Note: this is similar to the Randoop {@code randoop.reflection.RawSignature} class, but uses
+ * BCEL {@code Type} instead of {@code java.lang.reflect.Class} for the parameter types.
  */
-public class MethodDef {
+public class MethodSignature {
 
   /** fully-qualified class name */
   private final String classname;
@@ -24,17 +27,17 @@ public class MethodDef {
   /** The parameter types */
   private final Type[] paramTypes;
 
-  /** Cached {@link java.lang.reflect.Method} object for this {@link MethodDef} */
+  /** Cached {@link java.lang.reflect.Method} object for this {@link MethodSignature} */
   private Method method;
 
   /**
-   * Creates a {@code MethodDef}.
+   * Creates a {@code MethodSignature}.
    *
    * @param classname the fully-qualified classname
    * @param name the method name
    * @param argTypes the parameter types for the method
    */
-  private MethodDef(String classname, String name, Type[] argTypes) {
+  private MethodSignature(String classname, String name, Type[] argTypes) {
     this.classname = classname;
     this.name = name;
     this.paramTypes = argTypes;
@@ -42,41 +45,44 @@ public class MethodDef {
   }
 
   /**
-   * Creates a {@link MethodDef} object for a {@code java.lang.reflect.Method} object.
+   * Creates a {@link MethodSignature} object for a {@code java.lang.reflect.Method} object.
    *
    * @param method the reflection method object
-   * @return the {@link MethodDef} representation of the reflection object
+   * @return the {@link MethodSignature} representation of the reflection object
    */
-  public static MethodDef of(Method method) {
+  public static MethodSignature of(Method method) {
     Class<?>[] paramTypes = method.getParameterTypes();
     Type[] argTypes = new Type[paramTypes.length];
     for (int i = 0; i < paramTypes.length; i++) {
       argTypes[i] = Type.getType(paramTypes[i]);
     }
-    return new MethodDef(method.getDeclaringClass().getCanonicalName(), method.getName(), argTypes);
+    return new MethodSignature(
+        method.getDeclaringClass().getCanonicalName(), method.getName(), argTypes);
   }
 
   /**
-   * Creates a {@link MethodDef} object for the method called by a BCEL {@code InvokeInstruction}.
+   * Creates a {@link MethodSignature} object for the method called by a BCEL {@code
+   * InvokeInstruction}.
    *
    * @param invocation the BCEL {@code InvokeInstruction} of the method
    * @param pgen the constant pool where the instruction occurs
-   * @return the {@link MethodDef} for the method invoked by the given instruction
+   * @return the {@link MethodSignature} for the method invoked by the given instruction
    */
-  static MethodDef of(InvokeInstruction invocation, ConstantPoolGen pgen) {
-    return new MethodDef(
+  static MethodSignature of(InvokeInstruction invocation, ConstantPoolGen pgen) {
+    return new MethodSignature(
         invocation.getClassName(pgen),
         invocation.getMethodName(pgen),
         invocation.getArgumentTypes(pgen));
   }
 
   /**
-   * Creates a {@link MethodDef} object from string representations of its method name and types.
+   * Creates a {@link MethodSignature} object from string representations of its method name and
+   * types.
    *
    * @param fullMethodName fully-qualified name of method
    * @param args fully-qualified names of parameter types
    */
-  static MethodDef of(String fullMethodName, String[] args) {
+  static MethodSignature of(String fullMethodName, String[] args) {
     String methodName;
     String classname;
     int dotPos = fullMethodName.lastIndexOf('.');
@@ -91,20 +97,20 @@ public class MethodDef {
       argTypes[i] = BCELUtil.classname_to_type(args[i].trim());
     }
 
-    return new MethodDef(classname, methodName, argTypes);
+    return new MethodSignature(classname, methodName, argTypes);
   }
 
   /**
-   * Reads a signature string and builds the corresponding {@link MethodDef}.
+   * Reads a signature string and builds the corresponding {@link MethodSignature}.
    *
    * <p>The signature string must start with the fully-qualified classname, followed by the method
    * name, and then the fully-qualified parameter types in parenthesis.
    *
    * @param signature the method signature string, all types must be fully-qualified
-   * @return the {@link MethodDef} for the method represented by the signature string
+   * @return the {@link MethodSignature} for the method represented by the signature string
    * @throws IllegalArgumentException if {@code signature} is not formatted correctly
    */
-  static MethodDef of(String signature) {
+  static MethodSignature of(String signature) {
     int parenPos = signature.indexOf('(');
     if (parenPos < 1) {
       throw new IllegalArgumentException("Method signature expected");
@@ -119,15 +125,15 @@ public class MethodDef {
     if (!argString.isEmpty()) {
       arguments = argString.split("\\s*,\\s*");
     }
-    return MethodDef.of(name, arguments);
+    return MethodSignature.of(name, arguments);
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof MethodDef)) {
+    if (!(obj instanceof MethodSignature)) {
       return false;
     }
-    MethodDef md = (MethodDef) obj;
+    MethodSignature md = (MethodSignature) obj;
     return this.classname.equals(md.classname)
         && this.name.equals(md.name)
         && Arrays.equals(this.paramTypes, md.paramTypes);
@@ -139,9 +145,9 @@ public class MethodDef {
   }
 
   /**
-   * Returns the fully-qualified signature string for this {@link MethodDef}.
+   * Returns the fully-qualified signature string for this {@link MethodSignature}.
    *
-   * @return the fully-qualified signature string for this {@link MethodDef}
+   * @return the fully-qualified signature string for this {@link MethodSignature}
    */
   @Override
   public String toString() {
@@ -149,40 +155,41 @@ public class MethodDef {
   }
 
   /**
-   * Returns the fully-qualified class name of this {@link MethodDef}.
+   * Returns the fully-qualified class name of this {@link MethodSignature}.
    *
-   * @return the fully-qualified class name of this {@link MethodDef}
+   * @return the fully-qualified class name of this {@link MethodSignature}
    */
   String getClassname() {
     return classname;
   }
 
   /**
-   * Returns the method name for this {@link MethodDef}.
+   * Returns the method name for this {@link MethodSignature}.
    *
-   * @return the method name of this {@link MethodDef}
+   * @return the method name of this {@link MethodSignature}
    */
   String getName() {
     return name;
   }
 
   /**
-   * Returns the parameter types (as BCEL {@code Type} references) for this {@link MethodDef}.
+   * Returns the parameter types (as BCEL {@code Type} references) for this {@link MethodSignature}.
    *
-   * @return the parameter types for this {@link MethodDef}
+   * @return the parameter types for this {@link MethodSignature}
    */
   Type[] getParameterTypes() {
     return paramTypes;
   }
 
   /**
-   * Uses reflection to get the {@code java.lang.reflect.Method} object for this {@link MethodDef}.
+   * Uses reflection to get the {@code java.lang.reflect.Method} object for this {@link
+   * MethodSignature}.
    *
-   * @return the reflection object for this {@link MethodDef}
-   * @throws ClassNotFoundException if the containing class of this {@link MethodDef} is not found
-   *     on the classpath
-   * @throws NoSuchMethodException if the containing class of this {@link MethodDef} does not have
-   *     the represented method as a member
+   * @return the reflection object for this {@link MethodSignature}
+   * @throws ClassNotFoundException if the containing class of this {@link MethodSignature} is not
+   *     found on the classpath
+   * @throws NoSuchMethodException if the containing class of this {@link MethodSignature} does not
+   *     have the represented method as a member
    */
   Method toMethod() throws ClassNotFoundException, NoSuchMethodException {
     if (method != null) {
@@ -229,9 +236,9 @@ public class MethodDef {
   }
 
   /**
-   * Indicates whether the method represented by this {@link MethodDef} is found on the classpath.
-   * (Specifically, whether the containing class can be loaded, and contains the represented
-   * method.)
+   * Indicates whether the method represented by this {@link MethodSignature} is found on the
+   * classpath. (Specifically, whether the containing class can be loaded, and contains the
+   * represented method.)
    *
    * @return true if the the represented method exists on the classpath, false otherwise.
    */
@@ -244,26 +251,27 @@ public class MethodDef {
   }
 
   /**
-   * Returns the {@link MethodDef} formed by substituting the given classname for the classname of
-   * this {@link MethodDef}.
+   * Returns the {@link MethodSignature} formed by substituting the given classname for the
+   * classname of this {@link MethodSignature}.
    *
    * @param classname the substitute classname
-   * @return a new {@link MethodDef} with {@code classname} as the class name, and the signature of
-   *     this
+   * @return a new {@link MethodSignature} with {@code classname} as the class name, and the
+   *     signature of this
    */
-  MethodDef substituteClassname(String classname) {
-    return new MethodDef(classname, this.getName(), this.getParameterTypes());
+  MethodSignature substituteClassname(String classname) {
+    return new MethodSignature(classname, this.getName(), this.getParameterTypes());
   }
 
   /**
-   * Returns the {@link MethodDef} formed by removing the first parameter of this {@link MethodDef}.
+   * Returns the {@link MethodSignature} formed by removing the first parameter of this {@link
+   * MethodSignature}.
    *
-   * @return a new {@link MethodDef} identical to this one except the signature has the first
+   * @return a new {@link MethodSignature} identical to this one except the signature has the first
    *     parameter removed
    */
-  MethodDef removeFirstParameter() {
+  MethodSignature removeFirstParameter() {
     Type[] types = new Type[paramTypes.length - 1];
     System.arraycopy(paramTypes, 1, types, 0, paramTypes.length - 1);
-    return new MethodDef(this.classname, this.getName(), types);
+    return new MethodSignature(this.classname, this.getName(), types);
   }
 }
