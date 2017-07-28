@@ -47,7 +47,7 @@ public class SignatureParser {
    *
    * <p>where {@code package-name} is a period-separated list of identifiers, and <code>
    * argument-list</code> is a comma-separated (spaces-allowed) list of fully-qualified Java raw
-   * types.
+   * types. Array types have the format <code>element-type[]</code>.
    *
    * @param signature the signature string for a method or constructor
    * @param visibility the predicate for determining whether the method or constructor is visible
@@ -88,12 +88,12 @@ public class SignatureParser {
       throw new SignatureParseException("Fully-qualified name expected: " + qualifiedName);
     }
 
-    // check for reflection format for constructor signature
+    // Check whether signature has constructor reflection format
     boolean isConstructor = name.equals("<init>");
 
     /*
-     * qualifiedClassname is either package-name.class-name or package-name if the signature is
-     * a constructor
+     * The qualifiedClassname is either package-name.class-name, or package-name if the signature is
+     * a constructor.
      */
     Class<?> classType;
     try {
@@ -108,7 +108,7 @@ public class SignatureParser {
       }
     }
 
-    // can't use method if class is non-visible
+    // Can't use the method if the class is non-visible
     if (!visibility.isVisible(classType)) {
       System.out.println("Ignoring signature " + signature + " from non-visible " + classType);
       return null;
