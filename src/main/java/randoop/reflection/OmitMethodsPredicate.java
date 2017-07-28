@@ -17,10 +17,10 @@ import randoop.util.Log;
  * Tests whether an operation matches a user-specified pattern, indicating that the operation should
  * be omitted from the operation set.
  *
- * <p>An operation matches a pattern if the pattern matches the {@link
- * TypedClassOperation#getRawSignature()} of the operation or the inherited operation in a
- * superclass. This class provides methods that (1) test the raw signature of an operation, and (2)
- * test the raw signature of an operation and that of the same operation in superclasses.
+ * <p>An operation matches a pattern if the pattern matches the {@link RawSignature} of the
+ * operation or the inherited operation in a superclass. This class provides methods that (1) test
+ * the raw signature of an operation, and (2) test the raw signature of an operation and that of the
+ * same operation in superclasses.
  */
 public class OmitMethodsPredicate {
 
@@ -44,19 +44,24 @@ public class OmitMethodsPredicate {
   }
 
   /**
-   * Indicates whether some omit pattern matches the {@link TypedClassOperation#getRawSignature()}
-   * for the given operation.
+   * Indicates that the operation is a constructor or method call and that some omit pattern matches
+   * the {@link RawSignature} of the operation.
    *
-   * @param operation the constructor or method call to match against the omit patterns of this
-   *     extractor
-   * @return true if the signature matches an omit pattern, and false otherwise.
+   * @param operation the operation to match against the omit patterns of this predicate
+   * @return true if the signature matches an omit pattern, and false otherwise
    */
   boolean shouldOmit(TypedClassOperation operation) {
-    // done if there are no patterns
+    // Done if there are no patterns
     if (omitPatterns.isEmpty()) {
       return false;
     }
-    String signature = operation.getRawSignature();
+    // Only match constructors or methods
+    if (!operation.isConstructorCall() && !operation.isMethodCall()) {
+      return false;
+    }
+
+    String signature = operation.getRawSignature().toString();
+
     for (Pattern pattern : omitPatterns) {
       boolean result = pattern.matcher(signature).find();
       if (Log.isLoggingOn()) {
