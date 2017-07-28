@@ -114,8 +114,10 @@ class RandoopRunStatus {
 
     Path classDir = testEnvironment.classDir;
     CompilationStatus compileStatus =
-        CompilationStatus.compileTests(testClassSourceFiles, classDir.toString());
+        CompilationStatus.compileTests(
+            testClassSourceFiles, testEnvironment.getSystemTestClasspath(), classDir.toString());
     if (!compileStatus.succeeded) {
+      System.out.println("Compilation: ");
       if (randoopExitStatus.exitStatus == 0) {
         for (String line : randoopExitStatus.outputLines) {
           System.err.println(line);

@@ -20,7 +20,7 @@ class SystemTestEnvironment {
   private static final String JACOCO_DIR_NAME = "jacoco";
 
   /** The classpath for the systemtest */
-  private final String classpath;
+  final String classpath;
 
   /** The root for the system test working directories */
   private final Path systemTestWorkingDir;
@@ -32,7 +32,7 @@ class SystemTestEnvironment {
   private final Path testInputClassDir;
 
   /** The path for the mapcall agent jar */
-  private final Path mapcallAgentPath;
+  final Path mapcallAgentPath;
 
   /** The path for the covered-class agent jar */
   final Path coveredClassAgentPath;
