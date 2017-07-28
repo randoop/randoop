@@ -34,6 +34,8 @@ public class RawSignature {
   /**
    * Create a {@link RawSignature} object with the name and parameterTypes.
    *
+   * @param packageName the package name of the class
+   * @param classname the name of the class
    * @param name the method name
    * @param parameterTypes the method parameter types
    */
