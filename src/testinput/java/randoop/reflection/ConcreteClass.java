@@ -48,4 +48,8 @@ public class ConcreteClass {
   public void setThePrivateField(int i) {
     thePrivateField = i;
   }
+
+  public void setTheArrayField(int[] a) {
+    thePublicArray = a;
+  }
 }

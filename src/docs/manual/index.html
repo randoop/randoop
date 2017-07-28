@@ -1152,11 +1152,13 @@ A Randoop "fully-qualified signature" is
   <li><code>package-name.classname.method-name(argument-list)</code> for a method, or
   <li><code>package-name.classname(argument-list)</code> for a constructor
 </ul>
-   
+
 <p>
 where <code>package-name</code> is a period-separated list of identifiers,
 and <code>argument-list</code> is a comma-separated list of fully-qualified
-Java raw types, without spaces.
+Java raw types, without spaces. An array type should be written as expected in Java;
+for instance, the type for an array of <code>Object</code> is written as
+<code>java.lang.Object[]</code>
 </p>
 
 

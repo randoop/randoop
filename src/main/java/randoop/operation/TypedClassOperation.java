@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import plume.UtilMDE;
+import randoop.reflection.RawSignature;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ReferenceType;
@@ -23,7 +24,7 @@ public class TypedClassOperation extends TypedOperation {
   private final ClassOrInterfaceType declaringType;
 
   /** The cached value of {@link #getRawSignature()}. */
-  private String rawSignature = null;
+  private RawSignature rawSignature = null;
 
   /**
    * Creates a {@link TypedClassOperation} for a given {@link CallableOperation} indicating the
@@ -69,12 +70,11 @@ public class TypedClassOperation extends TypedOperation {
    */
   @Override
   public int compareTo(TypedOperation op) {
-    int result = 0;
     if (op instanceof TypedTermOperation) {
       return 1;
     }
     TypedClassOperation other = (TypedClassOperation) op;
-    result = declaringType.compareTo(other.declaringType);
+    int result = declaringType.compareTo(other.declaringType);
     if (result != 0) {
       return result;
     }
@@ -159,6 +159,15 @@ public class TypedClassOperation extends TypedOperation {
     return declaringType + "." + super.getName();
   }
 
+  /**
+   * Returns the name of this operation unqualified by the declaring class.
+   *
+   * @return the unqualified name of this operation
+   */
+  public String getUnqualifiedName() {
+    return super.getName();
+  }
+
   @Override
   public boolean hasWildcardTypes() {
     return getInputTypes().hasWildcard()
@@ -177,34 +186,28 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Returns the raw type signature for this operation. This signature consists of the classname as
-   * a fully-qualified raw type, the method name, and the argument types as fully-qualified raw
-   * types.
+   * Returns the {@link RawSignature} for this operation if it is a method or constructor call.
    *
-   * <p>The raw type signature for a constructor <code>C()</code> is <code>C()</code> instead of the
-   * reflection form <code>C.&lt;init&gt;</code>.
-   *
-   * @return the signature for this operation using raw types for the class and argument types
+   * @return the {@link RawSignature} of this method or constructor operation, null if it is another
+   *     kind of operation
    */
-  public String getRawSignature() {
+  public RawSignature getRawSignature() {
+    // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably both
+    if (!this.isConstructorCall() && !this.isMethodCall()) {
+      return null;
+    }
     if (rawSignature == null) {
-      List<Type> inputTypes = new ArrayList<>();
-      TypeTuple typeTuple = getInputTypes();
-      for (int i = 0; i < typeTuple.size(); i++) {
-        // for non-static method, don't include the receiver in the raw signature
-        if (i == 0 && this.isMethodCall() && !this.isStatic()) {
-          continue;
-        }
-        Type type = typeTuple.get(i);
-        if (type.isGeneric()) {
-          type = type.getRawtype();
-        }
-        inputTypes.add(type);
-      }
-      String methodName =
-          declaringType.getRawtype().toString()
-              + (this.isMethodCall() ? "." + super.getName() : "");
-      rawSignature = methodName + "(" + UtilMDE.join(inputTypes, ",") + ")";
+      Package classPackage = this.declaringType.getPackage();
+      String packageName = (classPackage != null) ? classPackage.getName() : "";
+      String classname = this.getDeclaringType().getRawtype().getUnqualifiedName();
+      String name =
+          this.getUnqualifiedName().equals("<init>") ? classname : this.getUnqualifiedName();
+
+      Class<?>[] parameterTypes =
+          this.isMethodCall()
+              ? ((MethodCall) getOperation()).getMethod().getParameterTypes()
+              : ((ConstructorCall) getOperation()).getConstructor().getParameterTypes();
+      rawSignature = new RawSignature(packageName, classname, name, parameterTypes);
     }
     return rawSignature;
   }

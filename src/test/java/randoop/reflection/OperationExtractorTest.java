@@ -43,7 +43,11 @@ public class OperationExtractorTest {
         c);
     assertThat("name should be", classType.getName(), is(equalTo(c.getName())));
 
-    assertThat("class has 12 operations", operations.size(), is(equalTo(12)));
+    int expectedCount = 13;
+    assertThat(
+        "class has " + expectedCount + " operations",
+        operations.size(),
+        is(equalTo(expectedCount)));
 
     int genericOpCount = 0;
     int wildcardOpCount = 0;

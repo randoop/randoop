@@ -28,6 +28,7 @@ public class SignatureParserTest {
     checkParse("randoop.reflection.ConcreteClass.getThePrivateField()");
     checkParse("randoop.reflection.ConcreteClass.setThePublicField(java.lang.Object)");
     checkParse("randoop.reflection.ConcreteClass.setThePrivateField(int)");
+    checkParse("randoop.reflection.ConcreteClass.setTheArrayField(int[])");
   }
 
   @Test
@@ -72,9 +73,8 @@ public class SignatureParserTest {
             : TypedOperation.forMethod((Method) accessibleObject);
 
     String expectedString = inputString.replace(" ", "").replace(".<init>", "");
+    String signatureString = operation.getRawSignature().toString();
     assertThat(
-        "raw type should be same as input",
-        operation.getRawSignature(),
-        is(equalTo(expectedString)));
+        "raw signature should be same as input", signatureString, is(equalTo(expectedString)));
   }
 }

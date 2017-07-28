@@ -152,9 +152,6 @@ public class OperationExtractor extends DefaultClassVisitor {
         operation = operation.getOperationForType(classType);
       }
     }
-    if (operation == null) {
-      System.out.println("null operation for " + classType + " method " + method.getName());
-    }
     if (!omitPredicate.shouldOmit(classType, operation, method)) {
       addOperation(operation);
     }

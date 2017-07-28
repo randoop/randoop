@@ -18,6 +18,10 @@ import randoop.util.Log;
  */
 public class DefaultReflectionPredicate implements ReflectionPredicate {
 
+  /**
+   * The set of fully-qualified field-names to omit from generated tests. See {@link
+   * randoop.main.GenInputsAbstract#omit_field}.
+   */
   private Set<String> omitFields;
 
   /** Create a reflection predicate. */
@@ -29,7 +33,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * DefaultReflectionFilter creates a filter object that uses default criteria for inclusion of
    * reflection objects.
    *
-   * @param omitFields set of field names to omit
+   * @param omitFields set of fully-qualified field names to omit
    */
   public DefaultReflectionPredicate(Set<String> omitFields) {
     super();
