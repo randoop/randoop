@@ -20,6 +20,9 @@ user manual for details. Also, makes the handling of methods from
 --methodlist consistent with what is done for methods of classes in
 --testclass or --classlist.
 
+Fixes a bug that required input using --testclass or --classlist, preventing
+exclusive use of --methodlist.
+
 New option --operation-history-log will write table of operation used during
 generation to either a file or standard out as indicated by the argument.
 
