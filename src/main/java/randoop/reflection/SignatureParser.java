@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -108,7 +109,7 @@ public class SignatureParser {
         classType = Class.forName(qualifiedName);
         isConstructor = true;
       } catch (ClassNotFoundException e) {
-        throw new SignatureParseException("Class not found for signature " + signature);
+        throw new SignatureParseException("Class not found for signature " + signature, e);
       }
     }
 
@@ -124,7 +125,7 @@ public class SignatureParser {
         argTypes[i] = TypeNames.getTypeForName(arguments[i]);
       } catch (ClassNotFoundException e) {
         throw new SignatureParseException(
-            "Argument type \"" + arguments[i] + "\" not recognized in signature " + signature);
+            "Argument type \"" + arguments[i] + "\" not recognized in signature " + signature, e);
       }
     }
 
@@ -133,7 +134,7 @@ public class SignatureParser {
       try {
         constructor = classType.getConstructor(argTypes);
       } catch (NoSuchMethodException e) {
-        throw new SignatureParseException("Constructor not found for signature " + signature);
+        throw new SignatureParseException("Constructor not found for signature " + signature, e);
       }
       if (reflectionPredicate.test(constructor)) {
         return constructor;
@@ -143,7 +144,15 @@ public class SignatureParser {
       try {
         method = classType.getMethod(name, argTypes);
       } catch (NoSuchMethodException e) {
-        throw new SignatureParseException("Method not found for signature: " + signature);
+        StringBuilder b = new StringBuilder();
+        b.append(
+            String.format(
+                "Method %s (%s) not found in %s for signature %s%n",
+                name, Arrays.toString(argTypes), classType, signature));
+        for (Method m : classType.getDeclaredMethods()) {
+          b.append(String.format("  %s%n", m));
+        }
+        throw new SignatureParseException(b.toString(), e);
       }
       if (reflectionPredicate.test(method)) {
         return method;

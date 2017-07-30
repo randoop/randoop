@@ -8,4 +8,8 @@ public class SignatureParseException extends Exception {
   public SignatureParseException(String string) {
     super(string);
   }
+
+  public SignatureParseException(String string, Throwable cause) {
+    super(string, cause);
+  }
 }
