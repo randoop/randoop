@@ -1,5 +1,7 @@
 package randoop.execution;
 
+import static randoop.execution.RunCommand.ProcessException;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -10,14 +12,14 @@ import java.util.Map;
 /** Provides the environment for running JUnit tests. */
 public class TestEnvironment {
 
-  /** The process timeout in milliseconds. Set initially to 15 minutes. */
-  private long timeout = 900000;
+  /** The process timeout in milliseconds. Defaults to 15 minutes. */
+  private long timeout = 15 * 60 * 1000;
 
   /** The classpath for the tests */
   private final String testClasspath;
 
   /** The map from javaagent jar path to argument string */
-  private final LinkedHashMap<Path, String> agentMap;
+  private final LinkedHashMap<Path, String> agentMap = new LinkedHashMap<>();
 
   /**
    * Creates a test environment with the given classpath and an empty agent map.
@@ -26,7 +28,6 @@ public class TestEnvironment {
    */
   public TestEnvironment(String testClasspath) {
     this.testClasspath = testClasspath;
-    this.agentMap = new LinkedHashMap<>();
   }
 
   /**
@@ -59,7 +60,7 @@ public class TestEnvironment {
    */
   public RunCommand.Status runTest(String testClassName, File workingDirectory)
       throws ProcessException {
-    List<String> command = buildCommandPrefix();
+    List<String> command = commandPrefix();
     command.add(testClassName);
     return RunCommand.run(command, workingDirectory, timeout);
   }
@@ -70,7 +71,7 @@ public class TestEnvironment {
    *
    * @return the command to run JUnit tests in this environment
    */
-  private List<String> buildCommandPrefix() {
+  private List<String> commandPrefix() {
     List<String> command = new ArrayList<>();
     command.add("java");
 

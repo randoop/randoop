@@ -10,28 +10,26 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-/** Compiler for Java classes files. */
+/** Compiler for Java source code files. */
 public class FileCompiler {
 
-  /** The options for running this compiler. */
+  /** The command-line options for running this compiler. */
   private final List<String> options;
 
   /** The compiler object */
   private final JavaCompiler compiler;
 
-  /** Creates a {@link FileCompiler} with no options. */
+  /** Creates a {@link FileCompiler} with no command-line options. */
   public FileCompiler() {
     this(new ArrayList<String>());
   }
 
   /**
-   * Creates a {@link FileCompiler} with the given options.
+   * Creates a {@link FileCompiler} with the given command-line options.
    *
-   * <p>See documentation for <a
-   * href="https://docs.oracle.com/javase/7/docs/api/javax/tools/JavaCompiler.html">JavaCompiler</a>
-   * for details on the compiler options.
-   *
-   * @param options the command-line arguments for the {@code JavaCompiler}
+   * @param options the <a
+   *     href="https://docs.oracle.com/javase/7/docs/api/javax/tools/JavaCompiler.html">command-line</a>
+   *     arguments for the {@code JavaCompiler}
    */
   public FileCompiler(List<String> options) {
     this.options = options;

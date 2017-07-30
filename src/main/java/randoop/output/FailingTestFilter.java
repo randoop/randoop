@@ -1,5 +1,7 @@
 package randoop.output;
 
+import static randoop.execution.RunCommand.ProcessException;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +18,6 @@ import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.compile.FileCompilerException;
 import randoop.compile.SequenceClassLoader;
-import randoop.execution.ProcessException;
 import randoop.execution.RunCommand;
 import randoop.execution.TestEnvironment;
 import randoop.main.GenTests;

@@ -7,14 +7,15 @@ import plume.TimeLimitProcess;
 import randoop.util.StreamUtils;
 
 /**
- * Class providing the {@link #run(List, File, long)} method to run a command in a separate process.
+ * Class providing the {@link #run(List, File, long)} method to run a command in a separate process
+ * with a timeout.
  */
 public class RunCommand {
 
   /**
-   * Runs the given command in the working directory in a new process using the given timeout. If
-   * returns normally, returns a {@link Status} object capturing the command, exit status, and
-   * output from the process.
+   * Runs the given command synchronously in the working directory in a new process using the given
+   * timeout. If the command completes normally, returns a {@link Status} object capturing the
+   * command, exit status, and output from the process.
    *
    * @param command the command to be run in the process
    * @param workingDirectory the working directory for this command
@@ -85,7 +86,7 @@ public class RunCommand {
     public final List<String> errorOutputLines;
 
     /**
-     * Creates a {@link Status} object for the command with captured exit status, and output.
+     * Creates a {@link Status} object for the command with captured exit status and output.
      *
      * @param command the command
      * @param exitStatus the exit status
@@ -101,6 +102,25 @@ public class RunCommand {
       this.exitStatus = exitStatus;
       this.standardOutputLines = standardOutputLines;
       this.errorOutputLines = errorOutputLines;
+    }
+  }
+
+  /**
+   * Exception representing an error that occured while running a process with {@link
+   * RunCommand#run(List, File, long)}.
+   */
+  public static class ProcessException extends Throwable {
+
+    private static final long serialVersionUID = 736230736083495268L;
+
+    /**
+     * Creates a {@link ProcessException} with a message and causing exception.
+     *
+     * @param message the exception message
+     * @param cause the causing exception
+     */
+    public ProcessException(String message, Throwable cause) {
+      super(message, cause);
     }
   }
 }
