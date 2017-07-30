@@ -70,12 +70,10 @@ public abstract class AbstractPerformanceTest {
       b.append(
           "Failure: performance test actual time was greater than expected time."
               + Globals.lineSep);
-      b.append("This failure could have two causes:" + Globals.lineSep + "");
-      b.append(" (1) Our guess as to how fast your machine is is wrong." + Globals.lineSep + "");
+      b.append("This failure could have two causes:" + Globals.lineSep);
+      b.append(" (1) Randoop mis-estimated your machine speed." + Globals.lineSep);
       b.append(
-          " (2) You made a change to Randoop that slows down its performance."
-              + Globals.lineSep
-              + "");
+          " (2) You made a change to Randoop that slows down its performance." + Globals.lineSep);
       fail(b.toString());
     }
   }

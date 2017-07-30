@@ -22,6 +22,7 @@ import plume.Options.ArgException;
 import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
+import randoop.Globals;
 import randoop.MultiVisitor;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
@@ -261,6 +262,8 @@ public class GenTests extends GenInputsAbstract {
     Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
+    String classpath = Globals.getClassPath();
+
     OperationModel operationModel = null;
     try {
       operationModel =
@@ -283,7 +286,6 @@ public class GenTests extends GenInputsAbstract {
     } catch (RandoopClassNameError e) {
       System.out.printf("Error: %s%n", e.getMessage());
       if (e.getMessage().startsWith("No class with name \"")) {
-        String classpath = System.getProperty("java.class.path");
         System.out.println("More specifically, none of the following files could be found:");
         StringTokenizer tokenizer = new StringTokenizer(classpath, File.pathSeparator);
         while (tokenizer.hasMoreTokens()) {
@@ -541,7 +543,7 @@ public class GenTests extends GenInputsAbstract {
    * @return a {@code SimpleLog} object that writes to the location indicated by {@code filename}
    */
   private static SimpleLog getSimpleLog(String filename) {
-    SimpleLog logger = null;
+    SimpleLog logger;
     if (filename.equals("-")) {
       logger = new SimpleLog(true);
     } else {
