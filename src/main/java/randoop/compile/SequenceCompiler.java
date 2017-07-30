@@ -89,12 +89,11 @@ public class SequenceCompiler {
    * #isCompilable(String, String, String)} methods: compiles the given class using the given
    * diagnostics collector.
    *
-   * <p>Always use a new diagnostics collector each compilation to avoid accumulating errors.
-   *
    * @param packageName the package of the class
    * @param classname the simple name of the class
    * @param classSource the source text of the class
-   * @param diagnostics the {@code DiagnosticsCollector} object to use for the compilation
+   * @param diagnostics the {@code DiagnosticsCollector} object to use for the compilation. Always
+   *     use a new diagnostics collector each compilation to avoid accumulating errors.
    * @return true if the class source is successfully compiled, false otherwise
    */
   private boolean compile(
