@@ -101,47 +101,16 @@ public class OmitMethodsPredicate {
       return false;
     }
 
-    // check whether the operation matches an omit pattern directly
-    if (shouldOmit(operation)) {
-      return true;
-    }
-
-    final ClassOrInterfaceType declaringType = operation.getDeclaringType();
-
-    // XXX these two searches are similar, but generalization is awkward.
-
     /*
-     * Search in the interval from classType to declaringType.  These types all have the method.
+     * Search classType and its supertypes that have the method.
      */
     Set<ClassOrInterfaceType> visited = new HashSet<>();
     Queue<ClassOrInterfaceType> typeQueue = new LinkedList<>();
     typeQueue.add(classType);
     while (!typeQueue.isEmpty()) {
       ClassOrInterfaceType type = typeQueue.remove();
-      if (visited.contains(type)) {
-        continue;
-      }
-
-      // all subtypes of declaringType have the method
-      TypedClassOperation superTypeOperation = operation.getOperationForType(type);
-      if (shouldOmit(superTypeOperation)) {
-        return true;
-      }
-
-      typeQueue.addAll(getImmediateSupertypesBelow(type, declaringType));
-      visited.add(type);
-    }
-
-    /*
-     * Search supertypes of declaringType that have the method.
-     */
-    visited = new HashSet<>();
-    typeQueue = new LinkedList<>();
-    typeQueue.add(declaringType);
-    while (!typeQueue.isEmpty()) {
-      ClassOrInterfaceType type = typeQueue.remove();
-      if (visited.contains(type)) {
-        continue;
+      if (!visited.add(type)) {
+        continue; // visited already contained type
       }
 
       Method superclassMethod =
@@ -153,8 +122,6 @@ public class OmitMethodsPredicate {
         }
         typeQueue.addAll(getImmediateSupertypes(type));
       }
-
-      visited.add(type);
     }
 
     return false;
