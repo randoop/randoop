@@ -69,7 +69,7 @@ public class TestEnvironment {
    * Constructs the command to run JUnit tests in this environment minus the name of the test class.
    * Adding the test class name is sufficient to build a runnable command.
    *
-   * @return the command to run JUnit tests in this environment
+   * @return the base command to run JUnit tests in this environment, without a test class name
    */
   private List<String> commandPrefix() {
     List<String> command = new ArrayList<>();

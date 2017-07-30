@@ -13,7 +13,7 @@ import java.util.List;
 public class StreamUtils {
 
   /**
-   * Captures lines from the stream as a {@code List<String>}.
+   * Reads all lines from the stream and returns them in a {@code List<String>}.
    *
    * @param stream the stream to read from
    * @return the list of lines read from the stream
