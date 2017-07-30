@@ -6,8 +6,8 @@ import java.io.PrintStream;
 import randoop.Globals;
 
 /**
- * A {@link CodeWriter} that writes JUnit4 test class source text to a .java file with annotations
- * so that tests are executed in ascending alphabetical order by test method name.
+ * A {@link CodeWriter} that writes JUnit4 test class source text to a {@code .java} file with
+ * annotations so that tests are executed in ascending alphabetical order by test method name.
  */
 public class JavaFileWriter implements CodeWriter {
 
@@ -116,7 +116,7 @@ public class JavaFileWriter implements CodeWriter {
     try {
       return new PrintStream(file);
     } catch (IOException e) {
-      System.out.println("Exception thrown while creating text print stream:" + file.getName());
+      System.out.println("Exception thrown while creating text print stream: " + file.getName());
       e.printStackTrace();
       System.exit(1);
       throw new Error("This can't happen");

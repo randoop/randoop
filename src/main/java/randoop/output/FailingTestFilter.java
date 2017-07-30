@@ -24,8 +24,8 @@ import randoop.main.GenTests;
 
 /**
  * A {@link CodeWriter} that outputs JUnit tests with assertions that fail commented out. Intended
- * to be used with regression tests inorder to filter flaky tests that pass within Randoop, but fail
- * when run from the command line.
+ * to be used with regression tests in order to filter flaky tests that pass within Randoop, but
+ * fail when run from the command line.
  *
  * <p>Writes the class, and then compiles and runs the tests to determine whether there are failing
  * assertions. Each failing assertion is replaced by a comment containing the code for the failing
@@ -34,7 +34,10 @@ import randoop.main.GenTests;
  */
 public class FailingTestFilter implements CodeWriter {
 
-  /** A pattern matching the JUnit4 message indicating the total count of failures */
+  /**
+   * A pattern matching the JUnit4 message indicating the total count of failures. Capturing group 1
+   * is the number of failures.
+   */
   private static final Pattern FAILURE_MESSAGE_PATTERN =
       Pattern.compile("There\\s+(?:was|were)\\s+(\\d+)\\s+failure(?:s|):");
 
@@ -52,11 +55,11 @@ public class FailingTestFilter implements CodeWriter {
   private final SequenceClassLoader classLoader;
 
   /**
-   * Create a {@link FailingTestFilter} for which tests will be run in the environment and using the
-   * given {@link JavaFileWriter} to output test classes.
+   * Create a {@link FailingTestFilter} for which tests will be run in the environment and which
+   * uses the given {@link JavaFileWriter} to output test classes.
    *
    * @param testEnvironment the {@link TestEnvironment} for executing tests during filtering
-   * @param javaFileWriter the {@link JavaFileWriter} to write java files for the classes
+   * @param javaFileWriter the {@link JavaFileWriter} to write {@code .java} files for the classes
    */
   public FailingTestFilter(TestEnvironment testEnvironment, JavaFileWriter javaFileWriter) {
     this.testEnvironment = testEnvironment;
@@ -95,7 +98,7 @@ public class FailingTestFilter implements CodeWriter {
       if (status.exitStatus == 0) {
         passing = true;
       } else {
-        classSource = editSource(classname, classSource, status);
+        classSource = commentFailingAssertions(classname, classSource, status);
       }
       pass++;
     }
@@ -114,7 +117,7 @@ public class FailingTestFilter implements CodeWriter {
   }
 
   /**
-   * Use the failures in the {@code status} from running JUnit with {@code classCode} to identify
+   * Uses the failures in the {@code status} from running JUnit with {@code classCode} to identify
    * lines with failing assertions and replaces them with a line comment with the assertion text
    *
    * @param classname the name of the test class
@@ -124,7 +127,8 @@ public class FailingTestFilter implements CodeWriter {
    * @throws BugInRandoopException if {@code status} contains output for a failure not involving a
    *     Randoop generated test method
    */
-  private String editSource(String classname, String classCode, RunCommand.Status status) {
+  private String commentFailingAssertions(
+      String classname, String classCode, RunCommand.Status status) {
     // JUnit4 writes to standard out, check this doesn't change.
     assert status.errorOutputLines.isEmpty()
         : "Expecting JUnit to write to standard out, but found output on standard error";
