@@ -15,7 +15,6 @@ import plume.Options;
 import plume.Unpublicized;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
-import randoop.util.Util;
 
 /** Container for Randoop options. They are stored as static variables, not instance variables. */
 @SuppressWarnings("WeakerAccess")
@@ -614,8 +613,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Logging, notifications, and troubleshooting Randoop")
-  @Option("Run more quietly: do not display information such as progress updates.")
-  public static boolean noprogressdisplay = false;
+  @Option("Run noisily: display information such as progress updates.")
+  public static boolean progressdisplay = true;
 
   @Option("Display progress message every <int> milliseconds. -1 means no display.")
   public static long progressintervalmillis = 60000;
@@ -708,19 +707,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   public static Set<String> getClassnamesFromArgs() {
-    String errMessage = "ERROR while reading list of classes to test";
-    Set<String> classnames = getStringSetFromFile(classlist, errMessage);
+    Set<String> classnames = getStringSetFromFile(classlist, "tested classes");
     classnames.addAll(testclass);
     return classnames;
   }
 
-  public static Set<String> getStringSetFromFile(File listFile, String errMessage) {
-    return getStringSetFromFile(listFile, errMessage, "^#.*", null);
+  public static Set<String> getStringSetFromFile(File listFile, String fileDescription) {
+    return getStringSetFromFile(listFile, fileDescription, "^#.*", null);
   }
 
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
-      File listFile, String errMessage, String commentRegex, String includeRegex) {
+      File listFile, String fileDescription, String commentRegex, String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile, commentRegex, includeRegex)) {
@@ -731,8 +729,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
           }
         }
       } catch (IOException e) {
-        String msg = Util.toNColsStr(errMessage + ": " + e.getMessage(), 70);
-        System.err.println(msg);
+        System.err.printf(
+            "Error while reading %s file %s: %s%n", listFile, fileDescription, e.getMessage());
         System.exit(1);
       }
     }

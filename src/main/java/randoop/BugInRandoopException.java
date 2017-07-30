@@ -13,11 +13,11 @@ public class BugInRandoopException extends RuntimeException {
     super(message);
   }
 
-  public BugInRandoopException(Exception e) {
-    super(e);
+  public BugInRandoopException(String message, Throwable cause) {
+    super(message, cause);
   }
 
-  public BugInRandoopException(Throwable exception) {
-    super(exception);
+  public BugInRandoopException(Throwable cause) {
+    super(cause);
   }
 }

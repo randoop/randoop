@@ -9,4 +9,4 @@ dependencies, and the Gradle wrapper task.  Those appear in these files:
   randoop/agent/mapcall/mapcall.gradle
 
 
-plume.jar: https://github.com/mernst/plume-lib/releases; version 1.1.1
+plume.jar: https://github.com/mernst/plume-lib/releases; prerelease of version 1.1.2
