@@ -56,7 +56,7 @@ public class SequenceCompiler {
    *
    * @param packageName the package name for the class
    * @param classname the simple name of the class
-   * @param classSource the source test of the class
+   * @param classSource the source text of the class
    * @return true if class source was successfully compiled, false otherwise
    */
   public boolean isCompilable(
