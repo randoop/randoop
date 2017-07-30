@@ -23,6 +23,7 @@ import plume.SimpleLog;
 import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
+import randoop.Globals;
 import randoop.MultiVisitor;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
@@ -267,7 +268,8 @@ public class GenTests extends GenInputsAbstract {
     Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
-    String classpath = System.getProperty("java.class.path");
+    String classpath = Globals.getClassPath();
+
     OperationModel operationModel = null;
     try {
       operationModel =

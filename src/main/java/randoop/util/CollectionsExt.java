@@ -33,7 +33,7 @@ public final class CollectionsExt {
       iter.next();
       counter++;
     }
-    throw new IllegalArgumentException("invalid index:" + index + " size:" + counter);
+    throw new IllegalArgumentException("invalid index: " + index + ", size: " + counter);
   }
 
   /**
@@ -87,7 +87,7 @@ public final class CollectionsExt {
       List<T> subList = list.subList(i * maxLength, (i + 1) * maxLength);
       if (subList.size() != maxLength) {
         throw new IllegalStateException(
-            "the sublist length:" + subList.size() + " should be " + maxLength);
+            "the sublist length " + subList.size() + " should be " + maxLength);
       }
       result.add(subList);
     }
