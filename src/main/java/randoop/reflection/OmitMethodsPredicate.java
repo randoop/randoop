@@ -27,7 +27,7 @@ public class OmitMethodsPredicate {
   /** An OmitMethodsPredicate that does no omission. */
   public static OmitMethodsPredicate NO_OMISSION = new OmitMethodsPredicate(null);
 
-  /** The list of {@code Pattern} objects to omit matching operations */
+  /** {@code Pattern}s that match operations that should be omitted. */
   private final List<Pattern> omitPatterns;
 
   /**
@@ -44,8 +44,8 @@ public class OmitMethodsPredicate {
   }
 
   /**
-   * Indicates that the operation is a constructor or method call and that some omit pattern matches
-   * the {@link RawSignature} of the operation.
+   * Returns true if the operation is a constructor or method call and some omit pattern matches the
+   * {@link RawSignature} of the operation.
    *
    * @param operation the operation to match against the omit patterns of this predicate
    * @return true if the signature matches an omit pattern, and false otherwise
@@ -82,10 +82,11 @@ public class OmitMethodsPredicate {
    *
    * <p>Needs to search all supertypes of {@code classType} that have a declared member
    * corresponding to the method. The type {@code classType} is a subtype of or equal to the
-   * declaring class of the operation. If non-equal, it is necessary to search all types in the
-   * interval between {@code classType} and {@code operation.getDeclaringType()}. Since the method
-   * may be an override in the declaring class, it is also necessary to search for superclasses of
-   * the declaring class that have the method.
+   * declaring class of the operation.
+   *
+   * <p>It is necessary to search all types from {@code classType} up to {@code
+   * operation.getDeclaringType()}, and also to search for superclasses and interfaces of the
+   * declaring class that have the method.
    *
    * @param classType the type to which the method belongs
    * @param operation the operation for the method
@@ -127,7 +128,7 @@ public class OmitMethodsPredicate {
         return true;
       }
 
-      typeQueue.addAll(getBoundSupertypes(type, declaringType));
+      typeQueue.addAll(getImmediateSupertypesBelow(type, declaringType));
       visited.add(type);
     }
 
@@ -150,7 +151,7 @@ public class OmitMethodsPredicate {
         if (shouldOmit(superTypeOperation)) {
           return true;
         }
-        typeQueue.addAll(getSupertypes(type));
+        typeQueue.addAll(getImmediateSupertypes(type));
       }
 
       visited.add(type);
@@ -160,14 +161,14 @@ public class OmitMethodsPredicate {
   }
 
   /**
-   * Returns the set of supertypes for the given class including the superclass and interfaces of
-   * the type restricted to those that are a subtype of the upper bound type.
+   * Returns the set of immediate supertypes for the given class including the superclass and
+   * interfaces of the type restricted to those that are a subtype of the given upper bound type.
    *
    * @param type the type for which supertypes are collected
    * @param upperBoundType the upper bound type
    * @return the set of immediate supertypes that are subtypes of {@code upperBoundType}
    */
-  private static Set<ClassOrInterfaceType> getBoundSupertypes(
+  private static Set<ClassOrInterfaceType> getImmediateSupertypesBelow(
       ClassOrInterfaceType type, ClassOrInterfaceType upperBoundType) {
     Set<ClassOrInterfaceType> boundedSet = new HashSet<>();
 
@@ -188,14 +189,14 @@ public class OmitMethodsPredicate {
   }
 
   /**
-   * Returns the set of supertypes for the given class obtained by collecting the superclass and
-   * interfaces of the type. (Rather than all supertypes returned by {@link
-   * ClassOrInterfaceType#getSuperTypes()}.
+   * Returns the set of immediate supertypes for the given class obtained by collecting the
+   * superclass and interfaces of the type. (Rather than the transitive set of all supertypes
+   * returned by {@link ClassOrInterfaceType#getSuperTypes()}.
    *
    * @param type the type for which supertypes are collected
    * @return the set of immediate supertypes.
    */
-  private static Set<ClassOrInterfaceType> getSupertypes(ClassOrInterfaceType type) {
+  private static Set<ClassOrInterfaceType> getImmediateSupertypes(ClassOrInterfaceType type) {
     Set<ClassOrInterfaceType> supertypes = new HashSet<>();
 
     if (type.equals(JavaTypes.OBJECT_TYPE)) {

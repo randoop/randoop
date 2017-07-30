@@ -6,29 +6,29 @@ import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Parses type signature strings used to identify methods and constructors in input.
- *
- * <p>Note: this duplicates should be factored into a separate source set (aka, module) so that it
- * can also be used in javagents. The patterns are duplicated from {@code ReplacementFileReader}
- * from the mapcall agent.
- */
+/** Parses type signature strings used to identify methods and constructors in input. */
+// TODO: This duplicates should be factored into a separate source set (aka, module) so that it
+// can also be used in javagents. The patterns are duplicated from {@code ReplacementFileReader}
+// from the mapcall agent.
 public class SignatureParser {
   /** Regex for Java identifiers */
   private static final String ID_STRING =
       "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**
-   * Regex to match a sequence of identifiers separated by periods. Corresponds to package names,
-   * fully-qualified classnames, or method names with fully-qualified classname.
+   * Regex to match a sequence of identifiers (or {@code <init>}) separated by periods. Corresponds
+   * to package names, fully-qualified classnames, or method names with fully-qualified classname.
    */
   private static final String DOT_DELIMITED_IDS =
-      ID_STRING + "(?:" + "\\." + "(?:" + ID_STRING + "|" + "<init>" + "))*";
+      ID_STRING + "(?:\\." + ID_STRING + ")*" + "(?:\\.<init>)?";
 
   /**
-   * Naive regex to match a method signature consisting of a fully-qualified classname, a method
-   * name, and argument types in parentheses. The pattern does not include the details of the
-   * argument types.
+   * Naive regex to match a method signature consisting of a fully-qualified method name followed by
+   * anything in parentheses. The parentheses are expected to contain argument types, but the
+   * pattern permits anything.
+   *
+   * <p>Capturing group 1 matches the fully-qualified method name, and capturing group 2 matches the
+   * contents of the parentheses.
    */
   private static final Pattern SIGNATURE_PATTERN =
       Pattern.compile("(" + DOT_DELIMITED_IDS + ")\\(([^)]*)\\)");
@@ -49,7 +49,8 @@ public class SignatureParser {
    * argument-list</code> is a comma-separated (spaces-allowed) list of fully-qualified Java raw
    * types. Array types have the format <code>element-type[]</code>.
    *
-   * @param signature the signature string for a method or constructor
+   * @param signature the string to parse: a signature string for a method or constructor, in the
+   *     above format
    * @param visibility the predicate for determining whether the method or constructor is visible
    * @param reflectionPredicate the predicate for checking reflection policy
    * @return the {@code AccessibleObject} for the method or constructor represented by the string
@@ -67,16 +68,19 @@ public class SignatureParser {
 
     String qualifiedName = signatureMatcher.group(1);
     String argString = signatureMatcher.group(2);
-    String[] arguments = new String[0];
-    if (!argString.isEmpty()) {
+    String[] arguments;
+    if (argString.isEmpty()) {
+      arguments = new String[0];
+    } else {
       arguments = argString.split("\\s*,\\s*");
     }
 
     /*
-     * The qualified name will be one of
+     * The qualified name is one of
      *   package-name.class-name for a constructor
      *   package-name.class-name.<init> for a constructor (reflection notation)
      *   package-name.class-name.method-name for a method
+     * Now, parse it.
      */
     String name;
     String qualifiedClassname;
@@ -93,7 +97,7 @@ public class SignatureParser {
 
     /*
      * The qualifiedClassname is either package-name.class-name, or package-name if the signature is
-     * a constructor.
+     * a constructor not represented as "<init>".
      */
     Class<?> classType;
     try {
@@ -116,14 +120,12 @@ public class SignatureParser {
 
     Class<?>[] argTypes = new Class<?>[arguments.length];
     for (int i = 0; i < arguments.length; i++) {
-      Class<?> c;
       try {
-        c = TypeNames.getTypeForName(arguments[i]);
+        argTypes[i] = TypeNames.getTypeForName(arguments[i]);
       } catch (ClassNotFoundException e) {
         throw new SignatureParseException(
-            "Argument type \"" + arguments[i] + "\" not recognized in arguments " + argString);
+            "Argument type \"" + arguments[i] + "\" not recognized in signature " + signature);
       }
-      argTypes[i] = c;
     }
 
     if (isConstructor) {
