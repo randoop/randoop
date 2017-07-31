@@ -529,6 +529,7 @@ public class GenTests extends GenInputsAbstract {
    * Returns patterns read from the given file.
    *
    * @param file the file to read from, may be null
+   * @return contents of the file, as a set of Patterns
    */
   private Set<Pattern> readOmitMethods(File file) {
     Set<Pattern> result = new LinkedHashSet<>();
@@ -882,6 +883,9 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Return the text of the given file, as a list of lines. Returns null if the {@code filename}
    * argument is null. Terminates execution if the {@code filename} file cannot be read.
+   *
+   * @param filename the file to read
+   * @return the contents of {@code filename}, as a list of strings
    */
   private static List<String> getFileText(String filename) {
     if (filename == null) {
