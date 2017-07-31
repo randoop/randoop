@@ -256,7 +256,7 @@ public abstract class AbstractGenerator {
 
     timer.startTiming();
 
-    if (!GenInputsAbstract.noprogressdisplay) {
+    if (GenInputsAbstract.progressdisplay) {
       progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE);
       progressDisplay.start();
     }
@@ -321,12 +321,12 @@ public abstract class AbstractGenerator {
       Log.logLine("allSequences.size()=" + numGeneratedSequences());
     }
 
-    if (!GenInputsAbstract.noprogressdisplay && progressDisplay != null) {
+    if (GenInputsAbstract.progressdisplay && progressDisplay != null) {
       progressDisplay.displayWithTime();
       progressDisplay.shouldStop = true;
     }
 
-    if (!GenInputsAbstract.noprogressdisplay) {
+    if (GenInputsAbstract.progressdisplay) {
       System.out.println();
       System.out.println("Normal method executions: " + ReflectionExecutor.normalExecs());
       System.out.println("Exceptional method executions: " + ReflectionExecutor.excepExecs());
