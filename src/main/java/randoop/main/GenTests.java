@@ -364,14 +364,10 @@ public class GenTests extends GenInputsAbstract {
             operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
 
     /*
-     * setup for check generation
+     * Create the test check generator for the contracts and observers
      */
     ContractSet contracts = operationModel.getContracts();
-
-    Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
-    // TODO add Object.toString() and Object.hashCode() to exclude set
-    TestCheckGenerator testGen =
-        createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
+    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap);
 
     explorer.addTestCheckGenerator(testGen);
 
@@ -379,7 +375,7 @@ public class GenTests extends GenInputsAbstract {
      * Setup for test predicate
      */
     // Always exclude a singleton sequence with just new Object()
-    TypedOperation objectConstructor = null;
+    TypedOperation objectConstructor;
     try {
       objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
@@ -825,14 +821,12 @@ public class GenTests extends GenInputsAbstract {
    * @param visibility the visibility predicate
    * @param contracts the contract checks
    * @param observerMap the map from types to observer methods
-   * @param excludeAsObservers methods to exclude when generating observer map
    * @return the {@code TestCheckGenerator} that reflects command line arguments.
    */
   public TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
-      MultiMap<Type, TypedOperation> observerMap,
-      Set<TypedOperation> excludeAsObservers) {
+      MultiMap<Type, TypedOperation> observerMap) {
 
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
@@ -858,8 +852,7 @@ public class GenTests extends GenInputsAbstract {
 
       RegressionCaptureVisitor regressionVisitor;
       regressionVisitor =
-          new RegressionCaptureVisitor(
-              expectation, observerMap, excludeAsObservers, visibility, includeAssertions);
+          new RegressionCaptureVisitor(expectation, observerMap, visibility, includeAssertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }

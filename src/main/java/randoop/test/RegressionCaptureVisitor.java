@@ -24,14 +24,13 @@ import randoop.util.Log;
 import randoop.util.MultiMap;
 
 /**
- * An {@code ExecutionVisitor} that records regression checks on the values created by the sequence.
+ * A {@code TestCheckGenerator} that records regression checks on the values created by the
+ * sequence.
  *
  * <p>NOTES:
  *
  * <ul>
  *   <li>Only creates checks over variables whose type is primitive or String.
- *   <li>Does not create checks for the return values of Object.toString() and Object.hashCode() as
- *       their values can vary from run to run.
  *   <li>Does not create checks for Strings that contain the string ";@" as this is a good
  *       indication that at least part of the String came from a call of Object.toString() (e.g.
  *       "[[Ljava.lang.Object;@5780d9]" is the string representation of a list containing one
@@ -40,21 +39,25 @@ import randoop.util.MultiMap;
  */
 public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
+  /** The generator for expected exceptions. */
   private ExpectedExceptionCheckGen exceptionExpectation;
+
+  /** The map from a type to the observer operations for the type */
   private MultiMap<Type, TypedOperation> observerMap;
-  private final Set<TypedOperation> excludeSet;
+
+  /** The visibility predicate */
   private final VisibilityPredicate isVisible;
+
+  /** The flag whether to include regression assertions */
   private boolean includeAssertions;
 
   public RegressionCaptureVisitor(
       ExpectedExceptionCheckGen exceptionExpectation,
       MultiMap<Type, TypedOperation> observerMap,
-      Set<TypedOperation> excludeSet,
       VisibilityPredicate isVisible,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
     this.observerMap = observerMap;
-    this.excludeSet = excludeSet;
     this.isVisible = isVisible;
     this.includeAssertions = includeAssertions;
   }
@@ -71,56 +74,50 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
    * @throws Error if any statement is not executed, or exception occurs before last statement
    */
   @Override
-  public TestChecks visit(ExecutableSequence s) {
+  public TestChecks visit(ExecutableSequence sequence) {
 
     RegressionChecks checks = new RegressionChecks();
 
-    int finalIndex = s.sequence.size() - 1;
+    int finalIndex = sequence.sequence.size() - 1;
 
     // Capture checks for each value created.
     // Recall there are as many values as statements in the sequence.
-    for (int i = 0; i < s.sequence.size(); i++) {
+    for (int i = 0; i < sequence.sequence.size(); i++) {
 
-      Statement st = s.sequence.getStatement(i);
-      ExecutionOutcome result = s.getResult(i);
+      Statement statement = sequence.sequence.getStatement(i);
+      ExecutionOutcome result = sequence.getResult(i);
       if (result instanceof NotExecuted) {
-        throw new Error("Abnormal execution in sequence: " + s);
+        throw new Error("Abnormal execution in sequence: " + sequence);
       } else if (result instanceof NormalExecution) {
         if (includeAssertions) {
-          NormalExecution e = (NormalExecution) result;
+          NormalExecution execution = (NormalExecution) result;
           // If value is like x in "int x = 3" don't capture
           // checks (nothing interesting).
-          if (st.isPrimitiveInitialization()) {
+          if (statement.isPrimitiveInitialization()) {
             continue;
           }
 
           // If value's type is void (i.e. its statement is a void-return method call),
           // don't capture checks (nothing interesting).
-          Type tc = st.getOutputType();
-          if (tc.isVoid()) continue; // no return value.
+          Type outputType = statement.getOutputType();
+          if (outputType.isVoid()) continue; // no return value.
 
-          // If value is the result of Object.toString() or Object.hashCode(),
-          // don't capture checks (value is likely to be non-deterministic across runs).
-          if (excludeSet.contains(st.getOperation())) {
-            continue;
-          }
+          Object runtimeValue = execution.getRuntimeValue();
 
-          Object o = e.getRuntimeValue();
+          Variable var = sequence.sequence.getVariable(i);
 
-          Variable var = s.sequence.getVariable(i);
-
-          if (o == null) {
+          if (runtimeValue == null) {
 
             // Add observer test for null
             checks.add(new ObjectCheck(new IsNull(), var));
 
-          } else if (PrimitiveTypes.isBoxedPrimitive(o.getClass())
-              || (o.getClass().equals(String.class))) {
+          } else if (PrimitiveTypes.isBoxedPrimitive(runtimeValue.getClass())
+              || (runtimeValue.getClass().equals(String.class))) {
 
-            if (o instanceof String) {
+            if (runtimeValue instanceof String) {
               // System.out.printf ("considering String check for seq %08X\n",
               // s.seq_id());
-              String str = (String) o;
+              String str = (String) runtimeValue;
               // Don't create assertions over strings that look like raw object
               // references.
               if (Value.looksLikeObjectToString(str)) {
@@ -143,11 +140,12 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
             // If the value is returned from a Date that we created,
             // don't use it as it's just going to have today's date in it.
-            if (!s.sequence.getInputs(i).isEmpty()) {
-              Variable var0 = s.sequence.getInputs(i).get(0);
+            if (!sequence.sequence.getInputs(i).isEmpty()) {
+              Variable var0 = sequence.sequence.getInputs(i).get(0);
               if (var0.getType().hasRuntimeClass(java.util.Date.class)) {
-                Statement sk = s.sequence.getCreatingStatement(var0);
-                if ((sk.isConstructorCall()) && (s.sequence.getInputs(i).size() == 1)) continue;
+                Statement sk = sequence.sequence.getCreatingStatement(var0);
+                if ((sk.isConstructorCall()) && (sequence.sequence.getInputs(i).size() == 1))
+                  continue;
                 // System.out.printf ("var type %s comes from date %s / %s%n",
                 // s.sequence.getVariable(i).getType(),
                 // s.sequence.getOperation(i), sk);
@@ -161,30 +159,32 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
             } else {
               printMode = PrimValue.PrintMode.EQUALSMETHOD;
             }
-            ObjectCheck oc = new ObjectCheck(new PrimValue(o, printMode), var);
+            ObjectCheck oc = new ObjectCheck(new PrimValue(runtimeValue, printMode), var);
             checks.add(oc);
             // System.out.printf ("Adding objectcheck %s to seq %08X\n",
             // oc, s.seq_id());
 
-          } else if (o.getClass().isEnum() && isVisible.isVisible(o.getClass())) {
-            ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) o), var);
+          } else if (runtimeValue.getClass().isEnum()
+              && isVisible.isVisible(runtimeValue.getClass())) {
+            // XXX Not clear why the visibility check is necessary
+            ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) runtimeValue), var);
             checks.add(oc);
           } else { // its a more complex type with a non-null value
 
             // Assert that the value is not null.
             // Exception: if the value comes directly from a constructor call,
             // not interesting that it's non-null; omit the check.
-            if (!(st.isConstructorCall())) {
+            if (!(statement.isConstructorCall())) {
               checks.add(new ObjectCheck(new IsNotNull(), var));
             }
 
             // Put out any observers that exist for this type
-            Variable var0 = s.sequence.getVariable(i);
+            Variable var0 = sequence.sequence.getVariable(i);
             Set<TypedOperation> observers = observerMap.getValues(var0.getType());
             if (observers != null) {
               for (TypedOperation m : observers) {
 
-                ExecutionOutcome outcome = m.execute(new Object[] {o}, null);
+                ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue}, null);
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
                       "unexpected error invoking observer "
@@ -195,9 +195,9 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
                           + var.getType()
                           + "]"
                           + " with value "
-                          + o
+                          + runtimeValue
                           + " ["
-                          + o.getClass()
+                          + runtimeValue.getClass()
                           + "]";
                   throw new RuntimeException(msg, ((ExceptionalExecution) outcome).getException());
                 }
@@ -232,7 +232,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
         // Otherwise, add the check determined by exceptionExpectation
         ExceptionalExecution e = (ExceptionalExecution) result;
-        checks.add(exceptionExpectation.getExceptionCheck(e, s, i));
+        checks.add(exceptionExpectation.getExceptionCheck(e, sequence, i));
 
       } else { // statement not executed
         throw new Error("Unexecuted statement in sequence");

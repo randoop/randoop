@@ -141,7 +141,7 @@ public class SpecialCoveredClassTest {
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     TestCheckGenerator checkGenerator =
-        genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
+        genTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClasses));
     //    TestUtils.setOperationLog(testGenerator);
