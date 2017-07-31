@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import randoop.Globals;
@@ -39,7 +41,8 @@ import randoop.util.Log;
 import randoop.util.MultiMap;
 
 /**
- * {@code OperationModel} represents the information context from which tests are generated. The
+ * {@code OperationModel} represents the information context from which tests are generated. It is
+ * also used to store information needed for the static weighting scheme of extracted literals. The
  * model includes:
  *
  * <ul>
@@ -68,6 +71,13 @@ public class OperationModel {
 
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
+
+  /**
+   * The map of literals to their term frequency: tf(t,d), where t is a literal and d is all classes
+   * under test. Note that this is the raw frequency, just the number of times they occur within all
+   * classes under test.
+   */
+  private Map<Sequence, Integer> literalsTermFrequency;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -101,6 +111,7 @@ public class OperationModel {
     coveredClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();
     classCount = 0;
+    literalsTermFrequency = new HashMap<>();
   }
 
   /**
@@ -178,6 +189,11 @@ public class OperationModel {
             case PACKAGE:
               assert pkg != null;
               compMgr.addPackageLevelLiteral(pkg, seq);
+              break;
+            case CLASS_OR_ALL:
+              compMgr.addClassLevelLiteral(
+                  type, seq); // add sequence to the collection of class literals
+              compMgr.addGeneratedSequence(seq); // add sequence to the collection of all sequences
               break;
             case ALL:
               compMgr.addGeneratedSequence(seq);
@@ -287,6 +303,17 @@ public class OperationModel {
   }
 
   /**
+   * The map of literals to their term frequency: tf(t,d), where t is a literal and d is all classes
+   * under test. Note that this is the raw frequency, just the number of times they occur within all
+   * classes under test.
+   *
+   * @return map of literals to their term frequency: tf(t,d)
+   */
+  public Map<Sequence, Integer> getLiteralsTermFrequency() {
+    return literalsTermFrequency;
+  }
+
+  /**
    * Gathers class types to be used in a run of Randoop and adds them to this {@code
    * OperationModel}. Specifically, collects types for classes-under-test, objects for covered-class
    * heuristic, concrete input types, annotated test values, and literal values. Also collects
@@ -311,8 +338,10 @@ public class OperationModel {
     mgr.add(new TypeExtractor(this.inputTypes, visibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
+
+    // We supply the term frequency map to obtain the tf-idf weight for extracted literals
     if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.literalsTermFrequency));
     }
 
     // Collect classes under test
