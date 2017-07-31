@@ -19,4 +19,6 @@ public interface TestCheckGenerator {
    * @return the generated check set for the sequence
    */
   TestChecks visit(ExecutableSequence s);
+
+  TestCheckGenerator getGenerator();
 }

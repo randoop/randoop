@@ -944,6 +944,183 @@ public class RandoopSystemTest {
         is(equalTo(runStatus.regressionTestCount)));
   }
 
+  //TODO figure out why Randoop wont generate the error test for this input class/spec
+  @Test
+  public void runConditionInputTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("condition-input");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.condition.ClassWithConditions");
+    options.setOption(
+        "specifications", "resources/systemTest/randoop/condition/classwithconditions.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("outputLimit", "200");
+
+    //TODO should check for invalid test count
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+  }
+
+  /** test input based on Toradocu tutorial example */
+  @Test
+  public void runToradocuExampleTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("toradocu-input");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("net.Connection");
+    options.setOption(
+        "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("outputLimit", "200");
+
+    //TODO should check for invalid test count
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+  }
+
+  //TODO need these 3 together: counts should not change when standard classification changes
+  @Test
+  public void runToradocuExampleWithInvalidExceptionsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("toradocu-invalid");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("net.Connection");
+    options.setOption(
+        "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("outputLimit", "200");
+    options.setOption("checked-exception", "INVALID");
+    options.setOption("unchecked-exception", "INVALID");
+
+    //TODO should check for invalid test count
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+  }
+
+  @Test
+  public void runToradocuExampleWithErrorExceptionsTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("toradocu-error");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("net.Connection");
+    options.setOption(
+        "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("outputLimit", "200");
+    options.setOption("checked-exception", "ERROR");
+    options.setOption("unchecked-exception", "ERROR");
+
+    //TODO should check for invalid test count
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+  }
+
+  @Test
+  public void runInheritedToradocuTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("toradocu-inherited");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("pkg.SubClass");
+    options.setOption("specifications", "resources/systemTest/pkg/pkg_subclass_toradocu_spec.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("outputLimit", "200");
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+  }
+
+  /**
+   * Tests pre-conditions that throw exceptions. The methods in the class under test with failing
+   * preconditions should not be covered by the generated tests.
+   *
+   * <p>The generation limits are set carefully, since only a few sequences are generated.
+   */
+  @Test
+  public void runConditionWithExceptionTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("condition-with-exception");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.condition.ConditionWithException");
+    options.setOption(
+        "specifications", "resources/systemTest/randoop/condition/condition_with_exception.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("outputLimit", "200");
+    options.setOption("attemptedLimit", "12");
+
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+
+    // These methods should not be called because the pre-conditions throw exceptions
+    coverageChecker.exclude("randoop.condition.ConditionWithException.getOne()");
+    coverageChecker.exclude("randoop.condition.ConditionWithException.getZero()");
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
+  }
+
+  @Test
+  public void runInheritedConditionsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("conditions-inherited");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.condition.OverridingConditionsClass");
+    options.setOption(
+        "specifications", "resources/systemTest/randoop/condition/overridingconditionsclass.json");
+    options.setErrorBasename("ConditionsError");
+    options.setRegressionBasename("ConditionsRegression");
+    options.setOption("outputLimit", "200");
+
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
+  @Test
+  public void runSuperclassConditionsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("conditions-superclass");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.condition.OverridingConditionsClass");
+    options.setOption(
+        "specifications", "resources/systemTest/randoop/condition/conditionsuperclass.json");
+    options.setErrorBasename("ConditionsError");
+    options.setRegressionBasename("ConditionsRegression");
+    options.setOption("outputLimit", "200");
+
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
+  @Test
+  public void runInterfaceConditionsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("conditions-interface");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.condition.OverridingConditionsClass");
+    options.setOption(
+        "specifications", "resources/systemTest/randoop/condition/conditionsinterface.json");
+    options.setErrorBasename("ConditionsError");
+    options.setRegressionBasename("ConditionsRegression");
+    options.setOption("outputLimit", "200");
+
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
+  @Test
+  public void runSuperSuperclassConditionsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("conditions-supersuperclass");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.condition.OverridingConditionsClass");
+    options.setOption(
+        "specifications", "resources/systemTest/randoop/condition/conditionsupersuperclass.json");
+    options.setErrorBasename("ConditionsError");
+    options.setRegressionBasename("ConditionsRegression");
+    options.setOption("outputLimit", "200");
+
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
   /**
    * recreate problem with tests over Google Guava where value from private enum returned by public
    * method and value used in {@code randoop.test.ObjectCheck} surfaces in test code, creating
@@ -972,6 +1149,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("CompError");
     options.setRegressionBasename("CompRegression");
     options.setOption("attemptedLimit", "3000");
+    options.setFlag("check-compilable");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.ignore("compileerr.WildcardCollection.getAStringList()");
@@ -1192,14 +1370,16 @@ public class RandoopSystemTest {
     RandoopRunStatus runStatus =
         RandoopRunStatus.generateAndCompile(environment, options, allowRandoopFailure);
 
-    System.out.println("Randoop:");
-    boolean prevLineIsBlank = false;
-    for (String line : runStatus.processStatus.outputLines) {
-      if ((line.isEmpty() && !prevLineIsBlank)
-          || (!line.isEmpty() && !line.startsWith("Progress update:"))) {
-        System.out.println(line);
+    if (!allowRandoopFailure) {
+      System.out.println("Randoop:");
+      boolean prevLineIsBlank = false;
+      for (String line : runStatus.processStatus.outputLines) {
+        if ((line.isEmpty() && !prevLineIsBlank)
+            || (!line.isEmpty() && !line.startsWith("Progress update:"))) {
+          System.out.println(line);
+        }
+        prevLineIsBlank = line.isEmpty();
       }
-      prevLineIsBlank = line.isEmpty();
     }
     return runStatus;
   }

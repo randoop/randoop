@@ -112,4 +112,9 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
     }
     return checks;
   }
+
+  @Override
+  public TestCheckGenerator getGenerator() {
+    return this;
+  }
 }

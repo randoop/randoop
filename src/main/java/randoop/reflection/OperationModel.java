@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import randoop.Globals;
+import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
@@ -104,7 +105,7 @@ public class OperationModel {
   }
 
   /**
-   * Factory method to construct an operation model for a particular set of classes
+   * Factory method to construct an operation model for a particular set of classes.
    *
    * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
    *     classes and class members
@@ -115,6 +116,7 @@ public class OperationModel {
    * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
+   * @param operationCollection the collection of specifications for operations
    * @return the operation model for the parameters
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
@@ -126,7 +128,8 @@ public class OperationModel {
       Set<String> coveredClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList)
+      List<String> literalsFileList,
+      SpecificationCollection operationCollection)
       throws OperationParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
@@ -139,11 +142,48 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    model.addOperations(model.classTypes, visibility, reflectionPredicate);
+    model.addOperations(model.classTypes, visibility, reflectionPredicate, operationCollection);
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
     return model;
+  }
+
+  /**
+   * Factory method to construct an operation model for a particular set of classes without behavior
+   * specifications.
+   *
+   * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
+   *     classes and class members
+   * @param reflectionPredicate the reflection predicate to determine which classes and class
+   *     members are used
+   * @param classnames the names of classes under test
+   * @param exercisedClassnames the names of classes to be tested by exercised heuristic
+   * @param methodSignatures the signatures of methods to be added to the model
+   * @param errorHandler the handler for bad file name errors
+   * @param literalsFileList the list of literals file names
+   * @return the operation model for the parameters
+   * @throws OperationParseException if a method signature is ill-formed
+   * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   */
+  public static OperationModel createModel(
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      Set<String> classnames,
+      Set<String> exercisedClassnames,
+      Set<String> methodSignatures,
+      ClassNameErrorHandler errorHandler,
+      List<String> literalsFileList)
+      throws NoSuchMethodException, OperationParseException {
+    return createModel(
+        visibility,
+        reflectionPredicate,
+        classnames,
+        exercisedClassnames,
+        methodSignatures,
+        errorHandler,
+        literalsFileList,
+        null);
   }
 
   /**
@@ -387,15 +427,19 @@ public class OperationModel {
    * @param concreteClassTypes the declaring class types for the operations
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
+   * @param operationConditions the collection of {@link
+   *     randoop.condition.specification.OperationSpecification}
    */
   private void addOperations(
       Set<ClassOrInterfaceType> concreteClassTypes,
       VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate) {
+      ReflectionPredicate reflectionPredicate,
+      SpecificationCollection operationConditions) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
       mgr.apply(
-          new OperationExtractor(classType, operations, reflectionPredicate, visibility),
+          new OperationExtractor(
+              classType, operations, reflectionPredicate, visibility, operationConditions),
           classType.getRuntimeClass());
     }
   }

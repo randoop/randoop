@@ -55,11 +55,13 @@ class RandoopOptions {
     options.setOption("timeLimit", "0");
     options.unsetFlag("minimize-error-test");
 
+    // Use value from environment variable if command-line argument was not set
     String selectionLog = System.getProperty("randoop.selection.log");
     if (selectionLog != null && !selectionLog.isEmpty()) {
       options.setOption("selection-log", selectionLog);
     }
 
+    // Use value from environment variable if command-line argument was not set
     String operationLog = System.getProperty("randoop.operation.history.log");
     if (operationLog != null && !operationLog.isEmpty()) {
       options.setOption("operation-history-log", operationLog);

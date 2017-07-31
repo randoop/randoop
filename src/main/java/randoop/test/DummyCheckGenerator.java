@@ -9,4 +9,9 @@ public class DummyCheckGenerator implements TestCheckGenerator {
   public TestChecks visit(ExecutableSequence s) {
     return new RegressionChecks();
   }
+
+  @Override
+  public TestCheckGenerator getGenerator() {
+    return this;
+  }
 }

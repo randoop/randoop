@@ -39,7 +39,16 @@ public class ExtendGenerator implements TestCheckGenerator {
     if (checks.hasInvalidBehavior() || checks.hasErrorBehavior()) {
       return checks;
     } else {
-      return secondGenerator.visit(s);
+      TestChecks secondChecks = secondGenerator.visit(s);
+      if (secondChecks.hasChecks()) {
+        return secondGenerator.visit(s);
+      }
+      return checks;
     }
+  }
+
+  @Override
+  public TestCheckGenerator getGenerator() {
+    return firstGenerator;
   }
 }

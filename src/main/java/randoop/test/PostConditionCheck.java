@@ -2,8 +2,11 @@ package randoop.test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import plume.UtilMDE;
 import randoop.Globals;
-import randoop.condition.Condition;
+import randoop.condition.PostCondition;
 import randoop.contract.ObjectContractUtils;
 import randoop.sequence.Execution;
 import randoop.sequence.Variable;
@@ -12,7 +15,7 @@ import randoop.sequence.Variable;
 public class PostConditionCheck implements Check {
 
   /** The post-condition */
-  private final Condition postcondition;
+  private final List<PostCondition> postConditions;
 
   /** The input variables for the condition */
   private final Variable[] inputVariables;
@@ -20,12 +23,46 @@ public class PostConditionCheck implements Check {
   /**
    * Creates a {@link PostConditionCheck}
    *
-   * @param postcondition the post-condition for this check
+   * @param postConditions the post-condition for this check
    * @param inputVariables the input variables for this condition check
    */
-  public PostConditionCheck(Condition postcondition, ArrayList<Variable> inputVariables) {
-    this.postcondition = postcondition;
+  public PostConditionCheck(List<PostCondition> postConditions, List<Variable> inputVariables) {
+    this.postConditions = postConditions;
     this.inputVariables = inputVariables.toArray(new Variable[0]);
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof PostConditionCheck)) {
+      return false;
+    }
+    PostConditionCheck other = (PostConditionCheck) object;
+    if (!this.postConditions.equals(other.postConditions)) {
+      return false;
+    }
+    if (this.inputVariables.length != other.inputVariables.length) {
+      return false;
+    }
+    for (int i = 0; i < this.inputVariables.length; i++) {
+      if (!this.inputVariables[i].equals(other.inputVariables[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(postConditions, Arrays.hashCode(inputVariables));
+  }
+
+  @Override
+  public String toString() {
+    List<String> conditionStrings = new ArrayList<>();
+    for (PostCondition condition : postConditions) {
+      conditionStrings.add(condition.getConditionSource());
+    }
+    return UtilMDE.join(conditionStrings, "&&");
   }
 
   @Override
@@ -35,24 +72,30 @@ public class PostConditionCheck implements Check {
 
   @Override
   public String toCodeStringPostStatement() {
-    String conditionString =
-        ObjectContractUtils.localizeContractCode(
-            postcondition.getConditionString(), inputVariables);
-    return Globals.lineSep
-        + "// Checks the post-condition: "
-        + postcondition.getComment()
-        + Globals.lineSep
-        + "org.junit.Assert.assertTrue("
-        + "\"Contract failed: "
-        + postcondition.getComment()
-        + "\", "
-        + conditionString
-        + ");";
+    StringBuilder builder = new StringBuilder();
+    for (PostCondition postCondition : postConditions) {
+      String conditionString =
+          ObjectContractUtils.localizeContractCode(
+              postCondition.getConditionSource(), inputVariables);
+      builder
+          .append("// Checks the post-condition: ")
+          .append(postCondition.getComment())
+          .append(Globals.lineSep);
+      //TODO output whether postcondition failed or succeeded
+      builder
+          .append("org.junit.Assert.assertTrue( \"Post-condition: ")
+          .append(postCondition.getComment())
+          .append("\",")
+          .append(conditionString)
+          .append(");")
+          .append(Globals.lineSep);
+    }
+    return builder.toString();
   }
 
   @Override
   public String getValue() {
-    return postcondition.getClass().getName() + "(" + postcondition.getConditionString() + ")";
+    return postConditions.getClass().getName() + "(" + UtilMDE.join(postConditions, ",") + ")";
   }
 
   @Override
@@ -70,5 +113,14 @@ public class PostConditionCheck implements Check {
   @Override
   public boolean evaluate(Execution execution) {
     return false;
+  }
+
+  /**
+   * Get the list of {@link PostCondition} objects for this {@link PostConditionCheck}.
+   *
+   * @return the {@link PostCondition} list for this check
+   */
+  public List<PostCondition> getPostConditions() {
+    return postConditions;
   }
 }

@@ -86,6 +86,11 @@ public class JUnitCreatorTest {
         checks.add(new ObjectCheck(new PrimValue(i, PrimValue.PrintMode.EQUALSEQUALS), variable));
         return checks;
       }
+
+      @Override
+      public TestCheckGenerator getGenerator() {
+        return this;
+      }
     };
   }
 }

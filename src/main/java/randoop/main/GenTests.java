@@ -26,6 +26,8 @@ import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MultiVisitor;
+import randoop.condition.RandoopConditionError;
+import randoop.condition.SpecificationCollection;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
@@ -263,6 +265,18 @@ public class GenTests extends GenInputsAbstract {
 
     String classpath = Globals.getClassPath();
 
+    /*
+     * Setup pre/post/throws-conditions for operations.
+     * Currently only uses Toradocu generated conditions.
+     */
+    SpecificationCollection operationConditions = null;
+    try {
+      operationConditions = SpecificationCollection.create(GenInputsAbstract.specifications);
+    } catch (RandoopConditionError e) {
+      System.out.println("Error when reading conditions: " + e.getMessage());
+      System.exit(1);
+    }
+
     OperationModel operationModel = null;
     try {
       operationModel =
@@ -273,7 +287,8 @@ public class GenTests extends GenInputsAbstract {
               coveredClassnames,
               methodSignatures,
               classNameErrorHandler,
-              GenInputsAbstract.literals_file);
+              GenInputsAbstract.literals_file,
+              operationConditions);
     } catch (OperationParseException e) {
       System.out.printf("%nError: parse exception thrown %s%n", e);
       System.out.println("Exiting Randoop.");
@@ -302,6 +317,9 @@ public class GenTests extends GenInputsAbstract {
         }
         System.out.println("Correct your classpath or the class name and re-run Randoop.");
       }
+      System.exit(1);
+    } catch (RandoopConditionError e) {
+      System.out.printf("Error: %s%n", e.getMessage());
       System.exit(1);
     }
     assert operationModel != null;
@@ -467,6 +485,8 @@ public class GenTests extends GenInputsAbstract {
     } catch (RandoopGenerationError e) {
       throw new BugInRandoopException(
           "Error in generation with operation " + e.getInstantiatedOperation(), e);
+    } catch (RandoopConditionError e) {
+      throw new BugInRandoopException("Error during generation: " + e.getMessage(), e);
     } catch (SequenceExecutionException e) {
       throw new BugInRandoopException("Error executing generated sequence", e);
     } catch (RandoopLoggingError e) {

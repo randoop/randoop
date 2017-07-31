@@ -15,9 +15,12 @@ import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
+import randoop.condition.OutcomeTable;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
+import randoop.test.InvalidChecks;
+import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
 import randoop.types.ReferenceType;
@@ -243,9 +246,12 @@ public class ExecutableSequence {
    *   <li>Executes each statement in the sequence. Before executing each statement calls the given
    *       visitor's <code>visitBefore</code> method. After executing each statement, calls the
    *       visitor's <code>visitAfter</code> method.
+   *   <li>Tests the pre-, post- and throws-conditions for the last statement. (See {@link
+   *       randoop.condition} for details.)
    *   <li>Execution stops if one of the following conditions holds:
    *       <ul>
    *         <li>All statements in the sequences have been executed.
+   *         <li>A pre-condition for the final statement fails
    *         <li>A statement's execution results in an exception and <code>stop_on_exception==true
    *             </code>.
    *         <li>A <code>null</code> input value is implicitly passed to the statement (i.e., not
@@ -256,6 +262,7 @@ public class ExecutableSequence {
    *
    * </ul>
    *
+   * @see randoop.condition
    * @param visitor the {@code ExecutionVisitor}
    * @param gen the check generator
    * @param ignoreException the flag to indicate exceptions should be ignored
@@ -279,6 +286,19 @@ public class ExecutableSequence {
       Object[] inputValues;
 
       inputValues = getRuntimeInputs(executionResults.theList, inputs);
+
+      if (i == this.sequence.size() - 1) {
+        TypedOperation operation = this.sequence.getStatement(i).getOperation();
+        if (operation.isConstructorCall() || operation.isMethodCall()) {
+          OutcomeTable outcomeTable = operation.checkConditions(inputValues);
+          if (outcomeTable.isInvalid()) {
+            checks = new InvalidChecks();
+            checks.add(new InvalidValueCheck(this, i));
+            return;
+          }
+          gen = outcomeTable.addPostCheckGenerator(gen);
+        }
+      }
 
       visitor.visitBeforeStatement(this, i);
       executeStatement(sequence, executionResults.theList, i, inputValues);

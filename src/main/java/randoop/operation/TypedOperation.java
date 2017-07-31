@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Objects;
 import randoop.ExecutionOutcome;
 import randoop.condition.Condition;
+import randoop.condition.OperationConditions;
+import randoop.condition.OutcomeTable;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -41,6 +43,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /** The output type. */
   private final Type outputType;
 
+  /** The conditions on this operation */
+  private OperationConditions conditions;
+
   /**
    * Create typed operation for the given {@link Operation}.
    *
@@ -52,6 +57,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
+    this.conditions = null;
   }
 
   @Override
@@ -532,6 +538,22 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
+   * Tests the conditions for this operation against the argument values and returns the {@link
+   * OutcomeTable} indicating the results of checking the pre-conditions of the specifications of
+   * the oepration.
+   *
+   * @param values the argument values
+   * @return the {@link OutcomeTable} indicating the results of checking the pre-conditions of the
+   *     specifications of the operation
+   */
+  public OutcomeTable checkConditions(Object[] values) {
+    if (conditions != null) {
+      return conditions.check(addNullReceiver(values));
+    }
+    return new OutcomeTable();
+  }
+
+  /**
    * Fixes the argument array for checking an {@link Operation} -- inserting {@code null} as first
    * argument when this operation is static.
    *
@@ -546,5 +568,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       System.arraycopy(values, 0, args, 1, values.length);
     }
     return args;
+  }
+
+  public void addConditions(OperationConditions conditions) {
+    this.conditions = conditions;
   }
 }

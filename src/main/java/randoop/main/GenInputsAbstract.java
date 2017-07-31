@@ -296,10 +296,39 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType sof_exception = BehaviorType.INVALID;
 
   /**
+   * Read JSON condition file to use specifications to control how tests are generated and
+   * classified.
+   *
+   * <ul>
+   *   <li>
+   *       <p>Param-conditions are pre-conditions on method/constructor calls, with test sequences
+   *       where the condition fails being classified as {@link BehaviorType#INVALID}.
+   *   <li>
+   *       <p>Return-conditions are post-conditions on method/constructor calls, consisting of a
+   *       guard and a property. If the inputs to the call satisfy the guard, then the property is
+   *       checked after the call. If the property fails, the sequence is classified as {@link
+   *       BehaviorType#ERROR}.
+   *   <li>Throws-conditions are post-conditions on expected exceptions: if the inputs to the call
+   *       satisfy the condition, when the exception is thrown the sequence is {@link
+   *       BehaviorType#EXPECTED}, but, if it is not, the sequence is classified as {@link
+   *       BehaviorType#ERROR}. If the throws-condition is not satisfied by the input, then ordinary
+   *       classification is applied.
+   * </ul>
+   *
+   * See the User documentation for more details.
+   */
+  @Option("Use specifications from JSON file to classify behaviors for methods/constructors")
+  public static List<File> specifications = null;
+
+  /** Allow Randoop to fail if the Java condition text of a specification cannot be compiled. */
+  @Option("Terminate Randoop if specification condition is uncompilable")
+  public static boolean fail_on_condition_error = false;
+
+  ///////////////////////////////////////////////////////////////////
+  /**
    * File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
    */
-  ///////////////////////////////////////////////////////////////////
   @OptionGroup("Observer methods")
   @Option("File containing observer functions")
   // This file is used to populate RegressionCaptureVisitor.observer_map
