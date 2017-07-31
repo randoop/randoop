@@ -73,7 +73,7 @@ class CheckRepExtractor extends DefaultClassVisitor {
         throw new RuntimeException(msg);
       }
 
-      if (!GenInputsAbstract.noprogressdisplay) {
+      if (GenInputsAbstract.progressdisplay) {
         printDetectedAnnotatedCheckRepMethod(m);
       }
       contracts.add(new CheckRepContract(m));

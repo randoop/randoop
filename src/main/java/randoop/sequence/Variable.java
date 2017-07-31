@@ -13,7 +13,9 @@ public class Variable implements Comparable<Variable> {
 
   public Variable(Sequence owner, int i) {
     if (owner == null) throw new IllegalArgumentException("missing owner");
-    if (i < 0) throw new IllegalArgumentException("negative index:" + i);
+    if (i < 0) {
+      throw new IllegalArgumentException("negative index: " + i);
+    }
     this.sequence = owner;
     this.index = i;
   }

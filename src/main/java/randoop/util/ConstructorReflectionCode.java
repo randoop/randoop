@@ -34,7 +34,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
     if (!this.constructor.isAccessible()) {
       this.constructor.setAccessible(true);
-      Log.logLine("not accessible:" + this.constructor);
+      Log.logLine("not accessible: " + this.constructor);
       // TODO something is bizarre - it seems that a public method can be
       // not-accessible sometimes. RatNum(int,int)
       // TODO you cannot just throw the exception below - because no sequences
@@ -76,13 +76,13 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    String ret = "Call to " + constructor + " args:" + Arrays.toString(inputs);
+    String ret = "Call to " + constructor + ", args: " + Arrays.toString(inputs);
     if (hasRunAlready()) {
       return ret + " not run yet";
     } else if (exceptionThrown == null) {
-      return ret + " returned:" + ret;
+      return ret + " returned: " + ret;
     } else {
-      return ret + " threw:" + exceptionThrown;
+      return ret + " threw: " + exceptionThrown;
     }
   }
 }

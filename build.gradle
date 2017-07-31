@@ -564,8 +564,8 @@ task clonePlumeLib {
         commandLine 'chmod', '-R', '+x', "$buildDir/utils/plume-lib/bin"
       }
     } else {
-      println("WARNING: not cloning plume-lib because already exists.")
-      println("         Force clone by running after clean")
+      def grgit = org.ajoberstar.grgit.Grgit.open(dir: plumeFolder)
+      grgit.pull()
     }
   }
 }
