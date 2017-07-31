@@ -1,5 +1,7 @@
 package randoop.output;
 
+import static randoop.execution.RunCommand.ProcessException;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,15 +18,14 @@ import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.compile.FileCompilerException;
 import randoop.compile.SequenceClassLoader;
-import randoop.execution.ProcessException;
 import randoop.execution.RunCommand;
 import randoop.execution.TestEnvironment;
 import randoop.main.GenTests;
 
 /**
  * A {@link CodeWriter} that outputs JUnit tests with assertions that fail commented out. Intended
- * to be used with regression tests inorder to filter flaky tests that pass within Randoop, but fail
- * when run from the command line.
+ * to be used with regression tests in order to filter flaky tests that pass within Randoop, but
+ * fail when run from the command line.
  *
  * <p>Writes the class, and then compiles and runs the tests to determine whether there are failing
  * assertions. Each failing assertion is replaced by a comment containing the code for the failing
@@ -33,7 +34,10 @@ import randoop.main.GenTests;
  */
 public class FailingTestFilter implements CodeWriter {
 
-  /** A pattern matching the JUnit4 message indicating the total count of failures */
+  /**
+   * A pattern matching the JUnit4 message indicating the total count of failures. Capturing group 1
+   * is the number of failures.
+   */
   private static final Pattern FAILURE_MESSAGE_PATTERN =
       Pattern.compile("There\\s+(?:was|were)\\s+(\\d+)\\s+failure(?:s|):");
 
@@ -51,11 +55,11 @@ public class FailingTestFilter implements CodeWriter {
   private final SequenceClassLoader classLoader;
 
   /**
-   * Create a {@link FailingTestFilter} for which tests will be run in the environment and using the
-   * given {@link JavaFileWriter} to output test classes.
+   * Create a {@link FailingTestFilter} for which tests will be run in the environment and which
+   * uses the given {@link JavaFileWriter} to output test classes.
    *
    * @param testEnvironment the {@link TestEnvironment} for executing tests during filtering
-   * @param javaFileWriter the {@link JavaFileWriter} to write java files for the classes
+   * @param javaFileWriter the {@link JavaFileWriter} to write {@code .java} files for the classes
    */
   public FailingTestFilter(TestEnvironment testEnvironment, JavaFileWriter javaFileWriter) {
     this.testEnvironment = testEnvironment;
@@ -94,7 +98,7 @@ public class FailingTestFilter implements CodeWriter {
       if (status.exitStatus == 0) {
         passing = true;
       } else {
-        classSource = editSource(classname, classSource, status);
+        classSource = commentFailingAssertions(classname, classSource, status);
       }
       pass++;
     }
@@ -108,22 +112,23 @@ public class FailingTestFilter implements CodeWriter {
   }
 
   @Override
-  public File writeUnmodifiedClassCode(String packageName, String classname, String classCode) {
-    return javaFileWriter.writeClassCode(packageName, classname, classCode);
+  public File writeUnmodifiedClassCode(String packageName, String classname, String javaCode) {
+    return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
 
   /**
-   * Use the failures in the {@code status} from running JUnit with {@code classCode} to identify
+   * Uses the failures in the {@code status} from running JUnit with {@code javaCode} to identify
    * lines with failing assertions and replaces them with a line comment with the assertion text
    *
    * @param classname the name of the test class
-   * @param classCode the source code for the test class, each assertion must be on its own line
+   * @param javaCode the source code for the test class, each assertion must be on its own line
    * @param status the {@link RunCommand.Status} for running the test with JUnit
    * @return the class source edited so that failing assertions are replaced by line comments
    * @throws BugInRandoopException if {@code status} contains output for a failure not involving a
    *     Randoop generated test method
    */
-  private String editSource(String classname, String classCode, RunCommand.Status status) {
+  private String commentFailingAssertions(
+      String classname, String javaCode, RunCommand.Status status) {
     // JUnit4 writes to standard out, check this doesn't change.
     assert status.errorOutputLines.isEmpty()
         : "Expecting JUnit to write to standard out, but found output on standard error";
@@ -135,13 +140,7 @@ public class FailingTestFilter implements CodeWriter {
      * First, find the message that indicates the number of failures in the run.
      */
 
-    Pair<String, String> failureCountMatch;
-    try {
-      failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
-    } catch (JUnitReaderException e) {
-      throw new BugInRandoopException(
-          "Error reading JUnit output: no match for failure count message");
-    }
+    Pair<String, String> failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
     int totalFailures = Integer.parseInt(failureCountMatch.b);
     assert totalFailures > 0 : "JUnit has non-zero exit status, but no failure found";
 
@@ -153,24 +152,19 @@ public class FailingTestFilter implements CodeWriter {
         Pattern.compile("\\d+\\)\\s+(" + ID_STRING + ")\\(" + ID_STRING + "\\)");
 
     /*
-     * Split class text so that we can match the line number for the assertion with the code.
+     * Split Java code text so that we can match the line number for the assertion with the code.
      * Use same line break as used to write test class file.
      */
-    String[] classLines = classCode.split(Globals.lineSep);
+    String[] javaCodeLines = javaCode.split(Globals.lineSep);
 
     int failureCount = 0;
     while (failureCount < totalFailures) {
       /*
        * Read until beginning of failure
        */
-      Pair<String, String> failureHeaderMatch;
-      try {
-        failureHeaderMatch = readUntilMatch(lineIterator, failureHeaderPattern);
-      } catch (JUnitReaderException e) {
-        throw new BugInRandoopException("Error reading JUnit output: no match for failure header");
-      }
-      String methodName = failureHeaderMatch.b;
+      Pair<String, String> failureHeaderMatch = readUntilMatch(lineIterator, failureHeaderPattern);
       String line = failureHeaderMatch.a;
+      String methodName = failureHeaderMatch.b;
 
       /*
        * If the method name in the failure message is not a test method, throw an exception.
@@ -191,37 +185,26 @@ public class FailingTestFilter implements CodeWriter {
        */
       Pattern linePattern =
           Pattern.compile(
-              "\\s+at\\s+"
-                  + classname
-                  + "\\."
-                  + methodName
-                  + "\\("
-                  + classname
-                  + "\\.java:(\\d+)\\)");
+              String.format(
+                  "\\s+at\\s+%s\\.%s\\(%s\\.java:(\\d+)\\)", classname, methodName, classname));
 
-      Pair<String, String> failureLineMatch;
-      try {
-        failureLineMatch = readUntilMatch(lineIterator, linePattern);
-      } catch (JUnitReaderException e) {
-        throw new BugInRandoopException(
-            "Error reading JUnit output: no match for failure in stacktrace");
-      }
+      Pair<String, String> failureLineMatch = readUntilMatch(lineIterator, linePattern);
       int lineNumber = Integer.parseInt(failureLineMatch.b);
-      if (lineNumber < 1 && lineNumber < classLines.length + 1) {
+      if (lineNumber < 1 && lineNumber < javaCodeLines.length + 1) {
         throw new BugInRandoopException(
             "Line number "
                 + lineNumber
                 + " read from JUnit out of range [1,"
-                + (classLines.length + 1)
+                + (javaCodeLines.length + 1)
                 + "]");
       }
-      classLines[lineNumber - 1] = "// flaky: " + classLines[lineNumber - 1];
+      javaCodeLines[lineNumber - 1] = "// flaky: " + javaCodeLines[lineNumber - 1];
 
       failureCount++;
     }
 
     //XXX have this method return the array and redo writeClass so that it writes from array (?)
-    return UtilMDE.join(classLines, Globals.lineSep);
+    return UtilMDE.join(javaCodeLines, Globals.lineSep);
   }
 
   /**
@@ -232,11 +215,10 @@ public class FailingTestFilter implements CodeWriter {
    * @param lineIterator the iterator for reading from the JUnit output
    * @param pattern the pattern for a regex with at least one group
    * @return the pair containing the line and the text matching the first group
-   * @throws JUnitReaderException if the iterator has no more lines, but the pattern hasn't been
+   * @throws BugInRandoopException if the iterator has no more lines, but the pattern hasn't been
    *     matched
    */
-  private Pair<String, String> readUntilMatch(Iterator<String> lineIterator, Pattern pattern)
-      throws JUnitReaderException {
+  private Pair<String, String> readUntilMatch(Iterator<String> lineIterator, Pattern pattern) {
     while (lineIterator.hasNext()) {
       String line = lineIterator.next();
       Matcher matcher = pattern.matcher(line);
@@ -244,26 +226,23 @@ public class FailingTestFilter implements CodeWriter {
         return Pair.of(line, matcher.group(1));
       }
     }
-    throw new JUnitReaderException("Error JUnit output doesn't match expected format");
+    throw new BugInRandoopException("Error: JUnit output doesn't contain: " + pattern.pattern());
   }
 
   /**
    * Compiles the Java files in the list of files and writes the resulting class files to the
    * directory.
    *
-   * <p>Calls {@code System.exit()} if the file does not compile.
-   *
    * @param packageName the package name for the test class
    * @param classname the name of the test class
    * @param classSource the text of the test class
    * @param destinationDir the directory for class file output
+   * @throw BugInRandoopException if the file does not compile
    */
   private void compileTestClass(
       String packageName, String classname, String classSource, Path destinationDir) {
-    /*
-     * The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler, which
-     * will compile from source, once it is able to write the class file to disk.
-     */
+    // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
+    // which will compile from source, once it is able to write the class file to disk.
     List<File> sourceFiles = new ArrayList<>();
     sourceFiles.add(javaFileWriter.writeClassCode(packageName, classname, classSource));
     FileCompiler fileCompiler = new FileCompiler();
@@ -275,37 +254,24 @@ public class FailingTestFilter implements CodeWriter {
   }
 
   /**
-   * Creates a temporary directory using the class name and a pass count to form the directory name.
+   * Creates a temporary directory by concatenating the class name and a pass count to form the
+   * directory name.
    *
-   * @param classname the class name used to form the temporary directory name
-   * @param pass the pass count used to form the temporary directory name
+   * @param classname the class name
+   * @param pass the pass count
    * @return the {@code Path} for the directory created
    */
   private Path createWorkingDirectory(String classname, int pass) {
-    Path workingDirectory = null;
     try {
-      workingDirectory = Files.createTempDirectory("check" + classname + pass);
+      Path workingDirectory = Files.createTempDirectory("check" + classname + pass);
       //workingDirectory.toFile().deleteOnExit();
+      return workingDirectory;
     } catch (IOException e) {
       System.err.printf(
           "Unable to create temporary directory for flaky-test filtering, exception: %s%n",
           e.getMessage());
       System.exit(1);
-    }
-    return workingDirectory;
-  }
-
-  /** Exception to indicate an error when reading the JUnit output. */
-  private static class JUnitReaderException extends Throwable {
-    private static final long serialVersionUID = 7160657703477853170L;
-
-    /**
-     * Create a {@link JUnitReaderException} with the given message.
-     *
-     * @param message the exception message
-     */
-    JUnitReaderException(String message) {
-      super(message);
+      throw new Error("unreachable statement");
     }
   }
 }

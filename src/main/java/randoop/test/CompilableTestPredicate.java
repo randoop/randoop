@@ -96,6 +96,6 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
    */
   boolean testSource(String testClassName, CompilationUnit source, String packageName) {
     String sourceText = source.toString();
-    return compiler.compileCheck(packageName, testClassName, sourceText);
+    return compiler.isCompilable(packageName, testClassName, sourceText);
   }
 }

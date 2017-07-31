@@ -4,13 +4,13 @@ import java.io.File;
 import randoop.main.Minimize;
 
 /**
- * A {@link CodeWriter} that for an error-revealing test class, writes both the original and
+ * A {@link CodeWriter} that, for an error-revealing test class, writes both the original and
  * minimized class. Minimizes the methods of the test class using {@link Minimize#mainMinimize(File,
  * String, int, boolean)}.
  */
 public class MinimizerWriter implements CodeWriter {
 
-  /** The {@link JavaFileWriter} used to write classes */
+  /** The {@link JavaFileWriter} used to write classes. */
   private final JavaFileWriter javaFileWriter;
 
   /**

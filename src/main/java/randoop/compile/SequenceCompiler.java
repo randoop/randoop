@@ -28,7 +28,7 @@ public class SequenceCompiler {
   private final SequenceClassLoader classLoader;
 
   /** The {@code FileManager} for this compiler */
-  private SequenceJavaFileManager fileManager;
+  private final SequenceJavaFileManager fileManager;
 
   /**
    * Creates a {@link SequenceCompiler} with the given {@code ClassLoader}, options list, and {@code
@@ -55,11 +55,11 @@ public class SequenceCompiler {
    * Indicates whether the given class is compilable.
    *
    * @param packageName the package name for the class
-   * @param classname the (unqualified) name of the class
-   * @param classSource the source test of the class
+   * @param classname the simple name of the class
+   * @param classSource the source text of the class
    * @return true if class source was successfully compiled, false otherwise
    */
-  public boolean compileCheck(
+  public boolean isCompilable(
       final String packageName, final String classname, final String classSource) {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     return compile(packageName, classname, classSource, diagnostics);
@@ -69,9 +69,9 @@ public class SequenceCompiler {
    * Compiles the given class. If this method returns normally, compilation was successful.
    *
    * @param packageName the package of the class
-   * @param classname the (unqualified) name of the class
+   * @param classname the simple name of the class
    * @param classSource the source text of the class
-   * @throws SequenceCompilerException if the compilation fails.
+   * @throws SequenceCompilerException if the compilation fails
    */
   public void compile(final String packageName, final String classname, final String classSource)
       throws SequenceCompilerException {
@@ -80,21 +80,20 @@ public class SequenceCompiler {
 
     boolean success = compile(packageName, classname, classSource, diagnostics);
     if (!success) {
-      throw new SequenceCompilerException("Compilation failed.", classSource, diagnostics);
+      throw new SequenceCompilerException("Compilation failed", classSource, diagnostics);
     }
   }
 
   /**
    * A helper method for the {@link #compile(String, String, String)} and {@link
-   * #compileCheck(String, String, String)} methods: compiles the given class using the diagnostics
-   * collector.
-   *
-   * <p>Always use a new diagnostics collector each compilation to avoid accumulating errors.
+   * #isCompilable(String, String, String)} methods: compiles the given class using the given
+   * diagnostics collector.
    *
    * @param packageName the package of the class
-   * @param classname the (unqualified) name of the class
+   * @param classname the simple name of the class
    * @param classSource the source text of the class
-   * @param diagnostics the {@code DiagnosticsCollector} object to use for the compilation
+   * @param diagnostics the {@code DiagnosticsCollector} object to use for the compilation. Always
+   *     use a new diagnostics collector each compilation to avoid accumulating errors.
    * @return true if the class source is successfully compiled, false otherwise
    */
   private boolean compile(
@@ -102,7 +101,7 @@ public class SequenceCompiler {
       final String classname,
       final String classSource,
       DiagnosticCollector<JavaFileObject> diagnostics) {
-    String classFileName = classname + CompileUtil.JAVA_EXTENSION;
+    String classFileName = classname + ".java";
     List<JavaFileObject> sources = new ArrayList<>();
     JavaFileObject source = new SequenceJavaFileObject(classFileName, classSource);
     sources.add(source);
