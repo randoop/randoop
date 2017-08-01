@@ -35,7 +35,7 @@ test {
 }
 
 shadowJar {
-  // should be named mapcall-version.jar
+  // We want the jar to be named mapcall-version.jar
   classifier = null
 
   relocate 'com.google', 'mapcall.com.google'
