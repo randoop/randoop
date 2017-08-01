@@ -3,7 +3,6 @@ package randoop.main;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
-
 import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
@@ -539,13 +537,13 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-* Returns patterns read from the given file.
-*
-* @param file the file to read from, may be null
-* @return contents of the file, as a set of Patterns
-*/
-private Set<Pattern> readOmitMethods(File file) {
- Set<Pattern> result = new LinkedHashSet<>();
+   * Returns patterns read from the given file.
+   *
+   * @param file the file to read from, may be null
+   * @return contents of the file, as a set of Patterns
+   */
+  private Set<Pattern> readOmitMethods(File file) {
+    Set<Pattern> result = new LinkedHashSet<>();
     // Read method omissions from user provided file
     if (file != null) {
       try (EntryReader er = new EntryReader(file, "^#.*", null)) {
