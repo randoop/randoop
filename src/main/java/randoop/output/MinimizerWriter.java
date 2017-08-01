@@ -28,7 +28,8 @@ public class MinimizerWriter implements CodeWriter {
    * <p>Writes both the original class and the minimized class.
    */
   @Override
-  public File writeClassCode(String packageName, String classname, String classCode) {
+  public File writeClassCode(String packageName, String classname, String classCode)
+      throws RandoopOutputException {
 
     // Write the original class
     File testFile = javaFileWriter.writeClassCode(packageName, classname, classCode);
@@ -41,13 +42,8 @@ public class MinimizerWriter implements CodeWriter {
   }
 
   @Override
-  public File writeUnmodifiedClassLines(
-      String packageName, String classname, String[] sourceLines) {
-    return javaFileWriter.writeUnmodifiedClassLines(packageName, classname, sourceLines);
-  }
-
-  @Override
-  public File writeUnmodifiedClassCode(String packageName, String classname, String classCode) {
+  public File writeUnmodifiedClassCode(String packageName, String classname, String classCode)
+      throws RandoopOutputException {
     return javaFileWriter.writeClassCode(packageName, classname, classCode);
   }
 }

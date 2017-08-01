@@ -1,9 +1,10 @@
 package randoop.output;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
-import randoop.Globals;
+import java.io.PrintWriter;
 
 /**
  * A {@link CodeWriter} that writes JUnit4 test class source text to a {@code .java} file with
@@ -11,7 +12,7 @@ import randoop.Globals;
  */
 public class JavaFileWriter implements CodeWriter {
 
-  /** The directory to which JUnit files are written */
+  /** The directory to which JUnit files are written. */
   private final String dirName;
 
   /**
@@ -33,32 +34,24 @@ public class JavaFileWriter implements CodeWriter {
    * @return the File object for generated java file
    */
   @Override
-  public File writeClassCode(String packageName, String className, String classCode) {
+  public File writeClassCode(String packageName, String className, String classCode)
+      throws RandoopOutputException {
     File dir = createOutputDir(packageName);
     File file = new File(dir, className + ".java");
 
-    try (PrintStream out = createTextOutputStream(file)) {
+    try (PrintWriter out = new PrintWriter(file, UTF_8.name())) {
       out.println(classCode);
+    } catch (IOException e) {
+      String message = "Exception creating print writer for file " + file.getName();
+      throw new RandoopOutputException(message, e);
     }
 
     return file;
   }
 
   @Override
-  public File writeUnmodifiedClassLines(
-      String packageName, String className, String[] sourceLines) {
-    File dir = createOutputDir(packageName);
-    File file = new File(dir, className + ".java");
-    try (PrintStream out = createTextOutputStream(file)) {
-      for (String line : sourceLines) {
-        out.print(line + Globals.lineSep);
-      }
-    }
-    return file;
-  }
-
-  @Override
-  public File writeUnmodifiedClassCode(String packageName, String classname, String classCode) {
+  public File writeUnmodifiedClassCode(String packageName, String classname, String classCode)
+      throws RandoopOutputException {
     return writeClassCode(packageName, classname, classCode);
   }
 
@@ -104,22 +97,5 @@ public class JavaFileWriter implements CodeWriter {
       dir = new File(dir, s);
     }
     return dir;
-  }
-
-  /**
-   * Returns the output stream to print to the given file.
-   *
-   * @param file the file to be written to
-   * @return the {@code PrintStream} for writing to the file
-   */
-  private static PrintStream createTextOutputStream(File file) {
-    try {
-      return new PrintStream(file);
-    } catch (IOException e) {
-      System.out.println("Exception thrown while creating text print stream: " + file.getName());
-      e.printStackTrace();
-      System.exit(1);
-      throw new Error("This can't happen");
-    }
   }
 }

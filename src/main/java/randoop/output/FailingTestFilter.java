@@ -1,6 +1,6 @@
 package randoop.output;
 
-import static randoop.execution.RunCommand.ProcessException;
+import static randoop.execution.RunCommand.CommandException;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,13 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import plume.Pair;
 import plume.UtilMDE;
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.compile.FileCompilerException;
-import randoop.compile.SequenceClassLoader;
 import randoop.execution.RunCommand;
 import randoop.execution.TestEnvironment;
 import randoop.main.GenTests;
@@ -51,9 +49,6 @@ public class FailingTestFilter implements CodeWriter {
   /** The underlying {@link randoop.output.JavaFileWriter} for writing a test class. */
   private final JavaFileWriter javaFileWriter;
 
-  /** The class loader for the compiler */
-  private final SequenceClassLoader classLoader;
-
   /**
    * Create a {@link FailingTestFilter} for which tests will be run in the environment and which
    * uses the given {@link JavaFileWriter} to output test classes.
@@ -64,7 +59,6 @@ public class FailingTestFilter implements CodeWriter {
   public FailingTestFilter(TestEnvironment testEnvironment, JavaFileWriter javaFileWriter) {
     this.testEnvironment = testEnvironment;
     this.javaFileWriter = javaFileWriter;
-    this.classLoader = new SequenceClassLoader(getClass().getClassLoader());
   }
 
   /**
@@ -76,7 +70,8 @@ public class FailingTestFilter implements CodeWriter {
    * TestEnvironment}.
    */
   @Override
-  public File writeClassCode(String packageName, String classname, String classSource) {
+  public File writeClassCode(String packageName, String classname, String classSource)
+      throws RandoopOutputException {
 
     String qualifiedClassname = (packageName.isEmpty() ? "" : packageName + ".") + classname;
 
@@ -91,11 +86,11 @@ public class FailingTestFilter implements CodeWriter {
       RunCommand.Status status;
       try {
         status = testEnvironment.runTest(qualifiedClassname, workingDirectory.toFile());
-      } catch (ProcessException e) {
+      } catch (CommandException e) {
         throw new BugInRandoopException("Error filtering regression tests", e);
       }
 
-      if (status.exitStatus == 0) {
+      if (status.exitStatus == 0 && !status.timedOut) {
         passing = true;
       } else {
         classSource = commentFailingAssertions(classname, classSource, status);
@@ -106,13 +101,8 @@ public class FailingTestFilter implements CodeWriter {
   }
 
   @Override
-  public File writeUnmodifiedClassLines(
-      String packageName, String classname, String[] sourceLines) {
-    return javaFileWriter.writeUnmodifiedClassLines(packageName, classname, sourceLines);
-  }
-
-  @Override
-  public File writeUnmodifiedClassCode(String packageName, String classname, String javaCode) {
+  public File writeUnmodifiedClassCode(String packageName, String classname, String javaCode)
+      throws RandoopOutputException {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
 
@@ -140,8 +130,8 @@ public class FailingTestFilter implements CodeWriter {
      * First, find the message that indicates the number of failures in the run.
      */
 
-    Pair<String, String> failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
-    int totalFailures = Integer.parseInt(failureCountMatch.b);
+    Match failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
+    int totalFailures = Integer.parseInt(failureCountMatch.group);
     assert totalFailures > 0 : "JUnit has non-zero exit status, but no failure found";
 
     /*
@@ -157,14 +147,13 @@ public class FailingTestFilter implements CodeWriter {
      */
     String[] javaCodeLines = javaCode.split(Globals.lineSep);
 
-    int failureCount = 0;
-    while (failureCount < totalFailures) {
+    for (int failureCount = 0; failureCount < totalFailures; failureCount++) {
       /*
        * Read until beginning of failure
        */
-      Pair<String, String> failureHeaderMatch = readUntilMatch(lineIterator, failureHeaderPattern);
-      String line = failureHeaderMatch.a;
-      String methodName = failureHeaderMatch.b;
+      Match failureHeaderMatch = readUntilMatch(lineIterator, failureHeaderPattern);
+      String line = failureHeaderMatch.line;
+      String methodName = failureHeaderMatch.group;
 
       /*
        * If the method name in the failure message is not a test method, throw an exception.
@@ -188,9 +177,9 @@ public class FailingTestFilter implements CodeWriter {
               String.format(
                   "\\s+at\\s+%s\\.%s\\(%s\\.java:(\\d+)\\)", classname, methodName, classname));
 
-      Pair<String, String> failureLineMatch = readUntilMatch(lineIterator, linePattern);
-      int lineNumber = Integer.parseInt(failureLineMatch.b);
-      if (lineNumber < 1 && lineNumber < javaCodeLines.length + 1) {
+      Match failureLineMatch = readUntilMatch(lineIterator, linePattern);
+      int lineNumber = Integer.parseInt(failureLineMatch.group);
+      if (lineNumber < 1 || lineNumber > javaCodeLines.length) {
         throw new BugInRandoopException(
             "Line number "
                 + lineNumber
@@ -199,8 +188,6 @@ public class FailingTestFilter implements CodeWriter {
                 + "]");
       }
       javaCodeLines[lineNumber - 1] = "// flaky: " + javaCodeLines[lineNumber - 1];
-
-      failureCount++;
     }
 
     //XXX have this method return the array and redo writeClass so that it writes from array (?)
@@ -218,12 +205,12 @@ public class FailingTestFilter implements CodeWriter {
    * @throws BugInRandoopException if the iterator has no more lines, but the pattern hasn't been
    *     matched
    */
-  private Pair<String, String> readUntilMatch(Iterator<String> lineIterator, Pattern pattern) {
+  private Match readUntilMatch(Iterator<String> lineIterator, Pattern pattern) {
     while (lineIterator.hasNext()) {
       String line = lineIterator.next();
       Matcher matcher = pattern.matcher(line);
       if (matcher.matches()) {
-        return Pair.of(line, matcher.group(1));
+        return new Match(line, matcher.group(1));
       }
     }
     throw new BugInRandoopException("Error: JUnit output doesn't contain: " + pattern.pattern());
@@ -237,14 +224,18 @@ public class FailingTestFilter implements CodeWriter {
    * @param classname the name of the test class
    * @param classSource the text of the test class
    * @param destinationDir the directory for class file output
-   * @throw BugInRandoopException if the file does not compile
+   * @throws BugInRandoopException if the file does not compile
    */
   private void compileTestClass(
       String packageName, String classname, String classSource, Path destinationDir) {
     // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
     // which will compile from source, once it is able to write the class file to disk.
     List<File> sourceFiles = new ArrayList<>();
-    sourceFiles.add(javaFileWriter.writeClassCode(packageName, classname, classSource));
+    try {
+      sourceFiles.add(javaFileWriter.writeClassCode(packageName, classname, classSource));
+    } catch (RandoopOutputException e) {
+      throw new BugInRandoopException("Output error during flaky-test filtering", e);
+    }
     FileCompiler fileCompiler = new FileCompiler();
     try {
       fileCompiler.compile(sourceFiles, destinationDir);
@@ -264,7 +255,7 @@ public class FailingTestFilter implements CodeWriter {
   private Path createWorkingDirectory(String classname, int pass) {
     try {
       Path workingDirectory = Files.createTempDirectory("check" + classname + pass);
-      //workingDirectory.toFile().deleteOnExit();
+      workingDirectory.toFile().deleteOnExit();
       return workingDirectory;
     } catch (IOException e) {
       System.err.printf(
@@ -272,6 +263,27 @@ public class FailingTestFilter implements CodeWriter {
           e.getMessage());
       System.exit(1);
       throw new Error("unreachable statement");
+    }
+  }
+
+  /** Captures the line and group from the match of a {@code Pattern} with a single group. */
+  private static class Match {
+
+    /** The line that matched the pattern. */
+    final String line;
+
+    /** The substring that matched the group. */
+    final String group;
+
+    /**
+     * Creates a {@link Match} record with the given line and group.
+     *
+     * @param line the matched line
+     * @param group the matched group substring
+     */
+    Match(String line, String group) {
+      this.line = line;
+      this.group = group;
     }
   }
 }
