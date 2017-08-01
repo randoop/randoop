@@ -59,31 +59,7 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Compares this operation to another {@link TypedOperation}. Ensures that any {@link
-   * TypedTermOperation} objects precedes a {@link TypedClassOperation}. Otherwise, orders {@link
-   * TypedClassOperation} objects by first comparing the declaring types, and then comparing by
-   * {@link TypedOperation#compareTo(TypedOperation)}.
-   *
-   * @param op the {@link TypedOperation} to compare with this operation
-   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the operations are identical,
-   *     and &gt; 0 if this operation succeeds op
-   */
-  @Override
-  public int compareTo(TypedOperation op) {
-    if (op instanceof TypedTermOperation) {
-      return 1;
-    }
-    TypedClassOperation other = (TypedClassOperation) op;
-    int result = declaringType.compareTo(other.declaringType);
-    if (result != 0) {
-      return result;
-    }
-    return super.compareTo(other);
-  }
-
-  /**
-   * Returns the class in which the operation is defined, or, if the operation represents a value,
-   * the type of the value.
+   * Returns the class in which the operation is defined.
    *
    * @return class to which the operation belongs
    */
@@ -92,11 +68,9 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Creates a {@link TypedOperation} from this operation by using the given {@link Substitution} on
-   * type variables.
+   * {@inheritDoc}
    *
-   * @param substitution the type substitution
-   * @return the concrete operation with type variables replaced by substitution
+   * <p>Applies the substitution to the declaring type, all input types, and the output type.
    */
   @Override
   public TypedClassOperation apply(Substitution<ReferenceType> substitution) {
@@ -117,7 +91,7 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Produces a Java source code representation of this statement and appends it to the given
+   * Produces a Java source code representation of this operation and appends it to the given
    * StringBuilder.
    *
    * @param inputVars the list of variables that are inputs to operation
@@ -222,8 +196,7 @@ public class TypedClassOperation extends TypedOperation {
    * case if {@code type} is a subtype of the declaring type of the operation, but this method does
    * not force that check because we sometimes want to create the operation for superclasses.
    *
-   * @param type a subtype of the declaring class of this operation to substitute into the
-   *     operation, non-null
+   * @param type a type to substitute into the operation, non-null
    * @return a new operation with {@code type} substituted for the declaring type of this operation.
    *     This object will be invalid if {@code type} does not have the method.
    */
