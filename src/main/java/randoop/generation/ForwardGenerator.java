@@ -1,7 +1,6 @@
 package randoop.generation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +18,7 @@ import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
@@ -41,8 +41,11 @@ public class ForwardGenerator extends AbstractGenerator {
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
    * discarded.
+   *
+   * <p>This must be ordered by insertion to allow for flaky test history collection in {@link
+   * randoop.main.GenTests#handleFlakySequenceException(AbstractGenerator, SequenceExceptionError)}.
    */
-  private final Set<Sequence> allSequences;
+  private final LinkedHashSet<Sequence> allSequences;
 
   private final Set<TypedOperation> observers;
 
@@ -155,8 +158,8 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public Set<Sequence> getAllSequences() {
-    return Collections.unmodifiableSet(this.allSequences);
+  public LinkedHashSet<Sequence> getAllSequences() {
+    return this.allSequences;
   }
 
   /**

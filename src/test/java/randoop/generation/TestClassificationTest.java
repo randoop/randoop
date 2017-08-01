@@ -337,10 +337,7 @@ public class TestClassificationTest {
     TestCheckGenerator checkGenerator =
         (new GenTests())
             .createTestCheckGenerator(
-                visibility,
-                new ContractSet(),
-                new MultiMap<Type, TypedOperation>(),
-                new LinkedHashSet<TypedOperation>());
+                visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
     ForwardGenerator gen = buildGenerator(c, componentManager, visibility, checkGenerator);
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
@@ -415,10 +412,7 @@ public class TestClassificationTest {
     TestCheckGenerator checkGenerator =
         (new GenTests())
             .createTestCheckGenerator(
-                visibility,
-                new ContractSet(),
-                new MultiMap<Type, TypedOperation>(),
-                new LinkedHashSet<TypedOperation>());
+                visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
     return buildGenerator(c, componentMgr, visibility, checkGenerator);
   }
 

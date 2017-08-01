@@ -37,8 +37,7 @@ public final class CollectionsExt {
   }
 
   /**
-   * Prints out the String.valueOf() of all elements of the collection, inserting a new line after
-   * each element. The order is specified by the collection's iterator.
+   * Returns the String.valueOf() of all elements of the collection, one on each line.
    *
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings as lines
@@ -51,8 +50,7 @@ public final class CollectionsExt {
   }
 
   /**
-   * List of String.valueOf() of all elements of the collection. The order is specified by the
-   * collection's iterator.
+   * List of String.valueOf() of all elements of the collection.
    *
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings
