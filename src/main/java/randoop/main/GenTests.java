@@ -41,6 +41,7 @@ import randoop.output.FailingTestFilter;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
 import randoop.output.MinimizerWriter;
+import randoop.output.RandoopOutputException;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
@@ -562,7 +563,7 @@ public class GenTests extends GenInputsAbstract {
             System.out.printf("Created file: %s%n", f.getAbsolutePath());
           }
         }
-      } catch (Throwable e) {
+      } catch (RandoopOutputException e) {
         System.out.printf(
             "%nError writing " + testKind.toLowerCase() + " tests: " + e.getMessage());
         System.exit(1);
