@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import plume.TimeLimitProcess;
-import randoop.util.StreamUtils;
+import plume.UtilMDE;
 
 /**
  * Class providing the {@link #run(List, File, long)} method to run a command in a separate process
@@ -21,10 +21,10 @@ public class RunCommand {
    * @param workingDirectory the working directory for this command
    * @param timeout the timeout in milliseconds for executing the process
    * @return the {@link Status} capturing the outcome of executing the command
-   * @throws ProcessException if there is an error running the command
+   * @throws CommandException if there is an error running the command
    */
   static Status run(List<String> command, File workingDirectory, long timeout)
-      throws ProcessException {
+      throws CommandException {
     ProcessBuilder processBuilder = new ProcessBuilder(command);
     processBuilder.directory(workingDirectory);
 
@@ -33,38 +33,31 @@ public class RunCommand {
     try {
       p = new TimeLimitProcess(processBuilder.start(), timeout, true);
     } catch (IOException e) {
-      throw new ProcessException("Exception starting process", e);
+      throw new CommandException("Exception starting process", e);
     }
 
     int exitValue;
     try {
       exitValue = p.waitFor();
     } catch (InterruptedException e) {
-      throw new ProcessException("Exception running process", e);
+      throw new CommandException("Exception running process", e);
     }
 
     List<String> standardOutputLines;
     try {
-      standardOutputLines = StreamUtils.captureLinesFromStream(p.getInputStream());
+      standardOutputLines = UtilMDE.streamLines(p.getInputStream());
     } catch (IOException e) {
-      throw new ProcessException("Exception getting process stream output", e);
+      throw new CommandException("Exception getting process stream output", e);
     }
 
     List<String> errorOutputLines;
     try {
-      errorOutputLines = StreamUtils.captureLinesFromStream(p.getErrorStream());
+      errorOutputLines = UtilMDE.streamLines(p.getErrorStream());
     } catch (IOException e) {
-      throw new ProcessException("Error getting process error output", e);
+      throw new CommandException("Error getting process error output", e);
     }
 
-    if (p.timed_out()) {
-      for (String line : standardOutputLines) {
-        System.out.println(line);
-      }
-      assert !p.timed_out() : "Process timed out after " + p.timeout_msecs() + " msecs";
-    }
-
-    return new Status(command, exitValue, standardOutputLines, errorOutputLines);
+    return new Status(command, exitValue, p.timed_out(), standardOutputLines, errorOutputLines);
   }
 
   /**
@@ -76,8 +69,11 @@ public class RunCommand {
     /** The command executed. */
     public final List<String> command;
 
-    /** The exit status of the command */
+    /** The exit status of the command. */
     public final int exitStatus;
+
+    /** Whether the command process timed out. */
+    public final boolean timedOut;
 
     /** The output from running the command. */
     public final List<String> standardOutputLines;
@@ -88,6 +84,10 @@ public class RunCommand {
     /**
      * Creates a {@link Status} object for the command with captured exit status and output.
      *
+     * <p>The output from command execution is captured as a {@code List} of output lines. This
+     * avoids losing output from the command if the process is destroyed. This can happend because
+     * the process times out.
+     *
      * @param command the command
      * @param exitStatus the exit status
      * @param standardOutputLines the lines of process output
@@ -96,10 +96,12 @@ public class RunCommand {
     Status(
         List<String> command,
         int exitStatus,
+        boolean timedOut,
         List<String> standardOutputLines,
         List<String> errorOutputLines) {
       this.command = command;
       this.exitStatus = exitStatus;
+      this.timedOut = timedOut;
       this.standardOutputLines = standardOutputLines;
       this.errorOutputLines = errorOutputLines;
     }
@@ -109,17 +111,17 @@ public class RunCommand {
    * Exception representing an error that occured while running a process with {@link
    * RunCommand#run(List, File, long)}.
    */
-  public static class ProcessException extends Throwable {
+  public static class CommandException extends Throwable {
 
     private static final long serialVersionUID = 736230736083495268L;
 
     /**
-     * Creates a {@link ProcessException} with a message and causing exception.
+     * Creates a {@link CommandException} with a message and causing exception.
      *
      * @param message the exception message
      * @param cause the causing exception
      */
-    public ProcessException(String message, Throwable cause) {
+    CommandException(String message, Throwable cause) {
       super(message, cause);
     }
   }

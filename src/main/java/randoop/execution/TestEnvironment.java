@@ -1,6 +1,6 @@
 package randoop.execution;
 
-import static randoop.execution.RunCommand.ProcessException;
+import static randoop.execution.RunCommand.CommandException;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -56,10 +56,10 @@ public class TestEnvironment {
    * @param testClassName the fully-qualified JUnit test class
    * @param workingDirectory the working directory for executing the test
    * @return the {@link RunCommand.Status} object for the execution of the test class
-   * @throws ProcessException if there is an error running the test command
+   * @throws CommandException if there is an error running the test command
    */
   public RunCommand.Status runTest(String testClassName, File workingDirectory)
-      throws ProcessException {
+      throws CommandException {
     List<String> command = commandPrefix();
     command.add(testClassName);
     return RunCommand.run(command, workingDirectory, timeout);
