@@ -12,4 +12,4 @@ set -e
 ./gradlew compileJava compileTestJava \
   :covered-class:compileJava :covered-class:compileTestJava \
   :mapcall:compileJava :covered-class:compileTestJava \
-  compileCoveredTestJava compileSystemTestJava
+  compileCoveredTestJava compileMapcallTestJava compileSystemTestJava
