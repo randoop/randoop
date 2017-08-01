@@ -76,7 +76,7 @@ import randoop.util.predicate.Predicate;
 
 public class GenTests extends GenInputsAbstract {
 
-  public static final String NO_CLASSES_TO_TEST = "There are no classes to test. Exiting.";
+  private static final String NO_CLASSES_TO_TEST = "There are no classes to test. Exiting.";
 
   private static final String command = "gentests";
 
