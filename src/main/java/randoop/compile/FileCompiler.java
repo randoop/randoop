@@ -41,10 +41,9 @@ public class FileCompiler {
    *
    * @param sourceFiles the list of {@code File} objects for the Java source files
    * @param destinationDir the {@code Path} of the destination directory for class files
-   * @return {@code true} if compilation succeeds and the method returns normally
    * @throws FileCompilerException if the compilation fails
    */
-  public boolean compile(List<File> sourceFiles, Path destinationDir) throws FileCompilerException {
+  public void compile(List<File> sourceFiles, Path destinationDir) throws FileCompilerException {
     // Set the destination directory for the compiler
     options.add("-d");
     options.add(destinationDir.toString());
@@ -61,6 +60,5 @@ public class FileCompiler {
     if (succeeded == null || !succeeded) {
       throw new FileCompilerException("Compilation failed.", sourceFiles, diagnostics);
     }
-    return true;
   }
 }
