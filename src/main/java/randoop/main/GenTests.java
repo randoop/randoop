@@ -562,7 +562,7 @@ public class GenTests extends GenInputsAbstract {
             System.out.printf("Created file: %s%n", f.getAbsolutePath());
           }
         }
-      } catch (BugInRandoopException e) {
+      } catch (Throwable e) {
         System.out.printf(
             "%nError writing " + testKind.toLowerCase() + " tests: " + e.getMessage());
         System.exit(1);
