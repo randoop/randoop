@@ -77,7 +77,7 @@ public class JavaFileWriter {
     try {
       return new PrintStream(file);
     } catch (IOException e) {
-      System.out.println("Exception thrown while creating text print stream:" + file.getName());
+      System.out.println("Exception thrown while creating text print stream: " + file.getName());
       e.printStackTrace();
       System.exit(1);
       throw new Error("This can't happen");

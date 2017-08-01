@@ -105,12 +105,11 @@ public class RawSignature {
     return Objects.hash(classname, name, Arrays.hashCode(parameterTypes));
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Returns the string representation of this signature in the format read by {@link
-   * SignatureParser#parse(String, VisibilityPredicate, ReflectionPredicate)}.
-   */
+  /** {@inheritDoc} */
+  // TODO: reinstate this Javadoc comment text, with correct link.
+  // Commented out because the Javadoc error is breaking the build.
+  // * <p>Returns the string representation of this signature in the format read by {@link
+  // * SignatureParser#parse(String, VisibilityPredicate, ReflectionPredicate)}.
   @Override
   public String toString() {
     List<String> typeNames = new ArrayList<>();
