@@ -455,7 +455,7 @@ task copyJars(type: Copy, dependsOn: [':covered-class:jar', ':mapcall:jar']) {
 assemble.dependsOn copyJars
 
 shadowJar {
-  // name should be randoop-all-$version.jar instead of randoop-$version-all.jar
+  // The jar file name is randoop-all-$version.jar
   baseName = 'randoop-all'
   classifier = null
 
@@ -533,8 +533,8 @@ task clonePlumeLib {
         commandLine 'chmod', '-R', '+x', "$buildDir/utils/plume-lib/bin"
       }
     } else {
-      println("WARNING: not cloning plume-lib because already exists.")
-      println("         Force clone by running after clean")
+      def grgit = org.ajoberstar.grgit.Grgit.open(dir: plumeFolder)
+      grgit.pull()
     }
   }
 }

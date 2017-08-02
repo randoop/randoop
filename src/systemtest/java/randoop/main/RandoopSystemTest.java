@@ -29,7 +29,7 @@ import org.junit.runners.MethodSorters;
  * <p>Each of the test methods
  *
  * <ul>
- *   <li>creates it's own subdirectory,
+ *   <li>creates its own subdirectory,
  *   <li>runs Randoop and saves generated tests to the subdirectory, and
  *   <li>compiles the generated test files.
  * </ul>
@@ -43,6 +43,10 @@ import org.junit.runners.MethodSorters;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RandoopSystemTest {
+
+  // Keep in synch with GenTests.NO_CLASSES_TO_TEST.
+  // TODO: how to use the GenTests version?
+  public static final String NO_CLASSES_TO_TEST = "There are no classes to test. Exiting.";
 
   private static SystemTestEnvironment systemTestEnvironment;
 
@@ -612,8 +616,8 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test formerly known as randoop-no-output. Runs with <tt>--noprogressdisplay</tt> and so should
-   * have no output.
+   * Test formerly known as randoop-no-output. Runs with <tt>--progressdisplay=false</tt> and so
+   * should have no output.
    */
   @Test
   public void runNoOutputTest() {
@@ -626,7 +630,7 @@ public class RandoopSystemTest {
 
     options.setOption("generatedLimit", "100");
     options.addTestClass("java.util.LinkedList");
-    options.setFlag("noprogressdisplay");
+    options.setOption("progressdisplay", "false");
 
     RandoopRunStatus randoopRunDesc =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
@@ -808,11 +812,10 @@ public class RandoopSystemTest {
 
     Iterator<String> it = result.outputLines.iterator();
     String line = "";
-    while (!line.contains("There are no methods to test") && it.hasNext()) {
+    while (!line.contains(NO_CLASSES_TO_TEST) && it.hasNext()) {
       line = it.next();
     }
-    assertTrue(
-        "should fail to find class names in file", line.contains("There are no methods to test"));
+    assertTrue("should fail to find class names in file", line.contains(NO_CLASSES_TO_TEST));
   }
 
   /**
