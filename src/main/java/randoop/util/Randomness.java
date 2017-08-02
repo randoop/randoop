@@ -116,7 +116,10 @@ public final class Randomness {
     double max = 0;
     for (int i = 0; i < list.size(); i++) {
       double weight = list.get(i).getWeight();
-      if (weight <= 0) throw new BugInRandoopException("weight was " + weight);
+      if (weight <= 0) {
+        throw new BugInRandoopException(
+            "Unable to select random member: found negative weight " + weight);
+      }
       max += weight;
     }
     assert max > 0;
@@ -132,7 +135,7 @@ public final class Randomness {
         return list.get(i);
       }
     }
-    throw new BugInRandoopException();
+    throw new BugInRandoopException("Unable to select random member");
   }
 
   public static <T> T randomSetMember(Collection<T> set) {
