@@ -1,3 +1,17 @@
+# THIS IS A PARTIALLY IMPLEMENTED BRANCH
+
+This branch introduces the use of a "symbol" table for managing the type
+parameters from the declaration of a generic class, method or constructor.
+This corrects an error involving how type parameters are dealt with in the Type
+hierarchy that is known to result in generation of uncompilable code for certain
+inputs, and likely affects a number of other open issues.
+
+This table should be created when the generic is created. Classes are
+created in `randoop.reflection.DeclarationExtractor.visitBefore(Class<?>)`.
+A method operation is created in `randoop.reflection.OperationExtractor.visit(Method)`.
+And, a constructor operation is created in `randoop.reflection.OperationExtractor.visit(Constructor)`.
+
+
 # Randoop
 
 Randoop is a unit test generator for Java.
