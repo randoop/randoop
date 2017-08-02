@@ -251,10 +251,7 @@ public class TestFilteringTest {
     TestCheckGenerator checkGenerator =
         (new GenTests())
             .createTestCheckGenerator(
-                visibility,
-                new ContractSet(),
-                new MultiMap<Type, TypedOperation>(),
-                new LinkedHashSet<TypedOperation>());
+                visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());
     TestUtils.setOperationLog(gen);

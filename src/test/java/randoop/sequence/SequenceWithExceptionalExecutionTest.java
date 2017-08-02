@@ -8,7 +8,6 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import org.junit.Test;
@@ -84,8 +83,7 @@ public class SequenceWithExceptionalExecutionTest {
             .createTestCheckGenerator(
                 new PublicVisibilityPredicate(),
                 new ContractSet(),
-                new MultiMap<Type, TypedOperation>(),
-                new HashSet<TypedOperation>());
+                new MultiMap<Type, TypedOperation>());
     es.execute(new DummyVisitor(), gen);
 
     assertFalse("sequence should not have unexecuted statements", es.hasNonExecutedStatements());

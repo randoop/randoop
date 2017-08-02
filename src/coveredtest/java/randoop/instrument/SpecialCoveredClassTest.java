@@ -61,14 +61,13 @@ public class SpecialCoveredClassTest {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.require_covered_classes, "Unable to read coverage class names");
+            GenInputsAbstract.require_covered_classes, "coverage class names");
     Set<String> omitFields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate =
         new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitFields);
     Set<String> methodSignatures =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.methodlist, "Error while reading method list file");
+        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.methodlist, "method list");
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     OperationModel operationModel = null;
     try {
@@ -142,7 +141,7 @@ public class SpecialCoveredClassTest {
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     TestCheckGenerator checkGenerator =
-        genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
+        genTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClasses));
     //    TestUtils.setOperationLog(testGenerator);
