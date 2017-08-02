@@ -32,6 +32,6 @@ public class CountDownTimer {
 
   @Override
   public String toString() {
-    return "elapsed:" + elapsedTime() + " remaining:" + remainingTime();
+    return "elapsed: " + elapsedTime() + ", remaining: " + remainingTime();
   }
 }

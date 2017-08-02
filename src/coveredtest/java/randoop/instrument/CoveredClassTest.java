@@ -180,16 +180,15 @@ public class CoveredClassTest {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.require_covered_classes, "unable to read coverage class names");
+            GenInputsAbstract.require_covered_classes, "coverage class names");
     Set<String> omitFields =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.omit_field_list, "Error reading field file");
+        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "field list");
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate =
         new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitFields);
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     Set<String> methodSignatures =
-        GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
+        GenInputsAbstract.getStringSetFromFile(methodlist, "method list");
 
     OperationModel operationModel = null;
     try {
@@ -220,7 +219,7 @@ public class CoveredClassTest {
 
     Set<String> observerSignatures =
         GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.observers, "Unable to read observer file", "//.*", null);
+            GenInputsAbstract.observers, "observer", "//.*", null);
 
     MultiMap<Type, TypedOperation> observerMap = null;
     try {
@@ -261,7 +260,7 @@ public class CoveredClassTest {
     ContractSet contracts = operationModel.getContracts();
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     TestCheckGenerator checkGenerator =
-        genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
+        genTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new CoveredClassVisitor(operationModel.getCoveredClasses()));
     return testGenerator;

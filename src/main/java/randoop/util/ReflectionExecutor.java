@@ -169,7 +169,7 @@ public final class ReflectionExecutor {
   }
 
   private static void printExceptionDetails(Throwable e, PrintStream out) {
-    out.println("Exception thrown:" + e.toString());
+    out.println("Exception thrown: " + e.toString());
     out.println("Message: " + e.getMessage());
     out.println("Stack trace: ");
     try {

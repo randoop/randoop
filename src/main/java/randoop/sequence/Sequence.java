@@ -547,7 +547,7 @@ public final class Sequence implements WeightedElement {
       // No nulls.
       if (statementWithInputs == null) {
         throw new IllegalStateException(
-            "Null statement in sequence:" + Globals.lineSep + this.toString());
+            "Null statement in sequence: " + Globals.lineSep + this.toString());
       }
       if (statementWithInputs.inputs == null) {
         throw new IllegalArgumentException("parameters cannot be null.");
