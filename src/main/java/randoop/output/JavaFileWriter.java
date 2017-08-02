@@ -61,12 +61,12 @@ public class JavaFileWriter implements CodeWriter {
    * @param packageName the package name
    * @return the {@code File} for the created directory
    */
-  private File createOutputDir(String packageName) {
+  private File createOutputDir(String packageName) throws RandoopOutputException {
     File dir = getDir(packageName);
     if (!dir.exists()) {
       boolean success = dir.mkdirs();
       if (!success) {
-        throw new Error("Unable to create directory: " + dir.getAbsolutePath());
+        throw new RandoopOutputException("Unable to create directory: " + dir.getAbsolutePath());
       }
     }
     return dir;

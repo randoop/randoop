@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
@@ -281,8 +282,7 @@ public class OperationModel {
         GenInputsAbstract.log.flush();
       }
     } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new BugInRandoopException("Error while logging operations", e);
     }
   }
 
@@ -421,8 +421,8 @@ public class OperationModel {
     try {
       objectConstructor = Object.class.getConstructor();
     } catch (NoSuchMethodException e) {
-      System.err.println("Something is wrong. Please report: unable to load Object()");
-      System.exit(1);
+      throw new BugInRandoopException(
+          "Something is wrong. Please report: unable to load Object()", e);
     }
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());
