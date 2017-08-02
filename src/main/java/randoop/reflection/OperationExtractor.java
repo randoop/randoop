@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import randoop.BugInRandoopException;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.MethodCall;
@@ -49,6 +50,9 @@ public class OperationExtractor extends DefaultClassVisitor {
    * members of the class satisfying the given visibility and reflection predicates and that don't
    * violate the omit method predicate.
    *
+   * <p>Once created this visitor should only be applied to members of {@code
+   * classType.getRuntimeType()}.
+   *
    * @param classType the declaring class for collected operations
    * @param operations the collection of operations, will be side-effected
    * @param predicate the reflection predicate
@@ -86,27 +90,62 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Adds an operation to the collection of this extractor. If the declaring class is an {@link
-   * InstantiatedType}, then the substitution for that class is applied to the types of the
-   * operation, and this instantiated operation is returned.
+   * Adds an operation to the collection of this extractor.
    *
    * @param operation the {@link TypedClassOperation}
    */
   private void addOperation(TypedClassOperation operation) {
     if (operation != null) {
-      if (!classType.isGeneric() && operation.getDeclaringType().isGeneric()) {
-        // if the declaring class is generic, then need substitution to instantiate type arguments
-        Substitution<ReferenceType> substitution =
-            classType.getInstantiatingSubstitution(operation.getDeclaringType());
-        if (substitution == null) { //no unifying substitution found
-          return;
-        }
-        operation = operation.apply(substitution);
-        if (operation == null) { //will be null if instantiation failed
-          return;
-        }
-      }
       operations.add(operation);
+    }
+  }
+
+  /**
+   * Updates the operation types in the case that {@code operation.getDeclaringType()} is generic,
+   * but {@code classType} is not. Constructs an {@link Substitution} that unifies the generic
+   * declaring type with {@code classType} or a superType.
+   *
+   * @param operation the operation to instantiate
+   * @return operation instantiated to match {@code classType} if the declaring type is generic and
+   *     {@code classType} is not; the unmodified operation otherwise
+   * @throws BugInRandoopException if there is no substitution that unifies the declaring type with
+   *     {@code classType} or a supertype
+   */
+  private TypedClassOperation instantiateTypes(TypedClassOperation operation) {
+    if (!classType.isGeneric() && operation.getDeclaringType().isGeneric()) {
+      Substitution<ReferenceType> substitution =
+          classType.getInstantiatingSubstitution(operation.getDeclaringType());
+      if (substitution == null) { // No unifying substitution found
+        throw new BugInRandoopException(
+            "Type for operation "
+                + classType
+                + " is not a subtype of an instantiation of declaring class of method "
+                + operation.getDeclaringType());
+      }
+      operation = operation.apply(substitution);
+      if (operation == null) {
+        throw new BugInRandoopException("Instantiation of operation failed");
+      }
+    }
+
+    return operation;
+  }
+
+  /**
+   * Ensures that {@code classType} is a subtype of {@code operation.getDeclaringType()}. This is
+   * expected, and so this method throws an exception if violated.
+   *
+   * @param operation the operation for which types are to be checked
+   * @throws BugInRandoopException if {@code classType} is not a subtype of {@code
+   *     operation.getDeclaringType()}
+   */
+  private void checkSubTypes(TypedClassOperation operation) {
+    if (!classType.isSubtypeOf(operation.getDeclaringType())) {
+      throw new BugInRandoopException(
+          "Type for operation "
+              + classType
+              + " is not a subtype of an instantiation of declaring class of method "
+              + operation.getDeclaringType());
     }
   }
 
@@ -126,7 +165,8 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (!predicate.test(constructor)) {
       return;
     }
-    TypedClassOperation operation = TypedOperation.forConstructor(constructor);
+    TypedClassOperation operation = instantiateTypes(TypedOperation.forConstructor(constructor));
+    checkSubTypes(operation);
     if (!omitPredicate.shouldOmit(operation)) {
       addOperation(operation);
     }
@@ -135,6 +175,9 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Creates a {@link MethodCall} object for the {@link Method}.
    *
+   * <p>The created operation has the declaring class of {@code method} as the declaring type. An
+   * exception is a static method for which the declaring class is not public.
+   *
    * @param method a {@link Method} object to be represented as an {@link Operation}
    */
   @Override
@@ -142,8 +185,10 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (!predicate.test(method)) {
       return;
     }
-    TypedClassOperation operation = TypedOperation.forMethod(method);
-    if (classType.isSubtypeOf(operation.getDeclaringType()) && operation.isStatic()) {
+    TypedClassOperation operation = instantiateTypes(TypedOperation.forMethod(method));
+    checkSubTypes(operation);
+
+    if (operation.isStatic()) {
       // If this classType inherits this static method, but declaring class is not public, then
       // consider method to have classType as declaring class.
       int declaringClassMods =
@@ -152,7 +197,10 @@ public class OperationExtractor extends DefaultClassVisitor {
         operation = operation.getOperationForType(classType);
       }
     }
-    if (!omitPredicate.shouldOmit(classType, operation, method)) {
+
+    // The declaring type of the method is not necessarily the classType, but may want to omit
+    // method in classType. So, create operation with the classType as declaring type for omit search
+    if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
       addOperation(operation);
     }
   }
@@ -192,9 +240,12 @@ public class OperationExtractor extends DefaultClassVisitor {
       }
     }
 
-    addOperation(TypedOperation.createGetterForField(field, declaringType));
+    TypedClassOperation getter =
+        instantiateTypes(TypedOperation.createGetterForField(field, declaringType));
+    checkSubTypes(getter);
+    addOperation(getter);
     if (!(Modifier.isFinal(mods))) {
-      addOperation(TypedOperation.createSetterForField(field, declaringType));
+      addOperation(instantiateTypes(TypedOperation.createSetterForField(field, declaringType)));
     }
   }
 
