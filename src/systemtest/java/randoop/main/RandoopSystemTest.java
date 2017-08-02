@@ -1028,8 +1028,6 @@ public class RandoopSystemTest {
     generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
-
-
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
