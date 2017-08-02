@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 
@@ -26,8 +27,7 @@ public final class Log {
       GenInputsAbstract.log.write(s);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new BugInRandoopException("Exception while writing to log", e);
     }
   }
 
@@ -46,8 +46,7 @@ public final class Log {
       GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new BugInRandoopException("Exception while writing to log", e);
     }
   }
 
@@ -68,8 +67,7 @@ public final class Log {
       pw.flush();
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new BugInRandoopException("Exception while writing to log", e);
     }
   }
 

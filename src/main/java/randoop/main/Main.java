@@ -2,6 +2,7 @@ package randoop.main;
 
 import java.util.ArrayList;
 import java.util.List;
+import randoop.BugInRandoopException;
 import randoop.generation.AbstractGenerator;
 
 /**
@@ -73,6 +74,16 @@ public class Main {
       System.out.println("`help " + handler.fcommand + "' as arguments.");
       System.exit(1);
 
+    } catch (RandoopInputException e) {
+      System.out.println();
+      System.out.println("Input error: " + e);
+      System.exit(1);
+    } catch (BugInRandoopException e) {
+      System.out.println();
+      System.out.println("Randoop failed in an unexpected way. Please report: " + e);
+      e.printStackTrace();
+      System.err.flush();
+      success = false;
     } catch (Throwable e) {
 
       System.out.println();
