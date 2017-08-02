@@ -63,8 +63,7 @@ public class SpecialCoveredClassTest {
     Set<String> coveredClassnames = null;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     Set<String> omitFields = new HashSet<>();
-    ReflectionPredicate reflectionPredicate =
-        new DefaultReflectionPredicate(omitFields);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     Set<String> methodSignatures = null;
     try {
       classnames = GenInputsAbstract.getClassnamesFromArgs();

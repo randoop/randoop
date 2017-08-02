@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.contract.CompareToAntiSymmetric;
