@@ -77,7 +77,8 @@ import randoop.util.predicate.Predicate;
 
 public class GenTests extends GenInputsAbstract {
 
-  public static final String NO_CLASSES_TO_TEST = "There are no classes to test. Exiting.";
+  // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
+  public static final String NO_OPERATIONS_TO_TEST = "There are no operations to test. Exiting.";
 
   private static final String command = "gentests";
 
@@ -197,7 +198,7 @@ public class GenTests extends GenInputsAbstract {
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(require_covered_classes, "coverage class names");
 
-    // get names of fields to be omitted
+    // Get names of fields to be omitted
     Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
     omitFields.addAll(omit_field);
 
@@ -280,7 +281,7 @@ public class GenTests extends GenInputsAbstract {
      * Stop if there no more than 1 operation. This will be Object().
      */
     if (operations.size() <= 1) {
-      System.out.println("There are no methods to test. Exiting.");
+      System.out.println(NO_OPERATIONS_TO_TEST);
       System.exit(1);
     }
     if (GenInputsAbstract.progressdisplay) {
