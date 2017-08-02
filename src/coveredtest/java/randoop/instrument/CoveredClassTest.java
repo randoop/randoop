@@ -260,7 +260,7 @@ public class CoveredClassTest {
     ContractSet contracts = operationModel.getContracts();
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     TestCheckGenerator checkGenerator =
-        genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
+        genTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new CoveredClassVisitor(operationModel.getCoveredClasses()));
     return testGenerator;

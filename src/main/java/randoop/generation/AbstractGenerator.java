@@ -1,6 +1,7 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import plume.Option;
@@ -350,7 +351,7 @@ public abstract class AbstractGenerator {
    *
    * @return return all generated sequences
    */
-  public abstract Set<Sequence> getAllSequences();
+  public abstract LinkedHashSet<Sequence> getAllSequences();
 
   /**
    * Returns the set of sequences that are used as inputs in other sequences (and can thus be
@@ -412,10 +413,20 @@ public abstract class AbstractGenerator {
     currSeq = s;
   }
 
+  /**
+   * Sets the operation history logger for this generator.
+   *
+   * @param logger the operation history logger to use for this generator
+   */
   public void setOperationHistoryLogger(OperationHistoryLogInterface logger) {
     operationHistory = logger;
   }
 
+  /**
+   * Return the operation history logger for this generator
+   *
+   * @return the operation history logger for this generator
+   */
   public OperationHistoryLogInterface getOperationHistory() {
     return operationHistory;
   }

@@ -1206,6 +1206,21 @@ public class RandoopSystemTest {
     generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
+  /* Test based on classes from the olajgo library. Has an instantiation error for
+      <N> randoop.types.CompoundFunction<N>.<init> : () -> randoop.types.CompoundFunction<N>
+      and generates no sequences
+  @Test
+  public void runAbstractWithRecursiveBoundTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("abstract-recursive-bound");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.types.AbstractMultiary"); // abstract shouldn't load
+    options.addTestClass("randoop.types.CompoundFunction"); //uses AbstractMultiary
+    options.setOption("generatedLimit", "1");
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.SOME);
+  }
+  */
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**

@@ -219,10 +219,7 @@ public class ForwardExplorerTests {
   private static TestCheckGenerator createChecker(ContractSet contracts) {
     return (new GenTests())
         .createTestCheckGenerator(
-            new PublicVisibilityPredicate(),
-            contracts,
-            new MultiMap<Type, TypedOperation>(),
-            new LinkedHashSet<TypedOperation>());
+            new PublicVisibilityPredicate(), contracts, new MultiMap<Type, TypedOperation>());
   }
 
   private static Predicate<ExecutableSequence> createOutputTest() {

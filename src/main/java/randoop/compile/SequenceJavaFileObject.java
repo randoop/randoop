@@ -9,20 +9,37 @@ import java.io.OutputStream;
 import javax.tools.SimpleJavaFileObject;
 
 /**
- * based on {@code javaxtools.compiler.JavaFileObjectImple} from <a
+ * A {@code JavaFileObject} for source code in memory.
+ *
+ * <p>based on {@code javaxtools.compiler.JavaFileObjectImple} from <a
  * href="https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
  * with javax.tools</a>.
  */
 class SequenceJavaFileObject extends SimpleJavaFileObject {
 
+  /** The source code text. */
   private final String source;
-  private ByteArrayOutputStream byteCode;
 
+  /** The stream for reading the source code */
+  private ByteArrayOutputStream byteStream;
+
+  /**
+   * Creates a {@link SequenceJavaFileObject} for the given class name and kind.
+   *
+   * @param classFileName the name of the class
+   * @param kind either {@code SOURCE} or {@code CLASS}
+   */
   SequenceJavaFileObject(final String classFileName, final Kind kind) {
     super(toURI(classFileName), kind);
     this.source = null;
   }
 
+  /**
+   * Creates a {@link SequenceJavaFileObject} with the given name and class source.
+   *
+   * @param classFileName the name of the class
+   * @param sequenceClass the class source
+   */
   SequenceJavaFileObject(String classFileName, String sequenceClass) {
     super(toURI(classFileName), Kind.SOURCE);
     this.source = sequenceClass;
@@ -44,11 +61,16 @@ class SequenceJavaFileObject extends SimpleJavaFileObject {
 
   @Override
   public OutputStream openOutputStream() {
-    byteCode = new ByteArrayOutputStream();
-    return byteCode;
+    byteStream = new ByteArrayOutputStream();
+    return byteStream;
   }
 
+  /**
+   * Returns the byte stream as a byte array.
+   *
+   * @return the byte array for the byte stream
+   */
   byte[] getByteCode() {
-    return byteCode.toByteArray();
+    return byteStream.toByteArray();
   }
 }

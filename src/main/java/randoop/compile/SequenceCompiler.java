@@ -91,12 +91,12 @@ public class SequenceCompiler {
   }
 
   /**
-   * Indicates whether the given class can be compiled.
+   * Indicates whether the given class source compiles without error.
    *
-   * @param packageName the package of the class
-   * @param classname the (unqualified) name of the class
-   * @param classSource the source text of the class
-   * @return true if the class compiles; false, otherwise
+   * @param packageName the package name for the class
+   * @param classname the name of the class
+   * @param classSource the source code for the class
+   * @return true if the class compiled, false if there was a compiler error
    */
   public boolean compileCheck(
       final String packageName, final String classname, final String classSource) {

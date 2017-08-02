@@ -7,14 +7,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 import plume.EntryReader;
 import plume.Options;
@@ -193,37 +191,7 @@ public class GenTests extends GenInputsAbstract {
     /*
      * If there is fixture code check that it can be parsed first
      */
-    boolean badFixtureText = false;
-
-    try {
-      afterAllFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_all));
-    } catch (ParseException e) {
-      System.out.println("Error in after-all fixture text at token " + e.currentToken);
-      badFixtureText = true;
-    }
-    try {
-      afterEachFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_each));
-    } catch (ParseException e) {
-      System.out.println("Error in after-each fixture text at token " + e.currentToken);
-      badFixtureText = true;
-    }
-    try {
-      beforeAllFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_all));
-    } catch (ParseException e) {
-      System.out.println("Error in before-all fixture text at token " + e.currentToken);
-      badFixtureText = true;
-    }
-    try {
-      beforeEachFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_each));
-    } catch (ParseException e) {
-      System.out.println("Error in before-each fixture text at token " + e.currentToken);
-      badFixtureText = true;
-    }
-    if (badFixtureText) {
+    if (!getFixtureCode()) {
       System.exit(1);
     }
 
@@ -242,10 +210,16 @@ public class GenTests extends GenInputsAbstract {
     omitFields.addAll(omit_field);
 
     VisibilityPredicate visibility;
-    if (GenInputsAbstract.junit_package_name == null
-        || GenInputsAbstract.only_test_public_members) {
-      System.out.println("not using package " + GenInputsAbstract.junit_package_name);
+    if (GenInputsAbstract.junit_package_name == null) {
       visibility = new PublicVisibilityPredicate();
+    } else if (GenInputsAbstract.only_test_public_members) {
+      visibility = new PublicVisibilityPredicate();
+      if (GenInputsAbstract.junit_package_name != null) {
+        System.out.println(
+            "Not using package "
+                + GenInputsAbstract.junit_package_name
+                + " since --only-test-public-members set");
+      }
     } else {
       visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
@@ -382,14 +356,10 @@ public class GenTests extends GenInputsAbstract {
             operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
 
     /*
-     * setup for check generation
+     * Create the test check generator for the contracts and observers
      */
     ContractSet contracts = operationModel.getContracts();
-
-    Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
-    // TODO add Object.toString() and Object.hashCode() to exclude set
-    TestCheckGenerator testGen =
-        createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
+    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap);
 
     explorer.addTestCheckGenerator(testGen);
 
@@ -397,7 +367,7 @@ public class GenTests extends GenInputsAbstract {
      * Setup for test predicate
      */
     // Always exclude a singleton sequence with just new Object()
-    TypedOperation objectConstructor = null;
+    TypedOperation objectConstructor;
     try {
       objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
@@ -546,6 +516,47 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
+   * Create fixture code from {@link GenInputsAbstract#junit_after_all}, {@link
+   * GenInputsAbstract#junit_after_each}, {@link GenInputsAbstract#junit_before_all}, and {@link
+   * GenInputsAbstract#junit_before_each} and set fixture body variables.
+   *
+   * @return true if all fixtures were read without error, false, otherwise
+   */
+  private boolean getFixtureCode() {
+    boolean badFixtureText = false;
+
+    try {
+      afterAllFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_all));
+    } catch (ParseException e) {
+      System.out.println("Error in after-all fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      afterEachFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_each));
+    } catch (ParseException e) {
+      System.out.println("Error in after-each fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      beforeAllFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_all));
+    } catch (ParseException e) {
+      System.out.println("Error in before-all fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      beforeEachFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_each));
+    } catch (ParseException e) {
+      System.out.println("Error in before-each fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    return !badFixtureText;
+  }
+
+  /**
    * Returns patterns read from the given file.
    *
    * @param file the file to read from, may be null
@@ -603,28 +614,30 @@ public class GenTests extends GenInputsAbstract {
       Log.log(String.format("Full sequence:%n%s%n", e.getSequence()));
       Log.log(String.format("Input subsequence:%n%s%n", subsequence.toCodeString()));
 
-      Set<String> callSet = new TreeSet<>();
-
-      Iterator<Sequence> s_i = explorer.getAllSequences().iterator();
-      if (s_i.hasNext()) {
-        Sequence s = s_i.next();
-        while (!subsequence.equals(s) && s_i.hasNext()) {
-          s = s_i.next();
+      /*
+       * Get the set of operations executed since the first execution of the flaky subsequence
+       */
+      List<String> executedOperationTrace = new ArrayList<>();
+      boolean flakySequenceFound = false;
+      for (Sequence sequence : explorer.getAllSequences()) {
+        // Look for occurrence of flaky sequence
+        if (subsequence.equals(sequence)) {
+          flakySequenceFound = true;
         }
-        while (s_i.hasNext()) {
-          s = s_i.next();
-          for (int i = 0; i < s.statements.size(); i++) {
-            Operation operation = s.statements.get(i).getOperation();
+        // Once flaky sequence found, collect the operations executed
+        if (flakySequenceFound) {
+          for (int i = 0; i < sequence.statements.size(); i++) {
+            Operation operation = sequence.statements.get(i).getOperation();
             if (!operation.isNonreceivingValue()) {
-              callSet.add(operation.toString());
+              executedOperationTrace.add(operation.toString());
             }
           }
         }
       }
 
-      if (!callSet.isEmpty()) {
+      if (!executedOperationTrace.isEmpty()) {
         Log.logLine("Operations performed since subsequence first executed:");
-        for (String opName : callSet) {
+        for (String opName : executedOperationTrace) {
           Log.logLine(opName);
         }
       } else {
@@ -845,14 +858,12 @@ public class GenTests extends GenInputsAbstract {
    * @param visibility the visibility predicate
    * @param contracts the contract checks
    * @param observerMap the map from types to observer methods
-   * @param excludeAsObservers methods to exclude when generating observer map
    * @return the {@code TestCheckGenerator} that reflects command line arguments.
    */
   public TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
-      MultiMap<Type, TypedOperation> observerMap,
-      Set<TypedOperation> excludeAsObservers) {
+      MultiMap<Type, TypedOperation> observerMap) {
 
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
@@ -878,8 +889,7 @@ public class GenTests extends GenInputsAbstract {
 
       RegressionCaptureVisitor regressionVisitor;
       regressionVisitor =
-          new RegressionCaptureVisitor(
-              expectation, observerMap, excludeAsObservers, visibility, includeAssertions);
+          new RegressionCaptureVisitor(expectation, observerMap, visibility, includeAssertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }

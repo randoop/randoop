@@ -455,7 +455,7 @@ task copyJars(type: Copy, dependsOn: [':covered-class:jar', ':mapcall:jar']) {
 assemble.dependsOn copyJars
 
 shadowJar {
-  // name should be randoop-all-$version.jar instead of randoop-$version-all.jar
+  // The jar file name is randoop-all-$version.jar
   baseName = 'randoop-all'
   classifier = null
 
