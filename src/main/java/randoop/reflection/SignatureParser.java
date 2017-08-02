@@ -46,15 +46,17 @@ public class SignatureParser {
    *       package-name.classname(argument-list)} for a constructor.
    * </ul>
    *
-   * <p>where {@code package-name} is a period-separated list of identifiers, and <code>
-   * argument-list</code> is a comma-separated (spaces-allowed) list of fully-qualified Java raw
-   * types. Array types have the format <code>element-type[]</code>.
+   * <p>where {@code package-name} is a period-separated list of identifiers, and {@code
+   * argument-list} is a comma-separated (spaces-allowed) list of fully-qualified Java raw types.
+   * Array types have the format {@code element-type[]}.
    *
    * @param signature the string to parse: a signature string for a method or constructor, in the
    *     above format
    * @param visibility the predicate for determining whether the method or constructor is visible
    * @param reflectionPredicate the predicate for checking reflection policy
-   * @return the {@code AccessibleObject} for the method or constructor represented by the string
+   * @return the {@code AccessibleObject} for the method or constructor represented by the string;
+   *     null if the visibility or reflection predicate fails on the class or the method or
+   *     constructor
    * @throws IllegalArgumentException if the string does not have the format of a signature
    * @throws SignatureParseException if the signature is not fully-qualified, or the class, an
    *     argument type, or the method or constructor is not found using reflection
@@ -136,7 +138,7 @@ public class SignatureParser {
       } catch (NoSuchMethodException e) {
         throw new SignatureParseException("Constructor not found for signature " + signature, e);
       }
-      if (reflectionPredicate.test(constructor)) {
+      if (reflectionPredicate.test(constructor) && visibility.isVisible(constructor)) {
         return constructor;
       }
     } else { // Otherwise, signature is a method
@@ -154,7 +156,7 @@ public class SignatureParser {
         }
         throw new SignatureParseException(b.toString(), e);
       }
-      if (reflectionPredicate.test(method)) {
+      if (reflectionPredicate.test(method) && visibility.isVisible(method)) {
         return method;
       }
     }
