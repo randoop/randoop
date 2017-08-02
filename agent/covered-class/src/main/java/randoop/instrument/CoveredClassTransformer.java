@@ -93,7 +93,7 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     }
 
     // agent dependency classes -- see build script for package relocation details
-    if (qualifiedName.startsWith("exercisedclass.")) {
+    if (qualifiedName.startsWith("coveredclass.")) {
       return null;
     }
 
