@@ -45,7 +45,10 @@ import randoop.util.Log;
  */
 public class ReflectionManager {
 
+  /** The visibility predicate for classes and class members. */
   private VisibilityPredicate predicate;
+
+  /** The visitors to apply. */
   private ArrayList<ClassVisitor> visitors;
 
   /**
@@ -128,11 +131,7 @@ public class ReflectionManager {
         // member types
         for (Class<?> ic : ClassUtil.getDeclaredClasses(c)) {
           if (predicate.isVisible(ic)) {
-            visitBefore(visitor, ic);
-            if (ic.isEnum()) { // inner enums require special attention
-              applyToEnum(visitor, ic);
-            }
-            visitAfter(visitor, ic);
+            applyTo(visitor, ic);
           }
         }
 
@@ -224,6 +223,23 @@ public class ReflectionManager {
       Log.logLine(String.format("Visiting field %s", f.toGenericString()));
     }
     v.visit(f);
+  }
+
+  /**
+   * Apply a visitor to the member class.
+   *
+   * <p>The {@link ReflectionManager} does not apply itself to the member class, since it could
+   * violate assumptions in the visitor. And, so instead allows the visitor to implement that call
+   * if it is necessary.
+   *
+   * @param v the {@link ClassVisitor}
+   * @param c the member class to be visited
+   */
+  private void applyTo(ClassVisitor v, Class<?> c) {
+    if (Log.isLoggingOn()) {
+      Log.logLine(String.format("Visiting member class %s", c.toString()));
+    }
+    v.visit(c, this);
   }
 
   /**
