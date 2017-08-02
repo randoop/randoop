@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+
+import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
@@ -59,9 +61,6 @@ public class OperationModel {
   /** The set of class declaration types for this model */
   private Set<ClassOrInterfaceType> classTypes;
 
-  /** The count of classes under test for this model */
-  private int classCount;
-
   /** The set of input types for this model */
   private Set<Type> inputTypes;
 
@@ -102,7 +101,6 @@ public class OperationModel {
 
     coveredClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();
-    classCount = 0;
   }
 
   /**
@@ -285,8 +283,7 @@ public class OperationModel {
         GenInputsAbstract.log.flush();
       }
     } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new BugInRandoopException("Error while logging operations", e);
     }
   }
 
@@ -356,7 +353,6 @@ public class OperationModel {
         }
       }
     }
-    classCount = this.classTypes.size();
 
     // Collect covered classes
     for (String classname : coveredClassnames) {
@@ -422,7 +418,7 @@ public class OperationModel {
       OmitMethodsPredicate omitPredicate)
       throws SignatureParseException {
     for (String sig : methodSignatures) {
-      AccessibleObject accessibleObject = null;
+      AccessibleObject accessibleObject;
       accessibleObject = SignatureParser.parse(sig, visibility, reflectionPredicate);
       if (accessibleObject != null) {
         TypedClassOperation operation;
@@ -440,12 +436,12 @@ public class OperationModel {
 
   /** Creates and adds the Object class default constructor call to the concrete operations. */
   private void addObjectConstructor() {
-    Constructor<?> objectConstructor = null;
+    Constructor<?> objectConstructor;
     try {
       objectConstructor = Object.class.getConstructor();
     } catch (NoSuchMethodException e) {
-      System.err.println("Something is wrong. Please report: unable to load Object()");
-      System.exit(1);
+      throw new BugInRandoopException(
+          "Something is wrong. Please report: unable to load Object()", e);
     }
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());

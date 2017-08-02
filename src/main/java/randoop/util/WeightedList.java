@@ -13,7 +13,9 @@ public class WeightedList {
   }
 
   public void add(WeightedElement elt) {
-    if (elt == null) throw new IllegalArgumentException("element to be added cannot be null.");
+    if (elt == null) {
+      throw new IllegalArgumentException("element to be added cannot be null.");
+    }
     theList.add(elt);
   }
 
@@ -25,9 +27,12 @@ public class WeightedList {
 
     // Find interval length. TODO cache max value.
     double max = 0;
-    for (int i = 0; i < theList.size(); i++) {
-      double weight = theList.get(i).getWeight();
-      if (weight <= 0) throw new BugInRandoopException("weight was " + weight);
+    for (WeightedElement list : theList) {
+      double weight = list.getWeight();
+      if (weight <= 0) {
+        throw new BugInRandoopException(
+            "Unable to select random index, found negative weight " + weight);
+      }
       max += weight;
     }
     assert max > 0;
@@ -41,6 +46,6 @@ public class WeightedList {
         return i;
       }
     }
-    throw new BugInRandoopException();
+    throw new BugInRandoopException("Failed to select random index of weighted list");
   }
 }

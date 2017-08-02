@@ -695,7 +695,11 @@ public class ForwardGenerator extends AbstractGenerator {
       // selection step is to select from among all possible values.
       // if (i == 0 && statement.isInstanceMethod()) m = Match.EXACT_TYPE;
       if (randomVariable == null) {
-        throw new BugInRandoopException("type: " + inputType + ", sequence: " + chosenSeq);
+        throw new BugInRandoopException(
+            "Failed to select variable with input type: "
+                + inputType
+                + " for sequence: "
+                + chosenSeq);
       }
 
       // Fail, if we were unlucky and selected a null or primitive value as the
