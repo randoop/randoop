@@ -22,6 +22,7 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
+import randoop.main.RandoopInputException;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
@@ -69,7 +70,12 @@ public class CoveredClassTest {
     GenInputsAbstract.require_covered_classes = null;
     // setup classes
 
-    ForwardGenerator testGenerator = getGenerator();
+    ForwardGenerator testGenerator = null;
+    try {
+      testGenerator = getGenerator();
+    } catch (RandoopInputException e) {
+      fail("Input error " + e);
+    }
 
     testGenerator.explore();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
@@ -108,7 +114,12 @@ public class CoveredClassTest {
         null; //"tests/instrument/testcase/coveredclasses.txt";
     // setup classes
 
-    ForwardGenerator testGenerator = getGenerator();
+    ForwardGenerator testGenerator = null;
+    try {
+      testGenerator = getGenerator();
+    } catch (RandoopInputException e) {
+      fail("Input error: " + e);
+    }
 
     testGenerator.explore();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
@@ -146,7 +157,12 @@ public class CoveredClassTest {
     GenInputsAbstract.require_covered_classes = new File("instrument/testcase/coveredclasses.txt");
     // setup classes
 
-    ForwardGenerator testGenerator = getGenerator();
+    ForwardGenerator testGenerator = null;
+    try {
+      testGenerator = getGenerator();
+    } catch (RandoopInputException e) {
+      fail("Input error: " + e);
+    }
 
     testGenerator.explore();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
@@ -176,7 +192,7 @@ public class CoveredClassTest {
     }
   }
 
-  private ForwardGenerator getGenerator() {
+  private ForwardGenerator getGenerator() throws RandoopInputException {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
@@ -246,7 +262,6 @@ public class CoveredClassTest {
     } catch (NoSuchMethodException e) {
       fail("failed to get Object constructor: " + e);
     }
-    assert objectConstructor != null : "object constructor is null";
 
     Sequence newObj = new Sequence().extend(objectConstructor);
     Set<Sequence> excludeSet = new LinkedHashSet<>();
@@ -258,7 +273,6 @@ public class CoveredClassTest {
     testGenerator.addTestPredicate(isOutputTest);
 
     ContractSet contracts = operationModel.getContracts();
-    Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     TestCheckGenerator checkGenerator =
         genTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.addTestCheckGenerator(checkGenerator);

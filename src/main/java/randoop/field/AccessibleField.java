@@ -111,8 +111,7 @@ public class AccessibleField {
     } catch (IllegalArgumentException e) {
       throw new SequenceExecutionException("Field access to object of wrong type: ", e);
     } catch (IllegalAccessException e) {
-      throw new BugInRandoopException(
-          "Access control violation for field: " + field.getName() + "; " + e.getMessage());
+      throw new BugInRandoopException("Access control violation for field: " + field.getName(), e);
     }
     return ret;
   }
@@ -133,7 +132,7 @@ public class AccessibleField {
     } catch (IllegalArgumentException e) {
       throw new SequenceExecutionException("Field set to object of wrong type", e);
     } catch (IllegalAccessException e) {
-      throw new BugInRandoopException("Access control violation for field: " + e.getMessage());
+      throw new BugInRandoopException("Access control violation for field: ", e);
     }
   }
 

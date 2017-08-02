@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.OperationParseException;
@@ -1073,8 +1074,7 @@ public final class Sequence implements WeightedElement {
       GenInputsAbstract.log.flush();
 
     } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new BugInRandoopException("Error while logging sequence", e);
     }
   }
 
