@@ -317,16 +317,9 @@ public class VisibilityTest {
 
     Set<TypedOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
-    int expectedCount =
-        expectedMethods.size()
-            + 2 * expectedFields.size()
-            + expectedEnums.size()
-            + expectedConstructors.size();
-    assertEquals(
-        "Expect operations count to be methods plus constructor", expectedCount, actual.size());
-
     for (Enum<?> e : expectedEnums) {
-      assertTrue("enum " + e.name() + " should occur", actual.contains(createEnumOperation(e)));
+      assertTrue(
+          "enum value " + e.name() + " should occur", actual.contains(createEnumOperation(e)));
     }
 
     for (Field f : expectedFields) {
@@ -354,6 +347,14 @@ public class VisibilityTest {
     } catch (RandoopTypeException e) {
       fail("Type error: " + e.getMessage());
     }
+
+    int expectedCount =
+        expectedMethods.size()
+            + 2 * expectedFields.size()
+            + expectedEnums.size()
+            + expectedConstructors.size();
+    assertEquals(
+        "Expect operations count to be methods plus constructor", expectedCount, actual.size());
   }
 
   /*
@@ -561,13 +562,16 @@ public class VisibilityTest {
 
   private Set<TypedOperation> getConcreteOperations(
       Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+    ReflectionManager typeManager = new ReflectionManager(visibilityPredicate);
+    Set<ClassOrInterfaceType> classTypes = new LinkedHashSet<>();
+    typeManager.apply(new DeclarationExtractor(classTypes, predicate), c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    OperationExtractor extractor =
-        new OperationExtractor(classType, operations, predicate, visibilityPredicate);
-    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
-    manager.add(extractor);
-    manager.apply(c);
+    ReflectionManager opManager = new ReflectionManager(visibilityPredicate);
+    for (ClassOrInterfaceType type : classTypes) {
+      opManager.apply(
+          new OperationExtractor(type, operations, predicate, visibilityPredicate),
+          type.getRuntimeClass());
+    }
     return operations;
   }
 
