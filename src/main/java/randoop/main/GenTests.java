@@ -23,6 +23,7 @@ import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
+import randoop.MethodReplacements;
 import randoop.MultiVisitor;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
@@ -42,6 +43,7 @@ import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.RandoopInstantiationError;
+import randoop.reflection.RawSignature;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -223,6 +225,9 @@ public class GenTests extends GenInputsAbstract {
     }
 
     omitmethods.addAll(readOmitMethods(omitmethods_list));
+    if (!GenInputsAbstract.dont_omit_replaced_methods) {
+      omitmethods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
+    }
 
     ReflectionPredicate reflectionPredicate =
         new DefaultReflectionPredicate(omitmethods, omitFields);
@@ -561,6 +566,41 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     return result;
+  }
+
+  /**
+   * Creates a list of signature strings (see {@link RawSignature#toString()} to a list of {@code
+   * Pattern}.
+   *
+   * @param signatures the list of signature strings
+   * @return the list of patterns for the signature strings
+   */
+  private List<Pattern> createPatternsFromSignatures(List<String> signatures) {
+    List<Pattern> patterns = new ArrayList<>();
+    for (String signatureString : signatures) {
+      patterns.add(signatureToPattern(signatureString));
+    }
+    return patterns;
+  }
+
+  /**
+   * Converts a signature string (see {@link RawSignature#toString()} to a {@code Pattern} that
+   * matches that string.
+   *
+   * @param signatureString the string representation of a signature
+   * @return the pattern to match {@code signatureString}
+   */
+  private Pattern signatureToPattern(String signatureString) {
+    String patternString =
+        signatureString
+            .replaceAll(" ", "")
+            .replaceAll("\\.", "\\\\.")
+            .replaceAll("\\(", "\\\\(")
+            .replaceAll("\\)", "\\\\)")
+            .replaceAll("\\$", "\\\\$")
+            .replaceAll("\\[", "\\\\[")
+            .replaceAll("\\]", "\\\\]");
+    return Pattern.compile(patternString);
   }
 
   /**
