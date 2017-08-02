@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
@@ -303,6 +304,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return JavaTypes.OBJECT_TYPE;
   }
 
+  /**
+   * Return the set of all of the supertypes of this type.
+   *
+   * @return the set of all supertypes of this type
+   */
   public Collection<ClassOrInterfaceType> getSuperTypes() {
     Collection<ClassOrInterfaceType> supertypes = new HashSet<>();
     if (this.isObject()) {
@@ -320,6 +326,24 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         supertypes.addAll(interfaceType.getSuperTypes());
       }
     }
+    return supertypes;
+  }
+
+  /**
+   * Return the set of immediate supertypes of this type
+   *
+   * @return the set of immediate supertypes of this type
+   */
+  public Set<ClassOrInterfaceType> getImmediateSupertypes() {
+    Set<ClassOrInterfaceType> supertypes = new HashSet<>();
+    if (this.isObject()) {
+      return supertypes;
+    }
+    ClassOrInterfaceType superclass = this.getSuperclass();
+    if (superclass != null) {
+      supertypes.add(superclass);
+    }
+    supertypes.addAll(this.getInterfaces());
     return supertypes;
   }
 
