@@ -22,6 +22,7 @@ import randoop.generation.TestUtils;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
+import randoop.main.RandoopInputException;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -58,16 +59,23 @@ public class SpecialCoveredClassTest {
     GenInputsAbstract.generatedLimit = 10000;
     GenInputsAbstract.outputLimit = 5000;
 
-    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
-    Set<String> coveredClassnames =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.require_covered_classes, "coverage class names");
-    Set<String> omitFields = new HashSet<>();
+    Set<String> classnames = null;
+    Set<String> coveredClassnames = null;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    Set<String> omitFields = new HashSet<>();
     ReflectionPredicate reflectionPredicate =
         new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitFields);
-    Set<String> methodSignatures =
-        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.methodlist, "method list");
+    Set<String> methodSignatures = null;
+    try {
+      classnames = GenInputsAbstract.getClassnamesFromArgs();
+      coveredClassnames =
+          GenInputsAbstract.getStringSetFromFile(
+              GenInputsAbstract.require_covered_classes, "coverage class names");
+      methodSignatures =
+          GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.methodlist, "method list");
+    } catch (RandoopInputException e) {
+      fail("Input error: " + e.getMessage());
+    }
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     OperationModel operationModel = null;
     try {
@@ -138,7 +146,6 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.require_classname_in_test);
     testGenerator.addTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
-    Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     TestCheckGenerator checkGenerator =
         genTests.createTestCheckGenerator(visibility, contracts, observerMap);
