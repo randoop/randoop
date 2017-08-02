@@ -44,9 +44,11 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RandoopSystemTest {
 
-  // Keep in synch with GenTests.NO_CLASSES_TO_TEST.
-  // TODO: how to use the GenTests version?
-  public static final String NO_CLASSES_TO_TEST = "There are no classes to test. Exiting.";
+  // XXX Can factor into module of shared dependencies, but...
+  // Since we are avoiding dependencies of the system tests on Randoop code, the tests cannot
+  // directly use GenTests.NO_METHODS_TO_TEST. So need to keep this in synch with
+  // GenTests.NO_OPERATIONS_TO_TEST.
+  private static final String NO_OPERATIONS_TO_TEST = "There are no operations to test. Exiting.";
 
   private static SystemTestEnvironment systemTestEnvironment;
 
@@ -812,10 +814,10 @@ public class RandoopSystemTest {
 
     Iterator<String> it = result.outputLines.iterator();
     String line = "";
-    while (!line.contains(NO_CLASSES_TO_TEST) && it.hasNext()) {
+    while (!line.contains(NO_OPERATIONS_TO_TEST) && it.hasNext()) {
       line = it.next();
     }
-    assertTrue("should fail to find class names in file", line.contains(NO_CLASSES_TO_TEST));
+    assertTrue("should fail to find class names in file", line.contains(NO_OPERATIONS_TO_TEST));
   }
 
   /**
