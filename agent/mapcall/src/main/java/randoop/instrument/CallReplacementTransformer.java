@@ -50,7 +50,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   /** Map from a method to its replacement. */
   private final ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap;
 
-  /** The list of package prefixes (package name + ".") to exclude from transformation */
+  /** The list of package prefixes (package name + ".") to exclude from transformation. */
   private final Set<String> excludedPackagePrefixes;
 
   /**
@@ -60,7 +60,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * <p>The transformer can be run by multiple threads, so the replacement maps use concurrent
    * implementations.
    *
-   * @param excludedPackagePrefixes the period terminated prefixes for packages from which classes
+   * @param excludedPackagePrefixes the period-terminated prefixes for packages from which classes
    *     should not be transformed
    * @param replacementMap the concurrent hash map with method replacements
    */
