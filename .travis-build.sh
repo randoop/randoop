@@ -33,8 +33,12 @@ fi
 
 if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
   # need gui for running tests of replace call agent with Swing/AWT
+  # run xvfb
   export DISPLAY=:99.0
-  sh -e /etc/init.d/xvfb start
+  XVFB=/usr/bin/Xvfb
+  XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
+  PIDFILE=/var/xvfb_${DISPLAY:1}.pid
+  /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
   sleep 3 # give xvfb some time to start
 
   # ./gradlew --info check
