@@ -44,7 +44,7 @@ public class TestEnvironment {
   /**
    * Set the test execution timeout.
    *
-   * @param timeout the time in milliseconds that a test is allowed to run before being terminated.
+   * @param timeout the time in milliseconds that a test is allowed to run before being terminated
    */
   public void setTimeout(long timeout) {
     this.timeout = timeout;
