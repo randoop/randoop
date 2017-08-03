@@ -413,8 +413,8 @@ class ReplacementFileReader {
             found = true;
           }
         } else {
-          // The subclass for directories is is internal.  It seems to work to assume the
-          // connection is a directory, and let an exception occur if it is not
+          // The subclass for directories is internal.  It seems to work to assume the
+          // connection is a directory, and let an exception occur if it is not.
           File path = new File(URLDecoder.decode(url.getPath(), "UTF-8"));
           if (path.exists() && path.isDirectory()) {
             addPackageReplacements(replacementMap, originalPackage, replacementPackage, path);
@@ -548,7 +548,7 @@ class ReplacementFileReader {
     }
   }
 
-  /** Exception to represent the occurrence of an error in the replacement file */
+  /** Exception to represent a malformed replacement file. */
   private static class ReplacementException extends Throwable {
     ReplacementException(String message) {
       super(message);
