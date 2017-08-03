@@ -111,7 +111,7 @@ public class MapCallsAgent {
       System.exit(1);
     }
 
-    // If user provided package exclusion file, load user package exclusions
+    // If user-provided package exclusion file, load user package exclusions
     if (dont_transform != null) {
       try {
         loadExclusions(

@@ -549,7 +549,7 @@ public class GenTests extends GenInputsAbstract {
    */
   private Set<Pattern> readOmitMethods(File file) {
     Set<Pattern> result = new LinkedHashSet<>();
-    // Read method omissions from user provided file
+    // Read method omissions from user-provided file
     if (file != null) {
       try (EntryReader er = new EntryReader(file, "^#.*", null)) {
         for (String line : er) {
