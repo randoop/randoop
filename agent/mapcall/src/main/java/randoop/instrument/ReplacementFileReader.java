@@ -269,7 +269,7 @@ class ReplacementFileReader {
       String originalClassname,
       Class<?> replacementClass)
       throws ReplacementException {
-    final Type type = BCELUtil.classname_to_type(originalClassname);
+    final Type originalType = BCELUtil.classname_to_type(originalClassname);
     for (Method method : replacementClass.getDeclaredMethods()) {
       int modifiers = method.getModifiers() & Modifier.methodModifiers();
       if (Modifier.isPrivate(modifiers)) {
@@ -300,7 +300,7 @@ class ReplacementFileReader {
 
       // Check if the replacement might correspond to a non-static original
       if (replacementDef.getParameterTypes().length > 0
-          && replacementDef.getParameterTypes()[0].equals(type)) {
+          && replacementDef.getParameterTypes()[0].equals(originalType)) {
         originalDef = originalDef.removeFirstParameter();
         if (originalDef.exists()) {
           // If there is already a replacement, do not overwrite it
