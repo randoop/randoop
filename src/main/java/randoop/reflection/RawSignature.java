@@ -158,7 +158,7 @@ public class RawSignature {
    * parentheses.
    *
    * @param parameterNames the parameter names to use to create declaration, length should be the
-   *     same as the number of parameter types in this signature.
+   *     same as the number of parameter types in this signature
    * @return the parameter declarations for this signature using the given parameter names
    */
   public String getDeclarationArguments(List<String> parameterNames) {

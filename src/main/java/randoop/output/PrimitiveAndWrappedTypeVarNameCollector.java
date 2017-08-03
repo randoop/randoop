@@ -17,7 +17,7 @@ public class PrimitiveAndWrappedTypeVarNameCollector extends VoidVisitorAdapter<
    * Visit every variable declaration.
    *
    * @param variableNames a set containing the names of all the variables that are of primitive or
-   *     wrapped types.
+   *     wrapped types
    */
   @SuppressWarnings("unchecked")
   @Override
