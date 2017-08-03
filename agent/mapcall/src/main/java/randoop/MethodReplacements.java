@@ -34,7 +34,7 @@ public class MethodReplacements {
    * Returns a copy of the signature list in this class.
    *
    * @return the list of signature strings set by {@link #addReplacedMethods(List)}, or the empty
-   *     list if that method hasn't been called.
+   *     list if that method hasn't been called
    */
   public static synchronized List<String> getSignatureList() {
     return new ArrayList<>(signatureList);

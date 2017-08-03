@@ -68,7 +68,7 @@ public class Window {
    * Helper method for mock methods to set the state of a {@code java.awt.Window} so that it is not
    * focusable, and attempt to dispose of it.
    *
-   * @param window the window to set to unfocusable, and to dispose.
+   * @param window the window to set to unfocusable, and to dispose
    */
   private static void setWindowState(java.awt.Window window) {
     window.setFocusableWindowState(false);

@@ -68,7 +68,7 @@ public class JFrame {
    * Helper method for mock methods to set the state of a {@code javax.swing.JFrame} so that it is
    * not focusable, and attempt to dispose of it.
    *
-   * @param frame the frame to set to unfocusable, and to dispose.
+   * @param frame the frame to set to unfocusable, and to dispose
    */
   private static void setWindowState(javax.swing.JFrame frame) {
     frame.setFocusableWindowState(false);

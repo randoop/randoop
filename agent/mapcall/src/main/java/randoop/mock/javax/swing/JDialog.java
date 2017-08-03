@@ -68,7 +68,7 @@ public class JDialog {
    * Helper method for mock methods to set the state of a {@code javax.swing.JDialog} so that it is
    * not focusable, and attempt to dispose of it.
    *
-   * @param dialog the window to set to unfocusable, and to dispose.
+   * @param dialog the window to set to unfocusable, and to dispose
    */
   private static void setWindowState(javax.swing.JDialog dialog) {
     dialog.setFocusableWindowState(false);

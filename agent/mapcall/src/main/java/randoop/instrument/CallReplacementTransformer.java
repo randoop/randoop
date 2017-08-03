@@ -185,7 +185,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    *
    * @param cg the BCEL class representation
    * @return true if the class has been transformed, false if either no calls were replaced or an
-   *     error occured.
+   *     error occured
    */
   private boolean transformClass(ClassGen cg) throws IllegalClassFormatException {
     boolean transformed = false;
