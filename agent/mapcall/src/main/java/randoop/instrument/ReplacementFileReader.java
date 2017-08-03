@@ -339,30 +339,31 @@ class ReplacementFileReader {
 
     boolean found = false;
     for (String pathString : bootclasspath.split(File.pathSeparator)) {
-      if (!pathString.startsWith(javaHome)) {
-        File file = new File(pathString);
-        if (!file.exists()) {
-          continue;
+      if (pathString.startsWith(javaHome)) {
+        continue;
+      }
+      File file = new File(pathString);
+      if (!file.exists()) {
+        continue;
+      }
+      if (file.isDirectory()) {
+        Path path = file.toPath();
+        Path replacementPath = path.resolve(replacementPackage.replace('.', File.separatorChar));
+        if (Files.exists(replacementPath) && Files.isDirectory(replacementPath)) {
+          addPackageReplacements(
+              replacementMap, originalPackage, replacementPackage, replacementPath.toFile());
+          found = true; // directory for package was found
         }
-        if (file.isDirectory()) {
-          Path path = file.toPath();
-          Path replacementPath = path.resolve(replacementPackage.replace('.', File.separatorChar));
-          if (Files.exists(replacementPath) && Files.isDirectory(replacementPath)) {
-            addPackageReplacements(
-                replacementMap, originalPackage, replacementPackage, replacementPath.toFile());
-            found = true; // directory for package was found
+      } else { // or a jar file
+        try {
+          JarFile jarFile = new JarFile(file);
+          if (addPackageReplacements(
+              replacementMap, originalPackage, replacementPackage, jarFile)) {
+            found = true;
           }
-        } else { // or a jar file
-          try {
-            JarFile jarFile = new JarFile(file);
-            if (addPackageReplacements(
-                replacementMap, originalPackage, replacementPackage, jarFile)) {
-              found = true;
-            }
-          } catch (IOException e) {
-            throw new ReplacementException(
-                "Error reading jar file from boot classpath: " + file.getName());
-          }
+        } catch (IOException e) {
+          throw new ReplacementException(
+              "Error reading jar file from boot classpath: " + file.getName());
         }
       }
     }
