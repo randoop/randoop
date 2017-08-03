@@ -137,7 +137,7 @@ public class MapCallsAgent {
               new InputStreamReader(inputStream), "default-replacements.txt");
     } catch (ReplacementFileException e) {
       System.err.printf("Error reading default replacement file:%n  %s%n", e);
-      System.err.println("Check that the mapcall.jar is on the classpath or bootclasspath.");
+      System.err.println("Check that mapcall.jar is on the classpath or bootclasspath.");
       System.exit(1);
     }
 
