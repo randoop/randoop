@@ -1198,7 +1198,7 @@ public class Minimize extends CommandHandler {
   /**
    * Calculate the length of a file, by number of lines.
    *
-   * @param file the file to compute the length of.
+   * @param file the file to compute the length of
    * @return the number of lines in the file. Returns -1 if an exception occurs while reading the
    *     file
    */
