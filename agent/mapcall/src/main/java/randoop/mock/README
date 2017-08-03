@@ -1,4 +1,4 @@
-Notes on Randoop mocks:
+This directory contains pre-defined mocks.
 
 All replacement methods need to be static. Replacing constructors and instance
 methods with constructors and instance methods complicates replacement.
@@ -8,7 +8,7 @@ don't replace a method that return int with another that just returns zero.  The
 reason is that this can change the behavior of client code.
 
 
-For AWT/Swing we want to try to avoid the following
+The goal of these mocks in to avoid the following AWT/Swing behaviors:
  - having dialogs (and other components/containers) display themselves,
  - having windowing system focus taken,
  - getting headless exceptions in headless environment,
