@@ -27,7 +27,7 @@ import plume.EntryReader;
  * #readReplacements(File)} that read a MapCall agent replacement file and populate the method
  * replacement map used by the agent. See the <a
  * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user
- * documentation</a> for details on the file format.
+ * documentation</a> for the file format.
  */
 class ReplacementFileReader {
 
@@ -68,7 +68,7 @@ class ReplacementFileReader {
    * Reads the given replacement file specifying method calls that should be replaced by other
    * method calls. See the <a
    * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user
-   * documentation</a> for details on the file format.
+   * documentation</a> for the file format.
    *
    * @see #readReplacements(Reader, String)
    * @param map_file the file with map of method substitutions
@@ -83,18 +83,11 @@ class ReplacementFileReader {
   /**
    * Reads the replacement file specifying method calls that should be replaced by other method
    * calls. See the <a href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall
-   * user documentation</a> for details on the file format.
-   *
-   * <p>For each replacement line, this method determines if the replacement is a method replacement
-   * or not. If so, the method {@link #addMethodReplacement(ConcurrentHashMap, String, String)} is
-   * called. If not, the method {@link #discoverClassOrPackageReplacements(ConcurrentHashMap,
-   * String, String)} determines whether the replacement is either a class or package replacement,
-   * and, for each, searches for method replacements within the replacement class or package, adding
-   * any found to the method replacement map returned by this method.
+   * user documentation</a> for the file format.
    *
    * @param in the {@code Reader} for the replacement file
    * @param filename the name of the file read by {@code in}, used for error reporting
-   * @throws IOException if there is an error reading from the file
+   * @throws IOException if there is an error while reading the file
    * @return the method replacement map constructed from the file
    */
   static ConcurrentHashMap<MethodSignature, MethodSignature> readReplacements(
@@ -140,7 +133,7 @@ class ReplacementFileReader {
    * reflection to check that the replacement method signature is well-formed and corresponds to a
    * method that exists.
    *
-   * <p>See {@link MethodSignature#of(String)} for details on expected format of a method signature.
+   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
    *
    * @param replacementMap the map from a method to a replacement method to which replacement is
    *     added
@@ -237,9 +230,9 @@ class ReplacementFileReader {
     if (replacementClass != null) {
       addClassReplacements(replacementMap, original, replacementClass);
     } else {
-      // Otherwise, determine if the replacement is a package
-      // How depends on whether the agent is run on bootloaded classes, which is the case if the
-      // ClassLoader is null
+      // Otherwise, assume the replacement is a package.
+      // Finding the package depends on whether the agent is run on bootloaded classes,
+      // which is the case if the ClassLoader is null.
       ClassLoader loader = ReplacementFileReader.class.getClassLoader();
       if (loader == null) {
         // If the agent is run on bootloaded classes, we have to check the path directly.
@@ -287,7 +280,7 @@ class ReplacementFileReader {
 
       MethodSignature originalDef = replacementDef.substituteClassname(originalClassname);
       if (originalDef.exists()) {
-        // If there is already a replacement, do not overwrite it
+        // If there is already a replacement, do not overwrite it.
         if (replacementMap.get(originalDef) != null) {
           String msg =
               String.format(
@@ -303,7 +296,7 @@ class ReplacementFileReader {
           && replacementDef.getParameterTypes()[0].equals(originalType)) {
         originalDef = originalDef.removeFirstParameter();
         if (originalDef.exists()) {
-          // If there is already a replacement, do not overwrite it
+          // If there is already a replacement, do not overwrite it.
           if (replacementMap.get(originalDef) != null) {
             String msg =
                 String.format(
