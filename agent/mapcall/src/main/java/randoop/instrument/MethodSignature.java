@@ -162,9 +162,9 @@ public class MethodSignature {
   }
 
   /**
-   * Returns the method name for this {@link MethodSignature}.
+   * Returns the simple method name for this {@link MethodSignature}.
    *
-   * @return the method name of this {@link MethodSignature}
+   * @return the simple method name of this {@link MethodSignature}
    */
   String getName() {
     return name;
@@ -227,10 +227,8 @@ public class MethodSignature {
    * @throws ClassNotFoundException if no {@code Class<?>} was found for the type
    */
   private Class<?> typeToClass(Type type) throws ClassNotFoundException {
-    Class<?> c;
     String name = UtilMDE.fieldDescriptorToClassGetName(type.getSignature());
-    c = UtilMDE.classForName(name);
-    return c;
+    return UtilMDE.classForName(name);
   }
 
   /**
