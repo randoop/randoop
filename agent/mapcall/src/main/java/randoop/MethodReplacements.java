@@ -11,8 +11,9 @@ import java.util.List;
  * <p>Uses synchronized access to a static list of the signature strings. This list is set by {@link
  * randoop.instrument.MapCallsAgent#premain(String, Instrumentation)} before the {@link
  * randoop.instrument.CallReplacementTransformer} is added to the class loader, and the method
- * {@link #addReplacedMethods(List)} should only be called at that point. Randoop should use {@link
- * #getSignatureList()} to add to the {@code --omitmethods} patterns before starting generation.
+ * {@link #addReplacedMethods(List)} should only be called at that point. Randoop should add the
+ * result of {@link #getSignatureList()} to the {@code --omitmethods} patterns before starting
+ * generation, because any method that is being replaced shouldn't be directly called.
  */
 public class MethodReplacements {
   /** The list of signature strings */
