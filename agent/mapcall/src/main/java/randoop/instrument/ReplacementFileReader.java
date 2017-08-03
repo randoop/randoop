@@ -42,9 +42,9 @@ class ReplacementFileReader {
   private static final String DOT_DELIMITED_IDS = ID_STRING + "(?:\\." + ID_STRING + ")*";
 
   /**
-   * Naive regex to match a method signature consisting of a fully-qualified classname, a method
-   * name, and argument types in parentheses. The pattern does not include the details of the
-   * argument types.
+   * Naive regex to match a method signature consisting of a fully-qualified method name followed by
+   * anything in parentheses. The parentheses are expected to contain argument types, but the
+   * pattern permits anything.
    */
   private static final String SIGNATURE_STRING = DOT_DELIMITED_IDS + "\\([^)]*\\)";
 
