@@ -25,8 +25,8 @@ import randoop.MethodReplacements;
  * The MapCalls javaagent applies the {@link CallReplacementTransformer} to map calls in loaded
  * classes to alternate implementations.
  *
- * <p>The transformer applies method call replacements as specified in either the default or a user
- * provided replacement file. (See the <a
+ * <p>The transformer applies method call replacements as specified in either the default or a
+ * user-provided replacement file. (See the <a
  * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user
  * documentation</a> the file format.) Default replacements are given in an internal resource file
  * {@code "default-replacements.txt"}. User replacements are then loaded using the {@link #map_calls
@@ -99,7 +99,7 @@ public class MapCallsAgent {
     String exclusionFileName = "/default-load-exclusions.txt";
     InputStream inputStream = MapCallsAgent.class.getResourceAsStream(exclusionFileName);
     if (inputStream == null) {
-      System.err.println("unable to open default package exclusion file. Please report.");
+      System.err.println("Unable to find default package exclusion file. Please report.");
       System.exit(1);
     }
     try {
