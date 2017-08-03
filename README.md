@@ -1,3 +1,12 @@
+# THIS IS A PARTIALLY IMPLEMENTED BRANCH
+
+Includes classes for using constraint programming to select types for
+instantiating generic/wildcard types.  The goal is to be able to determine
+domains for type instantiations without enumerating all possible instantiations.
+
+See LaTeX document in `devnotes`.
+
+
 # Randoop
 
 Randoop is a unit test generator for Java.
