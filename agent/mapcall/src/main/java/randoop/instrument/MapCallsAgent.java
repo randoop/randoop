@@ -142,8 +142,7 @@ public class MapCallsAgent {
     }
 
     // If the user has provided a replacement file, load user replacements and put them into the
-    // map for the default replacements. This use of the Map.put method allows a user replacement to
-    // override a default replacement.
+    // map, possibly overriding default replacements that already appear in the map.
     if (map_calls != null) {
       try {
         replacementMap.putAll(ReplacementFileReader.readReplacements(map_calls));
@@ -175,7 +174,7 @@ public class MapCallsAgent {
    *     must not be null
    * @param filename the name of the file read by the reader
    * @param excludedPackagePrefixes the set of excluded package prefixes, modified by adding new
-   *     prefixes. Must not be null
+   *     prefixes. Must not be null.
    * @throws IOException if there is an error reading the file
    */
   private static void loadExclusions(
