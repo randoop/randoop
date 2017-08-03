@@ -73,8 +73,7 @@ public class Operation {
    *
    * @param classname the fully-qualified name of the declaring class
    * @param parameterTypes the list of fully-qualified parameter type names
-   * @return the {@link Operation} for a constructor of the declaring class with the parameter
-   *     types.
+   * @return the {@link Operation} for a constructor of the declaring class with the parameter types
    */
   public static Operation forConstructorName(String classname, List<String> parameterTypes) {
     return new Operation(classname, classname, parameterTypes);

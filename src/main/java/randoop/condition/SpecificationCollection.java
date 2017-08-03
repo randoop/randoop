@@ -169,7 +169,7 @@ public class SpecificationCollection {
    * @param classType the class whose supertypes are searched
    * @param stopSet the set of methods
    * @return the set of methods with the signature and in the stop set from lowest supertypes of the
-   *     class type.
+   *     class type
    */
   private static Set<Method> findParents(Class<?> classType, Set<Method> stopSet) {
     Set<Method> parents = new HashSet<>();

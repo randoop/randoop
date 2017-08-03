@@ -22,8 +22,8 @@ class ConditionPair<T> {
   /**
    * Creates a {@link ConditionPair} object for the pre-condition and post-clause.
    *
-   * @param preCondition The condition to be evaluated before the operation is called
-   * @param postClause The clause to be evaluated after the operation is called
+   * @param preCondition the condition to be evaluated before the operation is called
+   * @param postClause the clause to be evaluated after the operation is called
    */
   ConditionPair(Condition preCondition, T postClause) {
     this.preCondition = preCondition;

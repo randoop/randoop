@@ -81,7 +81,7 @@ public class SpecificationTranslator {
    *     {@link OperationSpecification} to translate
    * @param identifiers the {@link Identifiers} from the specification to be translated
    * @param compiler the sequence compiler to use to create condition methods
-   * @return The translator object to convert the specifications for {@code accessibleObject}
+   * @return the translator object to convert the specifications for {@code accessibleObject}
    */
   static SpecificationTranslator createTranslator(
       AccessibleObject accessibleObject, Identifiers identifiers, SequenceCompiler compiler) {
@@ -398,7 +398,7 @@ public class SpecificationTranslator {
    *
    * <p>Only used for testing.
    *
-   * @return the pre-condition method parameter declaration string.
+   * @return the pre-condition method parameter declaration string
    */
   String getPreConditionDeclarations() {
     return preConditionDeclarations;
@@ -409,7 +409,7 @@ public class SpecificationTranslator {
    *
    * <p>Only used for testing.
    *
-   * @return the post-condition method parameter declaration string.
+   * @return the post-condition method parameter declaration string
    */
   String getPostConditionDeclarations() {
     return postConditionDeclarations;

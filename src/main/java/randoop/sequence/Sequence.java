@@ -1049,7 +1049,7 @@ public final class Sequence implements WeightedElement {
    * in operation arguments. If true, the initialization of the variable will not be included in the
    * sequence when dumped to a file.
    *
-   * @return true if the short form of variables can be used for this sequence, and false otherwise.
+   * @return true if the short form of variables can be used for this sequence, and false otherwise
    */
   boolean canUseShortForm() {
     return allowShortForm;
