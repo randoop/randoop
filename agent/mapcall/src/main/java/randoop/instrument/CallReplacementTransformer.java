@@ -327,7 +327,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       case Const.INVOKESPECIAL:
       case Const.INVOKEVIRTUAL:
         /*
-         * These calls have an implicit argument of the  {@code this} pointer. Since coversion is
+         * These calls have an implicit argument of the {@code this} pointer. Since coversion is
          * to a static call, need to insert the receiver type at the beginning of the argument type
          * array. This argument has already been explicitly pushed onto the stack, so modifying the
          * call signature is enough.
