@@ -60,15 +60,15 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * <p>The transformer can be run by multiple threads, so the replacement maps use concurrent
    * implementations.
    *
+   * @param replacementMap the concurrent hash map with method replacements
    * @param excludedPackagePrefixes the period-terminated prefixes for packages from which classes
    *     should not be transformed
-   * @param replacementMap the concurrent hash map with method replacements
    */
   CallReplacementTransformer(
-      Set<String> excludedPackagePrefixes,
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap) {
-    this.excludedPackagePrefixes = excludedPackagePrefixes;
+      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      Set<String> excludedPackagePrefixes) {
     this.replacementMap = replacementMap;
+    this.excludedPackagePrefixes = excludedPackagePrefixes;
   }
 
   /**
@@ -90,10 +90,6 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       ProtectionDomain protectionDomain,
       byte[] classfileBuffer)
       throws IllegalClassFormatException {
-
-    if (className == null) {
-      return null;
-    }
 
     String fullClassName = className.replace("/", ".");
 
@@ -120,7 +116,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       if (transformClass(cg)) {
         JavaClass javaClass = cg.getJavaClass();
         if (MapCallsAgent.debug) {
-          Path filepath = MapCallsAgent.debugPath.resolve(javaClass.getClassName() + ".class");
+          Path filepath = MapCallsAgent.debugPath.resolve(className + ".class");
           javaClass.dump(filepath.toFile());
         }
         debug_transform.log("transform: EXIT class %s transformed", className);
@@ -140,24 +136,28 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Indicates whether the class is a non-AWT/Swing boot-loaded class.
+   * Indicates whether the class is a boot-loaded class.
    *
-   * <p>This check is for performance, since attempting to transform all of {@code rt.jar} is
-   * unnecessary. However, we want to transform AWT/Swing classes if they are loaded.
+   * <p>Checks whether the class is loaded by the bootstrap loader or by the first classloader. The
+   * first classloader will either be a user-provided boot loader, or the extension class loader.
+   * Since the predicate is for performance, we don't make the extra check to determine if the user
+   * has given a boot loader.
    *
-   * <p>Actually checks whether the class is loaded by the bootstrap loader or by the first
-   * classloader. The first classloader will either be a user-provided boot loader, or the extension
-   * class loader. Since the predicate is mostly for performance, we don't make the extra check to
-   * determine if the user has given a boot loader.
-   *
-   * @param loader the class loader for the class
-   * @param fullClassName the fully-qualified name of the class
-   * @return true if the named class is boot-loaded and not in {@code java.awt.} or {@code
-   *     javax.swing.}, false otherwise
+   * @param loader the classloader for the class
+   * @return true if the named class is boot-loaded, false otherwise
    */
-  private boolean isNonGUIBootClass(ClassLoader loader, String fullClassName) {
-    return (loader == null || loader.getParent() == null)
-        && !(fullClassName.startsWith("java.awt.") || fullClassName.startsWith("javax.swing."));
+  private boolean isBootloadedClass(ClassLoader loader) {
+    return loader == null || loader.getParent() == null;
+  }
+
+  /**
+   * Indicates whether the class is in {@code java.awt.} or {@code javax.swing.} packages.
+   *
+   * @param fullClassName the fully-qualified class name
+   * @return true if the class is in {@code java.awt.} or {@code javax.swing.}, false otherwise
+   */
+  private boolean isGUIClass(String fullClassName) {
+    return fullClassName.startsWith("java.awt.") || fullClassName.startsWith("javax.swing.");
   }
 
   /**
@@ -168,8 +168,9 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * @return true if any excluded package is a prefix of the class name, false otherwise
    */
   private boolean isExcludedClass(ClassLoader loader, String fullClassName) {
-    if (isNonGUIBootClass(loader, fullClassName)) {
-      return false;
+    // For performance, skip boot loaded classes, but include GUI classes
+    if (isBootloadedClass(loader) && !isGUIClass(fullClassName)) {
+      return true;
     }
 
     for (String prefix : excludedPackagePrefixes) {

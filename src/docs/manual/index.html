@@ -1314,7 +1314,20 @@ So, the default mock for <code>java.awt.Component.show()</code> is <code>randoop
 You should not use the <code>randoop.mock</code> prefix for your own mock classes.
 </p>
 
-
+<p>
+Keep the following in mind when defining replacements:
+</p>
+<ul>
+  <li>
+    The implemented replacement mechanism is only designed to replace methods, and
+    will not work for constructors.
+  </li>
+  <li>
+    Replacements should avoid changing methods that return values. For instance,
+    don't replace a method that return int with another that just returns zero.  The
+    reason is that this can change the behavior of client code.
+  </li>
+</ul>
 
 <h3 id="map-calls-format">Replacement file format</h3>
 

@@ -44,9 +44,9 @@ public class MapCallsAgent {
 
   @SuppressWarnings("WeakerAccess")
   @Option("directory name for debug information")
-  public static String debug_directory = "";
+  public static String debug_directory = null;
 
-  static Path debugPath = Paths.get("").toAbsolutePath().normalize();
+  static Path debugPath;
 
   @SuppressWarnings("WeakerAccess")
   @Option("print progress information")
@@ -86,7 +86,8 @@ public class MapCallsAgent {
       }
     }
 
-    if (debug && !debug_directory.isEmpty()) {
+    debugPath = Paths.get("").toAbsolutePath().normalize();
+    if (debug && debug_directory != null && !debug_directory.isEmpty()) {
       debugPath = debugPath.resolve(debug_directory);
       if (!Files.exists(debugPath)) {
         Files.createDirectory(debugPath);
@@ -123,10 +124,15 @@ public class MapCallsAgent {
       }
     }
 
+    /*
+     * The agent is called when classes are loaded. If Randoop is using threads, this can result in
+     * multiple threads accessing the map to apply replacements. Since
+     */
     ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap = new ConcurrentHashMap<>();
 
     // Read the default replacement file
-    inputStream = MapCallsAgent.class.getResourceAsStream("/default-replacements.txt");
+    String replacementPath = "/default-replacements.txt";
+    inputStream = MapCallsAgent.class.getResourceAsStream(replacementPath);
     if (inputStream == null) {
       System.err.println("Unable to open default replacements file. Please report.");
       System.exit(1);
@@ -134,7 +140,7 @@ public class MapCallsAgent {
     try {
       replacementMap =
           ReplacementFileReader.readReplacements(
-              new InputStreamReader(inputStream), "default-replacements.txt");
+              new InputStreamReader(inputStream), replacementPath);
     } catch (ReplacementFileException e) {
       System.err.printf("Error reading default replacement file:%n  %s%n", e);
       System.err.println("Check that mapcall.jar is on the classpath or bootclasspath.");
@@ -152,7 +158,7 @@ public class MapCallsAgent {
       }
     }
 
-    // Communicate the list of replaced methods to Randoop
+    // Communicate the list of replaced methods to Randoop to omit direct calls
     List<String> signatureList = new ArrayList<>();
     for (MethodSignature def : replacementMap.keySet()) {
       signatureList.add(def.toString());
@@ -160,7 +166,7 @@ public class MapCallsAgent {
     MethodReplacements.addReplacedMethods(signatureList);
 
     CallReplacementTransformer transformer =
-        new CallReplacementTransformer(excludedPackagePrefixes, replacementMap);
+        new CallReplacementTransformer(replacementMap, excludedPackagePrefixes);
     transformer.addMapFileShutdownHook();
 
     inst.addTransformer(transformer);

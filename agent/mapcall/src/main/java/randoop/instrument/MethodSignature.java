@@ -111,12 +111,14 @@ public class MethodSignature {
   static MethodSignature of(String signature) {
     int parenPos = signature.indexOf('(');
     if (parenPos < 1) {
-      throw new IllegalArgumentException("Method signature expected");
+      throw new IllegalArgumentException(
+          "Method signature expected, did not find beginning parenthesis: " + signature);
     }
     String name = signature.substring(0, parenPos);
     int lastParenPos = signature.lastIndexOf(')');
     if (lastParenPos < parenPos + 1) {
-      throw new IllegalArgumentException("Method signature expected");
+      throw new IllegalArgumentException(
+          "Method signature expected, mismatched parenthesis: " + signature);
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
     String[] parameters = new String[0];
@@ -197,17 +199,15 @@ public class MethodSignature {
     Class<?> methodClass = Class.forName(classname);
     Class<?> params[] = new Class[paramTypes.length];
     for (int i = 0; i < paramTypes.length; i++) {
-      try {
-        params[i] = typeToClass(paramTypes[i]);
-      } catch (ClassNotFoundException e) {
-        throw new ArgumentClassNotFoundException(e.getMessage());
-      }
+      params[i] = typeToClass(paramTypes[i]);
     }
+
+    // Note that Method.getMethod only returns public methods, so call Method.getDeclaredMethod first
 
     // First check it the method is declared in the class
     try {
       method = methodClass.getDeclaredMethod(name, params);
-      method.setAccessible(true);
+      method.setAccessible(true); // method may be private
       return method;
     } catch (NoSuchMethodException e) {
       // ignore -- look for inherited method

@@ -11,7 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-/** Created by bjkeller on 6/16/17. */
+/** Tests for the {@link ReplacementFileReader}. */
 public class ReplacementFileTest {
   @Rule public ExpectedException thrown = ExpectedException.none();
 
@@ -19,7 +19,8 @@ public class ReplacementFileTest {
   public void missingClassMethodTest() throws IOException, ReplacementFileException {
     File file = new File("build/resources/test/randoop/instrument/missingclassreplacement.txt");
     thrown.expect(ReplacementFileException.class);
-    String msg = "Class randoop.mock.Gamma not found for replacement method";
+    String msg =
+        "missingclassreplacement.txt:2: Class not found: randoop.mock.Gamma for line: alpha.beta.Gamma.delta() randoop.mock.Gamma.delta(alpha.beta.Gamma)";
     thrown.expectMessage(msg);
     ConcurrentHashMap<MethodSignature, MethodSignature> map =
         ReplacementFileReader.readReplacements(file);
@@ -29,7 +30,8 @@ public class ReplacementFileTest {
   public void missingMethodMethodTest() throws IOException, ReplacementFileException {
     File file = new File("build/resources/test/randoop/instrument/missingmethodreplacement.txt");
     thrown.expect(ReplacementFileException.class);
-    String msg = "Replacement method not found randoop.mock.java.awt.Component.delta()";
+    String msg =
+        "missingmethodreplacement.txt:2: Method not found: randoop.mock.java.awt.Component.delta() for line: alpha.beta.Component.delta() randoop.mock.java.awt.Component.delta()";
     thrown.expectMessage(msg);
     ConcurrentHashMap<MethodSignature, MethodSignature> map =
         ReplacementFileReader.readReplacements(file);
@@ -39,8 +41,10 @@ public class ReplacementFileTest {
   public void badFormatMethodTest() throws IOException, ReplacementFileException {
     File file = new File("build/resources/test/randoop/instrument/badformatreplacement.txt");
     thrown.expect(ReplacementFileException.class);
-    String msg = "Error in replacement file: bad format";
+    String msg =
+        "badformatreplacement.txt:2: Error in replacement file: bad format for line: 19 ways alpha.beta.Gamma.delta() 3 fine randoop.mock.alpha.beta.Gamma.delta() zip";
     thrown.expectMessage(msg);
+
     ConcurrentHashMap<MethodSignature, MethodSignature> map =
         ReplacementFileReader.readReplacements(file);
   }
@@ -49,7 +53,8 @@ public class ReplacementFileTest {
   public void badArgTypeMethodTest() throws IOException, ReplacementFileException {
     File file = new File("build/resources/test/randoop/instrument/badargumenttypereplacement.txt");
     thrown.expect(ReplacementFileException.class);
-    String msg = "Class not found for replacement argument type alpha.beta.Gamma";
+    String msg =
+        "badargumenttypereplacement.txt:1: Class not found: alpha.beta.Gamma for line: alpha.beta.Gamma.delta() randoop.mock.java.awt.Component.show(alpha.beta.Gamma)";
     thrown.expectMessage(msg);
     ConcurrentHashMap<MethodSignature, MethodSignature> map =
         ReplacementFileReader.readReplacements(file);
@@ -59,7 +64,8 @@ public class ReplacementFileTest {
   public void missingClassClassTest() throws IOException, ReplacementFileException {
     File file = new File("build/resources/test/randoop/instrument/missingclass.txt");
     thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage("No package or class for replacement randoop.mock.Gamma");
+    thrown.expectMessage(
+        "missingclass.txt:1: No package or class for replacement randoop.mock.Gamma found on classpath for line: alpha.beta.Gamma randoop.mock.Gamma");
     ConcurrentHashMap<MethodSignature, MethodSignature> map =
         ReplacementFileReader.readReplacements(file);
   }
@@ -77,11 +83,11 @@ public class ReplacementFileTest {
     File file = new File("build/resources/test/randoop/instrument/packagereplacement.txt");
     ConcurrentHashMap<MethodSignature, MethodSignature> map =
         ReplacementFileReader.readReplacements(file);
-    assertThat("mock package has more methods than I want to count", map.size(), is(equalTo(75)));
+    assertThat("mock package has 75 methods", map.size(), is(equalTo(75)));
 
     File defaultFile = new File("build/resources/main/default-replacements.txt");
     ConcurrentHashMap<MethodSignature, MethodSignature> defaultMap =
         ReplacementFileReader.readReplacements(defaultFile);
-    assertThat("default file has more methods than I want to count", map.size(), is(equalTo(75)));
+    assertThat("default file loads 75 methods", map.size(), is(equalTo(75)));
   }
 }

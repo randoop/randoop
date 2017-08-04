@@ -1,13 +1,5 @@
 This directory contains pre-defined mocks.
 
-All replacement methods need to be static. Replacing constructors and instance
-methods with constructors and instance methods complicates replacement.
-
-Replacements should avoid changing methods that return values. For instance,
-don't replace a method that return int with another that just returns zero.  The
-reason is that this can change the behavior of client code.
-
-
 The goal of these mocks in to avoid the following AWT/Swing behaviors:
  - having dialogs (and other components/containers) display themselves,
  - having windowing system focus taken,
