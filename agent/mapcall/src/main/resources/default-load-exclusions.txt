@@ -14,8 +14,8 @@ junit.
 org.hamcrest.
 org.junit.
 
-// The following are library classes used by Randoop that are not relocated and for which replacing
-// calls to System.exit cause trouble.
+// The following are library classes used by Randoop for which package relocation
+// is not applied, and for which replacing calls to System.exit causes failure.
 com.sun.tools.javac.
 com.sun.source.util.
 com.sun.source.tree.
