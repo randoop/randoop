@@ -50,7 +50,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   /** Map from a method to its replacement. */
   private final ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap;
 
-  /** The list of package prefixes (package name + ".") to exclude from transformation */
+  /** The list of package prefixes (package name + ".") to exclude from transformation. */
   private final Set<String> excludedPackagePrefixes;
 
   /**
@@ -60,7 +60,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * <p>The transformer can be run by multiple threads, so the replacement maps use concurrent
    * implementations.
    *
-   * @param excludedPackagePrefixes the period terminated prefixes for packages from which classes
+   * @param excludedPackagePrefixes the period-terminated prefixes for packages from which classes
    *     should not be transformed
    * @param replacementMap the concurrent hash map with method replacements
    */
@@ -111,7 +111,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       c = parser.parse();
     } catch (Exception e) {
       debug_transform.log("transform: EXIT parse of %s resulted in error %s%n", className, e);
-      throw new RuntimeException("Unexpected parse exception: ", e);
+      throw new RuntimeException("Unexpected parse exception", e);
     }
 
     try {
@@ -140,19 +140,19 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Indicates whether the class is a non-AWT/Swing boot loaded class.
+   * Indicates whether the class is a non-AWT/Swing boot-loaded class.
    *
    * <p>This check is for performance, since attempting to transform all of {@code rt.jar} is
    * unnecessary. However, we want to transform AWT/Swing classes if they are loaded.
    *
    * <p>Actually checks whether the class is loaded by the bootstrap loader or by the first
-   * classloader. The first classloader will either be a user provided boot loader, or the extension
-   * class loader. Since predicate is mostly for performance, we don't make the extra check to
+   * classloader. The first classloader will either be a user-provided boot loader, or the extension
+   * class loader. Since the predicate is mostly for performance, we don't make the extra check to
    * determine if the user has given a boot loader.
    *
    * @param loader the class loader for the class
    * @param fullClassName the fully-qualified name of the class
-   * @return true if the named class is boot loaded and not in {@code java.awt.} or {@code
+   * @return true if the named class is boot-loaded and not in {@code java.awt.} or {@code
    *     javax.swing.}, false otherwise
    */
   private boolean isNonGUIBootClass(ClassLoader loader, String fullClassName) {
@@ -185,7 +185,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    *
    * @param cg the BCEL class representation
    * @return true if the class has been transformed, false if either no calls were replaced or an
-   *     error occured.
+   *     error occured
    */
   private boolean transformClass(ClassGen cg) throws IllegalClassFormatException {
     boolean transformed = false;
@@ -327,7 +327,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       case Const.INVOKESPECIAL:
       case Const.INVOKEVIRTUAL:
         /*
-         * These calls have an implicit argument of the  {@code this} pointer. Since coversion is
+         * These calls have an implicit argument of the {@code this} pointer. Since coversion is
          * to a static call, need to insert the receiver type at the beginning of the argument type
          * array. This argument has already been explicitly pushed onto the stack, so modifying the
          * call signature is enough.

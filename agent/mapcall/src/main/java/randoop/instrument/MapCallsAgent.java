@@ -25,10 +25,10 @@ import randoop.MethodReplacements;
  * The MapCalls javaagent applies the {@link CallReplacementTransformer} to map calls in loaded
  * classes to alternate implementations.
  *
- * <p>The transformer applies method call replacements as specified in either the default or a user
- * provided replacement file. (See the <a
- * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user documentat</a>
- * for details on the file format.) Default replacements are given in an internal resource file
+ * <p>The transformer applies method call replacements as specified in either the default or a
+ * user-provided replacement file. (See the <a
+ * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user
+ * documentation</a> the file format.) Default replacements are given in an internal resource file
  * {@code "default-replacements.txt"}. User replacements are then loaded using the {@link #map_calls
  * --map-calls} command-line argument. A user replacement may override a default replacement.
  *
@@ -99,7 +99,7 @@ public class MapCallsAgent {
     String exclusionFileName = "/default-load-exclusions.txt";
     InputStream inputStream = MapCallsAgent.class.getResourceAsStream(exclusionFileName);
     if (inputStream == null) {
-      System.err.println("unable to open default package exclusion file. Please report.");
+      System.err.println("Unable to find default package exclusion file. Please report.");
       System.exit(1);
     }
     try {
@@ -111,7 +111,7 @@ public class MapCallsAgent {
       System.exit(1);
     }
 
-    // If user provided package exclusion file, load user package exclusions
+    // If user-provided package exclusion file, load user package exclusions
     if (dont_transform != null) {
       try {
         loadExclusions(
@@ -137,13 +137,12 @@ public class MapCallsAgent {
               new InputStreamReader(inputStream), "default-replacements.txt");
     } catch (ReplacementFileException e) {
       System.err.printf("Error reading default replacement file:%n  %s%n", e);
-      System.err.println("Check that the mapcall.jar is on the classpath or bootclasspath.");
+      System.err.println("Check that mapcall.jar is on the classpath or bootclasspath.");
       System.exit(1);
     }
 
     // If the user has provided a replacement file, load user replacements and put them into the
-    // map for the default replacements. This use of the Map.put method allows a user replacement to
-    // override a default replacement.
+    // map, possibly overriding default replacements that already appear in the map.
     if (map_calls != null) {
       try {
         replacementMap.putAll(ReplacementFileReader.readReplacements(map_calls));
@@ -175,7 +174,7 @@ public class MapCallsAgent {
    *     must not be null
    * @param filename the name of the file read by the reader
    * @param excludedPackagePrefixes the set of excluded package prefixes, modified by adding new
-   *     prefixes. Must not be null
+   *     prefixes. Must not be null.
    * @throws IOException if there is an error reading the file
    */
   private static void loadExclusions(

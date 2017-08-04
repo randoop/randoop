@@ -27,7 +27,7 @@ import plume.EntryReader;
  * #readReplacements(File)} that read a MapCall agent replacement file and populate the method
  * replacement map used by the agent. See the <a
  * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user
- * documentation</a> for details on the file format.
+ * documentation</a> for the file format.
  */
 class ReplacementFileReader {
 
@@ -42,9 +42,9 @@ class ReplacementFileReader {
   private static final String DOT_DELIMITED_IDS = ID_STRING + "(?:\\." + ID_STRING + ")*";
 
   /**
-   * Naive regex to match a method signature consisting of a fully-qualified classname, a method
-   * name, and argument types in parentheses. The pattern does not include the details of the
-   * argument types.
+   * Naive regex to match a method signature consisting of a fully-qualified method name followed by
+   * anything in parentheses. The parentheses are expected to contain argument types, but the
+   * pattern permits anything.
    */
   private static final String SIGNATURE_STRING = DOT_DELIMITED_IDS + "\\([^)]*\\)";
 
@@ -68,7 +68,7 @@ class ReplacementFileReader {
    * Reads the given replacement file specifying method calls that should be replaced by other
    * method calls. See the <a
    * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user
-   * documentation</a> for details on the file format.
+   * documentation</a> for the file format.
    *
    * @see #readReplacements(Reader, String)
    * @param map_file the file with map of method substitutions
@@ -83,18 +83,11 @@ class ReplacementFileReader {
   /**
    * Reads the replacement file specifying method calls that should be replaced by other method
    * calls. See the <a href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall
-   * user documentation</a> for details on the file format.
-   *
-   * <p>For each replacement line, this method determines if the replacement is a method replacement
-   * or not. If so, the method {@link #addMethodReplacement(ConcurrentHashMap, String, String)} is
-   * called. If not, the method {@link #discoverClassOrPackageReplacements(ConcurrentHashMap,
-   * String, String)} determines whether the replacement is either a class or package replacement,
-   * and, for each, searches for method replacements within the replacement class or package, adding
-   * any found to the method replacement map returned by this method.
+   * user documentation</a> for the file format.
    *
    * @param in the {@code Reader} for the replacement file
    * @param filename the name of the file read by {@code in}, used for error reporting
-   * @throws IOException if there is an error reading from the file
+   * @throws IOException if there is an error while reading the file
    * @return the method replacement map constructed from the file
    */
   static ConcurrentHashMap<MethodSignature, MethodSignature> readReplacements(
@@ -140,7 +133,7 @@ class ReplacementFileReader {
    * reflection to check that the replacement method signature is well-formed and corresponds to a
    * method that exists.
    *
-   * <p>See {@link MethodSignature#of(String)} for details on expected format of a method signature.
+   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
    *
    * @param replacementMap the map from a method to a replacement method to which replacement is
    *     added
@@ -237,9 +230,9 @@ class ReplacementFileReader {
     if (replacementClass != null) {
       addClassReplacements(replacementMap, original, replacementClass);
     } else {
-      // Otherwise, determine if the replacement is a package
-      // How depends on whether the agent is run on bootloaded classes, which is the case if the
-      // ClassLoader is null
+      // Otherwise, assume the replacement is a package.
+      // Finding the package depends on whether the agent is run on bootloaded classes,
+      // which is the case if the ClassLoader is null.
       ClassLoader loader = ReplacementFileReader.class.getClassLoader();
       if (loader == null) {
         // If the agent is run on bootloaded classes, we have to check the path directly.
@@ -269,7 +262,7 @@ class ReplacementFileReader {
       String originalClassname,
       Class<?> replacementClass)
       throws ReplacementException {
-    final Type type = BCELUtil.classname_to_type(originalClassname);
+    final Type originalType = BCELUtil.classname_to_type(originalClassname);
     for (Method method : replacementClass.getDeclaredMethods()) {
       int modifiers = method.getModifiers() & Modifier.methodModifiers();
       if (Modifier.isPrivate(modifiers)) {
@@ -287,7 +280,7 @@ class ReplacementFileReader {
 
       MethodSignature originalDef = replacementDef.substituteClassname(originalClassname);
       if (originalDef.exists()) {
-        // If there is already a replacement, do not overwrite it
+        // If there is already a replacement, do not overwrite it.
         if (replacementMap.get(originalDef) != null) {
           String msg =
               String.format(
@@ -300,10 +293,10 @@ class ReplacementFileReader {
 
       // Check if the replacement might correspond to a non-static original
       if (replacementDef.getParameterTypes().length > 0
-          && replacementDef.getParameterTypes()[0].equals(type)) {
+          && replacementDef.getParameterTypes()[0].equals(originalType)) {
         originalDef = originalDef.removeFirstParameter();
         if (originalDef.exists()) {
-          // If there is already a replacement, do not overwrite it
+          // If there is already a replacement, do not overwrite it.
           if (replacementMap.get(originalDef) != null) {
             String msg =
                 String.format(
@@ -328,81 +321,84 @@ class ReplacementFileReader {
    * Discovers and adds method replacements on the boot classpath for the package replacement
    * determined by the {@code original} and {@code replacement} strings and the classes. Contrasts
    * with {@link #discoverPackageReplacements(ConcurrentHashMap, String, String, ClassLoader)} that
-   * searches for the package in using a class loader.
+   * searches for the package using a class loader.
    *
-   * @see #discoverClassOrPackageReplacements(ConcurrentHashMap, String, String)
+   * @see #discoverClassOrPackageReplacements(ConcurrentHashMap, String, String, ClassLoader)
    * @param replacementMap the method replacement map to which new replacements are added
-   * @param original the original package name
-   * @param replacement the replacement package name
+   * @param originalPackage the original package name
+   * @param replacementPackage the replacement package name
    * @throws ReplacementException if no package corresponding to the replacement is found
    */
   private static void discoverPackageReplacements(
       ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
-      String original,
-      String replacement)
+      String originalPackage,
+      String replacementPackage)
       throws ReplacementException {
-    String bootpathString = System.getProperty("sun.boot.class.path");
+    String bootclasspath = System.getProperty("sun.boot.class.path");
     String javaHome = System.getProperty("java.home");
 
-    String[] pathToks = bootpathString.split(File.pathSeparator);
     boolean found = false;
-    for (String pathString : pathToks) {
-      if (!pathString.startsWith(javaHome)) {
-        File file = new File(pathString);
-        if (file.exists()) { // either a directory
-          if (file.isDirectory()) {
-            Path path = file.toPath();
-            Path replacementPath = path.resolve(replacement.replace('.', File.separatorChar));
-            if (Files.exists(replacementPath) && Files.isDirectory(replacementPath)) {
-              addPackageReplacements(
-                  replacementMap, original, replacement, replacementPath.toFile());
-              found = true; // directory for package was found
-            }
-          } else { // or a jar file
-            try {
-              JarFile jarFile = new JarFile(file);
-              if (addPackageReplacements(replacementMap, original, replacement, jarFile)) {
-                found = true;
-              }
-            } catch (IOException e) {
-              throw new ReplacementException(
-                  "Error reading jar file from boot classpath: " + file.getName());
-            }
+    for (String pathString : bootclasspath.split(File.pathSeparator)) {
+      if (pathString.startsWith(javaHome)) {
+        continue;
+      }
+      File file = new File(pathString);
+      if (!file.exists()) {
+        continue;
+      }
+      if (file.isDirectory()) {
+        Path path = file.toPath();
+        Path replacementPath = path.resolve(replacementPackage.replace('.', File.separatorChar));
+        if (Files.exists(replacementPath) && Files.isDirectory(replacementPath)) {
+          addPackageReplacements(
+              replacementMap, originalPackage, replacementPackage, replacementPath.toFile());
+          found = true; // directory for package was found
+        }
+      } else { // or a jar file
+        try {
+          JarFile jarFile = new JarFile(file);
+          if (addPackageReplacements(
+              replacementMap, originalPackage, replacementPackage, jarFile)) {
+            found = true;
           }
+        } catch (IOException e) {
+          throw new ReplacementException(
+              "Error reading jar file from boot classpath: " + file.getName());
         }
       }
     }
     if (!found) {
       String msg =
           String.format(
-              "No package or class for replacement %s found on the boot classpath", replacement);
+              "No package or class for replacement %s found on the boot classpath",
+              replacementPackage);
       throw new ReplacementException(msg);
     }
   }
 
   /**
    * Discovers and adds method replacements from the given {@code ClassLoader} for the package
-   * replacement determined by the {@code original} and {@code replacement} strings. Contrasts with
-   * {@link #discoverPackageReplacements(ConcurrentHashMap, String, String)} that searches for the
-   * package on the boot classpath.
+   * replacement determined by the {@code originalPackage} and {@code replacementPackage} strings.
+   * Contrasts with {@link #discoverPackageReplacements(ConcurrentHashMap, String, String)} that
+   * searches for the package on the boot classpath.
    *
    * @see #discoverClassOrPackageReplacements(ConcurrentHashMap, String, String)
    * @param replacementMap the method replacement map to which new replacements are added
-   * @param original the original package name
-   * @param replacement the replacement package name
+   * @param originalPackage the original package name
+   * @param replacementPackage the replacement package name
    * @param loader the {@code ClassLoader}
    * @throws ReplacementException if no package corresponding to replacement is found
    */
   private static void discoverPackageReplacements(
       ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
-      String original,
-      String replacement,
+      String originalPackage,
+      String replacementPackage,
       ClassLoader loader)
       throws ReplacementException {
     boolean found = false;
     Enumeration<URL> resources;
     try {
-      resources = loader.getResources(replacement.replace('.', '/'));
+      resources = loader.getResources(replacementPackage.replace('.', '/'));
     } catch (IOException e) {
       throw new ReplacementException(e.getMessage());
     }
@@ -412,52 +408,55 @@ class ReplacementFileReader {
         URLConnection connection = url.openConnection();
         if (connection instanceof JarURLConnection) {
           JarFile jarFile = ((JarURLConnection) connection).getJarFile();
-          if (addPackageReplacements(replacementMap, original, replacement, jarFile)) {
+          if (addPackageReplacements(
+              replacementMap, originalPackage, replacementPackage, jarFile)) {
             found = true;
           }
         } else {
-          // The subclass for directories is is internal.  It seems to work to assume the
-          // connection is a directory, and let an exception occur if it is not
+          // The subclass for directories is internal.  It seems to work to assume the
+          // connection is a directory, and let an exception occur if it is not.
           File path = new File(URLDecoder.decode(url.getPath(), "UTF-8"));
           if (path.exists() && path.isDirectory()) {
-            addPackageReplacements(replacementMap, original, replacement, path);
+            addPackageReplacements(replacementMap, originalPackage, replacementPackage, path);
             found = true;
           }
         }
       } catch (IOException e) {
         String msg =
             String.format(
-                "Error identifying replacement %s with a package: %s", replacement, e.getMessage());
+                "Error identifying replacement %s with a package: %s",
+                replacementPackage, e.getMessage());
         throw new ReplacementException(msg);
       }
     }
     if (!found) {
       String msg =
-          String.format("No package or class for replacement %s found on classpath", replacement);
+          String.format(
+              "No package or class for replacement %s found on classpath", replacementPackage);
       throw new ReplacementException(msg);
     }
   }
 
   /**
-   * Adds method replacements for the package replacement determined by the {@code original} and
-   * {@code replacement} strings found in the given jar file.
+   * Adds method replacements for the package replacement determined by the {@code originalPackage}
+   * and {@code replacementPackage} strings found in the given jar file.
    *
    * @see #discoverPackageReplacements(ConcurrentHashMap, String, String)
    * @see #discoverPackageReplacements(ConcurrentHashMap, String, String, ClassLoader)
    * @param replacementMap the method replacement map to which new replacements are added
-   * @param original the original package name
-   * @param replacement the replacement package name
+   * @param originalPackage the original package name
+   * @param replacementPackage the replacement package name
    * @param jarFile the jar file to search
    * @return true if a class in the replacement package is found in the jar and replacements added
    *     to {@code replacementMap}, false otherwise
    */
   private static boolean addPackageReplacements(
       ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
-      String original,
-      String replacement,
+      String originalPackage,
+      String replacementPackage,
       JarFile jarFile)
       throws ReplacementException {
-    String replacementPath = replacement.replace('.', '/') + "/";
+    String replacementPath = replacementPackage.replace('.', '/') + "/";
     boolean found = false;
     Enumeration<JarEntry> entries = jarFile.entries();
     while (entries.hasMoreElements()) {
@@ -465,12 +464,12 @@ class ReplacementFileReader {
       String filename = entry.getName();
       if (filename.endsWith(".class") && filename.startsWith(replacementPath)) {
         final String classname =
-            filename.substring(replacement.length() + 1, filename.lastIndexOf(".class"));
-        final String originalClassname = original + "." + classname;
+            filename.substring(replacementPackage.length() + 1, filename.lastIndexOf(".class"));
+        final String originalClassname = originalPackage + "." + classname;
 
         if (classExists(originalClassname)) {
           try {
-            String replacementClassname = replacement + "." + classname;
+            String replacementClassname = replacementPackage + "." + classname;
             Class<?> replacementClass = Class.forName(replacementClassname);
             addClassReplacements(replacementMap, originalClassname, replacementClass);
             found = true;
@@ -494,24 +493,24 @@ class ReplacementFileReader {
    * @see #discoverPackageReplacements(ConcurrentHashMap, String, String)
    * @see #discoverPackageReplacements(ConcurrentHashMap, String, String, ClassLoader)
    * @param replacementMap the method replacement map to which replacements are added
-   * @param original the name of the original package
-   * @param replacement the name of the replacement package
+   * @param originalPackage the name of the original package
+   * @param replacementPackage the name of the replacement package
    * @param replacementDirectory the directory for the replacement package, must be non-null
    */
   private static void addPackageReplacements(
       ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
-      String original,
-      String replacement,
+      String originalPackage,
+      String replacementPackage,
       File replacementDirectory)
       throws ReplacementException {
 
     for (String filename : replacementDirectory.list()) {
       if (filename.endsWith(".class")) {
         final String classname = filename.substring(0, filename.length() - 6);
-        final String originalClassname = original + "." + classname;
+        final String originalClassname = originalPackage + "." + classname;
         if (classExists(originalClassname)) {
           try {
-            String replacementClassname = replacement + "." + classname;
+            String replacementClassname = replacementPackage + "." + classname;
             Class<?> replacementClass = Class.forName(replacementClassname);
             addClassReplacements(replacementMap, originalClassname, replacementClass);
           } catch (ClassNotFoundException e) {
@@ -525,7 +524,10 @@ class ReplacementFileReader {
         File subdirectory = new File(replacementDirectory, filename);
         if (subdirectory.exists() && subdirectory.isDirectory()) {
           addPackageReplacements(
-              replacementMap, original + filename, replacement + filename, subdirectory);
+              replacementMap,
+              originalPackage + filename,
+              replacementPackage + filename,
+              subdirectory);
         }
       }
     }
@@ -546,7 +548,7 @@ class ReplacementFileReader {
     }
   }
 
-  /** Exception to represent the occurrence of an error in the replacement file */
+  /** Exception to represent a malformed replacement file. */
   private static class ReplacementException extends Throwable {
     ReplacementException(String message) {
       super(message);

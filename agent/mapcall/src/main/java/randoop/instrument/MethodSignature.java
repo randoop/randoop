@@ -80,31 +80,29 @@ public class MethodSignature {
    * types.
    *
    * @param fullMethodName fully-qualified name of method
-   * @param args fully-qualified names of parameter types
+   * @param params fully-qualified names of parameter types
    */
-  static MethodSignature of(String fullMethodName, String[] args) {
-    String methodName;
-    String classname;
+  static MethodSignature of(String fullMethodName, String[] params) {
     int dotPos = fullMethodName.lastIndexOf('.');
-    if (dotPos > 0) {
-      methodName = fullMethodName.substring(dotPos + 1);
-      classname = fullMethodName.substring(0, dotPos);
-    } else {
-      throw new IllegalArgumentException("Fully-qualified method name expected");
+    if (dotPos < 1) {
+      throw new IllegalArgumentException(
+          "Fully-qualified method name expected, no period found: " + fullMethodName);
     }
-    Type[] argTypes = new Type[args.length];
-    for (int i = 0; i < args.length; i++) {
-      argTypes[i] = BCELUtil.classname_to_type(args[i].trim());
+    String methodName = fullMethodName.substring(dotPos + 1);
+    String classname = fullMethodName.substring(0, dotPos);
+    Type[] paramTypes = new Type[params.length];
+    for (int i = 0; i < params.length; i++) {
+      paramTypes[i] = BCELUtil.classname_to_type(params[i].trim());
     }
 
-    return new MethodSignature(classname, methodName, argTypes);
+    return new MethodSignature(classname, methodName, paramTypes);
   }
 
   /**
    * Reads a signature string and builds the corresponding {@link MethodSignature}.
    *
    * <p>The signature string must start with the fully-qualified classname, followed by the method
-   * name, and then the fully-qualified parameter types in parenthesis.
+   * name, and then the fully-qualified parameter types in parentheses.
    *
    * @param signature the method signature string, all types must be fully-qualified
    * @return the {@link MethodSignature} for the method represented by the signature string
@@ -120,12 +118,12 @@ public class MethodSignature {
     if (lastParenPos < parenPos + 1) {
       throw new IllegalArgumentException("Method signature expected");
     }
-    String argString = signature.substring(parenPos + 1, lastParenPos);
-    String[] arguments = new String[0];
-    if (!argString.isEmpty()) {
-      arguments = argString.split("\\s*,\\s*");
+    String paramString = signature.substring(parenPos + 1, lastParenPos);
+    String[] parameters = new String[0];
+    if (!paramString.isEmpty()) {
+      parameters = paramString.split("\\s*,\\s*");
     }
-    return MethodSignature.of(name, arguments);
+    return MethodSignature.of(name, parameters);
   }
 
   @Override
@@ -164,9 +162,9 @@ public class MethodSignature {
   }
 
   /**
-   * Returns the method name for this {@link MethodSignature}.
+   * Returns the simple method name for this {@link MethodSignature}.
    *
-   * @return the method name of this {@link MethodSignature}
+   * @return the simple method name of this {@link MethodSignature}
    */
   String getName() {
     return name;
@@ -197,10 +195,10 @@ public class MethodSignature {
     }
 
     Class<?> methodClass = Class.forName(classname);
-    Class<?> args[] = new Class[paramTypes.length];
+    Class<?> params[] = new Class[paramTypes.length];
     for (int i = 0; i < paramTypes.length; i++) {
       try {
-        args[i] = typeToClass(paramTypes[i]);
+        params[i] = typeToClass(paramTypes[i]);
       } catch (ClassNotFoundException e) {
         throw new ArgumentClassNotFoundException(e.getMessage());
       }
@@ -208,7 +206,7 @@ public class MethodSignature {
 
     // First check it the method is declared in the class
     try {
-      method = methodClass.getDeclaredMethod(name, args);
+      method = methodClass.getDeclaredMethod(name, params);
       method.setAccessible(true);
       return method;
     } catch (NoSuchMethodException e) {
@@ -216,7 +214,7 @@ public class MethodSignature {
     }
 
     // If it is not declared in class, check if it is inherited
-    method = methodClass.getMethod(name, args);
+    method = methodClass.getMethod(name, params);
     return method;
   }
 
@@ -229,10 +227,8 @@ public class MethodSignature {
    * @throws ClassNotFoundException if no {@code Class<?>} was found for the type
    */
   private Class<?> typeToClass(Type type) throws ClassNotFoundException {
-    Class<?> c;
     String name = UtilMDE.fieldDescriptorToClassGetName(type.getSignature());
-    c = UtilMDE.classForName(name);
-    return c;
+    return UtilMDE.classForName(name);
   }
 
   /**
@@ -240,7 +236,7 @@ public class MethodSignature {
    * classpath. (Specifically, whether the containing class can be loaded, and contains the
    * represented method.)
    *
-   * @return true if the the represented method exists on the classpath, false otherwise.
+   * @return true if the the represented method exists on the classpath, false otherwise
    */
   boolean exists() {
     try {

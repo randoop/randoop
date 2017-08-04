@@ -1,29 +1,35 @@
-Notes on Randoop mocks:
+This directory contains pre-defined mocks.
 
-All replacement methods need to be static. Replacing constructors and instance methods with
-constructors and instance methods complicates replacement.
+All replacement methods need to be static. Replacing constructors and instance
+methods with constructors and instance methods complicates replacement.
 
-Replacements should avoid changing methods that return values. For instance, don't replace a method
-that return int with another that just returns zero.
+Replacements should avoid changing methods that return values. For instance,
+don't replace a method that return int with another that just returns zero.  The
+reason is that this can change the behavior of client code.
 
 
-For AWT/Swing we want to try to avoid the following
+The goal of these mocks in to avoid the following AWT/Swing behaviors:
  - having dialogs (and other components/containers) display themselves,
  - having windowing system focus taken,
  - getting headless exceptions in headless environment,
  - having windowing system threads run a long time and cause a timeout
    which makes generation very slow.
 
-These replacements are "good enough", but don't acheive all of these goals in all environments:
- - Display of windows/dialogs is suppressed, but, at least on macOS, focus can be taken.
- - The headless exception can still occur in a headless environment, and it is necessary to use a
-   virtual windowing system (such as xvfb in the X11 distribution).
- - AWT/Swing threads are still started that have to be stopped. This can result in platform-
-   dependent exceptions, and delay while waiting for Randoop to apply the timeout.
-   The solution for this may be to Prevent AWT/Swing components from starting threads.
-   Threads are managed by an AppContext in java.awt.Component. So, we want to replace the call to
-   sun.awt.AppContext.getAppContext() in the constructor of java.awt.Component to create an AppContext
-   object that mocks the class in a reasonable way.
+These replacements are "good enough", but don't acheive all of these goals in
+all environments:
+ - Display of windows/dialogs is suppressed, but, at least on macOS, focus can
+   be taken.
+ - The headless exception can still occur in a headless environment, and it is
+   necessary to use a virtual windowing system (such as xvfb in the X11
+   distribution).
+ - AWT/Swing threads are still started that have to be stopped. This can result
+   in platform-dependent exceptions, and delay while waiting for Randoop to
+   apply the timeout.  The solution for this may be to Prevent AWT/Swing
+   components from starting threads.  Threads are managed by an AppContext in
+   java.awt.Component. So, we want to replace the call to
+   sun.awt.AppContext.getAppContext() in the constructor of java.awt.Component
+   to create an AppContext object that mocks the class in a reasonable way.
 
- Note: some of these changes require modifying bootloaded classes, meaning the mocks need to be
-   on the boot classpath, and the agent needs to allow them to be changed.
+Note: some of these changes require modifying bootloaded classes, meaning the
+mocks need to be on the boot classpath, and the agent needs to allow them to be
+changed.

@@ -69,7 +69,7 @@ public class Dialog {
    * Helper method for mock methods to set the state of a {@code java.awt.Dialog} so that it is not
    * focusable, and attempt to dispose of it.
    *
-   * @param dialog the dialog to set to unfocusable, and to dispose.
+   * @param dialog the dialog to set to unfocusable, and to dispose
    */
   private static void setDialogState(java.awt.Dialog dialog) {
     dialog.setFocusableWindowState(false);

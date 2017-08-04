@@ -1,7 +1,6 @@
 // This file contains default package exclusions for the mapcall agent.
 
-// Don't transform Java classes that are not loaded by the boot loader, but
-// for which the transformation leads to failures.
+// Don't transform Java classes for which the transformation leads to failures.
 sun.reflect.
 com.sun.proxy.$Proxy.
 
