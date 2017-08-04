@@ -27,25 +27,28 @@ import plume.SimpleLog;
 
 /**
  * The {@code CallReplacementTransformer} replaces each call to method m1 by a call to method m2. It
- * is used by the MapCallsAgent.
+ * is used by the ReplaceCallAgent.
  *
- * @see MapCallsAgent
+ * @see ReplaceCallAgent
  */
 public class CallReplacementTransformer implements ClassFileTransformer {
 
   /** Debug information about which classes are transformed and why */
   private static SimpleLog debug_transform =
       new SimpleLog(
-          MapCallsAgent.debugPath + File.separator + "transform-log.txt", MapCallsAgent.debug);
+          ReplaceCallAgent.debugPath + File.separator + "transform-log.txt",
+          ReplaceCallAgent.debug);
 
   private static SimpleLog debug_instrument_inst =
       new SimpleLog(
-          MapCallsAgent.debugPath + File.separator + "instrument-log.txt", MapCallsAgent.debug);
+          ReplaceCallAgent.debugPath + File.separator + "instrument-log.txt",
+          ReplaceCallAgent.debug);
 
   /** Debug information on method maping */
   private static SimpleLog debug_map =
       new SimpleLog(
-          MapCallsAgent.debugPath + File.separator + "method_mapping.txt", MapCallsAgent.debug);
+          ReplaceCallAgent.debugPath + File.separator + "method_mapping.txt",
+          ReplaceCallAgent.debug);
 
   /** Map from a method to its replacement. */
   private final ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap;
@@ -80,7 +83,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * <p>Excludes bootloaded classes that are not AWT/Swing classes. Other exclusions are determined
    * by the set of {@link #excludedPackagePrefixes}.
    *
-   * @see MapCallsAgent
+   * @see ReplaceCallAgent
    */
   @Override
   public byte[] transform(
@@ -115,8 +118,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       ClassGen cg = new ClassGen(c);
       if (transformClass(cg)) {
         JavaClass javaClass = cg.getJavaClass();
-        if (MapCallsAgent.debug) {
-          Path filepath = MapCallsAgent.debugPath.resolve(className + ".class");
+        if (ReplaceCallAgent.debug) {
+          Path filepath = ReplaceCallAgent.debugPath.resolve(className + ".class");
           javaClass.dump(filepath.toFile());
         }
         debug_transform.log("transform: EXIT class %s transformed", className);

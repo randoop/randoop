@@ -3,7 +3,7 @@ package input;
 import java.util.Objects;
 
 /**
- * Class that is just like SystemExitClass, but this one does not call System.exit, so the mapcalls
+ * Class that is just like SystemExitClass, but this one does not call System.exit, so the replacecall
  * mechanism doesn't need to do any replacements.
  */
 public class NoExitClass {

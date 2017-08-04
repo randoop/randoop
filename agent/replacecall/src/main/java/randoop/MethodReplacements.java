@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class used to communicate the signatures of methods replaced by the mapcalls agent to Randoop so
- * Randoop can omit direct calls to these methods.
+ * Class used to communicate the signatures of methods replaced by the replacecall agent to Randoop
+ * so Randoop can omit direct calls to these methods.
  *
- * <p>Uses synchronized access to a static list of the signature strings, because the mapcalls agent
- * can run on multiple classes concurrently.
+ * <p>Uses synchronized access to a static list of the signature strings, because the replacecall
+ * agent can run on multiple classes concurrently.
  *
  * <p>This list is set by {@link randoop.instrument.MapCallsAgent#premain(String, Instrumentation)}
  * before the {@link randoop.instrument.CallReplacementTransformer} is added to the class loader,

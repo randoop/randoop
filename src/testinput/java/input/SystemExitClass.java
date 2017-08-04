@@ -2,7 +2,7 @@ package input;
 
 import java.util.Objects;
 
-/** Input class for testing that mapcall agent is handling {@code System.exit()} calls. */
+/** Input class for testing that replacecall agent is handling {@code System.exit()} calls. */
 public class SystemExitClass {
   private int value;
 

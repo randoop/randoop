@@ -1,4 +1,4 @@
-//These are the public fields of classes used for mapcalls testing
+//These are the public fields of classes used for replacecall testing
 //May be useful for avoiding flaky tests in system testing
 components.ConversionPanel.textField
 components.ConversionPanel.unitChooser

@@ -207,7 +207,6 @@ public class MethodSignature {
     // First check it the method is declared in the class
     try {
       method = methodClass.getDeclaredMethod(name, params);
-      method.setAccessible(true); // method may be private
       return method;
     } catch (NoSuchMethodException e) {
       // ignore -- look for inherited method

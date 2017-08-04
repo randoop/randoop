@@ -27,7 +27,7 @@ import randoop.MethodReplacements;
  *
  * <p>The transformer applies method call replacements as specified in either the default or a
  * user-provided replacement file. (See the <a
- * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user
+ * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
  * documentation</a> the file format.) Default replacements are given in an internal resource file
  * {@code "default-replacements.txt"}. User replacements are then loaded using the {@link #map_calls
  * --map-calls} command-line argument. A user replacement may override a default replacement.
@@ -35,9 +35,9 @@ import randoop.MethodReplacements;
  * <p>The classes of packages listed in the resource file {@code "default-load-exclusions.txt"} are
  * excluded from transformation.
  */
-public class MapCallsAgent {
+public class ReplaceCallAgent {
 
-  /** Run the mapcall agent in debug mode. */
+  /** Run the replacecall agent in debug mode. */
   @SuppressWarnings("WeakerAccess")
   @Option("print debug information")
   public static boolean debug = false;
@@ -63,9 +63,9 @@ public class MapCallsAgent {
   public static File dont_transform = null;
 
   /**
-   * Entry point of the mapcall Java agent. Initializes the {@link CallReplacementTransformer} so
-   * that when classes are loaded they are transformed to replace calls to methods as specified in
-   * the replacements file(s).
+   * Entry point of the replacecall Java agent. Initializes the {@link CallReplacementTransformer}
+   * so that when classes are loaded they are transformed to replace calls to methods as specified
+   * in the replacements file(s).
    *
    * @param agentArgs the arguments to the agent
    * @param inst the {@code Instrumentation} object
@@ -78,7 +78,7 @@ public class MapCallsAgent {
     }
 
     if (agentArgs != null) { // if there are any arguments, parse them
-      Options options = new Options(MapCallsAgent.class);
+      Options options = new Options(ReplaceCallAgent.class);
       String[] target_args = options.parse_or_usage(agentArgs);
       if (target_args.length > 0) {
         System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
@@ -98,7 +98,7 @@ public class MapCallsAgent {
     Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
 
     String exclusionFileName = "/default-load-exclusions.txt";
-    InputStream inputStream = MapCallsAgent.class.getResourceAsStream(exclusionFileName);
+    InputStream inputStream = ReplaceCallAgent.class.getResourceAsStream(exclusionFileName);
     if (inputStream == null) {
       System.err.println("Unable to find default package exclusion file. Please report.");
       System.exit(1);
@@ -132,7 +132,7 @@ public class MapCallsAgent {
 
     // Read the default replacement file
     String replacementPath = "/default-replacements.txt";
-    inputStream = MapCallsAgent.class.getResourceAsStream(replacementPath);
+    inputStream = ReplaceCallAgent.class.getResourceAsStream(replacementPath);
     if (inputStream == null) {
       System.err.println("Unable to open default replacements file. Please report.");
       System.exit(1);
@@ -143,7 +143,7 @@ public class MapCallsAgent {
               new InputStreamReader(inputStream), replacementPath);
     } catch (ReplacementFileException e) {
       System.err.printf("Error reading default replacement file:%n  %s%n", e);
-      System.err.println("Check that mapcall.jar is on the classpath or bootclasspath.");
+      System.err.println("Check that replacecall.jar is on the classpath or bootclasspath.");
       System.exit(1);
     }
 

@@ -1,4 +1,4 @@
-// This file contains default package exclusions for the mapcall agent.
+// This file contains default package exclusions for the replacecall agent.
 
 // Don't transform Java classes for which the transformation leads to failures.
 sun.reflect.
@@ -6,7 +6,7 @@ com.sun.proxy.$Proxy.
 
 // Don't transform Randoop classes:
 randoop.
-mapcall.
+replacecall.
 
 // or JUnit classes:
 junit.

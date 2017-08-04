@@ -1,4 +1,4 @@
-// packages for classes that should not be loaded and transformed by the mapcall agent
+// packages for classes that should not be loaded and transformed by the replacecall agent
 // when running the agent with Randoop system tests
 //
 org.gradle

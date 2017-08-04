@@ -115,8 +115,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
-   * method replaced by the <code>mapcall</code> agent is treated as if it had been supplied as an
-   * argument to <code>--omitmethods</code>.
+   * method replaced by the <code>replacecall</code> agent is treated as if it had been supplied as
+   * an argument to <code>--omitmethods</code>.
    */
   @Option("Include methods that are omitted by default")
   public static boolean dont_omit_replaced_methods = false;

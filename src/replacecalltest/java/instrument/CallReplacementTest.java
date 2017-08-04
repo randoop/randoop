@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import randoop.SystemExitCalledError;
 
-/** Tests the mapcall agent. */
+/** Tests the replacecall agent. */
 public class CallReplacementTest {
 
   @Rule public ExpectedException thrown = ExpectedException.none();
