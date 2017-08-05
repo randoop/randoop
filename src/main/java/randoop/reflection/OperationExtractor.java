@@ -107,7 +107,7 @@ public class OperationExtractor extends DefaultClassVisitor {
 
   /**
    * Updates the operation types in the case that {@code operation.getDeclaringType()} is generic,
-   * but {@code classType} is not. Constructs an {@link Substitution} that unifies the generic
+   * but {@code classType} is not. Constructs a {@link Substitution} that unifies the generic
    * declaring type with {@code classType} or a superType.
    *
    * @param operation the operation to instantiate
@@ -122,13 +122,13 @@ public class OperationExtractor extends DefaultClassVisitor {
           classType.getInstantiatingSubstitution(operation.getDeclaringType());
       if (substitution == null) { // No unifying substitution found
         throw new BugInRandoopException(
-            "Type for operation "
-                + classType
-                + " is not a subtype of an instantiation of declaring class of method "
-                + operation.getDeclaringType());
+            String.format(
+                "Type %s for operation %s is not a subtype of an instantiation of declaring class of method %s",
+                classType, operation, operation.getDeclaringType()));
       }
       operation = operation.apply(substitution);
       if (operation == null) {
+        // No more details available because formal parameter {@code operation} was overwritten.
         throw new BugInRandoopException("Instantiation of operation failed");
       }
     }
@@ -137,8 +137,8 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Ensures that {@code classType} is a subtype of {@code operation.getDeclaringType()}. This is
-   * expected, and so this method throws an exception if violated.
+   * Ensures that {@code classType} is a subtype of {@code operation.getDeclaringType()}; throws an
+   * exception if not.
    *
    * @param operation the operation for which types are to be checked
    * @throws BugInRandoopException if {@code classType} is not a subtype of {@code
@@ -232,8 +232,8 @@ public class OperationExtractor extends DefaultClassVisitor {
     int mods = field.getModifiers() & Modifier.fieldModifiers();
     if (!visibilityPredicate.isVisible(field.getDeclaringClass())) {
       if (Modifier.isStatic(mods) && Modifier.isFinal(mods)) {
-        //XXX this is a stop-gap to handle potentially ambiguous inherited constants
-        /* An static final field of a non-public class may be accessible via a subclass, but only
+        // XXX This is a stop-gap to handle potentially ambiguous inherited constants.
+        /* A static final field of a non-public class may be accessible via a subclass, but only
          * if the field is not ambiguously inherited in the subclass. Without knowing for sure
          * whether there are two inherited fields with the same name, we cannot decide which case
          * is presented. So, assuming that there is an ambiguity and bailing on type.
