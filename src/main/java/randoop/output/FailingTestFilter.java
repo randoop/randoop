@@ -42,6 +42,9 @@ public class FailingTestFilter implements CodeWriter {
   private static final String ID_STRING =
       "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
+  private static final Pattern FAILURE_HEADER_PATTERN =
+      Pattern.compile("\\d+\\)\\s+(" + ID_STRING + ")\\(" + ID_STRING + "\\)");
+
   /** The {@link randoop.execution.TestEnvironment} for running the test classes. */
   private final TestEnvironment testEnvironment;
 
@@ -63,7 +66,7 @@ public class FailingTestFilter implements CodeWriter {
   /**
    * {@inheritDoc}
    *
-   * <p>Inserts comments in place of assertions that fail when the test is run.
+   * <p>Replaces failing assertions by comments.
    *
    * <p>Assumes output from JUnit4 {@code org.junit.runner.JUnitCore} runner used in {@link
    * TestEnvironment}.
@@ -106,15 +109,15 @@ public class FailingTestFilter implements CodeWriter {
   }
 
   /**
-   * Uses the failures in the {@code status} from running JUnit with {@code javaCode} to identify
-   * lines with failing assertions and replaces them with a line comment with the assertion text
+   * Comments out lines with failing assertions. Uses the failures in the {@code status} from
+   * running JUnit with {@code javaCode} to identify lines with failing assertions.
    *
    * @param classname the name of the test class
    * @param javaCode the source code for the test class, each assertion must be on its own line
    * @param status the {@link RunCommand.Status} for running the test with JUnit
-   * @return the class source edited so that failing assertions are replaced by line comments
+   * @return the class source edited so that failing assertions are replaced by comments
    * @throws BugInRandoopException if {@code status} contains output for a failure not involving a
-   *     Randoop generated test method
+   *     Randoop-generated test method
    */
   private String commentFailingAssertions(
       String classname, String javaCode, RunCommand.Status status) {
@@ -128,17 +131,13 @@ public class FailingTestFilter implements CodeWriter {
     /*
      * First, find the message that indicates the number of failures in the run.
      */
-
     Match failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
     int totalFailures = Integer.parseInt(failureCountMatch.group);
     assert totalFailures > 0 : "JUnit has non-zero exit status, but no failure found";
 
     /*
      * Then read the rest of the file to find each failure.
-     * The standard runner gives a numbered list with each entry matching the following pattern:
      */
-    Pattern failureHeaderPattern =
-        Pattern.compile("\\d+\\)\\s+(" + ID_STRING + ")\\(" + ID_STRING + "\\)");
 
     /*
      * Split Java code text so that we can match the line number for the assertion with the code.
@@ -150,7 +149,7 @@ public class FailingTestFilter implements CodeWriter {
       /*
        * Read until beginning of failure
        */
-      Match failureHeaderMatch = readUntilMatch(lineIterator, failureHeaderPattern);
+      Match failureHeaderMatch = readUntilMatch(lineIterator, FAILURE_HEADER_PATTERN);
       String line = failureHeaderMatch.line;
       String methodName = failureHeaderMatch.group;
 
@@ -161,9 +160,11 @@ public class FailingTestFilter implements CodeWriter {
         if (line.contains("initializationError")) {
           throw new BugInRandoopException(
               "Check configuration of test environment: "
-                  + "initialization error of test in flaky-test filter");
+                  + "initialization error of test in flaky-test filter: "
+                  + line);
         } else {
-          throw new BugInRandoopException("Unexpected failure in flaky-test filter: " + methodName);
+          throw new BugInRandoopException(
+              "Bad method name " + methodName + " in flaky-test filter: " + line);
         }
       }
 
@@ -184,17 +185,18 @@ public class FailingTestFilter implements CodeWriter {
                 + lineNumber
                 + " read from JUnit out of range [1,"
                 + (javaCodeLines.length + 1)
-                + "]");
+                + "]: "
+                + failureLineMatch.line);
       }
       javaCodeLines[lineNumber - 1] = "// flaky: " + javaCodeLines[lineNumber - 1];
     }
 
-    //XXX have this method return the array and redo writeClass so that it writes from array (?)
+    //XXX For efficiency, have this method return the array and redo writeClass so that it writes from array (?).
     return UtilMDE.join(javaCodeLines, Globals.lineSep);
   }
 
   /**
-   * Read lines of the JUnit output using the iterator until finding a match for the pattern, and
+   * Reads lines of the JUnit output using the iterator until finding a match for the pattern, and
    * then returns a pair containing the line and the text matching the first group of the pattern.
    * Assumes that there is a match, and that the pattern has at least one group.
    *
@@ -257,6 +259,7 @@ public class FailingTestFilter implements CodeWriter {
       workingDirectory.toFile().deleteOnExit();
       return workingDirectory;
     } catch (IOException e) {
+      // not BugInRandoopException
       System.err.printf(
           "Unable to create temporary directory for flaky-test filtering, exception: %s%n",
           e.getMessage());
@@ -265,7 +268,7 @@ public class FailingTestFilter implements CodeWriter {
     }
   }
 
-  /** Captures the line and group from the match of a {@code Pattern} with a single group. */
+  /** The line and first group from the match of a {@code Pattern}. */
   private static class Match {
 
     /** The line that matched the pattern. */

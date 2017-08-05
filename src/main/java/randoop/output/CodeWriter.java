@@ -7,10 +7,10 @@ public interface CodeWriter {
 
   /**
    * Writes the given class using this {@link CodeWriter}. May modify the class text before writing
-   * it, or write additional files.
+   * it. May write additional files (but those are not returned).
    *
    * @param packageName the package name of the class
-   * @param classname the name of the class
+   * @param classname the simple name of the class
    * @param classCode the text of a Java class, must be compilable
    * @return the {@code File} object for the Java file written
    */
@@ -21,7 +21,7 @@ public interface CodeWriter {
    * Writes the given class. Does not modify the class text.
    *
    * @param packageName the package name of the class
-   * @param classname the name of the class
+   * @param classname the simple name of the class
    * @param classCode the text of the class to be written, must be compilable
    * @return the {@code File} object for the Java file written
    */
