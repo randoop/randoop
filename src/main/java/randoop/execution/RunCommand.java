@@ -13,12 +13,12 @@ import plume.UtilMDE;
 public class RunCommand {
 
   /**
-   * Runs the given command synchronously in the working directory in a new process using the given
-   * timeout. If the command completes normally, returns a {@link Status} object capturing the
-   * command, exit status, and output from the process.
+   * Runs the given command synchronously in the given directory using the given timeout. If the
+   * command completes normally, returns a {@link Status} object capturing the command, exit status,
+   * and output from the process.
    *
    * @param command the command to be run in the process
-   * @param workingDirectory the working directory for this command
+   * @param workingDirectory the working directory for the command
    * @param timeout the timeout in milliseconds for executing the process
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
@@ -47,14 +47,14 @@ public class RunCommand {
     try {
       standardOutputLines = UtilMDE.streamLines(p.getInputStream());
     } catch (IOException e) {
-      throw new CommandException("Exception getting process stream output", e);
+      throw new CommandException("Exception getting process standard output", e);
     }
 
     List<String> errorOutputLines;
     try {
       errorOutputLines = UtilMDE.streamLines(p.getErrorStream());
     } catch (IOException e) {
-      throw new CommandException("Error getting process error output", e);
+      throw new CommandException("Exception getting process error output", e);
     }
 
     return new Status(command, exitValue, p.timed_out(), standardOutputLines, errorOutputLines);
@@ -85,12 +85,12 @@ public class RunCommand {
      * Creates a {@link Status} object for the command with captured exit status and output.
      *
      * <p>The output from command execution is captured as a {@code List} of output lines. This
-     * avoids losing output from the command if the process is destroyed. This can happend because
+     * avoids losing output from the command if the process is destroyed. This can happen because
      * the process times out.
      *
      * @param command the command
      * @param exitStatus the exit status
-     * @param standardOutputLines the lines of process output
+     * @param standardOutputLines the lines of process output to standard output
      * @param errorOutputLines the lines of process output to standard error
      */
     Status(
