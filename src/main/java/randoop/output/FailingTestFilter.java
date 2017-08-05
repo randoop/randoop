@@ -15,7 +15,6 @@ import plume.UtilMDE;
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
-import randoop.compile.FileCompilerException;
 import randoop.execution.RunCommand;
 import randoop.execution.TestEnvironment;
 import randoop.main.GenTests;
@@ -239,7 +238,7 @@ public class FailingTestFilter implements CodeWriter {
     FileCompiler fileCompiler = new FileCompiler();
     try {
       fileCompiler.compile(sourceFiles, destinationDir);
-    } catch (FileCompilerException e) {
+    } catch (FileCompiler.FileCompilerException e) {
       throw new BugInRandoopException("Compilation error during flaky-test filtering", e);
     }
   }
