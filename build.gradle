@@ -529,9 +529,14 @@ task clonePlumeLib {
     def plumeFolder = file("$buildDir/utils/plume-lib")
     if ( ! plumeFolder.exists() ) {
       org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
-      exec {
-        commandLine 'chmod', '-R', '+x', "$buildDir/utils/plume-lib/bin"
-      }
+      // This chmod command causes errors when pulling, because the clone
+      // of plume-lib has uncommitted changes (changes to execute bits).
+      // Find another way, or use a more restricted command that only
+      // sets execute bits on executable files, not all files in the
+      // bin/ directory.
+      // exec {
+      //   commandLine 'chmod', '-R', '+x', "$buildDir/utils/plume-lib/bin"
+      // }
     } else {
       def grgit = org.ajoberstar.grgit.Grgit.open(dir: plumeFolder)
       grgit.pull()
