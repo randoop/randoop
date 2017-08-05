@@ -538,7 +538,7 @@ task clonePlumeLib {
       //   commandLine 'chmod', '-R', '+x', "$buildDir/utils/plume-lib/bin"
       // }
       exec {
-        commandLine 'chmod', '+x', "$buildDir/utils/plume-lib/bin/preplace"
+        commandLine 'chmod', '+x', "$buildDir/utils/plume-lib/bin/preplace", "$buildDir/utils/plume-lib/bin/html-update-toc"
       }
     } else {
       def grgit = org.ajoberstar.grgit.Grgit.open(dir: plumeFolder)
