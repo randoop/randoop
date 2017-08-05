@@ -204,7 +204,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     }
 
     // The declaring type of the method is not necessarily the classType, but may want to omit
-    // method in classType. So, create operation with the classType as declaring type for omit search
+    // method in classType. So, create operation with the classType as declaring type for omit search.
     if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
       addOperation(operation);
     }
