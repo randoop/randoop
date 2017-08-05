@@ -15,10 +15,10 @@ public class TestEnvironment {
   /** The process timeout in milliseconds. Defaults to 15 minutes. */
   private long timeout = 15 * 60 * 1000;
 
-  /** The classpath for the tests */
+  /** The classpath for the tests. */
   private final String testClasspath;
 
-  /** The map from javaagent jar path to argument string */
+  /** A map from javaagent jar path to argument string. */
   private final LinkedHashMap<Path, String> agentMap = new LinkedHashMap<>();
 
   /**
@@ -53,7 +53,7 @@ public class TestEnvironment {
   /**
    * Runs the named JUnit test class in this environment.
    *
-   * @param testClassName the fully-qualified JUnit test class
+   * @param testClassName the fully-qualified JUnit test class name
    * @param workingDirectory the working directory for executing the test
    * @return the {@link RunCommand.Status} object for the execution of the test class
    * @throws CommandException if there is an error running the test command
@@ -66,8 +66,8 @@ public class TestEnvironment {
   }
 
   /**
-   * Constructs the command to run JUnit tests in this environment minus the name of the test class.
-   * Adding the test class name is sufficient to build a runnable command.
+   * Constructs the command to run JUnit tests in this environment, minus the name of the test
+   * class. Adding the test class name is sufficient to build a runnable command.
    *
    * @return the base command to run JUnit tests in this environment, without a test class name
    */

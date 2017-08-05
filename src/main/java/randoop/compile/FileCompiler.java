@@ -16,7 +16,7 @@ public class FileCompiler {
   /** The command-line options for running this compiler. */
   private final List<String> options;
 
-  /** The compiler object */
+  /** The compiler object. */
   private final JavaCompiler compiler;
 
   /** Creates a {@link FileCompiler} with no command-line options. */
@@ -58,7 +58,7 @@ public class FileCompiler {
 
     Boolean succeeded = task.call();
     if (succeeded == null || !succeeded) {
-      throw new FileCompilerException("Compilation failed.", sourceFiles, diagnostics);
+      throw new FileCompilerException("Compilation failed", sourceFiles, diagnostics);
     }
   }
 }

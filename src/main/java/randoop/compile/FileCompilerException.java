@@ -20,7 +20,7 @@ public class FileCompilerException extends Throwable {
   private final DiagnosticCollector<JavaFileObject> diagnostics;
 
   /**
-   * Creates a {@link FileCompilerException} with the error message, the list of source classes and
+   * Creates a {@link FileCompilerException} with the error message, the list of source classes, and
    * compiler diagnostics from the compilation.
    *
    * @param message the exception message
