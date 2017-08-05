@@ -16,7 +16,7 @@ public class TypeNames {
   /**
    * Returns {@link Class} object for a fully-qualified class name or primitive type name.
    *
-   * <p>Array types are expected to have the format <code>element-type[]</code>.
+   * <p>Array types are expected to have the format {@code element-type[]}.
    *
    * @param typeName a fully-qualified class name or primitive type name
    * @return {@link Class} object for type given in string
@@ -48,8 +48,8 @@ public class TypeNames {
   }
 
   /**
-   * Indicates whether the type name is an array type ending with brackets. For example: <code>int[]
-   * </code>.
+   * Indicates whether the type name is an array type ending with brackets. For example: {@code
+   * int[]}.
    *
    * @param typeName the type name
    * @return true if {@code typeName} ends with brackets, false otherwise

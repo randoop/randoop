@@ -13,30 +13,29 @@ import plume.UtilMDE;
  * signature consists of the classname as a fully-qualified raw type, the method name, and the
  * argument types as fully-qualified raw types.
  *
- * <p>The raw type signature for a constructor <code>C()</code> is <code>C()</code> instead of the
- * reflection form <code>C.&lt;init&gt;</code>. Also, the name and the classname of a constructor
- * are the same.
+ * <p>The raw type signature for a constructor {@code C()} is {@code C()} instead of the reflection
+ * form {@code C.<init>()}. Also, the name and the classname of a constructor are the same.
  */
 public class RawSignature {
 
-  /** The package name of the class */
+  /** The package name of the class; empty string for the unnamed package. */
   private final String packageName;
 
-  /** The name of the declaring class of the method */
+  /** The name of the declaring class of the method. */
   private final String classname;
 
-  /** The method name */
+  /** The method name; for a constructor, same as the classname. */
   private final String name;
 
-  /** The method parameter types */
+  /** The method parameter types. */
   private final Class<?>[] parameterTypes;
 
   /**
    * Create a {@link RawSignature} object with the name and parameterTypes.
    *
-   * @param packageName the package name of the class
+   * @param packageName the package name of the class; empty string for the unnamed package
    * @param classname the name of the class
-   * @param name the method name
+   * @param name the method name; for a constructor, same as the classname
    * @param parameterTypes the method parameter types
    */
   public RawSignature(
@@ -82,22 +81,11 @@ public class RawSignature {
     if (!(object instanceof RawSignature)) {
       return false;
     }
-    RawSignature signature = (RawSignature) object;
-    if (!this.classname.equals(signature.classname)) {
-      return false;
-    }
-    if (!this.name.equals(signature.name)) {
-      return false;
-    }
-    if (this.parameterTypes.length != signature.parameterTypes.length) {
-      return false;
-    }
-    for (int i = 0; i < parameterTypes.length; i++) {
-      if (!this.parameterTypes[i].equals(signature.parameterTypes[i])) {
-        return false;
-      }
-    }
-    return true;
+    RawSignature that = (RawSignature) object;
+    return this.packageName.equals(that.packageName)
+        && this.classname.equals(that.classname)
+        && this.name.equals(that.name)
+        && Arrays.equals(this.parameterTypes, that.parameterTypes);
   }
 
   @Override

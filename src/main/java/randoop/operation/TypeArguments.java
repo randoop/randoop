@@ -32,15 +32,12 @@ class TypeArguments {
       for (int i = 0; i < argsStrs.length; i++) {
         String typeName = argsStrs[i].trim();
 
-        Class<?> c;
         try {
-          c = TypeNames.getTypeForName(typeName);
+          argTypes[i] = TypeNames.getTypeForName(typeName);
         } catch (ClassNotFoundException e) {
           throw new OperationParseException(
               "Argument type \"" + typeName + "\" not recognized in arguments " + argStr);
         }
-
-        argTypes[i] = c;
       }
     }
     return argTypes;

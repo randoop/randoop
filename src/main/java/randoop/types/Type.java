@@ -353,7 +353,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * And, if after all those conversions, the type is a raw type, an unchecked conversion may occur.
    *
-   * @param sourceType the type to test for assignability, must be non-null
+   * @param sourceType the type to test for assignability
    * @return true if this type can be assigned from the source type, and false otherwise
    */
   public boolean isAssignableFrom(Type sourceType) {

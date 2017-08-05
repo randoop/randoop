@@ -379,8 +379,7 @@ public class OperationModel {
   }
 
   /**
-   * Adds operations to this {@link OperationModel} from all of the classes in the given set of
-   * classes.
+   * Adds operations to this {@link OperationModel} from all of the given classes.
    *
    * @param classTypes the set of declaring class types for the operations, must be non-null
    * @param visibility the visibility predicate
@@ -404,7 +403,7 @@ public class OperationModel {
   /**
    * Adds an operation to this {@link OperationModel} for each of the method signatures.
    *
-   * @param methodSignatures the set of signatures, must be non-null
+   * @param methodSignatures the set of signatures
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the predicate for omitting operations
@@ -417,8 +416,8 @@ public class OperationModel {
       OmitMethodsPredicate omitPredicate)
       throws SignatureParseException {
     for (String sig : methodSignatures) {
-      AccessibleObject accessibleObject;
-      accessibleObject = SignatureParser.parse(sig, visibility, reflectionPredicate);
+      AccessibleObject accessibleObject =
+          SignatureParser.parse(sig, visibility, reflectionPredicate);
       if (accessibleObject != null) {
         TypedClassOperation operation;
         if (accessibleObject instanceof Constructor) {

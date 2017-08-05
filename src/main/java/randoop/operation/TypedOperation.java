@@ -66,49 +66,47 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Compares this {@link TypedOperation} to another. Orders operations by lexicographical
-   * comparison, alphabetically comparing operation names, then input type names, and finally output
-   * type names. Ensures that any {@link TypedTermOperation} objects precedes a {@link
-   * TypedClassOperation}.
+   * Compares this {@link TypedOperation} to another. Orders operations by type (any {@link
+   * TypedTermOperation} object precedes a {@link TypedClassOperation}) then lexicographically
+   * (alphabetically comparing class names, then operation names, then input type names, and finally
+   * output type names).
    *
    * @param op the {@link TypedOperation} to compare with this operation
    * @return value &lt; 0 if this operation precedes {@code op}, 0 if the operations are identical,
    *     and &gt; 0 if this operation succeeds op
    */
   @Override
-  public int compareTo(TypedOperation op) {
+  public final int compareTo(TypedOperation other) {
     // term operations precede any class operation
-    if (this instanceof TypedTermOperation && op instanceof TypedClassOperation) {
+    if (this instanceof TypedTermOperation && other instanceof TypedClassOperation) {
       return -1;
+    }
+    if (this instanceof TypedClassOperation && other instanceof TypedTermOperation) {
+      return 1;
     }
 
     if (this instanceof TypedClassOperation) {
-      // class operations succeed any term operation
-      if (op instanceof TypedTermOperation) {
-        return 1;
-      }
-
       // for class operations, first compare declaring class
       TypedClassOperation thisOp = (TypedClassOperation) this;
-      TypedClassOperation other = (TypedClassOperation) op;
-      int result = thisOp.getDeclaringType().compareTo(other.getDeclaringType());
+      TypedClassOperation otherOp = (TypedClassOperation) other;
+      int result = thisOp.getDeclaringType().compareTo(otherOp.getDeclaringType());
       if (result != 0) {
         return result;
       }
     }
 
     // do lexicographical comparison of name
-    int result = this.getName().compareTo(op.getName());
+    int result = this.getName().compareTo(other.getName());
     if (result != 0) {
       return result;
     }
     // then input types
-    result = this.inputTypes.compareTo(op.inputTypes);
+    result = this.inputTypes.compareTo(other.inputTypes);
     if (result != 0) {
       return result;
     }
     // and then output type
-    return this.outputType.compareTo(op.outputType);
+    return this.outputType.compareTo(other.outputType);
   }
 
   @Override

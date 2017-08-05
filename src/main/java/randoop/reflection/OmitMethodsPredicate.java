@@ -30,9 +30,8 @@ public class OmitMethodsPredicate {
   private final List<Pattern> omitPatterns;
 
   /**
-   * If {@code omitPatterns} is null, treat it as the empty list.
-   *
-   * @param omitPatterns a list of regular expressions for method signatures, or null
+   * @param omitPatterns a list of regular expressions for method signatures. Null or the empty
+   *     least mean to do no omissions.
    */
   public OmitMethodsPredicate(List<Pattern> omitPatterns) {
     if (omitPatterns == null) {
@@ -52,11 +51,11 @@ public class OmitMethodsPredicate {
    * @return true if the signature matches an omit pattern, and false otherwise
    */
   private boolean shouldOmitExact(TypedClassOperation operation) {
-    // Done if there are no patterns
+    // Nothing to do if there are no patterns.
     if (omitPatterns.isEmpty()) {
       return false;
     }
-    // Only match constructors or methods
+    // Only match constructors or methods.
     if (!operation.isConstructorCall() && !operation.isMethodCall()) {
       return false;
     }
@@ -81,16 +80,8 @@ public class OmitMethodsPredicate {
    * Indicates whether an omit pattern matches the raw signature of the method in either the
    * declaring class of the method or a supertype.
    *
-   * <p>Searches all supertypes of {@code classType} that have a declared member corresponding to
-   * the method. The type {@code classType} is a subtype of or equal to the declaring class of the
-   * operation.
-   *
-   * <p>It is necessary to search all types from {@code classType} up to {@code
-   * operation.getDeclaringType()}, and also to search for superclasses and interfaces of the
-   * declaring class that have the method.
-   *
    * @param operation the operation for the method
-   * @return true if the signature of the method in the current class or a super class matches an
+   * @return true if the signature of the method in the current class or a superclass matches an
    *     omit pattern, false otherwise
    */
   boolean shouldOmit(final TypedClassOperation operation) {
@@ -99,11 +90,11 @@ public class OmitMethodsPredicate {
       return false;
     }
 
-    /*
-     * Search classType and its supertypes that have the method.
-     */
     RawSignature signature = operation.getRawSignature();
 
+    /*
+     * Search the type and its supertypes that have the method.
+     */
     Set<ClassOrInterfaceType> visited = new HashSet<>();
     Queue<ClassOrInterfaceType> typeQueue = new LinkedList<>();
     typeQueue.add(operation.getDeclaringType());

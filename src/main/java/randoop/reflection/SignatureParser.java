@@ -8,10 +8,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** Parses type signature strings used to identify methods and constructors in input. */
-// TODO: This duplicates should be factored into a separate source set (aka, module) so that it
-// can also be used in javagents. The patterns are duplicated from {@code ReplacementFileReader}
-// from the mapcall agent.
 public class SignatureParser {
+
+  // TODO: The duplicated regular expressions should be factored into a separate source set (aka,
+  // module) so that it can also be used in javagents. The patterns are duplicated from {@code
+  // ReplacementFileReader} from the mapcall agent.
+
   /** Regex for Java identifiers */
   private static final String ID_STRING =
       "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
@@ -55,7 +57,7 @@ public class SignatureParser {
    * @param visibility the predicate for determining whether the method or constructor is visible
    * @param reflectionPredicate the predicate for checking reflection policy
    * @return the {@code AccessibleObject} for the method or constructor represented by the string;
-   *     null if the visibility or reflection predicate fails on the class or the method or
+   *     null if the visibility or reflection predicate returns false on the class or the method or
    *     constructor
    * @throws IllegalArgumentException if the string does not have the format of a signature
    * @throws SignatureParseException if the signature is not fully-qualified, or the class, an
@@ -79,7 +81,7 @@ public class SignatureParser {
     }
 
     /*
-     * The qualified name is one of
+     * The qualified name should be one of
      *   package-name.class-name for a constructor
      *   package-name.class-name.<init> for a constructor (reflection notation)
      *   package-name.class-name.method-name for a method
@@ -111,7 +113,12 @@ public class SignatureParser {
         classType = Class.forName(qualifiedName);
         isConstructor = true;
       } catch (ClassNotFoundException e) {
-        throw new SignatureParseException("Class not found for signature " + signature, e);
+        throw new SignatureParseException(
+            "Class not found for method or constructor "
+                + qualifiedName
+                + " in signature "
+                + signature,
+            e);
       }
     }
 
@@ -136,7 +143,9 @@ public class SignatureParser {
       try {
         constructor = classType.getConstructor(argTypes);
       } catch (NoSuchMethodException e) {
-        throw new SignatureParseException("Constructor not found for signature " + signature, e);
+        throw new SignatureParseException(
+            "Class " + classType + " found, but constructor not found for signature " + signature,
+            e);
       }
       if (reflectionPredicate.test(constructor) && visibility.isVisible(constructor)) {
         return constructor;
@@ -149,8 +158,9 @@ public class SignatureParser {
         StringBuilder b = new StringBuilder();
         b.append(
             String.format(
-                "Method %s (%s) not found in %s for signature %s%n",
-                name, Arrays.toString(argTypes), classType, signature));
+                "Class %s found, but method %s(%s) not found for signature %s%n",
+                classType, name, Arrays.toString(argTypes), signature));
+        b.append("Here are the declared methods:%n");
         for (Method m : classType.getDeclaredMethods()) {
           b.append(String.format("  %s%n", m));
         }

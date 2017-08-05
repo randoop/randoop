@@ -136,7 +136,7 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Returns the name of this operation unqualified by the declaring class.
+   * Returns the simple name of this operation, not qualified by the declaring class.
    *
    * @return the unqualified name of this operation
    */
@@ -164,8 +164,8 @@ public class TypedClassOperation extends TypedOperation {
   /**
    * Returns the {@link RawSignature} for this operation if it is a method or constructor call.
    *
-   * @return the {@link RawSignature} of this method or constructor operation, null if it is another
-   *     kind of operation
+   * @return the {@link RawSignature} of this method or constructor operation, null if this is
+   *     another kind of operation
    */
   public RawSignature getRawSignature() {
     // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably both
@@ -196,7 +196,7 @@ public class TypedClassOperation extends TypedOperation {
    * case if {@code type} is a subtype of the declaring type of the operation, but this method does
    * not force that check because we sometimes want to create the operation for superclasses.
    *
-   * @param type a type to substitute into the operation, non-null
+   * @param type a type to substitute into the operation
    * @return a new operation with {@code type} substituted for the declaring type of this operation.
    *     This object will be invalid if {@code type} does not have the method.
    */

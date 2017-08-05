@@ -44,10 +44,9 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RandoopSystemTest {
 
-  // XXX Can factor into module of shared dependencies, but...
-  // Since we are avoiding dependencies of the system tests on Randoop code, the tests cannot
-  // directly use GenTests.NO_METHODS_TO_TEST. So need to keep this in synch with
-  // GenTests.NO_OPERATIONS_TO_TEST.
+  // Keep this in synch with GenTests.NO_OPERATIONS_TO_TEST.
+  // (XXX Can factor into module of shared dependencies, but...  Since we are avoiding dependencies
+  // of the system tests on Randoop code, the tests can't directly use GenTests.NO_METHODS_TO_TEST.)
   private static final String NO_OPERATIONS_TO_TEST = "There are no operations to test. Exiting.";
 
   private static SystemTestEnvironment systemTestEnvironment;

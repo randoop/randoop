@@ -278,7 +278,7 @@ public class GenTests extends GenInputsAbstract {
     List<TypedOperation> operations = operationModel.getOperations();
 
     /*
-     * Stop if there no more than 1 operation. This will be Object().
+     * Stop if there is only 1 operation. This will be Object().
      */
     if (operations.size() <= 1) {
       System.out.println(NO_OPERATIONS_TO_TEST);
