@@ -24,7 +24,7 @@ import randoop.util.Log;
 public class OmitMethodsPredicate {
 
   /** An OmitMethodsPredicate that does no omission. */
-  public static OmitMethodsPredicate NO_OMISSION = new OmitMethodsPredicate(null);
+  public static final OmitMethodsPredicate NO_OMISSION = new OmitMethodsPredicate(null);
 
   /** {@code Pattern}s that match operations that should be omitted. */
   private final List<Pattern> omitPatterns;
