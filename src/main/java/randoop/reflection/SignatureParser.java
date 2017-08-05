@@ -44,7 +44,7 @@ public class SignatureParser {
    *
    * <ul>
    *   <li>{@code package-name.classname.method-name(argument-list)} for a method,
-   *   <li>{@code package-name.classname.&lt;init&gt;(argument-list)} or {@code
+   *   <li>{@code package-name.classname.<init>(argument-list)} or {@code
    *       package-name.classname(argument-list)} for a constructor.
    * </ul>
    *
