@@ -25,7 +25,7 @@ public class MinimizerWriter implements CodeWriter {
   /**
    * {@inheritDoc}
    *
-   * <p>Writes both the original class and the minimized class.
+   * <p>Writes both the original class and the minimized class. Returns the original class.
    */
   @Override
   public File writeClassCode(String packageName, String classname, String classCode)
