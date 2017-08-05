@@ -402,7 +402,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return true if this type is a class or interface type; false, otherwise
    */
-  public boolean isClassType() {
+  public boolean isClassOrInterfaceType() {
     return false;
   }
 

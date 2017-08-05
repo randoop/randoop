@@ -38,14 +38,16 @@ public class ClassReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(
-      Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+      Class<?> c,
+      ReflectionPredicate reflectionPredicate,
+      VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor =
         new OperationExtractor(
             classType,
             operations,
-            predicate,
+            reflectionPredicate,
             OmitMethodsPredicate.NO_OMISSION,
             visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);

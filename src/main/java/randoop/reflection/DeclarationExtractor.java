@@ -9,17 +9,17 @@ import randoop.types.ClassOrInterfaceType;
  */
 public class DeclarationExtractor extends DefaultClassVisitor {
   private final Set<ClassOrInterfaceType> classDeclarationTypes;
-  private ReflectionPredicate predicate;
+  private ReflectionPredicate reflectionPredicate;
 
   public DeclarationExtractor(
-      Set<ClassOrInterfaceType> classDeclarationTypes, ReflectionPredicate predicate) {
+      Set<ClassOrInterfaceType> classDeclarationTypes, ReflectionPredicate reflectionPredicate) {
     this.classDeclarationTypes = classDeclarationTypes;
-    this.predicate = predicate;
+    this.reflectionPredicate = reflectionPredicate;
   }
 
   @Override
   public void visit(Class<?> c, ReflectionManager reflectionManager) {
-    if (!predicate.test(c)) {
+    if (!reflectionPredicate.test(c)) {
       return;
     }
     classDeclarationTypes.add(ClassOrInterfaceType.forClass(c));
@@ -28,7 +28,7 @@ public class DeclarationExtractor extends DefaultClassVisitor {
 
   @Override
   public void visitBefore(Class<?> c) {
-    if (!predicate.test(c)) {
+    if (!reflectionPredicate.test(c)) {
       return;
     }
     classDeclarationTypes.add(ClassOrInterfaceType.forClass(c));

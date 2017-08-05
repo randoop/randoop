@@ -368,13 +368,13 @@ public class InstantiationTest {
 
   private void addTypes(TypedOperation operation, Set<Type> typeSet) {
     Type outputType = operation.getOutputType();
-    if (outputType.isClassType()) {
+    if (outputType.isClassOrInterfaceType()) {
       addTypes(outputType, typeSet);
     }
   }
 
   private void addTypes(Type type, Set<Type> typeSet) {
-    if (type.isClassType()) {
+    if (type.isClassOrInterfaceType()) {
       ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
       if (!(classType.isGeneric() || classType.hasWildcard())) {
         typeSet.add(classType);

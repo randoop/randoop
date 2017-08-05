@@ -30,8 +30,8 @@ import randoop.types.TypeTuple;
  */
 public class OperationExtractor extends DefaultClassVisitor {
 
-  /** The predicate that implements reflection policy for collecting operations */
-  private final ReflectionPredicate predicate;
+  /** The reflection policy for collecting operations */
+  private final ReflectionPredicate reflectionPredicate;
 
   /** The predicate to test visibility */
   private final VisibilityPredicate visibilityPredicate;
@@ -55,19 +55,19 @@ public class OperationExtractor extends DefaultClassVisitor {
    *
    * @param classType the declaring class for collected operations
    * @param operations the collection of operations, will be side-effected
-   * @param predicate the reflection predicate
+   * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param visibilityPredicate the predicate for test visibility
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
       Collection<TypedOperation> operations,
-      ReflectionPredicate predicate,
+      ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
       VisibilityPredicate visibilityPredicate) {
     this.classType = classType;
     this.operations = operations;
-    this.predicate = predicate;
+    this.reflectionPredicate = reflectionPredicate;
     this.visibilityPredicate = visibilityPredicate;
     this.omitPredicate = omitPredicate;
   }
@@ -78,15 +78,20 @@ public class OperationExtractor extends DefaultClassVisitor {
    *
    * @param classType the declaring class for collected operations
    * @param operations the collection of operations, will be side-effected
-   * @param predicate the reflection predicate
+   * @param reflectionPredicate the reflection predicate
    * @param visibilityPredicate the predicate for test visibility
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
       Collection<TypedOperation> operations,
-      ReflectionPredicate predicate,
+      ReflectionPredicate reflectionPredicate,
       VisibilityPredicate visibilityPredicate) {
-    this(classType, operations, predicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
+    this(
+        classType,
+        operations,
+        reflectionPredicate,
+        OmitMethodsPredicate.NO_OMISSION,
+        visibilityPredicate);
   }
 
   /**
@@ -162,7 +167,7 @@ public class OperationExtractor extends DefaultClassVisitor {
             + " and declaring class "
             + constructor.getDeclaringClass().getName()
             + " should be same";
-    if (!predicate.test(constructor)) {
+    if (!reflectionPredicate.test(constructor)) {
       return;
     }
     TypedClassOperation operation = instantiateTypes(TypedOperation.forConstructor(constructor));
@@ -182,7 +187,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visit(Method method) {
-    if (!predicate.test(method)) {
+    if (!reflectionPredicate.test(method)) {
       return;
     }
     TypedClassOperation operation = instantiateTypes(TypedOperation.forMethod(method));
@@ -218,7 +223,7 @@ public class OperationExtractor extends DefaultClassVisitor {
             + classType
             + " should be assignable from "
             + field.getDeclaringClass().getName();
-    if (!predicate.test(field)) {
+    if (!reflectionPredicate.test(field)) {
       return;
     }
 

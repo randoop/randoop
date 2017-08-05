@@ -561,15 +561,17 @@ public class VisibilityTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(
-      Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+      Class<?> c,
+      ReflectionPredicate reflectionPredicate,
+      VisibilityPredicate visibilityPredicate) {
     ReflectionManager typeManager = new ReflectionManager(visibilityPredicate);
     Set<ClassOrInterfaceType> classTypes = new LinkedHashSet<>();
-    typeManager.apply(new DeclarationExtractor(classTypes, predicate), c);
+    typeManager.apply(new DeclarationExtractor(classTypes, reflectionPredicate), c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager opManager = new ReflectionManager(visibilityPredicate);
     for (ClassOrInterfaceType type : classTypes) {
       opManager.apply(
-          new OperationExtractor(type, operations, predicate, visibilityPredicate),
+          new OperationExtractor(type, operations, reflectionPredicate, visibilityPredicate),
           type.getRuntimeClass());
     }
     return operations;

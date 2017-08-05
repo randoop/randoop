@@ -227,14 +227,16 @@ public class TestFilteringTest {
   private ForwardGenerator buildAndRunGenerator(Class<?> c) {
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    ReflectionPredicate predicate = new DefaultReflectionPredicate(omitfields);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitfields);
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final List<TypedOperation> model = new ArrayList<>();
     OmitMethodsPredicate omitMethodsPredicate =
         new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
     ReflectionManager manager = new ReflectionManager(visibility);
     manager.apply(
-        new OperationExtractor(classType, model, predicate, omitMethodsPredicate, visibility), c);
+        new OperationExtractor(
+            classType, model, reflectionPredicate, omitMethodsPredicate, visibility),
+        c);
     Collection<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     ComponentManager componentMgr = new ComponentManager(components);

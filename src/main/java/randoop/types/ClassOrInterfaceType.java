@@ -487,7 +487,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public boolean isClassType() {
+  public boolean isClassOrInterfaceType() {
     return true;
   }
 }

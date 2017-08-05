@@ -1,5 +1,6 @@
 package randoop.reflection;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,14 +42,14 @@ public class SignatureParserTest {
   @Test
   public void testBadClassParse() throws SignatureParseException {
     thrown.expect(SignatureParseException.class);
-    thrown.expectMessage(startsWith("Class not found for signature"));
+    thrown.expectMessage(startsWith("Class not found for method or constructor"));
     checkParse("randoop.reflection.TheConcreteClass(java.lang.String, int, int, int)");
   }
 
   @Test
   public void testBadConstructorParse() throws SignatureParseException {
     thrown.expect(SignatureParseException.class);
-    thrown.expectMessage(startsWith("Constructor not found for signature"));
+    thrown.expectMessage(containsString("constructor not found for signature"));
     checkParse("randoop.reflection.ConcreteClass(java.lang.String, double)");
   }
 

@@ -71,7 +71,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * (alphabetically comparing class names, then operation names, then input type names, and finally
    * output type names).
    *
-   * @param op the {@link TypedOperation} to compare with this operation
+   * @param other the {@link TypedOperation} to compare with this operation
    * @return value &lt; 0 if this operation precedes {@code op}, 0 if the operations are identical,
    *     and &gt; 0 if this operation succeeds op
    */

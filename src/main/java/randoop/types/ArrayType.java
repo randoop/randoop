@@ -268,7 +268,7 @@ public class ArrayType extends ReferenceType {
     Type rawElementType;
     if (this.componentType.isArray()) {
       rawElementType = ((ArrayType) componentType).getRawTypeArray();
-    } else if (this.componentType.isClassType()) {
+    } else if (this.componentType.isClassOrInterfaceType()) {
       rawElementType = ((ClassOrInterfaceType) componentType).getRawtype();
     } else {
       return this;

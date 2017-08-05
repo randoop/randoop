@@ -104,13 +104,13 @@ public class SignatureParser {
      * The qualifiedClassname is either package-name.class-name, or package-name if the signature is
      * a constructor not represented as "<init>".
      */
-    Class<?> classType;
+    Class<?> clazz;
     try {
-      classType = Class.forName(qualifiedClassname);
+      clazz = Class.forName(qualifiedClassname);
     } catch (ClassNotFoundException first) {
       // could be that qualified name is package-name.class-name
       try {
-        classType = Class.forName(qualifiedName);
+        clazz = Class.forName(qualifiedName);
         isConstructor = true;
       } catch (ClassNotFoundException e) {
         throw new SignatureParseException(
@@ -123,8 +123,8 @@ public class SignatureParser {
     }
 
     // Can't use the method if the class is non-visible
-    if (!visibility.isVisible(classType)) {
-      System.out.println("Ignoring signature " + signature + " from non-visible " + classType);
+    if (!visibility.isVisible(clazz)) {
+      System.out.println("Ignoring signature " + signature + " from non-visible " + clazz);
       return null;
     }
 
@@ -141,11 +141,10 @@ public class SignatureParser {
     if (isConstructor) {
       Constructor<?> constructor;
       try {
-        constructor = classType.getConstructor(argTypes);
+        constructor = clazz.getConstructor(argTypes);
       } catch (NoSuchMethodException e) {
         throw new SignatureParseException(
-            "Class " + classType + " found, but constructor not found for signature " + signature,
-            e);
+            "Class " + clazz + " found, but constructor not found for signature " + signature, e);
       }
       if (reflectionPredicate.test(constructor) && visibility.isVisible(constructor)) {
         return constructor;
@@ -153,15 +152,15 @@ public class SignatureParser {
     } else { // Otherwise, signature is a method
       Method method;
       try {
-        method = classType.getMethod(name, argTypes);
+        method = clazz.getMethod(name, argTypes);
       } catch (NoSuchMethodException e) {
         StringBuilder b = new StringBuilder();
         b.append(
             String.format(
                 "Class %s found, but method %s(%s) not found for signature %s%n",
-                classType, name, Arrays.toString(argTypes), signature));
+                clazz, name, Arrays.toString(argTypes), signature));
         b.append("Here are the declared methods:%n");
-        for (Method m : classType.getDeclaredMethods()) {
+        for (Method m : clazz.getDeclaredMethods()) {
           b.append(String.format("  %s%n", m));
         }
         throw new SignatureParseException(b.toString(), e);
