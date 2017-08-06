@@ -524,54 +524,53 @@ public class GenTests extends GenInputsAbstract {
       CodeWriter codeWriter,
       String basename,
       String testKind) {
-    if (!testSequences.isEmpty()) {
-      if (GenInputsAbstract.progressdisplay) {
-        System.out.printf("%n%s test output:%n", testKind);
-        System.out.printf("%s test count: %d%n", testKind, testSequences.size());
-        System.out.printf("Writing JUnit tests...%n");
-      }
-      try {
-        List<File> testFiles = new ArrayList<>();
-
-        // Create and write test classes.
-        LinkedHashMap<String, CompilationUnit> testMap =
-            getTestASTMap(basename, testSequences, junitCreator);
-        for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
-          String classname = entry.getKey();
-          String classSource = entry.getValue().toString();
-          testFiles.add(
-              codeWriter.writeClassCode(
-                  GenInputsAbstract.junit_package_name, classname, classSource));
-        }
-
-        // Create and write suite or driver class.
-        String driverName;
-        String classSource;
-        if (GenInputsAbstract.junit_reflection_allowed) {
-          driverName = basename;
-          classSource = junitCreator.createTestSuite(driverName, testMap.keySet());
-        } else {
-          driverName = basename + "Driver";
-          classSource = junitCreator.createTestDriver(driverName, testMap.keySet());
-        }
-        testFiles.add(
-            codeWriter.writeUnmodifiedClassCode(
-                GenInputsAbstract.junit_package_name, driverName, classSource));
-        if (GenInputsAbstract.progressdisplay) {
-          System.out.println();
-          for (File f : testFiles) {
-            System.out.printf("Created file: %s%n", f.getAbsolutePath());
-          }
-        }
-      } catch (RandoopOutputException e) {
-        System.out.printf(
-            "%nError writing " + testKind.toLowerCase() + " tests: " + e.getMessage());
-        System.exit(1);
-      }
-    } else {
+    if (testSequences.isEmpty()) {
       if (GenInputsAbstract.progressdisplay) {
         System.out.printf("%nNo " + testKind.toLowerCase() + " tests to output%n");
       }
+      return;
+    }
+    if (GenInputsAbstract.progressdisplay) {
+      System.out.printf("%n%s test output:%n", testKind);
+      System.out.printf("%s test count: %d%n", testKind, testSequences.size());
+      System.out.printf("Writing JUnit tests...%n");
+    }
+    try {
+      List<File> testFiles = new ArrayList<>();
+
+      // Create and write test classes.
+      LinkedHashMap<String, CompilationUnit> testMap =
+          getTestASTMap(basename, testSequences, junitCreator);
+      for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
+        String classname = entry.getKey();
+        String classSource = entry.getValue().toString();
+        testFiles.add(
+            codeWriter.writeClassCode(
+                GenInputsAbstract.junit_package_name, classname, classSource));
+      }
+
+      // Create and write suite or driver class.
+      String driverName;
+      String classSource;
+      if (GenInputsAbstract.junit_reflection_allowed) {
+        driverName = basename;
+        classSource = junitCreator.createTestSuite(driverName, testMap.keySet());
+      } else {
+        driverName = basename + "Driver";
+        classSource = junitCreator.createTestDriver(driverName, testMap.keySet());
+      }
+      testFiles.add(
+          codeWriter.writeUnmodifiedClassCode(
+              GenInputsAbstract.junit_package_name, driverName, classSource));
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.println();
+        for (File f : testFiles) {
+          System.out.printf("Created file %s%n", f.getAbsolutePath());
+        }
+      }
+    } catch (RandoopOutputException e) {
+      System.out.printf("%nError writing " + testKind.toLowerCase() + " tests: " + e.getMessage());
+      System.exit(1);
     }
   }
 
@@ -764,7 +763,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Creates the JUnit test classes for the given sequences.
+   * Creates the JUnit test classes for the given sequences, in AST (abstract syntax tree) form.
    *
    * @param junitPrefix the class name prefix
    * @param sequences the sequences for test methods of the created test classes
