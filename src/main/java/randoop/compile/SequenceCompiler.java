@@ -56,13 +56,13 @@ public class SequenceCompiler {
    *
    * @param packageName the package name for the class
    * @param classname the simple name of the class
-   * @param classSource the source text of the class
+   * @param javaSource the source text of the class
    * @return true if class source was successfully compiled, false otherwise
    */
   public boolean isCompilable(
-      final String packageName, final String classname, final String classSource) {
+      final String packageName, final String classname, final String javaSource) {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-    return compile(packageName, classname, classSource, diagnostics);
+    return compile(packageName, classname, javaSource, diagnostics);
   }
 
   /**
@@ -70,17 +70,17 @@ public class SequenceCompiler {
    *
    * @param packageName the package of the class
    * @param classname the simple name of the class
-   * @param classSource the source text of the class
+   * @param javaSource the source text of the class
    * @throws SequenceCompilerException if the compilation fails
    */
-  public void compile(final String packageName, final String classname, final String classSource)
+  public void compile(final String packageName, final String classname, final String javaSource)
       throws SequenceCompilerException {
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
-    boolean success = compile(packageName, classname, classSource, diagnostics);
+    boolean success = compile(packageName, classname, javaSource, diagnostics);
     if (!success) {
-      throw new SequenceCompilerException("Compilation failed", classSource, diagnostics);
+      throw new SequenceCompilerException("Compilation failed", javaSource, diagnostics);
     }
   }
 
@@ -91,7 +91,7 @@ public class SequenceCompiler {
    *
    * @param packageName the package of the class
    * @param classname the simple name of the class
-   * @param classSource the source text of the class
+   * @param javaSource the source text of the class
    * @param diagnostics the {@code DiagnosticsCollector} object to use for the compilation. Always
    *     use a new diagnostics collector each compilation to avoid accumulating errors.
    * @return true if the class source is successfully compiled, false otherwise
@@ -99,11 +99,11 @@ public class SequenceCompiler {
   private boolean compile(
       final String packageName,
       final String classname,
-      final String classSource,
+      final String javaSource,
       DiagnosticCollector<JavaFileObject> diagnostics) {
     String classFileName = classname + CompileUtil.JAVA_EXTENSION;
     List<JavaFileObject> sources = new ArrayList<>();
-    JavaFileObject source = new SequenceJavaFileObject(classFileName, classSource);
+    JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
     fileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, classFileName, source);
     JavaCompiler.CompilationTask task =
