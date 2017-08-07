@@ -111,7 +111,7 @@ public class SpecialCoveredClassTest {
     //
     List<TypedOperation> model = operationModel.getOperations();
     //
-    assertEquals("model operations", 6, model.size());
+    assertEquals("model operations", 7, model.size());
     //
     Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
