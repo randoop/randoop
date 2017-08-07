@@ -16,7 +16,6 @@ import java.util.Set;
 import org.junit.Test;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
-import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.intersectiontypes.AccessibleInterval;
@@ -64,6 +63,7 @@ public class InstantiationTest {
     methodNames.add(classname + "." + "m12");
     methodNames.add("randoop.reflection.RML.getZ");
     methodNames.add("randoop.reflection.RML.setZ");
+    methodNames.add("java.lang.Object.getClass");
 
     OperationModel model = createModel(classnames, packageName);
 
@@ -298,12 +298,13 @@ public class InstantiationTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
+              null,
               names,
               coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
@@ -368,13 +369,13 @@ public class InstantiationTest {
 
   private void addTypes(TypedOperation operation, Set<Type> typeSet) {
     Type outputType = operation.getOutputType();
-    if (outputType.isClassType()) {
+    if (outputType.isClassOrInterfaceType()) {
       addTypes(outputType, typeSet);
     }
   }
 
   private void addTypes(Type type, Set<Type> typeSet) {
-    if (type.isClassType()) {
+    if (type.isClassOrInterfaceType()) {
       ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
       if (!(classType.isGeneric() || classType.hasWildcard())) {
         typeSet.add(classType);

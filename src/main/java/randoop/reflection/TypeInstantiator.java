@@ -232,7 +232,7 @@ public class TypeInstantiator {
     for (Type parameterType : operation.getInputTypes()) {
       Type workingType = parameterType.apply(substitution);
       if (workingType.isGeneric()) {
-        if (workingType.isClassType()) {
+        if (workingType.isClassOrInterfaceType()) {
           Substitution<ReferenceType> subst =
               selectMatch((ParameterizedType) parameterType, (ParameterizedType) workingType);
           if (subst == null) {

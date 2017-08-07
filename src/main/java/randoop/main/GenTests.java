@@ -43,6 +43,7 @@ import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.SignatureParseException;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -76,7 +77,8 @@ import randoop.util.predicate.Predicate;
 
 public class GenTests extends GenInputsAbstract {
 
-  public static final String NO_CLASSES_TO_TEST = "There are no classes to test. Exiting.";
+  // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
+  public static final String NO_OPERATIONS_TO_TEST = "There are no operations to test. Exiting.";
 
   private static final String command = "gentests";
 
@@ -159,13 +161,6 @@ public class GenTests extends GenInputsAbstract {
 
     checkOptionsValid();
 
-    // Check that there are classes to test
-    if (classlist == null && methodlist == null && testclass.isEmpty()) {
-      System.out.println("You must specify some classes or methods to test.");
-      System.out.println("Use the --classlist, --testclass, or --methodlist options.");
-      System.exit(1);
-    }
-
     Randomness.setSeed(randomseed);
     if (GenInputsAbstract.selection_log != null) {
       Randomness.selectionLog = new SimpleLog(GenInputsAbstract.selection_log);
@@ -196,14 +191,14 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Setup model of classes under test
      */
-    // get names of classes under test
+    // Get names of classes under test
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
 
-    // get names of classes that must be covered by output tests
+    // Get names of classes that must be covered by output tests
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(require_covered_classes, "coverage class names");
 
-    // get names of fields to be omitted
+    // Get names of fields to be omitted
     Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
     omitFields.addAll(omit_field);
 
@@ -224,8 +219,7 @@ public class GenTests extends GenInputsAbstract {
 
     omitmethods.addAll(readOmitMethods(omitmethods_list));
 
-    ReflectionPredicate reflectionPredicate =
-        new DefaultReflectionPredicate(omitmethods, omitFields);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     if (silently_ignore_bad_class_names) {
@@ -243,12 +237,13 @@ public class GenTests extends GenInputsAbstract {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
+              omitmethods,
               classnames,
               coveredClassnames,
               methodSignatures,
               classNameErrorHandler,
               GenInputsAbstract.literals_file);
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       System.out.printf("%nError: parse exception thrown %s%n", e);
       System.out.println("Exiting Randoop.");
       System.exit(1);
@@ -280,15 +275,13 @@ public class GenTests extends GenInputsAbstract {
     }
     assert operationModel != null;
 
-    if (!operationModel.hasClasses()) {
-      System.out.println(NO_CLASSES_TO_TEST);
-      System.exit(1);
-    }
-
     List<TypedOperation> operations = operationModel.getOperations();
 
-    if (operations.isEmpty()) {
-      System.out.println("There are no methods to test. Exiting.");
+    /*
+     * Stop if there is only 1 operation. This will be Object().
+     */
+    if (operations.size() <= 1) {
+      System.out.println(NO_OPERATIONS_TO_TEST);
       System.exit(1);
     }
     if (GenInputsAbstract.progressdisplay) {

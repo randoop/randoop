@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.TreeSet;
+import randoop.BugInRandoopException;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.MethodCall;
@@ -12,77 +14,122 @@ import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.InstantiatedType;
 import randoop.types.NonParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
 /**
- * OperationExtractor is a {@link ClassVisitor} that creates a collection of {@link Operation}
+ * OperationExtractor is a {@link ClassVisitor} that creates a collection of {@link TypedOperation}
  * objects for a particular {@link ClassOrInterfaceType} through its visit methods as called by
- * {@link ReflectionManager#apply(Class)}. Allows types of operations of an {@link InstantiatedType}
- * to be instantiated using the substitution of the type.
+ * {@link ReflectionManager#apply(Class)}.
  *
  * @see ReflectionManager
  * @see ClassVisitor
  */
 public class OperationExtractor extends DefaultClassVisitor {
 
-  /** The predicate that implements reflection policy for collecting operations */
-  private final ReflectionPredicate predicate;
+  /** The type of the declaring class for the collected operations. */
+  private ClassOrInterfaceType classType;
 
-  /** The predicate to test visibility */
-  private final VisibilityPredicate visibilityPredicate;
-
-  /** The collection of operations */
+  /** The operations collected by the extractor. This is the product of applying the visitor. */
   private final Collection<TypedOperation> operations;
 
-  /** The class type of the declaring class for the collected operations */
-  private ClassOrInterfaceType classType;
+  /** The reflection policy for collecting operations. */
+  private final ReflectionPredicate reflectionPredicate;
+
+  /** The predicate to test whether to omit an operation */
+  private OmitMethodsPredicate omitPredicate;
+
+  /** The predicate to test visibility. */
+  private final VisibilityPredicate visibilityPredicate;
 
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
-   * members of the class type and satisfying the given predicate.
+   * members of the class satisfying the given visibility and reflection predicates and that don't
+   * violate the omit method predicate.
    *
-   * @param classType the declaring classtype for collected operations
-   * @param operations the collection of operations
-   * @param predicate the reflection predicate
+   * <p>Once created this visitor should only be applied to members of {@code
+   * classType.getRuntimeType()}.
+   *
+   * @param classType the declaring class for collected operations
+   * @param reflectionPredicate the reflection predicate
+   * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param visibilityPredicate the predicate for test visibility
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
-      Collection<TypedOperation> operations,
-      ReflectionPredicate predicate,
+      ReflectionPredicate reflectionPredicate,
+      OmitMethodsPredicate omitPredicate,
       VisibilityPredicate visibilityPredicate) {
     this.classType = classType;
-    this.operations = operations;
-    this.predicate = predicate;
+    this.operations = new TreeSet<>();
+    this.reflectionPredicate = reflectionPredicate;
+    this.omitPredicate = omitPredicate;
     this.visibilityPredicate = visibilityPredicate;
   }
 
   /**
-   * Adds an operation to the collection of this extractor. If the declaring class type is an {@link
-   * InstantiatedType}, then the substitution for that class is applied to the types of the
-   * operation, and this instantiated operation is returned.
+   * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
+   * members of the class satisfying the given visibility and reflection predicates.
    *
-   * @param operation the {@link TypedClassOperation}
+   * @param classType the declaring class for collected operations
+   * @param reflectionPredicate the reflection predicate
+   * @param visibilityPredicate the predicate for test visibility
    */
-  private void addOperation(TypedClassOperation operation) {
-    if (operation != null) {
-      if (!classType.isGeneric() && operation.getDeclaringType().isGeneric()) {
-        // if the declaring class is generic, then need substitution to instantiate type arguments
-        Substitution<ReferenceType> substitution =
-            classType.getInstantiatingSubstitution(operation.getDeclaringType());
-        if (substitution == null) { //no unifying substitution found
-          return;
-        }
-        operation = operation.apply(substitution);
-        if (operation == null) { //will be null if instantiation failed
-          return;
-        }
+  public OperationExtractor(
+      ClassOrInterfaceType classType,
+      ReflectionPredicate reflectionPredicate,
+      VisibilityPredicate visibilityPredicate) {
+    this(classType, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
+  }
+
+  /**
+   * Updates the operation types in the case that {@code operation.getDeclaringType()} is generic,
+   * but {@code classType} is not. Constructs a {@link Substitution} that unifies the generic
+   * declaring type with {@code classType} or a superType.
+   *
+   * @param operation the operation to instantiate
+   * @return operation instantiated to match {@code classType} if the declaring type is generic and
+   *     {@code classType} is not; the unmodified operation otherwise
+   * @throws BugInRandoopException if there is no substitution that unifies the declaring type with
+   *     {@code classType} or a supertype
+   */
+  private TypedClassOperation instantiateTypes(TypedClassOperation operation) {
+    if (!classType.isGeneric() && operation.getDeclaringType().isGeneric()) {
+      Substitution<ReferenceType> substitution =
+          classType.getInstantiatingSubstitution(operation.getDeclaringType());
+      if (substitution == null) { // No unifying substitution found
+        throw new BugInRandoopException(
+            String.format(
+                "Type %s for operation %s is not a subtype of an instantiation of declaring class of method %s",
+                classType, operation, operation.getDeclaringType()));
       }
-      operations.add(operation);
+      operation = operation.apply(substitution);
+      if (operation == null) {
+        // No more details available because formal parameter {@code operation} was overwritten.
+        throw new BugInRandoopException("Instantiation of operation failed");
+      }
+    }
+
+    return operation;
+  }
+
+  /**
+   * Ensures that {@code classType} is a subtype of {@code operation.getDeclaringType()}; throws an
+   * exception if not.
+   *
+   * @param operation the operation for which types are to be checked
+   * @throws BugInRandoopException if {@code classType} is not a subtype of {@code
+   *     operation.getDeclaringType()}
+   */
+  private void checkSubTypes(TypedClassOperation operation) {
+    if (!classType.isSubtypeOf(operation.getDeclaringType())) {
+      throw new BugInRandoopException(
+          "Type for operation "
+              + classType
+              + " is not a subtype of an instantiation of declaring class of method "
+              + operation.getDeclaringType());
     }
   }
 
@@ -99,37 +146,48 @@ public class OperationExtractor extends DefaultClassVisitor {
             + " and declaring class "
             + constructor.getDeclaringClass().getName()
             + " should be same";
-    if (!predicate.test(constructor)) {
+    if (!reflectionPredicate.test(constructor)) {
       return;
     }
-    TypedClassOperation operation = TypedOperation.forConstructor(constructor);
-    addOperation(operation);
+    TypedClassOperation operation = instantiateTypes(TypedOperation.forConstructor(constructor));
+    checkSubTypes(operation);
+    if (!omitPredicate.shouldOmit(operation)) {
+      operations.add(operation);
+    }
   }
 
   /**
    * Creates a {@link MethodCall} object for the {@link Method}.
    *
+   * <p>The created operation has the declaring class of {@code method} as the declaring type. An
+   * exception is a static method for which the declaring class is not public, in which case {@link
+   * #classType} is used as the declaring class.
+   *
    * @param method a {@link Method} object to be represented as an {@link Operation}
    */
   @Override
   public void visit(Method method) {
-    if (!predicate.test(method)) {
+    if (!reflectionPredicate.test(method)) {
       return;
     }
-    TypedClassOperation operation = TypedOperation.forMethod(method);
-    if (classType.isSubtypeOf(operation.getDeclaringType()) && operation.isStatic()) {
+    TypedClassOperation operation = instantiateTypes(TypedOperation.forMethod(method));
+    checkSubTypes(operation);
+
+    if (operation.isStatic()) {
+      // If this classType inherits this static method, but declaring class is not public, then
+      // consider method to have classType as declaring class.
       int declaringClassMods =
           method.getDeclaringClass().getModifiers() & Modifier.classModifiers();
       if (!Modifier.isPublic(declaringClassMods)) {
-        operation =
-            new TypedClassOperation(
-                operation.getOperation(),
-                classType,
-                operation.getInputTypes(),
-                operation.getOutputType());
+        operation = operation.getOperationForType(classType);
       }
     }
-    addOperation(operation);
+
+    // The declaring type of the method is not necessarily the classType, but may want to omit
+    // method in classType. So, create operation with the classType as declaring type for omit search.
+    if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
+      operations.add(operation);
+    }
   }
 
   /**
@@ -145,7 +203,7 @@ public class OperationExtractor extends DefaultClassVisitor {
             + classType
             + " should be assignable from "
             + field.getDeclaringClass().getName();
-    if (!predicate.test(field)) {
+    if (!reflectionPredicate.test(field)) {
       return;
     }
 
@@ -154,8 +212,8 @@ public class OperationExtractor extends DefaultClassVisitor {
     int mods = field.getModifiers() & Modifier.fieldModifiers();
     if (!visibilityPredicate.isVisible(field.getDeclaringClass())) {
       if (Modifier.isStatic(mods) && Modifier.isFinal(mods)) {
-        //XXX this is a stop-gap to handle potentially ambiguous inherited constants
-        /* An static final field of a non-public class may be accessible via a subclass, but only
+        // XXX This is a stop-gap to handle potentially ambiguous inherited constants.
+        /* A static final field of a non-public class may be accessible via a subclass, but only
          * if the field is not ambiguously inherited in the subclass. Without knowing for sure
          * whether there are two inherited fields with the same name, we cannot decide which case
          * is presented. So, assuming that there is an ambiguity and bailing on type.
@@ -167,9 +225,18 @@ public class OperationExtractor extends DefaultClassVisitor {
       }
     }
 
-    addOperation(TypedOperation.createGetterForField(field, declaringType));
+    TypedClassOperation getter =
+        instantiateTypes(TypedOperation.createGetterForField(field, declaringType));
+    checkSubTypes(getter);
+    if (getter != null) {
+      operations.add(getter);
+    }
     if (!(Modifier.isFinal(mods))) {
-      addOperation(TypedOperation.createSetterForField(field, declaringType));
+      TypedClassOperation operation =
+          instantiateTypes(TypedOperation.createSetterForField(field, declaringType));
+      if (operation != null) {
+        operations.add(operation);
+      }
     }
   }
 
@@ -183,6 +250,19 @@ public class OperationExtractor extends DefaultClassVisitor {
     ClassOrInterfaceType enumType = new NonParameterizedType(e.getDeclaringClass());
     assert !enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);
-    addOperation(new TypedClassOperation(op, enumType, new TypeTuple(), enumType));
+    TypedClassOperation operation =
+        new TypedClassOperation(op, enumType, new TypeTuple(), enumType);
+    operations.add(operation);
+  }
+
+  /**
+   * Returns the {@link TypedOperation} objects collected for {@link #classType}.
+   *
+   * <p>Should be called after all members of the class are visited.
+   *
+   * @return the collection of operations collected for the class
+   */
+  public Collection<TypedOperation> getOperations() {
+    return operations;
   }
 }

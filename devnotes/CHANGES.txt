@@ -9,6 +9,20 @@ same way.
    it outputs them; this makes the failures easier to understand.  You can
    disable this behavior.
 
+Improves how --omitmethods works so that it matches against the signature
+of a method or constructor rather than java.lang.reflect.Method.toString().
+Also, omits the method throughout the inheritance hierarchy. See the
+documentation of --omitmethods in the user manual for details.
+
+Changes --methodlist to use method or constructor signatures similar to
+those used for --omitmethods. See the documentation of --methodlist in the
+user manual for details. Also, makes the handling of methods from
+--methodlist consistent with what is done for methods of classes in
+--testclass or --classlist.
+
+Fixes a bug that required input using --testclass or --classlist, preventing
+exclusive use of --methodlist.
+
 New option --operation-history-log will write table of operation used during
 generation to either a file or standard out as indicated by the argument.
 
