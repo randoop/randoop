@@ -162,16 +162,12 @@ public class OmitMethodsTest {
     List<Pattern> omitList = new ArrayList<>();
     omitList.add(omitpattern);
     OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(omitList);
-
-    Set<TypedOperation> operations = new TreeSet<>();
-
     VisibilityPredicate visibility = new PackageVisibilityPredicate("randoop.reflection");
     ReflectionManager mgr = new ReflectionManager(visibility);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    mgr.apply(
-        new OperationExtractor(
-            type, operations, reflectionPredicate, omitMethodsPredicate, visibility),
-        type.getRuntimeClass());
-    return operations;
+    final OperationExtractor extractor =
+        new OperationExtractor(type, reflectionPredicate, omitMethodsPredicate, visibility);
+    mgr.apply(extractor, type.getRuntimeClass());
+    return new TreeSet<>(extractor.getOperations());
   }
 }

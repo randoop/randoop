@@ -332,9 +332,10 @@ public class EnumReflectionTest {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager opManager = new ReflectionManager(visibilityPredicate);
     for (ClassOrInterfaceType type : classTypes) {
-      opManager.apply(
-          new OperationExtractor(type, operations, reflectionPredicate, visibilityPredicate),
-          type.getRuntimeClass());
+      final OperationExtractor extractor =
+          new OperationExtractor(type, reflectionPredicate, visibilityPredicate);
+      opManager.apply(extractor, type.getRuntimeClass());
+      operations.addAll(extractor.getOperations());
     }
     return operations;
   }

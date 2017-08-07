@@ -87,14 +87,14 @@ public class ICSE07ContainersTest {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(
+      final OperationExtractor extractor =
           new OperationExtractor(
               classType,
-              model,
               new DefaultReflectionPredicate(excludeNames),
               new OmitMethodsPredicate(omitMethodPatterns),
-              visibility),
-          c);
+              visibility);
+      mgr.apply(extractor, c);
+      model.addAll(extractor.getOperations());
     }
     assertTrue("model should not be empty", !model.isEmpty());
     System.out.println("Number of operations: " + model.size());

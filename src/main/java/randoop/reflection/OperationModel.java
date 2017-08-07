@@ -393,10 +393,10 @@ public class OperationModel {
       OmitMethodsPredicate omitPredicate) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : classTypes) {
-      mgr.apply(
-          new OperationExtractor(
-              classType, operations, reflectionPredicate, omitPredicate, visibility),
-          classType.getRuntimeClass());
+      OperationExtractor extractor =
+          new OperationExtractor(classType, reflectionPredicate, omitPredicate, visibility);
+      mgr.apply(extractor, classType.getRuntimeClass());
+      operations.addAll(extractor.getOperations());
     }
   }
 

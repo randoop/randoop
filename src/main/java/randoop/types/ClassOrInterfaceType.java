@@ -340,9 +340,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return supertypes;
     }
     ClassOrInterfaceType superclass = this.getSuperclass();
-    if (superclass != null) {
-      supertypes.add(superclass);
-    }
+    supertypes.add(superclass);
     supertypes.addAll(this.getInterfaces());
     return supertypes;
   }

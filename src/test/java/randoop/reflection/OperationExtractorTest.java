@@ -38,9 +38,10 @@ public class OperationExtractorTest {
     assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        c);
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, c);
+    operations.addAll(extractor.getOperations());
     assertThat("name should be", classType.getName(), is(equalTo(c.getName())));
 
     int expectedCount = 13;
@@ -83,9 +84,10 @@ public class OperationExtractorTest {
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.apply(substitution);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        c);
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, c);
+    operations.addAll(extractor.getOperations());
 
     assertThat("there should be 20 operations", operations.size(), is(equalTo(20)));
   }
@@ -111,9 +113,10 @@ public class OperationExtractorTest {
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.apply(substitution);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        c);
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, c);
+    operations.addAll(extractor.getOperations());
     assertThat("should be three operations", operations.size(), is(equalTo(3)));
 
     ClassOrInterfaceType memberType = null;
@@ -150,10 +153,10 @@ public class OperationExtractorTest {
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
     assertFalse("static member is not parameterized", classType.isParameterized());
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        classType.getRuntimeClass());
-
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, classType.getRuntimeClass());
+    operations.addAll(extractor.getOperations());
     assertThat("should be two operations", operations.size(), is(equalTo(2)));
   }
 
@@ -177,9 +180,10 @@ public class OperationExtractorTest {
     assertFalse("class type is not parameterized", classType.isParameterized());
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        classType.getRuntimeClass());
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, classType.getRuntimeClass());
+    operations.addAll(extractor.getOperations());
     assertThat("should be 3 operations", operations.size(), is(equalTo(3)));
   }
 
@@ -197,9 +201,10 @@ public class OperationExtractorTest {
     }
     assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        classType.getRuntimeClass());
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, classType.getRuntimeClass());
+    operations.addAll(extractor.getOperations());
     assertTrue("should be two usable operations", operations.size() == 2);
     for (TypedOperation operation : operations) {
       assertThat(

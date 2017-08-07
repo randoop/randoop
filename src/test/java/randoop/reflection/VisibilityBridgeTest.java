@@ -129,10 +129,11 @@ public class VisibilityBridgeTest {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor =
-        new OperationExtractor(classType, operations, reflectionPredicate, visibilityPredicate);
+        new OperationExtractor(classType, reflectionPredicate, visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(extractor);
     manager.apply(c);
+    operations.addAll(extractor.getOperations());
     return operations;
   }
 }

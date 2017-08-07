@@ -13,20 +13,23 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 
 /**
- * Tests whether an operation matches a user-specified pattern, indicating that the operation should
- * be omitted from the operation set.
+ * Tests whether an operation is matched by a user-specified pattern, indicating that the operation
+ * should be omitted from the operation set.
  *
- * <p>An operation matches a pattern if the pattern matches the {@link RawSignature} of the
- * operation or the inherited operation in a superclass. This class provides methods that (1) test
- * the raw signature of an operation, and (2) test the raw signature of an operation and that of the
- * same operation in superclasses.
+ * <p>A pattern matches an operation representing a constructor, if the pattern matches the {@link
+ * RawSignature} of the operation. A pattern matches an operation representing a method, if the
+ * pattern matches the {@link RawSignature} of an operation for which the declaring class is a
+ * supertype of {@link TypedClassOperation#getDeclaringType()} of the operation. * A constructor may
+ * If the operation is a method, a pattern matches the operation if This class provides methods that
+ * (1) test the raw signature of an operation, and (2) test the raw signature of an operation and,
+ * for an inherited method, that of the same operation in superclasses.
  */
 public class OmitMethodsPredicate {
 
   /** An OmitMethodsPredicate that does no omission. */
   public static final OmitMethodsPredicate NO_OMISSION = new OmitMethodsPredicate(null);
 
-  /** {@code Pattern}s that match operations that should be omitted. */
+  /** {@code Pattern}s to match operations that should be omitted. */
   private final List<Pattern> omitPatterns;
 
   /**
@@ -47,7 +50,7 @@ public class OmitMethodsPredicate {
    *
    * <p>This method does not check for matches of the operation in superclasses.
    *
-   * @param operation the operation to match against the omit patterns of this predicate
+   * @param operation the operation to be matched against the omit patterns of this predicate
    * @return true if the signature matches an omit pattern, and false otherwise
    */
   private boolean shouldOmitExact(TypedClassOperation operation) {
@@ -81,8 +84,8 @@ public class OmitMethodsPredicate {
    * declaring class of the method or a supertype.
    *
    * @param operation the operation for the method
-   * @return true if the signature of the method in the current class or a superclass matches an
-   *     omit pattern, false otherwise
+   * @return true if the signature of the method in the current class or a superclass is matched by
+   *     an omit pattern, false otherwise
    */
   boolean shouldOmit(final TypedClassOperation operation) {
     // Done if there are no patterns
@@ -115,7 +118,7 @@ public class OmitMethodsPredicate {
 
       // If type has the method
       if (method != null) {
-        // Create the operation and test whether it matches an omit pattern
+        // Create the operation and test whether it is matched by an omit pattern
         TypedClassOperation superTypeOperation = operation.getOperationForType(type);
         if (shouldOmitExact(superTypeOperation)) {
           return true;

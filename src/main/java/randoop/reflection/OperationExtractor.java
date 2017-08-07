@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.TreeSet;
 import randoop.BugInRandoopException;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
@@ -13,37 +14,35 @@ import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.InstantiatedType;
 import randoop.types.NonParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
 /**
- * OperationExtractor is a {@link ClassVisitor} that creates a collection of {@link Operation}
+ * OperationExtractor is a {@link ClassVisitor} that creates a collection of {@link TypedOperation}
  * objects for a particular {@link ClassOrInterfaceType} through its visit methods as called by
- * {@link ReflectionManager#apply(Class)}. Allows types of operations of an {@link InstantiatedType}
- * to be instantiated using the substitution of the type.
+ * {@link ReflectionManager#apply(Class)}.
  *
  * @see ReflectionManager
  * @see ClassVisitor
  */
 public class OperationExtractor extends DefaultClassVisitor {
 
-  /** The reflection policy for collecting operations */
-  private final ReflectionPredicate reflectionPredicate;
+  /** The type of the declaring class for the collected operations. */
+  private ClassOrInterfaceType classType;
 
-  /** The predicate to test visibility */
-  private final VisibilityPredicate visibilityPredicate;
-
-  /** The collection of operations */
+  /** The operations collected by the extractor. This is the product of applying the visitor. */
   private final Collection<TypedOperation> operations;
 
-  /** The type of the declaring class for the collected operations */
-  private ClassOrInterfaceType classType;
+  /** The reflection policy for collecting operations. */
+  private final ReflectionPredicate reflectionPredicate;
 
   /** The predicate to test whether to omit an operation */
   private OmitMethodsPredicate omitPredicate;
+
+  /** The predicate to test visibility. */
+  private final VisibilityPredicate visibilityPredicate;
 
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
@@ -54,22 +53,20 @@ public class OperationExtractor extends DefaultClassVisitor {
    * classType.getRuntimeType()}.
    *
    * @param classType the declaring class for collected operations
-   * @param operations the collection of operations, will be side-effected
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param visibilityPredicate the predicate for test visibility
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
-      Collection<TypedOperation> operations,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
       VisibilityPredicate visibilityPredicate) {
     this.classType = classType;
-    this.operations = operations;
+    this.operations = new TreeSet<>();
     this.reflectionPredicate = reflectionPredicate;
-    this.visibilityPredicate = visibilityPredicate;
     this.omitPredicate = omitPredicate;
+    this.visibilityPredicate = visibilityPredicate;
   }
 
   /**
@@ -77,32 +74,14 @@ public class OperationExtractor extends DefaultClassVisitor {
    * members of the class satisfying the given visibility and reflection predicates.
    *
    * @param classType the declaring class for collected operations
-   * @param operations the collection of operations, will be side-effected
    * @param reflectionPredicate the reflection predicate
    * @param visibilityPredicate the predicate for test visibility
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
-      Collection<TypedOperation> operations,
       ReflectionPredicate reflectionPredicate,
       VisibilityPredicate visibilityPredicate) {
-    this(
-        classType,
-        operations,
-        reflectionPredicate,
-        OmitMethodsPredicate.NO_OMISSION,
-        visibilityPredicate);
-  }
-
-  /**
-   * Adds an operation to the collection of this extractor.
-   *
-   * @param operation the {@link TypedClassOperation}
-   */
-  private void addOperation(TypedClassOperation operation) {
-    if (operation != null) {
-      operations.add(operation);
-    }
+    this(classType, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
   }
 
   /**
@@ -173,7 +152,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     TypedClassOperation operation = instantiateTypes(TypedOperation.forConstructor(constructor));
     checkSubTypes(operation);
     if (!omitPredicate.shouldOmit(operation)) {
-      addOperation(operation);
+      operations.add(operation);
     }
   }
 
@@ -181,7 +160,8 @@ public class OperationExtractor extends DefaultClassVisitor {
    * Creates a {@link MethodCall} object for the {@link Method}.
    *
    * <p>The created operation has the declaring class of {@code method} as the declaring type. An
-   * exception is a static method for which the declaring class is not public.
+   * exception is a static method for which the declaring class is not public, in which case {@link
+   * #classType} is used as the declaring class.
    *
    * @param method a {@link Method} object to be represented as an {@link Operation}
    */
@@ -206,7 +186,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     // The declaring type of the method is not necessarily the classType, but may want to omit
     // method in classType. So, create operation with the classType as declaring type for omit search.
     if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
-      addOperation(operation);
+      operations.add(operation);
     }
   }
 
@@ -248,9 +228,15 @@ public class OperationExtractor extends DefaultClassVisitor {
     TypedClassOperation getter =
         instantiateTypes(TypedOperation.createGetterForField(field, declaringType));
     checkSubTypes(getter);
-    addOperation(getter);
+    if (getter != null) {
+      operations.add(getter);
+    }
     if (!(Modifier.isFinal(mods))) {
-      addOperation(instantiateTypes(TypedOperation.createSetterForField(field, declaringType)));
+      TypedClassOperation operation =
+          instantiateTypes(TypedOperation.createSetterForField(field, declaringType));
+      if (operation != null) {
+        operations.add(operation);
+      }
     }
   }
 
@@ -264,6 +250,19 @@ public class OperationExtractor extends DefaultClassVisitor {
     ClassOrInterfaceType enumType = new NonParameterizedType(e.getDeclaringClass());
     assert !enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);
-    addOperation(new TypedClassOperation(op, enumType, new TypeTuple(), enumType));
+    TypedClassOperation operation =
+        new TypedClassOperation(op, enumType, new TypeTuple(), enumType);
+    operations.add(operation);
+  }
+
+  /**
+   * Returns the {@link TypedOperation} objects collected for {@link #classType}.
+   *
+   * <p>Should be called after all members of the class are visited.
+   *
+   * @return the collection of operations collected for the class
+   */
+  public Collection<TypedOperation> getOperations() {
+    return operations;
   }
 }

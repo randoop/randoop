@@ -42,17 +42,13 @@ public class ClassReflectionTest {
       ReflectionPredicate reflectionPredicate,
       VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
+
     OperationExtractor extractor =
         new OperationExtractor(
-            classType,
-            operations,
-            reflectionPredicate,
-            OmitMethodsPredicate.NO_OMISSION,
-            visibilityPredicate);
+            classType, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.apply(extractor, c);
-    return operations;
+    return new LinkedHashSet<>(extractor.getOperations());
   }
 
   @Test

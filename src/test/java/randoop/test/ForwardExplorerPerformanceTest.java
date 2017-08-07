@@ -70,9 +70,10 @@ public class ForwardExplorerPerformanceTest {
         Class<?> c = Class.forName(entry);
         ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
         VisibilityPredicate visibility = new PublicVisibilityPredicate();
-        manager.apply(
-            new OperationExtractor(classType, model, new DefaultReflectionPredicate(), visibility),
-            c);
+        final OperationExtractor extractor =
+            new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+        manager.apply(extractor, c);
+        model.addAll(extractor.getOperations());
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);
