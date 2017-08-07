@@ -120,11 +120,8 @@ public class TypedClassOperation extends TypedOperation {
   @Override
   public String toString() {
     if (this.isGeneric()) {
-      StringBuilder b = new StringBuilder();
-      b.append("<");
-      b.append(UtilMDE.join(this.getTypeParameters(), ","));
-      b.append(">").append(" ");
-      return b.toString() + super.toString();
+      String b = "<" + UtilMDE.join(this.getTypeParameters(), ",") + ">" + " ";
+      return b + super.toString();
     } else {
       return super.toString();
     }
