@@ -45,8 +45,9 @@ public class FileCompiler {
    */
   public void compile(List<File> sourceFiles, Path destinationDir) throws FileCompilerException {
     // Set the destination directory for the compiler
-    options.add("-d");
-    options.add(destinationDir.toString());
+    List<String> compileOptions = new ArrayList<>(options);
+    compileOptions.add("-d");
+    compileOptions.add(destinationDir.toString());
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
@@ -54,11 +55,11 @@ public class FileCompiler {
         fileManager.getJavaFileObjectsFromFiles(sourceFiles);
 
     JavaCompiler.CompilationTask task =
-        compiler.getTask(null, fileManager, diagnostics, options, null, filesToCompile);
+        compiler.getTask(null, fileManager, diagnostics, compileOptions, null, filesToCompile);
 
     Boolean succeeded = task.call();
     if (succeeded == null || !succeeded) {
-      throw new FileCompilerException("Compilation failed", sourceFiles, diagnostics);
+      throw new FileCompilerException("Compilation failed", sourceFiles, compileOptions, diagnostics);
     }
   }
 
@@ -69,6 +70,9 @@ public class FileCompiler {
 
     /** The list of source files for the compilation */
     private final List<File> sourceFiles;
+
+    /** The compiler options. */
+    private final List<String> options;
 
     /** The compiler diagnostics */
     private final DiagnosticCollector<JavaFileObject> diagnostics;
@@ -82,9 +86,10 @@ public class FileCompiler {
      * @param diagnostics the compiler diagnostics
      */
     FileCompilerException(
-        String message, List<File> sourceFiles, DiagnosticCollector<JavaFileObject> diagnostics) {
+        String message, List<File> sourceFiles, List<String> options, DiagnosticCollector<JavaFileObject> diagnostics) {
       super(message);
       this.sourceFiles = sourceFiles;
+      this.options = options;
       this.diagnostics = diagnostics;
     }
 
@@ -95,6 +100,15 @@ public class FileCompiler {
      */
     public List<File> getSourceFiles() {
       return sourceFiles;
+    }
+
+    /**
+     * Returns the list of compiler options used in the compilation that generated this error.
+     *
+     * @return the list of compiler options for which compilation generated this exception
+     */
+    public List<String> getOptions() {
+      return options;
     }
 
     /**

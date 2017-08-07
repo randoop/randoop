@@ -133,7 +133,9 @@ public class FailingTestFilter implements CodeWriter {
      */
     Match failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
     int totalFailures = Integer.parseInt(failureCountMatch.group);
-    assert totalFailures > 0 : "JUnit has non-zero exit status, but no failure found";
+    if (totalFailures < 0) {
+      throw new BugInRandoopException("JUnit has non-zero exit status, but no failure found");
+    }
 
     /*
      * Then read the rest of the file to find each failure.

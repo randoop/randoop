@@ -575,8 +575,9 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Creates a {@code plume.SimpleLog} that writes to standard output if {@code filename} is "-" (a
-   * hyphen), or the file with name {@code filename}.
+   * Create fixture code from {@link GenInputsAbstract#junit_after_all}, {@link
+   * GenInputsAbstract#junit_after_each}, {@link GenInputsAbstract#junit_before_all}, and {@link
+   * GenInputsAbstract#junit_before_each} and set fixture body variables.
    *
    * @return true if all fixtures were read without error, false, otherwise
    */
@@ -782,9 +783,7 @@ public class GenTests extends GenInputsAbstract {
       String testClassName = junitPrefix + i;
       CompilationUnit classAST =
           junitCreator.createTestClass(testClassName, TEST_METHOD_NAME_PREFIX, partition);
-      if (classAST != null) {
-        testMap.put(testClassName, classAST);
-      }
+      testMap.put(testClassName, classAST);
     }
     return testMap;
   }

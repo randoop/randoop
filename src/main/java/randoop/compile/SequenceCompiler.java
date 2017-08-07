@@ -18,14 +18,16 @@ import javax.tools.ToolProvider;
  */
 public class SequenceCompiler {
 
-  /** the Java compiler */
-  private final JavaCompiler compiler;
+
+
+  /** The {@code ClassLoader} for this compiler */
+  private final SequenceClassLoader classLoader;
 
   /** the options to the compiler */
   private final List<String> options;
 
-  /** The {@code ClassLoader} for this compiler */
-  private final SequenceClassLoader classLoader;
+  /** the Java compiler */
+  private final JavaCompiler compiler;
 
   /** The {@code FileManager} for this compiler */
   private final SequenceJavaFileManager fileManager;
@@ -39,8 +41,8 @@ public class SequenceCompiler {
    */
   public SequenceCompiler(SequenceClassLoader classLoader, List<String> options) {
     this.classLoader = classLoader;
-    this.compiler = ToolProvider.getSystemJavaCompiler();
     this.options = new ArrayList<>(options);
+    this.compiler = ToolProvider.getSystemJavaCompiler();
 
     if (this.compiler == null) {
       throw new IllegalStateException(

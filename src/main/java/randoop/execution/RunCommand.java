@@ -36,11 +36,11 @@ public class RunCommand {
       throw new CommandException("Exception starting process", e);
     }
 
-    int exitValue;
+    int exitValue = -1;
     try {
       exitValue = p.waitFor();
     } catch (InterruptedException e) {
-      throw new CommandException("Exception running process", e);
+      // Ignore exception, but record fact that process timed out in Status
     }
 
     List<String> standardOutputLines;
@@ -85,8 +85,7 @@ public class RunCommand {
      * Creates a {@link Status} object for the command with captured exit status and output.
      *
      * <p>The output from command execution is captured as a {@code List} of output lines. This
-     * avoids losing output from the command if the process is destroyed. This can happen because
-     * the process times out.
+     * avoids losing output from the command if the process is destroyed.
      *
      * @param command the command
      * @param exitStatus the exit status
