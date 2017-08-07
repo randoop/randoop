@@ -138,11 +138,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * <p>Two of the three known cases involve forcing unchecked casts to allow type narrowing of
    * return types (covariant return types) and instantiation of generic type parameters in methods.
-   * Both of these are situations that a programmer could view as overriding, but really aren't. These bridge
-   * methods do unchecked type conversions from the general type to the more specific type expected
-   * by the local method. As a result, if included for testing, Randoop would generate many tests
-   * that would confirm that there is an unchecked type conversion. So, we do not want to include
-   * these methods.
+   * Both of these are situations that a programmer could view as overriding, but really aren't.
+   * These bridge methods do unchecked type conversions from the general type to the more specific
+   * type expected by the local method. As a result, if included for testing, Randoop would generate
+   * many tests that would confirm that there is an unchecked type conversion. So, we do not want to
+   * include these methods.
    *
    * <p>The third known case involves a public class inheriting a public method defined in a private
    * class of the same package. The bridge method in the public class exposes the method outside of
