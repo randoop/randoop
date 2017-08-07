@@ -18,8 +18,6 @@ import javax.tools.ToolProvider;
  */
 public class SequenceCompiler {
 
-
-
   /** The {@code ClassLoader} for this compiler */
   private final SequenceClassLoader classLoader;
 

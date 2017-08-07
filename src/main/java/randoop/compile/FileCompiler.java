@@ -59,7 +59,8 @@ public class FileCompiler {
 
     Boolean succeeded = task.call();
     if (succeeded == null || !succeeded) {
-      throw new FileCompilerException("Compilation failed", sourceFiles, compileOptions, diagnostics);
+      throw new FileCompilerException(
+          "Compilation failed", sourceFiles, compileOptions, diagnostics);
     }
   }
 
@@ -86,7 +87,10 @@ public class FileCompiler {
      * @param diagnostics the compiler diagnostics
      */
     FileCompilerException(
-        String message, List<File> sourceFiles, List<String> options, DiagnosticCollector<JavaFileObject> diagnostics) {
+        String message,
+        List<File> sourceFiles,
+        List<String> options,
+        DiagnosticCollector<JavaFileObject> diagnostics) {
       super(message);
       this.sourceFiles = sourceFiles;
       this.options = options;
