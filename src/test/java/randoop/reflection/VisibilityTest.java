@@ -118,7 +118,8 @@ public class VisibilityTest {
         expectedMethods.size()
             + 2 * expectedFields.size()
             + expectedEnums.size()
-            + expectedConstructors.size();
+            + expectedConstructors.size()
+            + 1;
     assertEquals(
         "Expect operations count to be methods plus constructor", expectedCount, actual.size());
 
@@ -352,7 +353,8 @@ public class VisibilityTest {
         expectedMethods.size()
             + 2 * expectedFields.size()
             + expectedEnums.size()
-            + expectedConstructors.size();
+            + expectedConstructors.size()
+            + 1;
     assertEquals(
         "Expect operations count to be methods plus constructor", expectedCount, actual.size());
   }
@@ -423,7 +425,8 @@ public class VisibilityTest {
         expectedMethods.size()
             + 2 * expectedFields.size()
             + expectedEnums.size()
-            + expectedConstructors.size();
+            + expectedConstructors.size()
+            + 1;
     assertEquals(
         "Expect operations count to be methods plus constructor", expectedCount, actual.size());
 

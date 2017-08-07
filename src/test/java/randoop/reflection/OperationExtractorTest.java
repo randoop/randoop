@@ -44,7 +44,7 @@ public class OperationExtractorTest {
     operations.addAll(extractor.getOperations());
     assertThat("name should be", classType.getName(), is(equalTo(c.getName())));
 
-    int expectedCount = 13;
+    int expectedCount = 14;
     assertThat(
         "class has " + expectedCount + " operations",
         operations.size(),
@@ -60,8 +60,11 @@ public class OperationExtractorTest {
         wildcardOpCount++;
       }
     }
-    assertThat("class has one generic operation", genericOpCount, is(equalTo(1)));
-    assertThat("class has no operations with wildcards", wildcardOpCount, is(equalTo(0)));
+    assertThat("class has one generic operation", 1, is(equalTo(genericOpCount)));
+    assertThat(
+        "class has no operations with wildcards other than getClass",
+        1,
+        is(equalTo(wildcardOpCount)));
   }
 
   @Test
@@ -88,8 +91,11 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
-
-    assertThat("there should be 20 operations", operations.size(), is(equalTo(20)));
+    int expectedCount = 21;
+    assertThat(
+        "there should be " + expectedCount + " operations",
+        expectedCount,
+        is(equalTo(operations.size())));
   }
 
   @Test
@@ -117,7 +123,8 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
-    assertThat("should be three operations", operations.size(), is(equalTo(3)));
+    int expectedCount = 4;
+    assertThat("should be " + expectedCount + " operations", expectedCount, is(equalTo(4)));
 
     ClassOrInterfaceType memberType = null;
     for (TypedOperation operation : operations) {
@@ -157,7 +164,11 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
     mgr.apply(extractor, classType.getRuntimeClass());
     operations.addAll(extractor.getOperations());
-    assertThat("should be two operations", operations.size(), is(equalTo(2)));
+    int expectedCount = 3;
+    assertThat(
+        "should be " + expectedCount + " operations",
+        expectedCount,
+        is(equalTo(operations.size())));
   }
 
   @Test
@@ -184,7 +195,11 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
     mgr.apply(extractor, classType.getRuntimeClass());
     operations.addAll(extractor.getOperations());
-    assertThat("should be 3 operations", operations.size(), is(equalTo(3)));
+    int expectedCount = 4;
+    assertThat(
+        "should be " + expectedCount + " operations",
+        expectedCount,
+        is(equalTo(operations.size())));
   }
 
   @Test
@@ -205,7 +220,7 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
     mgr.apply(extractor, classType.getRuntimeClass());
     operations.addAll(extractor.getOperations());
-    assertTrue("should be two usable operations", operations.size() == 2);
+    assertTrue("should be three usable operations", operations.size() == 3);
     for (TypedOperation operation : operations) {
       assertThat(
           "should be wildcard or variable",
@@ -214,9 +229,8 @@ public class OperationExtractorTest {
               is(
                   equalTo(
                       "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mTypeVariable")),
-              is(
-                  equalTo(
-                      "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mWildcard"))));
+              is(equalTo("randoop.reflection.visibilitytest.InaccessibleArgumentInput.mWildcard")),
+              is(equalTo("java.lang.Object.getClass"))));
     }
   }
 }

@@ -102,7 +102,7 @@ public class VisibilityBridgeTest {
     Set<TypedOperation> actualOps = getConcreteOperations(sub);
     assertEquals(
         "expect operations count to be inherited methods plus constructor",
-        include.size() + 1,
+        include.size() + 2,
         actualOps.size());
 
     List<FormalMethod> actual = new ArrayList<>();

@@ -29,7 +29,7 @@ public class ClassReflectionTest {
     Set<TypedOperation> actual = getConcreteOperations(c);
 
     // TODO be sure the types of the inherited method has the proper type arguments
-    assertEquals("number of operations", 4, actual.size());
+    assertEquals("number of operations", 5, actual.size());
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
@@ -62,10 +62,10 @@ public class ClassReflectionTest {
     }
 
     Set<TypedOperation> innerActual = getConcreteOperations(inner);
-    assertEquals("number of inner class operations", 6, innerActual.size());
+    assertEquals("number of inner class operations", 7, innerActual.size());
 
     Set<TypedOperation> outerActual = getConcreteOperations(outer);
-    assertEquals("number of outer operations", 2, outerActual.size());
+    assertEquals("number of outer operations", 3, outerActual.size());
 
     TypedOperation constructorOp = null;
     for (TypedOperation op : outerActual) {

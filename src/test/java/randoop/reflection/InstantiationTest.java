@@ -63,6 +63,7 @@ public class InstantiationTest {
     methodNames.add(classname + "." + "m12");
     methodNames.add("randoop.reflection.RML.getZ");
     methodNames.add("randoop.reflection.RML.setZ");
+    methodNames.add("java.lang.Object.getClass");
 
     OperationModel model = createModel(classnames, packageName);
 

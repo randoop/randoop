@@ -121,7 +121,7 @@ public class EnumReflectionTest {
           actual.contains(createEnumOperation(e)));
     }
 
-    assertEquals("number of statements", include.size() + 7, actual.size());
+    assertEquals("number of statements", include.size() + 8, actual.size());
   }
 
   @Test
@@ -152,7 +152,7 @@ public class EnumReflectionTest {
     // TODO test that declaring class of operations for inner enum is enum
 
     Set<TypedOperation> actual = getConcreteOperations(cwim);
-    assertEquals("number of statements", 13, actual.size());
+    assertEquals("number of statements", 14, actual.size());
 
     for (TypedOperation op : include) {
       assertTrue("operation " + op + " should occur", actual.contains(op));
