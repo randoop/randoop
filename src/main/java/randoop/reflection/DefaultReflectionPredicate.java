@@ -11,7 +11,9 @@ import randoop.CheckRep;
 import randoop.util.Log;
 
 /**
- * Returns true for public members, with some exceptions (see {@link #doNotUseSpecialCase} method).
+ * Default implementations of methods that indicate whether a class, method, constructor, or field
+ * should be used in Randoop's exploration. Returns true for public members, with some exceptions
+ * (see {@link #doNotUseSpecialCase} method).
  *
  * <p>If a method has the {@code @CheckRep} annotation, returns false (the method will be used as a
  * contract checker, not as a method under test).
@@ -51,12 +53,14 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * <p>Does checks for the following cases:
    *
    * <ul>
-   *   <li>Main methods
-   *   <li>Bridge methods related to type
-   *   <li>Non-bridge, synthetic methods
-   *   <li>Methods that are not visible, or do not have visible return type
-   *   <li>[Special cases that need to be listed TODO]
+   *   <li>Main methods,
+   *   <li>Methods matching omission pattern,
+   *   <li>Bridge methods related to type,
+   *   <li>Non-bridge, synthetic methods,
+   *   <li>Methods that are not visible, or do not have visible return type, and others.
    * </ul>
+   *
+   * <p>See the code for the full list.
    */
   @Override
   public boolean test(Method m) {
@@ -134,7 +138,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * <p>Two of the three known cases involve forcing unchecked casts to allow type narrowing of
    * return types (covariant return types) and instantiation of generic type parameters in methods.
-   * Both of these are situations that we think of as overriding, but really aren't. These bridge
+   * Both of these are situations that a programmer could view as overriding, but really aren't. These bridge
    * methods do unchecked type conversions from the general type to the more specific type expected
    * by the local method. As a result, if included for testing, Randoop would generate many tests
    * that would confirm that there is an unchecked type conversion. So, we do not want to include
@@ -152,7 +156,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @return true if the bridge method should be discarded, false otherwise
    */
   private boolean discardBridge(Method m) {
-    if (isNotVisibilityBridge(m)) {
+    if (!isVisibilityBridge(m)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: it's a bridge method");
@@ -167,7 +171,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   /**
-   * Determines whether a bridge method is not a <i>visibility</i> bridge, which allows access to a
+   * Determines whether a bridge method is a <i>visibility</i> bridge, which allows access to a
    * definition of the method in a non-visible superclass.
    *
    * <p>To recognize a visibility bridge, it is sufficient to run up the superclass chain and
@@ -178,11 +182,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @return true if {@code m} is not a visibility bridge, and false otherwise
    * @throws Error if a {@link SecurityException} is thrown when accessing superclass methods
    */
-  private boolean isNotVisibilityBridge(Method m) throws Error {
+  private boolean isVisibilityBridge(Method m) throws Error {
     Method method = m;
     Class<?> c = m.getDeclaringClass();
     if (!isPublic(c)) {
-      return true;
+      return false;
     }
     while (c != null && isPublic(c) && method != null && method.isBridge()) {
       c = c.getSuperclass();
@@ -195,7 +199,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
         throw new Error(msg);
       }
     }
-    return isPublic(c);
+    return !isPublic(c);
   }
 
   private boolean isPublic(Class<?> c) {
@@ -259,6 +263,12 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     return null;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Use the constructor unless it is specifically omitted, is synthetic with anonymous
+   * parameters, or the class is abstract.
+   */
   @Override
   public boolean test(Constructor<?> c) {
 
@@ -287,17 +297,25 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    if (omitFields == null) {
+    String name = f.getDeclaringClass().getName() + "." + f.getName();
+
+    if (omitFields == null) { // No omitFields were given
+      if (Log.isLoggingOn()) {
+        Log.logLine(String.format("Field '%s' included, no omit-field arguments", name));
+      }
       return true;
     }
 
-    String name = f.getDeclaringClass().getName() + "." + f.getName();
     boolean result = !omitFields.contains(name);
     if (Log.isLoggingOn()) {
       if (result) {
-        Log.logLine(String.format("Including field '%s'", name));
+        if (Log.isLoggingOn()) {
+          Log.logLine(String.format("Field '%s' does not match omit-field, including field", name));
+        }
       } else {
-        Log.logLine(String.format("Not including field '%s'", name));
+        if (Log.isLoggingOn()) {
+          Log.logLine(String.format("Field '%s' matches omit-field, not including field", name));
+        }
       }
     }
     return result;
