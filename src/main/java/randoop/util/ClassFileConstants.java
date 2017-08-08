@@ -100,9 +100,9 @@ public class ClassFileConstants {
   /**
    * A simple driver program that prints output literals file format.
    *
-   * @see randoop.reflection.LiteralFileReader
    * @param args the command line arguments
    * @throws IOException if an error occurs in writing the constants
+   * @see randoop.reflection.LiteralFileReader
    */
   public static void main(String[] args) throws IOException {
     for (String classname : args) {
@@ -113,9 +113,9 @@ public class ClassFileConstants {
   /**
    * Returns all the constants found in the given class.
    *
-   * @see #getConstants(String,ConstantSet)
    * @param classname the name of the type
    * @return the set of constants of the given type
+   * @see #getConstants(String,ConstantSet)
    */
   public static ConstantSet getConstants(String classname) {
     ConstantSet result = new ConstantSet();
@@ -126,10 +126,10 @@ public class ClassFileConstants {
   /**
    * Adds all the constants found in the given class into the given ConstantSet, and returns it.
    *
-   * @see #getConstants(String)
    * @param classname the name of the type
    * @param result the set of constants to which constants are added
    * @return the set of constants with new constants of given type added
+   * @see #getConstants(String)
    */
   public static ConstantSet getConstants(String classname, ConstantSet result) {
 

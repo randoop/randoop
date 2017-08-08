@@ -406,10 +406,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.2">section 4.10.2
    * of JLS for JavaSE 8</a>.
    *
-   * @see #isAssignableFrom(Type)
-   * @see ParameterizedType#isSubtypeOf(Type)
    * @param otherType the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
+   * @see #isAssignableFrom(Type)
+   * @see ParameterizedType#isSubtypeOf(Type)
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {
