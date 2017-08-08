@@ -26,7 +26,7 @@ import plume.EntryReader;
  * Provides the methods {@link #readReplacements(Reader, String)} and {@link
  * #readReplacements(File)} that read a MapCall agent replacement file and populate the method
  * replacement map used by the agent. See the <a
- * href="https://randoop.github.io/randoop/manual/index.html#map_calls">replacecall user
+ * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
  * documentation</a> for the file format.
  */
 class ReplacementFileReader {
@@ -71,13 +71,13 @@ class ReplacementFileReader {
    * documentation</a> for the file format.
    *
    * @see #readReplacements(Reader, String)
-   * @param map_file the file with map of method substitutions
+   * @param replacementFile the file with method substitutions
    * @throws IOException if there is an error reading the file
    * @return the method replacement map constructed from the file
    */
-  static ConcurrentHashMap<MethodSignature, MethodSignature> readReplacements(File map_file)
+  static ConcurrentHashMap<MethodSignature, MethodSignature> readReplacements(File replacementFile)
       throws IOException, ReplacementFileException {
-    return readReplacements(new FileReader(map_file), map_file.getName());
+    return readReplacements(new FileReader(replacementFile), replacementFile.getName());
   }
 
   /**
