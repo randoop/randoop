@@ -1288,7 +1288,9 @@ in which case, the first parameter type should be the containing class of the
 original method.
 For instance, a call to <code>java.awt.Component.show()</code> would be replaced
 by a call to a method with the signature <code>show(java.awt.Component)</code>.
-See this <a href="mockJOptionPane.java.txt">JOptionPane mock class</a> for an example class.
+See the default
+<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java">Component class</a>
+for an example mock class.
 </p>
 
 <p>
@@ -1367,7 +1369,7 @@ Again, if there is no user-specified replacement method for an original method, 
 <p>
 These types of replacements can be used together. Say, for instance, that we have project-specific replacement methods for <code>javax.swing</code>
 in <code>projectmock.javax.swing</code>, but want to use a special implementation of <code>java.awt.Component</code> methods from <code>specialmock.java.awt.Component</code>.
-To use these replacements put thee lines in a file <code>replace_calls.txt</code>
+To use these replacements put these lines in a file <code>replace_calls.txt</code>
 </p>
 <pre>
 javax.swing projectmock.javax.swing  // project-wide package replacements
@@ -1377,7 +1379,7 @@ java.awt.Component specialmock.java.awt.Component // special-case class replacem
 and run Randoop with the additional arguments
 </p>
 <pre>
-    -Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--map_calls=replace_calls_example.txt
+    -Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--map_calls=replace_calls.txt
 </pre>
 <p>
 The boot classpath should include the agent jar if any replacements are made of AWT or Swing calls.
