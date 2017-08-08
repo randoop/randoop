@@ -81,8 +81,8 @@ class ReplacementFileReader {
   }
 
   /**
-   * Reads the replacement file specifying which method calls that should be replaced by other
-   * method calls. See the <a
+   * Reads the replacement file specifying method calls that should be replaced by other method
+   * calls. See the <a
    * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
    * documentation</a> for the file format.
    *
