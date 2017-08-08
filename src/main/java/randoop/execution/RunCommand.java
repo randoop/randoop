@@ -89,6 +89,7 @@ public class RunCommand {
      *
      * @param command the command
      * @param exitStatus the exit status
+     * @param timedOut whether the command timed out
      * @param standardOutputLines the lines of process output to standard output
      * @param errorOutputLines the lines of process output to standard error
      */
