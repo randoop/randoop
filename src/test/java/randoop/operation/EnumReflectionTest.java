@@ -20,6 +20,7 @@ import java.util.TreeSet;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.reflection.DeclarationExtractor;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
@@ -52,7 +53,7 @@ public class EnumReflectionTest {
    * four values: ONE, TWO, THREE, and FOUR.
    */
   @Test
-  public void simpleEnum() {
+  public void simpleEnumTest() {
     Class<?> se = SimpleEnum.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(se);
 
@@ -92,7 +93,7 @@ public class EnumReflectionTest {
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void innerEnum() {
+  public void innerEnumTest() {
     Class<?> pc = PlayingCard.class;
 
     List<Enum<?>> include = new ArrayList<>();
@@ -109,7 +110,6 @@ public class EnumReflectionTest {
     }
 
     Set<TypedOperation> actual = getConcreteOperations(pc);
-    assertEquals("number of statements", include.size() + 5, actual.size());
 
     for (Enum<?> e : include) {
       assertTrue(
@@ -120,6 +120,8 @@ public class EnumReflectionTest {
           "enum constant " + e.name() + " should not occur",
           actual.contains(createEnumOperation(e)));
     }
+
+    assertEquals("number of statements", include.size() + 8, actual.size());
   }
 
   @Test
@@ -150,7 +152,7 @@ public class EnumReflectionTest {
     // TODO test that declaring class of operations for inner enum is enum
 
     Set<TypedOperation> actual = getConcreteOperations(cwim);
-    assertEquals("number of statements", 13, actual.size());
+    assertEquals("number of statements", 14, actual.size());
 
     for (TypedOperation op : include) {
       assertTrue("operation " + op + " should occur", actual.contains(op));
@@ -321,13 +323,20 @@ public class EnumReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(
-      Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+      Class<?> c,
+      ReflectionPredicate reflectionPredicate,
+      VisibilityPredicate visibilityPredicate) {
+    ReflectionManager typeManager = new ReflectionManager(visibilityPredicate);
+    Set<ClassOrInterfaceType> classTypes = new LinkedHashSet<>();
+    typeManager.apply(new DeclarationExtractor(classTypes, reflectionPredicate), c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    OperationExtractor extractor =
-        new OperationExtractor(classType, operations, predicate, visibilityPredicate);
-    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
-    manager.apply(extractor, c);
+    ReflectionManager opManager = new ReflectionManager(visibilityPredicate);
+    for (ClassOrInterfaceType type : classTypes) {
+      final OperationExtractor extractor =
+          new OperationExtractor(type, reflectionPredicate, visibilityPredicate);
+      opManager.apply(extractor, type.getRuntimeClass());
+      operations.addAll(extractor.getOperations());
+    }
     return operations;
   }
 

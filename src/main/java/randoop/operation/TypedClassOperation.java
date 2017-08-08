@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import plume.UtilMDE;
+import randoop.reflection.RawSignature;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ReferenceType;
@@ -15,14 +16,15 @@ import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
 
 /**
- * Represents a type decoration for an operation that has a declaring class, such as method call or
- * field access.
- *
- * <p>The representation is the operation plus the declaring class.
+ * Represents a TypedOperation and its declaring class. Examples of TypedOperations that have a
+ * declaring class are a method call or field access.
  */
 public class TypedClassOperation extends TypedOperation {
-  /** The declaring type for this operation */
+  /** The declaring type for this operation. */
   private final ClassOrInterfaceType declaringType;
+
+  /** The cached value of {@link #getRawSignature()}. */
+  private RawSignature rawSignature = null;
 
   /**
    * Creates a {@link TypedClassOperation} for a given {@link CallableOperation} indicating the
@@ -57,32 +59,7 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Compares this operation to another {@link TypedOperation}. Ensures that any {@link
-   * TypedTermOperation} objects precedes a {@link TypedClassOperation}. Otherwise, orders {@link
-   * TypedClassOperation} objects by first comparing the declaring types, and then comparing by
-   * {@link TypedOperation#compareTo(TypedOperation)}.
-   *
-   * @param op the {@link TypedOperation} to compare with this operation
-   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the operations are identical,
-   *     and &gt; 0 if this operation succeeds op
-   */
-  @Override
-  public int compareTo(TypedOperation op) {
-    int result = 0;
-    if (op instanceof TypedTermOperation) {
-      return 1;
-    }
-    TypedClassOperation other = (TypedClassOperation) op;
-    result = declaringType.compareTo(other.declaringType);
-    if (result != 0) {
-      return result;
-    }
-    return super.compareTo(other);
-  }
-
-  /**
-   * Returns the class in which the operation is defined, or, if the operation represents a value,
-   * the type of the value.
+   * Returns the class in which the operation is defined.
    *
    * @return class to which the operation belongs
    */
@@ -91,11 +68,9 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Creates a {@link TypedOperation} from this operation by using the given {@link Substitution} on
-   * type variables.
+   * {@inheritDoc}
    *
-   * @param substitution the type substitution
-   * @return the concrete operation with type variables replaced by substitution
+   * <p>Applies the substitution to the declaring type, all input types, and the output type.
    */
   @Override
   public TypedClassOperation apply(Substitution<ReferenceType> substitution) {
@@ -116,7 +91,7 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Produces a Java source code representation of this statement and append it to the given
+   * Produces a Java source code representation of this operation and appends it to the given
    * StringBuilder.
    *
    * @param inputVars the list of variables that are inputs to operation
@@ -130,10 +105,10 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Returns a string representation of this Operation, which can be read by static parse method for
-   * class. For a class C implementing the Operation interface, this method should return a String s
-   * such that parsing the string returns an object equivalent to this object, i.e.
-   * C.parse(this.s).equals(this).
+   * Returns a string representation of this Operation, which can be read by the static {@code
+   * parse} method for an Operation class. For a class C implementing the Operation interface, this
+   * method should return a String s such that parsing the string returns an object equivalent to
+   * this object, i.e., C.parse(this.s).equals(this).
    *
    * @return string descriptor of {@link Operation} object
    */
@@ -144,18 +119,26 @@ public class TypedClassOperation extends TypedOperation {
 
   @Override
   public String toString() {
-    StringBuilder b = new StringBuilder();
     if (this.isGeneric()) {
-      b.append("<");
-      b.append(UtilMDE.join(this.getTypeParameters(), ","));
-      b.append(">").append(" ");
+      String b = "<" + UtilMDE.join(this.getTypeParameters(), ",") + ">" + " ";
+      return b + super.toString();
+    } else {
+      return super.toString();
     }
-    return b.toString() + super.toString();
   }
 
   @Override
   public String getName() {
     return declaringType + "." + super.getName();
+  }
+
+  /**
+   * Returns the simple name of this operation, not qualified by the declaring class.
+   *
+   * @return the unqualified name of this operation
+   */
+  public String getUnqualifiedName() {
+    return super.getName();
   }
 
   @Override
@@ -173,5 +156,49 @@ public class TypedClassOperation extends TypedOperation {
       paramSet.addAll(((ReferenceType) getOutputType()).getTypeParameters());
     }
     return new ArrayList<>(paramSet);
+  }
+
+  /**
+   * Returns the {@link RawSignature} for this operation if it is a method or constructor call.
+   *
+   * @return the {@link RawSignature} of this method or constructor operation, null if this is
+   *     another kind of operation
+   */
+  public RawSignature getRawSignature() {
+    // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably both
+    if (!this.isConstructorCall() && !this.isMethodCall()) {
+      return null;
+    }
+    if (rawSignature == null) {
+      Package classPackage = this.declaringType.getPackage();
+      String packageName = (classPackage != null) ? classPackage.getName() : "";
+      String classname = this.getDeclaringType().getRawtype().getUnqualifiedName();
+      String name =
+          this.getUnqualifiedName().equals("<init>") ? classname : this.getUnqualifiedName();
+
+      Class<?>[] parameterTypes =
+          this.isMethodCall()
+              ? ((MethodCall) getOperation()).getMethod().getParameterTypes()
+              : ((ConstructorCall) getOperation()).getConstructor().getParameterTypes();
+      rawSignature = new RawSignature(packageName, classname, name, parameterTypes);
+    }
+    return rawSignature;
+  }
+
+  /**
+   * Creates an operation with the same name, input types, and output type as this operation, but
+   * having the given type as the owning class.
+   *
+   * <p>Note: this is only a valid object if {@code type} has the method. This is definitely the
+   * case if {@code type} is a subtype of the declaring type of the operation, but this method does
+   * not force that check because we sometimes want to create the operation for superclasses.
+   *
+   * @param type a type to substitute into the operation
+   * @return a new operation with {@code type} substituted for the declaring type of this operation.
+   *     This object will be invalid if {@code type} does not have the method.
+   */
+  public TypedClassOperation getOperationForType(ClassOrInterfaceType type) {
+    return new TypedClassOperation(
+        this.getOperation(), type, this.getInputTypes(), this.getOutputType());
   }
 }

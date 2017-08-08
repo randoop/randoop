@@ -297,7 +297,7 @@ public final class ConstructorCall extends CallableOperation {
    *     ReflectionPredicate#test(Constructor)} implemented by predicate.
    */
   @Override
-  public boolean satisfies(ReflectionPredicate predicate) {
-    return predicate.test(constructor);
+  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+    return reflectionPredicate.test(constructor);
   }
 }

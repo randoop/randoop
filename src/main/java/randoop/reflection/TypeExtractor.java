@@ -34,6 +34,12 @@ class TypeExtractor extends DefaultClassVisitor {
     this.predicate = predicate;
   }
 
+  @Override
+  public void visit(Class<?> c, ReflectionManager reflectionManager) {
+    addIfConcrete(ClassOrInterfaceType.forClass(c));
+    reflectionManager.apply(this, c);
+  }
+
   /**
    * {@inheritDoc}
    *

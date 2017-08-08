@@ -102,7 +102,7 @@ public class VisibilityBridgeTest {
     Set<TypedOperation> actualOps = getConcreteOperations(sub);
     assertEquals(
         "expect operations count to be inherited methods plus constructor",
-        include.size() + 1,
+        include.size() + 2,
         actualOps.size());
 
     List<FormalMethod> actual = new ArrayList<>();
@@ -123,14 +123,17 @@ public class VisibilityBridgeTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(
-      Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+      Class<?> c,
+      ReflectionPredicate reflectionPredicate,
+      VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor =
-        new OperationExtractor(classType, operations, predicate, visibilityPredicate);
+        new OperationExtractor(classType, reflectionPredicate, visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(extractor);
     manager.apply(c);
+    operations.addAll(extractor.getOperations());
     return operations;
   }
 }

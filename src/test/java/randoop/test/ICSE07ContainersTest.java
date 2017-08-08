@@ -22,6 +22,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
@@ -86,13 +87,14 @@ public class ICSE07ContainersTest {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(
+      final OperationExtractor extractor =
           new OperationExtractor(
               classType,
-              model,
-              new DefaultReflectionPredicate(omitMethodPatterns, excludeNames),
-              visibility),
-          c);
+              new DefaultReflectionPredicate(excludeNames),
+              new OmitMethodsPredicate(omitMethodPatterns),
+              visibility);
+      mgr.apply(extractor, c);
+      model.addAll(extractor.getOperations());
     }
     assertTrue("model should not be empty", !model.isEmpty());
     System.out.println("Number of operations: " + model.size());

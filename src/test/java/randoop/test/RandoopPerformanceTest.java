@@ -63,9 +63,10 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(
-          new OperationExtractor(classType, model, new DefaultReflectionPredicate(), visibility),
-          c);
+      final OperationExtractor extractor =
+          new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+      mgr.apply(extractor, c);
+      model.addAll(extractor.getOperations());
     }
     return model;
   }
