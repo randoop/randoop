@@ -296,8 +296,8 @@ public class TypeInstantiator {
    */
   private Substitution<ReferenceType> selectSubstitution(
       List<TypeVariable> typeParameters, Substitution<ReferenceType> substitution) {
-    List<Substitution<ReferenceType>> substitutionList;
-    substitutionList = collectSubstitutions(typeParameters, substitution);
+    List<Substitution<ReferenceType>> substitutionList =
+        collectSubstitutions(typeParameters, substitution);
     if (substitutionList.isEmpty()) {
       return null;
     }
