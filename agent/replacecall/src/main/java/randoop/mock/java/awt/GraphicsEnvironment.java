@@ -9,7 +9,7 @@ package randoop.mock.java.awt;
  * mocks prevent the display of these objects, these methods pretend that all environments are not
  * headless.
  *
- * <p>Default replacement for {@link randoop.instrument.MapCallsAgent}. Replacement should be
+ * <p>Default replacement for {@link randoop.instrument.ReplaceCallAgent}. Replacement should be
  * specified in {@code "resources/default-replacements.txt"}
  */
 public class GraphicsEnvironment {

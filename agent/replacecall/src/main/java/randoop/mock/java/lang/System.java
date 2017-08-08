@@ -3,8 +3,8 @@ package randoop.mock.java.lang;
 import randoop.SystemExitCalledError;
 
 /**
- * Default replacement for {@link randoop.instrument.MapCallsAgent}. Replacement should be specified
- * in {@code "resources/replacements.txt"}
+ * Default replacement for {@link randoop.instrument.ReplaceCallAgent}. Replacement should be
+ * specified in {@code "resources/replacements.txt"}
  */
 public class System {
 
