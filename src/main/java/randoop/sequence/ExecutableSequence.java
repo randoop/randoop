@@ -72,7 +72,6 @@ import randoop.util.ProgressDisplay;
  *         <li>getResult(i)
  *         <li>getException(i)
  *       </ul>
- *
  * </ul>
  */
 public class ExecutableSequence {
@@ -259,13 +258,12 @@ public class ExecutableSequence {
    *         <li>After executing the i-th statement and calling the visitor's <code>visitAfter
    *             </code> method, a <code>ContractViolation</code> check is present at index i.
    *       </ul>
-   *
    * </ul>
    *
-   * @see randoop.condition
    * @param visitor the {@code ExecutionVisitor}
    * @param gen the check generator
    * @param ignoreException the flag to indicate exceptions should be ignored
+   * @see randoop.condition
    */
   @SuppressWarnings("SameParameterValue")
   private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {

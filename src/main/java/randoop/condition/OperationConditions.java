@@ -58,9 +58,9 @@ public class OperationConditions {
    * OutcomeTable} with an entry for the conditions for this operation, and conditions for this
    * operation in all supertypes.
    *
-   * @see #check(Object[], OutcomeTable)
    * @param args the argument values to test the conditions
    * @return the table with entries for this operation
+   * @see #check(Object[], OutcomeTable)
    */
   public OutcomeTable check(Object[] args) {
     OutcomeTable table = new OutcomeTable();
@@ -75,9 +75,9 @@ public class OperationConditions {
    * Creates an {@link OutcomeTable} entry for the conditions of this method, recording:
    *
    * <ul>
-   *   <li> Whether the preconditions fail or are satisfied
-   *   <li> The set of expected exceptions
-   *   <li> The expected postcondition
+   *   <li>Whether the preconditions fail or are satisfied
+   *   <li>The set of expected exceptions
+   *   <li>The expected postcondition
    * </ul>
    *
    * (See the evaluation algorithm in {@link randoop.condition}.)
