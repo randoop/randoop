@@ -24,7 +24,7 @@ import plume.EntryReader;
 
 /**
  * Provides the methods {@link #readReplacements(Reader, String)} and {@link
- * #readReplacements(File)} that read a MapCall agent replacement file and populate the method
+ * #readReplacements(File)} that read a replacecall agent replacement file and populate the method
  * replacement map used by the agent. See the <a
  * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
  * documentation</a> for the file format.

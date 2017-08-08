@@ -22,15 +22,14 @@ import plume.Options;
 import randoop.MethodReplacements;
 
 /**
- * The MapCalls javaagent applies the {@link CallReplacementTransformer} to map calls in loaded
+ * The replacecall javaagent applies the {@link CallReplacementTransformer} to map calls in loaded
  * classes to alternate implementations.
  *
  * <p>The transformer applies method call replacements as specified in either the default or a
  * user-provided replacement file. (See the <a
  * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
  * documentation</a> the file format.) Default replacements are given in an internal resource file
- * {@code "default-replacements.txt"}. User replacements are then loaded using the {@link
- * #replacecall --map-calls} command-line argument. A user replacement may override a default
+ * {@code "default-replacements.txt"}. User replacements are then loaded using the {@code --map-calls} command-line argument. A user replacement may override a default
  * replacement.
  *
  * <p>The classes of packages listed in the resource file {@code "default-load-exclusions.txt"} are

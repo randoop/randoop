@@ -12,7 +12,7 @@ public class SignatureParser {
 
   // TODO: The duplicated regular expressions should be factored into a separate source set (aka,
   // module) so that it can also be used in javagents. The patterns are duplicated from {@code
-  // ReplacementFileReader} from the mapcall agent.
+  // ReplacementFileReader} from the replacecall agent.
 
   /** Regex for Java identifiers */
   private static final String ID_STRING =
