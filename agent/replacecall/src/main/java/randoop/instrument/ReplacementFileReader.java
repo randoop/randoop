@@ -522,9 +522,7 @@ class ReplacementFileReader {
       throws ClassNotFoundException, ReplacementException {
 
     // Check that original class exists
-    Class<?> originalClass = Class.forName(originalClassname);
-
-    if (originalClass != null) {
+    if (Class.forName(originalClassname) != null) {
       Class<?> replacementClass = Class.forName(replacementClassname);
       addReplacementsForClass(replacementMap, originalClassname, replacementClass);
     }
