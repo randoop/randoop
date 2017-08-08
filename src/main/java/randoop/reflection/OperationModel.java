@@ -172,13 +172,13 @@ public class OperationModel {
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   static OperationModel createModel(
-          VisibilityPredicate visibility,
-          ReflectionPredicate reflectionPredicate,
-          Set<String> classnames,
-          Set<String> coveredClassnames,
-          Set<String> methodSignatures,
-          ClassNameErrorHandler errorHandler,
-          List<String> literalsFileList)
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      Set<String> classnames,
+      Set<String> coveredClassnames,
+      Set<String> methodSignatures,
+      ClassNameErrorHandler errorHandler,
+      List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
     return createModel(
         visibility,
