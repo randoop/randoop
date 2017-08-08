@@ -46,8 +46,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   /**
    * {@inheritDoc}
    *
-   * @see #getName()
    * @return the name of this type
+   * @see #getName()
    */
   @Override
   public String toString() {
