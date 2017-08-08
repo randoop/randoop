@@ -72,8 +72,8 @@ class ReplacementFileReader {
    *
    * @see #readReplacements(Reader, String)
    * @param replacementFile the file with method substitutions
-   * @throws IOException if there is an error reading the file
    * @return the method replacement map constructed from the file
+   * @throws IOException if there is an error reading the file
    */
   static ConcurrentHashMap<MethodSignature, MethodSignature> readReplacements(File replacementFile)
       throws IOException, ReplacementFileException {
@@ -88,8 +88,8 @@ class ReplacementFileReader {
    *
    * @param in the {@code Reader} for the replacement file
    * @param filename the name of the file read by {@code in}, used for error reporting
-   * @throws IOException if there is an error while reading the file
    * @return the method replacement map constructed from the file
+   * @throws IOException if there is an error while reading the file
    */
   static ConcurrentHashMap<MethodSignature, MethodSignature> readReplacements(
       Reader in, String filename) throws ReplacementFileException, IOException {
