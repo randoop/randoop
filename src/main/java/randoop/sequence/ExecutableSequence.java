@@ -262,10 +262,10 @@ public class ExecutableSequence {
    *
    * </ul>
    *
-   * @see randoop.condition
    * @param visitor the {@code ExecutionVisitor}
    * @param gen the check generator
    * @param ignoreException the flag to indicate exceptions should be ignored
+   * @see randoop.condition
    */
   @SuppressWarnings("SameParameterValue")
   private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
