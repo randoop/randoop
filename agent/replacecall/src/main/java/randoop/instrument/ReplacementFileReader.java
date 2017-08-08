@@ -70,10 +70,10 @@ class ReplacementFileReader {
    * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
    * documentation</a> for the file format.
    *
-   * @see #readReplacements(Reader, String)
    * @param replacementFile the file with method substitutions
    * @return the method replacement map constructed from the file
    * @throws IOException if there is an error reading the file
+   * @see #readReplacements(Reader, String)
    */
   static ConcurrentHashMap<MethodSignature, MethodSignature> readReplacements(File replacementFile)
       throws IOException, ReplacementFileException {
@@ -208,7 +208,8 @@ class ReplacementFileReader {
    * Adds the method replacements for the package or class replacement determined by the {@code
    * original} and {@code replacement} strings.
    *
-   * <p>Determines whether the replacement corresponds to a either a class or a package.
+   * <p>Behaves differently depending on whether the replacement corresponds to a class or a
+   * package:
    *
    * <ul>
    *   <li>If the replacement is a class, then checks whether every method in the class has a
@@ -230,14 +231,15 @@ class ReplacementFileReader {
       throws ReplacementException, IOException, ClassNotFoundException {
 
     // Check whether the replacement string corresponds to a class (that can be loaded)
-    Class<?> replacementClass = null;
+    Class<?> replacementClass;
     try {
       replacementClass = Class.forName(replacement);
     } catch (ClassNotFoundException e) {
+      replacementClass = null;
       //if not found, then replacement is not a class than can be loaded or not a class
     }
 
-    // If the class was loaded then the replacement is a class
+    // If the class was loaded, then the replacement is a class.
     if (replacementClass != null) {
       addReplacementsForClass(replacementMap, original, replacementClass);
     } else {
@@ -246,7 +248,7 @@ class ReplacementFileReader {
       // which is the case if the ClassLoader is null.
       ClassLoader loader = ReplacementFileReader.class.getClassLoader();
       if (loader == null) {
-        // If the agent is run on bootloaded classes, we have to check the path directly.
+        // The agent is run on bootloaded classes, so we have to check the path directly.
         addReplacementsForPackage(replacementMap, original, replacement);
       } else {
         // Otherwise, use the ClassLoader to avoid missing any classes on the normal classpath.
@@ -279,13 +281,13 @@ class ReplacementFileReader {
     for (Method method : replacementClass.getDeclaredMethods()) {
       int modifiers = method.getModifiers() & Modifier.methodModifiers();
       if (Modifier.isPrivate(modifiers)) {
-        // a mock class may have private helper methods, quietly ignore them
+        // A mock class may have private helper methods; quietly ignore them.
         continue;
       }
       if (!Modifier.isStatic(modifiers)) {
         String msg =
             String.format(
-                "Non-static replacement method found: %s.%s",
+                "Non-static non-private replacement method found: %s.%s",
                 replacementClass.getCanonicalName(), method.getName());
         throw new ReplacementException(msg);
       }
@@ -326,11 +328,11 @@ class ReplacementFileReader {
    * <p>Contrasts with {@link #addReplacementsForPackage(ConcurrentHashMap, String, String,
    * ClassLoader)} that searches for the package using a class loader.
    *
-   * @see #addReplacementsForClassOrPackage(ConcurrentHashMap, String, String)
    * @param replacementMap the method replacement map to which new replacements are added
    * @param originalPackage the original package name
    * @param replacementPackage the replacement package name
    * @throws ReplacementException if no package corresponding to the replacement is found
+   * @see #addReplacementsForClassOrPackage(ConcurrentHashMap, String, String)
    */
   private static void addReplacementsForPackage(
       ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
@@ -380,13 +382,13 @@ class ReplacementFileReader {
    * <p>Contrasts with {@link #addReplacementsForPackage(ConcurrentHashMap, String, String)} that
    * searches for the package on the boot classpath.
    *
-   * @see #addReplacementsForClassOrPackage(ConcurrentHashMap, String, String)
    * @param replacementMap the method replacement map to which new replacements are added
    * @param originalPackage the original package name
    * @param replacementPackage the replacement package name
    * @param loader the {@code ClassLoader}
    * @throws IOException if no package corresponding to replacement is found
    * @throws ReplacementException if no replacements are found in the replacement package
+   * @see #addReplacementsForClassOrPackage(ConcurrentHashMap, String, String)
    */
   private static void addReplacementsForPackage(
       ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
@@ -437,14 +439,14 @@ class ReplacementFileReader {
    *
    * <p>Assumes that subpackage structure of original and replacement packages is identical.
    *
-   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String)
-   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String, ClassLoader)
    * @param replacementMap the method replacement map to which replacements are added
    * @param originalPackage the name of the original package
    * @param replacementPackage the name of the replacement package
    * @param replacementDirectory the directory for the replacement package, must be non-null
    * @throws ReplacementException if a replacement method is not valid
    * @throws ClassNotFoundException if a replacement or package class is not found
+   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String)
+   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String, ClassLoader)
    */
   private static void addReplacementsForPackage(
       ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
@@ -477,12 +479,12 @@ class ReplacementFileReader {
    * #addReplacementsForClass(ConcurrentHashMap, String, String)} to add method replacements from
    * the original package to the replacement package.
    *
-   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String)
-   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String, ClassLoader)
    * @param replacementMap the method replacement map to which new replacements are added
    * @param originalPackage the original package name
    * @param replacementPackage the replacement package name
    * @param jarFile the jar file to search
+   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String)
+   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String, ClassLoader)
    */
   private static void addReplacementsFromAllClassesOfPackage(
       ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
