@@ -148,7 +148,7 @@ class ReplacementFileReader {
    *     added
    * @param originalSignature the signature of the method to be mapped
    * @param replacementSignature the signature of the method to be mapped
-   * @throws ReplacementException if the replacement signature is badly-formed, the replacement
+   * @throws ReplacementException if either replacement signature is badly-formed, the replacement
    *     class is not found, or the method does not exist
    */
   private static void addMethodReplacement(
