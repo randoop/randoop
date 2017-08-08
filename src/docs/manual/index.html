@@ -28,7 +28,7 @@ The Randoop homepage is
   <li><a href="#generating_tests">Generating tests</a>
     <ul>
       <li><a href="#example_collections">Example: Generating tests for <code>java.util.Collections</code></a></li>
-      <li><a href="#specifying-methods">Specifying methods and constructors that may appear in a test</a></li>
+      <li><a href="#specifying-methods">Specifying methods, constructors, and fields that may appear in a test</a></li>
       <li><a href="#classifying_tests">Classifying tests</a></li>
       <li><a href="#error_revealing_tests">Error-revealing tests</a></li>
       <li><a href="#regression_tests">Regression tests</a>
@@ -341,7 +341,7 @@ RegressionTest will pass.
 </p>
 
 
-<h2 id="specifying-methods">Specifying methods and constructors that may appear in a test</h2>
+<h2 id="specifying-methods">Specifying methods, constructors, and fields that may appear in a test</h2>
 
 <p>
 Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the following are true:
@@ -769,57 +769,39 @@ Randoop about your application, and that is how we recommend using Randoop.
 
 <!-- start options doc (DO NOT EDIT BY HAND) -->
 <ul>
-  <li id="optiongroup:Code-under-test:--which-methods-may-be-called-by-a-test">Code under test:  which methods may be called by a test
+  <li id="optiongroup:Code-under-test:--which-members-may-be-used-by-a-test">Code under test:  which members may be used by a test
       <ul>
             <li id="option:testclass"><b>--testclass=</b><i>string</i> <code>[+]</code>.
-             The fully-qualified name of a class to test; for example, <code>--testclass=java.util.TreeSet
- </code>. All of its methods are methods under test. This class is tested in addition to any
- specified using <code>--classlist</code>, and must be accessible from the package of the tests
- (set with <code>--junit-package-name</code>).
+             The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
+ in addition to any specified using <code>--classlist</code>, and must be accessible from the package
+ of the tests (set with <code>--junit-package-name</code>).
             <li id="option:classlist"><b>--classlist=</b><i>filename</i>.
              File that lists classes to test. All of their methods are methods under test.
 
  <p>In the file, each class under test is specified by its fully-qualified name on a separate
  line. See an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt">
- example</a>. These classes are tested in addition to any specified using <code>--testclass
- </code>. All classes must be accessible from the package of the tests (set with <code>
- --junit-package-name</code>).
+ example</a>. These classes are tested in addition to any specified using <code>--testclass</code>.
+ All classes must be accessible from the package of the tests (set with <code>--junit-package-name</code>).
             <li id="option:methodlist"><b>--methodlist=</b><i>filename</i>.
-             File that lists methods to test.
+             A file containing a list of methods and constructors to test, each given as a <a
+ href="#fully-qualified-signature">fully-qualified signature</a> on a separate line.
 
- <p>In the file, each method under test is specified on a separate line. The list of methods
- given by this argument augment any methods determined via the <code>--testclass</code> or
- <code>--classlist</code> option.
+ <p>These methods augment any methods from classes given by the <code>--testclass</code> or
+ <code>--classlist</code> options.
 
- <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
- <code>&lt;init&gt;</code>, and the constructor's parameter types enclosed in parentheses. Methods are
- specified in a similar way. For example:
-
- <pre><code>
- cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
- method : Type0.method_name(Type1, Type2, ..., TypeN)
- </code></pre>
-
- <p>Each <code>Type<i>i</i></code> must be fully-qualified (include package names).
-
- <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">
- example</a>.
+ <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
+ file</a>.
             <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i> <code>[+]</code>.
-             Methods whose <code>java.lang.reflect.Method.toString() toString()</code> matches this regex are not
- directly called by test methods. This does not prevent indirect calls to such methods from
- other, allowed methods.
+             A regex that indicates methods that should not be called directly in generated tests. This does
+ not prevent indirect calls to such methods from other, allowed methods.
 
- <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>--classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>omitmethods</code>
- --is to override one of those other command-line options.
+ <p>Randoop will not directly call a method whose <a
+ href="#fully-qualified-signature">fully-qualified signature</a> matches the regular expression,
+ or a method inherited from a superclass or interface whose signature matches the regular
+ expression.
 
- <p>The regex may match a substring of the method name, unless the regex is anchored with <code>^</code> or <code>$</code>.
-
- <p>Note:
-
- <ul>
-   <li>If a method is inherited without an override, the pattern must match the superclass
-       method.
- </ul>
+ <p>If the regular expression contains anchors "<code>^</code>" and "<code>$</code>", they refer to the
+ beginning and the end of the signature string.
             <li id="option:omitmethods-list"><b>--omitmethods-list=</b><i>filename</i>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>
@@ -1194,6 +1176,20 @@ Randoop about your application, and that is how we recommend using Randoop.
 <code>[+]</code> marked option can be specified multiple times
 <!-- end options doc -->
 
+<p id="fully-qualified-signature">
+A Randoop "fully-qualified signature" is
+</p>
+<ul>
+  <li><code>package-name.classname.method-name(argument-list)</code> for a method, or
+  <li><code>package-name.classname(argument-list)</code> for a constructor
+</ul>
+
+<p>
+where <code>package-name</code> is a period-separated list of identifiers,
+and <code>argument-list</code> is a comma-separated list of fully-qualified
+Java raw types, without spaces.
+</p>
+
 
 <h2 id="map_calls">Avoiding calls to specific methods</h2>
 
@@ -1207,7 +1203,7 @@ require user interaction, such as popping up a modal dialog box.
 <p>
 You can prevent Randoop from calling certain methods in the code under
 test, by using the
-<code>--omitmethods=regexp</code> command-line option.
+<a href="#option:omitmethods"><code>--omitmethods=regexp</code></a> command-line option.
 </p>
 
 <p>
@@ -2153,6 +2149,13 @@ tests</a>.
     <li>the exact and complete output of the commands, and</li>
     <li>all the files that are necessary to run those commands.</li>
   </ul>
+
+<p>
+  Never submit just a screenshot or image of your computer screen.
+  Instead, cut-and-paste the text of your command and its output.  The text
+  is easier to read, is searchable, and does not require transcribing from
+  a screenshot in order to reproduce.
+</p>
 
 <p>
   If you encountered the problem while using the Maven plug-in,

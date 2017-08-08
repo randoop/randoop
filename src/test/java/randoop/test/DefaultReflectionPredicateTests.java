@@ -62,16 +62,15 @@ public class DefaultReflectionPredicateTests extends TestCase {
     assertTrue(!filter.test(wait));
   }
 
-  //this could be OK - currently we disable it
+  //equals is used in contracts, but not as operation in a sequence
   public void testObjectMethods8() throws Exception {
     Method equals = Object.class.getMethod("equals", new Class<?>[] {Object.class});
     assertTrue(!filter.test(equals));
   }
 
-  //this could be OK - currently we disable it
   public void testObjectMethods9() throws Exception {
     Method getClass = Object.class.getMethod("getClass", new Class[0]);
-    assertTrue(!filter.test(getClass));
+    assertTrue(filter.test(getClass));
   }
 
   public void testNondeterministicHashCode() throws Exception {

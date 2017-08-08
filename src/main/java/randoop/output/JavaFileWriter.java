@@ -1,13 +1,18 @@
 package randoop.output;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
-import randoop.BugInRandoopException;
+import java.io.PrintWriter;
 
-public class JavaFileWriter {
+/**
+ * A {@link CodeWriter} that writes JUnit4 test class source text to a {@code .java} file with
+ * annotations so that tests are executed in ascending alphabetical order by test method name.
+ */
+public class JavaFileWriter implements CodeWriter {
 
-  /** The directory to which JUnit files are written */
+  /** The directory to which JUnit files are written. */
   private final String dirName;
 
   /**
@@ -20,39 +25,60 @@ public class JavaFileWriter {
   }
 
   /**
-   * writeClass writes a code sequence as a JUnit4 test class to a .java file. Tests are executed in
-   * ascending alphabetical order by test method name.
+   * writeClassCode writes a code sequence as a JUnit4 test class to a .java file. Tests are
+   * executed in ascending alphabetical order by test method name.
    *
    * @param packageName the package name for the class
    * @param className the name of the class
-   * @param testClassText the source text of the test class
+   * @param classCode the source text of the test class
    * @return the File object for generated java file
    */
-  public File writeClass(String packageName, String className, String testClassText) {
+  @Override
+  public File writeClassCode(String packageName, String className, String classCode)
+      throws RandoopOutputException {
     File dir = createOutputDir(packageName);
     File file = new File(dir, className + ".java");
-    PrintStream out = createTextOutputStream(file);
 
-    try {
-      out.println(testClassText);
-    } finally {
-      if (out != null) out.close();
+    try (PrintWriter out = new PrintWriter(file, UTF_8.name())) {
+      out.println(classCode);
+    } catch (IOException e) {
+      String message = "Exception creating print writer for file " + file.getName();
+      throw new RandoopOutputException(message, e);
     }
 
     return file;
   }
 
-  private File createOutputDir(String packageName) {
+  @Override
+  public File writeUnmodifiedClassCode(String packageName, String classname, String classCode)
+      throws RandoopOutputException {
+    return writeClassCode(packageName, classname, classCode);
+  }
+
+  /**
+   * Create the output directory for the package if it does not already exist.
+   *
+   * @param packageName the package name
+   * @return the {@code File} for the created directory
+   * @throws RandoopOutputException if the directory cannot be created
+   */
+  private File createOutputDir(String packageName) throws RandoopOutputException {
     File dir = getDir(packageName);
     if (!dir.exists()) {
       boolean success = dir.mkdirs();
       if (!success) {
-        throw new Error("Unable to create directory: " + dir.getAbsolutePath());
+        throw new RandoopOutputException("Unable to create directory: " + dir.getAbsolutePath());
       }
     }
     return dir;
   }
 
+  /**
+   * Returns the directory for the package name relative to the directory name of this writer.
+   *
+   * @param packageName the package name
+   * @return the {@code File} for the directory corresponding to the package name
+   */
   private File getDir(String packageName) {
     File dir;
     if (dirName == null || dirName.length() == 0) {
@@ -72,14 +98,5 @@ public class JavaFileWriter {
       dir = new File(dir, s);
     }
     return dir;
-  }
-
-  private static PrintStream createTextOutputStream(File file) {
-    try {
-      return new PrintStream(file);
-    } catch (IOException e) {
-      String message = "Exception thrown while creating text print stream: " + file.getName();
-      throw new BugInRandoopException(message, e);
-    }
   }
 }

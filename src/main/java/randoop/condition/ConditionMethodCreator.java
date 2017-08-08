@@ -43,12 +43,19 @@ public class ConditionMethodCreator {
     String classText =
         createConditionClassSource(
             signature.getName(), conditionSource, parameterDeclaration, packageName, classname);
-    Class<?> conditionClass;
+
     try {
-      conditionClass = compiler.compile(packageName, classname, classText);
+      compiler.compile(packageName, classname, classText);
     } catch (SequenceCompilerException e) {
       String msg = getCompilerErrorMessage(e.getDiagnostics().getDiagnostics(), classText);
       throw new RandoopConditionError(msg, e);
+    }
+
+    Class<?> conditionClass;
+    try {
+      conditionClass = compiler.loadClass(packageName, classname);
+    } catch (ClassNotFoundException e) {
+      throw new RandoopConditionError("Failed to load condition class", e);
     }
 
     try {

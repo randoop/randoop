@@ -60,11 +60,11 @@ public abstract class CallableOperation implements Operation {
    * Checks whether reflective object contained in an {@link Operation} satisfies the predicate.
    * Since there is no reflective object in an {@code CallableOperation}, returns false.
    *
-   * @param predicate {@link ReflectionPredicate} against which object to be checked
+   * @param reflectionPredicate {@link ReflectionPredicate} against which object to be checked
    * @return false as there is no object to check
    */
   @Override
-  public boolean satisfies(ReflectionPredicate predicate) {
+  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
     return false;
   }
 

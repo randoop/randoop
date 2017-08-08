@@ -63,8 +63,7 @@ public class SpecialCoveredClassTest {
     Set<String> coveredClassnames = null;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     Set<String> omitFields = new HashSet<>();
-    ReflectionPredicate reflectionPredicate =
-        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitFields);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     Set<String> methodSignatures = null;
     try {
       classnames = GenInputsAbstract.getClassnamesFromArgs();
@@ -77,17 +76,20 @@ public class SpecialCoveredClassTest {
       fail("Input error: " + e.getMessage());
     }
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
+
     OperationModel operationModel = null;
     try {
       operationModel =
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
+              GenInputsAbstract.omitmethods,
               classnames,
               coveredClassnames,
               methodSignatures,
               classNameErrorHandler,
-              GenInputsAbstract.literals_file);
+              GenInputsAbstract.literals_file,
+              null);
     } catch (Throwable e) {
       fail("Error: " + e);
     }
@@ -110,7 +112,7 @@ public class SpecialCoveredClassTest {
     //
     List<TypedOperation> model = operationModel.getOperations();
     //
-    assertEquals("model operations", 6, model.size());
+    assertEquals("model operations", 7, model.size());
     //
     Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());

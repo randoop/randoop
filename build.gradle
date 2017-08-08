@@ -368,7 +368,7 @@ task extractJacocoAgent(type: Copy) {
  * Runs JUnit over all classes in systemTest sourceSet.
  * JUnit tests assume that working directories can be found in the build directory.
  */
-task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingDirs', 'copyJars' ]) {
+task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingDirs', 'assemble' ]) {
 
   workingDir = file("$buildDir")
   testClassesDirs = sourceSets.systemTest.output.classesDirs
@@ -529,8 +529,16 @@ task clonePlumeLib {
     def plumeFolder = file("$buildDir/utils/plume-lib")
     if ( ! plumeFolder.exists() ) {
       org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
+      // This chmod command causes errors when pulling, because the clone
+      // of plume-lib has uncommitted changes (changes to execute bits).
+      // Find another way, or use a more restricted command that only
+      // sets execute bits on executable files, not all files in the
+      // bin/ directory.
+      // exec {
+      //   commandLine 'chmod', '-R', '+x', "$buildDir/utils/plume-lib/bin"
+      // }
       exec {
-        commandLine 'chmod', '-R', '+x', "$buildDir/utils/plume-lib/bin"
+        commandLine 'chmod', '+x', "$buildDir/utils/plume-lib/bin/preplace", "$buildDir/utils/plume-lib/bin/html-update-toc"
       }
     } else {
       def grgit = org.ajoberstar.grgit.Grgit.open(dir: plumeFolder)

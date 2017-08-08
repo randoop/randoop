@@ -30,6 +30,7 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.SignatureParseException;
 import randoop.reflection.TypeNames;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -200,8 +201,7 @@ public class CoveredClassTest {
     Set<String> omitFields =
         GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "field list");
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    ReflectionPredicate reflectionPredicate =
-        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitFields);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(methodlist, "method list");
@@ -212,12 +212,14 @@ public class CoveredClassTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
+              GenInputsAbstract.omitmethods,
               classnames,
               coveredClassnames,
               methodSignatures,
               classNameErrorHandler,
-              GenInputsAbstract.literals_file);
-    } catch (OperationParseException e) {
+              GenInputsAbstract.literals_file,
+              null);
+    } catch (SignatureParseException e) {
       fail("operation parse exception thrown: " + e);
     } catch (NoSuchMethodException e) {
       fail("Method not found: " + e);

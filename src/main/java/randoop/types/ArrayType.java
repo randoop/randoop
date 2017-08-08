@@ -230,6 +230,14 @@ public class ArrayType extends ReferenceType {
     return false;
   }
 
+  @Override
+  public Type getRawtype() {
+    if (!componentType.isGeneric()) {
+      return this;
+    }
+    return new ArrayType(componentType.getRawtype(), runtimeClass);
+  }
+
   /**
    * Indicate whether this type has a wildcard either as or in a type argument.
    *
@@ -260,7 +268,7 @@ public class ArrayType extends ReferenceType {
     Type rawElementType;
     if (this.componentType.isArray()) {
       rawElementType = ((ArrayType) componentType).getRawTypeArray();
-    } else if (this.componentType.isClassType()) {
+    } else if (this.componentType.isClassOrInterfaceType()) {
       rawElementType = ((ClassOrInterfaceType) componentType).getRawtype();
     } else {
       return this;
