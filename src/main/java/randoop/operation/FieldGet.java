@@ -148,8 +148,7 @@ public class FieldGet extends CallableOperation {
 
     AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
     ClassOrInterfaceType classType = accessibleField.getDeclaringType();
-    Type fieldType;
-    fieldType = Type.forType(accessibleField.getRawField().getGenericType());
+    Type fieldType = Type.forType(accessibleField.getRawField().getGenericType());
 
     List<Type> getInputTypeList = new ArrayList<>();
     if (!accessibleField.isStatic()) {
