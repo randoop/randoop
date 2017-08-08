@@ -238,8 +238,8 @@ public class OperationModel {
   /**
    * Returns the set of input types that occur as parameters in classes under test.
    *
-   * @see TypeExtractor
    * @return the set of input types that occur in classes under test
+   * @see TypeExtractor
    */
   public Set<Type> getInputTypes() {
     //TODO this is not used, should it be? or should it even be here?

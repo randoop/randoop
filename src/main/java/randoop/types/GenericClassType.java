@@ -194,9 +194,9 @@ public class GenericClassType extends ParameterizedType {
   /**
    * Creates a type substitution using the given type arguments and applies it to this type.
    *
-   * @see #apply(Substitution)
    * @param typeArguments the type arguments
    * @return a type which is this type parameterized by the given type arguments
+   * @see #apply(Substitution)
    */
   public InstantiatedType instantiate(ReferenceType... typeArguments) {
     if (typeArguments.length != this.getTypeParameters().size()) {
@@ -220,9 +220,9 @@ public class GenericClassType extends ParameterizedType {
   /**
    * Creates a type substitution using the given type arguments and applies it to this type.
    *
-   * @see #apply(Substitution)
    * @param typeArguments the type arguments
    * @return the type that is this type instantiated by the given type arguments
+   * @see #apply(Substitution)
    */
   public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
     if (typeArguments.size() != this.getTypeParameters().size()) {

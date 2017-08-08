@@ -112,8 +112,8 @@ public abstract class ParameterBound {
   /**
    * Applies a capture conversion to any wildcard arguments in the type of this bound.
    *
-   * @see ReferenceType#applyCaptureConversion()
    * @return this type with any wildcards replaced by capture conversion
+   * @see ReferenceType#applyCaptureConversion()
    */
   public abstract ParameterBound applyCaptureConversion();
 
