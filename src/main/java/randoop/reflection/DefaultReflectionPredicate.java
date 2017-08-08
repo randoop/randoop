@@ -6,46 +6,39 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 import randoop.CheckRep;
 import randoop.util.Log;
 
 /**
- * Returns true for public members, with some exceptions (see {@link #doNotUseSpecialCase} method).
+ * Default implementations of methods that indicate whether a class, method, constructor, or field
+ * should be used in Randoop's exploration. Returns true for public members, with some exceptions
+ * (see {@link #doNotUseSpecialCase} method).
  *
  * <p>If a method has the {@code @CheckRep} annotation, returns false (the method will be used as a
  * contract checker, not as a method under test).
  */
 public class DefaultReflectionPredicate implements ReflectionPredicate {
 
-  private List<Pattern> omitMethods = null;
+  /**
+   * The set of fully-qualified field names to omit from generated tests. See {@link
+   * randoop.main.GenInputsAbstract#omit_field}.
+   */
   private Set<String> omitFields;
 
-  /**
-   * Create a reflection predicate. If omitMethods is null, then no methods are omitted.
-   *
-   * @param omitMethods the pattern for names of methods to omit
-   */
-  public DefaultReflectionPredicate(List<Pattern> omitMethods) {
-    this(omitMethods, new HashSet<String>());
-  }
-
+  /** Create a reflection predicate. */
   public DefaultReflectionPredicate() {
-    this(null, new HashSet<String>());
+    this(new HashSet<String>());
   }
 
   /**
    * DefaultReflectionFilter creates a filter object that uses default criteria for inclusion of
    * reflection objects.
    *
-   * @param omitMethods pattern for methods to omit, if null then no methods omitted
-   * @param omitFields set of field names to omit
+   * @param omitFields set of fully-qualified field names to omit
    */
-  public DefaultReflectionPredicate(List<Pattern> omitMethods, Set<String> omitFields) {
+  public DefaultReflectionPredicate(Set<String> omitFields) {
     super();
-    this.omitMethods = omitMethods;
     this.omitFields = omitFields;
   }
 
@@ -57,16 +50,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   /**
    * {@inheritDoc}
    *
-   * <p>Does checks for the following cases:
+   * <p>Does checks for the several cases, including main methods, bridge methods (see {@link
+   * #discardBridge(Method)}, non-bridge synthetic methods, non-visible methods, or methods with
+   * non-visible return types.
    *
-   * <ul>
-   *   <li>Main methods
-   *   <li>Methods matching omission pattern
-   *   <li>Bridge methods related to type
-   *   <li>Non-bridge, synthetic methods
-   *   <li>Methods that are not visible, or do not have visible return type
-   *   <li>[Special cases that need to be listed TODO]
-   * </ul>
+   * <p>See the code for the full list.
    */
   @Override
   public boolean test(Method m) {
@@ -89,15 +77,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    //XXX should use fully-qualified signature and not toString()
-    if (matchesOmitMethodPattern(m.toString())) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: matches regexp specified in --omitmethods option.");
-      }
-      return false;
-    }
-
     if (m.isBridge()) {
       if (discardBridge(m)) {
         return false;
@@ -116,13 +95,16 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    // TODO we could enable some methods from Object, like getClass
+    //This is a special case handled here to avoid printing the reason for exclusion
+    // Most Object methods are excluded. Allow getClass. Equals is used in contracts.
+    // The rest are problematic (toString), involve threads, waiting, or are somehow problematic.
     if (m.getDeclaringClass().equals(java.lang.Object.class)) {
-      return false; // handled here to avoid printing reasons
+      return m.getName().equals("getClass");
     }
 
+    //This is a special case handled here to avoid printing the reason for exclusion
     if (m.getDeclaringClass().equals(java.lang.Thread.class)) {
-      return false; // handled here to avoid printing reasons
+      return false;
     }
 
     if (m.getAnnotation(CheckRep.class) != null) {
@@ -148,15 +130,16 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   /**
    * Determines whether a bridge method should be discarded.
    *
-   * <p>Bridge methods are synthetic overriding methods that are used by the compiler to make
-   * certain things possible that seem reasonable but need tweaks to make them work. Two of the
-   * three known cases involve forcing unchecked casts to allow type narrowing of return types
-   * (covariant return types) and instantiation of generic type parameters in methods. Both of these
-   * are situations that we think of as overriding, but really aren't. These bridge methods do
-   * unchecked type conversions from the general type to the more specific type expected by the
-   * local method. As a result, if included for testing, Randoop would generate many tests that
-   * would confirm that there is an unchecked type conversion. So, we do not want to include these
-   * methods.
+   * <p>Bridge methods are synthetic overriding methods that are generated by the compiler to make
+   * certain calls type-correct.
+   *
+   * <p>Two of the three known cases involve forcing unchecked casts to allow type narrowing of
+   * return types (covariant return types) and instantiation of generic type parameters in methods.
+   * Both of these are situations that a programmer could view as overriding, but really aren't.
+   * These bridge methods do unchecked type conversions from the general type to the more specific
+   * type expected by the local method. As a result, if included for testing, Randoop would generate
+   * many tests that would confirm that there is an unchecked type conversion. So, we do not want to
+   * include these methods.
    *
    * <p>The third known case involves a public class inheriting a public method defined in a private
    * class of the same package. The bridge method in the public class exposes the method outside of
@@ -170,7 +153,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @return true if the bridge method should be discarded, false otherwise
    */
   private boolean discardBridge(Method m) {
-    if (isNotVisibilityBridge(m)) {
+    if (!isVisibilityBridge(m)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: it's a bridge method");
@@ -185,7 +168,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   /**
-   * Determines whether a bridge method is not a <i>visibility</i> bridge, which allows access to a
+   * Determines whether a bridge method is a <i>visibility</i> bridge, which allows access to a
    * definition of the method in a non-visible superclass.
    *
    * <p>To recognize a visibility bridge, it is sufficient to run up the superclass chain and
@@ -196,11 +179,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @return true if {@code m} is not a visibility bridge, and false otherwise
    * @throws Error if a {@link SecurityException} is thrown when accessing superclass methods
    */
-  private boolean isNotVisibilityBridge(Method m) throws Error {
+  private boolean isVisibilityBridge(Method m) throws Error {
     Method method = m;
     Class<?> c = m.getDeclaringClass();
     if (!isPublic(c)) {
-      return true;
+      return false;
     }
     while (c != null && isPublic(c) && method != null && method.isBridge()) {
       c = c.getSuperclass();
@@ -213,91 +196,86 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
         throw new Error(msg);
       }
     }
-    return isPublic(c);
+    return !isPublic(c);
   }
 
+  /**
+   * Indicates whether the {@code Class} is public.
+   *
+   * @param c the class
+   * @return true if {@code c} is a public class
+   */
   private boolean isPublic(Class<?> c) {
     return Modifier.isPublic(c.getModifiers() & Modifier.classModifiers());
   }
 
+  /**
+   * Indicates methods for which this predicate should return false. See inline comments for
+   * details. This is a main place that Randoop controls which methods are methods under test.
+   *
+   * @param m the method to accept or reject for inclusion in methods under test
+   * @return a non-null string giving a reason the method should be skipped, or null to not skip it
+   */
+  @SuppressWarnings("ReferenceEquality")
   private String doNotUseSpecialCase(Method m) {
 
+    String mName = m.getName().intern();
+    Class<?> mClass = m.getDeclaringClass();
+
     // Special case 1:
-    // We're skipping compareTo method in enums - you can call it only with the
-    // same type as receiver
-    // but the signature does not tell you that
-    if (!m.getDeclaringClass().isAnonymousClass()
-        && m.getDeclaringClass().getCanonicalName().equals("java.lang.Enum")
-        && m.getName().equals("compareTo")
+    // Skip compareTo method in enums -- you can call it only with the
+    // same type as receiver, but the signature does not tell you that.
+    if (!mClass.isAnonymousClass()
+        && mClass.getCanonicalName().equals("java.lang.Enum")
+        && mName == "compareTo" // interned
         && m.getParameterTypes().length == 1
         && m.getParameterTypes()[0].equals(Enum.class))
-      return "We're skipping compareTo method in enums";
+      return "Enum compareTo method has restrictions on argument types";
 
-    // Special case 2:
-    if (m.getName().equals("randomUUID")) {
-      return "We're skipping this to get reproducibility when running java.util tests.";
+    // Special case 2: Nondeterminism
+    if (mName == "randomUUID") { // interned
+      return "randomUUID() is nondeterministic";
     }
-
-    // Special case 2:
-    // hashCode is bad in general but String.hashCode is fair game
-    if (m.getName().equals("hashCode") && !m.getDeclaringClass().equals(String.class)) {
-      return "hashCode";
+    // hashCode is nondeterministic in general, but String.hashCode is deterministic.
+    if (mName == "hashCode" // interned
+        && !mClass.equals(String.class)) {
+      return "hashCode is nondeterministic";
     }
-
-    // Special case 3: (just clumps together a bunch of hashCodes, so skip it)
-    if (m.getName().equals("deepHashCode") && m.getDeclaringClass().equals(Arrays.class)) {
-      return "deepHashCode";
+    if (mName == "deepHashCode" // interned
+        && mClass.equals(Arrays.class)) {
+      return "deepHashCode is nondeterministic because hashCode() is";
     }
-
-    // Special case 4: (differs too much between JDK installations)
-    if (m.getName().equals("getAvailableLocales")) {
-      return "getAvailableLocales";
+    if (mName == "getAvailableLocales") { // interned
+      return "getAvailableLocales differs too much between JDK installations";
     }
 
-    // During experimentation, we observed that exception-related
-    // methods can cause lots of nonterminating runs of Randoop. So we
-    // don't explore them.
-    if (m.getName().equals("fillInStackTrace")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("getCause")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("getLocalizedMessage")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("getMessage")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("getStackTrace")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("initCause")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("printStackTrace")) {
-      return "Randoop avoids exploring Exception class methods.";
-    }
-    if (m.getName().equals("setStackTrace")) {
-      return "Randoop avoids exploring Exception class methods.";
+    // Special case 3:
+    // During experimentation, we observed that exception-related methods can
+    // cause lots of nonterminating runs of Randoop. So we don't explore them.
+    if ((mName == "fillInStackTrace") // interned
+        || (mName == "getCause") // interned
+        || (mName == "getLocalizedMessage") // interned
+        || (mName == "getMessage") // interned
+        || (mName == "getStackTrace") // interned
+        || (mName == "initCause") // interned
+        || (mName == "printStackTrace") // interned
+        || (mName == "setStackTrace")) { // interned
+      return "Randoop avoids exploring Exception class methods, to avoid nontermination.";
     }
 
     return null;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Use the constructor unless it is specifically omitted, is synthetic with anonymous
+   * parameters, or the class is abstract.
+   */
   @Override
   public boolean test(Constructor<?> c) {
 
-    //should use fully-qualified signature
-    if (matchesOmitMethodPattern(c.toString())) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + c.toString());
-      }
-      return false;
-    }
-
-    // synthetic constructors are OK
-    // unless they have anonymous parameters
+    // Synthetic constructors are OK unless they have anonymous parameters.
     if (c.isSynthetic()) {
       for (Class<?> p : c.getParameterTypes()) {
         if (p.isAnonymousClass()) {
@@ -307,23 +285,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     }
 
     return !Modifier.isAbstract(c.getDeclaringClass().getModifiers());
-  }
-
-  private boolean matchesOmitMethodPattern(String name) {
-    if (omitMethods == null || omitMethods.isEmpty()) {
-      return false;
-    }
-    for (Pattern pattern : omitMethods) {
-      boolean result = pattern.matcher(name).find();
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            String.format("Comparing '%s' against pattern '%s' = %b%n", name, pattern, result));
-      }
-      if (result) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
@@ -339,22 +300,38 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    if (omitFields == null) {
+    String name = f.getDeclaringClass().getName() + "." + f.getName();
+
+    if (omitFields == null) { // No omitFields were given
+      if (Log.isLoggingOn()) {
+        Log.logLine(String.format("Field '%s' included, no omit-field arguments", name));
+      }
       return true;
     }
 
-    String name = f.getDeclaringClass().getName() + "." + f.getName();
     boolean result = !omitFields.contains(name);
     if (Log.isLoggingOn()) {
       if (result) {
-        Log.logLine(String.format("Including field '%s'", name));
+        if (Log.isLoggingOn()) {
+          Log.logLine(String.format("Field '%s' does not match omit-field, including field", name));
+        }
       } else {
-        Log.logLine(String.format("Not including field '%s'", name));
+        if (Log.isLoggingOn()) {
+          Log.logLine(String.format("Field '%s' matches omit-field, not including field", name));
+        }
       }
     }
     return result;
   }
 
+  /**
+   * Indicates that a field is generated by the covered-class instrumentation agent.
+   *
+   * <p>Tests whether the field begins with {@code "randoop_"}.
+   *
+   * @param f the field
+   * @return true if the field name
+   */
   private boolean isRandoopInstrumentation(Field f) {
     return f.getName().contains("randoop_");
   }

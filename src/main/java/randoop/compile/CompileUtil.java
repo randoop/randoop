@@ -13,9 +13,9 @@ class CompileUtil {
   /**
    * Converts the path string to a URI for use by the file manager of the compiler.
    *
-   * @see SequenceJavaFileManager#uri(JavaFileManager.Location, String, String)
    * @param pathString the path to a file as a string
    * @return the {@code URI} for the path
+   * @see SequenceJavaFileManager#uri(JavaFileManager.Location, String, String)
    */
   static URI toURI(String pathString) {
     try {

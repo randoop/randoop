@@ -124,8 +124,8 @@ public class CoveredClassTransformer implements ClassFileTransformer {
    * the class. Modifies each method and constructor to set an inserted private field that keeps
    * track. Adds a public method {@code boolean randoop_checkAndReset()}
    *
-   * @see #transform(ClassLoader, String, Class, ProtectionDomain, byte[])
    * @param cc the {@code javassist.CtClass} object
+   * @see #transform(ClassLoader, String, Class, ProtectionDomain, byte[])
    */
   private void modifyClass(CtClass cc) {
     // add static field

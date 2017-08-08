@@ -164,4 +164,9 @@ public abstract class TypeVariable extends ParameterType {
 
   public abstract TypeVariable createCopyWithBounds(
       ParameterBound lowerBound, ParameterBound upperBound);
+
+  @Override
+  public Type getRawtype() {
+    return JavaTypes.OBJECT_TYPE;
+  }
 }

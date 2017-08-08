@@ -47,8 +47,8 @@ public interface IEventListener {
    * Called by AbstractGenerator to determine if generation should stop. True signals to the
    * generator that generation should stop.
    *
-   * @see randoop.generation.AbstractGenerator
    * @return true if generation should stop, false otherwise
+   * @see randoop.generation.AbstractGenerator
    */
   boolean shouldStopGeneration();
 }

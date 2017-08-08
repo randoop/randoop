@@ -20,6 +20,17 @@ import java.lang.reflect.Method;
 public interface ClassVisitor {
 
   /**
+   * Perform action on member class.
+   *
+   * <p>The {@link ReflectionManager} is needed to allow visitors to initiate recursive visits if
+   * needed.
+   *
+   * @param c the member class
+   * @param reflectionManager the {@link ReflectionManager} that called this visitor
+   */
+  void visit(Class<?> c, ReflectionManager reflectionManager);
+
+  /**
    * Perform action on a constructor.
    *
    * @param c the constructor

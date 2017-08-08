@@ -74,8 +74,8 @@ class WildcardArgument extends TypeArgument {
   /**
    * Applies a capture conversion to the bound of this {@link WildcardArgument}.
    *
-   * @see ReferenceType#applyCaptureConversion()
    * @return this wildcard argument with capture conversion applied to the type bound
+   * @see ReferenceType#applyCaptureConversion()
    */
   public WildcardArgument applyCaptureConversion() {
     WildcardType wildcardType = argumentType.applyCaptureConversion();

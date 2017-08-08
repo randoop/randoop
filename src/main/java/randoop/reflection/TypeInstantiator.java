@@ -232,7 +232,7 @@ public class TypeInstantiator {
     for (Type parameterType : operation.getInputTypes()) {
       Type workingType = parameterType.apply(substitution);
       if (workingType.isGeneric()) {
-        if (workingType.isClassType()) {
+        if (workingType.isClassOrInterfaceType()) {
           Substitution<ReferenceType> subst =
               selectMatch((ParameterizedType) parameterType, (ParameterizedType) workingType);
           if (subst == null) {
@@ -273,10 +273,10 @@ public class TypeInstantiator {
   /**
    * Selects an instantiating substitution for the given list of type variables.
    *
-   * @see #selectSubstitution(List, Substitution)
    * @param typeParameters the type variables to be instantiated
    * @return a substitution instantiating the type variables; null if a variable has no
    *     instantiating types
+   * @see #selectSubstitution(List, Substitution)
    */
   private Substitution<ReferenceType> selectSubstitution(List<TypeVariable> typeParameters) {
     Substitution<ReferenceType> substitution = new Substitution<>();

@@ -154,7 +154,7 @@ public class SequenceCollection {
       if (sequence.isActive(argument.getDeclIndex())) {
         Type type = formalTypes.get(i);
         sequenceTypes.add(type);
-        if (type.isClassType()) {
+        if (type.isClassOrInterfaceType()) {
           sequenceTypes.addAll(((ClassOrInterfaceType) type).getSuperTypes());
         }
         typeSet.add(type);

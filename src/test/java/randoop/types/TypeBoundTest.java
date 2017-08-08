@@ -216,6 +216,11 @@ public class TypeBoundTest {
     }
 
     @Override
+    public void visit(Class<?> c, ReflectionManager reflectionManager) {
+      // do nothing for member class
+    }
+
+    @Override
     public void visit(Constructor<?> c) {
       addParameters(c.getName(), c.getTypeParameters());
     }
