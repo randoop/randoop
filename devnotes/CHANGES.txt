@@ -9,11 +9,11 @@ same way.
    it outputs them; this makes the failures easier to understand.  You can
    disable this behavior.
 
-Randoop's mapcall agent has been improved.  The mapcall agent prevents
-Randoop, or a test suite, from calling certain methods such as System.exit();
-instead, at runtime a replacement method is called.
+Randoop's mapcall agent has been renamed replacecall and has been improved.
+The replacecall agent prevents Randoop, or a test suite, from calling certain
+methods such as System.exit(); `instead, at runtime a replacement method is called.
  * The file format for specifying replacements has changed.
- * The mapcall agent applies default replacements for System.exit() and
+ * The replacecall agent applies default replacements for System.exit() and
    display of AWT/Swing components
  * Randoop does not make direct calls to methods whose calls are replaced.
    You can disable this with option --dont-omit-replaced-methods.

@@ -25,7 +25,7 @@ It automatically creates unit tests for your classes, in JUnit format.
     * `docs` - all editable documentation and resources
     * `javadoc` - resource files for creating [docs/api](docs/api)
     * `main` - Randoop source code
-    * `mapcalltest` - source for JUnit tests of the mapcall Java agent
+    * `replacecalltest` - source for JUnit tests of the replacecall Java agent
     * `systemtest` - source for Randoop system tests
     * `test` - source for JUnit tests of Randoop
     * `testinput` - source for libraries used in Randoop testing
