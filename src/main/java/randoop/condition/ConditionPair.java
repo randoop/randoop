@@ -6,7 +6,7 @@ package randoop.condition;
  * <p>Intended to be used to represent pairs for pre-specifications (a pair with pre-condition and
  * post-condition) and throws-specifications (a pair with a pre-condition and a throws-clause).
  *
- * @param <T> the post-clause type (Use {@link PostCondition} or {@link ThrowsClause}.)
+ * @param <T> the post-clause type. Use {@link PostCondition} or {@link ThrowsClause}.
  */
 class ConditionPair<T> {
 
