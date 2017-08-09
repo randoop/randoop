@@ -154,7 +154,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Indicates whether the class is in {@code java.awt.} or {@code javax.swing.} packages.
+   * Indicates whether the class is in the {@code java.awt.} or {@code javax.swing.} packages.
    *
    * @param fullClassName the fully-qualified class name
    * @return true if the class is in {@code java.awt.} or {@code javax.swing.}, false otherwise
@@ -164,8 +164,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Indicates whether the named class occurs in a package that is excluded. Tests whether one of
-   * the excluded package names is a prefix of the fully-qualified class name.
+   * Indicates whether the named class is defined in a package that is excluded.
    *
    * @param fullClassName the fully-qualified class name, must be non-null
    * @return true if any excluded package is a prefix of the class name, false otherwise
@@ -185,7 +184,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Processes each method in the given class replacing any specified calls with static user calls.
+   * Processes each method in the given class replacing any specified calls. The replacements are
+   * static methods.
    *
    * @param cg the BCEL class representation
    * @return true if the class has been transformed, false if either no calls were replaced or an
