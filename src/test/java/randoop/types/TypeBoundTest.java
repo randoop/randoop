@@ -44,6 +44,7 @@ public class TypeBoundTest {
     Map<String, TypeVariable> argTypes = getArgumentTypes(WildcardBoundExamples.class);
 
     TypeVariable variable;
+
     variable = argTypes.get("m1");
     assertTrue("TW satisfies " + variable.getName() + " bound", checkBound(variable, twType));
     assertFalse(

@@ -119,8 +119,7 @@ public class StringEscapeUtils {
       return;
     }
 
-    int sz;
-    sz = str.length();
+    int sz = str.length();
     for (int i = 0; i < sz; i++) {
       char ch = str.charAt(i);
 

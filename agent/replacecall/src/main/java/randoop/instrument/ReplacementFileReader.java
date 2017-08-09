@@ -324,8 +324,8 @@ class ReplacementFileReader {
   }
 
   /**
-   * Adds method replacements determined by an original and replacement package. Uses the boot
-   * classpath to find the replacement package.
+   * Adds method replacements determined by an original and replacement package. Uses the
+   * bootclasspath to find the replacement package.
    *
    * <p>Visits each class of the package on the classpath and applies {@link
    * #addReplacementsForClass(ConcurrentHashMap, String, Class)} to add the method replacements.
@@ -349,7 +349,7 @@ class ReplacementFileReader {
 
     // Explore the whole classpath to ensure all replacements are found.
     for (String pathString : bootclasspath.split(File.pathSeparator)) {
-      // replacements wont be found in java.home
+      // Replacements won't be found in java.home.
       if (pathString.startsWith(javaHome)) {
         continue;
       }
@@ -402,8 +402,7 @@ class ReplacementFileReader {
       ClassLoader loader)
       throws ReplacementException, IOException, ClassNotFoundException {
     boolean found = false;
-    Enumeration<URL> resources;
-    resources = loader.getResources(replacementPackage.replace('.', '/'));
+    Enumeration<URL> resources = loader.getResources(replacementPackage.replace('.', '/'));
 
     // Explore the whole classpath to ensure all replacements are found.
     while (resources.hasMoreElements()) {
@@ -529,10 +528,7 @@ class ReplacementFileReader {
       throws ClassNotFoundException, ReplacementException {
 
     // Check that original class exists
-    Class<?> originalClass;
-    originalClass = Class.forName(originalClassname);
-
-    if (originalClass != null) {
+    if (Class.forName(originalClassname) != null) {
       Class<?> replacementClass = Class.forName(replacementClassname);
       addReplacementsForClass(replacementMap, originalClassname, replacementClass);
     }

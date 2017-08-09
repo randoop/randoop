@@ -424,8 +424,7 @@ class HelperSequenceCreator {
     MethodCall op = new MethodCall(method);
     assert method.getTypeParameters().length == 1 : "method should have one type parameter";
     List<Type> paramTypes = new ArrayList<>();
-    ParameterizedType collectionType;
-    collectionType = JDKTypes.COLLECTION_TYPE.instantiate(elementType);
+    ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(elementType);
 
     paramTypes.add(collectionType);
     paramTypes.add(ArrayType.ofComponentType(elementType));
