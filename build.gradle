@@ -340,7 +340,7 @@ task replacecallTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.replacecallTest.output.resourcesDir
   testClassesDirs = sourceSets.replacecallTest.output.classesDirs
   classpath = sourceSets.replacecallTest.runtimeClasspath + files("$buildDir/libs/replacecall-${version}.jar")
-  jvmArgs "-javaagent:$buildDir/libs/replacecall-${version}.jar=--dont-transform=load-exclusions.txt,--debug"
+  jvmArgs "-javaagent:$buildDir/libs/replacecall-${version}.jar=--dont-transform=systemtest-load-exclusions.txt,--debug"
   jvmArgs "-Xbootclasspath/a:$buildDir/libs/replacecall-${version}.jar"
   testLogging {
     showStandardStreams = true

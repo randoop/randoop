@@ -1,0 +1,6 @@
+// Packages whose classes should not be loaded and transformed by the replacecall agent,
+// when running the Randoop system tests.
+//
+org.gradle
+org.jacoco
+worker.org.gradle
