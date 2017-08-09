@@ -120,7 +120,7 @@ public class ReplaceCallAgent {
       } catch (IOException e) {
         System.err.format(
             "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
-        System.exit(1); // Exit on user input error. (See note at end of method.)
+        System.exit(1); // Exit on user input error. (Throwing exception would halt JVM.)
       }
     }
 
