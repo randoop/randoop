@@ -1,10 +1,10 @@
 package randoop.condition;
 
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import plume.UtilMDE;
 
 /** A map from a {@code String} name to another name. */
 public class NameReplacementMap {
@@ -14,7 +14,7 @@ public class NameReplacementMap {
 
   /** Creates a new {@link NameReplacementMap} with an empty map. */
   NameReplacementMap() {
-    this.replacements = new HashMap<>();
+    this.replacements = new LinkedHashMap<>();
   }
 
   /**
@@ -32,30 +32,27 @@ public class NameReplacementMap {
   /**
    * Replace occurrences of names from this map with corresponding replacements.
    *
+   * <p>This method is not guaranteed to work correctly if there are replacements that are cyclic or
+   * whose application is order dependent, such as {@code "a"=>"b"} and {@code "b"=>"c"}.
+   *
    * @param text the text to search for occurrences of names in this map
    * @return the text modified by replacing original names with replacement names
    */
   String replaceNames(String text) {
-    // make sure that we are replacing from longer to shorter strings to avoid mangled replacement
-    Set<String> names = new TreeSet<>(new LengthComparator());
-    names.addAll(replacements.keySet());
-    for (String name : names) {
-      String namePattern = "\\b" + name + "\\b";
-      text = text.replaceAll(namePattern, replacements.get(name));
-    }
-    return text;
-  }
+    String nameString = UtilMDE.join(replacements.keySet().toArray(), "|");
+    Pattern namePattern = Pattern.compile("\\b(" + nameString + ")\\b");
+    Matcher nameMatcher = namePattern.matcher(text);
+    StringBuilder b = new StringBuilder();
 
-  /** Comparator to order strings by decreasing length. */
-  private static class LengthComparator implements Comparator<String> {
-    @Override
-    public int compare(String o1, String o2) {
-      if (o1.length() < o2.length()) {
-        return 1; // shorter last
-      } else if (o1.length() > o2.length()) {
-        return -1; // longer first
-      }
-      return o1.compareTo(o2);
+    int position = 0;
+    while (nameMatcher.find(position)) {
+      int previousPosition = position;
+      String name = nameMatcher.group(1);
+      position = nameMatcher.start(1);
+      b.append(text.substring(previousPosition, position)).append(replacements.get(name));
+      position += name.length();
     }
+    b.append(text.substring(position));
+    return b.toString();
   }
 }

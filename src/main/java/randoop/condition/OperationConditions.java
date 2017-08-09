@@ -6,12 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Represents all conditions on an operation including pre-, post- and throws-conditions defined on
- * this operation and inherited from supertypes.
- *
- * <p>For an operation that is a method, the {@link OperationConditions} form an arbitrary directed
- * acyclic graph consisting of conditions for methods of supertypes, each of which has attached
- * specifications.
+ * Represents the collection of all conditions on an operation including pre-, post- and
+ * throws-conditions defined on this operation and inherited from supertypes.
  */
 public class OperationConditions {
 
@@ -24,7 +20,13 @@ public class OperationConditions {
   /** The throws-conditions. */
   private final List<ConditionPair<ThrowsClause>> throwsConditions;
 
-  /** The parent conditions for this object */
+  /**
+   * The parent conditions for this object.
+   *
+   * <p>For an operation that is a method, the {@link OperationConditions} form an arbitrary
+   * directed acyclic graph consisting of conditions for methods of supertypes, each of which has
+   * attached specifications.
+   */
   private List<OperationConditions> parentList;
 
   /** Creates an empty {@link OperationConditions} object. */

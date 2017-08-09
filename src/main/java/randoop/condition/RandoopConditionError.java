@@ -1,7 +1,8 @@
 package randoop.condition;
 
 /**
- * Exception to represent errors that occur during creation or evaluation of a {@link Condition}.
+ * Exception to represent user errors that occur during creation or evaluation of a {@link
+ * Condition}.
  */
 public class RandoopConditionError extends Error {
 

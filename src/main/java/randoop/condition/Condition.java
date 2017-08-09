@@ -5,7 +5,15 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 import randoop.util.Log;
 
-/** Represents a condition on an operation. */
+/**
+ * Defines objects that evaluate a Boolean expression by invoking a {@code
+ * java.lang.reflect.Method}.
+ *
+ * <p>Used to represent a pre- or post-condition of an operation where the expression is given as an
+ * expression in Java source code and converted using {@link ConditionMethodCreator}.
+ *
+ * @see SpecificationTranslator
+ */
 public class Condition {
 
   /** The {@code java.lang.reflect.Method} to test this condition */

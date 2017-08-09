@@ -11,11 +11,20 @@ import randoop.test.TestCheckGenerator;
 
 /** Records the outcome of checking all of the conditions for a method. */
 public class OutcomeTable {
+
+  /** Indicates whether this table is empty. */
   private boolean isEmpty = true;
+
+  /** Indicates whether this table has a valid entry. */
   private boolean hasValid = false;
+
+  /** The list of throws clauses for this table. */
   private final List<Set<ThrowsClause>> exceptionSets;
+
+  /** The list of post-conditions for this table. */
   private final List<PostCondition> postConditions;
 
+  /** Creates an empty {@link OutcomeTable}. */
   public OutcomeTable() {
     exceptionSets = new ArrayList<>();
     postConditions = new ArrayList<>();
@@ -25,8 +34,9 @@ public class OutcomeTable {
    * Adds the outcome of checking the conditions of a specification.
    *
    * @param preconditionsSatisfied boolean value indicating whether all preconditions satisfied
-   * @param throwsClauses set of exceptions expected in post-state
-   * @param postCondition post-condition that must be true in post-state, null if none
+   * @param throwsClauses set of exception type-comment pairs for exceptions expected in post-state
+   * @param postCondition post-condition that must be true in post-state if no exception is thrown,
+   *     null if none
    */
   void add(
       boolean preconditionsSatisfied,

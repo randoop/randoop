@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
 import randoop.compile.SequenceCompilerException;
@@ -19,18 +20,23 @@ public class ConditionMethodCreator {
   /** The name of the condition method. */
   private static final String CONDITION_METHOD_NAME = "test";
 
-  /** The name generator used to generate class names. */
+  /** The name generator to use to generate class names. */
   private static final NameGenerator nameGenerator = new NameGenerator(CONDITION_CLASS_BASENAME);
 
   /**
    * Creates the {@code java.lang.reflect.Method} to test the condition in the condition code.
    *
-   * <p>Generates the Java source for a class with the method and then
+   * <p>Generates the Java source for a class with the method, compiles the class and returns the
+   * condition method.
    *
-   * @param signature the signature string for the condition method
-   * @param parameterDeclaration the parameter declaration string, includes parentheses
+   * <p>The class name of the condition method signature is ignored and a new name is generated
+   * using {@link #nameGenerator}.
+   *
+   * @param signature the signature for the condition method
+   * @param parameterDeclaration the parameter declaration string, including parameter names and
+   *     wrapped in parentheses
    * @param conditionSource the source code for the condition
-   * @param compiler the compiler used to compile the condition class
+   * @param compiler the compiler to use to compile the condition class
    * @return the {@code Method} object for the condition method of the created class
    */
   public static Method create(
@@ -55,13 +61,13 @@ public class ConditionMethodCreator {
     try {
       conditionClass = compiler.loadClass(packageName, classname);
     } catch (ClassNotFoundException e) {
-      throw new RandoopConditionError("Failed to load condition class", e);
+      throw new BugInRandoopException("Failed to load condition class", e);
     }
 
     try {
       return conditionClass.getDeclaredMethod(signature.getName(), signature.getParameterTypes());
     } catch (NoSuchMethodException e) {
-      throw new RandoopConditionError("Failed to load condition method", e);
+      throw new BugInRandoopException("Failed to load condition method", e);
     }
   }
 
@@ -149,13 +155,16 @@ public class ConditionMethodCreator {
    * @param receiverType the declaring class of the method or constructor, used as receiver type if
    *     {@code shift == 1}
    * @param parameterTypes the parameter types for the original method
-   * @param shift starting position of {@code parameterTypes} in condition method parameter list,
-   *     either 0 or 1
+   * @param shiftParameters whether to shift the {@code parameterTypes} in the condition method
+   *     parameter list by 1
    * @return the constructed pre-condition method signature
    */
   static RawSignature getPreconditionSignature(
-      String packageName, Class<?> receiverType, Class<?>[] parameterTypes, int shift) {
-    assert shift == 0 || shift == 1;
+      String packageName,
+      Class<?> receiverType,
+      Class<?>[] parameterTypes,
+      boolean shiftParameters) {
+    int shift = (shiftParameters) ? 1 : 0;
     Class<?>[] conditionParameterTypes = new Class<?>[parameterTypes.length + shift];
     if (shift == 1) {
       conditionParameterTypes[0] = receiverType;
@@ -181,8 +190,8 @@ public class ConditionMethodCreator {
    *     {@code shift == 1}
    * @param parameterTypes the parameter types for the original method or constructor
    * @param returnType the return type for the method, or the declaring class for a constructor
-   * @param shift starting position of {@code parameterTypes} in condition method parameter list,
-   *     either 0 or 1
+   * @param shiftParameters whether to shift the {@code parameterTypes} in the condition method
+   *     parameter list by 1
    * @return the constructed post-condition method signature
    */
   static RawSignature getPostconditionSignature(
@@ -190,8 +199,8 @@ public class ConditionMethodCreator {
       Class<?> receiverType,
       Class<?>[] parameterTypes,
       Class<?> returnType,
-      int shift) {
-    assert shift == 0 || shift == 1;
+      boolean shiftParameters) {
+    int shift = (shiftParameters) ? 1 : 0;
     Class<?>[] conditionParameterTypes = new Class<?>[parameterTypes.length + shift + 1];
     if (shift == 1) {
       conditionParameterTypes[0] = receiverType;

@@ -142,10 +142,9 @@ public class SpecificationTranslator {
   private static RawSignature getPreConditionSignature(Method method) {
     Class<?> declaringClass = method.getDeclaringClass();
     Class<?>[] parameterTypes = method.getParameterTypes();
-    int shift = 1; // need receiver, so shift the parameters
     String packageName = getPackageName(declaringClass.getPackage());
     return ConditionMethodCreator.getPreconditionSignature(
-        packageName, declaringClass, parameterTypes, shift);
+        packageName, declaringClass, parameterTypes, true);
   }
 
   /**
@@ -163,10 +162,9 @@ public class SpecificationTranslator {
   private static RawSignature getPreConditionSignature(Constructor<?> constructor) {
     Class<?> declaringClass = constructor.getDeclaringClass();
     Class<?>[] parameterTypes = constructor.getParameterTypes();
-    int shift = 0; //constructor has no receiver, so don't need to shift parameter types
     String packageName = getPackageName(declaringClass.getPackage());
     return ConditionMethodCreator.getPreconditionSignature(
-        packageName, declaringClass, parameterTypes, shift);
+        packageName, declaringClass, parameterTypes, false);
   }
 
   /**
@@ -186,10 +184,9 @@ public class SpecificationTranslator {
     Class<?> declaringClass = method.getDeclaringClass();
     Class<?>[] parameterTypes = method.getParameterTypes();
     Class<?> returnType = method.getReturnType();
-    int shift = 1; // need receiver, so shift the parameters
     String packageName = getPackageName(declaringClass.getPackage());
     return ConditionMethodCreator.getPostconditionSignature(
-        packageName, declaringClass, parameterTypes, returnType, shift);
+        packageName, declaringClass, parameterTypes, returnType, true);
   }
 
   /**
@@ -208,10 +205,9 @@ public class SpecificationTranslator {
   private static RawSignature getPostConditionSignature(Constructor<?> constructor) {
     Class<?> declaringClass = constructor.getDeclaringClass();
     Class<?>[] parameterTypes = constructor.getParameterTypes();
-    int shift = 0; //constructor has no receiver, so don't need to shift parameter types
     String packageName = getPackageName(declaringClass.getPackage());
     return ConditionMethodCreator.getPostconditionSignature(
-        packageName, declaringClass, parameterTypes, declaringClass, shift);
+        packageName, declaringClass, parameterTypes, declaringClass, false);
   }
 
   /**
