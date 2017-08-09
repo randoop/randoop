@@ -32,9 +32,6 @@ public class NameReplacementMap {
   /**
    * Replace occurrences of names from this map with corresponding replacements.
    *
-   * <p>This method is not guaranteed to work correctly if there are replacements that are cyclic or
-   * whose application is order dependent, such as {@code "a"=>"b"} and {@code "b"=>"c"}.
-   *
    * @param text the text to search for occurrences of names in this map
    * @return the text modified by replacing original names with replacement names
    */
