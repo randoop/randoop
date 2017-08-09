@@ -116,8 +116,7 @@ public class SequenceTests {
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
-    ExpectedExceptionCheckGen expectation;
-    expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
     testGen =
         new ExtendGenerator(
             new ContractCheckingVisitor(

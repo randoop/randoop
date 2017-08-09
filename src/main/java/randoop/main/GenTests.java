@@ -348,8 +348,7 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Create the generator for this session.
      */
-    AbstractGenerator explorer;
-    explorer =
+    AbstractGenerator explorer =
         new ForwardGenerator(
             operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
 
@@ -837,11 +836,9 @@ public class GenTests extends GenInputsAbstract {
       } else {
         isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
       }
-      ExpectedExceptionCheckGen expectation;
-      expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+      ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
 
-      RegressionCaptureVisitor regressionVisitor;
-      regressionVisitor =
+      RegressionCaptureVisitor regressionVisitor =
           new RegressionCaptureVisitor(expectation, observerMap, visibility, includeAssertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
