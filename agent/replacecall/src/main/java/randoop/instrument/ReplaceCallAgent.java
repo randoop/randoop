@@ -22,8 +22,8 @@ import plume.Options;
 import randoop.MethodReplacements;
 
 /**
- * The replacecall javaagent applies the {@link CallReplacementTransformer} to map calls in loaded
- * classes to alternate implementations.
+ * The replacecall javaagent applies the {@link CallReplacementTransformer} to replace calls in
+ * loaded classes by calls to alternate implementations.
  *
  * <p>The transformer applies method call replacements as specified in either the default or a
  * user-provided replacement file. (See the <a
@@ -43,7 +43,7 @@ public class ReplaceCallAgent {
   public static boolean debug = false;
 
   @SuppressWarnings("WeakerAccess")
-  @Option("directory name for debug information")
+  @Option("directory name where debug logs are written")
   public static String debug_directory = null;
 
   static Path debugPath;
@@ -52,7 +52,7 @@ public class ReplaceCallAgent {
   @Option("print progress information")
   public static boolean verbose = false;
 
-  /** The file from which to read the user replacements for mapping calls. */
+  /** The file from which to read the user replacements for replacing calls. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing methods whose calls to replace by substitute methods")
   public static File map_calls = null;

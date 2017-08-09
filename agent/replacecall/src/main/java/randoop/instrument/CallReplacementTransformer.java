@@ -222,7 +222,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         mg.setInstructionList(instructionList);
         mg.update();
 
-        // Update the max stack and Max Locals
+        // Update the max stack and Max Locals.
         // Since the locals and stack are not modified these three lines should not be necessary,
         // and are here to be cautious. The performance hit is expected to be minimal.
         mg.setMaxLocals();
@@ -331,7 +331,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       case Const.INVOKESPECIAL:
       case Const.INVOKEVIRTUAL:
         /*
-         * These calls have an implicit argument of the {@code this} pointer. Since coversion is
+         * These calls have an implicit receiver ({@code this}) argument. Since conversion is
          * to a static call, need to insert the receiver type at the beginning of the argument type
          * array. This argument has already been explicitly pushed onto the stack, so modifying the
          * call signature is enough.
@@ -385,7 +385,6 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
   /** Adds a shutdown hook that prints out the results of the method maps */
   void addMapFileShutdownHook() {
-    // Add a shutdown hook to printout some debug information
     Runtime.getRuntime()
         .addShutdownHook(
             new Thread() {

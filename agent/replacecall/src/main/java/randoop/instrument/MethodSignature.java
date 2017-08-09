@@ -88,8 +88,8 @@ public class MethodSignature {
       throw new IllegalArgumentException(
           "Fully-qualified method name expected, no period found: " + fullMethodName);
     }
-    String methodName = fullMethodName.substring(dotPos + 1);
     String classname = fullMethodName.substring(0, dotPos);
+    String methodName = fullMethodName.substring(dotPos + 1);
     Type[] paramTypes = new Type[params.length];
     for (int i = 0; i < params.length; i++) {
       paramTypes[i] = BCELUtil.classname_to_type(params[i].trim());
@@ -114,18 +114,15 @@ public class MethodSignature {
       throw new IllegalArgumentException(
           "Method signature expected, did not find beginning parenthesis: " + signature);
     }
-    String name = signature.substring(0, parenPos);
+    String fullMethodName = signature.substring(0, parenPos);
     int lastParenPos = signature.lastIndexOf(')');
     if (lastParenPos < parenPos + 1) {
       throw new IllegalArgumentException(
           "Method signature expected, mismatched parenthesis: " + signature);
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
-    String[] parameters = new String[0];
-    if (!paramString.isEmpty()) {
-      parameters = paramString.split("\\s*,\\s*");
-    }
-    return MethodSignature.of(name, parameters);
+    String[] parameters = paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*");
+    return MethodSignature.of(fullMethodName, parameters);
   }
 
   @Override
@@ -204,12 +201,12 @@ public class MethodSignature {
 
     // Note that Method.getMethod only returns public methods, so call Method.getDeclaredMethod first
 
-    // First check it the method is declared in the class
+    // First check if the method is declared in the class
     try {
       method = methodClass.getDeclaredMethod(name, params);
       return method;
     } catch (NoSuchMethodException e) {
-      // ignore -- look for inherited method
+      // ignore exception -- look for inherited method
     }
 
     // If it is not declared in class, check if it is inherited
@@ -218,8 +215,10 @@ public class MethodSignature {
   }
 
   /**
-   * Converts the BCEL type to a {@code java.lang.Class} object. (This method replicates the {@code
-   * BCELUtils.type_to_class()} method, but does not repackage the exception.)
+   * Converts the BCEL type to a {@code java.lang.Class} object.
+   *
+   * <p>This method replicates the {@code BCELUtils.type_to_class()} method, but does not repackage
+   * the exception.
    *
    * @param type the type object
    * @return the {@code Class<?>} object for the type
