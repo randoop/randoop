@@ -45,9 +45,6 @@ The Randoop homepage is
         <ul>
           <li><a href="#replacecall-load-exclusions">Replacement exclusions</a></li>
           <li><a href="#replacecall-replacement-definition">Defining replacements</a></li>
-          <li><a href="#replacecalls-format">Replacement file format</a></li>
-          <li><a href="#determining-calls-to-map">Determining which calls to place in the replacements file</a></li>
-          <li><a href="#replacements-and-classpaths">Placing replacement mocks on the classpath</a></li>
         </ul></li>
       <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
       <li><a href="#covered-filter">Instrumenting classes for filtering tests on covered-classes</a></li>
@@ -804,8 +801,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  --omitmethods</code>, and the default omissions.
             <li id="option:dont-omit-replaced-methods"><b>--dont-omit-replaced-methods=</b><i>boolean</i>.
              Include methods that are otherwise omitted by default. Unless you set this to true, every
- method replaced by the <code>replacecall</code> agent is treated as if it had been supplied as an
- argument to <code>--omitmethods</code>. [default false]
+ method replaced by the <code>replacecall</code> agent is treated as if it had been supplied as
+ an argument to <code>--omitmethods</code>. [default false]
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
              A fully-qualified field name of a field to be excluded from test generation. An accessible
  field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
