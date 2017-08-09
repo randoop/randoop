@@ -1277,7 +1277,7 @@ with the exception of packages in <code>java.awt</code> and <code>javax.swing</c
 <h3 id="replacecall-replacement-definition">Defining replacements</h3>
 
 <p>
-You can define your own replacements by writing mock implementations and specifying the replacements in a text file.
+You can define your own method replacements by writing mock implementations and specifying the replacements in a text file.
 The replacecall agent is able to use the implementation classes to discover replacements.
 </p>
 
@@ -1317,8 +1317,7 @@ Keep the following in mind when defining replacements:
 </p>
 <ul>
   <li>
-    The implemented replacement mechanism is only designed to replace methods, and
-    will not work for constructors.
+    Only methods may be replaced.
   </li>
   <li>
     Replacements should avoid changing methods that return values. For instance,
@@ -1327,98 +1326,6 @@ Keep the following in mind when defining replacements:
   </li>
 </ul>
 
-<h3 id="replacecalls-format">Replacement file format</h3>
-
-<p>
-The replacement-file is a list of replacements, each of which is a pair of methods, classes or packages.
-</p>
-
-<p>
-A method replacement is given by a pair of fully-qualified method signatures.
-For instance, the method deplacements for the three methods of the <a href="mockJOptionPane.java.txt">JOptionPane mock class</a> are
-</p>
-<pre><code>
-javax.swing.JOptionPane.showMessageDialog(Component,Object,String,int) projectmock.javax.swing.JOptionPane.showMessageDialog(Component,Object,String,int)
-javax.swing.JOptionPane.showConfirmDialog(Component,Object,String,int) projectmock.javax.swing.JOptionPane.showConfirmDialog(Component,Object,String,int)
-javax.swing.JOptionPane.showConfirmDialog(Component,Object,String,int,int) projectmock.javax.swing.JOptionPane.showConfirmDialog(Component,Object,String,int,int)
-</code></pre>
-<p>
-(If a signature is generic, it should be written using rawtypes.)
-These methods will override the default replacements, but all other default replacements will still be used.
-</p>
-
-<p>
-The class and package replacements provide a short-hand for method replacements.
-The class replacement form for the <code>JOptionPane</code> example is
-</p>
-<pre>
-javax.swing.JOptionPane projectmock.javax.swing.JOptionPane
-</pre>
-<p>
-and the package replacement form is the slightly simpler
-</p>
-<pre>
-javax.swing projectmock.javax.swing
-</pre>
-<p>
-In both cases, the requirements is that every (non-private) method in a
-replacement class must have a corresponding method in the original class, and no original method has more than one replacement.
-Again, if there is no user-specified replacement method for an original method, the defaults are used.
-</p>
-
-<p>
-These types of replacements can be used together. Say, for instance, that we have project-specific replacement methods for <code>javax.swing</code>
-in <code>projectmock.javax.swing</code>, but want to use a special implementation of <code>java.awt.Component</code> methods from <code>specialmock.java.awt.Component</code>.
-To use these replacements put these lines in a file <code>replace_calls.txt</code>
-</p>
-<pre>
-javax.swing projectmock.javax.swing  // project-wide package replacements
-java.awt.Component specialmock.java.awt.Component // special-case class replacement
-</pre>
-<p>
-and run Randoop with the additional arguments
-</p>
-<pre>
-    -Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--map_calls=replace_calls.txt
-</pre>
-<p>
-The boot classpath should include the agent jar if any replacements are made of AWT or Swing calls.
-Otherwise, include <code>replacecall-3.1.5.jar</code> on the normal classpath.
-</p>
-
-<p>
-Blank lines and <code>//</code> comments are ignored in the replacements-file.)
-</p>
-
-
-<h3 id="determining-calls-to-map">Determining which calls to place in the replacements file</h3>
-
-<p>
-If Randoop is calling methods that it should not (for example, while
-generating tests, a dialog box pops up), then you need to use the <code>replacecall</code> agent.
-If problems continue, you need to add more calls to your replacements file.
-</p>
-
-<p>
-To determine the specific method, examine the application's code where it
-calls the method that puts up the box (or other unwanted activity).
-</p>
-
-<p>
-For a dialog box, while the dialog box is displayed, determine which
-  calls are executing by examining the stack trace.  On Unix this can be done
-  by typing <code>Ctrl-\</code> (hold down the Control key, then press the
-  Backslash key).
-</p>
-
-
-<h3 id="replacements-and-classpaths">Placing replacement mocks on the classpath</h3>
-
-<p>
-Note: the <code>-Xbootclasspath</code> option is only necessary when classes
-that extend or use AWT or Swing are called. Otherwise, the agent jar can be placed
-on the classpath.
-</p>
 
 <h2 id="checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</h2>
 

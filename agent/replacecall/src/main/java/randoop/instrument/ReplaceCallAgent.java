@@ -77,12 +77,12 @@ public class ReplaceCallAgent {
           "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n", agentArgs, inst);
     }
 
-    if (agentArgs != null) { // if there are any arguments, parse them
+    if (agentArgs != null) { // If there are any arguments, parse them
       Options options = new Options(ReplaceCallAgent.class);
       String[] target_args = options.parse_or_usage(agentArgs);
       if (target_args.length > 0) {
         System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
-        System.exit(1);
+        System.exit(1); // Exit on bad user input.
       }
     }
 
@@ -101,7 +101,7 @@ public class ReplaceCallAgent {
     InputStream inputStream = ReplaceCallAgent.class.getResourceAsStream(exclusionFileName);
     if (inputStream == null) {
       System.err.println("Unable to find default package exclusion file. Please report.");
-      System.exit(1);
+      System.exit(1); // Exit on configuration error. (See note at end of method.)
     }
     try {
       loadExclusions(
@@ -109,7 +109,7 @@ public class ReplaceCallAgent {
     } catch (IOException e) {
       System.err.format(
           "Unable to read default package exclusion file: %s%nPlease report.", e.getMessage());
-      System.exit(1);
+      System.exit(1); // Exit on configuration error. (See note at end of method.)
     }
 
     // If user-provided package exclusion file, load user package exclusions
@@ -120,8 +120,14 @@ public class ReplaceCallAgent {
       } catch (IOException e) {
         System.err.format(
             "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
-        System.exit(1);
+        System.exit(1); // Exit on user input error.
       }
+
+      // Within Randoop, the policy for handling configuration errors is that a BugInRandoopException
+      // should be thrown. However, the agent is separate from Randoop, and an uncaught exception
+      // within premain results in the JVM halting. So, this method is explicit in the call to
+      // System.exit() when a configuration error results in a failure.
+
     }
 
     /*

@@ -93,6 +93,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       ProtectionDomain protectionDomain,
       byte[] classfileBuffer)
       throws IllegalClassFormatException {
+    // Note: An uncaught exception within a transform method results in null being returned.
 
     String fullClassName = className.replace("/", ".");
 

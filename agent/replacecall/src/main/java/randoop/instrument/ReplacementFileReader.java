@@ -45,6 +45,9 @@ class ReplacementFileReader {
    * Naive regex to match a method signature consisting of a fully-qualified method name followed by
    * anything in parentheses. The parentheses are expected to contain argument types, but the
    * pattern permits anything.
+   *
+   * <p>Note: Replacements may only be methods, and so representing the {@code <init>} notation for
+   * constructors is unnecessary.
    */
   private static final String SIGNATURE_STRING = DOT_DELIMITED_IDS + "\\([^)]*\\)";
 
@@ -146,8 +149,8 @@ class ReplacementFileReader {
    *
    * @param replacementMap the map from a method to a replacement method to which replacement is
    *     added
-   * @param originalSignature the signature of the method to be mapped
-   * @param replacementSignature the signature of the method to be mapped
+   * @param originalSignature the signature of the method to be replaced
+   * @param replacementSignature the signature of the replacement method
    * @throws ReplacementException if either replacement signature is badly-formed, the replacement
    *     class is not found, or the method does not exist
    */
@@ -171,16 +174,18 @@ class ReplacementFileReader {
       throw new ReplacementException("Bad replacement signature", e);
     }
 
-    // Calling replacement.exists() captures the NoSuchMethodException.
-    // Since we want the exception to happen, we just try to get the method for the signature.
+    // This call is made instead of calling replacement.exists(). The exists() method captures the
+    // NoSuchMethodException, but the exception should be thrown to allow for error handling.
     replacement.toMethod();
 
     addReplacement(replacementMap, original, replacement);
   }
 
   /**
-   * Adds a method replacement for the method with the original signature, if one exists, with the
-   * replacement method.
+   * Adds a method replacement for the method with the original signature with the replacement
+   * method.
+   *
+   * <p>It is an error if a replacement already exists for the original signature.
    *
    * @param replacementMap the map from an original signature to a replacement signature
    * @param original the original signature
@@ -410,8 +415,9 @@ class ReplacementFileReader {
           addReplacementsFromAllClassesOfPackage(
               replacementMap, originalPackage, replacementPackage, jarFile);
         } else {
-          // The subclass for directories is internal.  It seems to work to assume the
-          // connection is a directory, and let an exception occur if it is not.
+          // The subclass for directories is an internal Java class and its use results in compiler warnings.
+          // It seems to work to assume that connection is a directory, and let an exception occur
+          // if it is not.
           File path = new File(URLDecoder.decode(url.getPath(), "UTF-8"));
           if (path.exists() && path.isDirectory()) {
             addReplacementsForPackage(replacementMap, originalPackage, replacementPackage, path);
@@ -428,8 +434,7 @@ class ReplacementFileReader {
     }
     if (!found) {
       String msg =
-          String.format(
-              "No package or class for replacement %s found on classpath", replacementPackage);
+          String.format("No package for replacement %s found on classpath", replacementPackage);
       throw new ReplacementException(msg);
     }
   }
@@ -437,7 +442,8 @@ class ReplacementFileReader {
   /**
    * Adds method replacements for the classes in the replacement package to the replacement map.
    *
-   * <p>Assumes that subpackage structure of original and replacement packages is identical.
+   * <p>Assumes that if a replacement package has a class or a subpackage, then the original package
+   * does also.
    *
    * @param replacementMap the method replacement map to which replacements are added
    * @param originalPackage the name of the original package
@@ -532,7 +538,12 @@ class ReplacementFileReader {
     }
   }
 
-  /** Exception to represent a malformed replacement file. */
+  /**
+   * Exception to represent an error discovered while reading a replacement file. Used to represent
+   * errors within the reader methods where file name and line details are not available. Repackaged
+   * as a {@link ReplacementFileException} in {@link ReplacementFileReader#readReplacements(Reader,
+   * String)}.
+   */
   private static class ReplacementException extends Throwable {
     /**
      * Create an exception with the message.
