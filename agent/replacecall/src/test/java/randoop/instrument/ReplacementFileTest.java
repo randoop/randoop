@@ -65,7 +65,7 @@ public class ReplacementFileTest {
     File file = new File("build/resources/test/randoop/instrument/missingclass.txt");
     thrown.expect(ReplacementFileException.class);
     thrown.expectMessage(
-        "missingclass.txt:1: No package or class for replacement randoop.mock.Gamma found on classpath for line: alpha.beta.Gamma randoop.mock.Gamma");
+        "missingclass.txt:1: No package for replacement randoop.mock.Gamma found on classpath for line: alpha.beta.Gamma randoop.mock.Gamma");
     ConcurrentHashMap<MethodSignature, MethodSignature> map =
         ReplacementFileReader.readReplacements(file);
   }
