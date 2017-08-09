@@ -116,7 +116,7 @@ public class ConditionMethodCreator {
     }
     return UtilMDE.join(
         new String[] {
-          "public class " + conditionClassName + " {",
+          packageDeclaration + "public class " + conditionClassName + " {",
           "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",
           "    return " + conditionText + ";",
           "  }",
