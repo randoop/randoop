@@ -1,3 +1,6 @@
+// This class is the source code whose conditions appear in the JSON file
+// condition_spec_json_example.txt.
+
 package net;
 
 /**

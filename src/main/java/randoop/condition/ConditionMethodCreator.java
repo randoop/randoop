@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import plume.UtilMDE;
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
@@ -11,7 +12,7 @@ import randoop.compile.SequenceCompilerException;
 import randoop.output.NameGenerator;
 import randoop.reflection.RawSignature;
 
-/** Defines the factory method for creating condition methods. */
+/** Defines the factory method {@link #create} for creating condition methods. */
 public class ConditionMethodCreator {
 
   /** The basename for the condition class name. */
@@ -103,7 +104,7 @@ public class ConditionMethodCreator {
    * Create the source code for the condition class.
    *
    * @param methodName the name of the condition method
-   * @param conditionText the condition source code
+   * @param conditionText the condition source code -- a boolean Java expression
    * @param parameterDeclarations the signature string for the condition method
    * @param packageName the package of the condition class
    * @param conditionClassName the name of the condition class
@@ -115,29 +116,19 @@ public class ConditionMethodCreator {
       String parameterDeclarations,
       String packageName,
       String conditionClassName) {
-    String classSource = "";
+    String packageDeclaration = "";
     if (packageName != null && !packageName.isEmpty()) {
-      classSource = "package " + packageName + ";" + Globals.lineSep;
+      packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
-    return classSource
-        + Globals.lineSep
-        + "public class "
-        + conditionClassName
-        + " {"
-        + Globals.lineSep
-        + "  public static boolean "
-        + methodName
-        + parameterDeclarations
-        + " throws Throwable {"
-        + Globals.lineSep
-        + "    return "
-        + conditionText
-        + ";"
-        + Globals.lineSep
-        + "  }"
-        + Globals.lineSep
-        + "}"
-        + Globals.lineSep;
+    return UtilMDE.join(
+        new String[] {
+          packageDeclaration + "public class " + conditionClassName + " {",
+          "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",
+          "    return " + conditionText + ";",
+          "  }",
+          "}" + Globals.lineSep
+        },
+        Globals.lineSep);
   }
 
   /**
