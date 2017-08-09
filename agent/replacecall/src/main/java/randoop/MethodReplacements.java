@@ -6,7 +6,8 @@ import java.util.List;
 
 /**
  * Class used to communicate the signatures of methods replaced by the replacecall agent to Randoop
- * so Randoop can omit direct calls to these methods.
+ * so Randoop can omit direct calls to these methods. Any method that is being replaced shouldn't be
+ * directly called.
  *
  * <p>Uses synchronized access to a static list of the signature strings, because the replacecall
  * agent can run on multiple classes concurrently.
@@ -15,8 +16,7 @@ import java.util.List;
  * Instrumentation)} before the {@link randoop.instrument.CallReplacementTransformer} is added to
  * the class loader, and the method {@link #addReplacedMethods(List)} should only be called at that
  * point. Randoop should add the result of {@link #getSignatureList()} to the {@code --omitmethods}
- * patterns before starting generation, because any method that is being replaced shouldn't be
- * directly called.
+ * patterns before starting generation.
  */
 public class MethodReplacements {
   /** The list of signature strings */

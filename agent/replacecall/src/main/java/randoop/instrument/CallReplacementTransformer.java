@@ -115,7 +115,6 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     }
 
     try {
-      // Get the class information
       ClassGen cg = new ClassGen(c);
       if (transformClass(cg)) {
         JavaClass javaClass = cg.getJavaClass();
