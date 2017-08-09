@@ -101,7 +101,7 @@ public class ReplaceCallAgent {
     InputStream inputStream = ReplaceCallAgent.class.getResourceAsStream(exclusionFileName);
     if (inputStream == null) {
       System.err.println("Unable to find default package exclusion file. Please report.");
-      System.exit(1); // Exit on configuration error. (See note at end of method.)
+      System.exit(1); // Exit on configuration error. (Throwing exception would halt JVM.)
     }
     try {
       loadExclusions(
@@ -109,7 +109,7 @@ public class ReplaceCallAgent {
     } catch (IOException e) {
       System.err.format(
           "Unable to read default package exclusion file: %s%nPlease report.", e.getMessage());
-      System.exit(1); // Exit on configuration error. (See note at end of method.)
+      System.exit(1); // Exit on configuration error. (Throwing exception would halt JVM.)
     }
 
     // If user-provided package exclusion file, load user package exclusions
@@ -120,14 +120,8 @@ public class ReplaceCallAgent {
       } catch (IOException e) {
         System.err.format(
             "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
-        System.exit(1); // Exit on user input error.
+        System.exit(1); // Exit on user input error. (See note at end of method.)
       }
-
-      // Within Randoop, the policy for handling configuration errors is that a BugInRandoopException
-      // should be thrown. However, the agent is separate from Randoop, and an uncaught exception
-      // within premain results in the JVM halting. So, this method is explicit in the call to
-      // System.exit() when a configuration error results in a failure.
-
     }
 
     /*
