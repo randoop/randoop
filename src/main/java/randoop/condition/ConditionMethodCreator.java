@@ -15,10 +15,10 @@ import randoop.reflection.RawSignature;
 /** Defines the factory method {@link #create} for creating condition methods. */
 public class ConditionMethodCreator {
 
-  /** The basename for the condition class name. */
+  /** The basename for the condition class name. It is used for compiling the method. */
   private static final String CONDITION_CLASS_BASENAME = "RandoopConditionClass";
 
-  /** The name of the condition method. */
+  /** The name of the condition method. It is used for compiling the method. */
   private static final String CONDITION_METHOD_NAME = "test";
 
   /** The name generator to use to generate class names. */
@@ -27,16 +27,14 @@ public class ConditionMethodCreator {
   /**
    * Creates the {@code java.lang.reflect.Method} to test the condition in the condition code.
    *
-   * <p>Generates the Java source for a class with the method, compiles the class and returns the
+   * <p>Generates the Java source for a class with the method, compiles the class, and returns the
    * condition method.
    *
-   * <p>The class name of the condition method signature is ignored and a new name is generated
-   * using {@link #nameGenerator}.
-   *
-   * @param signature the signature for the condition method
+   * @param signature the signature for the condition method. The class name of the condition method
+   *     signature is ignored and a new name is generated using {@link #nameGenerator}.
    * @param parameterDeclaration the parameter declaration string, including parameter names and
    *     wrapped in parentheses
-   * @param conditionSource the source code for the condition
+   * @param conditionSource a Java expression that is the source code for the condition
    * @param compiler the compiler to use to compile the condition class
    * @return the {@code Method} object for the condition method of the created class
    */

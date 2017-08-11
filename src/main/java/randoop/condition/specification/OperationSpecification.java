@@ -196,10 +196,10 @@ public class OperationSpecification {
   }
 
   /**
-   * Indicates whether this {@link OperationSpecification} contains any pre-, post- or
+   * Indicates whether this {@link OperationSpecification} contains any pre-, post-, or
    * throws-specifications.
    *
-   * @return {@code true} if there are no pre-, post- or throws-specifications, false otherwise
+   * @return {@code true} if there are no pre-, post-, or throws-specifications, false otherwise
    */
   public boolean isEmpty() {
     return throwsSpecifications.isEmpty()

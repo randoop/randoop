@@ -9,8 +9,37 @@ import randoop.test.InvalidCheckGenerator;
 import randoop.test.PostConditionCheckGenerator;
 import randoop.test.TestCheckGenerator;
 
-/** Records the outcome of checking all of the conditions for a method. */
-public class OutcomeTable {
+/**
+ * Records the outcome of checking all of the preconditions for a method. Each table entry records:
+ *
+ * <p>TODO: clarify the following, or merge it into other documentation.
+ *
+ * <ol>
+ *   <li>Whether the preconditions of the specification fail or are satisfied. The preconditions
+ *       fail if the Boolean expression of any precondition in the specification is false.
+ *       Otherwise, the preconditions are satisfied. See {@link
+ *       OperationConditions#checkPreconditions(java.lang.Object[])}.
+ *   <li>A set of expected exceptions. The exception is expected because its guard was satisfied.
+ *       Evaluate the guard of each throws-condition, and for each one satisfied, add the exception
+ *       to the set of expected exceptions. (There will be one set per specification.) See {@link
+ *       OperationConditions#checkThrowsPreconditions(java.lang.Object[])}.
+ *   <li>The expected postcondition, if any. If the preconditions are satisfied, test the guards of
+ *       the normal postconditions of the specification in order, and save the property for the
+ *       first guard satisfied, if there is one. See {@link
+ *       OperationConditions#checkPostconditionGuards(java.lang.Object[])}.
+ * </ol>
+ *
+ * <p>TODO: Merge the following in as well
+ *
+ * <ul>
+ *   <li>Whether the preconditions fail or are satisfied, given the observed values
+ *   <li>The set of expected exceptions, given the observed values (that is, which
+ *       throws-conditions' guards are satisfied)
+ *   <li>The expected postcondition, given the observed values (that is, which return-clauses'
+ *       guards are satisfied)
+ * </ul>
+ */
+public class PreconditionOutcomeTable {
 
   /** Indicates whether this table is empty. */
   private boolean isEmpty = true;
@@ -24,8 +53,8 @@ public class OutcomeTable {
   /** The list of post-conditions for this table. */
   private final List<PostCondition> postConditions;
 
-  /** Creates an empty {@link OutcomeTable}. */
-  public OutcomeTable() {
+  /** Creates an empty {@link PreconditionOutcomeTable}. */
+  public PreconditionOutcomeTable() {
     exceptionSets = new ArrayList<>();
     postConditions = new ArrayList<>();
   }
@@ -33,7 +62,7 @@ public class OutcomeTable {
   /**
    * Adds the outcome of checking the conditions of a specification.
    *
-   * @param preconditionsSatisfied boolean value indicating whether all preconditions satisfied
+   * @param preconditionsSatisfied boolean value indicating whether all preconditions are satisfied
    * @param throwsClauses set of exception type-comment pairs for exceptions expected in post-state
    * @param postCondition post-condition that must be true in post-state if no exception is thrown,
    *     null if none
@@ -58,13 +87,13 @@ public class OutcomeTable {
    * Indicate whether this set of results indicates a definitively invalid pre-state. Occurs when
    * all preconditions fail and there are no expected exceptions.
    *
-   * <p>This method will evaluate the current state of the table, but should be called after all
-   * entries are added
+   * <p>This method should be called after all entries are added; that is, no more entries should be
+   * added after it is called.
    *
    * @return true if preconditions of all specifications are unsatisfied, and there are no expected
    *     exceptions; false, otherwise
    */
-  public boolean isInvalid() {
+  public boolean isInvalidPrestate() {
     return !isEmpty && !hasValid && exceptionSets.isEmpty();
   }
 
@@ -72,7 +101,7 @@ public class OutcomeTable {
    * Constructs the {@link TestCheckGenerator} to apply post call by extending the given generator.
    *
    * <ul>
-   *   <li>if this table is empty, returns the given generator
+   *   <li>if this table is empty, returns the given generator.
    *   <li>if this table has expected exceptions, then returns a generator that checks for those
    *       exceptions.
    *   <li>if all preconditions fail, then return an {@link InvalidCheckGenerator}.

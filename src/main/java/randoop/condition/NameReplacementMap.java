@@ -36,18 +36,15 @@ public class NameReplacementMap {
    * @return the text modified by replacing original names with replacement names
    */
   String replaceNames(String text) {
-    String nameString = UtilMDE.join(replacements.keySet().toArray(), "|");
-    Pattern namePattern = Pattern.compile("\\b(" + nameString + ")\\b");
-    Matcher nameMatcher = namePattern.matcher(text);
+    Pattern namesPattern =
+        Pattern.compile("\\b(" + UtilMDE.join(replacements.keySet().toArray(), "|") + ")\\b");
+    Matcher namesMatcher = namesPattern.matcher(text);
     StringBuilder b = new StringBuilder();
-
     int position = 0;
-    while (nameMatcher.find(position)) {
-      int previousPosition = position;
-      String name = nameMatcher.group(1);
-      position = nameMatcher.start(1);
-      b.append(text.substring(previousPosition, position)).append(replacements.get(name));
-      position += name.length();
+    while (namesMatcher.find(position)) {
+      b.append(text.substring(position, namesMatcher.start(1)));
+      b.append(replacements.get(namesMatcher.group(1)));
+      position = namesMatcher.end(1);
     }
     b.append(text.substring(position));
     return b.toString();

@@ -25,7 +25,7 @@ public class PostCondition extends Condition {
    * Returns the {@link PostCondition} that checks the condition with the given argument values as
    * the pre-state.
    *
-   * <p>Since pre-state is not implemented, this method just returns this object.
+   * <p>Since pre-state is not yet implemented, this method just returns this object.
    *
    * @param args the pre-state values to the arguments
    * @return the {@link PostCondition} with the pre-state set

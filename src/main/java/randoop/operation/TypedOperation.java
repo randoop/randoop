@@ -10,7 +10,7 @@ import java.util.Objects;
 import randoop.ExecutionOutcome;
 import randoop.condition.Condition;
 import randoop.condition.OperationConditions;
-import randoop.condition.OutcomeTable;
+import randoop.condition.PreconditionOutcomeTable;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -561,18 +561,18 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   /**
    * Tests the conditions for this operation against the argument values and returns the {@link
-   * OutcomeTable} indicating the results of checking the pre-conditions of the specifications of
-   * the oepration.
+   * PreconditionOutcomeTable} indicating the results of checking the pre-conditions of the
+   * specifications of the oepration.
    *
    * @param values the argument values
-   * @return the {@link OutcomeTable} indicating the results of checking the pre-conditions of the
-   *     specifications of the operation
+   * @return the {@link PreconditionOutcomeTable} indicating the results of checking the
+   *     pre-conditions of the specifications of the operation
    */
-  public OutcomeTable checkConditions(Object[] values) {
+  public PreconditionOutcomeTable checkConditions(Object[] values) {
     if (conditions != null) {
       return conditions.check(addNullReceiver(values));
     }
-    return new OutcomeTable();
+    return new PreconditionOutcomeTable();
   }
 
   /**

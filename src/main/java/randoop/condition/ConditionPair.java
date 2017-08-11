@@ -14,8 +14,8 @@ class ConditionPair<T> {
   final Condition preCondition;
 
   /**
-   * The clause to be evaluated after the operation is called (intention that this be either {@link
-   * PostCondition} or {@link ThrowsClause}).
+   * The clause to be evaluated after the operation is called: either {@link PostCondition} or
+   * {@link ThrowsClause})
    */
   final T postClause;
 
