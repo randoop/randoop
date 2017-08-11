@@ -1037,6 +1037,7 @@ public class RandoopSystemTest {
     options.setFlag("ignore-flaky-tests");
     options.setOption("operation-history-log", "-");
     options.setFlag("usethreads");
+    options.unsetFlag("deterministic");
 
     CoverageChecker checker = new CoverageChecker(options);
 
