@@ -290,17 +290,17 @@ public class SpecificationTranslator {
    * post-conditions from {@code postSpecifications}.
    *
    * @param postSpecifications the list of {@link PostSpecification} that will be converted
-   * @return the list of {@link ConditionPair} objects obtained by converting the elements of {@code
-   *     postSpecifications}
+   * @return the list of {@link PrePostConditionPair} objects obtained by converting the elements of
+   *     {@code postSpecifications}
    */
-  private ArrayList<ConditionPair<PostCondition>> getReturnConditions(
+  private ArrayList<PrePostConditionPair> getReturnConditions(
       List<PostSpecification> postSpecifications) {
-    ArrayList<ConditionPair<PostCondition>> returnConditions = new ArrayList<>();
+    ArrayList<PrePostConditionPair> returnConditions = new ArrayList<>();
     for (PostSpecification postSpecification : postSpecifications) {
       try {
         Condition preCondition = create(postSpecification.getGuard());
         PostCondition postCondition = create(postSpecification.getProperty());
-        returnConditions.add(new ConditionPair<>(preCondition, postCondition));
+        returnConditions.add(new PrePostConditionPair(preCondition, postCondition));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;
@@ -316,12 +316,12 @@ public class SpecificationTranslator {
    * throws-conditions from {@code throwsSpecifications}.
    *
    * @param throwsSpecifications the list of {@link ThrowsSpecification} that will be converted
-   * @return the list of {@link ConditionPair} objects obtained by converting the elements of {@code
-   *     }
+   * @return the list of {@link PrePostConditionPair} objects obtained by converting the elements of
+   *     {@code }
    */
-  private ArrayList<ConditionPair<ThrowsClause>> getThrowsConditions(
+  private ArrayList<PreThrowsConditionPair> getThrowsConditions(
       List<ThrowsSpecification> throwsSpecifications) {
-    ArrayList<ConditionPair<ThrowsClause>> throwsConditions = new ArrayList<>();
+    ArrayList<PreThrowsConditionPair> throwsConditions = new ArrayList<>();
     for (ThrowsSpecification throwsSpecification : throwsSpecifications) {
       ClassOrInterfaceType exceptionType;
       try {
@@ -343,7 +343,7 @@ public class SpecificationTranslator {
         Condition guardCondition = create(throwsSpecification.getGuard());
         ThrowsClause exception =
             new ThrowsClause(exceptionType, "// " + throwsSpecification.getDescription());
-        throwsConditions.add(new ConditionPair<>(guardCondition, exception));
+        throwsConditions.add(new PreThrowsConditionPair(guardCondition, exception));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;

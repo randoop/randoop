@@ -15,7 +15,7 @@ import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.condition.PreconditionOutcomeTable;
+import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
@@ -290,7 +290,7 @@ public class ExecutableSequence {
       if (i == this.sequence.size() - 1) {
         TypedOperation operation = this.sequence.getStatement(i).getOperation();
         if (operation.isConstructorCall() || operation.isMethodCall()) {
-          PreconditionOutcomeTable outcomeTable = operation.checkConditions(inputValues);
+          ExpectedOutcomeTable outcomeTable = operation.checkConditions(inputValues);
           if (outcomeTable.isInvalidPrestate()) {
             checks = new InvalidChecks();
             checks.add(new InvalidValueCheck(this, i));

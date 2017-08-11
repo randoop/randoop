@@ -39,22 +39,22 @@ import randoop.test.TestCheckGenerator;
  *       guards are satisfied)
  * </ul>
  */
-public class PreconditionOutcomeTable {
+public class ExpectedOutcomeTable {
 
   /** Indicates whether this table is empty. */
   private boolean isEmpty = true;
 
-  /** Indicates whether this table has a valid entry. */
-  private boolean hasValid = false;
+  /** Indicates whether a precondition was satisfied. */
+  private boolean hasSatisfiedPrecondition = false;
 
-  /** The list of throws clauses for this table. */
+  /** The list of sets of throws clauses for which the pre-condition was satisfied. */
   private final List<Set<ThrowsClause>> exceptionSets;
 
-  /** The list of post-conditions for this table. */
+  /** The list of post-conditions for which the pre-condition was satisfied. */
   private final List<PostCondition> postConditions;
 
-  /** Creates an empty {@link PreconditionOutcomeTable}. */
-  public PreconditionOutcomeTable() {
+  /** Creates an empty {@link ExpectedOutcomeTable}. */
+  public ExpectedOutcomeTable() {
     exceptionSets = new ArrayList<>();
     postConditions = new ArrayList<>();
   }
@@ -76,7 +76,7 @@ public class PreconditionOutcomeTable {
       if (postCondition != null) {
         postConditions.add(postCondition);
       }
-      hasValid = true;
+      hasSatisfiedPrecondition = true;
     }
     if (!throwsClauses.isEmpty()) {
       exceptionSets.add(throwsClauses);
@@ -94,11 +94,11 @@ public class PreconditionOutcomeTable {
    *     exceptions; false, otherwise
    */
   public boolean isInvalidPrestate() {
-    return !isEmpty && !hasValid && exceptionSets.isEmpty();
+    return !isEmpty && !hasSatisfiedPrecondition && exceptionSets.isEmpty();
   }
 
   /**
-   * Constructs the {@link TestCheckGenerator} to apply post call by extending the given generator.
+   * Constructs the {@link TestCheckGenerator} that will test for expected conditions as follows:
    *
    * <ul>
    *   <li>if this table is empty, returns the given generator.
@@ -108,8 +108,6 @@ public class PreconditionOutcomeTable {
    *   <li>if there are post-conditions, then extend the given generator with a {@link
    *       PostConditionCheckGenerator}.
    * </ul>
-   *
-   * (Pre-conditions are checked here to allow for conflicts with throws-conditions.)
    *
    * @param gen the generator to extend
    * @return the {@link TestCheckGenerator} to check for expected outcomes in this table
@@ -125,7 +123,7 @@ public class PreconditionOutcomeTable {
     }
 
     // had conflict with pre-conditions
-    if (!hasValid) {
+    if (!hasSatisfiedPrecondition) {
       gen = new InvalidCheckGenerator();
     }
 

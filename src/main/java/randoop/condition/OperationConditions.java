@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Represents the collection of all conditions on an operation including pre-, post-, and
- * throws-conditions defined on this operation and inherited from supertypes.
+ * The collection of all pre-, return-, and throws-conditions defined on this operation and
+ * inherited from supertypes.
  */
 public class OperationConditions {
 
@@ -15,13 +15,13 @@ public class OperationConditions {
   private final List<Condition> preconditions;
 
   /** The return-conditions. */
-  private final List<ConditionPair<PostCondition>> returnConditions;
+  private final List<PrePostConditionPair> prePostConditionPairs;
 
   /** The throws-conditions. */
-  private final List<ConditionPair<ThrowsClause>> throwsConditions;
+  private final List<PreThrowsConditionPair> preThrowsConditionPairs;
 
   /**
-   * The parent conditions for this object.
+   * The parent {@link OperationConditions} for this object.
    *
    * <p>For an operation that is a method, the {@link OperationConditions} form an arbitrary
    * directed acyclic graph consisting of conditions for methods of supertypes, each of which has
@@ -33,39 +33,38 @@ public class OperationConditions {
   OperationConditions() {
     this(
         new ArrayList<Condition>(),
-        new ArrayList<ConditionPair<PostCondition>>(),
-        new ArrayList<ConditionPair<ThrowsClause>>());
+        new ArrayList<PrePostConditionPair>(),
+        new ArrayList<PreThrowsConditionPair>());
   }
 
   /**
-   * Creates an {@link OperationConditions} object for the given pre-conditions, return-conditions,
-   * and throws-conditions.
+   * Creates an {@link OperationConditions} object for the given pre-conditions, pre-post-condition
+   * pairs, and pre-throws condition pairs.
    *
    * @param preconditions the pre-conditions
-   * @param returnConditions the return-conditions
-   * @param throwsConditions the throws-conditions
+   * @param prePostConditionPairs the pre-post-condition pairs
+   * @param preThrowsConditionPairs the pre-throws condition pairs
    */
   OperationConditions(
       List<Condition> preconditions,
-      List<ConditionPair<PostCondition>> returnConditions,
-      List<ConditionPair<ThrowsClause>> throwsConditions) {
+      List<PrePostConditionPair> prePostConditionPairs,
+      List<PreThrowsConditionPair> preThrowsConditionPairs) {
     this.preconditions = preconditions;
-    this.returnConditions = returnConditions;
-    this.throwsConditions = throwsConditions;
+    this.prePostConditionPairs = prePostConditionPairs;
+    this.preThrowsConditionPairs = preThrowsConditionPairs;
     this.parentList = new ArrayList<>();
   }
 
   /**
-   * Check the conditions for this operation against the arguments. Constructs an {@link
-   * PreconditionOutcomeTable} with an entry for the conditions for this operation, and conditions
-   * for this operation in all supertypes.
+   * Check the pre-conditions for this operation against the arguments. Constructs an {@link
+   * ExpectedOutcomeTable} for this operation, and for this operation in all supertypes.
    *
-   * @param args the argument values to test the conditions
+   * @param args the argument values to test the preconditions
    * @return the table with entries for this operation
-   * @see #check(Object[], PreconditionOutcomeTable)
+   * @see #check(Object[], ExpectedOutcomeTable)
    */
-  public PreconditionOutcomeTable check(Object[] args) {
-    PreconditionOutcomeTable table = new PreconditionOutcomeTable();
+  public ExpectedOutcomeTable check(Object[] args) {
+    ExpectedOutcomeTable table = new ExpectedOutcomeTable();
     this.check(args, table);
     for (OperationConditions conditions : parentList) {
       conditions.check(args, table);
@@ -74,14 +73,14 @@ public class OperationConditions {
   }
 
   /**
-   * Modifies the given table, adding an {@link PreconditionOutcomeTable} entry for the conditions
-   * of this method. The entry records:
+   * Modifies the given table, adding an {@link ExpectedOutcomeTable} entry for the preconditions of
+   * this method. The entry records:
    *
    * <ul>
    *   <li>Whether the preconditions fail or are satisfied, given the observed values
    *   <li>The set of expected exceptions, given the observed values (that is, which
    *       throws-conditions' guards are satisfied)
-   *   <li>The expected postcondition, given the observed values (that is, which return-clauses'
+   *   <li>The expected post-condition, given the observed values (that is, which return-clauses'
    *       guards are satisfied)
    * </ul>
    *
@@ -90,7 +89,7 @@ public class OperationConditions {
    * @param args the argument values
    * @param table the table to which the created entry is to be added
    */
-  private void check(Object[] args, PreconditionOutcomeTable table) {
+  private void check(Object[] args, ExpectedOutcomeTable table) {
     boolean preconditionCheck = checkPreconditions(args);
     Set<ThrowsClause> throwsClauses = checkThrowsPreconditions(args);
     PostCondition postCondition = checkPostconditionGuards(args);
@@ -114,18 +113,19 @@ public class OperationConditions {
   }
 
   /**
-   * Tests the given argument values against the guards of the throws-conditions in this {@link
-   * OperationConditions} and returns the set of exceptions whose precondition evaluated to true.
+   * Tests the given argument values against the guards of the pre-throws-condition pairs in this
+   * {@link OperationConditions} and returns the set of exceptions whose precondition evaluated to
+   * true.
    *
    * @param args the argument values
    * @return the set of exceptions for which the precondition evaluated to true
    */
   private Set<ThrowsClause> checkThrowsPreconditions(Object[] args) {
     Set<ThrowsClause> throwsClauses = new LinkedHashSet<>();
-    for (ConditionPair<ThrowsClause> pair : throwsConditions) {
+    for (PreThrowsConditionPair pair : preThrowsConditionPairs) {
       Condition precondition = pair.preCondition;
       if (precondition.check(args)) {
-        throwsClauses.add(pair.postClause);
+        throwsClauses.add(pair.throwsClause);
       }
     }
     return throwsClauses;
@@ -140,10 +140,10 @@ public class OperationConditions {
    *     none
    */
   private PostCondition checkPostconditionGuards(Object[] args) {
-    for (ConditionPair<PostCondition> pair : returnConditions) {
+    for (PrePostConditionPair pair : prePostConditionPairs) {
       Condition precondition = pair.preCondition;
       if (precondition.check(args)) {
-        return pair.postClause.addPrestate(args);
+        return pair.postCondition.addPrestate(args);
       }
     }
     return null;
@@ -165,7 +165,9 @@ public class OperationConditions {
    *     otherwise
    */
   public boolean isEmpty() {
-    if (!(preconditions.isEmpty() && returnConditions.isEmpty() && throwsConditions.isEmpty())) {
+    if (!(preconditions.isEmpty()
+        && prePostConditionPairs.isEmpty()
+        && preThrowsConditionPairs.isEmpty())) {
       return false;
     }
     for (OperationConditions conditions : parentList) {

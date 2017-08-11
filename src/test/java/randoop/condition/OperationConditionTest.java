@@ -54,7 +54,7 @@ public class OperationConditionTest {
 
     Object[] preValues;
     preValues = new Object[] {receiver, -1};
-    PreconditionOutcomeTable table = conditions.check(preValues);
+    ExpectedOutcomeTable table = conditions.check(preValues);
     assertTrue("should fail param condition", table.isInvalidPrestate());
 
     preValues = new Object[] {receiver, 1};

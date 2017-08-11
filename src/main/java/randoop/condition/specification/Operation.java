@@ -26,9 +26,6 @@ import java.util.Objects;
  *   }
  * </pre>
  *
- * <p>Note that the class name and parameter type names should be given as fully-qualified class
- * names. Generic types should be given as rawtypes.
- *
  * <p>The <code>classname</code> must be the declaring class of the method. (For a constructor, the
  * <code>classname</code> and operation <code>name</code> will be identical.) If named class is not
  * the declaring class of the method, the method will not be found, and the enclosing specification
@@ -57,7 +54,7 @@ public class Operation {
    * Create an {@link Operation} object given the names of the declaring class, method or
    * constructor, the parameter types.
    *
-   * @param classname the fully-qualified name of the declaring class
+   * @param classname the fully-qualified raw name of the declaring class
    * @param name the name of the method or constructor
    * @param parameterTypes the list of fully-qualified parameter type names
    */
@@ -68,10 +65,9 @@ public class Operation {
   }
 
   /**
-   * Create a {@link Operation} for the constructor of the class with the parameter types. The name
-   * of the constructor is the same as the class name.
+   * Create a {@link Operation} for the constructor of the class with the parameter types.
    *
-   * @param classname the fully-qualified name of the declaring class
+   * @param classname the fully-qualified raw name of the declaring class
    * @param parameterTypes the list of fully-qualified parameter type names
    * @return the {@link Operation} for a constructor of the declaring class with the parameter types
    */

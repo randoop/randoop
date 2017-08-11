@@ -18,9 +18,6 @@ public class ConditionMethodCreator {
   /** The basename for the condition class name. It is used for compiling the method. */
   private static final String CONDITION_CLASS_BASENAME = "RandoopConditionClass";
 
-  /** The name of the condition method. It is used for compiling the method. */
-  private static final String CONDITION_METHOD_NAME = "test";
-
   /** The name generator to use to generate class names. */
   private static final NameGenerator nameGenerator = new NameGenerator(CONDITION_CLASS_BASENAME);
 
@@ -132,9 +129,9 @@ public class ConditionMethodCreator {
   /**
    * Creates the {@link RawSignature} for the precondition method.
    *
-   * <p>if {@code shift == 1}, the parameter types for the condition method have the receiver type
-   * first, followed by the parameter types. Otherwise, the condition method parameter types are
-   * just the parameter types.
+   * <p>if {@code insertReceiver} is true, the parameter types for the precondition method have the
+   * receiver type first, followed by the parameter types. Otherwise, the condition method parameter
+   * types are as given.
    *
    * <p>Note that these signatures may be used more than once for different condition methods, and
    * so {@link #create(RawSignature, String, String, SequenceCompiler)} replaces the classname to
@@ -142,33 +139,33 @@ public class ConditionMethodCreator {
    *
    * @param packageName the package name for the condition class
    * @param receiverType the declaring class of the method or constructor, used as receiver type if
-   *     {@code shift == 1}
+   *     {@code insertRetriever} is true
    * @param parameterTypes the parameter types for the original method
-   * @param shiftParameters whether to shift the {@code parameterTypes} in the condition method
-   *     parameter list by 1
+   * @param insertRetriever whether to insert the {@code receiverType} before the {@code
+   *     parameterTypes} in the condition method parameter list
    * @return the constructed pre-condition method signature
    */
   static RawSignature getPreconditionSignature(
       String packageName,
       Class<?> receiverType,
       Class<?>[] parameterTypes,
-      boolean shiftParameters) {
-    int shift = (shiftParameters) ? 1 : 0;
+      boolean insertRetriever) {
+    int shift = (insertRetriever) ? 1 : 0;
     Class<?>[] conditionParameterTypes = new Class<?>[parameterTypes.length + shift];
     if (shift == 1) {
       conditionParameterTypes[0] = receiverType;
     }
     System.arraycopy(parameterTypes, 0, conditionParameterTypes, shift, parameterTypes.length);
     return new RawSignature(
-        packageName, CONDITION_CLASS_BASENAME, CONDITION_METHOD_NAME, conditionParameterTypes);
+        packageName, CONDITION_CLASS_BASENAME, "ClassNameWillBeReplaced", conditionParameterTypes);
   }
 
   /**
    * Creates the {@link RawSignature} for the post-condition method.
    *
-   * <p>if {@code shift == 1}, the parameter types for the condition method have the receiver type
-   * first, followed by the parameter types. Otherwise, the condition method parameter types are
-   * just the parameter types.
+   * <p>if {@code insertRetriever} is true, the parameter types for the post-condition method have
+   * the receiver type first, followed by the parameter types. Otherwise, the condition method
+   * parameter types are as given.
    *
    * <p>Note that these signatures may be used more than once for different condition methods, and
    * so {@link #create(RawSignature, String, String, SequenceCompiler)} replaces the classname to
@@ -176,11 +173,11 @@ public class ConditionMethodCreator {
    *
    * @param packageName the package name for the condition class
    * @param receiverType the declaring class of the method or constructor, used as receiver type if
-   *     {@code shift == 1}
+   *     {@code insertRetriever} is true
    * @param parameterTypes the parameter types for the original method or constructor
    * @param returnType the return type for the method, or the declaring class for a constructor
-   * @param shiftParameters whether to shift the {@code parameterTypes} in the condition method
-   *     parameter list by 1
+   * @param insertRetriever whether to insert the {@code receiverType} before the {@code
+   *     parameterTypes} in the condition method parameter list
    * @return the constructed post-condition method signature
    */
   static RawSignature getPostconditionSignature(
@@ -188,8 +185,8 @@ public class ConditionMethodCreator {
       Class<?> receiverType,
       Class<?>[] parameterTypes,
       Class<?> returnType,
-      boolean shiftParameters) {
-    int shift = (shiftParameters) ? 1 : 0;
+      boolean insertRetriever) {
+    int shift = (insertRetriever) ? 1 : 0;
     Class<?>[] conditionParameterTypes = new Class<?>[parameterTypes.length + shift + 1];
     if (shift == 1) {
       conditionParameterTypes[0] = receiverType;
@@ -197,6 +194,6 @@ public class ConditionMethodCreator {
     conditionParameterTypes[conditionParameterTypes.length - 1] = returnType;
     System.arraycopy(parameterTypes, 0, conditionParameterTypes, shift, parameterTypes.length);
     return new RawSignature(
-        packageName, CONDITION_CLASS_BASENAME, CONDITION_METHOD_NAME, conditionParameterTypes);
+        packageName, CONDITION_CLASS_BASENAME, "ClassNameWillBeReplaced", conditionParameterTypes);
   }
 }

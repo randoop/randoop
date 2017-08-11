@@ -28,7 +28,7 @@
  * <p><i>Description</i>: The algorithm consists of two phases: (1) evaluating guards of the
  * specifications before the call, and (2) checking for expected behavior after the call.
  * Specifically, the first phase saves the results of the evaluation in a {@link
- * randoop.condition.PreconditionOutcomeTable} table that is used in the second phase.
+ * randoop.condition.ExpectedOutcomeTable} table that is used in the second phase.
  *
  * <p>This algorithm is applied before the standard rules for classification, and so unclassified
  * calls will fall through to contract checking and exception classification.
@@ -62,7 +62,7 @@
  *
  * <ol>
  *   <li>For each table entry with a non-empty expected exception set (see {@link
- *       randoop.condition.PreconditionOutcomeTable#addPostCheckGenerator(randoop.test.TestCheckGenerator)})
+ *       randoop.condition.ExpectedOutcomeTable#addPostCheckGenerator(randoop.test.TestCheckGenerator)})
  *       <ul>
  *         <li>If an exception is thrown by the call and the thrown exception is a member of the
  *             set, then classify as <b>Expected</b>.

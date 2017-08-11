@@ -37,19 +37,19 @@ public class Identifiers {
   /** The default identifier name for the return value (value: "result") */
   private static final String DEFAULT_RETURN_NAME = "result";
 
-  /** The parameter names for the operation */
+  /** The formal parameter names (not including the receiver name) */
   private final List<String> parameters;
 
-  /** The receiver name for the specifications */
+  /** The receiver name. */
   private final String receiverName;
 
-  /** The return value identifier for the specifications */
+  /** The return value identifier. */
   private final String returnName;
 
   /**
    * Create an {@link Identifiers} object with the given names.
    *
-   * @param parameters the list of identifiers for the operation parameters
+   * @param parameters the list of identifiers for the operation formal parameters
    * @param receiverName the receiver name
    * @param returnName the return name
    */
@@ -146,27 +146,7 @@ public class Identifiers {
     Set<String> names = new HashSet<>(parameters);
     return names.size() != parameters.size()
         || parameters.contains(receiverName)
-        || parameters.contains(returnName);
-  }
-
-  /**
-   * Returns the set of identifier names that occur more than once in this {@link Identifiers}
-   * object.
-   *
-   * @return the set of identifier names that occur more than once in this object
-   */
-  public Set<String> getConflictingNames() {
-    Set<String> conflictingNames = new HashSet<>();
-    Set<String> names = new HashSet<>();
-    names.add(receiverName);
-    if (!names.add(returnName)) {
-      conflictingNames.add(returnName);
-    }
-    for (String parameter : parameters) {
-      if (!names.add(parameter)) {
-        conflictingNames.add(parameter);
-      }
-    }
-    return conflictingNames;
+        || parameters.contains(returnName)
+        || receiverName.equals(returnName);
   }
 }

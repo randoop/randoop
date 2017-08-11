@@ -77,7 +77,7 @@ public class Condition {
               + conditionMethod
               + " (invoke threw "
               + e.getCause()
-              + ")";
+              + "). This indicates a bug in the condition method creation.";
       if (Log.isLoggingOn()) {
         Log.logLine(message);
       }
