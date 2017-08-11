@@ -26,7 +26,7 @@ import java.util.Objects;
  *     },
  *    "identifiers": {
  *       "parameters": [
- *         "code"
+ *         "signalValue"
  *        ],
  *       "receiverName": "receiver",
  *       "returnName": "result"
@@ -35,10 +35,10 @@ import java.util.Objects;
  *    "postSpecifications": [],
  *    "preSpecifications": [
  *      {
- *        "description": "the code must be positive",
+ *        "description": "the signalValue must be positive",
  *        "guard": {
- *          "conditionText": {@code "code > 0"},
- *          "description": "the code must be positive"
+ *          "conditionText": {@code "signalValue > 0"},
+ *          "description": "the signalValue must be positive"
  *         }
  *      }
  *    ]

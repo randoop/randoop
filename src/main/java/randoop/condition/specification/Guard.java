@@ -11,7 +11,7 @@ package randoop.condition.specification;
  *
  * <pre>
  *   {
- *      "conditionText": {@code "code > 0"},
+ *      "conditionText": {@code "signalValue > 0"},
  *      "description": "the code must be positive"
  *   }
  * </pre>

@@ -3,8 +3,8 @@
  *
  * <p>Each operation corresponds to an {@code java.lang.reflect.AccessibleObject} that is either a
  * {@code Method} or {@code Constructor}. A specification for this object is represented as a {@link
- * randoop.condition.specification.OperationSpecification}. Randoop loads specifications using Gson
- * JSON serialization of these classes with the method {@link
+ * randoop.condition.specification.OperationSpecification}. Randoop loads JSON serialization of
+ * specifications with the method {@link
  * randoop.condition.SpecificationCollection#create(java.util.List)}.
  *
  * <p>Programs that create specifications can use the classes in this package to generate the
