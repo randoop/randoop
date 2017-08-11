@@ -12,9 +12,10 @@ same way.
 Randoop's mapcall agent has been renamed replacecall and has been improved.
 The replacecall agent prevents Randoop, or a test suite, from calling certain
 methods such as System.exit(); `instead, at runtime a replacement method is called.
- * The file format for specifying replacements has changed.
+ * The file format for specifying replacements has changed, and the file argument
+   is now named --replacements.
  * The replacecall agent applies default replacements for System.exit() and
-   display of AWT/Swing components
+   display of AWT/Swing components.
  * Randoop does not make direct calls to methods whose calls are replaced.
    You can disable this with option --dont-omit-replaced-methods.
 

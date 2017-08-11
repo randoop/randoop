@@ -1279,6 +1279,13 @@ The replacecall agent is able to use the implementation classes to discover repl
 </p>
 
 <p>
+Give the replacement file to the replacecall agent using the <code>--replacements</code> argument:
+</p>
+<pre>
+    -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--replacements=replacement-file.txt
+</pre>
+
+<p>
 A replacement method must be static and non-private; and should have an
 identical signature to the original, unless the original method is non-static,
 in which case, the first parameter type should be the containing class of the
