@@ -9,7 +9,8 @@ import plume.UtilMDE;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
- * OperationSpecification}. The order of the names is significant, but the names need not match the actual declaration of the method.
+ * OperationSpecification}. The order of the names is significant, but the names need not match the
+ * actual declaration of the method.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
