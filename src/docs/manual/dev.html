@@ -178,8 +178,8 @@
     <td>to compile the <code>test</code> source set</td>
   </tr>
   <tr>
-    <td><code>./gradlew compileAgentTestJava</code></td>
-    <td>to compile the <code>agentTest</code> source set</td>
+    <td><code>./gradlew compileExercisedTestJava</code></td>
+    <td>to compile the <code>exercisedTest</code> source set</td>
   </tr>
   <tr>
     <td><code>./gradlew manual</code></td>
@@ -192,9 +192,10 @@
   A source set is a grouping of source files that can have its own set of
   dependencies and tasks.
   For instance, in the Randoop <code>build.gradle</code> there is the
-  <code>agentTest</code> source set that is separate from the <code>test</code> source
-  set because the test classes must run using the <code>covered-class</code> Java
-  agent.
+  <code>coveredTest</code> and <code>replacecallTest</code> source sets that
+  are separate from the <code>test</code> sourceset because the test classes
+  must run using the <code>covered-class</code> and <code>replacecall</code> Java
+  agents.
   The Gradle Java plugin normally has two source sets named <code>main</code> and <code>test</code>,
   and the Randoop build script defines others to better structure the build process.
 </p>
@@ -335,7 +336,7 @@ For instance,
 <p>
 The system tests write logs to the directory
 <code>build/working-directories/<em>test-name</em></code>.
-You can create additional logs (as produced by 
+You can create additional logs (as produced by
 <a href="index.html#option:selection-log"><code>--selection-log</code></a> or
 <a href="index.html#option:operation-history-log"><code>--operation-history-log</code></a>)
 can be set from the command-line by setting the system properties
@@ -360,7 +361,7 @@ tests.
   Randoop has three kinds of tests:
   tests of Randoop internal classes (under directory <code>src/test</code>),
   tests of Randoop Java agents (under directories <code>src/coveredtest</code>
-  and <code>src/mapcalltest</code>), and
+  and <code>src/replacecalltest</code>), and
   system tests that run Randoop on input classes.
   All of the tests are written as JUnit classes, but are separate because each
   needs to be executed differently.

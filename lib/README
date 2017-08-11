@@ -6,7 +6,7 @@ also update, the library information in configuration blocks for plugins,
 dependencies, and the Gradle wrapper task.  Those appear in these files:
   randoop/build.gradle
   randoop/agent/covered-class/covered-class.gradle
-  randoop/agent/mapcall/mapcall.gradle
+  randoop/agent/replacecall/replacecall.gradle
 
 
 plume.jar: https://github.com/mernst/plume-lib/releases; prerelease of version 1.1.2

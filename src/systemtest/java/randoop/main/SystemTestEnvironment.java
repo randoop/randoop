@@ -20,7 +20,7 @@ class SystemTestEnvironment {
   private static final String JACOCO_DIR_NAME = "jacoco";
 
   /** The classpath for the systemtest */
-  private final String classpath;
+  final String classpath;
 
   /** The root for the system test working directories */
   private final Path systemTestWorkingDir;
@@ -31,8 +31,8 @@ class SystemTestEnvironment {
   /** The path for the root directory for test input classes. */
   private final Path testInputClassDir;
 
-  /** The path for the mapcall agent jar */
-  private final Path mapcallAgentPath;
+  /** The path for the replacecall agent jar */
+  final Path replacecallAgentPath;
 
   /** The path for the covered-class agent jar */
   final Path coveredClassAgentPath;
@@ -51,13 +51,13 @@ class SystemTestEnvironment {
       Path workingDir,
       Path testInputClassDir,
       Path jacocoAgentPath,
-      Path mapcallAgentPath,
+      Path replacecallAgentPath,
       Path coveredClassAgentPath) {
     this.classpath = classpath;
     this.systemTestWorkingDir = workingDir;
     this.testInputClassDir = testInputClassDir;
     this.jacocoAgentPath = jacocoAgentPath;
-    this.mapcallAgentPath = mapcallAgentPath;
+    this.replacecallAgentPath = replacecallAgentPath;
     this.coveredClassAgentPath = coveredClassAgentPath;
   }
 
@@ -76,7 +76,7 @@ class SystemTestEnvironment {
         buildDir.resolve("classes/java/testInput"); //XXX breaks when Gradle changes
     Path jacocoAgentPath = buildDir.resolve("jacocoagent/jacocoagent.jar");
     Path libsPath = buildDir.resolve("libs");
-    Path mapcallAgentPath = null;
+    Path replacecallAgentPath = null;
     Path coveredClassAgentPath = null;
     Path randoopJarPath = null;
     try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(libsPath)) {
@@ -84,8 +84,8 @@ class SystemTestEnvironment {
         if (entry.getFileName().toString().startsWith("covered-class")) {
           coveredClassAgentPath = entry;
         }
-        if (entry.getFileName().toString().startsWith("mapcall")) {
-          mapcallAgentPath = entry;
+        if (entry.getFileName().toString().startsWith("replacecall")) {
+          replacecallAgentPath = entry;
         }
         if (entry.getFileName().toString().startsWith("randoop-all")) {
           randoopJarPath = entry;
@@ -100,7 +100,7 @@ class SystemTestEnvironment {
         workingDir,
         testInputClassDir,
         jacocoAgentPath,
-        mapcallAgentPath,
+        replacecallAgentPath,
         coveredClassAgentPath);
   }
 

@@ -13,6 +13,7 @@ public interface CodeWriter {
    * @param classname the simple name of the class
    * @param classCode the text of a Java class, must be compilable
    * @return the {@code File} object for the Java file written
+   * @throws RandoopOutputException if there is an error while writing the code
    */
   public File writeClassCode(String packageName, String classname, String classCode)
       throws RandoopOutputException;
@@ -24,6 +25,7 @@ public interface CodeWriter {
    * @param classname the simple name of the class
    * @param classCode the text of the class to be written, must be compilable
    * @return the {@code File} object for the Java file written
+   * @throws RandoopOutputException if there is an error while writing the code
    */
   public File writeUnmodifiedClassCode(String packageName, String classname, String classCode)
       throws RandoopOutputException;

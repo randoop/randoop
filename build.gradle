@@ -70,6 +70,15 @@ sourceSets {
     }
   }
 
+  replacecallTest {
+    java {
+      srcDir 'src/replacecalltest/java'
+    }
+    resources {
+      srcDir 'src/replacecalltest/resources'
+    }
+  }
+
   /* system tests */
   systemTest {
     java {
@@ -119,6 +128,8 @@ configurations {
    */
   coveredTestImplementation.extendsFrom testImplementation
   coveredTestRuntimeOnly.extendsFrom testRuntimeOnly
+  replacecallTestImplementation.extendsFrom testImplementation
+  replacecallTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 dependencies {
@@ -126,6 +137,7 @@ dependencies {
   plume files('lib/plume.jar')
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
   implementation group: 'junit', name: 'junit', version: '4.+'
+  implementation files(project(':replacecall').sourceSets.main.output)
 
   /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files. */
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
@@ -142,6 +154,8 @@ dependencies {
   coveredTestImplementation sourceSets.main.output
   coveredTestImplementation sourceSets.test.output
   coveredTestRuntimeOnly project(':covered-class')
+
+  replacecallTestImplementation files(project(':replacecall').sourceSets.main.output)
 
   jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.7.201606060606'
 
@@ -203,6 +217,7 @@ tasks.withType(JavaCompile) {
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
 compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileCoveredTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
+compileReplacecallTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
@@ -230,7 +245,7 @@ tasks.withType(JavaCompile).each { t ->
 /*
  * Configuration for clean
  */
-clean.dependsOn ':mapcall:clean'
+clean.dependsOn ':replacecall:clean'
 clean.dependsOn ':covered-class:clean'
 
 /*
@@ -320,6 +335,23 @@ task coveredTest(type: Test, dependsOn: ['copyJars', 'compileTestJava']) {
  * the project build task.
  */
 check.dependsOn coveredTest
+
+task replacecallTest(type: Test, dependsOn: 'copyJars') {
+  workingDir = sourceSets.replacecallTest.output.resourcesDir
+  testClassesDirs = sourceSets.replacecallTest.output.classesDirs
+  classpath = sourceSets.replacecallTest.runtimeClasspath + files("$buildDir/libs/replacecall-${version}.jar")
+  // use the replacecall agent using the exclusions file from replacecalltest/resources
+  jvmArgs "-javaagent:$buildDir/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt,--debug"
+  jvmArgs "-Xbootclasspath/a:$buildDir/libs/replacecall-${version}.jar"
+  testLogging {
+    showStandardStreams = true
+    exceptionFormat = 'full'
+  }
+
+  /* Turn off HTML reports -- handled by testReport task */
+  reports.html.enabled = false
+}
+check.dependsOn replacecallTest
 
 jacocoTestReport {
   group 'Report'
@@ -447,7 +479,7 @@ uploadArchives {
   }
 }
 
-task copyJars(type: Copy, dependsOn: [':covered-class:jar', ':mapcall:jar']) {
+task copyJars(type: Copy, dependsOn: [':covered-class:jar', ':replacecall:jar']) {
   from subprojects.collect { it.tasks.withType(Jar) }
   into "$buildDir/libs"
 }
@@ -463,7 +495,7 @@ shadowJar {
   exclude '**/default-*.txt'
 
   // don't include either mocks or agent classes
-  // otherwise creates problems for replacement creation of mapcall agent
+  // otherwise creates problems for replacement creation of replacecall agent
   exclude '**/randoop/mock/*'
   exclude '**/randoop/instrument/*'
 
@@ -751,7 +783,7 @@ task tags(type: Exec, dependsOn: 'clonePlumeLib') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
-  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/mapcall/src/ -name *.java | grep -v src/testinput | sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name *.java | grep -v src/testinput | sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */

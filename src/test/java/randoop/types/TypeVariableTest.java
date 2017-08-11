@@ -39,7 +39,6 @@ public class TypeVariableTest {
         }
         assert parameterType.isVariable();
         variable = (TypeVariable) parameterType;
-        System.out.println("method " + m.getName() + " variable " + variable);
         if (!(m.getName().equals("m05")
             || m.getName().equals("m06")
             || m.getName().equals("m08"))) {
@@ -59,11 +58,7 @@ public class TypeVariableTest {
         assertTrue(
             "variable " + variable + " from " + m.getName() + " should be instantiable by Integer",
             variable.canBeInstantiatedBy(JavaTypes.INT_TYPE.toBoxedPrimitive()));
-
-        System.out.println();
       }
     }
-
-    //fail("incomplete");
   }
 }
