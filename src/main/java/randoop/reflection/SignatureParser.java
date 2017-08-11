@@ -15,14 +15,13 @@ public class SignatureParser {
   // ReplacementFileReader} from the replacecall agent.
 
   /** Regex for Java identifiers */
-  private static final String ID_STRING =
-      "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+  public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**
    * Regex to match a sequence of identifiers (or {@code <init>}) separated by periods. Corresponds
    * to package names, fully-qualified classnames, or method names with fully-qualified classname.
    */
-  private static final String DOT_DELIMITED_IDS =
+  public static final String DOT_DELIMITED_IDS =
       ID_STRING + "(?:\\." + ID_STRING + ")*" + "(?:\\.<init>)?";
 
   /**
