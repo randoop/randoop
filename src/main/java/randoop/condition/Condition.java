@@ -22,13 +22,14 @@ public class Condition {
   /** The comment describing this condition */
   private final String comment;
 
-  /** The Java source code for this condition */
+  /** The Java source code for this condition. For the format, see {@link #getConditionSource}. */
   private final String conditionSource;
 
   /**
    * Creates a {@link Condition} that calls the given condition method.
    *
-   * @param conditionMethod the reflection {@code Method} for the condition method
+   * @param conditionMethod the reflection {@code Method} for the condition method. For the format,
+   *     see {@link #getConditionSource}.
    * @param comment the comment describing this condition
    * @param conditionSource the source code for this condition
    */
@@ -74,7 +75,7 @@ public class Condition {
       String message =
           "Failure executing condition method: "
               + conditionMethod
-              + "(invoke threw "
+              + " (invoke threw "
               + e.getCause()
               + ")";
       if (Log.isLoggingOn()) {
@@ -95,9 +96,9 @@ public class Condition {
 
   /**
    * Return the Java source code for this condition. Arguments to the condition follow the {@link
-   * randoop.contract.ObjectContract} convention where variables are represented by {@code x0}, ...,
-   * {@code xn} for some number {@code n}. If the operation takes a receiver it will be {@code x0},
-   * and if the operation has a return value it will be {@code xn} (the last variable).
+   * randoop.contract.ObjectContract} convention where parameters (including the receiver, if any)
+   * are represented by {@code x0}, ..., {@code xn} for some number {@code n}. If the operation has
+   * a return value it will be {@code xn} (the last, extra variable).
    *
    * @return the Java representation of the condition as a {@code String}
    */
