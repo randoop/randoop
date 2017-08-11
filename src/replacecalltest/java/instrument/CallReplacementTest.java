@@ -24,7 +24,8 @@ public class CallReplacementTest {
 
     int value = 0;
     thrown.expect(SystemExitCalledError.class);
-    thrown.expectMessage("System exit with status " + value + " ignored");
+    String expected = String.format("System exit(%d) ignored", value);
+    thrown.expectMessage(expected);
     obj.checkValue(value);
   }
 
