@@ -9,7 +9,7 @@ import plume.UtilMDE;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
- * OperationSpecification}. These names need not match the actual declaration of the method.
+ * OperationSpecification}. The order of the names is significant, but the names need not match the actual declaration of the method.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
@@ -18,7 +18,7 @@ import plume.UtilMDE;
  * <pre>
  *   {
  *     "parameters": [
- *       "code"
+ *       "signalValue"
  *      ],
  *     "receiverName": "receiver",
  *     "returnName": "result"
@@ -26,7 +26,7 @@ import plume.UtilMDE;
  * </pre>
  *
  * <p>When using the class, if names are not given for the receiver and return value, then the
- * defaults will be used.
+ * defaults {@link #DEFAULT_RECEIVER_NAME} and {@link #DEFAULT_RETURN_NAME} will be used.
  */
 public class Identifiers {
 

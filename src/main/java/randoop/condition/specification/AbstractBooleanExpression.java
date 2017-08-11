@@ -15,10 +15,10 @@ public abstract class AbstractBooleanExpression {
   @SerializedName("condition")
   private final String conditionSource;
 
-  /** The description of the expression. Used in test assertions. */
+  /** The description of the expression. Used as the descriptive text in test assertions. */
   private final String description;
 
-  /** A default constructor is expected for Gson serialization. */
+  /** A default constructor is required to exist for Gson serialization. */
   @SuppressWarnings("unused")
   private AbstractBooleanExpression() {
     this.conditionSource = "";
