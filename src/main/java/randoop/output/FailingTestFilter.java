@@ -1,6 +1,8 @@
 package randoop.output;
 
 import static randoop.execution.RunCommand.CommandException;
+import static randoop.reflection.SignatureParser.DOT_DELIMITED_IDS;
+import static randoop.reflection.SignatureParser.ID_STRING;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,12 +40,8 @@ public class FailingTestFilter implements CodeWriter {
   private static final Pattern FAILURE_MESSAGE_PATTERN =
       Pattern.compile("There\\s+(?:was|were)\\s+(\\d+)\\s+failure(?:s|):");
 
-  /** Regex for Java identifiers */
-  private static final String ID_STRING =
-      "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
-
   private static final Pattern FAILURE_HEADER_PATTERN =
-      Pattern.compile("\\d+\\)\\s+(" + ID_STRING + ")\\(" + ID_STRING + "\\)");
+      Pattern.compile("\\d+\\)\\s+(" + ID_STRING + ")\\(" + DOT_DELIMITED_IDS + "\\)");
 
   /** The {@link randoop.execution.TestEnvironment} for running the test classes. */
   private final TestEnvironment testEnvironment;
@@ -95,7 +93,7 @@ public class FailingTestFilter implements CodeWriter {
       if (status.exitStatus == 0 && !status.timedOut) {
         passing = true;
       } else {
-        classSource = commentFailingAssertions(classname, classSource, status);
+        classSource = commentFailingAssertions(packageName, classname, classSource, status);
       }
       pass++;
     }
@@ -112,6 +110,7 @@ public class FailingTestFilter implements CodeWriter {
    * Comments out lines with failing assertions. Uses the failures in the {@code status} from
    * running JUnit with {@code javaCode} to identify lines with failing assertions.
    *
+   * @param packageName the package name of the test class
    * @param classname the name of the test class
    * @param javaCode the source code for the test class, each assertion must be on its own line
    * @param status the {@link RunCommand.Status} for running the test with JUnit
@@ -120,12 +119,9 @@ public class FailingTestFilter implements CodeWriter {
    *     Randoop-generated test method
    */
   private String commentFailingAssertions(
-      String classname, String javaCode, RunCommand.Status status) {
-    // JUnit4 writes to standard out, check this doesn't change.
-    assert status.errorOutputLines.isEmpty()
-        : "Expecting JUnit to write to standard out, but found output on standard error";
+      String packageName, String classname, String javaCode, RunCommand.Status status) {
 
-    /* Iterator to move through JUnit output. */
+    /* Iterator to move through JUnit output. (JUnit only writes to standard output.) */
     Iterator<String> lineIterator = status.standardOutputLines.iterator();
 
     /*
@@ -174,10 +170,12 @@ public class FailingTestFilter implements CodeWriter {
        * Search for the stacktrace entry corresponding to the test method, and capture the line
        * number.
        */
+      String qualifiedClassname = ((packageName.isEmpty()) ? "" : packageName + ".") + classname;
       Pattern linePattern =
           Pattern.compile(
               String.format(
-                  "\\s+at\\s+%s\\.%s\\(%s\\.java:(\\d+)\\)", classname, methodName, classname));
+                  "\\s+at\\s+%s\\.%s\\(%s\\.java:(\\d+)\\)",
+                  qualifiedClassname, methodName, classname));
 
       Match failureLineMatch = readUntilMatch(lineIterator, linePattern);
       int lineNumber = Integer.parseInt(failureLineMatch.group);

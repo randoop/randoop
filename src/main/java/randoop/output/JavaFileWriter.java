@@ -60,7 +60,7 @@ public class JavaFileWriter implements CodeWriter {
    *
    * @param packageName the package name
    * @return the {@code File} for the created directory
-   * @throws RandoopOutputException if the directory cannot be created
+   * @throws RandoopOutputException if the directory for the package could not be created
    */
   private File createOutputDir(String packageName) throws RandoopOutputException {
     File dir = getDir(packageName);

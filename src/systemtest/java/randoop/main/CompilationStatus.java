@@ -43,16 +43,20 @@ class CompilationStatus {
    * status as a {@link CompilationStatus} object.
    *
    * @param testSourceFiles the Java source for the tests
+   * @param classpath the classpath for compiling
    * @param destinationDir the path to the desination directory
    * @return true if compile succeeded, false otherwise
    */
-  static CompilationStatus compileTests(List<File> testSourceFiles, String destinationDir) {
+  static CompilationStatus compileTests(
+      List<File> testSourceFiles, String classpath, String destinationDir) {
     final Locale locale = null; // use default locale
     final Charset charset = null; // use default charset
     final Writer writer = null; // use System.err for output
     final List<String> annotatedClasses = null; // no classes
 
     List<String> options = new ArrayList<>();
+    options.add("-classpath");
+    options.add(classpath);
     options.add("-d");
     options.add(destinationDir);
 
