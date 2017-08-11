@@ -39,12 +39,13 @@ public class CallReplacementTransformer implements ClassFileTransformer {
           ReplaceCallAgent.debugPath + File.separator + "transform-log.txt",
           ReplaceCallAgent.debug);
 
+  /** Debug information for instrumentation. */
   private static SimpleLog debug_instrument_inst =
       new SimpleLog(
           ReplaceCallAgent.debugPath + File.separator + "instrument-log.txt",
           ReplaceCallAgent.debug);
 
-  /** Debug information on method maping */
+  /** Debug information on method mapping. */
   private static SimpleLog debug_map =
       new SimpleLog(
           ReplaceCallAgent.debugPath + File.separator + "method_mapping.txt",
@@ -93,7 +94,10 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       ProtectionDomain protectionDomain,
       byte[] classfileBuffer)
       throws IllegalClassFormatException {
-    // Note: An uncaught exception within a transform method results in null being returned.
+
+    // Note: An uncaught exception within a transform method is equivalent to null being returned.
+    // This method will only throw an IllegalClassFormatException, which is a ClassFileTransformer
+    // convention.
 
     String fullClassName = className.replace("/", ".");
 
@@ -111,7 +115,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       c = parser.parse();
     } catch (Exception e) {
       debug_transform.log("transform: EXIT parse of %s resulted in error %s%n", className, e);
-      throw new RuntimeException("Unexpected parse exception", e);
+      return null;
     }
 
     try {
@@ -128,6 +132,12 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         debug_transform.log("transform: EXIT class %s not transformed", className);
         return null;
       }
+    } catch (IllegalClassFormatException e) {
+      debug_transform.log(
+          "transform: EXIT transform of %s resulted in exception %s%n", className, e);
+      System.out.format(
+          "Unexpected exception %s (%s) in class transform of %s%n", e, e.getCause(), className);
+      throw e;
     } catch (Throwable e) {
       debug_transform.log(
           "transform: EXIT transform of %s resulted in exception %s%n", className, e);
@@ -139,9 +149,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Indicates whether the class is a boot-loaded class.
-   *
-   * <p>Checks whether the class is loaded by the bootstrap loader or by the first classloader. The
+   * Indicates whether the class loader is the bootstrap loader or by the first classloader. The
    * first classloader will either be a user-provided boot loader, or the extension class loader.
    * Since the predicate is for performance, we don't make the extra check to determine if the user
    * has given a boot loader.
@@ -154,7 +162,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Indicates whether the class is in the {@code java.awt.} or {@code javax.swing.} packages.
+   * Indicates whether the class name begins with {@code java.awt.} or {@code javax.swing.} package
+   * prefixes.
    *
    * @param fullClassName the fully-qualified class name
    * @return true if the class is in {@code java.awt.} or {@code javax.swing.}, false otherwise
@@ -188,8 +197,9 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * static methods.
    *
    * @param cg the BCEL class representation
-   * @return true if the class has been transformed, false if either no calls were replaced or an
-   *     error occured
+   * @return true if the class has been transformed, false otherwise
+   * @throws IllegalClassFormatException if an unexpected instruction is found where an invoke is
+   *     expected
    */
   private boolean transformClass(ClassGen cg) throws IllegalClassFormatException {
     boolean transformed = false;
@@ -256,6 +266,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * @param ifact the instrument factory for the enclosing class of this method
    * @param pgen the constant pool for this class
    * @return true if the method was modified, false otherwise
+   * @throws IllegalClassFormatException if an unexpected instruction is found where an invoke is
+   *     expected
    */
   private boolean transformMethod(MethodGen mg, InstructionFactory ifact, ConstantPoolGen pgen)
       throws IllegalClassFormatException {
@@ -296,6 +308,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * @param inst the instruction to replace
    * @param ifact the instruction factory for the enclosing class
    * @return the new instruction, or null if the instruction has no replacement
+   * @throws IllegalClassFormatException if an unexpected instruction is found where an invoke is
+   *     expected
    */
   private InvokeInstruction getReplacementInstruction(
       MethodGen mg, Instruction inst, InstructionFactory ifact, ConstantPoolGen pgen)
@@ -331,13 +345,13 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       case Const.INVOKESPECIAL:
       case Const.INVOKEVIRTUAL:
         /*
-         * These calls have an implicit receiver ({@code this}) argument. Since conversion is
-         * to a static call, need to insert the receiver type at the beginning of the argument type
+         * These calls have an implicit receiver ({@code this}) argument. Since the conversion is
+         * to a static call, the receiver type is inserted at the beginning of the argument type
          * array. This argument has already been explicitly pushed onto the stack, so modifying the
          * call signature is enough.
          */
         Type instanceType = invocation.getReferenceType(pgen);
-        Type[] arguments = BCELUtil.insert_type(instanceType, invocation.getArgumentTypes(pgen));
+        Type[] arguments = BCELUtil.prependToArray(instanceType, invocation.getArgumentTypes(pgen));
         instruction =
             ifact.createInvoke(
                 call.getClassname(),
@@ -370,7 +384,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     return instruction;
   }
 
-  /** Dumps out the map list to the debug_map logger */
+  /** Dumps out {@link #replacementMap} to the debug_map logger */
   private void logReplacementMap() {
     if (debug_map.enabled()) {
       if (replacementMap.isEmpty()) {
@@ -383,7 +397,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     }
   }
 
-  /** Adds a shutdown hook that prints out the results of the method maps */
+  /** Adds a shutdown hook that prints out {@link #replacementMap} */
   void addMapFileShutdownHook() {
     Runtime.getRuntime()
         .addShutdownHook(

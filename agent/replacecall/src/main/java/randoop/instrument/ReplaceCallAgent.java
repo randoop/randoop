@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import plume.EntryReader;
 import plume.Option;
 import plume.Options;
+import plume.UtilMDE;
 import randoop.MethodReplacements;
 
 /**
@@ -37,15 +38,23 @@ import randoop.MethodReplacements;
  */
 public class ReplaceCallAgent {
 
+  /** The name of this agent. */
+  private static final String AGENT_NAME = "replacecall";
+
   /** Run the replacecall agent in debug mode. */
   @SuppressWarnings("WeakerAccess")
   @Option("print debug information")
   public static boolean debug = false;
 
+  /**
+   * The directory where debug logs are written when {@code debug} is set. If no directory is given,
+   * then the current working directory is used.
+   */
   @SuppressWarnings("WeakerAccess")
   @Option("directory name where debug logs are written")
-  public static String debug_directory = null;
+  public static String debug_directory;
 
+  /** The path for the debug directory. Used by the logs in {@link CallReplacementTransformer}. */
   static Path debugPath;
 
   @SuppressWarnings("WeakerAccess")
@@ -55,7 +64,7 @@ public class ReplaceCallAgent {
   /** The file from which to read the user replacements for replacing calls. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing methods whose calls to replace by substitute methods")
-  public static File map_calls = null;
+  public static File replacements = null;
 
   /** Exclude transformation of classes in the the listed packages. */
   @SuppressWarnings("WeakerAccess")
@@ -68,108 +77,134 @@ public class ReplaceCallAgent {
    * in the replacements file(s).
    *
    * @param agentArgs the arguments to the agent
-   * @param inst the {@code Instrumentation} object
+   * @param instrumentation the {@code Instrumentation} object
    * @throws IOException if there is an error reading a file
    */
-  public static void premain(String agentArgs, Instrumentation inst) throws IOException {
+  public static void premain(String agentArgs, Instrumentation instrumentation) throws IOException {
     if (verbose) {
       System.out.format(
-          "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n", agentArgs, inst);
+          "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n", agentArgs, instrumentation);
     }
 
-    if (agentArgs != null) { // If there are any arguments, parse them
-      Options options = new Options(ReplaceCallAgent.class);
-      String[] target_args = options.parse_or_usage(agentArgs);
-      if (target_args.length > 0) {
-        System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
-        System.exit(1); // Exit on bad user input.
-      }
-    }
-
-    debugPath = Paths.get("").toAbsolutePath().normalize();
-    if (debug && debug_directory != null && !debug_directory.isEmpty()) {
-      debugPath = debugPath.resolve(debug_directory);
-      if (!Files.exists(debugPath)) {
-        Files.createDirectory(debugPath);
-      }
-    }
-
-    // Load package prefixes from the resource file in the jar for default package exclusions
-    Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
-
-    String exclusionFileName = "/default-load-exclusions.txt";
-    InputStream inputStream = ReplaceCallAgent.class.getResourceAsStream(exclusionFileName);
-    if (inputStream == null) {
-      System.err.println("Unable to find default package exclusion file. Please report.");
-      System.exit(1); // Exit on configuration error. (Throwing exception would halt JVM.)
-    }
     try {
-      loadExclusions(
-          new InputStreamReader(inputStream), exclusionFileName, excludedPackagePrefixes);
-    } catch (IOException e) {
-      System.err.format(
-          "Unable to read default package exclusion file: %s%nPlease report.", e.getMessage());
-      System.exit(1); // Exit on configuration error. (Throwing exception would halt JVM.)
-    }
+      if (agentArgs != null) { // If there are any arguments, parse them
+        Options options = new Options(ReplaceCallAgent.class);
+        String[] target_args = options.parse_or_usage(agentArgs);
+        if (target_args.length > 0) {
+          System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
+          System.exit(1); // Exit on bad user input.
+        }
+      }
 
-    // If user-provided package exclusion file, load user package exclusions
-    if (dont_transform != null) {
+      debugPath = Paths.get("").toAbsolutePath().toAbsolutePath();
+      if (debug && debug_directory != null && !debug_directory.isEmpty()) {
+        debugPath = debugPath.resolve(debug_directory);
+        if (!Files.exists(debugPath)) {
+          Files.createDirectory(debugPath);
+        }
+      }
+
+      // Load package prefixes from the resource file in the jar for default package exclusions
+      Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
+
+      String exclusionFileName = "/default-load-exclusions.txt";
+      InputStream inputStream = ReplaceCallAgent.class.getResourceAsStream(exclusionFileName);
+      if (inputStream == null) {
+        throw new BugInAgentException("Unable to find default package exclusion file.");
+      }
       try {
-        loadExclusions(
-            new FileReader(dont_transform), dont_transform.getName(), excludedPackagePrefixes);
+        excludedPackagePrefixes.addAll(
+            loadExclusions(new InputStreamReader(inputStream), exclusionFileName));
       } catch (IOException e) {
-        System.err.format(
-            "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
-        System.exit(1); // Exit on user input error. (Throwing exception would halt JVM.)
+        throw new BugInAgentException(
+            "Unable to read default package exclusion file: " + e.getMessage());
       }
-    }
 
-    /*
-     * The agent is called when classes are loaded. If Randoop is using threads, this can result in
-     * multiple threads accessing the map to apply replacements. Since
-     */
-    ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap = new ConcurrentHashMap<>();
+      // If user-provided package exclusion file, load user package exclusions
+      Path exclusionFilePath = null;
+      if (dont_transform != null) {
+        try {
+          excludedPackagePrefixes.addAll(
+              loadExclusions(new FileReader(dont_transform), dont_transform.getName()));
+        } catch (IOException e) {
+          System.err.format(
+              "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
+          System.exit(1); // Exit on user input error. (Throwing exception would halt JVM.)
+        }
+        // Get path for exclusions file to use in argument string given to Randoop
+        exclusionFilePath = dont_transform.toPath();
+      }
 
-    // Read the default replacement file
-    String replacementPath = "/default-replacements.txt";
-    inputStream = ReplaceCallAgent.class.getResourceAsStream(replacementPath);
-    if (inputStream == null) {
-      System.err.println("Unable to open default replacements file. Please report.");
-      System.exit(1);
-    }
-    try {
-      replacementMap =
-          ReplacementFileReader.readReplacements(
-              new InputStreamReader(inputStream), replacementPath);
-    } catch (ReplacementFileException e) {
-      System.err.printf("Error reading default replacement file:%n  %s%n", e);
-      System.err.println("Check that replacecall.jar is on the classpath or bootclasspath.");
-      System.exit(1);
-    }
+      /*
+       * The agent is called when classes are loaded. If Randoop is using threads, this can result in
+       * multiple threads accessing the map to apply replacements.
+       */
+      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap =
+          new ConcurrentHashMap<>();
 
-    // If the user has provided a replacement file, load user replacements and put them into the
-    // map, possibly overriding default replacements that already appear in the map.
-    if (map_calls != null) {
+      // Read the default replacement file
+      String replacementPath = "/default-replacements.txt";
+      inputStream = ReplaceCallAgent.class.getResourceAsStream(replacementPath);
+      if (inputStream == null) {
+        throw new BugInAgentException("Unable to open default replacements file.");
+      }
       try {
-        replacementMap.putAll(ReplacementFileReader.readReplacements(map_calls));
-      } catch (Throwable e) {
-        System.err.printf("Error reading replacement file %s:%n  %s%n", map_calls, e.getMessage());
-        System.exit(1);
+        replacementMap =
+            ReplacementFileReader.readReplacements(
+                new InputStreamReader(inputStream), replacementPath);
+      } catch (ReplacementFileException e) {
+        throw new BugInAgentException("Error reading default replacement file. " + e.getMessage());
       }
+
+      // If the user has provided a replacement file, load user replacements and put them into the
+      // map, possibly overriding default replacements that already appear in the map.
+      Path replacementFilePath = null;
+      if (replacements != null) {
+        try {
+          replacementMap.putAll(ReplacementFileReader.readReplacements(replacements));
+        } catch (Throwable e) {
+          System.err.printf(
+              "Error reading replacement file %s:%n  %s%n", replacements, e.getMessage());
+          System.exit(1);
+        }
+        // Get path for replacement file to use in argument string given to Randoop.
+        replacementFilePath = replacements.toPath();
+      }
+
+      /*
+       * The flaky-filter in Randoop needs to run the generated tests using the agent with the same
+       * file inputs on the command-line. The paths for the files are made absolute and then the
+       * argument string is rebuilt.
+       */
+      MethodReplacements.setAgentPath(getAgentPath());
+      MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
+
+      // Communicate the list of replaced methods to Randoop to omit direct calls
+      List<String> signatureList = new ArrayList<>();
+      for (MethodSignature def : replacementMap.keySet()) {
+        signatureList.add(def.toString());
+      }
+      MethodReplacements.setReplacedMethods(signatureList);
+
+      // Create the transformer and add to the class loader instrumentation
+      CallReplacementTransformer transformer =
+          new CallReplacementTransformer(replacementMap, excludedPackagePrefixes);
+      transformer.addMapFileShutdownHook();
+      instrumentation.addTransformer(transformer);
+
+    } catch (BugInAgentException e) {
+      System.err.println("Error in replacecall agent: " + e.getMessage());
+      System.err.println(
+          "For problems with the default replacements file, make sure that the"
+              + " replacecall.jar file is on the bootclasspath.");
+      System.err.println("Otherwise, please report.");
+      System.exit(1);
+    } catch (Throwable e) {
+      // Make sure that a message is printed for any stray exception
+      System.err.println("Unexpected exception thrown by replacecall agent: " + e.getMessage());
+      System.err.println("Please report.");
+      System.exit(1);
     }
-
-    // Communicate the list of replaced methods to Randoop to omit direct calls
-    List<String> signatureList = new ArrayList<>();
-    for (MethodSignature def : replacementMap.keySet()) {
-      signatureList.add(def.toString());
-    }
-    MethodReplacements.addReplacedMethods(signatureList);
-
-    CallReplacementTransformer transformer =
-        new CallReplacementTransformer(replacementMap, excludedPackagePrefixes);
-    transformer.addMapFileShutdownHook();
-
-    inst.addTransformer(transformer);
   }
 
   /**
@@ -179,13 +214,12 @@ public class ReplaceCallAgent {
    * @param exclusionReader the reader for the text file containing the list of excluded packages,
    *     must not be null
    * @param filename the name of the file read by the reader
-   * @param excludedPackagePrefixes the set of excluded package prefixes, modified by adding new
-   *     prefixes. Must not be null.
+   * @return the set of excluded package prefixes from the file
    * @throws IOException if there is an error reading the file
    */
-  private static void loadExclusions(
-      Reader exclusionReader, String filename, Set<String> excludedPackagePrefixes)
+  private static Set<String> loadExclusions(Reader exclusionReader, String filename)
       throws IOException {
+    Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
     try (EntryReader reader = new EntryReader(exclusionReader, filename, "//.*$", null)) {
       for (String line : reader) {
         String trimmed = line.trim();
@@ -196,6 +230,63 @@ public class ReplaceCallAgent {
           excludedPackagePrefixes.add(trimmed);
         }
       }
+    }
+    return excludedPackagePrefixes;
+  }
+
+  /**
+   * Extracts the path for the jar of this agent from the boot classpath.
+   *
+   * @return the path for the jar file, as a string
+   * @throws BugInAgentException if the agent is not found on the boot classpath
+   */
+  private static String getAgentPath() throws BugInAgentException {
+    String bootclasspath = System.getProperty("sun.boot.class.path");
+    String[] paths = bootclasspath.split(File.pathSeparator);
+    for (String path : paths) {
+      if (path.contains(AGENT_NAME)) {
+        return path;
+      }
+    }
+    throw new BugInAgentException("Agent should be included on bootclasspath");
+  }
+
+  /**
+   * Creates an argument string using absolute paths for the replacement and exclusion file.
+   *
+   * <p>This is necessary because the flaky filter in Randoop needs to call the agent using the same
+   * files used in the original use of the agent.
+   *
+   * @param replacementFilePath the {@code Path} for the replacement file
+   * @param exclusionFilePath the {@code Path} for the replacement file
+   * @return the argument string for the current run using absolute paths
+   */
+  private static String createAgentArgs(Path replacementFilePath, Path exclusionFilePath) {
+    List<String> args = new ArrayList<>();
+    if (replacementFilePath != null) {
+      args.add("--replacements=" + replacementFilePath.toAbsolutePath());
+    }
+    if (exclusionFilePath != null) {
+      args.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
+    }
+    return UtilMDE.join(args, ",");
+  }
+
+  /**
+   * Private exception class used to manage agent-specific errors.
+   *
+   * <p>Analogous to {@code BugInRandoopException}, but that class is not available within the
+   * agent.
+   */
+  private static class BugInAgentException extends Throwable {
+
+    /**
+     * Create a {@link BugInAgentException} with the message.
+     *
+     * @param message the error message
+     */
+    BugInAgentException(String message) {
+      super(message);
     }
   }
 }

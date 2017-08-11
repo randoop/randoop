@@ -11,7 +11,7 @@ public class SystemExitCalledError extends Error {
   private final int status;
 
   public SystemExitCalledError(int status) {
-    super(String.format("System exit(%d) ignored%n", status));
+    super(String.format("System exit(%d) ignored", status));
     this.status = status;
   }
 }
