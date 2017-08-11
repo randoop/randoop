@@ -21,6 +21,12 @@ public class TestEnvironment {
   /** A map from javaagent jar path to argument string. */
   private final LinkedHashMap<Path, String> agentMap = new LinkedHashMap<>();
 
+  /** The path for the replacecall agent. */
+  private Path replaceCallAgentPath;
+
+  /** The argument string for the replacecall agent. */
+  private String replaceCallAgentArgs;
+
   /**
    * Creates a test environment with the given classpath and an empty agent map.
    *
@@ -39,6 +45,18 @@ public class TestEnvironment {
    */
   public void addAgent(Path agentPath, String agentArgumentString) {
     agentMap.put(agentPath, agentArgumentString);
+  }
+
+  /**
+   * Sets the path and arguments for the replace call agent. This agent has to be placed on the boot
+   * classpath.
+   *
+   * @param agentPath the path for the replacecall agent
+   * @param agentArgs the arguments for running the agent
+   */
+  public void setReplaceCallAgent(Path agentPath, String agentArgs) {
+    replaceCallAgentPath = agentPath;
+    replaceCallAgentArgs = agentArgs;
   }
 
   /**
@@ -74,22 +92,30 @@ public class TestEnvironment {
   private List<String> commandPrefix() {
     List<String> command = new ArrayList<>();
     command.add("java");
+    command.add("-ea");
 
-    for (Map.Entry<Path, String> entry : agentMap.entrySet()) {
-      String agentPath = entry.getKey().toString();
-      String agent = "-javaagent:" + agentPath;
-      String args = entry.getValue();
-      if (args != null) {
-        agent = agent + "=" + args;
-      }
-      command.add(agent);
+    if (replaceCallAgentPath != null) {
+      command.add("-Xbootclasspath/a:" + replaceCallAgentPath);
+      command.add(getJavaagentOption(replaceCallAgentPath, replaceCallAgentArgs));
     }
 
-    command.add("-ea");
+    for (Map.Entry<Path, String> entry : agentMap.entrySet()) {
+      String args = entry.getValue();
+      command.add(getJavaagentOption(entry.getKey(), args));
+    }
+
     command.add("-classpath");
     command.add(testClasspath + File.pathSeparator + ".");
     command.add("org.junit.runner.JUnitCore");
 
     return command;
+  }
+
+  private String getJavaagentOption(Path agentPath, String args) {
+    String agent = "-javaagent:" + agentPath;
+    if (args != null && !args.isEmpty()) {
+      agent = agent + "=" + args;
+    }
+    return agent;
   }
 }

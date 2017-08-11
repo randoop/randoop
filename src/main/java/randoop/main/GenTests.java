@@ -5,6 +5,8 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -474,8 +476,15 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (!GenInputsAbstract.no_regression_tests) {
-      FailingTestFilter codeWriter =
-          new FailingTestFilter(new TestEnvironment(classpath), javaFileWriter);
+      final TestEnvironment testEnvironment = new TestEnvironment(classpath);
+      String agentPathString = MethodReplacements.getAgentPath();
+      String agentArgs = MethodReplacements.getAgentArgs();
+      if (agentPathString != null && !agentPathString.isEmpty()) {
+        Path agentPath = Paths.get(agentPathString);
+        testEnvironment.setReplaceCallAgent(agentPath, agentArgs);
+      }
+
+      FailingTestFilter codeWriter = new FailingTestFilter(testEnvironment, javaFileWriter);
       writeTestFiles(
           junitCreator,
           explorer.getRegressionSequences(),
