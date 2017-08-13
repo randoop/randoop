@@ -117,7 +117,7 @@ public class SpecificationCollection {
         if (operation == null) { // deserialization could result in null operation
           continue;
         }
-        if (specification.getIdentifiers().hasNameConflict()) {
+        if (specification.getIdentifiers().hasDuplicatedName()) {
           String msg =
               String.format(
                   "Ignoring specification with identifier name conflict: %s",

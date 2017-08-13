@@ -36,7 +36,7 @@ public class RawSignature {
    * @param packageName the package name of the class; empty string for the unnamed package
    * @param classname the name of the class
    * @param name the method name; for a constructor, same as the classname
-   * @param parameterTypes the method parameter types
+   * @param parameterTypes the method parameter types, including the receiver type if any
    */
   public RawSignature(
       String packageName, String classname, String name, Class<?>[] parameterTypes) {

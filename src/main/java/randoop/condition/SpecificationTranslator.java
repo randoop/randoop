@@ -134,7 +134,7 @@ public class SpecificationTranslator {
    * followed by the parameter types of the method.
    *
    * <p>Note: The declaring class of the condition method is actually determined by {@link
-   * ConditionMethodCreator#create(RawSignature, String, String, SequenceCompiler)}
+   * ConditionMethodCreator#createMethod(RawSignature, String, String, SequenceCompiler)}
    *
    * @param method the method to which the precondition belongs
    * @return the {@link RawSignature} for a pre-condition method of the method
@@ -143,8 +143,8 @@ public class SpecificationTranslator {
     Class<?> declaringClass = method.getDeclaringClass();
     Class<?>[] parameterTypes = method.getParameterTypes();
     String packageName = getPackageName(declaringClass.getPackage());
-    return ConditionMethodCreator.getPreconditionSignature(
-        packageName, declaringClass, parameterTypes, true);
+    return ConditionMethodCreator.getRawSignature(
+        packageName, declaringClass, parameterTypes, null, true);
   }
 
   /**
@@ -154,7 +154,7 @@ public class SpecificationTranslator {
    * <p>The parameter types of the condition method are the parameter types of the constructor.
    *
    * <p>Note: The declaring class of the condition method is actually determined by {@link
-   * ConditionMethodCreator#create(RawSignature, String, String, SequenceCompiler)}
+   * ConditionMethodCreator#createMethod(RawSignature, String, String, SequenceCompiler)}
    *
    * @param constructor the constructor to which the precondition belongs
    * @return the {@link RawSignature} for a pre-condition method of the constructor
@@ -163,8 +163,8 @@ public class SpecificationTranslator {
     Class<?> declaringClass = constructor.getDeclaringClass();
     Class<?>[] parameterTypes = constructor.getParameterTypes();
     String packageName = getPackageName(declaringClass.getPackage());
-    return ConditionMethodCreator.getPreconditionSignature(
-        packageName, declaringClass, parameterTypes, false);
+    return ConditionMethodCreator.getRawSignature(
+        packageName, declaringClass, parameterTypes, null, false);
   }
 
   /**
@@ -175,7 +175,7 @@ public class SpecificationTranslator {
    * followed by the parameter types of the method, and the return type of the method.
    *
    * <p>Note: The declaring class of the condition method is actually determined by {@link
-   * ConditionMethodCreator#create(RawSignature, String, String, SequenceCompiler)}
+   * ConditionMethodCreator#createMethod(RawSignature, String, String, SequenceCompiler)}
    *
    * @param method the method to which the post-condition belongs
    * @return the {@link RawSignature} for a post-condition method of the method
@@ -185,7 +185,7 @@ public class SpecificationTranslator {
     Class<?>[] parameterTypes = method.getParameterTypes();
     Class<?> returnType = method.getReturnType();
     String packageName = getPackageName(declaringClass.getPackage());
-    return ConditionMethodCreator.getPostconditionSignature(
+    return ConditionMethodCreator.getRawSignature(
         packageName, declaringClass, parameterTypes, returnType, true);
   }
 
@@ -197,7 +197,7 @@ public class SpecificationTranslator {
    * followed by the return type of the method.
    *
    * <p>Note: The declaring class of the condition method is actually determined by {@link
-   * ConditionMethodCreator#create(RawSignature, String, String, SequenceCompiler)}
+   * ConditionMethodCreator#createMethod(RawSignature, String, String, SequenceCompiler)}
    *
    * @param constructor the constructor to which the post-condition belongs
    * @return the {@link RawSignature} for a post-condition method of the method
@@ -206,7 +206,7 @@ public class SpecificationTranslator {
     Class<?> declaringClass = constructor.getDeclaringClass();
     Class<?>[] parameterTypes = constructor.getParameterTypes();
     String packageName = getPackageName(declaringClass.getPackage());
-    return ConditionMethodCreator.getPostconditionSignature(
+    return ConditionMethodCreator.getRawSignature(
         packageName, declaringClass, parameterTypes, declaringClass, false);
   }
 
@@ -363,7 +363,7 @@ public class SpecificationTranslator {
    */
   private Condition create(Guard guard) {
     Method conditionMethod =
-        ConditionMethodCreator.create(
+        ConditionMethodCreator.createMethod(
             preConditionSignature, preConditionDeclarations, guard.getConditionSource(), compiler);
     String comment = guard.getDescription();
     String conditionText = replacementMap.replaceNames(guard.getConditionSource());
@@ -379,7 +379,7 @@ public class SpecificationTranslator {
    */
   public PostCondition create(Property property) {
     Method conditionMethod =
-        ConditionMethodCreator.create(
+        ConditionMethodCreator.createMethod(
             postConditionSignature,
             postConditionDeclarations,
             property.getConditionSource(),

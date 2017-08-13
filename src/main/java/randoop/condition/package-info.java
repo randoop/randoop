@@ -36,8 +36,8 @@
  * <p><i>Before call</i>:
  *
  * <ol>
- *   <li>For each specification of method there is a {@link PreconditionOutcomeTable}, with the
- *       following:
+ *   <li>For each specification of method there is a {@link randoop.condition.ExpectedOutcomeTable},
+ *       with the following:
  *       <ol>
  *         <li>Whether the preconditions of the specification fail or are satisfied. The
  *             preconditions fail if the Boolean expression of any precondition in the specification

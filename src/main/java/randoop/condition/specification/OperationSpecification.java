@@ -79,16 +79,6 @@ public class OperationSpecification {
   }
 
   /**
-   * Creates an {@link OperationSpecification} for the given operation with no specifications and
-   * the default receiver and return value identifiers.
-   *
-   * @param operation the {@link Operation} object, must be non-null
-   */
-  public OperationSpecification(Operation operation) {
-    this(operation, new Identifiers());
-  }
-
-  /**
    * Creates an {@link OperationSpecification} for the given operation with no specifications.
    *
    * @param operation the {@link Operation} object, must be non-null

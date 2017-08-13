@@ -142,7 +142,7 @@ public class Identifiers {
    *
    * @return true if a name occurs more than once, false otherwise
    */
-  public boolean hasNameConflict() {
+  public boolean hasDuplicatedName() {
     Set<String> names = new HashSet<>(parameters);
     return names.size() != parameters.size()
         || parameters.contains(receiverName)

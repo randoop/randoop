@@ -135,7 +135,7 @@ public class SpecificationTranslatorTest {
             new SequenceClassLoader(getClass().getClassLoader()), new ArrayList<String>());
 
     conditionMethod =
-        ConditionMethodCreator.create(
+        ConditionMethodCreator.createMethod(
             sig.getPostConditionSignature(),
             sig.getPostConditionDeclarations(),
             conditionText,

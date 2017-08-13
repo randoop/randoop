@@ -6,8 +6,7 @@ import java.util.Objects;
 import randoop.util.Log;
 
 /**
- * Defines objects that evaluate a Boolean expression by invoking a {@code
- * java.lang.reflect.Method}.
+ * A {@code Condition} represents a Boolean expression.
  *
  * <p>Used to represent a pre- or post-condition of an operation where the expression is given as an
  * expression in Java source code and converted using {@link ConditionMethodCreator}.

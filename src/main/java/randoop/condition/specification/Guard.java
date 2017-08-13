@@ -12,21 +12,21 @@ package randoop.condition.specification;
  * <pre>
  *   {
  *      "conditionText": {@code "signalValue > 0"},
- *      "description": "the code must be positive"
+ *      "description": "the signal value must be positive"
  *   }
  * </pre>
  *
- * <p>where {@code code} is a declared identifier in the specification.
+ * <p>where {@code signalValue} is a declared identifier in the specification.
  *
  * <p>The identifiers in the property should be given in the {@link Identifiers} for the {@link
  * OperationSpecification} containing the {@link PostSpecification} where the property occurs.
  *
- * @see Specification
+ * @see SpecificationClause
  */
 public class Guard extends AbstractBooleanExpression {
 
   /**
-   * Creates a {@link Guard} with the given description and condition code.
+   * Creates a {@link Guard} with the given description and condition source code.
    *
    * @param description the description of this boolean condition
    * @param conditionText the text of the Java code for the created condition

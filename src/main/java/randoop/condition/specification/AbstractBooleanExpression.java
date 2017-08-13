@@ -4,7 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
 
 /**
- * Abstract class representing boolean expressions that occur in {@link Specification} objects.
+ * Abstract class representing boolean expressions that occur in {@link SpecificationClause}
+ * objects.
  *
  * @see Guard
  * @see Property
@@ -26,7 +27,8 @@ public abstract class AbstractBooleanExpression {
   }
 
   /**
-   * Creates a {@link AbstractBooleanExpression} with the given description and condition code.
+   * Creates a {@link AbstractBooleanExpression} with the given description and condition source
+   * code.
    *
    * @param description the description of this boolean condition
    * @param conditionSource the text of the Java code for the created condition
@@ -72,7 +74,7 @@ public abstract class AbstractBooleanExpression {
   /**
    * Return the condition text for this {@link AbstractBooleanExpression}.
    *
-   * @return the Java text for this condition
+   * @return the Java source code for this condition
    */
   public String getConditionSource() {
     return conditionSource;

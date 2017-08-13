@@ -85,7 +85,7 @@ public class ConnectionSpecTest {
     List<PostSpecification> retList = new ArrayList<>();
     retList.add(opReturn);
     op = Operation.of(m);
-    opSpec = new OperationSpecification(op);
+    opSpec = new OperationSpecification(op, new Identifiers());
     opSpec.addReturnSpecifications(retList);
     opList.add(opSpec);
 

@@ -39,7 +39,7 @@ public class Operation {
   /** The name of this operation */
   private final String name;
 
-  /** The list of fully-qualified type names for the parameters of this operation */
+  /** The list of fully-qualified raw type names for the parameters of this operation */
   private final List<String> parameterTypes;
 
   /** A default constructor is expected for Gson serialization. */
@@ -54,9 +54,9 @@ public class Operation {
    * Create an {@link Operation} object given the names of the declaring class, method or
    * constructor, the parameter types.
    *
-   * @param classname the fully-qualified raw name of the declaring class
+   * @param classname the fully-qualified name of the declaring class
    * @param name the name of the method or constructor
-   * @param parameterTypes the list of fully-qualified parameter type names
+   * @param parameterTypes the list of fully-qualified raw parameter type names
    */
   private Operation(String classname, String name, List<String> parameterTypes) {
     this.classname = classname;

@@ -96,7 +96,7 @@ public class ConditionMethodTest {
   private Condition createCondition(
       RawSignature signature, String declarations, String conditionText, String comment) {
     Method method =
-        ConditionMethodCreator.create(signature, declarations, conditionText, getCompiler());
+        ConditionMethodCreator.createMethod(signature, declarations, conditionText, getCompiler());
     return new Condition(method, comment, conditionText);
   }
 
