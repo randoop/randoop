@@ -2,6 +2,7 @@ package randoop.condition;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,86 +129,48 @@ public class SpecificationTranslator {
 
   /**
    * Create the {@link RawSignature} for the condition method for evaluating a precondition for the
-   * given method.
+   * given method or constructor.
    *
-   * <p>The parameter types of the condition method are the declaring class as the receiver type
-   * followed by the parameter types of the method.
-   *
-   * <p>Note: The declaring class of the condition method is actually determined by {@link
-   * ConditionMethodCreator#createMethod(RawSignature, String, String, SequenceCompiler)}
-   *
-   * @param method the method to which the precondition belongs
-   * @return the {@link RawSignature} for a pre-condition method of the method
-   */
-  private static RawSignature getPreConditionSignature(Method method) {
-    Class<?> declaringClass = method.getDeclaringClass();
-    Class<?>[] parameterTypes = method.getParameterTypes();
-    String packageName = getPackageName(declaringClass.getPackage());
-    return ConditionMethodCreator.getRawSignature(
-        packageName, declaringClass, parameterTypes, null, true);
-  }
-
-  /**
-   * Create the {@link RawSignature} for the condition method for evaluating a precondition for the
-   * given constructor.
-   *
-   * <p>The parameter types of the condition method are the parameter types of the constructor.
+   * <p>The parameter types of the RawSignature are the declaring class as the receiver type
+   * followed by the parameter types of {@code executable}.
    *
    * <p>Note: The declaring class of the condition method is actually determined by {@link
    * ConditionMethodCreator#createMethod(RawSignature, String, String, SequenceCompiler)}
    *
-   * @param constructor the constructor to which the precondition belongs
-   * @return the {@link RawSignature} for a pre-condition method of the constructor
+   * @param executable the method or constructor to which the precondition belongs
+   * @return the {@link RawSignature} for a pre-condition method of {@code executable}
    */
-  private static RawSignature getPreConditionSignature(Constructor<?> constructor) {
-    Class<?> declaringClass = constructor.getDeclaringClass();
-    Class<?>[] parameterTypes = constructor.getParameterTypes();
+  private static RawSignature getPreConditionSignature(Executable executable) {
+    boolean isMethod = executable instanceof Method;
+    Class<?> declaringClass = executable.getDeclaringClass();
+    Class<?>[] parameterTypes = executable.getParameterTypes();
     String packageName = getPackageName(declaringClass.getPackage());
     return ConditionMethodCreator.getRawSignature(
-        packageName, declaringClass, parameterTypes, null, false);
+        packageName, declaringClass, parameterTypes, null, isMethod);
   }
 
   /**
    * Create the {@link RawSignature} for the condition method for evaluating a post-condition for
-   * the given method.
+   * the given method or constructor.
    *
-   * <p>The parameter types of the condition method are the declaring class as the receiver type
-   * followed by the parameter types of the method, and the return type of the method.
-   *
-   * <p>Note: The declaring class of the condition method is actually determined by {@link
-   * ConditionMethodCreator#createMethod(RawSignature, String, String, SequenceCompiler)}
-   *
-   * @param method the method to which the post-condition belongs
-   * @return the {@link RawSignature} for a post-condition method of the method
-   */
-  private static RawSignature getPostConditionSignature(Method method) {
-    Class<?> declaringClass = method.getDeclaringClass();
-    Class<?>[] parameterTypes = method.getParameterTypes();
-    Class<?> returnType = method.getReturnType();
-    String packageName = getPackageName(declaringClass.getPackage());
-    return ConditionMethodCreator.getRawSignature(
-        packageName, declaringClass, parameterTypes, returnType, true);
-  }
-
-  /**
-   * Create the {@link RawSignature} for the condition method for evaluating a post-condition for
-   * the given constructor.
-   *
-   * <p>The parameter types of the condition method are the the parameter types of the method,
-   * followed by the return type of the method.
+   * <p>The parameter types of the RawSignature are the declaring class as the receiver type
+   * followed by the parameter types of {@code executable}, and the return type (if {@code
+   * executable} is a method).
    *
    * <p>Note: The declaring class of the condition method is actually determined by {@link
    * ConditionMethodCreator#createMethod(RawSignature, String, String, SequenceCompiler)}
    *
-   * @param constructor the constructor to which the post-condition belongs
-   * @return the {@link RawSignature} for a post-condition method of the method
+   * @param executable the method or constructor to which the post-condition belongs
+   * @return the {@link RawSignature} for a post-condition method of {@code executable}
    */
-  private static RawSignature getPostConditionSignature(Constructor<?> constructor) {
-    Class<?> declaringClass = constructor.getDeclaringClass();
-    Class<?>[] parameterTypes = constructor.getParameterTypes();
+  private static RawSignature getPostConditionSignature(Executable executable) {
+    boolean isMethod = executable instanceof Method;
+    Class<?> declaringClass = executable.getDeclaringClass();
+    Class<?>[] parameterTypes = executable.getParameterTypes();
+    Class<?> returnType = (isMethod ? ((Method) executable).getReturnType() : declaringClass);
     String packageName = getPackageName(declaringClass.getPackage());
     return ConditionMethodCreator.getRawSignature(
-        packageName, declaringClass, parameterTypes, declaringClass, false);
+        packageName, declaringClass, parameterTypes, returnType, isMethod);
   }
 
   /**

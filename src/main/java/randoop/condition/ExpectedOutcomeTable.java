@@ -12,6 +12,16 @@ import randoop.test.TestCheckGenerator;
 /**
  * Records the outcome of checking all of the preconditions for a method. Each table entry records:
  *
+ * <p>TODO: The entry records:
+ *
+ * <ul>
+ *   <li>Whether the preconditions fail or are satisfied, given the observed values
+ *   <li>The set of expected exceptions, given the observed values (that is, which
+ *       throws-conditions' guards are satisfied)
+ *   <li>The expected post-condition, given the observed values (that is, which return-clauses'
+ *       guards are satisfied)
+ * </ul>
+ *
  * <p>TODO: clarify the following, or merge it into other documentation.
  *
  * <ol>

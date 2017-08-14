@@ -13,7 +13,7 @@ public class ThrowsClause {
   private final ClassOrInterfaceType exceptionType;
 
   /**
-   * Creates an {@link ThrowsClause} object with the given type, and comment.
+   * Creates a {@link ThrowsClause} object with the given type, and comment.
    *
    * @param exceptionType the type of the expected exception
    * @param comment the text description of the throws clause

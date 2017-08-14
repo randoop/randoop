@@ -21,13 +21,15 @@ public class OperationConditions {
   private final List<PreThrowsConditionPair> preThrowsConditionPairs;
 
   /**
-   * The parent {@link OperationConditions} for this object.
+   * Mirrors the overrides/implements relation among methods. If this OperationConditions is the
+   * local specification for method m, the {@code parentList} contains one element for each method
+   * that m overrides or implements.
    *
    * <p>For an operation that is a method, the {@link OperationConditions} form an arbitrary
    * directed acyclic graph consisting of conditions for methods of supertypes, each of which has
    * attached specifications.
    */
-  private List<OperationConditions> parentList;
+  private List<OperationConditions> parentList = new ArrayList<>();
 
   /** Creates an empty {@link OperationConditions} object. */
   OperationConditions() {
@@ -52,7 +54,6 @@ public class OperationConditions {
     this.preconditions = preconditions;
     this.prePostConditionPairs = prePostConditionPairs;
     this.preThrowsConditionPairs = preThrowsConditionPairs;
-    this.parentList = new ArrayList<>();
   }
 
   /**
@@ -74,17 +75,9 @@ public class OperationConditions {
 
   /**
    * Modifies the given table, adding an {@link ExpectedOutcomeTable} entry for the preconditions of
-   * this method. The entry records:
+   * this method.
    *
-   * <ul>
-   *   <li>Whether the preconditions fail or are satisfied, given the observed values
-   *   <li>The set of expected exceptions, given the observed values (that is, which
-   *       throws-conditions' guards are satisfied)
-   *   <li>The expected post-condition, given the observed values (that is, which return-clauses'
-   *       guards are satisfied)
-   * </ul>
-   *
-   * (See the evaluation algorithm in {@link randoop.condition}.)
+   * <p>(See the evaluation algorithm in {@link randoop.condition}.)
    *
    * @param args the argument values
    * @param table the table to which the created entry is to be added
@@ -101,7 +94,8 @@ public class OperationConditions {
    * The preconditions fail if any precondition evaluates to false on the arguments.
    *
    * @param args the argument values
-   * @return false if any precondition fails on the argument values, true otherwise
+   * @return false if any precondition fails on the argument values, true if all preconditions
+   *     succeed
    */
   private boolean checkPreconditions(Object[] args) {
     for (Condition condition : preconditions) {
@@ -114,8 +108,8 @@ public class OperationConditions {
 
   /**
    * Tests the given argument values against the guards of the pre-throws-condition pairs in this
-   * {@link OperationConditions} and returns the set of exceptions whose precondition evaluated to
-   * true.
+   * {@link OperationConditions} and returns the set of throws-conditions whose precondition
+   * evaluated to true.
    *
    * @param args the argument values
    * @return the set of exceptions for which the precondition evaluated to true

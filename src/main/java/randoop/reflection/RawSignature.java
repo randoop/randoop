@@ -152,7 +152,13 @@ public class RawSignature {
   public String getDeclarationArguments(List<String> parameterNames) {
     if (parameterNames.size() != parameterTypes.length) {
       throw new IllegalArgumentException(
-          "Number of parameter names must match the number of parameter types");
+          String.format(
+              "Number of parameter names %d (%s) must match the number of parameter types %d (%s) for %s",
+              parameterNames.size(),
+              parameterNames,
+              parameterTypes.length,
+              Arrays.toString(parameterTypes),
+              this));
     }
 
     List<String> paramDeclarations = new ArrayList<>();
