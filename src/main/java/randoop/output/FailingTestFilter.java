@@ -1,6 +1,7 @@
 package randoop.output;
 
 import static randoop.execution.RunCommand.CommandException;
+import static randoop.execution.RunCommand.Status;
 import static randoop.reflection.SignatureParser.DOT_DELIMITED_IDS;
 import static randoop.reflection.SignatureParser.ID_STRING;
 
@@ -17,7 +18,6 @@ import plume.UtilMDE;
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
-import randoop.execution.RunCommand;
 import randoop.execution.TestEnvironment;
 import randoop.main.GenTests;
 
@@ -83,7 +83,7 @@ public class FailingTestFilter implements CodeWriter {
 
       compileTestClass(packageName, classname, classSource, workingDirectory);
 
-      RunCommand.Status status;
+      Status status;
       try {
         status = testEnvironment.runTest(qualifiedClassname, workingDirectory.toFile());
       } catch (CommandException e) {
@@ -113,13 +113,13 @@ public class FailingTestFilter implements CodeWriter {
    * @param packageName the package name of the test class
    * @param classname the name of the test class
    * @param javaCode the source code for the test class, each assertion must be on its own line
-   * @param status the {@link RunCommand.Status} for running the test with JUnit
+   * @param status the {@link randoop.execution.RunCommand.Status} for running the test with JUnit
    * @return the class source edited so that failing assertions are replaced by comments
    * @throws BugInRandoopException if {@code status} contains output for a failure not involving a
    *     Randoop-generated test method
    */
   private String commentFailingAssertions(
-      String packageName, String classname, String javaCode, RunCommand.Status status) {
+      String packageName, String classname, String javaCode, Status status) {
 
     /* Iterator to move through JUnit output. (JUnit only writes to standard output.) */
     Iterator<String> lineIterator = status.standardOutputLines.iterator();

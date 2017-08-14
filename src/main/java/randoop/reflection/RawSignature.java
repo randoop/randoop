@@ -36,7 +36,7 @@ public class RawSignature {
    * @param packageName the package name of the class; empty string for the unnamed package
    * @param classname the name of the class
    * @param name the method name; for a constructor, same as the classname
-   * @param parameterTypes the method parameter types
+   * @param parameterTypes the method parameter types, including the receiver type if any
    */
   public RawSignature(
       String packageName, String classname, String name, Class<?>[] parameterTypes) {
@@ -152,7 +152,13 @@ public class RawSignature {
   public String getDeclarationArguments(List<String> parameterNames) {
     if (parameterNames.size() != parameterTypes.length) {
       throw new IllegalArgumentException(
-          "Number of parameter names must match the number of parameter types");
+          String.format(
+              "Number of parameter names %d (%s) must match the number of parameter types %d (%s) for %s",
+              parameterNames.size(),
+              parameterNames,
+              parameterTypes.length,
+              Arrays.toString(parameterTypes),
+              this));
     }
 
     List<String> paramDeclarations = new ArrayList<>();

@@ -6,106 +6,126 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * The collection of all pre-, return-, and throws-conditions defined on this operation and
- * inherited from supertypes.
+ * The collection of all {@link BooleanExpression}, {@link GuardPropertyPair}, and {@link
+ * GuardThrowsPair} for the {@link randoop.condition.specification.PreSpecification}, {@link
+ * randoop.condition.specification.PostSpecification}, and {@link
+ * randoop.condition.specification.ThrowsSpecification} objects defined on a single operation.
+ * Includes specifications inherited from supertypes.
  */
 public class OperationConditions {
 
-  /** The pre-conditions for the operation */
-  private final List<Condition> preconditions;
-
-  /** The return-conditions. */
-  private final List<PrePostConditionPair> prePostConditionPairs;
-
-  /** The throws-conditions. */
-  private final List<PreThrowsConditionPair> preThrowsConditionPairs;
+  /**
+   * The {@link BooleanExpression} objects for the {@link
+   * randoop.condition.specification.PreSpecification}s of the operation.
+   */
+  private final List<BooleanExpression> preExpressions;
 
   /**
-   * The parent {@link OperationConditions} for this object.
+   * The {@link GuardThrowsPair} objects for the {@link
+   * randoop.condition.specification.PostSpecification}s of the operation.
+   */
+  private final List<GuardPropertyPair> guardPropertyPairs;
+
+  /**
+   * The {@link GuardThrowsPair} objects for the {@link
+   * randoop.condition.specification.ThrowsSpecification}s of the operation.
+   */
+  private final List<GuardThrowsPair> guardThrowsPairs;
+
+  /**
+   * Mirrors the overrides/implements relation among methods. If this OperationConditions is the
+   * local specification for method m, the {@code parentList} contains one element for each method
+   * that m overrides or implements (and has specifications).
    *
    * <p>For an operation that is a method, the {@link OperationConditions} form an arbitrary
-   * directed acyclic graph consisting of conditions for methods of supertypes, each of which has
-   * attached specifications.
+   * directed acyclic graph consisting of {@link OperationConditions} objects for methods of
+   * supertypes, each of which has associated specifications in {@link SpecificationCollection}.
    */
-  private List<OperationConditions> parentList;
+  private List<OperationConditions> parentList = new ArrayList<>();
 
   /** Creates an empty {@link OperationConditions} object. */
   OperationConditions() {
     this(
-        new ArrayList<Condition>(),
-        new ArrayList<PrePostConditionPair>(),
-        new ArrayList<PreThrowsConditionPair>());
+        new ArrayList<BooleanExpression>(),
+        new ArrayList<GuardPropertyPair>(),
+        new ArrayList<GuardThrowsPair>());
   }
 
   /**
-   * Creates an {@link OperationConditions} object for the given pre-conditions, pre-post-condition
-   * pairs, and pre-throws condition pairs.
+   * Creates an {@link OperationConditions} object for the lists of guard expressions for
+   * pre-specifications, {@link GuardPropertyPair} objects for post-specifications, and {@link
+   * GuardThrowsPair} objects for throws-specifications.
    *
-   * @param preconditions the pre-conditions
-   * @param prePostConditionPairs the pre-post-condition pairs
-   * @param preThrowsConditionPairs the pre-throws condition pairs
+   * @param preExpressions the guard {@link BooleanExpression} objects for the operation
+   *     pre-specifications
+   * @param guardPropertyPairs the {@link GuardPropertyPair} objects for the operation
+   *     post-specifications
+   * @param guardThrowsPairs the {@link GuardThrowsPair} objects for the operation
+   *     throws-specifications
    */
   OperationConditions(
-      List<Condition> preconditions,
-      List<PrePostConditionPair> prePostConditionPairs,
-      List<PreThrowsConditionPair> preThrowsConditionPairs) {
-    this.preconditions = preconditions;
-    this.prePostConditionPairs = prePostConditionPairs;
-    this.preThrowsConditionPairs = preThrowsConditionPairs;
-    this.parentList = new ArrayList<>();
+      List<BooleanExpression> preExpressions,
+      List<GuardPropertyPair> guardPropertyPairs,
+      List<GuardThrowsPair> guardThrowsPairs) {
+    this.preExpressions = preExpressions;
+    this.guardPropertyPairs = guardPropertyPairs;
+    this.guardThrowsPairs = guardThrowsPairs;
   }
 
   /**
-   * Check the pre-conditions for this operation against the arguments. Constructs an {@link
-   * ExpectedOutcomeTable} for this operation, and for this operation in all supertypes.
+   * Check all guard expressions of this {@link OperationConditions} against the arguments by
+   * calling {@link #checkPrestate(Object[], ExpectedOutcomeTable)} for this collection and each
+   * member of {@link #parentList}.
    *
-   * @param args the argument values to test the preconditions
+   * @param args the argument values to test the guard expressions
    * @return the table with entries for this operation
-   * @see #check(Object[], ExpectedOutcomeTable)
+   * @see #checkPrestate(Object[], ExpectedOutcomeTable)
    */
-  public ExpectedOutcomeTable check(Object[] args) {
+  public ExpectedOutcomeTable checkPrestate(Object[] args) {
     ExpectedOutcomeTable table = new ExpectedOutcomeTable();
-    this.check(args, table);
+    this.checkPrestate(args, table);
     for (OperationConditions conditions : parentList) {
-      conditions.check(args, table);
+      conditions.checkPrestate(args, table);
     }
     return table;
   }
 
   /**
-   * Modifies the given table, adding an {@link ExpectedOutcomeTable} entry for the preconditions of
-   * this method. The entry records:
+   * Modifies the given table, adding an {@link ExpectedOutcomeTable} entry for the guard
+   * expressions of this method recording the following:
    *
-   * <ul>
-   *   <li>Whether the preconditions fail or are satisfied, given the observed values
-   *   <li>The set of expected exceptions, given the observed values (that is, which
-   *       throws-conditions' guards are satisfied)
-   *   <li>The expected post-condition, given the observed values (that is, which return-clauses'
-   *       guards are satisfied)
-   * </ul>
+   * <ol>
+   *   <li>Whether the {@link #preExpressions} fail or are satisfied. See {@link
+   *       randoop.condition.OperationConditions#checkPreExpressions(java.lang.Object[])}.
+   *   <li>A set of {@link ThrowsClause} objects for expected exceptions. See {@link
+   *       randoop.condition.OperationConditions#checkGuardThrowsPairs(java.lang.Object[])}.
+   *   <li>The expected {@link PropertyExpression}, if any. See {@link
+   *       randoop.condition.OperationConditions#checkGuardPropertyPairs(java.lang.Object[])}.
+   * </ol>
    *
-   * (See the evaluation algorithm in {@link randoop.condition}.)
+   * <p>See the evaluation algorithm in {@link randoop.condition} for more details.
    *
    * @param args the argument values
    * @param table the table to which the created entry is to be added
    */
-  private void check(Object[] args, ExpectedOutcomeTable table) {
-    boolean preconditionCheck = checkPreconditions(args);
-    Set<ThrowsClause> throwsClauses = checkThrowsPreconditions(args);
-    PostCondition postCondition = checkPostconditionGuards(args);
-    table.add(preconditionCheck, throwsClauses, postCondition);
+  private void checkPrestate(Object[] args, ExpectedOutcomeTable table) {
+    boolean preconditionCheck = checkPreExpressions(args);
+    Set<ThrowsClause> throwsClauses = checkGuardThrowsPairs(args);
+    PropertyExpression postCondition = checkGuardPropertyPairs(args);
+    table.add(preconditionCheck, postCondition, throwsClauses);
   }
 
   /**
-   * Tests the given argument values against the preconditions in this {@link OperationConditions}.
-   * The preconditions fail if any precondition evaluates to false on the arguments.
+   * Tests the given argument values against the {@link BooleanExpression} objects in {@link
+   * #preExpressions} in this {@link OperationConditions}. These expressions fail if any expression
+   * evaluates to false on the arguments.
    *
    * @param args the argument values
-   * @return false if any precondition fails on the argument values, true otherwise
+   * @return false if any expression fails on the argument values, true if all expressions succeed
    */
-  private boolean checkPreconditions(Object[] args) {
-    for (Condition condition : preconditions) {
-      if (!condition.check(args)) {
+  private boolean checkPreExpressions(Object[] args) {
+    for (BooleanExpression preCondition : preExpressions) {
+      if (!preCondition.check(args)) {
         return false;
       }
     }
@@ -113,18 +133,17 @@ public class OperationConditions {
   }
 
   /**
-   * Tests the given argument values against the guards of the pre-throws-condition pairs in this
-   * {@link OperationConditions} and returns the set of exceptions whose precondition evaluated to
-   * true.
+   * Evaluate the guard of each {@link GuardThrowsPair}, and for each one satisfied, add the {@link
+   * ThrowsClause} to the set of expected exceptions.
    *
    * @param args the argument values
-   * @return the set of exceptions for which the precondition evaluated to true
+   * @return the set of exceptions for which the guard expression evaluated to true
    */
-  private Set<ThrowsClause> checkThrowsPreconditions(Object[] args) {
+  private Set<ThrowsClause> checkGuardThrowsPairs(Object[] args) {
     Set<ThrowsClause> throwsClauses = new LinkedHashSet<>();
-    for (PreThrowsConditionPair pair : preThrowsConditionPairs) {
-      Condition precondition = pair.preCondition;
-      if (precondition.check(args)) {
+    for (GuardThrowsPair pair : guardThrowsPairs) {
+      BooleanExpression guardExpression = pair.guardExpression;
+      if (guardExpression.check(args)) {
         throwsClauses.add(pair.throwsClause);
       }
     }
@@ -132,25 +151,26 @@ public class OperationConditions {
   }
 
   /**
-   * Tests the given argument values against the guards of the post-conditions in this {@link
-   * OperationConditions} and returns the first post-condition whose precondition evaluated to true.
+   * Tests the given argument values against the guards of the {@link GuardPropertyPair} objects in
+   * this {@link OperationConditions} and returns the first {@link PropertyExpression} from the pair
+   * whose guard expression evaluated to true.
    *
    * @param args the argument values
-   * @return the first post-condition for which the precodition evaluates to true; null if there is
-   *     none
+   * @return the {@link PropertyExpression} for the first {@link GuardPropertyPair} for which the
+   *     guard expression evaluates to true; null if there is none
    */
-  private PostCondition checkPostconditionGuards(Object[] args) {
-    for (PrePostConditionPair pair : prePostConditionPairs) {
-      Condition precondition = pair.preCondition;
-      if (precondition.check(args)) {
-        return pair.postCondition.addPrestate(args);
+  private PropertyExpression checkGuardPropertyPairs(Object[] args) {
+    for (GuardPropertyPair pair : guardPropertyPairs) {
+      BooleanExpression guardExpression = pair.guardExpression;
+      if (guardExpression.check(args)) {
+        return pair.propertyExpression.addPrestate(args);
       }
     }
     return null;
   }
 
   /**
-   * Add the parent {@link OperationConditions} for this collection of conditions.
+   * Add the parent {@link OperationConditions} for this collection.
    *
    * @param parentConditions the {@link OperationConditions} to which to link
    */
@@ -159,15 +179,14 @@ public class OperationConditions {
   }
 
   /**
-   * Indicates whether this {@link OperationConditions}, and the parent, has no conditions.
+   * Indicates whether this {@link OperationConditions}, and any member of the parent list, has no
+   * guard expresions, or property or throws pairs.
    *
-   * @return true if there are no pre-, post-, or throws-conditions in this or the parent, false
-   *     otherwise
+   * @return true if there are no guard expressions, or property or throws pairs in this or the
+   *     parent list, false otherwise
    */
   public boolean isEmpty() {
-    if (!(preconditions.isEmpty()
-        && prePostConditionPairs.isEmpty()
-        && preThrowsConditionPairs.isEmpty())) {
+    if (!(preExpressions.isEmpty() && guardPropertyPairs.isEmpty() && guardThrowsPairs.isEmpty())) {
       return false;
     }
     for (OperationConditions conditions : parentList) {

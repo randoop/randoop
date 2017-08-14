@@ -1,8 +1,8 @@
 package randoop.condition.specification;
 
 /**
- * A {@link Specification} for pre-conditions on the parameters and receiver of an operation. The
- * pre-condition is expressed as a {@link Guard} that is to be checked before the operation is
+ * A {@link SpecificationClause} for pre-conditions on the parameters and receiver of an operation.
+ * The pre-condition is expressed as a {@link Guard} that is to be checked before the operation is
  * invoked. If the guard evaluates to false on the arguments to the invocation, the operation should
  * not be invoked on the arguments. This means that the sequence with the particular call should be
  * classified as invalid, and discarded.
@@ -23,7 +23,7 @@ package randoop.condition.specification;
  *
  * See {@link Guard} for details on specifying guards.
  */
-public class PreSpecification extends Specification {
+public class PreSpecification extends SpecificationClause {
 
   /**
    * Create a {@link PreSpecification} with the given {@link Guard}.
@@ -37,6 +37,6 @@ public class PreSpecification extends Specification {
 
   @Override
   public String toString() {
-    return "{ \"guard\": " + getGuard() + " }";
+    return "{ \"description\": \"" + getDescription() + "\", \"guard\": \"" + getGuard() + "\" }";
   }
 }

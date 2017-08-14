@@ -49,11 +49,11 @@ public class SpecificationTranslatorTest {
 
     assertThat(
         "presignature is just receiver and parameters",
-        sig.getPreConditionDeclarations(),
+        sig.getGuardExpressionDeclaration(),
         is(equalTo("(java.io.PrintWriter receiver, char c)")));
     assertThat(
         "postsignature is receiver, parameters and result",
-        sig.getPostConditionDeclarations(),
+        sig.getPropertyExpressionDeclarations(),
         is(equalTo("(java.io.PrintWriter receiver, char c, java.io.PrintWriter result)")));
 
     assertThat(
@@ -83,8 +83,8 @@ public class SpecificationTranslatorTest {
 
   private PostConditionCheck createCheck(
       Sequence sequence, SpecificationTranslator sig, String conditionText) {
-    List<PostCondition> postConditions = new ArrayList<>();
-    PostCondition condition = createPostCondition(sig, conditionText);
+    List<PropertyExpression> postConditions = new ArrayList<>();
+    PropertyExpression condition = createPostCondition(sig, conditionText);
     postConditions.add(condition);
 
     List<Variable> inputList = new ArrayList<>(sequence.getInputs(sequence.size() - 1));
@@ -128,21 +128,22 @@ public class SpecificationTranslatorTest {
     return sequence;
   }
 
-  private PostCondition createPostCondition(SpecificationTranslator sig, String conditionText) {
+  private PropertyExpression createPostCondition(
+      SpecificationTranslator sig, String conditionText) {
     Method conditionMethod;
     SequenceCompiler compiler =
         new SequenceCompiler(
             new SequenceClassLoader(getClass().getClassLoader()), new ArrayList<String>());
 
     conditionMethod =
-        ConditionMethodCreator.create(
-            sig.getPostConditionSignature(),
-            sig.getPostConditionDeclarations(),
+        BooleanExpression.createMethod(
+            sig.getPropertyExpressionSignature(),
+            sig.getPropertyExpressionDeclarations(),
             conditionText,
             compiler);
     String comment = "returns this writer";
     String postConditionText = sig.getReplacementMap().replaceNames(conditionText);
-    return new PostCondition(conditionMethod, comment, postConditionText);
+    return new PropertyExpression(conditionMethod, comment, postConditionText);
   }
 
   private TypedOperation getPrintWriterConstructorOperation() {
@@ -169,11 +170,11 @@ public class SpecificationTranslatorTest {
 
     assertThat(
         "presignature is just receiver and parameters",
-        sig.getPreConditionDeclarations(),
+        sig.getGuardExpressionDeclaration(),
         is(equalTo("(java.io.PrintWriter target, char c)")));
     assertThat(
         "postsignature is receiver, parameters and result",
-        sig.getPostConditionDeclarations(),
+        sig.getPropertyExpressionDeclarations(),
         is(equalTo("(java.io.PrintWriter target, char c, java.io.PrintWriter result)")));
 
     assertThat(

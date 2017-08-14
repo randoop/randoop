@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
 
 /**
- * A specification that an exception should be thrown.
+ * A specification clause that an exception should be thrown.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
@@ -23,7 +23,9 @@ import java.util.Objects;
  *
  * See {@link Guard} for details on specifying guards.
  */
-public class ThrowsSpecification extends Specification {
+public class ThrowsSpecification extends SpecificationClause {
+
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
 
   /** The fully-qualified name of the type of the expected exception */
   @SerializedName("exception")
@@ -65,7 +67,13 @@ public class ThrowsSpecification extends Specification {
 
   @Override
   public String toString() {
-    return "{ \"guard\": " + getGuard() + ", \"exceptionType\": " + exceptionType + " }";
+    return "{ \"description\": \""
+        + getDescription()
+        + "\", \"guard\": \""
+        + getGuard()
+        + ", \"exceptionType\": "
+        + exceptionType
+        + "\" }";
   }
 
   /**

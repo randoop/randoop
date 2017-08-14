@@ -45,28 +45,30 @@ import java.util.Objects;
  *   }
  * </pre>
  *
- * See the classes {@link Operation}, {@link Identifiers}, {@link PreSpecification}, {@link
+ * See the classes {@link OperationSignature}, {@link Identifiers}, {@link PreSpecification}, {@link
  * PostSpecification}, and {@link ThrowsSpecification} for details on specifying those objects.
  */
 public class OperationSpecification {
 
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+
   /** The reflection object for the operation */
-  private final Operation operation;
+  private final OperationSignature operation;
 
   /** The identifier names used in the specifications */
   private final Identifiers identifiers;
 
-  /** The specification of expected exceptions for the operation */
-  @SerializedName("throws")
-  private final List<ThrowsSpecification> throwsSpecifications;
+  /** The list of pre-conditions for the operation */
+  @SerializedName("pre")
+  private final List<PreSpecification> preSpecifications;
 
-  /** The list of post-conditions on the return value of the operation */
+  /** The list of post-conditions for the operation */
   @SerializedName("post")
   private final List<PostSpecification> postSpecifications;
 
-  /** The list of pre-conditions on the parameters of the operation */
-  @SerializedName("pre")
-  private final List<PreSpecification> preSpecifications;
+  /** The specification of expected exceptions for the operation */
+  @SerializedName("throws")
+  private final List<ThrowsSpecification> throwsSpecifications;
 
   /** Default constructor is needed for Gson serialization */
   @SuppressWarnings("unused")
@@ -79,22 +81,12 @@ public class OperationSpecification {
   }
 
   /**
-   * Creates an {@link OperationSpecification} for the given operation with no specifications and
-   * the default receiver and return value identifiers.
-   *
-   * @param operation the {@link Operation} object, must be non-null
-   */
-  public OperationSpecification(Operation operation) {
-    this(operation, new Identifiers());
-  }
-
-  /**
    * Creates an {@link OperationSpecification} for the given operation with no specifications.
    *
-   * @param operation the {@link Operation} object, must be non-null
+   * @param operation the {@link OperationSignature} object, must be non-null
    * @param identifiers the {@link Identifiers} object, must be non-null
    */
-  public OperationSpecification(Operation operation, Identifiers identifiers) {
+  public OperationSpecification(OperationSignature operation, Identifiers identifiers) {
     this(
         operation,
         identifiers,
@@ -114,7 +106,7 @@ public class OperationSpecification {
    * @param preSpecifications the list of param specifications for the operation
    */
   public OperationSpecification(
-      Operation operation,
+      OperationSignature operation,
       Identifiers identifiers,
       List<ThrowsSpecification> throwsSpecifications,
       List<PostSpecification> postSpecifications,
@@ -208,11 +200,11 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the {@code java.lang.reflect.AccessibleObject} for the operation
+   * Return the {@link OperationSignature} for the operation
    *
    * @return the reflection object for the operation
    */
-  public Operation getOperation() {
+  public OperationSignature getOperation() {
     return operation;
   }
 

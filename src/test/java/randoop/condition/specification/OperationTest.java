@@ -23,7 +23,7 @@ public class OperationTest {
       fail("Could not load constructor");
     }
     assert constructor != null;
-    Operation operation = Operation.of(constructor);
+    OperationSignature operation = OperationSignature.of(constructor);
     assertTrue("operation is a constructor", operation.isConstructor());
 
     assertThat("name", operation.getName(), is(equalTo("randoop.condition.ClassWithConditions")));
@@ -38,7 +38,7 @@ public class OperationTest {
     } catch (NoSuchMethodException e) {
       fail("Could not load method");
     }
-    Operation methodOperation = Operation.of(method);
+    OperationSignature methodOperation = OperationSignature.of(method);
     assertFalse("operation is not a constructor", methodOperation.isConstructor());
   }
 }

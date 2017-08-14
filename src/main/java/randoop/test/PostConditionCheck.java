@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import plume.UtilMDE;
 import randoop.Globals;
-import randoop.condition.PostCondition;
+import randoop.condition.PropertyExpression;
 import randoop.contract.ObjectContractUtils;
 import randoop.sequence.Execution;
 import randoop.sequence.Variable;
@@ -15,7 +15,7 @@ import randoop.sequence.Variable;
 public class PostConditionCheck implements Check {
 
   /** The post-condition */
-  private final List<PostCondition> postConditions;
+  private final List<PropertyExpression> postConditions;
 
   /** The input variables for the condition */
   private final Variable[] inputVariables;
@@ -26,7 +26,8 @@ public class PostConditionCheck implements Check {
    * @param postConditions the post-condition for this check
    * @param inputVariables the input variables for this condition check
    */
-  public PostConditionCheck(List<PostCondition> postConditions, List<Variable> inputVariables) {
+  public PostConditionCheck(
+      List<PropertyExpression> postConditions, List<Variable> inputVariables) {
     this.postConditions = postConditions;
     this.inputVariables = inputVariables.toArray(new Variable[0]);
   }
@@ -59,8 +60,8 @@ public class PostConditionCheck implements Check {
   @Override
   public String toString() {
     List<String> conditionStrings = new ArrayList<>();
-    for (PostCondition condition : postConditions) {
-      conditionStrings.add(condition.getConditionSource());
+    for (PropertyExpression condition : postConditions) {
+      conditionStrings.add(condition.getContractSource());
     }
     return UtilMDE.join(conditionStrings, "&&");
   }
@@ -73,10 +74,10 @@ public class PostConditionCheck implements Check {
   @Override
   public String toCodeStringPostStatement() {
     StringBuilder builder = new StringBuilder();
-    for (PostCondition postCondition : postConditions) {
+    for (PropertyExpression postCondition : postConditions) {
       String conditionString =
           ObjectContractUtils.localizeContractCode(
-              postCondition.getConditionSource(), inputVariables);
+              postCondition.getContractSource(), inputVariables);
       builder
           .append("// Checks the post-condition: ")
           .append(postCondition.getComment())
@@ -116,11 +117,11 @@ public class PostConditionCheck implements Check {
   }
 
   /**
-   * Get the list of {@link PostCondition} objects for this {@link PostConditionCheck}.
+   * Get the list of {@link PropertyExpression} objects for this {@link PostConditionCheck}.
    *
-   * @return the {@link PostCondition} list for this check
+   * @return the {@link PropertyExpression} list for this check
    */
-  public List<PostCondition> getPostConditions() {
+  public List<PropertyExpression> getPostConditions() {
     return postConditions;
   }
 }

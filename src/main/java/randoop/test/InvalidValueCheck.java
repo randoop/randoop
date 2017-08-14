@@ -4,8 +4,8 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Execution;
 
 /**
- * Represents the occurrence of an invalid value for a {@link randoop.condition.Condition} of the
- * {@link randoop.operation.TypedOperation} in a {@link randoop.sequence.Statement}.
+ * Represents the occurrence of an invalid value for a {@link randoop.condition.BooleanExpression}
+ * of the {@link randoop.operation.TypedOperation} in a {@link randoop.sequence.Statement}.
  */
 public class InvalidValueCheck implements Check {
 

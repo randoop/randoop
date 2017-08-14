@@ -31,6 +31,8 @@ import plume.UtilMDE;
  */
 public class Identifiers {
 
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+
   /** The default identifier name for receiver (value: "receiver") */
   private static final String DEFAULT_RECEIVER_NAME = "receiver";
 
@@ -142,7 +144,7 @@ public class Identifiers {
    *
    * @return true if a name occurs more than once, false otherwise
    */
-  public boolean hasNameConflict() {
+  public boolean hasDuplicatedName() {
     Set<String> names = new HashSet<>(parameters);
     return names.size() != parameters.size()
         || parameters.contains(receiverName)
