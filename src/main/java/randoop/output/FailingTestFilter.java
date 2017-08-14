@@ -113,7 +113,7 @@ public class FailingTestFilter implements CodeWriter {
    * @param packageName the package name of the test class
    * @param classname the name of the test class
    * @param javaCode the source code for the test class, each assertion must be on its own line
-   * @param status the {@link Status} for running the test with JUnit
+   * @param status the {@link randoop.execution.RunCommand.Status} for running the test with JUnit
    * @return the class source edited so that failing assertions are replaced by comments
    * @throws BugInRandoopException if {@code status} contains output for a failure not involving a
    *     Randoop-generated test method
