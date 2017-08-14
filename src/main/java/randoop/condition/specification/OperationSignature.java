@@ -33,6 +33,8 @@ import java.util.Objects;
  */
 public class OperationSignature {
 
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+
   /** The fully-qualified name of the declaring class of this operation */
   private final String classname;
 

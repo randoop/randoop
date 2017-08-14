@@ -30,6 +30,8 @@ import java.util.Objects;
  */
 public class PostSpecification extends SpecificationClause {
 
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+
   /** The post-condition */
   private final Property property;
 
