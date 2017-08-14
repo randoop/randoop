@@ -402,6 +402,15 @@ task extractJacocoAgent(type: Copy) {
  */
 task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingDirs', 'assemble' ]) {
 
+  /*
+   * Set system properties for jar paths, used by randoop.main.SystemTestEnvironment
+   */
+  doFirst {
+    systemProperty 'jar.randoop', shadowJar.archivePath
+    systemProperty 'jar.replacecall.agent', project(':replacecall').shadowJar.archivePath
+    systemProperty 'jar.covered.class.agent', project(':covered-class').shadowJar.archivePath
+  }
+
   workingDir = file("$buildDir")
   testClassesDirs = sourceSets.systemTest.output.classesDirs
   classpath = sourceSets.systemTest.runtimeClasspath
@@ -436,6 +445,7 @@ tasks.withType(Test) {
 
   /*
    * Pass along any system properties that begin with "randoop."
+   * Used by randoop.main.RandoopOptions in systemtest.
    */
   System.properties.each { k,v->
         if (k.startsWith("randoop.")) {
