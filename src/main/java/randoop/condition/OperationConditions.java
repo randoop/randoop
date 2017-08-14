@@ -12,13 +12,13 @@ import java.util.Set;
 public class OperationConditions {
 
   /** The pre-conditions for the operation */
-  private final List<Condition> preconditions;
+  private final List<BooleanExpression> guardExpressions;
 
   /** The return-conditions. */
-  private final List<PrePostConditionPair> prePostConditionPairs;
+  private final List<GuardPropertyExpressionPair> prePostConditionPairs;
 
   /** The throws-conditions. */
-  private final List<PreThrowsConditionPair> preThrowsConditionPairs;
+  private final List<GuardExpressionThrowsPair> preThrowsConditionPairs;
 
   /**
    * Mirrors the overrides/implements relation among methods. If this OperationConditions is the
@@ -34,24 +34,24 @@ public class OperationConditions {
   /** Creates an empty {@link OperationConditions} object. */
   OperationConditions() {
     this(
-        new ArrayList<Condition>(),
-        new ArrayList<PrePostConditionPair>(),
-        new ArrayList<PreThrowsConditionPair>());
+        new ArrayList<BooleanExpression>(),
+        new ArrayList<GuardPropertyExpressionPair>(),
+        new ArrayList<GuardExpressionThrowsPair>());
   }
 
   /**
    * Creates an {@link OperationConditions} object for the given pre-conditions, pre-post-condition
    * pairs, and pre-throws condition pairs.
    *
-   * @param preconditions the pre-conditions
+   * @param guardExpressions the pre-conditions
    * @param prePostConditionPairs the pre-post-condition pairs
    * @param preThrowsConditionPairs the pre-throws condition pairs
    */
   OperationConditions(
-      List<Condition> preconditions,
-      List<PrePostConditionPair> prePostConditionPairs,
-      List<PreThrowsConditionPair> preThrowsConditionPairs) {
-    this.preconditions = preconditions;
+      List<BooleanExpression> guardExpressions,
+      List<GuardPropertyExpressionPair> prePostConditionPairs,
+      List<GuardExpressionThrowsPair> preThrowsConditionPairs) {
+    this.guardExpressions = guardExpressions;
     this.prePostConditionPairs = prePostConditionPairs;
     this.preThrowsConditionPairs = preThrowsConditionPairs;
   }
@@ -60,7 +60,7 @@ public class OperationConditions {
    * Check the pre-conditions for this operation against the arguments. Constructs an {@link
    * ExpectedOutcomeTable} for this operation, and for this operation in all supertypes.
    *
-   * @param args the argument values to test the preconditions
+   * @param args the argument values to test the guardExpressions
    * @return the table with entries for this operation
    * @see #check(Object[], ExpectedOutcomeTable)
    */
@@ -74,8 +74,8 @@ public class OperationConditions {
   }
 
   /**
-   * Modifies the given table, adding an {@link ExpectedOutcomeTable} entry for the preconditions of
-   * this method.
+   * Modifies the given table, adding an {@link ExpectedOutcomeTable} entry for the guardExpressions
+   * of this method.
    *
    * <p>(See the evaluation algorithm in {@link randoop.condition}.)
    *
@@ -85,21 +85,22 @@ public class OperationConditions {
   private void check(Object[] args, ExpectedOutcomeTable table) {
     boolean preconditionCheck = checkPreconditions(args);
     Set<ThrowsClause> throwsClauses = checkThrowsPreconditions(args);
-    PostCondition postCondition = checkPostconditionGuards(args);
+    PropertyExpression postCondition = checkPostconditionGuards(args);
     table.add(preconditionCheck, throwsClauses, postCondition);
   }
 
   /**
-   * Tests the given argument values against the preconditions in this {@link OperationConditions}.
-   * The preconditions fail if any precondition evaluates to false on the arguments.
+   * Tests the given argument values against the guardExpressions in this {@link
+   * OperationConditions}. The guardExpressions fail if any precondition evaluates to false on the
+   * arguments.
    *
    * @param args the argument values
-   * @return false if any precondition fails on the argument values, true if all preconditions
+   * @return false if any precondition fails on the argument values, true if all guardExpressions
    *     succeed
    */
   private boolean checkPreconditions(Object[] args) {
-    for (Condition condition : preconditions) {
-      if (!condition.check(args)) {
+    for (BooleanExpression preCondition : guardExpressions) {
+      if (!preCondition.check(args)) {
         return false;
       }
     }
@@ -116,9 +117,9 @@ public class OperationConditions {
    */
   private Set<ThrowsClause> checkThrowsPreconditions(Object[] args) {
     Set<ThrowsClause> throwsClauses = new LinkedHashSet<>();
-    for (PreThrowsConditionPair pair : preThrowsConditionPairs) {
-      Condition precondition = pair.preCondition;
-      if (precondition.check(args)) {
+    for (GuardExpressionThrowsPair pair : preThrowsConditionPairs) {
+      BooleanExpression guardExpression = pair.guardExpression;
+      if (guardExpression.check(args)) {
         throwsClauses.add(pair.throwsClause);
       }
     }
@@ -133,11 +134,11 @@ public class OperationConditions {
    * @return the first post-condition for which the precodition evaluates to true; null if there is
    *     none
    */
-  private PostCondition checkPostconditionGuards(Object[] args) {
-    for (PrePostConditionPair pair : prePostConditionPairs) {
-      Condition precondition = pair.preCondition;
+  private PropertyExpression checkPostconditionGuards(Object[] args) {
+    for (GuardPropertyExpressionPair pair : prePostConditionPairs) {
+      BooleanExpression precondition = pair.guardExpression;
       if (precondition.check(args)) {
-        return pair.postCondition.addPrestate(args);
+        return pair.propertyExpression.addPrestate(args);
       }
     }
     return null;
@@ -159,7 +160,7 @@ public class OperationConditions {
    *     otherwise
    */
   public boolean isEmpty() {
-    if (!(preconditions.isEmpty()
+    if (!(guardExpressions.isEmpty()
         && prePostConditionPairs.isEmpty()
         && preThrowsConditionPairs.isEmpty())) {
       return false;

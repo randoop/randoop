@@ -21,7 +21,7 @@ public class ConditionMethodTest {
   public void testSimpleConditionMethod() {
     RawSignature signature =
         new RawSignature("", "SimpleCondition", "test", new Class<?>[] {String.class});
-    Condition simple = createCondition(signature, "(String s)", "true", "// always true");
+    BooleanExpression simple = createCondition(signature, "(String s)", "true", "// always true");
     Object[] values = new Object[] {"dummy"};
     assertTrue("condition is always true", simple.check(values));
   }
@@ -30,7 +30,7 @@ public class ConditionMethodTest {
   public void testSingleArgumentMethod() {
     RawSignature signature =
         new RawSignature("", "SingleArgumentCondition", "test", new Class<?>[] {String.class});
-    Condition simple =
+    BooleanExpression simple =
         createCondition(signature, "(String s)", "s.length() > 2", "// has two characters");
     assertTrue("string has more than two characters", simple.check(new Object[] {"dummy"}));
     assertFalse("string has two characters", simple.check(new Object[] {"01"}));
@@ -41,7 +41,7 @@ public class ConditionMethodTest {
     thrown.expect(RandoopConditionError.class);
     RawSignature signature =
         new RawSignature("", "WrongIdentifierCondition", "test", new Class<?>[] {String.class});
-    Condition simple =
+    BooleanExpression simple =
         createCondition(
             signature, "(String s)", "t.length() > 2", "// condition has wrong identifier");
   }
@@ -51,7 +51,7 @@ public class ConditionMethodTest {
     thrown.expect(RandoopConditionError.class);
     RawSignature signature =
         new RawSignature("", "WrongTypeCondition", "test", new Class<?>[] {String.class});
-    Condition simple =
+    BooleanExpression simple =
         createCondition(signature, "(String s)", "s.length()", "// int is not a boolean");
   }
 
@@ -63,7 +63,7 @@ public class ConditionMethodTest {
             "ErrorThrownCondition",
             "test",
             new Class<?>[] {ConditionWithException.class});
-    Condition error =
+    BooleanExpression error =
         createCondition(
             signature,
             "(randoop.condition.ConditionWithException r)",
@@ -82,7 +82,7 @@ public class ConditionMethodTest {
             "ThrowableThrownCondition",
             "test",
             new Class<?>[] {ConditionWithException.class});
-    Condition throwable =
+    BooleanExpression throwable =
         createCondition(
             signature,
             "(randoop.condition.ConditionWithException r)",
@@ -93,11 +93,11 @@ public class ConditionMethodTest {
         throwable.check(new Object[] {new ConditionWithException()}));
   }
 
-  private Condition createCondition(
+  private BooleanExpression createCondition(
       RawSignature signature, String declarations, String conditionText, String comment) {
     Method method =
-        ConditionMethodCreator.createMethod(signature, declarations, conditionText, getCompiler());
-    return new Condition(method, comment, conditionText);
+        BooleanExpression.createMethod(signature, declarations, conditionText, getCompiler());
+    return new BooleanExpression(method, comment, conditionText);
   }
 
   private SequenceCompiler getCompiler() {

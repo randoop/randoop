@@ -128,11 +128,11 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+      for (PropertyExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for ONE",
             "x2.equals(ClassWithConditions.Range.ONE)",
-            condition.getConditionSource());
+            condition.getContractSource());
       }
     }
 
@@ -144,11 +144,11 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+      for (PropertyExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for TWO",
             "x2.equals(ClassWithConditions.Range.TWO)",
-            condition.getConditionSource());
+            condition.getContractSource());
       }
     }
 
@@ -160,11 +160,11 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+      for (PropertyExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for THREE",
             "x2.equals(ClassWithConditions.Range.THREE)",
-            condition.getConditionSource());
+            condition.getContractSource());
       }
     }
 
@@ -176,11 +176,11 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+      for (PropertyExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for FOUR",
             "x2.equals(ClassWithConditions.Range.FOUR)",
-            condition.getConditionSource());
+            condition.getContractSource());
       }
     }
 

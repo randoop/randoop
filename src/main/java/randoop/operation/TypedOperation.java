@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import randoop.ExecutionOutcome;
-import randoop.condition.Condition;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.condition.OperationConditions;
 import randoop.field.AccessibleField;
@@ -580,7 +579,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * argument when this operation is static.
    *
    * @param values the argument array for this operation
-   * @return the corresponding operation array for checking a {@link Condition}
+   * @return the corresponding operation array for checking a {@link
+   *     randoop.condition.BooleanExpression}
    */
   private Object[] addNullReceiver(Object[] values) {
     Object[] args = values;
