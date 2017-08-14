@@ -145,10 +145,11 @@ public class SpecificationTranslator {
    */
   // The type AccessibleObject should be Executable, but that class was introduced in Java 8
   private static RawSignature getGuardExpressionSignature(AccessibleObject executable) {
+    Class<?> receiverType = (executable instanceof Method) ? getDeclaringClass(executable) : null;
     Class<?> declaringClass = getDeclaringClass(executable);
     Class<?>[] parameterTypes = getParameterTypes(executable);
     String packageName = getPackageName(declaringClass.getPackage());
-    return BooleanExpression.getRawSignature(packageName, parameterTypes);
+    return BooleanExpression.getRawSignature(packageName, receiverType, parameterTypes);
   }
 
   /**
@@ -269,22 +270,22 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Construct the list of {@link GuardPropertyExpressionPair} objects, one for each {@link
-   * PostSpecification} in {@code postSpecifications}.
+   * Construct the list of {@link GuardPropertyPair} objects, one for each {@link PostSpecification}
+   * in {@code postSpecifications}.
    *
    * @param postSpecifications the list of {@link PostSpecification} that will be converted to
-   *     {@link GuardPropertyExpressionPair} objects
-   * @return the list of {@link GuardPropertyExpressionPair} objects obtained by converting each
-   *     {@link PostSpecification}
+   *     {@link GuardPropertyPair} objects
+   * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
+   *     PostSpecification}
    */
-  private ArrayList<GuardPropertyExpressionPair> getReturnConditions(
+  private ArrayList<GuardPropertyPair> getReturnConditions(
       List<PostSpecification> postSpecifications) {
-    ArrayList<GuardPropertyExpressionPair> returnConditions = new ArrayList<>();
+    ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>();
     for (PostSpecification postSpecification : postSpecifications) {
       try {
         BooleanExpression guardExpression = create(postSpecification.getGuard());
         PropertyExpression propertyExpression = create(postSpecification.getProperty());
-        returnConditions.add(new GuardPropertyExpressionPair(guardExpression, propertyExpression));
+        returnConditions.add(new GuardPropertyPair(guardExpression, propertyExpression));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;
@@ -297,17 +298,17 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Construct the list of {@link GuardExpressionThrowsPair} objects, one for each {@link
-   * ThrowsSpecification} in {@code throwsSpecifications}.
+   * Construct the list of {@link GuardThrowsPair} objects, one for each {@link ThrowsSpecification}
+   * in {@code throwsSpecifications}.
    *
    * @param throwsSpecifications the list of {@link ThrowsSpecification} that will be converted to
-   *     {@link GuardPropertyExpressionPair} objects
-   * @return the list of {@link GuardPropertyExpressionPair} objects obtained by converting each
-   *     {@link ThrowsSpecification}
+   *     {@link GuardPropertyPair} objects
+   * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
+   *     ThrowsSpecification}
    */
-  private ArrayList<GuardExpressionThrowsPair> getThrowsConditions(
+  private ArrayList<GuardThrowsPair> getThrowsConditions(
       List<ThrowsSpecification> throwsSpecifications) {
-    ArrayList<GuardExpressionThrowsPair> throwsPairs = new ArrayList<>();
+    ArrayList<GuardThrowsPair> throwsPairs = new ArrayList<>();
     for (ThrowsSpecification throwsSpecification : throwsSpecifications) {
       ClassOrInterfaceType exceptionType;
       try {
@@ -329,7 +330,7 @@ public class SpecificationTranslator {
         BooleanExpression guardExpression = create(throwsSpecification.getGuard());
         ThrowsClause throwsClause =
             new ThrowsClause(exceptionType, "// " + throwsSpecification.getDescription());
-        throwsPairs.add(new GuardExpressionThrowsPair(guardExpression, throwsClause));
+        throwsPairs.add(new GuardThrowsPair(guardExpression, throwsClause));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;
@@ -366,15 +367,14 @@ public class SpecificationTranslator {
    * @return the {@link PropertyExpression} object for {@code property}
    */
   public PropertyExpression create(Property property) {
-    Method expressionMethod =
-        BooleanExpression.createMethod(
-            propertyExpressionSignature,
-            propertyExpressionDeclarations,
-            property.getConditionSource(),
-            compiler);
-    String comment = property.getDescription();
     String contractText = replacementMap.replaceNames(property.getConditionSource());
-    return new PropertyExpression(expressionMethod, comment, contractText);
+    return PropertyExpression.createPropertyExpression(
+        propertyExpressionSignature,
+        propertyExpressionDeclarations,
+        property.getConditionSource(),
+        contractText,
+        property.getDescription(),
+        compiler);
   }
 
   /**

@@ -1,7 +1,7 @@
 package randoop.condition;
 
-/** Represents a pre-condition and post-condition pair for an operation. */
-class GuardPropertyExpressionPair {
+/** Represents a guard and property expression pair for an operation. */
+class GuardPropertyPair {
 
   /** The expression that must hold before the operation is called. */
   final BooleanExpression guardExpression;
@@ -13,15 +13,14 @@ class GuardPropertyExpressionPair {
   final PropertyExpression propertyExpression;
 
   /**
-   * Creates a {@link GuardPropertyExpressionPair} object for the guard and property expressions.
+   * Creates a {@link GuardPropertyPair} object for the guard and property expressions.
    *
    * @param guardExpression the {@link BooleanExpression} to be evaluated before the operation is
    *     called
    * @param propertyExpression the {@link PropertyExpression} to be evaluated after the operation is
    *     called
    */
-  GuardPropertyExpressionPair(
-      BooleanExpression guardExpression, PropertyExpression propertyExpression) {
+  GuardPropertyPair(BooleanExpression guardExpression, PropertyExpression propertyExpression) {
     this.guardExpression = guardExpression;
     this.propertyExpression = propertyExpression;
   }

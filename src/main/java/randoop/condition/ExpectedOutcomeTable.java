@@ -33,7 +33,7 @@ import randoop.test.TestCheckGenerator;
  *       expressions are satisfied. See {@link
  *       OperationConditions#checkPreconditions(java.lang.Object[])}.
  *   <li>The set of {@link ThrowsClause} objects for expected exceptions. An exception is expected
- *       because the operation has a {@link GuardExpressionThrowsPair} for which the guard {@link
+ *       because the operation has a {@link GuardThrowsPair} for which the guard {@link
  *       BooleanExpression} was satisfied. Evaluate the guard of each throws-condition, and for each
  *       one satisfied, add the exception to the set of expected exceptions. (There will be one set
  *       per specification.) See {@link

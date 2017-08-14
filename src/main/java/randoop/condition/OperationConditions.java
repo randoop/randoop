@@ -15,10 +15,10 @@ public class OperationConditions {
   private final List<BooleanExpression> guardExpressions;
 
   /** The return-conditions. */
-  private final List<GuardPropertyExpressionPair> prePostConditionPairs;
+  private final List<GuardPropertyPair> prePostConditionPairs;
 
   /** The throws-conditions. */
-  private final List<GuardExpressionThrowsPair> preThrowsConditionPairs;
+  private final List<GuardThrowsPair> preThrowsConditionPairs;
 
   /**
    * Mirrors the overrides/implements relation among methods. If this OperationConditions is the
@@ -35,8 +35,8 @@ public class OperationConditions {
   OperationConditions() {
     this(
         new ArrayList<BooleanExpression>(),
-        new ArrayList<GuardPropertyExpressionPair>(),
-        new ArrayList<GuardExpressionThrowsPair>());
+        new ArrayList<GuardPropertyPair>(),
+        new ArrayList<GuardThrowsPair>());
   }
 
   /**
@@ -49,8 +49,8 @@ public class OperationConditions {
    */
   OperationConditions(
       List<BooleanExpression> guardExpressions,
-      List<GuardPropertyExpressionPair> prePostConditionPairs,
-      List<GuardExpressionThrowsPair> preThrowsConditionPairs) {
+      List<GuardPropertyPair> prePostConditionPairs,
+      List<GuardThrowsPair> preThrowsConditionPairs) {
     this.guardExpressions = guardExpressions;
     this.prePostConditionPairs = prePostConditionPairs;
     this.preThrowsConditionPairs = preThrowsConditionPairs;
@@ -117,7 +117,7 @@ public class OperationConditions {
    */
   private Set<ThrowsClause> checkThrowsPreconditions(Object[] args) {
     Set<ThrowsClause> throwsClauses = new LinkedHashSet<>();
-    for (GuardExpressionThrowsPair pair : preThrowsConditionPairs) {
+    for (GuardThrowsPair pair : preThrowsConditionPairs) {
       BooleanExpression guardExpression = pair.guardExpression;
       if (guardExpression.check(args)) {
         throwsClauses.add(pair.throwsClause);
@@ -135,7 +135,7 @@ public class OperationConditions {
    *     none
    */
   private PropertyExpression checkPostconditionGuards(Object[] args) {
-    for (GuardPropertyExpressionPair pair : prePostConditionPairs) {
+    for (GuardPropertyPair pair : prePostConditionPairs) {
       BooleanExpression precondition = pair.guardExpression;
       if (precondition.check(args)) {
         return pair.propertyExpression.addPrestate(args);
