@@ -92,11 +92,11 @@ public class SpecificationTranslator {
     List<String> parameterNames = new ArrayList<>();
     if (accessibleObject instanceof Method) {
       Method method = (Method) accessibleObject;
-      // get expression method signatures
+      // Get expression method signatures.
       guardExpressionSignature = getGuardExpressionSignature(method);
       propertyExpressionSignature = getPropertyExpressionSignature(method);
 
-      // get expression method parameter declaration strings
+      // Get expression method parameter declaration strings.
       parameterNames.add(identifiers.getReceiverName());
       parameterNames.addAll(identifiers.getParameterNames());
       guardExpressionDeclarations =
@@ -106,11 +106,11 @@ public class SpecificationTranslator {
           propertyExpressionSignature.getDeclarationArguments(parameterNames);
     } else if (accessibleObject instanceof Constructor) {
       Constructor<?> constructor = (Constructor) accessibleObject;
-      // get expression method signatures
+      // Get expression method signatures.
       guardExpressionSignature = getGuardExpressionSignature(constructor);
       propertyExpressionSignature = getPropertyExpressionSignature(constructor);
 
-      // get expression method parameter declaration strings
+      // Get expression method parameter declaration strings.
       parameterNames.addAll(identifiers.getParameterNames());
       guardExpressionDeclarations =
           guardExpressionSignature.getDeclarationArguments(parameterNames);
@@ -170,11 +170,12 @@ public class SpecificationTranslator {
   private static RawSignature getPropertyExpressionSignature(AccessibleObject executable) {
     boolean isMethod = executable instanceof Method;
     Class<?> declaringClass = getDeclaringClass(executable);
+    Class<?> receiverType = (executable instanceof Method) ? declaringClass : null;
     Class<?>[] parameterTypes = getParameterTypes(executable);
     Class<?> returnType = (isMethod ? ((Method) executable).getReturnType() : declaringClass);
     String packageName = getPackageName(declaringClass.getPackage());
     return PropertyExpression.getRawSignature(
-        packageName, declaringClass, parameterTypes, returnType);
+        packageName, receiverType, parameterTypes, returnType);
   }
 
   // In JDK 8, replace invocations of this by: executable.getDeclaringClass()

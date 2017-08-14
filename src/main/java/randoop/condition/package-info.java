@@ -1,8 +1,12 @@
 /**
- * Package containing classes for handling specifications on operations. The specifications for an
- * operation are represented by an {@link randoop.condition.specification.OperationSpecification}
- * object that contains lists of pre-, post-, or throws-specifications. The specifications are read
- * from JSON files that serialize the specification classes using {@link
+ * Package containing classes for handling specifications on operations.
+ *
+ * <h3 id="specifications">Operation Specifications and Evaluation</h3>
+ *
+ * The specifications for an operation are represented by an {@link
+ * randoop.condition.specification.OperationSpecification} object that contains lists of pre-,
+ * post-, or throws-specifications. The specifications are read from JSON files that serialize the
+ * specification classes using {@link
  * randoop.condition.SpecificationCollection#create(java.util.List)}.
  *
  * <p>The specifications are translated to objects that allow the underlying Boolean expressions to
@@ -14,8 +18,9 @@
  * The pair classes each have a {@link randoop.condition.BooleanExpression} for the {@link
  * randoop.condition.specification.Guard} that is to be evaluated before the operation call, along
  * with either a {@link randoop.condition.PropertyExpression} or a {@link
- * randoop.condition.ThrowsClause} to be evaluated after the operation call. All of these
- * pre-condition expressions and pairs for an operation are represented as an {@link
+ * randoop.condition.ThrowsClause} to be evaluated after the operation call.
+ *
+ * <p>All of the pre-condition expressions and pairs for an operation are represented as an {@link
  * randoop.condition.OperationConditions} object that is created using {@link
  * randoop.condition.SpecificationCollection#getOperationConditions(java.lang.reflect.AccessibleObject)}.
  *
@@ -26,15 +31,22 @@
  *
  * <h3 id="eval-algorithm">Condition Evaluation Algorithm</h3>
  *
- * <p><i>Input</i>: a method, the set of specifications for the method, and arguments for a call to
- * the method.
+ * <p><i>Input</i>: a {@link randoop.operation.TypedClassOperation}, the {@link
+ * randoop.condition.OperationConditions} for the method, and arguments for a call to the operation.
  *
- * <p><i>Goal</i>: classify the call to the method using the arguments as <b>Expected</b>,
- * <b>Invalid</b> or <b>Error-revealing</b> based on the specifications.
+ * <p><i>Goal</i>: classify the call to the operation using the arguments as {@link
+ * randoop.main.GenInputsAbstract.BehaviorType#EXPECTED}, {@link
+ * randoop.main.GenInputsAbstract.BehaviorType#INVALID} or {@link
+ * randoop.main.GenInputsAbstract.BehaviorType#ERROR} based on the elements of {@link
+ * randoop.condition.OperationConditions}.
  *
- * <p><i>Definitions</i>: A precondition, guard, or property evaluated on the method arguments is
- * <i>satisfied</i> if the underlying Boolean expression evaluates to true, and <i>fails</i>
- * otherwise.
+ * <p><i>Definitions</i>: Let {@code expression} be either a {@link
+ * randoop.condition.BooleanExpression} representing a {@link
+ * randoop.condition.specification.PreSpecification} or {@link
+ * randoop.condition.specification.Guard}; or the {@link randoop.condition.PropertyExpression} for a
+ * {@link randoop.condition.specification.Property}. Then {@code expression} evaluated on the method
+ * arguments is <i>satisfied</i> if {@code expression.check(values)} evaluates to true, and
+ * <i>fails</i> otherwise.
  *
  * <p><i>Description</i>: The algorithm consists of two phases: (1) evaluating guards of the
  * specifications before the call, and (2) checking for expected behavior after the call.

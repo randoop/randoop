@@ -74,8 +74,23 @@ public class OperationConditions {
   }
 
   /**
-   * Modifies the given table, adding an {@link ExpectedOutcomeTable} entry for the guardExpressions
-   * of this method.
+   * Modifies the given table, adding an {@link ExpectedOutcomeTable} entry for the guard
+   * expressions of this method.
+   *
+   * <ol>
+   *   <li>Whether the preconditions of the specification fail or are satisfied. The preconditions
+   *       fail if the Boolean expression of any precondition in the specification is false.
+   *       Otherwise, the preconditions are satisfied. See {@link
+   *       randoop.condition.OperationConditions#checkPreconditions(java.lang.Object[])}.
+   *   <li>A set of expected exceptions. Evaluate the guard of each throws-condition, and for each
+   *       one satisfied, add the exception to the set of expected exceptions. (There will be one
+   *       set per specification.) See {@link
+   *       randoop.condition.OperationConditions#checkThrowsPreconditions(java.lang.Object[])}.
+   *   <li>The expected postcondition, if any. If the preconditions are satisfied, test the guards
+   *       of the normal postconditions of the specification in order, and save the property for the
+   *       first guard satisfied, if there is one. See {@link
+   *       randoop.condition.OperationConditions#checkPostconditionGuards(java.lang.Object[])}.
+   * </ol>
    *
    * <p>(See the evaluation algorithm in {@link randoop.condition}.)
    *
