@@ -10,84 +10,88 @@ import randoop.test.PostConditionCheckGenerator;
 import randoop.test.TestCheckGenerator;
 
 /**
- * Records the outcome of checking all of the guard expressions for an operation call in pre-state.
- * Each table entry records:
+ * Records the outcome of checking in prestate all of the {@link BooleanExpression} for the {@link
+ * randoop.condition.specification.PreSpecification}, the {@link GuardPropertyPair}, and {@link
+ * GuardThrowsPair} for an operation call.
  *
- * <p>TODO: The entry records:
- *
- * <ul>
- *   <li>Whether the guard expressions fail or are satisfied, given the observed values
- *   <li>The set of expected exceptions, given the observed values (that is, the {@link
- *       ThrowsClause} for which the guard {@link BooleanExpression} is satisfied)
- *   <li>The expected guard expression, given the observed values (that is, the {@link
- *       PropertyExpression} for which the guard {@link BooleanExpression} is satisfied)
- * </ul>
- *
- * <p>TODO: clarify the following, or merge it into other documentation.
+ * <p>Conceptually, represents a table, in which each table entry records:
  *
  * <ol>
  *   <li>Whether the guard expressions for the {@link
  *       randoop.condition.specification.PreSpecification} of the specification fail or are
  *       satisfied. The guard expressions fail if the Boolean expression of any {@link
  *       randoop.condition.specification.PreSpecification} is false. Otherwise, the guard
- *       expressions are satisfied. See {@link
- *       OperationConditions#checkPreconditions(java.lang.Object[])}.
+ *       expressions are satisfied.
  *   <li>The set of {@link ThrowsClause} objects for expected exceptions. An exception is expected
  *       because the operation has a {@link GuardThrowsPair} for which the guard {@link
- *       BooleanExpression} was satisfied. Evaluate the guard of each throws-condition, and for each
- *       one satisfied, add the exception to the set of expected exceptions. (There will be one set
- *       per specification.) See {@link
- *       OperationConditions#checkThrowsPreconditions(java.lang.Object[])}.
- *   <li>The expected postcondition, if any. If the guard expressions are satisfied, test the guards
- *       of the normal postconditions of the specification in order, and save the property for the
- *       first guard satisfied, if there is one. See {@link
- *       OperationConditions#checkPostconditionGuards(java.lang.Object[])}.
+ *       BooleanExpression} was satisfied.
+ *   <li>The expected {@link PropertyExpression}, if any.
  * </ol>
  *
- * <p>TODO: Merge the following in as well
+ * <p>For a particular operation call, a table is constructed by calling {@link
+ * OperationConditions#checkPrestate(Object[])} and represents the expected outcome(s) from the
+ * call. The table is used to create a {@link TestCheckGenerator} by calling {@link
+ * #addPostCheckGenerator(TestCheckGenerator)} that, when given to the sequence generator, will
+ * classify the call as follows
  *
- * <ul>
- *   <li>Whether the guard expressions fail or are satisfied, given the observed values
- *   <li>The set of expected exceptions, given the observed values (that is, which
- *       throws-conditions' guards are satisfied)
- *   <li>The expected postcondition, given the observed values (that is, which return-clauses'
- *       guards are satisfied)
- * </ul>
+ * <ol>
+ *   <li>For each table entry with a non-empty expected exception set
+ *       <ul>
+ *         <li>If an exception is thrown by the call and the thrown exception is a member of the
+ *             set, then classify as {@link randoop.main.GenInputsAbstract.BehaviorType#EXPECTED}.
+ *         <li>If an exception is thrown by the call and the thrown exception is not a member of the
+ *             set, classify as {@link randoop.main.GenInputsAbstract.BehaviorType#ERROR} (because
+ *             the specification required an exception to be thrown, but it was not thrown).
+ *         <li>If no exception is thrown, then classify as {@link
+ *             randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
+ *       </ul>
+ *
+ *   <li>If for each table entry, the preconditions failed, classify as {@link
+ *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}.
+ *   <li>For each table entry where all preconditions were satisfied, check the corresponding normal
+ *       post-condition property, if one exists. If any such property fails, then classify as {@link
+ *       randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
+ * </ol>
  */
 public class ExpectedOutcomeTable {
 
   /** Indicates whether this table is empty. */
   private boolean isEmpty = true;
 
-  /** Indicates whether a guard expression was satisfied. */
+  /** Indicates whether a pre-expression was satisfied. */
   private boolean hasSatisfiedGuardExpression = false;
-
-  /** The list of sets of throws clauses for which the guard expression was satisfied. */
-  private final List<Set<ThrowsClause>> exceptionSets;
 
   /** The list of guard expressions for which the guard expression was satisfied. */
   private final List<PropertyExpression> postConditions;
 
+  /** The list of sets of throws clauses for which the guard expression was satisfied. */
+  private final List<Set<ThrowsClause>> exceptionSets;
+
   /** Creates an empty {@link ExpectedOutcomeTable}. */
   public ExpectedOutcomeTable() {
-    exceptionSets = new ArrayList<>();
     postConditions = new ArrayList<>();
+    exceptionSets = new ArrayList<>();
   }
 
   /**
-   * Adds the outcome of checking the conditions of a specification.
+   * Adds the outcome of checking the pre- and guard expressions of an operation.
    *
    * @param guardIsSatisfied boolean value indicating whether all guard expressions are satisfied
+   * @param propertyExpression property expression that must be true in post-state if no exception
+   *     is
    * @param throwsClauses set of exception type-comment pairs for exceptions expected in post-state
-   * @param postCondition guard expression that must be true in post-state if no exception is
-   *     thrown, null if none
    */
   void add(
-      boolean guardIsSatisfied, Set<ThrowsClause> throwsClauses, PropertyExpression postCondition) {
+      boolean guardIsSatisfied,
+      PropertyExpression propertyExpression,
+      Set<ThrowsClause> throwsClauses) {
+    // An empty table cannot represent a pre-state for which the call is invalid, so setting isEmpty
+    // to false is necessary even if the entry has !guardIsSatisfied and no propertyExpression or
+    // throwsClauses
     isEmpty = false;
     if (guardIsSatisfied) {
-      if (postCondition != null) {
-        postConditions.add(postCondition);
+      if (propertyExpression != null) {
+        postConditions.add(propertyExpression);
       }
       hasSatisfiedGuardExpression = true;
     }
@@ -97,8 +101,11 @@ public class ExpectedOutcomeTable {
   }
 
   /**
-   * Indicate whether this set of results indicates a definitively invalid pre-state. Occurs when
-   * all guard expressions fail and there are no expected exceptions.
+   * Indicate whether this set of results indicates a definitively invalid pre-state.
+   * (<i>Invalid</i> meaning that the call should be classified as {@link
+   * randoop.main.GenInputsAbstract.BehaviorType#INVALID}.)
+   *
+   * <p>Occurs when all guard expressions fail and there are no expected exceptions.
    *
    * <p>This method should be called after all entries are added; that is, no more entries should be
    * added after it is called.
@@ -111,15 +118,16 @@ public class ExpectedOutcomeTable {
   }
 
   /**
-   * Constructs the {@link TestCheckGenerator} that will test for expected conditions as follows:
+   * Constructs the {@link TestCheckGenerator} that will test for expected {@link ThrowsClause}s or
+   * {@link PropertyExpression} as follows:
    *
    * <ul>
    *   <li>if this table is empty, returns the given generator.
-   *   <li>if this table has expected exceptions, then returns a generator that checks for those
-   *       exceptions.
-   *   <li>if all guard expressions fail, then return an {@link InvalidCheckGenerator}.
-   *   <li>if there are guard expressions, then extend the given generator with a {@link
-   *       PostConditionCheckGenerator}.
+   *   <li>if this table has expected exceptions, then returns a {@link ExpectedExceptionGenerator}
+   *       to check for those exceptions.
+   *   <li>if all pre-expressions fail, then return an {@link InvalidCheckGenerator}.
+   *   <li>if any {@link GuardPropertyPair} has a satisfied guard expression, then extend the given
+   *       generator with a {@link PostConditionCheckGenerator}.
    * </ul>
    *
    * @param gen the generator to extend
@@ -135,7 +143,7 @@ public class ExpectedOutcomeTable {
       return new ExpectedExceptionGenerator(exceptionSets);
     }
 
-    // had conflict with guard expressions
+    // had conflict with throws guard expressions
     if (!hasSatisfiedGuardExpression) {
       gen = new InvalidCheckGenerator();
     }

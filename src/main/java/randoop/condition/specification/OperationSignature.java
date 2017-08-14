@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents an operation for an {@link OperationSpecification} so that the {@code
- * java.lang.reflect.AccessibleObject} can be loaded.
+ * Represents the signature of a method or constructor for an {@link OperationSpecification} so that
+ * the {@code java.lang.reflect.AccessibleObject} can be loaded.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
@@ -31,7 +31,7 @@ import java.util.Objects;
  * the declaring class of the method, the method will not be found, and the enclosing specification
  * will not be used.
  */
-public class Operation {
+public class OperationSignature {
 
   /** The fully-qualified name of the declaring class of this operation */
   private final String classname;
@@ -44,76 +44,80 @@ public class Operation {
 
   /** A default constructor is expected for Gson serialization. */
   @SuppressWarnings("unused")
-  private Operation() {
+  private OperationSignature() {
     this.classname = "";
     this.name = "";
     this.parameterTypes = new ArrayList<>();
   }
 
   /**
-   * Create an {@link Operation} object given the names of the declaring class, method or
+   * Create an {@link OperationSignature} object given the names of the declaring class, method or
    * constructor, the parameter types.
    *
    * @param classname the fully-qualified name of the declaring class
    * @param name the name of the method or constructor
    * @param parameterTypes the list of fully-qualified raw parameter type names
    */
-  private Operation(String classname, String name, List<String> parameterTypes) {
+  private OperationSignature(String classname, String name, List<String> parameterTypes) {
     this.classname = classname;
     this.name = name;
     this.parameterTypes = parameterTypes;
   }
 
   /**
-   * Create a {@link Operation} for the constructor of the class with the parameter types.
+   * Create a {@link OperationSignature} for the constructor of the class with the parameter types.
    *
    * @param classname the fully-qualified raw name of the declaring class
    * @param parameterTypes the list of fully-qualified parameter type names
-   * @return the {@link Operation} for a constructor of the declaring class with the parameter types
+   * @return the {@link OperationSignature} for a constructor of the declaring class with the
+   *     parameter types
    */
-  public static Operation forConstructorName(String classname, List<String> parameterTypes) {
-    return new Operation(classname, classname, parameterTypes);
+  public static OperationSignature forConstructorName(
+      String classname, List<String> parameterTypes) {
+    return new OperationSignature(classname, classname, parameterTypes);
   }
 
   /**
-   * Create a {@link Operation} for the method in the named class, with the method name and
+   * Create a {@link OperationSignature} for the method in the named class, with the method name and
    * parameter types.
    *
    * @param classname the name of the declaring class
    * @param name the name of the method
    * @param parameterTypes the list of fully-qualified parameter type names
-   * @return the {@link Operation} for the named method in the declaring class, with the parameter
-   *     types
+   * @return the {@link OperationSignature} for the named method in the declaring class, with the
+   *     parameter types
    */
-  public static Operation forMethodName(
+  public static OperationSignature forMethodName(
       String classname, String name, List<String> parameterTypes) {
-    return new Operation(classname, name, parameterTypes);
+    return new OperationSignature(classname, name, parameterTypes);
   }
 
   /**
-   * Returns an {@link Operation} for a method given as a {@code java.lang.reflect.Method}.
+   * Returns an {@link OperationSignature} for a method given as a {@code java.lang.reflect.Method}.
    *
    * @param method the {@code Method} for which operation is to be created
-   * @return the {@link Operation} with the class, name and parameter types of {@code method}
+   * @return the {@link OperationSignature} with the class, name and parameter types of {@code
+   *     method}
    */
-  public static Operation of(Method method) {
-    return new Operation(
+  public static OperationSignature of(Method method) {
+    return new OperationSignature(
         method.getDeclaringClass().getName(),
         method.getName(),
         getTypeNames(method.getParameterTypes()));
   }
 
   /**
-   * Returns an {@link Operation} for a constructor given as a {@code
+   * Returns an {@link OperationSignature} for a constructor given as a {@code
    * java.lang.reflect.Constructor}.
    *
    * <p>Note: the name and classname of a constructor are equal
    *
    * @param constructor the {@code Constructor} for which an operation is to be created
-   * @return the {@link Operation} with the class and parameter types of {@code constructor}
+   * @return the {@link OperationSignature} with the class and parameter types of {@code
+   *     constructor}
    */
-  public static Operation of(Constructor<?> constructor) {
-    return new Operation(
+  public static OperationSignature of(Constructor<?> constructor) {
+    return new OperationSignature(
         constructor.getDeclaringClass().getName(),
         constructor.getName(),
         getTypeNames(constructor.getParameterTypes()));
@@ -124,9 +128,9 @@ public class Operation {
    * java.lang.reflect.AccessibleObject}.
    *
    * @param op the method or constructor
-   * @return an {@link Operation} if {@code op} is a constructor or method, null otherwise
+   * @return an {@link OperationSignature} if {@code op} is a constructor or method, null otherwise
    */
-  public static Operation of(AccessibleObject op) {
+  public static OperationSignature of(AccessibleObject op) {
     if (op instanceof Field) {
       return null;
     }
@@ -141,10 +145,10 @@ public class Operation {
 
   @Override
   public boolean equals(Object object) {
-    if (!(object instanceof Operation)) {
+    if (!(object instanceof OperationSignature)) {
       return false;
     }
-    Operation other = (Operation) object;
+    OperationSignature other = (OperationSignature) object;
     return this.classname.equals(other.classname)
         && this.name.equals(other.name)
         && this.parameterTypes.equals(other.parameterTypes);
@@ -177,7 +181,7 @@ public class Operation {
   }
 
   /**
-   * Return the name of the declaring class of this {@link Operation}.
+   * Return the name of the declaring class of this {@link OperationSignature}.
    *
    * @return the name of the declaring class of this operation
    */
@@ -186,7 +190,7 @@ public class Operation {
   }
 
   /**
-   * Return the name of this {@link Operation}.
+   * Return the name of this {@link OperationSignature}.
    *
    * @return the name of this operation
    */
@@ -195,7 +199,7 @@ public class Operation {
   }
 
   /**
-   * Return the list of parameter type names for this {@link Operation}.
+   * Return the list of parameter type names for this {@link OperationSignature}.
    *
    * @return the list of parameter type names for this operation
    */
@@ -204,9 +208,9 @@ public class Operation {
   }
 
   /**
-   * Indicates whether this {@link Operation} represents a constructor.
+   * Indicates whether this {@link OperationSignature} represents a constructor.
    *
-   * @return {@code true} if this {@link Operation} represents a constructor, {@code false}
+   * @return {@code true} if this {@link OperationSignature} represents a constructor, {@code false}
    *     otherwise
    */
   public boolean isConstructor() {
@@ -214,7 +218,8 @@ public class Operation {
   }
 
   /**
-   * Indicates whether this {@link Operation} is a valid representation of a method or constructor.
+   * Indicates whether this {@link OperationSignature} is a valid representation of a method or
+   * constructor.
    *
    * @return {@code true} if the class and operation names are both non-null, non-empty and the type
    *     name list is non-null.

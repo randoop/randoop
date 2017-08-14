@@ -59,46 +59,65 @@
  * <p><i>Before call</i>:
  *
  * <ol>
- *   <li>For each specification of method there is a {@link randoop.condition.ExpectedOutcomeTable},
- *       with the following:
+ *   <li>Create a {@link randoop.condition.ExpectedOutcomeTable} by calling {@link
+ *       randoop.condition.OperationConditions#checkPrestate(java.lang.Object[])}, which creates a
+ *       table entry corresponding to each specification of the operation, recording:
  *       <ol>
- *         <li>Whether the preconditions of the specification fail or are satisfied. The
- *             preconditions fail if the Boolean expression of any precondition in the specification
- *             is false. Otherwise, the preconditions are satisfied. See {@link
- *             randoop.condition.OperationConditions#checkPreconditions(java.lang.Object[])}.
- *         <li>A set of expected exceptions. Evaluate the guard of each throws-condition, and for
- *             each one satisfied, add the exception to the set of expected exceptions. (There will
- *             be one set per specification.) See {@link
- *             randoop.condition.OperationConditions#checkThrowsPreconditions(java.lang.Object[])}.
- *         <li>The expected postcondition, if any. If the preconditions are satisfied, test the
- *             guards of the normal postconditions of the specification in order, and save the
- *             property for the first guard satisfied, if there is one. See {@link
- *             randoop.condition.OperationConditions#checkPostconditionGuards(java.lang.Object[])}.
+ *         <li>Whether the {@link randoop.condition.BooleanExpression}s of the {@link
+ *             randoop.condition.specification.PreSpecification}s fail or are satisfied. The
+ *             expressions fail if any expression is false on the arguments. Otherwise, the
+ *             preconditions are satisfied.
+ *         <li>A set of {@link randoop.condition.ThrowsClause} objects for expected exceptions.
+ *         <li>The expected {@link randoop.condition.PropertyExpression}, if any. This is the {@link
+ *             randoop.condition.PropertyExpression}, of the first {@link
+ *             randoop.condition.GuardPropertyPair} for which the guard {@link
+ *             randoop.condition.BooleanExpression} is satisfied.
  *       </ol>
  *
- *   <li>If for each table entry, the preconditions failed and the expected exception set is empty,
- *       then classify as <b>Invalid</b> and don't make the call. This avoids making a call on
- *       invalid arguments unless the specification indicates that exceptions should be thrown.
+ *   <li>If {@link randoop.condition.ExpectedOutcomeTable#isInvalidPrestate()} then classify as
+ *       {@link randoop.main.GenInputsAbstract.BehaviorType#INVALID}, and don't make the call. This
+ *       avoids making a call on invalid arguments unless the specification indicates that
+ *       exceptions should be thrown.
+ *   <li>Otherwise, create a {@link randoop.test.TestCheckGenerator} by calling {@link
+ *       randoop.condition.ExpectedOutcomeTable#addPostCheckGenerator(randoop.test.TestCheckGenerator)}.
+ *       This method selects the check generator as follows:
+ *       <ol>
+ *         <li>If any table entry contains an expected exception set, a {@link
+ *             randoop.test.ExpectedExceptionGenerator} is returned.
+ *         <li>If there are no expected exceptions, and no satisfied {@link
+ *             randoop.condition.BooleanExpression}s for any {@link
+ *             randoop.condition.specification.PreSpecification}, return an {@link
+ *             randoop.test.InvalidCheckGenerator}.
+ *         <li>Otherwise, if there are {@link randoop.condition.PropertyExpression} to evaluate,
+ *             then extend the current generator with a {@link
+ *             randoop.test.PostConditionCheckGenerator}.
+ *       </ol>
+ *
  * </ol>
  *
  * <p><i>After call</i>:
  *
+ * <p>The check generator created before the call is applied to the results of the call.
+ *
  * <ol>
- *   <li>For each table entry with a non-empty expected exception set (see {@link
- *       randoop.condition.ExpectedOutcomeTable#addPostCheckGenerator(randoop.test.TestCheckGenerator)})
+ *   <li>The {@link randoop.test.ExpectedExceptionGenerator} is evaluated over the expected
+ *       exception set such that
  *       <ul>
  *         <li>If an exception is thrown by the call and the thrown exception is a member of the
- *             set, then classify as <b>Expected</b>.
+ *             set, then classify as {@link randoop.main.GenInputsAbstract.BehaviorType#EXPECTED}.
  *         <li>If an exception is thrown by the call and the thrown exception is not a member of the
- *             set, classify as <b>Error-revealing</b> (because the specification required an
- *             exception to be thrown, but it was not thrown).
- *         <li>If no exception is thrown, then classify as <b>Error-revealing</b>.
+ *             set, classify as {@link randoop.main.GenInputsAbstract.BehaviorType#ERROR} (because
+ *             the specification required an exception to be thrown, but it was not thrown).
+ *         <li>If no exception is thrown, then classify as {@link
+ *             randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
  *       </ul>
  *
- *   <li>If for each table entry, the preconditions failed, classify as <b>Invalid</b>.
- *   <li>For each table entry where all preconditions were satisfied, check the corresponding normal
- *       post-condition property, if one exists. If any such property fails, then classify as
- *       <b>Error-revealing</b>.
+ *   <li>The {@link randoop.test.InvalidCheckGenerator} will classify the call as {@link
+ *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}.
+ *   <li>The {@link randoop.test.PostConditionCheckGenerator} will, for each table entry where all
+ *       guards were satisfied, check the corresponding {@link
+ *       randoop.condition.PropertyExpression}, if one exists. If any such expression fails, then
+ *       classify as {@link randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
  * </ol>
  */
 package randoop.condition;

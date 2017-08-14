@@ -1,6 +1,10 @@
 package randoop.condition;
 
-/** Represents a guard expression and throws clause pair for an operation. */
+/**
+ * Represents a guard expression and throws clause pair for an operation.
+ *
+ * <p>Corresponds to a {@link randoop.condition.specification.ThrowsSpecification}.
+ */
 class GuardThrowsPair {
 
   /** The expression that should be true before the operation is called. */

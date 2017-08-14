@@ -8,7 +8,7 @@ import java.util.Objects;
  */
 public abstract class SpecificationClause {
 
-  /** The description of this {@link SpecificationClause} */
+  /** The description of this {@link SpecificationClause}. */
   private final String description;
 
   /** The {@link Guard} for this specification */

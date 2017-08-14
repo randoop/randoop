@@ -90,7 +90,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       return 1;
     }
 
-    if (this instanceof TypedClassOperation) {
+    if (this instanceof TypedClassOperation && other instanceof TypedClassOperation) {
       // for class operations, first compare declaring class
       TypedClassOperation thisOp = (TypedClassOperation) this;
       TypedClassOperation otherOp = (TypedClassOperation) other;
@@ -569,7 +569,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public ExpectedOutcomeTable checkConditions(Object[] values) {
     if (conditions != null) {
-      return conditions.check(addNullReceiver(values));
+      return conditions.checkPrestate(addNullReceiver(values));
     }
     return new ExpectedOutcomeTable();
   }

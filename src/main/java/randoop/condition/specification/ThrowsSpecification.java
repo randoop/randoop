@@ -65,7 +65,13 @@ public class ThrowsSpecification extends SpecificationClause {
 
   @Override
   public String toString() {
-    return "{ \"guard\": " + getGuard() + ", \"exceptionType\": " + exceptionType + " }";
+    return "{ \"description\": \""
+        + getDescription()
+        + "\", \"guard\": \""
+        + getGuard()
+        + ", \"exceptionType\": "
+        + exceptionType
+        + "\" }";
   }
 
   /**

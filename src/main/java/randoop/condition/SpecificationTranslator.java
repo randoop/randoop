@@ -149,7 +149,7 @@ public class SpecificationTranslator {
     Class<?> declaringClass = getDeclaringClass(executable);
     Class<?>[] parameterTypes = getParameterTypes(executable);
     String packageName = getPackageName(declaringClass.getPackage());
-    return BooleanExpression.getRawSignature(packageName, receiverType, parameterTypes);
+    return BooleanExpression.getRawSignature(packageName, receiverType, parameterTypes, null);
   }
 
   /**

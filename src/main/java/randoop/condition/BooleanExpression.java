@@ -18,18 +18,19 @@ import randoop.util.Log;
 
 /**
  * A {@code BooleanExpression} is an expression constructed from the Java source for a Boolean
- * expression.
+ * expression, and allows evaluation on argument values.
  *
- * <p>Used to evaluate the expression of a {@link randoop.condition.specification.PreSpecification},
- * or the guard of a {@link randoop.condition.specification.PostSpecification} or {@link
- * randoop.condition.specification.ThrowsSpecification} during generation.
+ * <p>Corresponds to {@link randoop.condition.specification.Guard} in {@link
+ * randoop.condition.specification.PreSpecification}, {@link
+ * randoop.condition.specification.PostSpecification} or {@link
+ * randoop.condition.specification.ThrowsSpecification}.
  *
  * @see SpecificationTranslator
  */
 public class BooleanExpression {
 
   /** The basename for the expression class name. It is used for compiling the method. */
-  static final String EXPRESSION_CLASS_NAME = "RandoopExpressionClass";
+  private static final String EXPRESSION_CLASS_NAME = "RandoopExpressionClass";
 
   /** The name generator to use to generate class names. */
   private static final NameGenerator nameGenerator = new NameGenerator(EXPRESSION_CLASS_NAME);
@@ -264,25 +265,32 @@ public class BooleanExpression {
   }
 
   /**
-   * Creates a {@link RawSignature} for the expression method of the {@link BooleanExpression} for a
-   * {@link randoop.condition.specification.Guard}.
+   * Creates a {@link RawSignature} for the expression method of the {@link BooleanExpression}.
    *
    * <p>Note that these signatures may be used more than once for different expression methods, and
    * so {@link #createMethod(RawSignature, String, String, SequenceCompiler)} replaces the classname
    * to ensure a unique name.
    *
    * @param packageName the package name for the expression class
+   * @param receiverType the declaring class of the method or constructor, included first in
+   *     parameter types if non-null
    * @param parameterTypes the parameter types for the original method or constructor
+   * @param returnType the return type for the method, or the declaring class for a constructor,
+   *     included last in parameter types if non-null
    * @return the constructed post-expression method signature
    */
   static RawSignature getRawSignature(
-      String packageName, Class<?> receiverType, Class<?>[] parameterTypes) {
-    int shift = (receiverType != null) ? 1 : 0;
-    Class<?>[] expressionParameterTypes = new Class<?>[parameterTypes.length + shift];
+      String packageName, Class<?> receiverType, Class<?>[] parameterTypes, Class<?> returnType) {
+    final int shift = (receiverType != null) ? 1 : 0;
+    final int length = parameterTypes.length + shift + (returnType != null ? 1 : 0);
+    Class<?>[] expressionParameterTypes = new Class<?>[length];
     if (receiverType != null) {
       expressionParameterTypes[0] = receiverType;
     }
     System.arraycopy(parameterTypes, 0, expressionParameterTypes, shift, parameterTypes.length);
+    if (returnType != null) {
+      expressionParameterTypes[expressionParameterTypes.length - 1] = returnType;
+    }
     return new RawSignature(
         packageName, EXPRESSION_CLASS_NAME, "ClassNameWillBeReplaced", expressionParameterTypes);
   }

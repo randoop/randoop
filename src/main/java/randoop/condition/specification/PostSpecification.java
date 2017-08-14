@@ -3,10 +3,10 @@ package randoop.condition.specification;
 import java.util.Objects;
 
 /**
- * A {@link PostSpecification} is a specification clause of a contract on the return value (or
- * outcome) of the invocation of an operation. The specification consists of a {@link Guard} and a
- * {@link Property}. For an invocation of the operation, if the {@link Guard} evaluates to true,
- * then the {@link Property} must also be true.
+ * A {@link PostSpecification} is a specification clause of a contract on the outcome of the
+ * invocation of an operation. The specification consists of a {@link Guard} and a {@link Property}.
+ * For an invocation of the operation, if the {@link Guard} evaluates to true, then the {@link
+ * Property} must also be true.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
@@ -72,7 +72,13 @@ public class PostSpecification extends SpecificationClause {
 
   @Override
   public String toString() {
-    return "{ \"guard\": " + getGuard() + ", \"property\": " + property + " }";
+    return "{ \"description\": \""
+        + getDescription()
+        + "\", \"guard\": \""
+        + getGuard()
+        + ", \"property\": "
+        + property
+        + "\" }";
   }
 
   /**

@@ -66,38 +66,4 @@ public class PropertyExpression extends BooleanExpression {
   PropertyExpression addPrestate(Object[] args) {
     return this;
   }
-
-  /**
-   * Creates a {@link RawSignature} for the expression method of the the {@link PropertyExpression}
-   * for a {@link randoop.condition.specification.Property}.
-   *
-   * <p>The parameter types for the expression have the receiver type first, followed by the
-   * parameter types. method parameter types are as given.
-   *
-   * <p>Note that these signatures may be used more than once for different expression methods, and
-   * so {@link #createMethod(RawSignature, String, String, SequenceCompiler)} replaces the classname
-   * to ensure a unique name.
-   *
-   * @param packageName the package name for the expression class
-   * @param receiverType the declaring class of the method or constructor, used as receiver type if
-   *     {@code firstArgumentIsReceiver} is true
-   * @param parameterTypes the parameter types for the original method or constructor
-   * @param returnType the return type for the method, or the declaring class for a constructor
-   * @return the constructed property expression method signature
-   */
-  static RawSignature getRawSignature(
-      String packageName, Class<?> receiverType, Class<?>[] parameterTypes, Class<?> returnType) {
-    int shift = (receiverType != null) ? 1 : 0;
-    Class<?>[] expressionParameterTypes =
-        new Class<?>[parameterTypes.length + shift + (returnType != null ? 1 : 0)];
-    if (receiverType != null) {
-      expressionParameterTypes[0] = receiverType;
-    }
-    System.arraycopy(parameterTypes, 0, expressionParameterTypes, shift, parameterTypes.length);
-    if (returnType != null) {
-      expressionParameterTypes[expressionParameterTypes.length - 1] = returnType;
-    }
-    return new RawSignature(
-        packageName, EXPRESSION_CLASS_NAME, "ClassNameWillBeReplaced", expressionParameterTypes);
-  }
 }
