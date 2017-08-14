@@ -2,7 +2,6 @@ package randoop.condition;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,10 +139,11 @@ public class SpecificationTranslator {
    * @param executable the method or constructor to which the precondition belongs
    * @return the {@link RawSignature} for a pre-condition method of {@code executable}
    */
-  private static RawSignature getPreConditionSignature(Executable executable) {
+  // The type AccessibleObject should be Executable, but that class was introduced in Java 8
+  private static RawSignature getPreConditionSignature(AccessibleObject executable) {
     boolean isMethod = executable instanceof Method;
-    Class<?> declaringClass = executable.getDeclaringClass();
-    Class<?>[] parameterTypes = executable.getParameterTypes();
+    Class<?> declaringClass = getDeclaringClass(executable);
+    Class<?>[] parameterTypes = getParameterTypes(executable);
     String packageName = getPackageName(declaringClass.getPackage());
     return ConditionMethodCreator.getRawSignature(
         packageName, declaringClass, parameterTypes, null, isMethod);
@@ -163,14 +163,33 @@ public class SpecificationTranslator {
    * @param executable the method or constructor to which the post-condition belongs
    * @return the {@link RawSignature} for a post-condition method of {@code executable}
    */
-  private static RawSignature getPostConditionSignature(Executable executable) {
+  // The type AccessibleObject should be Executable, but that class was introduced in Java 8
+  private static RawSignature getPostConditionSignature(AccessibleObject executable) {
     boolean isMethod = executable instanceof Method;
-    Class<?> declaringClass = executable.getDeclaringClass();
-    Class<?>[] parameterTypes = executable.getParameterTypes();
+    Class<?> declaringClass = getDeclaringClass(executable);
+    Class<?>[] parameterTypes = getParameterTypes(executable);
     Class<?> returnType = (isMethod ? ((Method) executable).getReturnType() : declaringClass);
     String packageName = getPackageName(declaringClass.getPackage());
     return ConditionMethodCreator.getRawSignature(
         packageName, declaringClass, parameterTypes, returnType, isMethod);
+  }
+
+  // In JDK 8, replace invocations of this by: executable.getDeclaringClass()
+  private static Class<?> getDeclaringClass(AccessibleObject executable) {
+    if (executable instanceof Method) {
+      return ((Method) executable).getDeclaringClass();
+    } else {
+      return ((Constructor<?>) executable).getDeclaringClass();
+    }
+  }
+
+  // In JDK 8, replace invocations of this by: executable.getParameterTypes()
+  private static Class<?>[] getParameterTypes(AccessibleObject executable) {
+    if (executable instanceof Method) {
+      return ((Method) executable).getParameterTypes();
+    } else {
+      return ((Constructor<?>) executable).getParameterTypes();
+    }
   }
 
   /**
