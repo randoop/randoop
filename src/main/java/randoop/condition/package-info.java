@@ -3,9 +3,20 @@
  * operation are represented by an {@link randoop.condition.specification.OperationSpecification}
  * object that contains lists of pre-, post-, or throws-specifications. The specifications are read
  * from JSON files that serialize the specification classes using {@link
- * randoop.condition.SpecificationCollection#create(java.util.List)}. The conditions for an
- * operation are represented as an {@link randoop.condition.OperationConditions} object that is
- * created using {@link
+ * randoop.condition.SpecificationCollection#create(java.util.List)}.
+ *
+ * <p>The specifications are translated to objects that allow the underlying Boolean expressions to
+ * be evaluated A {@link randoop.condition.specification.PreSpecification} is translated to a {@link
+ * randoop.condition.BooleanExpression} object, a {@link
+ * randoop.condition.specification.PostSpecification} to a {@link
+ * randoop.condition.GuardPropertyPair}, and a {@link
+ * randoop.condition.specification.ThrowsSpecification} a {@link randoop.condition.GuardThrowsPair}.
+ * The pair classes each have a {@link randoop.condition.BooleanExpression} for the {@link
+ * randoop.condition.specification.Guard} that is to be evaluated before the operation call, along
+ * with either a {@link randoop.condition.PropertyExpression} or a {@link
+ * randoop.condition.ThrowsClause} to be evaluated after the operation call. All of these
+ * pre-condition expressions and pairs for an operation are represented as an {@link
+ * randoop.condition.OperationConditions} object that is created using {@link
  * randoop.condition.SpecificationCollection#getOperationConditions(java.lang.reflect.AccessibleObject)}.
  *
  * <p>The operations are used in the {@link

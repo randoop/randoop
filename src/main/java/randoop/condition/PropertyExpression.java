@@ -13,32 +13,50 @@ import randoop.reflection.RawSignature;
 public class PropertyExpression extends BooleanExpression {
 
   /**
-   * Creates a {@link PropertyExpression} that calls the given condition method.
+   * Creates a {@link PropertyExpression} that calls the given expression method.
    *
-   * @param conditionMethod the reflection object for the condition method
-   * @param comment the comment describing this condition
-   * @param conditionText the text for this condition
+   * @param expressionMethod the reflection object for the expression method
+   * @param comment the comment describing this expression
+   * @param contractText the text for this expression
    */
-  PropertyExpression(Method conditionMethod, String comment, String conditionText) {
-    super(conditionMethod, comment, conditionText);
+  PropertyExpression(Method expressionMethod, String comment, String contractText) {
+    super(expressionMethod, comment, contractText);
   }
 
-  public PropertyExpression createPropertyExpression(
+  /**
+   * Creates a {@link PropertyExpression} for evaluating the property (see {@link
+   * randoop.condition.specification.Property}) of a {@link
+   * randoop.condition.specification.PostSpecification}.
+   *
+   * @param signature the signature for the expression method to be created. The class name of the
+   *     expression method signature is ignored and a new name is generated using {@link
+   *     #nameGenerator}.
+   * @param declarations the parameter declaration string for the expression method to be created,
+   *     including parameter names and wrapped in parentheses
+   * @param expressionSource the source code for a Java expression to be used as the body of the
+   *     expression method
+   * @param contractSource a Java expression that is the source code for the expression, in the
+   *     format of {@link BooleanExpression#getContractSource()}
+   * @param comment the comment describing the expression
+   * @param compiler the compiler to used to compile the expression method
+   * @return the {@link BooleanExpression} that evaluates the given expression source on parameters
+   *     described by the declaration string
+   */
+  static PropertyExpression createPropertyExpression(
       RawSignature signature,
       String declarations,
       String expressionSource,
       String contractSource,
       String comment,
       SequenceCompiler compiler) {
-    Method conditionMethod =
+    Method expressionMethod =
         BooleanExpression.createMethod(signature, declarations, expressionSource, compiler);
-
-    return new PropertyExpression(conditionMethod, comment, contractSource);
+    return new PropertyExpression(expressionMethod, comment, contractSource);
   }
 
   /**
-   * Returns the {@link PropertyExpression} that checks the condition with the given argument values
-   * as the pre-state.
+   * Returns the {@link PropertyExpression} that checks the expression with the given argument
+   * values as the pre-state.
    *
    * <p>Since pre-state is not yet implemented, this method just returns this object.
    *
@@ -64,20 +82,21 @@ public class PropertyExpression extends BooleanExpression {
    * @param receiverType the declaring class of the method or constructor, used as receiver type if
    *     {@code firstArgumentIsReceiver} is true
    * @param parameterTypes the parameter types for the original method or constructor
-   * @param returnType the return type for the method, or the declaring class for a constructor, or
-   *     null if constructing a {@code RawSignature} for a precondition
-   * @return the constructed post-expression method signature
+   * @param returnType the return type for the method, or the declaring class for a constructor
+   * @return the constructed property expression method signature
    */
   static RawSignature getRawSignature(
       String packageName, Class<?> receiverType, Class<?>[] parameterTypes, Class<?> returnType) {
-    int shift = 1;
+    int shift = (receiverType != null) ? 1 : 0;
     Class<?>[] expressionParameterTypes =
         new Class<?>[parameterTypes.length + shift + (returnType != null ? 1 : 0)];
-    expressionParameterTypes[0] = receiverType;
+    if (receiverType != null) {
+      expressionParameterTypes[0] = receiverType;
+    }
+    System.arraycopy(parameterTypes, 0, expressionParameterTypes, shift, parameterTypes.length);
     if (returnType != null) {
       expressionParameterTypes[expressionParameterTypes.length - 1] = returnType;
     }
-    System.arraycopy(parameterTypes, 0, expressionParameterTypes, shift, parameterTypes.length);
     return new RawSignature(
         packageName, EXPRESSION_CLASS_NAME, "ClassNameWillBeReplaced", expressionParameterTypes);
   }

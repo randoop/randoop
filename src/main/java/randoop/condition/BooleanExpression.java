@@ -78,7 +78,7 @@ public class BooleanExpression {
    * @return the {@link BooleanExpression} that evaluates the given expression source on parameters
    *     described by the declaration string
    */
-  public static BooleanExpression createGuardExpression(
+  static BooleanExpression createGuardExpression(
       RawSignature signature,
       String declarations,
       String expressionSource,
@@ -275,9 +275,13 @@ public class BooleanExpression {
    * @param parameterTypes the parameter types for the original method or constructor
    * @return the constructed post-expression method signature
    */
-  static RawSignature getRawSignature(String packageName, Class<?>[] parameterTypes) {
-    int shift = 0;
+  static RawSignature getRawSignature(
+      String packageName, Class<?> receiverType, Class<?>[] parameterTypes) {
+    int shift = (receiverType != null) ? 1 : 0;
     Class<?>[] expressionParameterTypes = new Class<?>[parameterTypes.length + shift];
+    if (receiverType != null) {
+      expressionParameterTypes[0] = receiverType;
+    }
     System.arraycopy(parameterTypes, 0, expressionParameterTypes, shift, parameterTypes.length);
     return new RawSignature(
         packageName, EXPRESSION_CLASS_NAME, "ClassNameWillBeReplaced", expressionParameterTypes);
