@@ -1,0 +1,101 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousByteChannel",
+      "name": "read",
+      "parameterTypes": [
+        "java.nio.ByteBuffer",
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dst",
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the buffer is read-only",
+        "guard": {
+          "condition": "dst.isReadOnly()",
+          "description": "If the buffer is read-only"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousByteChannel",
+      "name": "read",
+      "parameterTypes": [
+        "java.nio.ByteBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dst"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the buffer is read-only",
+        "guard": {
+          "condition": "dst.isReadOnly()",
+          "description": "If the buffer is read-only"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousByteChannel",
+      "name": "write",
+      "parameterTypes": [
+        "java.nio.ByteBuffer",
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  }
+]

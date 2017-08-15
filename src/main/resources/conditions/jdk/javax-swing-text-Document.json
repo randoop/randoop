@@ -1,0 +1,209 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.Document",
+      "name": "remove",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offs",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the offset from the beginning >= 0",
+        "guard": {
+          "condition": "offs>=0",
+          "description": "the offset from the beginning >= 0"
+        }
+      },
+      {
+        "description": "the number of characters to remove >= 0",
+        "guard": {
+          "condition": "len>=0",
+          "description": "the number of characters to remove >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Document",
+      "name": "insertString",
+      "parameterTypes": [
+        "int",
+        "java.lang.String",
+        "javax.swing.text.AttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "str",
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the offset into the document to insert the content >= 0. All positions that track change at or after the given location will move.",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the offset into the document to insert the content >= 0. All positions that track change at or after the given location will move."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Document",
+      "name": "getText",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "length"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(length)",
+          "description": "the text, in a String of length >= 0"
+        },
+        "description": "return the text, in a String of length >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the offset into the document representing the desired start of the text >= 0",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the offset into the document representing the desired start of the text >= 0"
+        }
+      },
+      {
+        "description": "the length of the desired string >= 0",
+        "guard": {
+          "condition": "length>=0",
+          "description": "the length of the desired string >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Document",
+      "name": "getText",
+      "parameterTypes": [
+        "int",
+        "int",
+        "javax.swing.text.Segment"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "length",
+        "txt"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the offset into the document representing the desired start of the text >= 0",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the offset into the document representing the desired start of the text >= 0"
+        }
+      },
+      {
+        "description": "the length of the desired string >= 0",
+        "guard": {
+          "condition": "length>=0",
+          "description": "the length of the desired string >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Document",
+      "name": "createPosition",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the offset from the start of the document >= 0",
+        "guard": {
+          "condition": "offs>=0",
+          "description": "the offset from the start of the document >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Document",
+      "name": "getDefaultRootElement",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getRootElements())",
+          "description": "the root element"
+        },
+        "description": "return the root element",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

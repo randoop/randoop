@@ -1,0 +1,270 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Runtime",
+      "name": "exec",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If command is null",
+        "guard": {
+          "condition": "command==null",
+          "description": "If command is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If command is empty",
+        "guard": {
+          "condition": "command.isEmpty()",
+          "description": "If command is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Runtime",
+      "name": "exec",
+      "parameterTypes": [
+        "java.lang.String",
+        "[Ljava.lang.String;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command",
+        "envp"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If command is null, or one of the elements of envp is null",
+        "guard": {
+          "condition": "command==null || envp==null",
+          "description": "If command is null, or one of the elements of envp is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If command is empty",
+        "guard": {
+          "condition": "command.isEmpty()",
+          "description": "If command is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Runtime",
+      "name": "exec",
+      "parameterTypes": [
+        "java.lang.String",
+        "[Ljava.lang.String;",
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "command",
+        "envp",
+        "dir"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If command is null, or one of the elements of envp is null",
+        "guard": {
+          "condition": "command==null || envp==null",
+          "description": "If command is null, or one of the elements of envp is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If command is empty",
+        "guard": {
+          "condition": "command.isEmpty()",
+          "description": "If command is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Runtime",
+      "name": "exec",
+      "parameterTypes": [
+        "[Ljava.lang.String;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cmdarray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If cmdarray is null, or one of the elements of cmdarray is null",
+        "guard": {
+          "condition": "cmdarray==null || cmdarray==null",
+          "description": "If cmdarray is null, or one of the elements of cmdarray is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Runtime",
+      "name": "exec",
+      "parameterTypes": [
+        "[Ljava.lang.String;",
+        "[Ljava.lang.String;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cmdarray",
+        "envp"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If cmdarray is null, or one of the elements of cmdarray is null, or one of the elements of envp is null",
+        "guard": {
+          "condition": "cmdarray==null || envp==null || cmdarray==null || envp==null",
+          "description": "If cmdarray is null, or one of the elements of cmdarray is null, or one of the elements of envp is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Runtime",
+      "name": "exec",
+      "parameterTypes": [
+        "[Ljava.lang.String;",
+        "[Ljava.lang.String;",
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cmdarray",
+        "envp",
+        "dir"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If cmdarray is null, or one of the elements of cmdarray is null, or one of the elements of envp is null",
+        "guard": {
+          "condition": "cmdarray==null || envp==null || cmdarray==null || envp==null",
+          "description": "If cmdarray is null, or one of the elements of cmdarray is null, or one of the elements of envp is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Runtime",
+      "name": "load",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "filename"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if filename is null",
+        "guard": {
+          "condition": "filename==null",
+          "description": "if filename is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Runtime",
+      "name": "loadLibrary",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "libname"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsatisfiedLinkError",
+        "description": "throws UnsatisfiedLinkError if either the libname argument contains a file path, the native library is not statically linked with the VM, or the library cannot be mapped to a native library image by the host system.",
+        "guard": {
+          "condition": "libname.contains(java.lang.CharSequence)",
+          "description": "if either the libname argument contains a file path, the native library is not statically linked with the VM, or the library cannot be mapped to a native library image by the host system."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if libname is null",
+        "guard": {
+          "condition": "libname==null",
+          "description": "if libname is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

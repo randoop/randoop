@@ -1,0 +1,64 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.MembershipKey",
+      "name": "block",
+      "parameterTypes": [
+        "java.net.InetAddress"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This membership key"
+        },
+        "description": "return This membership key",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.MembershipKey",
+      "name": "unblock",
+      "parameterTypes": [
+        "java.net.InetAddress"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This membership key"
+        },
+        "description": "return This membership key",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

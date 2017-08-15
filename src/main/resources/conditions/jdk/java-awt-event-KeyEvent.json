@@ -1,0 +1,80 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.KeyEvent",
+      "name": "java.awt.event.KeyEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "long",
+        "int",
+        "int",
+        "char",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "when",
+        "modifiers",
+        "keyCode",
+        "keyChar",
+        "keyLocation"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.KeyEvent",
+      "name": "java.awt.event.KeyEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "long",
+        "int",
+        "int",
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "when",
+        "modifiers",
+        "keyCode",
+        "keyChar"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

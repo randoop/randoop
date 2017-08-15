@@ -1,0 +1,193 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentLinkedQueue",
+      "name": "java.util.concurrent.ConcurrentLinkedQueue",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection or any of its elements are null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentLinkedQueue",
+      "name": "add",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "target.element()==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "true (as specified by Collection.add(E))"
+        },
+        "description": "return true (as specified by Collection.add(E))",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentLinkedQueue",
+      "name": "offer",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "target.element()==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "true (as specified by Queue.offer(E))"
+        },
+        "description": "return true (as specified by Queue.offer(E))",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentLinkedQueue",
+      "name": "isEmpty",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this queue contains no elements"
+        },
+        "description": "return true if this queue contains no elements",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentLinkedQueue",
+      "name": "addAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection or any of its elements are null",
+        "guard": {
+          "condition": "c==null || target.element()==null",
+          "description": "if the specified collection or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentLinkedQueue",
+      "name": "toArray",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array is null",
+        "guard": {
+          "condition": "a==null",
+          "description": "if the specified array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

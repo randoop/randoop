@@ -1,0 +1,66 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.TextLayoutStrategy",
+      "name": "insertUpdate",
+      "parameterTypes": [
+        "javax.swing.text.FlowView",
+        "javax.swing.event.DocumentEvent",
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fv",
+        "e",
+        "alloc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the current allocation of the view inside of the insets. This value will be null if the view has not yet been displayed.",
+        "guard": {
+          "condition": "alloc==null",
+          "description": "the current allocation of the view inside of the insets. This value will be null if the view has not yet been displayed."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.TextLayoutStrategy",
+      "name": "adjustRow",
+      "parameterTypes": [
+        "javax.swing.text.FlowView",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fv",
+        "rowIndex",
+        "desiredSpan",
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the current layout span >= 0",
+        "guard": {
+          "condition": "desiredSpan>=0",
+          "description": "the current layout span >= 0"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,247 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.parser.DTD",
+      "name": "getName",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the name of the DTD"
+        },
+        "description": "return the name of the DTD",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.parser.DTD",
+      "name": "defEntity",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "type",
+        "ch"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the new character Entity"
+        },
+        "description": "return the new character Entity",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.parser.DTD",
+      "name": "defEntity",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "type",
+        "str"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the new Entity"
+        },
+        "description": "return the new Entity",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.parser.DTD",
+      "name": "defElement",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "boolean",
+        "boolean",
+        "javax.swing.text.html.parser.ContentModel",
+        "[Ljava.lang.String;",
+        "[Ljava.lang.String;",
+        "javax.swing.text.html.parser.AttributeList"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "type",
+        "omitStart",
+        "omitEnd",
+        "content",
+        "exclusions",
+        "inclusions",
+        "atts"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the new Element"
+        },
+        "description": "return the new Element",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.parser.DTD",
+      "name": "defAttributeList",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int",
+        "java.lang.String",
+        "java.lang.String",
+        "javax.swing.text.html.parser.AttributeList"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "type",
+        "modifier",
+        "value",
+        "values",
+        "atts"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the new AttributeList"
+        },
+        "description": "return the new AttributeList",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.parser.DTD",
+      "name": "defContentModel",
+      "parameterTypes": [
+        "int",
+        "java.lang.Object",
+        "javax.swing.text.html.parser.ContentModel"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type",
+        "obj",
+        "next"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the new ContentModel"
+        },
+        "description": "return the new ContentModel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.parser.DTD",
+      "name": "toString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the string representation of this DTD"
+        },
+        "description": "return the string representation of this DTD",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

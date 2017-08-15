@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.function.Function",
+      "name": "compose",
+      "parameterTypes": [
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "before"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if before is null",
+        "guard": {
+          "condition": "before==null",
+          "description": "if before is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.function.Function",
+      "name": "andThen",
+      "parameterTypes": [
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "after"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if after is null",
+        "guard": {
+          "condition": "after==null",
+          "description": "if after is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

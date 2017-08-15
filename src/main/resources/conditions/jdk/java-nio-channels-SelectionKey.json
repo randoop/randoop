@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.SelectionKey",
+      "name": "interestOps",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ops"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This selection key"
+        },
+        "description": "return This selection key",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

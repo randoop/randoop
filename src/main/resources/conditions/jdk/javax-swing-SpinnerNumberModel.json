@@ -1,0 +1,91 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerNumberModel",
+      "name": "javax.swing.SpinnerNumberModel",
+      "parameterTypes": [
+        "java.lang.Number",
+        "java.lang.Comparable",
+        "java.lang.Comparable",
+        "java.lang.Number"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value",
+        "minimum",
+        "maximum",
+        "stepSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if stepSize or value is null or if the following expression is false: minimum <= value <= maximum",
+        "guard": {
+          "condition": "stepSize==null || value==null",
+          "description": "if stepSize or value is null or if the following expression is false: minimum <= value <= maximum"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerNumberModel",
+      "name": "getNumber",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getValue())",
+          "description": "the value property"
+        },
+        "description": "return the value property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SpinnerNumberModel",
+      "name": "setValue",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if value is null or not a Number",
+        "guard": {
+          "condition": "value==null",
+          "description": "if value is null or not a Number"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

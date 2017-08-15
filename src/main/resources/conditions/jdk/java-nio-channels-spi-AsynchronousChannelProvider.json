@@ -1,0 +1,133 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.spi.AsynchronousChannelProvider",
+      "name": "openAsynchronousChannelGroup",
+      "parameterTypes": [
+        "int",
+        "java.util.concurrent.ThreadFactory"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nThreads",
+        "threadFactory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If nThreads <= 0",
+        "guard": {
+          "condition": "nThreads<=0",
+          "description": "If nThreads <= 0"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(nThreads)",
+          "description": "A new asynchronous channel group"
+        },
+        "description": "return A new asynchronous channel group",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.spi.AsynchronousChannelProvider",
+      "name": "openAsynchronousChannelGroup",
+      "parameterTypes": [
+        "java.util.concurrent.ExecutorService",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "executor",
+        "initialSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(initialSize)",
+          "description": "A new asynchronous channel group"
+        },
+        "description": "return A new asynchronous channel group",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.spi.AsynchronousChannelProvider",
+      "name": "openAsynchronousServerSocketChannel",
+      "parameterTypes": [
+        "java.nio.channels.AsynchronousChannelGroup"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "group"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.nio.channels.ShutdownChannelGroupException",
+        "description": "throws ShutdownChannelGroupException The group is shutdown",
+        "guard": {
+          "condition": "group.isShutdown()",
+          "description": "The group is shutdown"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.spi.AsynchronousChannelProvider",
+      "name": "openAsynchronousSocketChannel",
+      "parameterTypes": [
+        "java.nio.channels.AsynchronousChannelGroup"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "group"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.nio.channels.ShutdownChannelGroupException",
+        "description": "throws ShutdownChannelGroupException The group is shutdown",
+        "guard": {
+          "condition": "group.isShutdown()",
+          "description": "The group is shutdown"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

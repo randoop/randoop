@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.ref.ReferenceQueue",
+      "name": "remove",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "timeout"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the value of the timeout argument is negative",
+        "guard": {
+          "condition": "timeout<0",
+          "description": "If the value of the timeout argument is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,103 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.stream.LongStream",
+      "name": "limit",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "maxSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if maxSize is negative",
+        "guard": {
+          "condition": "maxSize<0",
+          "description": "if maxSize is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.LongStream",
+      "name": "skip",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "n"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if n is negative",
+        "guard": {
+          "condition": "n<0",
+          "description": "if n is negative"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(n)",
+          "description": "the new stream"
+        },
+        "description": "return the new stream",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.LongStream",
+      "name": "iterate",
+      "parameterTypes": [
+        "long",
+        "java.util.function.LongUnaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "seed",
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(f)",
+          "description": "a new sequential LongStream"
+        },
+        "description": "return a new sequential LongStream",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

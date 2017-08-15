@@ -1,0 +1,62 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Scanner",
+      "name": "findWithinHorizon",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pattern",
+        "horizon"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if horizon is negative",
+        "guard": {
+          "condition": "horizon<0",
+          "description": "if horizon is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Scanner",
+      "name": "findWithinHorizon",
+      "parameterTypes": [
+        "java.util.regex.Pattern",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pattern",
+        "horizon"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if horizon is negative",
+        "guard": {
+          "condition": "horizon<0",
+          "description": "if horizon is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

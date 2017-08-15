@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Event",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.x)",
+          "description": "the parameter string of this event"
+        },
+        "description": "return the parameter string of this event",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

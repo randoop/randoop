@@ -1,0 +1,325 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.PageAttributes",
+      "name": "java.awt.PageAttributes",
+      "parameterTypes": [
+        "java.awt.PageAttributes$ColorType",
+        "java.awt.PageAttributes$MediaType",
+        "java.awt.PageAttributes$OrientationRequestedType",
+        "java.awt.PageAttributes$OriginType",
+        "java.awt.PageAttributes$PrintQualityType",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "color",
+        "media",
+        "orientationRequested",
+        "origin",
+        "printQuality",
+        "printerResolution"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "an integer array of 3 elements. The first element must be greater than 0. The second element must be must be greater than 0. The third element must be either 3 or 4.",
+        "guard": {
+          "condition": "printerResolution.length>0",
+          "description": "an integer array of 3 elements. The first element must be greater than 0. The second element must be must be greater than 0. The third element must be either 3 or 4."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.PageAttributes",
+      "name": "setColor",
+      "parameterTypes": [
+        "java.awt.PageAttributes$ColorType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "color"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if color is null.",
+        "guard": {
+          "condition": "color==null",
+          "description": "if color is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.PageAttributes",
+      "name": "setMedia",
+      "parameterTypes": [
+        "java.awt.PageAttributes$MediaType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "media"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if media is null.",
+        "guard": {
+          "condition": "media==null",
+          "description": "if media is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.PageAttributes",
+      "name": "setOrientationRequested",
+      "parameterTypes": [
+        "java.awt.PageAttributes$OrientationRequestedType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "orientationRequested"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if orientationRequested is null.",
+        "guard": {
+          "condition": "orientationRequested==null",
+          "description": "if orientationRequested is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.PageAttributes",
+      "name": "setOrientationRequested",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "orientationRequested"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if orientationRequested is not 3 or 4",
+        "guard": {
+          "condition": "(orientationRequested==3) == false",
+          "description": "if orientationRequested is not 3 or 4"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.PageAttributes",
+      "name": "setOrigin",
+      "parameterTypes": [
+        "java.awt.PageAttributes$OriginType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "origin"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if origin is null.",
+        "guard": {
+          "condition": "origin==null",
+          "description": "if origin is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.PageAttributes",
+      "name": "setPrintQuality",
+      "parameterTypes": [
+        "java.awt.PageAttributes$PrintQualityType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "printQuality"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if printQuality is null.",
+        "guard": {
+          "condition": "printQuality==null",
+          "description": "if printQuality is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.PageAttributes",
+      "name": "setPrintQuality",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "printQuality"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if printQuality is not 3 , 4, or 5",
+        "guard": {
+          "condition": "(printQuality==4) == false",
+          "description": "if printQuality is not 3 , 4, or 5"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.PageAttributes",
+      "name": "getPrinterResolution",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==3",
+          "description": "an integer array of 3 elements. The first element must be greater than 0. The second element must be must be greater than 0. The third element must be either 3 or 4."
+        },
+        "description": "return an integer array of 3 elements. The first element must be greater than 0. The second element must be must be greater than 0. The third element must be either 3 or 4.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.PageAttributes",
+      "name": "setPrinterResolution",
+      "parameterTypes": [
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "printerResolution"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "an integer array of 3 elements. The first element must be greater than 0. The second element must be must be greater than 0. The third element must be either 3 or 4.",
+        "guard": {
+          "condition": "(printerResolution.length>0) || (target.getPrinterResolution()==3)",
+          "description": "an integer array of 3 elements. The first element must be greater than 0. The second element must be must be greater than 0. The third element must be either 3 or 4."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.PageAttributes",
+      "name": "setPrinterResolution",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "printerResolution"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if printerResolution is less than or equal to 0.",
+        "guard": {
+          "condition": "printerResolution<=0",
+          "description": "if printerResolution is less than or equal to 0."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "an integer greater than 0.",
+        "guard": {
+          "condition": "printerResolution>0",
+          "description": "an integer greater than 0."
+        }
+      }
+    ]
+  }
+]

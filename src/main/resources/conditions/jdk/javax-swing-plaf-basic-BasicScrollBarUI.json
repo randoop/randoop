@@ -1,0 +1,114 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicScrollBarUI",
+      "name": "getMaximumSize",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);"
+        },
+        "description": "return new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicScrollBarUI",
+      "name": "getMinimumThumbSize",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "The smallest acceptable size for the thumb."
+        },
+        "description": "return The smallest acceptable size for the thumb.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicScrollBarUI",
+      "name": "getMaximumThumbSize",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "The largest acceptable size for the thumb."
+        },
+        "description": "return The largest acceptable size for the thumb.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicScrollBarUI",
+      "name": "getThumbBounds",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "The current size/location of the thumb."
+        },
+        "description": "return The current size/location of the thumb.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

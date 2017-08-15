@@ -1,0 +1,83 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JMenuItem",
+      "name": "getSubElements",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "an array of MenuElements"
+        },
+        "description": "return an array of MenuElements",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenuItem",
+      "name": "getComponent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the Component that paints this menu item"
+        },
+        "description": "return the Component that paints this menu item",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenuItem",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JMenuItem"
+        },
+        "description": "return a string representation of this JMenuItem",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

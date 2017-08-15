@@ -1,0 +1,221 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTextAreaUI",
+      "name": "createUI",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ta"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the UI"
+        },
+        "description": "return the UI",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTextAreaUI",
+      "name": "getPropertyPrefix",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the name (\"TextArea\")"
+        },
+        "description": "return the name (\"TextArea\")",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTextAreaUI",
+      "name": "getPreferredSize",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the preferred size"
+        },
+        "description": "return the preferred size",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTextAreaUI",
+      "name": "getMinimumSize",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the minimum size"
+        },
+        "description": "return the minimum size",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTextAreaUI",
+      "name": "create",
+      "parameterTypes": [
+        "javax.swing.text.Element"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "elem"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the view"
+        },
+        "description": "return the view",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTextAreaUI",
+      "name": "getBaseline",
+      "parameterTypes": [
+        "javax.swing.JComponent",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width or height is < 0",
+        "guard": {
+          "condition": "width<0 || height<0",
+          "description": "if width or height is < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTextAreaUI",
+      "name": "getBaselineResizeBehavior",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

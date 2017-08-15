@@ -1,0 +1,98 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Point",
+      "name": "getLocation",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a copy of this point, at the same location"
+        },
+        "description": "return a copy of this point, at the same location",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Point",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the object to be compared is an instance of Point2D and has the same values; false otherwise."
+        },
+        "description": "return true if the object to be compared is an instance of Point2D and has the same values; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofPoint2D",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the object to be compared is an instance of Point2D and has the same values; false otherwise."
+        },
+        "description": "return true if the object to be compared is an instance of Point2D and has the same values; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofPoint2D",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Point",
+      "name": "toString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this point"
+        },
+        "description": "return a string representation of this point",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

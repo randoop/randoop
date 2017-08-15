@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.synth.Region",
+      "name": "javax.swing.plaf.synth.Region",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "ui",
+        "subregion"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "String that will be returned from component.getUIClassID. This will be null if this is a subregion.",
+        "guard": {
+          "condition": "ui==null || target.isSubregion()",
+          "description": "String that will be returned from component.getUIClassID. This will be null if this is a subregion."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.synth.Region",
+      "name": "toString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getName())",
+          "description": "name of the Region."
+        },
+        "description": "return name of the Region.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

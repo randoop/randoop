@@ -1,0 +1,128 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.ByteLookupTable",
+      "name": "java.awt.image.ByteLookupTable",
+      "parameterTypes": [
+        "int",
+        "[[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if offset is is less than 0 or if the length of data is less than 1",
+        "guard": {
+          "condition": "data.length<1",
+          "description": "if offset is is less than 0 or if the length of data is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ByteLookupTable",
+      "name": "java.awt.image.ByteLookupTable",
+      "parameterTypes": [
+        "int",
+        "[[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if offset is is less than 0 or if the length of data is less than 1",
+        "guard": {
+          "condition": "data.length<1",
+          "description": "if offset is is less than 0 or if the length of data is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ByteLookupTable",
+      "name": "lookupPixel",
+      "parameterTypes": [
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "dst"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(src)",
+          "description": "the array dst, an int array of samples."
+        },
+        "description": "return the array dst, an int array of samples.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ByteLookupTable",
+      "name": "lookupPixel",
+      "parameterTypes": [
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "dst"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(src)",
+          "description": "the array dst, an int array of samples."
+        },
+        "description": "return the array dst, an int array of samples.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

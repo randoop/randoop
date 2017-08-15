@@ -1,0 +1,459 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "flip",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bitIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the specified index is negative",
+        "guard": {
+          "condition": "bitIndex<0",
+          "description": "if the specified index is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "flip",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if fromIndex is negative, or toIndex is negative, or fromIndex is larger than toIndex",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex<0",
+          "description": "if fromIndex is negative, or toIndex is negative, or fromIndex is larger than toIndex"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "set",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bitIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the specified index is negative",
+        "guard": {
+          "condition": "bitIndex<0",
+          "description": "if the specified index is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "set",
+      "parameterTypes": [
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bitIndex",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the specified index is negative",
+        "guard": {
+          "condition": "bitIndex<0",
+          "description": "if the specified index is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "set",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if fromIndex is negative, or toIndex is negative, or fromIndex is larger than toIndex",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex<0",
+          "description": "if fromIndex is negative, or toIndex is negative, or fromIndex is larger than toIndex"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "set",
+      "parameterTypes": [
+        "int",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromIndex",
+        "toIndex",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if fromIndex is negative, or toIndex is negative, or fromIndex is larger than toIndex",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex<0",
+          "description": "if fromIndex is negative, or toIndex is negative, or fromIndex is larger than toIndex"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "clear",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bitIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the specified index is negative",
+        "guard": {
+          "condition": "bitIndex<0",
+          "description": "if the specified index is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "clear",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if fromIndex is negative, or toIndex is negative, or fromIndex is larger than toIndex",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex<0",
+          "description": "if fromIndex is negative, or toIndex is negative, or fromIndex is larger than toIndex"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "get",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bitIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the specified index is negative",
+        "guard": {
+          "condition": "bitIndex<0",
+          "description": "if the specified index is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "get",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if fromIndex is negative, or toIndex is negative, or fromIndex is larger than toIndex",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex<0",
+          "description": "if fromIndex is negative, or toIndex is negative, or fromIndex is larger than toIndex"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(int))",
+          "description": "a new BitSet from a range of this BitSet"
+        },
+        "description": "return a new BitSet from a range of this BitSet",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "nextSetBit",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the specified index is negative",
+        "guard": {
+          "condition": "fromIndex<0",
+          "description": "if the specified index is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "nextClearBit",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the specified index is negative",
+        "guard": {
+          "condition": "fromIndex<0",
+          "description": "if the specified index is negative"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(int))",
+          "description": "the index of the next clear bit"
+        },
+        "description": "return the index of the next clear bit",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "previousSetBit",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the specified index is less than -1",
+        "guard": {
+          "condition": "fromIndex<-1",
+          "description": "if the specified index is less than -1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "previousClearBit",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the specified index is less than -1",
+        "guard": {
+          "condition": "fromIndex<-1",
+          "description": "if the specified index is less than -1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.BitSet",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the object to compare with",
+        "guard": {
+          "condition": "target.get(int)",
+          "description": "the object to compare with"
+        }
+      }
+    ]
+  }
+]

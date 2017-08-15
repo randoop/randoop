@@ -1,0 +1,214 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.GregorianCalendar",
+      "name": "java.util.GregorianCalendar",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "year",
+        "month",
+        "dayOfMonth"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the value used to set the MONTH calendar field in the calendar. Month value is 0-based. e.g., 0 for January.",
+        "guard": {
+          "condition": "month==0",
+          "description": "the value used to set the MONTH calendar field in the calendar. Month value is 0-based. e.g., 0 for January."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.GregorianCalendar",
+      "name": "java.util.GregorianCalendar",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "year",
+        "month",
+        "dayOfMonth",
+        "hourOfDay",
+        "minute"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the value used to set the MONTH calendar field in the calendar. Month value is 0-based. e.g., 0 for January.",
+        "guard": {
+          "condition": "month==0",
+          "description": "the value used to set the MONTH calendar field in the calendar. Month value is 0-based. e.g., 0 for January."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.GregorianCalendar",
+      "name": "java.util.GregorianCalendar",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "year",
+        "month",
+        "dayOfMonth",
+        "hourOfDay",
+        "minute",
+        "second"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the value used to set the MONTH calendar field in the calendar. Month value is 0-based. e.g., 0 for January.",
+        "guard": {
+          "condition": "month==0",
+          "description": "the value used to set the MONTH calendar field in the calendar. Month value is 0-based. e.g., 0 for January."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.GregorianCalendar",
+      "name": "java.util.GregorianCalendar",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "year",
+        "month",
+        "dayOfMonth",
+        "hourOfDay",
+        "minute",
+        "second",
+        "millis"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the value used to set the MONTH calendar field in the calendar. Month value is 0-based. e.g., 0 for January.",
+        "guard": {
+          "condition": "month==0",
+          "description": "the value used to set the MONTH calendar field in the calendar. Month value is 0-based. e.g., 0 for January."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.GregorianCalendar",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this object is equal to obj; false otherwise."
+        },
+        "description": "return true if this object is equal to obj; false otherwise.",
+        "guard": {
+          "condition": "target==obj",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if this object is equal to obj; false otherwise."
+        },
+        "description": "return true if this object is equal to obj; false otherwise.",
+        "guard": {
+          "condition": "target==obj",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.GregorianCalendar",
+      "name": "from",
+      "parameterTypes": [
+        "java.time.ZonedDateTime"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "zdt"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if zdt is null",
+        "guard": {
+          "condition": "zdt==null",
+          "description": "if zdt is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

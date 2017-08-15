@@ -1,0 +1,94 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.PixelInterleavedSampleModel",
+      "name": "java.awt.image.PixelInterleavedSampleModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataType",
+        "w",
+        "h",
+        "pixelStride",
+        "scanlineStride",
+        "bandOffsets"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if w or h is not greater than 0",
+        "guard": {
+          "condition": "(w>0) == false || (h>0) == false",
+          "description": "if w or h is not greater than 0"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the product of pixelStride and w is greater than scanlineStride",
+        "guard": {
+          "condition": "w>scanlineStride && w>scanlineStride",
+          "description": "if the product of pixelStride and w is greater than scanlineStride"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if pixelStride is less than any offset between bands",
+        "guard": {
+          "condition": "pixelStride<dataType",
+          "description": "if pixelStride is less than any offset between bands"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dataType is not one of the supported data types",
+        "guard": {
+          "condition": "(dataType==1) == false",
+          "description": "if dataType is not one of the supported data types"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.PixelInterleavedSampleModel",
+      "name": "createCompatibleSampleModel",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if w or h is not greater than 0",
+        "guard": {
+          "condition": "(w>0) == false || (h>0) == false",
+          "description": "if w or h is not greater than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

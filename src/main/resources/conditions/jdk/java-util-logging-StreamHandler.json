@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.logging.StreamHandler",
+      "name": "setOutputStream",
+      "parameterTypes": [
+        "java.io.OutputStream"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "New output stream. May not be null.",
+        "guard": {
+          "condition": "(out==null) == false",
+          "description": "New output stream. May not be null."
+        }
+      }
+    ]
+  }
+]

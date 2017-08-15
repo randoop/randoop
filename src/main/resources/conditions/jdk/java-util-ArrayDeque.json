@@ -1,0 +1,524 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "java.util.ArrayDeque",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "addFirst",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "addLast",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "offerFirst",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "true (as specified by Deque.offerFirst(E))"
+        },
+        "description": "return true (as specified by Deque.offerFirst(E))",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "offerLast",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "true (as specified by Deque.offerLast(E))"
+        },
+        "description": "return true (as specified by Deque.offerLast(E))",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "removeFirst",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "removeLast",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "getFirst",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "getLast",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "add",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "true (as specified by Collection.add(E))"
+        },
+        "description": "return true (as specified by Collection.add(E))",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "offer",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "true (as specified by Queue.offer(E))"
+        },
+        "description": "return true (as specified by Queue.offer(E))",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "remove",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "element",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "push",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "pop",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "isEmpty",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this deque contains no elements"
+        },
+        "description": "return true if this deque contains no elements",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "toArray",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array is null",
+        "guard": {
+          "condition": "a==null",
+          "description": "if the specified array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ArrayDeque",
+      "name": "clone",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.pop())",
+          "description": "a copy of this deque"
+        },
+        "description": "return a copy of this deque",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

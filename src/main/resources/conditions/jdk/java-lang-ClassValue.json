@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.ClassValue",
+      "name": "get",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "type==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ClassValue",
+      "name": "remove",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "type==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.invoke.SwitchPoint",
+      "name": "guardWithTest",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle",
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "fallback"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either argument is null",
+        "guard": {
+          "condition": "target==null || fallback==null",
+          "description": "if either argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.SwitchPoint",
+      "name": "invalidateAll",
+      "parameterTypes": [
+        "[Ljava.lang.invoke.SwitchPoint;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "switchPoints"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the switchPoints array reference is null or the array contains a null",
+        "guard": {
+          "condition": "switchPoints==null",
+          "description": "if the switchPoints array reference is null or the array contains a null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.peer.TextFieldPeer",
+      "name": "getMinimumSize",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "columns"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getMinimumSize())",
+          "description": "the minimum size of the text field"
+        },
+        "description": "return the minimum size of the text field",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

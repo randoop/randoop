@@ -1,0 +1,86 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.invoke.VolatileCallSite",
+      "name": "java.lang.invoke.VolatileCallSite",
+      "parameterTypes": [
+        "java.lang.invoke.MethodType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the proposed type is null",
+        "guard": {
+          "condition": "type==null",
+          "description": "if the proposed type is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.VolatileCallSite",
+      "name": "java.lang.invoke.VolatileCallSite",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the proposed target is null",
+        "guard": {
+          "condition": "target==null",
+          "description": "if the proposed target is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.VolatileCallSite",
+      "name": "setTarget",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newTarget"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the proposed new target is null",
+        "guard": {
+          "condition": "newTarget==null",
+          "description": "if the proposed new target is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.SplashScreen",
+      "name": "setImageURL",
+      "parameterTypes": [
+        "java.net.URL"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "imageURL"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if imageURL is null",
+        "guard": {
+          "condition": "imageURL==null",
+          "description": "if imageURL is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

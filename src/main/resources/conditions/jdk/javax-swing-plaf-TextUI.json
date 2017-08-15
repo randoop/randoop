@@ -1,0 +1,136 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.TextUI",
+      "name": "viewToModel",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent",
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "t",
+        "pt"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the offset from the start of the document >= 0"
+        },
+        "description": "return the offset from the start of the document >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.TextUI",
+      "name": "viewToModel",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent",
+        "java.awt.Point",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "t",
+        "pt",
+        "biasReturn"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the location within the model that best represents the given point in the view >= 0"
+        },
+        "description": "return the location within the model that best represents the given point in the view >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.TextUI",
+      "name": "getNextVisualPositionFrom",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent",
+        "int",
+        "javax.swing.text.Position$Bias",
+        "int",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "t",
+        "pos",
+        "b",
+        "direction",
+        "biasRet"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position to convert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position to convert >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.TextUI",
+      "name": "getRootView",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "t"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the view"
+        },
+        "description": "return the view",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

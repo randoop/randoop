@@ -1,0 +1,274 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.Box",
+      "name": "createHorizontalBox",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the box"
+        },
+        "description": "return the box",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Box",
+      "name": "createVerticalBox",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the box"
+        },
+        "description": "return the box",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Box",
+      "name": "createRigidArea",
+      "parameterTypes": [
+        "java.awt.Dimension"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "d"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getComponents())",
+          "description": "the component"
+        },
+        "description": "return the component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Box",
+      "name": "createHorizontalStrut",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getComponent(int))",
+          "description": "the component"
+        },
+        "description": "return the component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the width of the invisible component, in pixels >= 0",
+        "guard": {
+          "condition": "width>=0",
+          "description": "the width of the invisible component, in pixels >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Box",
+      "name": "createVerticalStrut",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getComponent(int))",
+          "description": "the component"
+        },
+        "description": "return the component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the height of the invisible component, in pixels >= 0",
+        "guard": {
+          "condition": "height>=0",
+          "description": "the height of the invisible component, in pixels >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Box",
+      "name": "createGlue",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getComponents())",
+          "description": "the component"
+        },
+        "description": "return the component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Box",
+      "name": "createHorizontalGlue",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getComponents())",
+          "description": "the component"
+        },
+        "description": "return the component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Box",
+      "name": "createVerticalGlue",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getComponents())",
+          "description": "the component"
+        },
+        "description": "return the component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Box",
+      "name": "paintComponent",
+      "parameterTypes": [
+        "java.awt.Graphics"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "g"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if g is null",
+        "guard": {
+          "condition": "g==null",
+          "description": "if g is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.Scrollable",
+      "name": "getScrollableUnitIncrement",
+      "parameterTypes": [
+        "java.awt.Rectangle",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "visibleRect",
+        "orientation",
+        "direction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>0",
+          "description": "The \"unit\" increment for scrolling in the specified direction. This value should always be positive."
+        },
+        "description": "return The \"unit\" increment for scrolling in the specified direction. This value should always be positive.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.Scrollable",
+      "name": "getScrollableBlockIncrement",
+      "parameterTypes": [
+        "java.awt.Rectangle",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "visibleRect",
+        "orientation",
+        "direction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>0",
+          "description": "The \"block\" increment for scrolling in the specified direction. This value should always be positive."
+        },
+        "description": "return The \"block\" increment for scrolling in the specified direction. This value should always be positive.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

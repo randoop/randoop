@@ -1,0 +1,251 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.geom.Arc2D",
+      "name": "containsAngle",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "angle"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the arc contains the angle, false if the arc doesn't contain the angle."
+        },
+        "description": "return true if the arc contains the angle, false if the arc doesn't contain the angle.",
+        "guard": {
+          "condition": "target.contains(angle)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the arc contains the angle, false if the arc doesn't contain the angle."
+        },
+        "description": "return true if the arc contains the angle, false if the arc doesn't contain the angle.",
+        "guard": {
+          "condition": "target.contains(angle)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Arc2D",
+      "name": "intersects",
+      "parameterTypes": [
+        "double",
+        "double",
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the arc intersects the rectangle, false if the arc doesn't intersect the rectangle."
+        },
+        "description": "return true if the arc intersects the rectangle, false if the arc doesn't intersect the rectangle.",
+        "guard": {
+          "condition": "target.intersects(java.awt.geom.Rectangle2D)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the arc intersects the rectangle, false if the arc doesn't intersect the rectangle."
+        },
+        "description": "return true if the arc intersects the rectangle, false if the arc doesn't intersect the rectangle.",
+        "guard": {
+          "condition": "target.intersects(java.awt.geom.Rectangle2D)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Arc2D",
+      "name": "contains",
+      "parameterTypes": [
+        "double",
+        "double",
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the arc contains the rectangle, false if the arc doesn't contain the rectangle."
+        },
+        "description": "return true if the arc contains the rectangle, false if the arc doesn't contain the rectangle.",
+        "guard": {
+          "condition": "target.contains(x,y,w,h)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the arc contains the rectangle, false if the arc doesn't contain the rectangle."
+        },
+        "description": "return true if the arc contains the rectangle, false if the arc doesn't contain the rectangle.",
+        "guard": {
+          "condition": "target.contains(x,y,w,h)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Arc2D",
+      "name": "contains",
+      "parameterTypes": [
+        "java.awt.geom.Rectangle2D"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "r"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the arc contains the rectangle, false if the arc doesn't contain the rectangle."
+        },
+        "description": "return true if the arc contains the rectangle, false if the arc doesn't contain the rectangle.",
+        "guard": {
+          "condition": "r.contains(r)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the arc contains the rectangle, false if the arc doesn't contain the rectangle."
+        },
+        "description": "return true if the arc contains the rectangle, false if the arc doesn't contain the rectangle.",
+        "guard": {
+          "condition": "r.contains(r)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Arc2D",
+      "name": "hashCode",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the hashcode for this Arc2D."
+        },
+        "description": "return the hashcode for this Arc2D.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Arc2D",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if obj is an instance of Arc2D and has the same values; false otherwise."
+        },
+        "description": "return true if obj is an instance of Arc2D and has the same values; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofArc2D",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if obj is an instance of Arc2D and has the same values; false otherwise."
+        },
+        "description": "return true if obj is an instance of Arc2D and has the same values; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofArc2D",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

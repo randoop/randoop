@@ -1,0 +1,126 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.stream.StreamSupport",
+      "name": "stream",
+      "parameterTypes": [
+        "java.util.function.Supplier",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "supplier",
+        "characteristics",
+        "parallel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "Spliterator characteristics of the supplied Spliterator. The characteristics must be equal to supplier.get().characteristics(), otherwise undefined behavior may occur when terminal operation commences.",
+        "guard": {
+          "condition": "characteristics==supplier.get()",
+          "description": "Spliterator characteristics of the supplied Spliterator. The characteristics must be equal to supplier.get().characteristics(), otherwise undefined behavior may occur when terminal operation commences."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.StreamSupport",
+      "name": "intStream",
+      "parameterTypes": [
+        "java.util.function.Supplier",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "supplier",
+        "characteristics",
+        "parallel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "Spliterator characteristics of the supplied Spliterator.OfInt. The characteristics must be equal to supplier.get().characteristics(), otherwise undefined behavior may occur when terminal operation commences.",
+        "guard": {
+          "condition": "characteristics==supplier.get()",
+          "description": "Spliterator characteristics of the supplied Spliterator.OfInt. The characteristics must be equal to supplier.get().characteristics(), otherwise undefined behavior may occur when terminal operation commences."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.StreamSupport",
+      "name": "longStream",
+      "parameterTypes": [
+        "java.util.function.Supplier",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "supplier",
+        "characteristics",
+        "parallel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "Spliterator characteristics of the supplied Spliterator.OfLong. The characteristics must be equal to supplier.get().characteristics(), otherwise undefined behavior may occur when terminal operation commences.",
+        "guard": {
+          "condition": "characteristics==supplier.get()",
+          "description": "Spliterator characteristics of the supplied Spliterator.OfLong. The characteristics must be equal to supplier.get().characteristics(), otherwise undefined behavior may occur when terminal operation commences."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.stream.StreamSupport",
+      "name": "doubleStream",
+      "parameterTypes": [
+        "java.util.function.Supplier",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "supplier",
+        "characteristics",
+        "parallel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "Spliterator characteristics of the supplied Spliterator.OfDouble. The characteristics must be equal to supplier.get().characteristics(), otherwise undefined behavior may occur when terminal operation commences.",
+        "guard": {
+          "condition": "characteristics==supplier.get()",
+          "description": "Spliterator characteristics of the supplied Spliterator.OfDouble. The characteristics must be equal to supplier.get().characteristics(), otherwise undefined behavior may occur when terminal operation commences."
+        }
+      }
+    ]
+  }
+]

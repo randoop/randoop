@@ -1,0 +1,389 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "getInstance",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a Calendar."
+        },
+        "description": "return a Calendar.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "getInstance",
+      "parameterTypes": [
+        "java.util.TimeZone"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "zone"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a Calendar."
+        },
+        "description": "return a Calendar.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "getInstance",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aLocale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a Calendar."
+        },
+        "description": "return a Calendar.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "getInstance",
+      "parameterTypes": [
+        "java.util.TimeZone",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "zone",
+        "aLocale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a Calendar."
+        },
+        "description": "return a Calendar.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "set",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "year",
+        "month",
+        "date"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the value used to set the MONTH calendar field. Month value is 0-based. e.g., 0 for January.",
+        "guard": {
+          "condition": "month==0",
+          "description": "the value used to set the MONTH calendar field. Month value is 0-based. e.g., 0 for January."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "set",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "year",
+        "month",
+        "date",
+        "hourOfDay",
+        "minute"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the value used to set the MONTH calendar field. Month value is 0-based. e.g., 0 for January.",
+        "guard": {
+          "condition": "month==0",
+          "description": "the value used to set the MONTH calendar field. Month value is 0-based. e.g., 0 for January."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "set",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "year",
+        "month",
+        "date",
+        "hourOfDay",
+        "minute",
+        "second"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the value used to set the MONTH calendar field. Month value is 0-based. e.g., 0 for January.",
+        "guard": {
+          "condition": "month==0",
+          "description": "the value used to set the MONTH calendar field. Month value is 0-based. e.g., 0 for January."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "getDisplayName",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "field",
+        "style",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale is null",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "getDisplayNames",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "field",
+        "style",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale is null",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this object is equal to obj; false otherwise."
+        },
+        "description": "return true if this object is equal to obj; false otherwise.",
+        "guard": {
+          "condition": "target==obj",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if this object is equal to obj; false otherwise."
+        },
+        "description": "return true if this object is equal to obj; false otherwise.",
+        "guard": {
+          "condition": "target==obj",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "compareTo",
+      "parameterTypes": [
+        "java.util.Calendar"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "anotherCalendar"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified Calendar is null.",
+        "guard": {
+          "condition": "anotherCalendar==null",
+          "description": "if the specified Calendar is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Calendar",
+      "name": "getFieldName",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "field"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if field is negative, equal to or greater then FIELD_COUNT.",
+        "guard": {
+          "condition": "field<0",
+          "description": "if field is negative, equal to or greater then FIELD_COUNT."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

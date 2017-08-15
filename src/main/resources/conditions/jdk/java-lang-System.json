@@ -1,0 +1,392 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "setSecurityManager",
+      "parameterTypes": [
+        "java.lang.SecurityManager"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.SecurityException",
+        "description": "throws SecurityException if the security manager has already been set and its checkPermission method doesn't allow it to be replaced.",
+        "guard": {
+          "condition": "s!=null",
+          "description": "if the security manager has already been set and its checkPermission method doesn't allow it to be replaced."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "arraycopy",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "java.lang.Object",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "srcPos",
+        "dest",
+        "destPos",
+        "length"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either src or dest is null.",
+        "guard": {
+          "condition": "src==null || dest==null",
+          "description": "if either src or dest is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "identityHashCode",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.hashCode())",
+          "description": "the hashCode"
+        },
+        "description": "return the hashCode",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "getProperties",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the system properties"
+        },
+        "description": "return the system properties",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "getProperty",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if key is empty.",
+        "guard": {
+          "condition": "key.isEmpty()",
+          "description": "if key is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "getProperty",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "def"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if key is empty.",
+        "guard": {
+          "condition": "key.isEmpty()",
+          "description": "if key is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "setProperty",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key or value is null.",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if key or value is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if key is empty.",
+        "guard": {
+          "condition": "key.isEmpty()",
+          "description": "if key is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "clearProperty",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if key is empty.",
+        "guard": {
+          "condition": "key.isEmpty()",
+          "description": "if key is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "getenv",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "load",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "filename"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if filename is null",
+        "guard": {
+          "condition": "filename==null",
+          "description": "if filename is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "loadLibrary",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "libname"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsatisfiedLinkError",
+        "description": "throws UnsatisfiedLinkError if either the libname argument contains a file path, the native library is not statically linked with the VM, or the library cannot be mapped to a native library image by the host system.",
+        "guard": {
+          "condition": "libname.contains(java.lang.CharSequence)",
+          "description": "if either the libname argument contains a file path, the native library is not statically linked with the VM, or the library cannot be mapped to a native library image by the host system."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if libname is null",
+        "guard": {
+          "condition": "libname==null",
+          "description": "if libname is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.System",
+      "name": "mapLibraryName",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "libname"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if libname is null",
+        "guard": {
+          "condition": "libname==null",
+          "description": "if libname is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.Path",
+      "name": "subpath",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "beginIndex",
+        "endIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if beginIndex is negative, or greater than or equal to the number of elements. If endIndex is less than or equal to beginIndex, or larger than the number of elements.",
+        "guard": {
+          "condition": "(beginIndex<0) || (endIndex<=beginIndex)",
+          "description": "if beginIndex is negative, or greater than or equal to the number of elements. If endIndex is less than or equal to beginIndex, or larger than the number of elements."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

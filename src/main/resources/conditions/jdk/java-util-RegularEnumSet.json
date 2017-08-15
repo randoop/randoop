@@ -1,0 +1,181 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.RegularEnumSet",
+      "name": "isEmpty",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this set contains no elements"
+        },
+        "description": "return true if this set contains no elements",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.RegularEnumSet",
+      "name": "add",
+      "parameterTypes": [
+        "java.lang.Enum"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if e is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if e is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.RegularEnumSet",
+      "name": "containsAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this set contains all of the elements in the specified collection"
+        },
+        "description": "return true if this set contains all of the elements in the specified collection",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.RegularEnumSet",
+      "name": "addAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection or any of its elements are null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.RegularEnumSet",
+      "name": "removeAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.RegularEnumSet",
+      "name": "retainAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

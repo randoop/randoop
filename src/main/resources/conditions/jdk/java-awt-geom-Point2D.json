@@ -1,0 +1,98 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.geom.Point2D",
+      "name": "clone",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a clone of this instance."
+        },
+        "description": "return a clone of this instance.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Point2D",
+      "name": "hashCode",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a hash code for this Point2D."
+        },
+        "description": "return a hash code for this Point2D.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Point2D",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the object to be compared is an instance of Point2D and has the same values; false otherwise."
+        },
+        "description": "return true if the object to be compared is an instance of Point2D and has the same values; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofPoint2D",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the object to be compared is an instance of Point2D and has the same values; false otherwise."
+        },
+        "description": "return true if the object to be compared is an instance of Point2D and has the same values; false otherwise.",
+        "guard": {
+          "condition": "objinstanceofPoint2D",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

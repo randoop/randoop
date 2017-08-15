@@ -1,0 +1,43 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.TabExpander",
+      "name": "nextTabStop",
+      "parameterTypes": [
+        "float",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "tabOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the next tab stop >= 0"
+        },
+        "description": "return the next tab stop >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the position within the text stream that the tab occurred at >= 0.",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the position within the text stream that the tab occurred at >= 0."
+        }
+      }
+    ]
+  }
+]

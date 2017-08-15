@@ -1,0 +1,78 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.ConvolveOp",
+      "name": "filter",
+      "parameterTypes": [
+        "java.awt.image.BufferedImage",
+        "java.awt.image.BufferedImage"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "dst"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if src is null",
+        "guard": {
+          "condition": "src==null",
+          "description": "if src is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if src equals dst",
+        "guard": {
+          "condition": "src.equals(java.lang.Object)",
+          "description": "if src equals dst"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ConvolveOp",
+      "name": "filter",
+      "parameterTypes": [
+        "java.awt.image.Raster",
+        "java.awt.image.WritableRaster"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "dst"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if src is null",
+        "guard": {
+          "condition": "src==null",
+          "description": "if src is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if src equals dst",
+        "guard": {
+          "condition": "src.equals(java.lang.Object)",
+          "description": "if src equals dst"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

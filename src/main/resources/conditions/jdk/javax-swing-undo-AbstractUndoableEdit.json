@@ -1,0 +1,145 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.undo.AbstractUndoableEdit",
+      "name": "canUndo",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this edit is alive and hasBeenDone is true"
+        },
+        "description": "return true if this edit is alive and hasBeenDone is true",
+        "guard": {
+          "condition": "target==true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.undo.AbstractUndoableEdit",
+      "name": "canRedo",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this edit is alive and hasBeenDone is false"
+        },
+        "description": "return true if this edit is alive and hasBeenDone is false",
+        "guard": {
+          "condition": "target==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.undo.AbstractUndoableEdit",
+      "name": "addEdit",
+      "parameterTypes": [
+        "javax.swing.undo.UndoableEdit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "anEdit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "false"
+        },
+        "description": "return false",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.undo.AbstractUndoableEdit",
+      "name": "replaceEdit",
+      "parameterTypes": [
+        "javax.swing.undo.UndoableEdit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "anEdit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "false"
+        },
+        "description": "return false",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.undo.AbstractUndoableEdit",
+      "name": "isSignificant",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

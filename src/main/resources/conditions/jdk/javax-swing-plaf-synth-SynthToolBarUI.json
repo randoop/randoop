@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.synth.SynthToolBarUI",
+      "name": "createLayout",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a LayoutManager instance"
+        },
+        "description": "return a LayoutManager instance",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

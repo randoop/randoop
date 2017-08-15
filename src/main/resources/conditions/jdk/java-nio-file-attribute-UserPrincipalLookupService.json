@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.attribute.UserPrincipalLookupService",
+      "name": "lookupPrincipalByGroupName",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "group"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(group)",
+          "description": "a group principal"
+        },
+        "description": "return a group principal",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

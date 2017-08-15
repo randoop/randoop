@@ -1,0 +1,767 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "javax.swing.JList",
+      "parameterTypes": [
+        "javax.swing.ListModel"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataModel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the model is null",
+        "guard": {
+          "condition": "dataModel==null",
+          "description": "if the model is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getPrototypeCellValue",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the prototypeCellValue property"
+        },
+        "description": "return the value of the prototypeCellValue property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getCellRenderer",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the cellRenderer property"
+        },
+        "description": "return the value of the cellRenderer property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getVisibleRowCount",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the visibleRowCount property."
+        },
+        "description": "return the value of the visibleRowCount property.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getLayoutOrientation",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the layoutOrientation property"
+        },
+        "description": "return the value of the layoutOrientation property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "setLayoutOrientation",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "layoutOrientation"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if layoutOrientation isn't one of the allowable values",
+        "guard": {
+          "condition": "(layoutOrientation==1) == false",
+          "description": "if layoutOrientation isn't one of the allowable values"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getFirstVisibleIndex",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the index of the first visible cell"
+        },
+        "description": "return the index of the first visible cell",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getLastVisibleIndex",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the index of the last visible cell"
+        },
+        "description": "return the index of the last visible cell",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "setDragEnabled",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.HeadlessException",
+        "description": "throws HeadlessException if b is true and GraphicsEnvironment.isHeadless() returns true",
+        "guard": {
+          "condition": "b==true && b==true",
+          "description": "if b is true and GraphicsEnvironment.isHeadless() returns true"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getDragEnabled",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the dragEnabled property"
+        },
+        "description": "return the value of the dragEnabled property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getDropMode",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the drop mode for this component"
+        },
+        "description": "return the drop mode for this component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "dropLocationForPoint",
+      "parameterTypes": [
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(p)",
+          "description": "the drop location, or null"
+        },
+        "description": "return the drop location, or null",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getDropLocation",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the drop location"
+        },
+        "description": "return the drop location",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getNextMatch",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "prefix",
+        "startIndex",
+        "bias"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if prefix is null or startIndex is out of bounds",
+        "guard": {
+          "condition": "prefix==null",
+          "description": "if prefix is null or startIndex is out of bounds"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "indexToLocation",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the origin of the cell, or null"
+        },
+        "description": "return the origin of the cell, or null",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getCellBounds",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index0",
+        "index1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the bounding rectangle for the range of cells, or null"
+        },
+        "description": "return the bounding rectangle for the range of cells, or null",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "setModel",
+      "parameterTypes": [
+        "javax.swing.ListModel"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "model"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if model is null",
+        "guard": {
+          "condition": "model==null",
+          "description": "if model is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "setSelectionModel",
+      "parameterTypes": [
+        "javax.swing.ListSelectionModel"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "selectionModel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if selectionModel is null",
+        "guard": {
+          "condition": "selectionModel==null",
+          "description": "if selectionModel is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "setSelectionMode",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "selectionMode"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the selection mode isn't one of those allowed",
+        "guard": {
+          "condition": "(selectionMode==1) == false",
+          "description": "if the selection mode isn't one of those allowed"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getSelectionMode",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the current selection mode"
+        },
+        "description": "return the current selection mode",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getAnchorSelectionIndex",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the anchor selection index"
+        },
+        "description": "return the anchor selection index",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getLeadSelectionIndex",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the lead selection index"
+        },
+        "description": "return the lead selection index",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "setSelectedIndices",
+      "parameterTypes": [
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "indices"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given array is null",
+        "guard": {
+          "condition": "indices==null",
+          "description": "if the given array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getSelectedValue",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the first selected value"
+        },
+        "description": "return the first selected value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getScrollableUnitIncrement",
+      "parameterTypes": [
+        "java.awt.Rectangle",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "visibleRect",
+        "orientation",
+        "direction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if visibleRect is null, or orientation isn't one of SwingConstants.VERTICAL or SwingConstants.HORIZONTAL",
+        "guard": {
+          "condition": "visibleRect==null",
+          "description": "if visibleRect is null, or orientation isn't one of SwingConstants.VERTICAL or SwingConstants.HORIZONTAL"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "getScrollableBlockIncrement",
+      "parameterTypes": [
+        "java.awt.Rectangle",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "visibleRect",
+        "orientation",
+        "direction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if visibleRect is null, or orientation isn't one of SwingConstants.VERTICAL or SwingConstants.HORIZONTAL",
+        "guard": {
+          "condition": "visibleRect==null",
+          "description": "if visibleRect is null, or orientation isn't one of SwingConstants.VERTICAL or SwingConstants.HORIZONTAL"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JList",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a String representation of this JList."
+        },
+        "description": "return a String representation of this JList.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,84 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.ObjectInputStream",
+      "name": "java.io.ObjectInputStream",
+      "parameterTypes": [
+        "java.io.InputStream"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "in"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if in is null",
+        "guard": {
+          "condition": "in==null",
+          "description": "if in is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.ObjectInputStream",
+      "name": "readLine",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.toString())",
+          "description": "a String copy of the line."
+        },
+        "description": "return a String copy of the line.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.ObjectInputStream",
+      "name": "readUTF",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.toString())",
+          "description": "the String."
+        },
+        "description": "return the String.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

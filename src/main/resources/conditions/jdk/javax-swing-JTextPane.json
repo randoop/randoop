@@ -1,0 +1,201 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JTextPane",
+      "name": "getStyledDocument",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the model"
+        },
+        "description": "return the model",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextPane",
+      "name": "addStyle",
+      "parameterTypes": [
+        "java.lang.String",
+        "javax.swing.text.Style"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm",
+        "parent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the new Style"
+        },
+        "description": "return the new Style",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextPane",
+      "name": "getStyle",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the Style"
+        },
+        "description": "return the Style",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextPane",
+      "name": "getLogicalStyle",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the Style"
+        },
+        "description": "return the Style",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextPane",
+      "name": "getParagraphAttributes",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the attributes"
+        },
+        "description": "return the attributes",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextPane",
+      "name": "getInputAttributes",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the attributes"
+        },
+        "description": "return the attributes",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextPane",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JTextPane"
+        },
+        "description": "return a string representation of this JTextPane",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

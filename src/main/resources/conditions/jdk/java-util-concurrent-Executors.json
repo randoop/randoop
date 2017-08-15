@@ -1,0 +1,246 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Executors",
+      "name": "newFixedThreadPool",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nThreads"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if nThreads <= 0",
+        "guard": {
+          "condition": "nThreads<=0",
+          "description": "if nThreads <= 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Executors",
+      "name": "newWorkStealingPool",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parallelism"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if parallelism <= 0",
+        "guard": {
+          "condition": "parallelism<=0",
+          "description": "if parallelism <= 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Executors",
+      "name": "newFixedThreadPool",
+      "parameterTypes": [
+        "int",
+        "java.util.concurrent.ThreadFactory"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nThreads",
+        "threadFactory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if threadFactory is null",
+        "guard": {
+          "condition": "threadFactory==null",
+          "description": "if threadFactory is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if nThreads <= 0",
+        "guard": {
+          "condition": "nThreads<=0",
+          "description": "if nThreads <= 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Executors",
+      "name": "newSingleThreadExecutor",
+      "parameterTypes": [
+        "java.util.concurrent.ThreadFactory"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "threadFactory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if threadFactory is null",
+        "guard": {
+          "condition": "threadFactory==null",
+          "description": "if threadFactory is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Executors",
+      "name": "newCachedThreadPool",
+      "parameterTypes": [
+        "java.util.concurrent.ThreadFactory"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "threadFactory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if threadFactory is null",
+        "guard": {
+          "condition": "threadFactory==null",
+          "description": "if threadFactory is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Executors",
+      "name": "newSingleThreadScheduledExecutor",
+      "parameterTypes": [
+        "java.util.concurrent.ThreadFactory"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "threadFactory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if threadFactory is null",
+        "guard": {
+          "condition": "threadFactory==null",
+          "description": "if threadFactory is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Executors",
+      "name": "newScheduledThreadPool",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "corePoolSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if corePoolSize < 0",
+        "guard": {
+          "condition": "corePoolSize<0",
+          "description": "if corePoolSize < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.Executors",
+      "name": "newScheduledThreadPool",
+      "parameterTypes": [
+        "int",
+        "java.util.concurrent.ThreadFactory"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "corePoolSize",
+        "threadFactory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if corePoolSize < 0",
+        "guard": {
+          "condition": "corePoolSize<0",
+          "description": "if corePoolSize < 0"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if threadFactory is null",
+        "guard": {
+          "condition": "threadFactory==null",
+          "description": "if threadFactory is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

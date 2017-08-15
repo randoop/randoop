@@ -1,0 +1,103 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.BufferCapabilities",
+      "name": "java.awt.BufferCapabilities",
+      "parameterTypes": [
+        "java.awt.ImageCapabilities",
+        "java.awt.ImageCapabilities",
+        "java.awt.BufferCapabilities$FlipContents"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "frontCaps",
+        "backCaps",
+        "flipContents"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if frontCaps or backCaps are null",
+        "guard": {
+          "condition": "frontCaps==null || backCaps==null",
+          "description": "if frontCaps or backCaps are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the capabilities of the front buffer; cannot be null",
+        "guard": {
+          "condition": "(frontCaps==null) == false",
+          "description": "the capabilities of the front buffer; cannot be null"
+        }
+      },
+      {
+        "description": "the capabilities of the back and intermediate buffers; cannot be null",
+        "guard": {
+          "condition": "(backCaps==null) == false",
+          "description": "the capabilities of the back and intermediate buffers; cannot be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.BufferCapabilities",
+      "name": "getFlipContents",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==1",
+          "description": "the resulting contents of the back buffer after page-flipping. This value is null when the isPageFlipping returns false, implying blitting. It can be one of FlipContents.UNDEFINED (the assumed default), FlipContents.BACKGROUND, FlipContents.PRIOR, or FlipContents.COPIED."
+        },
+        "description": "return the resulting contents of the back buffer after page-flipping. This value is null when the isPageFlipping returns false, implying blitting. It can be one of FlipContents.UNDEFINED (the assumed default), FlipContents.BACKGROUND, FlipContents.PRIOR, or FlipContents.COPIED.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.BufferCapabilities",
+      "name": "isFullScreenRequired",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "whether page flipping is only available in full-screen mode. If this is true, full-screen exclusive mode is required for page-flipping."
+        },
+        "description": "return whether page flipping is only available in full-screen mode. If this is true, full-screen exclusive mode is required for page-flipping.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]
