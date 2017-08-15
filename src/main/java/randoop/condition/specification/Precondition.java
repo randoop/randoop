@@ -23,15 +23,15 @@ package randoop.condition.specification;
  *
  * See {@link Guard} for details on specifying guards.
  */
-public class PreSpecification extends SpecificationClause {
+public class Precondition extends SpecificationClause {
 
   /**
-   * Create a {@link PreSpecification} with the given {@link Guard}.
+   * Create a {@link Precondition} with the given {@link Guard}.
    *
    * @param description the text description of the param-specification
    * @param guard the guard for the param-specification
    */
-  public PreSpecification(String description, Guard guard) {
+  public Precondition(String description, Guard guard) {
     super(description, guard);
   }
 

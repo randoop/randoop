@@ -3,7 +3,7 @@ package randoop.condition;
 /**
  * Represents a guard and property expression pair for an operation.
  *
- * <p>Corresponds to a {@link randoop.condition.specification.PostSpecification}.
+ * <p>Corresponds to a {@link randoop.condition.specification.Postcondition}.
  */
 class GuardPropertyPair {
 

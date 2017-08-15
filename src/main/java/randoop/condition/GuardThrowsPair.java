@@ -3,7 +3,7 @@ package randoop.condition;
 /**
  * Represents a guard expression and throws clause pair for an operation.
  *
- * <p>Corresponds to a {@link randoop.condition.specification.ThrowsSpecification}.
+ * <p>Corresponds to a {@link randoop.condition.specification.ThrowsCondition}.
  */
 class GuardThrowsPair {
 

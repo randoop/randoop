@@ -34,16 +34,16 @@ public class ConnectionSpecTest {
     List<OperationSpecification> opList = new ArrayList<>();
 
     Guard throwsGuard = new Guard("if the connection is already open", "receiver.isOpen()");
-    ThrowsSpecification opThrows =
-        new ThrowsSpecification(
+    ThrowsCondition opThrows =
+        new ThrowsCondition(
             "throws IllegalStateException if the connection is already open",
             throwsGuard,
             IllegalStateException.class.getCanonicalName());
-    List<ThrowsSpecification> throwsList = new ArrayList<>();
+    List<ThrowsCondition> throwsList = new ArrayList<>();
     throwsList.add(opThrows);
     OperationSignature op = OperationSignature.of(m);
     OperationSpecification opSpec = new OperationSpecification(op, new Identifiers());
-    opSpec.addThrowsSpecifications(throwsList);
+    opSpec.ThrowsConditions(throwsList);
     opList.add(opSpec);
 
     m = null;
@@ -55,11 +55,11 @@ public class ConnectionSpecTest {
     assert m != null;
 
     Guard paramGuard = new Guard("the code must be positive", "code > 0");
-    PreSpecification opParam = new PreSpecification("the code must be positive", paramGuard);
-    List<PreSpecification> paramList = new ArrayList<>();
+    Precondition opParam = new Precondition("the code must be positive", paramGuard);
+    List<Precondition> paramList = new ArrayList<>();
     throwsGuard = new Guard("the connection is not open", "!receiver.isOpen()");
     opThrows =
-        new ThrowsSpecification(
+        new ThrowsCondition(
             "throws IllegalStateException if the connection is not open",
             throwsGuard,
             IllegalStateException.class.getCanonicalName());
@@ -80,9 +80,9 @@ public class ConnectionSpecTest {
     }
     Guard returnGuard = new Guard("", "true");
     Property property = new Property("received value is non-negative", "result >= 0");
-    PostSpecification opReturn =
-        new PostSpecification("returns non-negative received value", returnGuard, property);
-    List<PostSpecification> retList = new ArrayList<>();
+    Postcondition opReturn =
+        new Postcondition("returns non-negative received value", returnGuard, property);
+    List<Postcondition> retList = new ArrayList<>();
     retList.add(opReturn);
     op = OperationSignature.of(m);
     opSpec = new OperationSpecification(op, new Identifiers());

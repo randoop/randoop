@@ -9,10 +9,10 @@ import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
 import randoop.condition.specification.OperationSpecification;
-import randoop.condition.specification.PostSpecification;
-import randoop.condition.specification.PreSpecification;
+import randoop.condition.specification.Postcondition;
+import randoop.condition.specification.Precondition;
 import randoop.condition.specification.Property;
-import randoop.condition.specification.ThrowsSpecification;
+import randoop.condition.specification.ThrowsCondition;
 import randoop.main.GenInputsAbstract;
 import randoop.reflection.RawSignature;
 import randoop.types.ClassOrInterfaceType;
@@ -242,22 +242,22 @@ public class SpecificationTranslator {
   OperationConditions createConditions(OperationSpecification specification) {
 
     return new OperationConditions(
-        getGuardExpressions(specification.getPreSpecifications()),
-        getReturnConditions(specification.getPostSpecifications()),
-        getThrowsConditions(specification.getThrowsSpecifications()));
+        getGuardExpressions(specification.getPreconditions()),
+        getReturnConditions(specification.getPostconditions()),
+        getThrowsConditions(specification.getThrowsConditions()));
   }
 
   /**
-   * Construct the list of {@link BooleanExpression} objects, one for each {@link PreSpecification}.
+   * Construct the list of {@link BooleanExpression} objects, one for each {@link Precondition}.
    *
-   * @param preSpecifications the list of {@link PreSpecification} objects that will be converted to
+   * @param preSpecifications the list of {@link Precondition} objects that will be converted to
    *     {@link BooleanExpression}
    * @return the list of {@link BooleanExpression} objects obtained by converting each {@link
-   *     PreSpecification}
+   *     Precondition}
    */
-  private List<BooleanExpression> getGuardExpressions(List<PreSpecification> preSpecifications) {
+  private List<BooleanExpression> getGuardExpressions(List<Precondition> preSpecifications) {
     List<BooleanExpression> guardExpressions = new ArrayList<>();
-    for (PreSpecification preSpecification : preSpecifications) {
+    for (Precondition preSpecification : preSpecifications) {
       try {
         guardExpressions.add(create(preSpecification.getGuard()));
       } catch (RandoopConditionError e) {
@@ -271,18 +271,17 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Construct the list of {@link GuardPropertyPair} objects, one for each {@link PostSpecification}
-   * in {@code postSpecifications}.
+   * Construct the list of {@link GuardPropertyPair} objects, one for each {@link Postcondition} in
+   * {@code postSpecifications}.
    *
-   * @param postSpecifications the list of {@link PostSpecification} that will be converted to
-   *     {@link GuardPropertyPair} objects
+   * @param postSpecifications the list of {@link Postcondition} that will be converted to {@link
+   *     GuardPropertyPair} objects
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
-   *     PostSpecification}
+   *     Postcondition}
    */
-  private ArrayList<GuardPropertyPair> getReturnConditions(
-      List<PostSpecification> postSpecifications) {
+  private ArrayList<GuardPropertyPair> getReturnConditions(List<Postcondition> postSpecifications) {
     ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>();
-    for (PostSpecification postSpecification : postSpecifications) {
+    for (Postcondition postSpecification : postSpecifications) {
       try {
         BooleanExpression guardExpression = create(postSpecification.getGuard());
         PropertyExpression propertyExpression = create(postSpecification.getProperty());
@@ -299,18 +298,18 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Construct the list of {@link GuardThrowsPair} objects, one for each {@link ThrowsSpecification}
-   * in {@code throwsSpecifications}.
+   * Construct the list of {@link GuardThrowsPair} objects, one for each {@link ThrowsCondition} in
+   * {@code throwsSpecifications}.
    *
-   * @param throwsSpecifications the list of {@link ThrowsSpecification} that will be converted to
+   * @param throwsSpecifications the list of {@link ThrowsCondition} that will be converted to
    *     {@link GuardPropertyPair} objects
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
-   *     ThrowsSpecification}
+   *     ThrowsCondition}
    */
   private ArrayList<GuardThrowsPair> getThrowsConditions(
-      List<ThrowsSpecification> throwsSpecifications) {
+      List<ThrowsCondition> throwsSpecifications) {
     ArrayList<GuardThrowsPair> throwsPairs = new ArrayList<>();
-    for (ThrowsSpecification throwsSpecification : throwsSpecifications) {
+    for (ThrowsCondition throwsSpecification : throwsSpecifications) {
       ClassOrInterfaceType exceptionType;
       try {
         exceptionType =
