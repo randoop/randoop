@@ -889,6 +889,8 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.ClassWithConditions");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/classwithconditions.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -906,6 +908,8 @@ public class RandoopSystemTest {
     options.addTestClass("net.Connection");
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -924,6 +928,8 @@ public class RandoopSystemTest {
     options.addTestClass("net.Connection");
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -942,6 +948,8 @@ public class RandoopSystemTest {
     options.addTestClass("net.Connection");
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -960,6 +968,8 @@ public class RandoopSystemTest {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("pkg.SubClass");
     options.setOption("specifications", "resources/systemTest/pkg/pkg_subclass_toradocu_spec.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -982,6 +992,8 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.ConditionWithException");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/condition_with_exception.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -1005,6 +1017,8 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/overridingconditionsclass.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
     options.setOption("outputLimit", "200");
@@ -1020,6 +1034,8 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsuperclass.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
     options.setOption("outputLimit", "200");
@@ -1035,6 +1051,8 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsinterface.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
     options.setOption("outputLimit", "200");
@@ -1050,6 +1068,8 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsupersuperclass.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
     options.setOption("outputLimit", "200");
@@ -1455,6 +1475,68 @@ public class RandoopSystemTest {
     options.setOption("generatedLimit", "40");
     CoverageChecker checker = new CoverageChecker(options);
     checker.exclude("input.NoExitClass.hashCode()");
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+  }
+
+  @Test
+  public void runJDKSpecificationsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("jdk-specification-test");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("java.util.ArrayList");
+    options.addTestClass("java.util.LinkedHashSet");
+    options.setFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
+    options.setOption("outputLimit", "400");
+    options.setOption("generatedLimit", "800");
+
+    CoverageChecker checker = new CoverageChecker(options);
+    checker.exclude("java.util.ArrayList.add(int, java.lang.Object)");
+    checker.exclude("java.util.ArrayList.add(java.lang.Object)");
+    checker.exclude("java.util.ArrayList.addAll(int, java.util.Collection)");
+    checker.exclude("java.util.ArrayList.addAll(java.util.Collection)");
+    checker.exclude("java.util.ArrayList.batchRemove(java.util.Collection, boolean)");
+    checker.exclude("java.util.ArrayList.clear()");
+    checker.exclude("java.util.ArrayList.clone()");
+    checker.exclude("java.util.ArrayList.contains(java.lang.Object)");
+    checker.exclude("java.util.ArrayList.elementData(int)");
+    checker.exclude("java.util.ArrayList.ensureCapacity(int)");
+    checker.exclude("java.util.ArrayList.ensureCapacityInternal(int)");
+    checker.exclude("java.util.ArrayList.ensureExplicitCapacity(int)");
+    checker.exclude("java.util.ArrayList.fastRemove(int)");
+    checker.exclude("java.util.ArrayList.forEach(java.util.function.Consumer)");
+    checker.exclude("java.util.ArrayList.get(int)");
+    checker.exclude("java.util.ArrayList.grow(int)");
+    checker.exclude("java.util.ArrayList.hugeCapacity(int)");
+    checker.exclude("java.util.ArrayList.indexOf(java.lang.Object)");
+    checker.exclude("java.util.ArrayList.isEmpty()");
+    checker.exclude("java.util.ArrayList.iterator()");
+    checker.exclude("java.util.ArrayList.lastIndexOf(java.lang.Object)");
+    checker.exclude("java.util.ArrayList.listIterator()");
+    checker.exclude("java.util.ArrayList.listIterator(int)");
+    checker.exclude("java.util.ArrayList.outOfBoundsMsg(int)");
+    checker.exclude("java.util.ArrayList.rangeCheck(int)");
+    checker.exclude("java.util.ArrayList.rangeCheckForAdd(int)");
+    checker.exclude("java.util.ArrayList.readObject(java.io.ObjectInputStream)");
+    checker.exclude("java.util.ArrayList.remove(int)");
+    checker.exclude("java.util.ArrayList.remove(java.lang.Object)");
+    checker.exclude("java.util.ArrayList.removeAll(java.util.Collection)");
+    checker.exclude("java.util.ArrayList.removeIf(java.util.function.Predicate)");
+    checker.exclude("java.util.ArrayList.removeRange(int, int)");
+    checker.exclude("java.util.ArrayList.replaceAll(java.util.function.UnaryOperator)");
+    checker.exclude("java.util.ArrayList.retainAll(java.util.Collection)");
+    checker.exclude("java.util.ArrayList.set(int, java.lang.Object)");
+    checker.exclude("java.util.ArrayList.size()");
+    checker.exclude("java.util.ArrayList.sort(java.util.Comparator)");
+    checker.exclude("java.util.ArrayList.spliterator()");
+    checker.exclude("java.util.ArrayList.subList(int, int)");
+    checker.exclude("java.util.ArrayList.subListRangeCheck(int, int, int)");
+    checker.exclude("java.util.ArrayList.toArray()");
+    checker.exclude("java.util.ArrayList.toArray(java.lang.Object[])");
+    checker.exclude("java.util.ArrayList.trimToSize()");
+    checker.exclude("java.util.ArrayList.writeObject(java.io.ObjectOutputStream)");
+    checker.exclude("java.util.LinkedHashSet.spliterator()");
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
   }

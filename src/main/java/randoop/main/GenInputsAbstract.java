@@ -311,6 +311,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Use specifications from JSON file to classify behaviors for methods/constructors")
   public static List<File> specifications = null;
 
+  /**
+   * Use the internal specifications for JDK classes to control how tests are generated and
+   * classified.
+   *
+   * <p>These specifications are applied to the methods of classes that inherit from them. See
+   * {@link #specifications} for details on classification using specifications.
+   */
+  @Option("Use specifications for JDK classes to classify behaviors for methods/constructors")
+  public static boolean use_jdk_specifications = false;
+
   /** Allow Randoop to fail if the Java condition text of a specification cannot be compiled. */
   @Option("Terminate Randoop if specification condition is uncompilable")
   public static boolean fail_on_condition_error = false;
