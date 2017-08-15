@@ -10,21 +10,20 @@ import randoop.test.PostConditionCheckGenerator;
 import randoop.test.TestCheckGenerator;
 
 /**
- * Records the outcome of checking in prestate all of the {@link BooleanExpression} for the {@link
- * randoop.condition.specification.PreSpecification}, the {@link GuardPropertyPair}, and {@link
+ * Records the outcome of checking all of the prestate {@link BooleanExpression}s: for the {@link
+ * randoop.condition.specification.Precondition}, the {@link GuardPropertyPair}, and {@link
  * GuardThrowsPair} for an operation call.
  *
- * <p>Conceptually, represents a table, in which each table entry records:
+ * <p>Conceptually, represents a table, in which each table entry represents the specification for
+ * one declared method. There may be multiple entries in a table, because a method implementation
+ * must satisfy not only the specification written on it, but also any written on method
+ * declarations that it overrides or implements.
  *
  * <ol>
- *   <li>Whether the guard expressions for the {@link
- *       randoop.condition.specification.PreSpecification} of the specification fail or are
- *       satisfied. The guard expressions fail if the Boolean expression of any {@link
- *       randoop.condition.specification.PreSpecification} is false. Otherwise, the guard
- *       expressions are satisfied.
- *   <li>The set of {@link ThrowsClause} objects for expected exceptions. An exception is expected
- *       because the operation has a {@link GuardThrowsPair} for which the guard {@link
- *       BooleanExpression} was satisfied.
+ *   <li>Whether any guard expression for the {@link randoop.condition.specification.Precondition}
+ *       fails, or all are satisfied.
+ *   <li>The set of {@link ThrowsCondition} objects for expected exceptions. An exception is
+ *       expected if the guard of a {@link GuardThrowsPair} is satisfied.
  *   <li>The expected {@link PropertyExpression}, if any.
  * </ol>
  *
@@ -58,10 +57,10 @@ public class ExpectedOutcomeTable {
   /** Indicates whether this table is empty. */
   private boolean isEmpty = true;
 
-  /** Indicates whether a pre-expression was satisfied. */
+  /** Indicates whether a precondition was satisfied. */
   private boolean hasSatisfiedGuardExpression = false;
 
-  /** The list of guard expressions for which the guard expression was satisfied. */
+  /** The list of post-conditions whose guard expression was satisfied. */
   private final List<PropertyExpression> postConditions;
 
   /** The list of sets of throws clauses for which the guard expression was satisfied. */
@@ -74,11 +73,11 @@ public class ExpectedOutcomeTable {
   }
 
   /**
-   * Adds the outcome of checking the pre- and guard expressions of an operation.
+   * Adds the outcome of checking the prestate parts of an operation's specification.
    *
    * @param guardIsSatisfied boolean value indicating whether all guard expressions are satisfied
    * @param propertyExpression property expression that must be true in post-state if no exception
-   *     is
+   *     is thrown
    * @param throwsClauses set of exception type-comment pairs for exceptions expected in post-state
    */
   void add(
@@ -87,7 +86,7 @@ public class ExpectedOutcomeTable {
       Set<ThrowsClause> throwsClauses) {
     // An empty table cannot represent a pre-state for which the call is invalid, so setting isEmpty
     // to false is necessary even if the entry has !guardIsSatisfied and no propertyExpression or
-    // throwsClauses
+    // throwsClauses.
     isEmpty = false;
     if (guardIsSatisfied) {
       if (propertyExpression != null) {
@@ -125,7 +124,7 @@ public class ExpectedOutcomeTable {
    *   <li>if this table is empty, returns the given generator.
    *   <li>if this table has expected exceptions, then returns a {@link ExpectedExceptionGenerator}
    *       to check for those exceptions.
-   *   <li>if all pre-expressions fail, then return an {@link InvalidCheckGenerator}.
+   *   <li>if all preconditions fail, then return an {@link InvalidCheckGenerator}.
    *   <li>if any {@link GuardPropertyPair} has a satisfied guard expression, then extend the given
    *       generator with a {@link PostConditionCheckGenerator}.
    * </ul>

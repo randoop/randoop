@@ -19,10 +19,10 @@ import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
 import randoop.condition.specification.OperationSignature;
 import randoop.condition.specification.OperationSpecification;
-import randoop.condition.specification.PostSpecification;
-import randoop.condition.specification.PreSpecification;
+import randoop.condition.specification.Postcondition;
+import randoop.condition.specification.Precondition;
 import randoop.condition.specification.Property;
-import randoop.condition.specification.ThrowsSpecification;
+import randoop.condition.specification.ThrowsCondition;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
@@ -289,43 +289,43 @@ public class OperationConditionTest {
     OperationSpecification spec =
         new OperationSpecification(OperationSignature.of(method), new Identifiers(paramNames));
 
-    List<PreSpecification> preSpecifications = new ArrayList<>();
+    List<Precondition> preSpecifications = new ArrayList<>();
     Guard paramGuard = new Guard("positive", "value > 0");
-    PreSpecification paramSpec = new PreSpecification("must be positive", paramGuard);
+    Precondition paramSpec = new Precondition("must be positive", paramGuard);
     preSpecifications.add(paramSpec);
     spec.addParamSpecifications(preSpecifications);
 
-    List<ThrowsSpecification> throwsSpecifications = new ArrayList<>();
+    List<ThrowsCondition> throwsSpecifications = new ArrayList<>();
     Guard throwsGuard = new Guard("greater than 4*getValue()", "value > 4*receiver.getValue()");
-    ThrowsSpecification throwsSpec =
-        new ThrowsSpecification(
+    ThrowsCondition throwsSpec =
+        new ThrowsCondition(
             "should be less than 4*getValue", throwsGuard, "java.lang.IllegalArgumentException");
     throwsSpecifications.add(throwsSpec);
-    spec.addThrowsSpecifications(throwsSpecifications);
+    spec.ThrowsConditions(throwsSpecifications);
 
-    List<PostSpecification> postSpecifications = new ArrayList<>();
+    List<Postcondition> postSpecifications = new ArrayList<>();
     Guard retGuard;
     Property retProperty;
-    PostSpecification returnSpec;
+    Postcondition returnSpec;
 
     retGuard = new Guard("value in first range", "value < receiver.getValue()");
     retProperty = new Property("return ONE", "result.equals(ClassWithConditions.Range.ONE)");
-    returnSpec = new PostSpecification("value in first range", retGuard, retProperty);
+    returnSpec = new Postcondition("value in first range", retGuard, retProperty);
     postSpecifications.add(returnSpec);
 
     retGuard = new Guard("value in second range", "value < 2*receiver.getValue()");
     retProperty = new Property("return TWO", "result.equals(ClassWithConditions.Range.TWO)");
-    returnSpec = new PostSpecification("value in second range", retGuard, retProperty);
+    returnSpec = new Postcondition("value in second range", retGuard, retProperty);
     postSpecifications.add(returnSpec);
 
     retGuard = new Guard("value in third range", "value < 3*receiver.getValue()");
     retProperty = new Property("return THREE", "result.equals(ClassWithConditions.Range.THREE)");
-    returnSpec = new PostSpecification("value in third range", retGuard, retProperty);
+    returnSpec = new Postcondition("value in third range", retGuard, retProperty);
     postSpecifications.add(returnSpec);
 
     retGuard = new Guard("otherwise", "true");
     retProperty = new Property("return FOUR", "result.equals(ClassWithConditions.Range.FOUR)");
-    returnSpec = new PostSpecification("otherwise, return FOUR", retGuard, retProperty);
+    returnSpec = new Postcondition("otherwise, return FOUR", retGuard, retProperty);
     postSpecifications.add(returnSpec);
     spec.addReturnSpecifications(postSpecifications);
 
@@ -348,18 +348,17 @@ public class OperationConditionTest {
     paramNames.add("value");
     OperationSpecification spec =
         new OperationSpecification(OperationSignature.of(constructor), new Identifiers(paramNames));
-    List<PreSpecification> preSpecifications = new ArrayList<>();
+    List<Precondition> preSpecifications = new ArrayList<>();
     Guard paramGuard = new Guard("non-negative value", "value >= 0");
-    PreSpecification paramSpec = new PreSpecification("must be non-negative", paramGuard);
+    Precondition paramSpec = new Precondition("must be non-negative", paramGuard);
     preSpecifications.add(paramSpec);
     spec.addParamSpecifications(preSpecifications);
 
-    List<PostSpecification> postSpecifications = new ArrayList<>();
+    List<Postcondition> postSpecifications = new ArrayList<>();
     Guard retGuard = new Guard("always", "true");
     Property retProperty =
         new Property("should have value of argument", "value == 2*result.getValue()");
-    PostSpecification returnSpec =
-        new PostSpecification("value should be argument", retGuard, retProperty);
+    Postcondition returnSpec = new Postcondition("value should be argument", retGuard, retProperty);
     postSpecifications.add(returnSpec);
     spec.addReturnSpecifications(postSpecifications);
 
@@ -378,19 +377,19 @@ public class OperationConditionTest {
     paramNames.add("value");
     OperationSpecification spec =
         new OperationSpecification(OperationSignature.of(method), new Identifiers(paramNames));
-    List<ThrowsSpecification> throwsSpecifications = new ArrayList<>();
+    List<ThrowsCondition> throwsSpecifications = new ArrayList<>();
     Guard throwsGuard = new Guard("non null", "range == null");
-    ThrowsSpecification throwsSpecification =
-        new ThrowsSpecification("non null", throwsGuard, "java.lang.NullPointerException");
+    ThrowsCondition throwsSpecification =
+        new ThrowsCondition("non null", throwsGuard, "java.lang.NullPointerException");
     throwsSpecifications.add(throwsSpecification);
 
     throwsGuard = new Guard("positive value", "value <= 0");
     throwsSpecification =
-        new ThrowsSpecification(
+        new ThrowsCondition(
             "value should be positive integer", throwsGuard, "java.lang.IllegalArgumentException");
     throwsSpecifications.add(throwsSpecification);
 
-    spec.addThrowsSpecifications(throwsSpecifications);
+    spec.ThrowsConditions(throwsSpecifications);
 
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(method, spec);

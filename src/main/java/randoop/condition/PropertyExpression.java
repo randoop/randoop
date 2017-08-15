@@ -26,7 +26,7 @@ public class PropertyExpression extends BooleanExpression {
   /**
    * Creates a {@link PropertyExpression} for evaluating the property (see {@link
    * randoop.condition.specification.Property}) of a {@link
-   * randoop.condition.specification.PostSpecification}.
+   * randoop.condition.specification.Postcondition}.
    *
    * @param signature the signature for the expression method to be created. The class name of the
    *     expression method signature is ignored and a new name is generated using {@link

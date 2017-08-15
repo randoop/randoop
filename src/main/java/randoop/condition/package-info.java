@@ -10,15 +10,15 @@
  * randoop.condition.SpecificationCollection#create(java.util.List)}.
  *
  * <p>The specifications are translated to objects that allow the underlying Boolean expressions to
- * be evaluated A {@link randoop.condition.specification.PreSpecification} is translated to a {@link
+ * be evaluated A {@link randoop.condition.specification.Precondition} is translated to a {@link
  * randoop.condition.BooleanExpression} object, a {@link
- * randoop.condition.specification.PostSpecification} to a {@link
- * randoop.condition.GuardPropertyPair}, and a {@link
- * randoop.condition.specification.ThrowsSpecification} a {@link randoop.condition.GuardThrowsPair}.
- * The pair classes each have a {@link randoop.condition.BooleanExpression} for the {@link
- * randoop.condition.specification.Guard} that is to be evaluated before the operation call, along
- * with either a {@link randoop.condition.PropertyExpression} or a {@link
- * randoop.condition.ThrowsClause} to be evaluated after the operation call.
+ * randoop.condition.specification.Postcondition} to a {@link randoop.condition.GuardPropertyPair},
+ * and a {@link randoop.condition.specification.ThrowsCondition} a {@link
+ * randoop.condition.GuardThrowsPair}. The pair classes each have a {@link
+ * randoop.condition.BooleanExpression} for the {@link randoop.condition.specification.Guard} that
+ * is to be evaluated before the operation call, along with either a {@link
+ * randoop.condition.PropertyExpression} or a {@link randoop.condition.ThrowsCondition} to be
+ * evaluated after the operation call.
  *
  * <p>All of the pre-condition expressions and pairs for an operation are represented as an {@link
  * randoop.condition.OperationConditions} object that is created using {@link
@@ -42,9 +42,9 @@
  *
  * <p><i>Definitions</i>: Let {@code expression} be either a {@link
  * randoop.condition.BooleanExpression} representing a {@link
- * randoop.condition.specification.PreSpecification} or {@link
- * randoop.condition.specification.Guard}; or the {@link randoop.condition.PropertyExpression} for a
- * {@link randoop.condition.specification.Property}. Then {@code expression} evaluated on the method
+ * randoop.condition.specification.Precondition} or {@link randoop.condition.specification.Guard};
+ * or the {@link randoop.condition.PropertyExpression} for a {@link
+ * randoop.condition.specification.Property}. Then {@code expression} evaluated on the method
  * arguments is <i>satisfied</i> if {@code expression.check(values)} evaluates to true, and
  * <i>fails</i> otherwise.
  *
@@ -64,9 +64,9 @@
  *       table entry corresponding to each specification of the operation, recording:
  *       <ol>
  *         <li>Whether the {@link randoop.condition.BooleanExpression}s of the {@link
- *             randoop.condition.specification.PreSpecification}s fail or are satisfied. The
- *             expressions fail if any expression is false on the arguments. Otherwise, the
- *             preconditions are satisfied.
+ *             randoop.condition.specification.Precondition}s fail or are satisfied. The expressions
+ *             fail if any expression is false on the arguments. Otherwise, the preconditions are
+ *             satisfied.
  *         <li>A set of {@link randoop.condition.ThrowsClause} objects for expected exceptions.
  *         <li>The expected {@link randoop.condition.PropertyExpression}, if any. This is the {@link
  *             randoop.condition.PropertyExpression}, of the first {@link
@@ -86,7 +86,7 @@
  *             randoop.test.ExpectedExceptionGenerator} is returned.
  *         <li>If there are no expected exceptions, and no satisfied {@link
  *             randoop.condition.BooleanExpression}s for any {@link
- *             randoop.condition.specification.PreSpecification}, return an {@link
+ *             randoop.condition.specification.Precondition}, return an {@link
  *             randoop.test.InvalidCheckGenerator}.
  *         <li>Otherwise, if there are {@link randoop.condition.PropertyExpression} to evaluate,
  *             then extend the current generator with a {@link

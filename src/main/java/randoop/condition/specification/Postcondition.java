@@ -3,10 +3,10 @@ package randoop.condition.specification;
 import java.util.Objects;
 
 /**
- * A {@link PostSpecification} is a specification clause of a contract on the outcome of the
- * invocation of an operation. The specification consists of a {@link Guard} and a {@link Property}.
- * For an invocation of the operation, if the {@link Guard} evaluates to true, then the {@link
- * Property} must also be true.
+ * A {@link Postcondition} is a specification clause of a contract on the outcome of the invocation
+ * of an operation. The specification consists of a {@link Guard} and a {@link Property}. For an
+ * invocation of the operation, if the {@link Guard} evaluates to true, then the {@link Property}
+ * must also be true.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
@@ -28,7 +28,7 @@ import java.util.Objects;
  *
  * See the classes {@link Guard} and {@link Property} for details on specifying those objects.
  */
-public class PostSpecification extends SpecificationClause {
+public class Postcondition extends SpecificationClause {
 
   // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
 
@@ -37,29 +37,29 @@ public class PostSpecification extends SpecificationClause {
 
   /** Default constructor for Gson serialization. */
   @SuppressWarnings("unused")
-  private PostSpecification() {
+  private Postcondition() {
     super();
     this.property = null;
   }
 
   /**
-   * Creates a {@link PostSpecification} with the given guard and property.
+   * Creates a {@link Postcondition} with the given guard and property.
    *
    * @param description the description of the specification
    * @param guard the {@link Guard} for the constructed specification
    * @param property the {@link Property} for the constructed specification
    */
-  public PostSpecification(String description, Guard guard, Property property) {
+  public Postcondition(String description, Guard guard, Property property) {
     super(description, guard);
     this.property = property;
   }
 
   @Override
   public boolean equals(Object object) {
-    if (!(object instanceof PostSpecification)) {
+    if (!(object instanceof Postcondition)) {
       return false;
     }
-    PostSpecification other = (PostSpecification) object;
+    Postcondition other = (Postcondition) object;
     return super.equals(other)
         && ((this.property != null
                 && other.property != null

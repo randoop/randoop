@@ -30,7 +30,6 @@ script:
 - echo "TRAVIS_PULL_REQUEST_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH}"
 - echo "TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}"
 - echo "GROUP=${GROUP}"
-- echo "BUILDJDK=${BUILDJDK}"
 - >-
   docker run mdernst/$OS-for-randoop-$JDKVER /bin/bash -c "true &&
      export JAVA_HOME=\`which javac|xargs readlink -f|xargs dirname|xargs dirname\` &&
@@ -51,7 +50,7 @@ script:
      javac -version &&
      export TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG &&
      export TRAVIS_BUILD_DIR=$TRAVIS_BUILD_DIR &&
-     ./.travis-build.sh $GROUP $BUILDJDK"
+     ./.travis-build.sh $GROUP"
 
 git:
   depth: 9

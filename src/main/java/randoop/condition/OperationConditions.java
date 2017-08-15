@@ -7,28 +7,28 @@ import java.util.Set;
 
 /**
  * The collection of all {@link BooleanExpression}, {@link GuardPropertyPair}, and {@link
- * GuardThrowsPair} for the {@link randoop.condition.specification.PreSpecification}, {@link
- * randoop.condition.specification.PostSpecification}, and {@link
- * randoop.condition.specification.ThrowsSpecification} objects defined on a single operation.
- * Includes specifications inherited from supertypes.
+ * GuardThrowsPair} for the {@link randoop.condition.specification.Precondition}, {@link
+ * randoop.condition.specification.Postcondition}, and {@link
+ * randoop.condition.specification.ThrowsCondition} objects defined on a single operation. Includes
+ * specifications inherited from supertypes.
  */
 public class OperationConditions {
 
   /**
    * The {@link BooleanExpression} objects for the {@link
-   * randoop.condition.specification.PreSpecification}s of the operation.
+   * randoop.condition.specification.Precondition}s of the operation.
    */
   private final List<BooleanExpression> preExpressions;
 
   /**
    * The {@link GuardThrowsPair} objects for the {@link
-   * randoop.condition.specification.PostSpecification}s of the operation.
+   * randoop.condition.specification.Postcondition}s of the operation.
    */
   private final List<GuardPropertyPair> guardPropertyPairs;
 
   /**
    * The {@link GuardThrowsPair} objects for the {@link
-   * randoop.condition.specification.ThrowsSpecification}s of the operation.
+   * randoop.condition.specification.ThrowsCondition}s of the operation.
    */
   private final List<GuardThrowsPair> guardThrowsPairs;
 

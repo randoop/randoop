@@ -21,9 +21,9 @@ import randoop.util.Log;
  * expression, and allows evaluation on argument values.
  *
  * <p>Corresponds to {@link randoop.condition.specification.Guard} in {@link
- * randoop.condition.specification.PreSpecification}, {@link
- * randoop.condition.specification.PostSpecification} or {@link
- * randoop.condition.specification.ThrowsSpecification}.
+ * randoop.condition.specification.Precondition}, {@link
+ * randoop.condition.specification.Postcondition} or {@link
+ * randoop.condition.specification.ThrowsCondition}.
  *
  * @see SpecificationTranslator
  */
@@ -51,7 +51,7 @@ public class BooleanExpression {
    * Creates a {@link BooleanExpression} that calls the method to evaluate the expression.
    *
    * @param expressionMethod the reflection {@code Method} for the expression.
-   * @param comment the comment describing this expression
+   * @param comment a comment describing this expression
    * @param contractSource the source code for this expression (see {@link #getContractSource()} for
    *     format details)
    */
@@ -292,6 +292,6 @@ public class BooleanExpression {
       expressionParameterTypes[expressionParameterTypes.length - 1] = returnType;
     }
     return new RawSignature(
-        packageName, EXPRESSION_CLASS_NAME, "ClassNameWillBeReplaced", expressionParameterTypes);
+        packageName, "ClassNameIsIrrelevant", "MethodNameIsIrrelevant", expressionParameterTypes);
   }
 }

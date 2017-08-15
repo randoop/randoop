@@ -23,7 +23,7 @@ import java.util.Objects;
  *
  * See {@link Guard} for details on specifying guards.
  */
-public class ThrowsSpecification extends SpecificationClause {
+public class ThrowsCondition extends SpecificationClause {
 
   // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
 
@@ -33,30 +33,29 @@ public class ThrowsSpecification extends SpecificationClause {
 
   /** Gson serialization requires that classes have a default constructor. */
   @SuppressWarnings("unused")
-  private ThrowsSpecification() {
+  private ThrowsCondition() {
     super();
     this.exceptionType = "";
   }
 
   /**
-   * Creates a {@link ThrowsSpecification} representing an exception expected when the guard is
-   * true.
+   * Creates a {@link ThrowsCondition} representing an exception expected when the guard is true.
    *
    * @param description the description of the condition
    * @param guard the guard for the specification
    * @param exceptionType the expected exception type
    */
-  public ThrowsSpecification(String description, Guard guard, String exceptionType) {
+  public ThrowsCondition(String description, Guard guard, String exceptionType) {
     super(description, guard);
     this.exceptionType = exceptionType;
   }
 
   @Override
   public boolean equals(Object object) {
-    if (!(object instanceof ThrowsSpecification)) {
+    if (!(object instanceof ThrowsCondition)) {
       return false;
     }
-    ThrowsSpecification other = (ThrowsSpecification) object;
+    ThrowsCondition other = (ThrowsCondition) object;
     return super.equals(other) && this.exceptionType.equals(other.exceptionType);
   }
 
@@ -77,7 +76,7 @@ public class ThrowsSpecification extends SpecificationClause {
   }
 
   /**
-   * Returns the exception type name for this {@link ThrowsSpecification}.
+   * Returns the exception type name for this {@link ThrowsCondition}.
    *
    * @return the exception type name for this throws specification
    */
