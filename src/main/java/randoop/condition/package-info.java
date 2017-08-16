@@ -9,20 +9,22 @@
  * specification classes using {@link
  * randoop.condition.SpecificationCollection#create(java.util.List)}.
  *
- * <p>The specifications are translated to objects that allow the underlying Boolean expressions to
- * be evaluated A {@link randoop.condition.specification.Precondition} is translated to a {@link
- * randoop.condition.BooleanExpression} object, a {@link
- * randoop.condition.specification.Postcondition} to a {@link randoop.condition.GuardPropertyPair},
- * and a {@link randoop.condition.specification.ThrowsCondition} a {@link
- * randoop.condition.GuardThrowsPair}. The pair classes each have a {@link
- * randoop.condition.BooleanExpression} for the {@link randoop.condition.specification.Guard} that
- * is to be evaluated before the operation call, along with either a {@link
- * randoop.condition.PropertyExpression} or a {@link randoop.condition.ThrowsCondition} to be
- * evaluated after the operation call.
+ * <p>The specifications are translated by {@link
+ * randoop.condition.SpecificationCollection#getOperationConditions(java.lang.reflect.AccessibleObject)}
+ * to an {@link randoop.condition.OperationConditions} object that allows the underlying Boolean
+ * expressions to be evaluated. Translation makes the following conversions:
  *
- * <p>All of the pre-condition expressions and pairs for an operation are represented as an {@link
- * randoop.condition.OperationConditions} object that is created using {@link
- * randoop.condition.SpecificationCollection#getOperationConditions(java.lang.reflect.AccessibleObject)}.
+ * <ul>
+ *   <li>{@link randoop.condition.specification.Precondition} to {@link
+ *       randoop.condition.BooleanExpression}
+ *   <li>{@link randoop.condition.specification.Postcondition} to {@link
+ *       randoop.condition.GuardPropertyPair}
+ *   <li>{@link randoop.condition.specification.ThrowsCondition} to {@link
+ *       randoop.condition.GuardThrowsPair}
+ * </ul>
+ *
+ * <p>All of the pre-condition expressions and pairs for an operation are represented as an that is
+ * created using.
  *
  * <p>The operations are used in the {@link
  * randoop.sequence.ExecutableSequence#execute(randoop.ExecutionVisitor,
@@ -43,7 +45,7 @@
  * <p><i>Definitions</i>: Let {@code expression} be either a {@link
  * randoop.condition.BooleanExpression} representing a {@link
  * randoop.condition.specification.Precondition} or {@link randoop.condition.specification.Guard};
- * or the {@link randoop.condition.PropertyExpression} for a {@link
+ * or the {@link randoop.condition.BooleanExpression} for a {@link
  * randoop.condition.specification.Property}. Then {@code expression} evaluated on the method
  * arguments is <i>satisfied</i> if {@code expression.check(values)} evaluates to true, and
  * <i>fails</i> otherwise.
@@ -68,8 +70,8 @@
  *             fail if any expression is false on the arguments. Otherwise, the preconditions are
  *             satisfied.
  *         <li>A set of {@link randoop.condition.ThrowsClause} objects for expected exceptions.
- *         <li>The expected {@link randoop.condition.PropertyExpression}, if any. This is the {@link
- *             randoop.condition.PropertyExpression}, of the first {@link
+ *         <li>The expected {@link randoop.condition.BooleanExpression}, if any. This is the {@link
+ *             randoop.condition.BooleanExpression}, of the first {@link
  *             randoop.condition.GuardPropertyPair} for which the guard {@link
  *             randoop.condition.BooleanExpression} is satisfied.
  *       </ol>
@@ -88,9 +90,8 @@
  *             randoop.condition.BooleanExpression}s for any {@link
  *             randoop.condition.specification.Precondition}, return an {@link
  *             randoop.test.InvalidCheckGenerator}.
- *         <li>Otherwise, if there are {@link randoop.condition.PropertyExpression} to evaluate,
- *             then extend the current generator with a {@link
- *             randoop.test.PostConditionCheckGenerator}.
+ *         <li>Otherwise, if there are {@link randoop.condition.BooleanExpression} to evaluate, then
+ *             extend the current generator with a {@link randoop.test.PostConditionCheckGenerator}.
  *       </ol>
  *
  * </ol>
@@ -115,9 +116,9 @@
  *   <li>The {@link randoop.test.InvalidCheckGenerator} will classify the call as {@link
  *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}.
  *   <li>The {@link randoop.test.PostConditionCheckGenerator} will, for each table entry where all
- *       guards were satisfied, check the corresponding {@link
- *       randoop.condition.PropertyExpression}, if one exists. If any such expression fails, then
- *       classify as {@link randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
+ *       guards were satisfied, check the corresponding {@link randoop.condition.BooleanExpression},
+ *       if one exists. If any such expression fails, then classify as {@link
+ *       randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
  * </ol>
  */
 package randoop.condition;

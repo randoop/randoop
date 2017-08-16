@@ -14,18 +14,18 @@ class GuardPropertyPair {
    * The expression that must be true after the operation is called when the {@link
    * #guardExpression} is true.
    */
-  final PropertyExpression propertyExpression;
+  final BooleanExpression booleanExpression;
 
   /**
    * Creates a {@link GuardPropertyPair} object for the guard and property expressions.
    *
    * @param guardExpression the {@link BooleanExpression} to be evaluated before the operation is
    *     called
-   * @param propertyExpression the {@link PropertyExpression} to be evaluated after the operation is
+   * @param booleanExpression the {@link BooleanExpression} to be evaluated after the operation is
    *     called
    */
-  GuardPropertyPair(BooleanExpression guardExpression, PropertyExpression propertyExpression) {
+  GuardPropertyPair(BooleanExpression guardExpression, BooleanExpression booleanExpression) {
     this.guardExpression = guardExpression;
-    this.propertyExpression = propertyExpression;
+    this.booleanExpression = booleanExpression;
   }
 }

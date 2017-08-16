@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * The collection of all {@link BooleanExpression}, {@link GuardPropertyPair}, and {@link
- * GuardThrowsPair} for the {@link randoop.condition.specification.Precondition}, {@link
+ * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
+ * is represented as the collection of all {@link BooleanExpression}, {@link GuardPropertyPair}, and
+ * {@link GuardThrowsPair} for the {@link randoop.condition.specification.Precondition}, {@link
  * randoop.condition.specification.Postcondition}, and {@link
  * randoop.condition.specification.ThrowsCondition} objects defined on a single operation. Includes
  * specifications inherited from supertypes.
@@ -34,8 +35,8 @@ public class OperationConditions {
 
   /**
    * Mirrors the overrides/implements relation among methods. If this OperationConditions is the
-   * local specification for method m, the {@code parentList} contains one element for each method
-   * that m overrides or implements (and has specifications).
+   * local specification for method declaration m, the {@code parentList} contains one element for
+   * each method that m overrides or implements (and has specifications).
    *
    * <p>For an operation that is a method, the {@link OperationConditions} form an arbitrary
    * directed acyclic graph consisting of {@link OperationConditions} objects for methods of
@@ -73,9 +74,11 @@ public class OperationConditions {
   }
 
   /**
-   * Check all guard expressions of this {@link OperationConditions} against the arguments by
-   * calling {@link #checkPrestate(Object[], ExpectedOutcomeTable)} for this collection and each
-   * member of {@link #parentList}.
+   * Check all guard expressions of the method's full specification, which includes this {@link
+   * OperationConditions} and those for of any overridden/implemented method.
+   *
+   * <p>This method makes multiple calls to {@link #checkPrestate(Object[], ExpectedOutcomeTable)},
+   * using a new {@link ExpectedOutcomeTable} which is returned.
    *
    * @param args the argument values to test the guard expressions
    * @return the table with entries for this operation
@@ -92,14 +95,14 @@ public class OperationConditions {
 
   /**
    * Modifies the given table, adding an {@link ExpectedOutcomeTable} entry for the guard
-   * expressions of this method recording the following:
+   * expressions of this method's local specification recording the following:
    *
    * <ol>
    *   <li>Whether the {@link #preExpressions} fail or are satisfied. See {@link
    *       randoop.condition.OperationConditions#checkPreExpressions(java.lang.Object[])}.
    *   <li>A set of {@link ThrowsClause} objects for expected exceptions. See {@link
    *       randoop.condition.OperationConditions#checkGuardThrowsPairs(java.lang.Object[])}.
-   *   <li>The expected {@link PropertyExpression}, if any. See {@link
+   *   <li>The expected {@link BooleanExpression}, if any. See {@link
    *       randoop.condition.OperationConditions#checkGuardPropertyPairs(java.lang.Object[])}.
    * </ol>
    *
@@ -111,17 +114,16 @@ public class OperationConditions {
   private void checkPrestate(Object[] args, ExpectedOutcomeTable table) {
     boolean preconditionCheck = checkPreExpressions(args);
     Set<ThrowsClause> throwsClauses = checkGuardThrowsPairs(args);
-    PropertyExpression postCondition = checkGuardPropertyPairs(args);
+    BooleanExpression postCondition = checkGuardPropertyPairs(args);
     table.add(preconditionCheck, postCondition, throwsClauses);
   }
 
   /**
-   * Tests the given argument values against the {@link BooleanExpression} objects in {@link
-   * #preExpressions} in this {@link OperationConditions}. These expressions fail if any expression
-   * evaluates to false on the arguments.
+   * Tests the given argument values against the local preconditions &mdash; that is, the {@link
+   * BooleanExpression} objects in {@link #preExpressions} in this {@link OperationConditions}.
    *
    * @param args the argument values
-   * @return false if any expression fails on the argument values, true if all expressions succeed
+   * @return false if any local precondition fails on the argument values, true if all succeed
    */
   private boolean checkPreExpressions(Object[] args) {
     for (BooleanExpression preCondition : preExpressions) {
@@ -133,8 +135,8 @@ public class OperationConditions {
   }
 
   /**
-   * Evaluate the guard of each {@link GuardThrowsPair}, and for each one satisfied, add the {@link
-   * ThrowsClause} to the set of expected exceptions.
+   * Evaluate the guard of each local {@link GuardThrowsPair}, and for each one satisfied, add the
+   * {@link ThrowsClause} to the set of expected exceptions.
    *
    * @param args the argument values
    * @return the set of exceptions for which the guard expression evaluated to true
@@ -151,19 +153,19 @@ public class OperationConditions {
   }
 
   /**
-   * Tests the given argument values against the guards of the {@link GuardPropertyPair} objects in
-   * this {@link OperationConditions} and returns the first {@link PropertyExpression} from the pair
-   * whose guard expression evaluated to true.
+   * Tests the given argument values against the guards of local postconditions &mdash; that is, the
+   * {@link GuardPropertyPair} objects in this {@link OperationConditions}. Returns the {@link
+   * BooleanExpression} from the first pair whose guard expression evaluated to true.
    *
    * @param args the argument values
-   * @return the {@link PropertyExpression} for the first {@link GuardPropertyPair} for which the
+   * @return the {@link BooleanExpression} for the first {@link GuardPropertyPair} for which the
    *     guard expression evaluates to true; null if there is none
    */
-  private PropertyExpression checkGuardPropertyPairs(Object[] args) {
+  private BooleanExpression checkGuardPropertyPairs(Object[] args) {
     for (GuardPropertyPair pair : guardPropertyPairs) {
       BooleanExpression guardExpression = pair.guardExpression;
       if (guardExpression.check(args)) {
-        return pair.propertyExpression.addPrestate(args);
+        return pair.booleanExpression.addPrestate(args);
       }
     }
     return null;
@@ -179,8 +181,8 @@ public class OperationConditions {
   }
 
   /**
-   * Indicates whether this {@link OperationConditions}, and any member of the parent list, has no
-   * guard expresions, or property or throws pairs.
+   * Indicates whether the full specification is empty: this {@link OperationConditions}, and any
+   * member of the parent list, has no guard expresions, no property pairs, and no throws pairs.
    *
    * @return true if there are no guard expressions, or property or throws pairs in this or the
    *     parent list, false otherwise

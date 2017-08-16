@@ -83,8 +83,8 @@ public class SpecificationTranslatorTest {
 
   private PostConditionCheck createCheck(
       Sequence sequence, SpecificationTranslator sig, String conditionText) {
-    List<PropertyExpression> postConditions = new ArrayList<>();
-    PropertyExpression condition = createPostCondition(sig, conditionText);
+    List<BooleanExpression> postConditions = new ArrayList<>();
+    BooleanExpression condition = createPostCondition(sig, conditionText);
     postConditions.add(condition);
 
     List<Variable> inputList = new ArrayList<>(sequence.getInputs(sequence.size() - 1));
@@ -128,8 +128,7 @@ public class SpecificationTranslatorTest {
     return sequence;
   }
 
-  private PropertyExpression createPostCondition(
-      SpecificationTranslator sig, String conditionText) {
+  private BooleanExpression createPostCondition(SpecificationTranslator sig, String conditionText) {
     Method conditionMethod;
     SequenceCompiler compiler =
         new SequenceCompiler(
@@ -143,7 +142,7 @@ public class SpecificationTranslatorTest {
             compiler);
     String comment = "returns this writer";
     String postConditionText = sig.getReplacementMap().replaceNames(conditionText);
-    return new PropertyExpression(conditionMethod, comment, postConditionText);
+    return new BooleanExpression(conditionMethod, comment, postConditionText);
   }
 
   private TypedOperation getPrintWriterConstructorOperation() {

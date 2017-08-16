@@ -27,7 +27,7 @@ import randoop.util.Log;
 import randoop.util.MultiMap;
 
 /**
- * A collection of {@link OperationSpecification} objects that supports mapping an {@link
+ * A collection of {@link OperationSpecification} objects. Also a map from an {@link
  * AccessibleObject} reflection object to the {@link OperationConditions} for the corresponding
  * {@link randoop.operation.TypedClassOperation}.
  *
@@ -58,12 +58,13 @@ public class SpecificationCollection {
   /**
    * Creates a {@link SpecificationCollection} for the given specification map.
    *
-   * <p>This constructor is only accessible to allow testing. Randoop should use {@link
-   * #create(List)} instead.
+   * <p>This constructor is used internally. It is only accessible to allow testing. Clients should
+   * use {@link #create(List)} instead.
    *
    * @param specificationMap the map from reflection objects to {@link OperationSpecification}
    * @param signatureMap the multimap from a signature to methods with with the signature
-   * @param parentMap the map to overridden method with specification
+   * @param parentMap the map from a method to methods that it it overrides and that have a
+   *     specification
    */
   SpecificationCollection(
       Map<AccessibleObject, OperationSpecification> specificationMap,
@@ -110,7 +111,6 @@ public class SpecificationCollection {
       }
 
       for (OperationSpecification specification : specificationList) {
-        AccessibleObject accessibleObject;
         OperationSignature operation = specification.getOperation();
 
         // Check for bad input
@@ -129,7 +129,7 @@ public class SpecificationCollection {
           continue;
         }
 
-        accessibleObject = getAccessibleObject(operation);
+        AccessibleObject accessibleObject = getAccessibleObject(operation);
         specificationMap.put(accessibleObject, specification);
         if (accessibleObject instanceof Method) {
           OperationSignature signature = OperationSignature.of(accessibleObject);
@@ -188,7 +188,7 @@ public class SpecificationCollection {
    * Get the {@code java.lang.reflect.AccessibleObject} for the {@link OperationSignature}.
    *
    * @param operation the {@link OperationSignature}
-   * @return the {@code java.lang.reflect.AccessibleObject} for the operation
+   * @return the {@code java.lang.reflect.AccessibleObject} for {@code operation}
    */
   private static AccessibleObject getAccessibleObject(OperationSignature operation) {
     if (operation.isValid()) {

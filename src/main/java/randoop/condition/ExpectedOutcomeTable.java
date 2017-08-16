@@ -24,7 +24,7 @@ import randoop.test.TestCheckGenerator;
  *       fails, or all are satisfied.
  *   <li>The set of {@link ThrowsCondition} objects for expected exceptions. An exception is
  *       expected if the guard of a {@link GuardThrowsPair} is satisfied.
- *   <li>The expected {@link PropertyExpression}, if any.
+ *   <li>The expected {@link BooleanExpression}, if any.
  * </ol>
  *
  * <p>For a particular operation call, a table is constructed by calling {@link
@@ -61,7 +61,7 @@ public class ExpectedOutcomeTable {
   private boolean hasSatisfiedGuardExpression = false;
 
   /** The list of post-conditions whose guard expression was satisfied. */
-  private final List<PropertyExpression> postConditions;
+  private final List<BooleanExpression> postConditions;
 
   /** The list of sets of throws clauses for which the guard expression was satisfied. */
   private final List<Set<ThrowsClause>> exceptionSets;
@@ -76,21 +76,21 @@ public class ExpectedOutcomeTable {
    * Adds the outcome of checking the prestate parts of an operation's specification.
    *
    * @param guardIsSatisfied boolean value indicating whether all guard expressions are satisfied
-   * @param propertyExpression property expression that must be true in post-state if no exception
-   *     is thrown
+   * @param booleanExpression property expression that must be true in post-state if no exception is
+   *     thrown
    * @param throwsClauses set of exception type-comment pairs for exceptions expected in post-state
    */
   void add(
       boolean guardIsSatisfied,
-      PropertyExpression propertyExpression,
+      BooleanExpression booleanExpression,
       Set<ThrowsClause> throwsClauses) {
     // An empty table cannot represent a pre-state for which the call is invalid, so setting isEmpty
-    // to false is necessary even if the entry has !guardIsSatisfied and no propertyExpression or
+    // to false is necessary even if the entry has !guardIsSatisfied and no booleanExpression or
     // throwsClauses.
     isEmpty = false;
     if (guardIsSatisfied) {
-      if (propertyExpression != null) {
-        postConditions.add(propertyExpression);
+      if (booleanExpression != null) {
+        postConditions.add(booleanExpression);
       }
       hasSatisfiedGuardExpression = true;
     }
@@ -118,7 +118,7 @@ public class ExpectedOutcomeTable {
 
   /**
    * Constructs the {@link TestCheckGenerator} that will test for expected {@link ThrowsClause}s or
-   * {@link PropertyExpression} as follows:
+   * {@link BooleanExpression} as follows:
    *
    * <ul>
    *   <li>if this table is empty, returns the given generator.

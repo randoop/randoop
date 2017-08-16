@@ -237,8 +237,8 @@ public class ExecutableSequence {
 
   /**
    * Execute this sequence, invoking the given visitor as the execution unfolds. After invoking this
-   * method, the client can query the outcome of executing each statement via the method <code>
-   * getResult(i)</code>.
+   * method, the client can query the outcome of executing each statement via the method {@code
+   * getResult(i)}.
    *
    * <ul>
    *   <li>Before the sequence is executed, clears execution results and calls <code>

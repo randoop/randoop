@@ -26,10 +26,10 @@ import java.util.Objects;
  *   }
  * </pre>
  *
- * <p>The <code>classname</code> must be the declaring class of the method. (For a constructor, the
- * <code>classname</code> and operation <code>name</code> will be identical.) If named class is not
- * the declaring class of the method, the method will not be found, and the enclosing specification
- * will not be used.
+ * <p>The {@code classname} must be the declaring class of the method. (For a constructor, the
+ * {@code classname} and operation {@code name} will be identical.) If named class is not the
+ * declaring class of the method, the method will not be found, and the enclosing specification will
+ * not be used.
  */
 public class OperationSignature {
 

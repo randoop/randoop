@@ -23,7 +23,9 @@ import randoop.util.Log;
  * <p>Corresponds to {@link randoop.condition.specification.Guard} in {@link
  * randoop.condition.specification.Precondition}, {@link
  * randoop.condition.specification.Postcondition} or {@link
- * randoop.condition.specification.ThrowsCondition}.
+ * randoop.condition.specification.ThrowsCondition}; and to {@link
+ * randoop.condition.specification.Property} in {@link
+ * randoop.condition.specification.Postcondition}.
  *
  * @see SpecificationTranslator
  */
@@ -50,7 +52,7 @@ public class BooleanExpression {
   /**
    * Creates a {@link BooleanExpression} that calls the method to evaluate the expression.
    *
-   * @param expressionMethod the reflection {@code Method} for the expression.
+   * @param expressionMethod the reflection {@code Method} for the expression
    * @param comment a comment describing this expression
    * @param contractSource the source code for this expression (see {@link #getContractSource()} for
    *     format details)
@@ -62,7 +64,7 @@ public class BooleanExpression {
   }
 
   /**
-   * Creates a {@link BooleanExpression} for evaluating the guard (see {@link
+   * Creates a {@link BooleanExpression} for evaluating an expression (see {@link
    * randoop.condition.specification.Guard}) of a specification.
    *
    * @param signature the signature for the expression method to be created. The class name of the
@@ -79,7 +81,7 @@ public class BooleanExpression {
    * @return the {@link BooleanExpression} that evaluates the given expression source on parameters
    *     described by the declaration string
    */
-  static BooleanExpression createGuardExpression(
+  static BooleanExpression createBooleanExpression(
       RawSignature signature,
       String declarations,
       String expressionSource,
@@ -88,6 +90,19 @@ public class BooleanExpression {
       SequenceCompiler compiler) {
     Method expressionMethod = createMethod(signature, declarations, expressionSource, compiler);
     return new BooleanExpression(expressionMethod, comment, contractSource);
+  }
+
+  /**
+   * Returns the {@link BooleanExpression} that checks the expression with the given argument values
+   * as the pre-state.
+   *
+   * <p>Since pre-state is not yet implemented, this method just returns this object.
+   *
+   * @param args the pre-state values to the arguments
+   * @return the {@link BooleanExpression} with the pre-state set
+   */
+  BooleanExpression addPrestate(Object[] args) {
+    return this;
   }
 
   @Override
@@ -211,7 +226,7 @@ public class BooleanExpression {
    * @param methodName the name of the expression method
    * @param expressionText the expression source code -- a boolean Java expression
    * @param parameterDeclarations the signature string for the expression method
-   * @param packageName the package of the expression class
+   * @param packageName the package of the expression class, or null for the default package
    * @param expressionClassName the name of the expression class
    * @return the Java source code for the expression class
    */
