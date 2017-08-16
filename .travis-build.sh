@@ -29,7 +29,7 @@ if [[ "$SLUGOWNER" == "" ]]; then
   SLUGOWNER=randoop
 fi
 
-./.travis-build-without-test.sh ${BUILDJDK}
+./.travis-build-without-test.sh
 
 if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
   # need gui for running tests of replace call agent with Swing/AWT
