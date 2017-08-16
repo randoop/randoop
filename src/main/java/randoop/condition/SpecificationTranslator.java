@@ -145,8 +145,10 @@ public class SpecificationTranslator {
    */
   // The type AccessibleObject should be Executable, but that class was introduced in Java 8
   private static RawSignature getGuardExpressionSignature(AccessibleObject executable) {
-    Class<?> receiverType = (executable instanceof Method) ? getDeclaringClass(executable) : null;
+    boolean isMethod = executable instanceof Method;
     Class<?> declaringClass = getDeclaringClass(executable);
+    // TODO: a constructor for an inner class has a receiver (which is not the declaring class)
+    Class<?> receiverType = isMethod ? declaringClass : null;
     Class<?>[] parameterTypes = getParameterTypes(executable);
     String packageName = getPackageName(declaringClass.getPackage());
     return BooleanExpression.getRawSignature(packageName, receiverType, parameterTypes, null);
@@ -170,7 +172,8 @@ public class SpecificationTranslator {
   private static RawSignature getPropertyExpressionSignature(AccessibleObject executable) {
     boolean isMethod = executable instanceof Method;
     Class<?> declaringClass = getDeclaringClass(executable);
-    Class<?> receiverType = (executable instanceof Method) ? declaringClass : null;
+    // TODO: a constructor for an inner class has a receiver (which is not the declaring class)
+    Class<?> receiverType = isMethod ? declaringClass : null;
     Class<?>[] parameterTypes = getParameterTypes(executable);
     Class<?> returnType = (isMethod ? ((Method) executable).getReturnType() : declaringClass);
     String packageName = getPackageName(declaringClass.getPackage());
