@@ -50,7 +50,7 @@ script:
      javac -version &&
      export TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG &&
      export TRAVIS_BUILD_DIR=$TRAVIS_BUILD_DIR &&
-     ./.travis-build.sh $GROUP"
+     ./.travis-build.sh $GROUP
 
 git:
   depth: 9
