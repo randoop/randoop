@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicMenuItemUI",
+      "name": "createPropertyChangeListener",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "an instance of a PropertyChangeListener or null"
+        },
+        "description": "return an instance of a PropertyChangeListener or null",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

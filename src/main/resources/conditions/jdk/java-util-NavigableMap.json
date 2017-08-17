@@ -1,0 +1,406 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "lowerEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "lowerKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "floorEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "floorKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "ceilingEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "ceilingKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "higherEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "higherKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null and this map does not permit null keys",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "subMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean",
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey",
+        "fromInclusive",
+        "toKey",
+        "toInclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey or toKey is null and this map does not permit null keys",
+        "guard": {
+          "condition": "fromKey==null || toKey==null",
+          "description": "if fromKey or toKey is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "headMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toKey",
+        "inclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if toKey is null and this map does not permit null keys",
+        "guard": {
+          "condition": "toKey==null",
+          "description": "if toKey is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "tailMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey",
+        "inclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey is null and this map does not permit null keys",
+        "guard": {
+          "condition": "fromKey==null",
+          "description": "if fromKey is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "subMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey",
+        "toKey"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey or toKey is null and this map does not permit null keys",
+        "guard": {
+          "condition": "fromKey==null || toKey==null",
+          "description": "if fromKey or toKey is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "headMap",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toKey"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if toKey is null and this map does not permit null keys",
+        "guard": {
+          "condition": "toKey==null",
+          "description": "if toKey is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.NavigableMap",
+      "name": "tailMap",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey is null and this map does not permit null keys",
+        "guard": {
+          "condition": "fromKey==null",
+          "description": "if fromKey is null and this map does not permit null keys"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

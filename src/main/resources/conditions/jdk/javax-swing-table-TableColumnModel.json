@@ -1,0 +1,42 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.table.TableColumnModel",
+      "name": "getColumnIndex",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "columnIdentifier"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if identifier is null, or no TableColumn has this identifier",
+        "guard": {
+          "condition": "columnIdentifier==null",
+          "description": "if identifier is null, or no TableColumn has this identifier"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result=={identifier}",
+          "description": "the index of the first table column whose identifier is equal to identifier"
+        },
+        "description": "return the index of the first table column whose identifier is equal to identifier",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

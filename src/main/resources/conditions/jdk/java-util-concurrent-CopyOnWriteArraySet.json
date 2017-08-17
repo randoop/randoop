@@ -1,0 +1,184 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArraySet",
+      "name": "java.util.concurrent.CopyOnWriteArraySet",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArraySet",
+      "name": "isEmpty",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this set contains no elements"
+        },
+        "description": "return true if this set contains no elements",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArraySet",
+      "name": "toArray",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array is null",
+        "guard": {
+          "condition": "a==null",
+          "description": "if the specified array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArraySet",
+      "name": "add",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this set did not already contain the specified element"
+        },
+        "description": "return true if this set did not already contain the specified element",
+        "guard": {
+          "condition": "(target.contains(java.lang.Object))==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArraySet",
+      "name": "containsAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this set contains all of the elements of the specified collection"
+        },
+        "description": "return true if this set contains all of the elements of the specified collection",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArraySet",
+      "name": "addAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

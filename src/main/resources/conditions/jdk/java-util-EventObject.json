@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.EventObject",
+      "name": "java.util.EventObject",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null.",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

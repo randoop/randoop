@@ -1,0 +1,64 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.zip.GZIPOutputStream",
+      "name": "java.util.zip.GZIPOutputStream",
+      "parameterTypes": [
+        "java.io.OutputStream",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "size"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size <= 0",
+        "guard": {
+          "condition": "size<=0",
+          "description": "if size <= 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.GZIPOutputStream",
+      "name": "java.util.zip.GZIPOutputStream",
+      "parameterTypes": [
+        "java.io.OutputStream",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "size",
+        "syncFlush"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size <= 0",
+        "guard": {
+          "condition": "size<=0",
+          "description": "if size <= 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

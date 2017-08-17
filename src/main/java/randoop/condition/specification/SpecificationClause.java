@@ -8,7 +8,9 @@ import java.util.Objects;
  */
 public abstract class SpecificationClause {
 
-  /** The description of this {@link SpecificationClause} */
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+
+  /** The description of this {@link SpecificationClause}. */
   private final String description;
 
   /** The {@link Guard} for this specification */

@@ -1,0 +1,170 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JEditorPane",
+      "name": "javax.swing.JEditorPane",
+      "parameterTypes": [
+        "java.net.URL"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialPage"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.io.IOException",
+        "description": "throws IOException if the URL is null or cannot be accessed",
+        "guard": {
+          "condition": "initialPage==null",
+          "description": "if the URL is null or cannot be accessed"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JEditorPane",
+      "name": "javax.swing.JEditorPane",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "url"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.io.IOException",
+        "description": "throws IOException if the URL is null or cannot be accessed",
+        "guard": {
+          "condition": "url==null",
+          "description": "if the URL is null or cannot be accessed"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JEditorPane",
+      "name": "javax.swing.JEditorPane",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type",
+        "text"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the type parameter is null",
+        "guard": {
+          "condition": "type==null",
+          "description": "if the type parameter is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JEditorPane",
+      "name": "setContentType",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the type parameter is null",
+        "guard": {
+          "condition": "type==null",
+          "description": "if the type parameter is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JEditorPane",
+      "name": "getText",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the text"
+        },
+        "description": "return the text",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JEditorPane",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JEditorPane"
+        },
+        "description": "return a string representation of this JEditorPane",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

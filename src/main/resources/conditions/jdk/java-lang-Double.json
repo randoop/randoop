@@ -1,0 +1,331 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Double",
+      "name": "java.lang.Double",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the string does not contain a parsable number.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the string does not contain a parsable number."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Double",
+      "name": "toString",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "d"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(d)",
+          "description": "a string representation of the argument."
+        },
+        "description": "return a string representation of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Double",
+      "name": "toHexString",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "d"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(d)",
+          "description": "a hex string representation of the argument."
+        },
+        "description": "return a hex string representation of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Double",
+      "name": "valueOf",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the string does not contain a parsable number.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the string does not contain a parsable number."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Double",
+      "name": "parseDouble",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the string is null",
+        "guard": {
+          "condition": "s==null",
+          "description": "if the string is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Double",
+      "name": "isNaN",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "v"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the value of the argument is NaN; false otherwise."
+        },
+        "description": "return true if the value of the argument is NaN; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Double.isNaN(v)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the value of the argument is NaN; false otherwise."
+        },
+        "description": "return true if the value of the argument is NaN; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Double.isNaN(v)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Double",
+      "name": "isInfinite",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "v"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the value of the argument is positive infinity or negative infinity; false otherwise."
+        },
+        "description": "return true if the value of the argument is positive infinity or negative infinity; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Double.isInfinite(v)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the value of the argument is positive infinity or negative infinity; false otherwise."
+        },
+        "description": "return true if the value of the argument is positive infinity or negative infinity; false otherwise.",
+        "guard": {
+          "condition": "java.lang.Double.isInfinite(v)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Double",
+      "name": "sum",
+      "parameterTypes": [
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the sum of a and b"
+        },
+        "description": "return the sum of a and b",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Double",
+      "name": "max",
+      "parameterTypes": [
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the greater of a and b"
+        },
+        "description": "return the greater of a and b",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Double",
+      "name": "min",
+      "parameterTypes": [
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the smaller of a and b."
+        },
+        "description": "return the smaller of a and b.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

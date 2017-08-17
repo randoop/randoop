@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.BorderLayout",
+      "name": "getLayoutComponent",
+      "parameterTypes": [
+        "java.awt.Container",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target",
+        "constraints"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the target parameter is null",
+        "guard": {
+          "condition": "target==null",
+          "description": "if the target parameter is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

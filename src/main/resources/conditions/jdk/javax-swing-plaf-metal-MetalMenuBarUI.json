@@ -1,0 +1,128 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalMenuBarUI",
+      "name": "createUI",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if x is null",
+        "guard": {
+          "condition": "x==null",
+          "description": "if x is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "ComponentUI implementation for x"
+        },
+        "description": "return ComponentUI implementation for x",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalMenuBarUI",
+      "name": "installUI",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null.",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalMenuBarUI",
+      "name": "uninstallUI",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null.",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.MetalMenuBarUI",
+      "name": "update",
+      "parameterTypes": [
+        "java.awt.Graphics",
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "g",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if g or c is null",
+        "guard": {
+          "condition": "g==null || c==null",
+          "description": "if g or c is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

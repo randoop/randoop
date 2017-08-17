@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.RenderingHints",
+      "name": "put",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the key is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

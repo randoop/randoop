@@ -1,0 +1,162 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTabbedPaneUI",
+      "name": "createScrollButton",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "direction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if direction is not one of NORTH, SOUTH, EAST or WEST",
+        "guard": {
+          "condition": "(direction==1) == false",
+          "description": "if direction is not one of NORTH, SOUTH, EAST or WEST"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTabbedPaneUI",
+      "name": "getBaseline",
+      "parameterTypes": [
+        "javax.swing.JComponent",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width or height is < 0",
+        "guard": {
+          "condition": "width<0 || height<0",
+          "description": "if width or height is < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTabbedPaneUI",
+      "name": "getBaselineResizeBehavior",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTabbedPaneUI",
+      "name": "getBaseline",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tab"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result<0",
+          "description": "baseline or a value < 0 indicating there is no reasonable baseline"
+        },
+        "description": "return baseline or a value < 0 indicating there is no reasonable baseline",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicTabbedPaneUI",
+      "name": "getTabBounds",
+      "parameterTypes": [
+        "int",
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tabIndex",
+        "dest"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the resulting rectangle"
+        },
+        "description": "return the resulting rectangle",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

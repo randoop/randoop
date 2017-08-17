@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.ArrayTable",
+      "name": "getKeys",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keys"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(keys)",
+          "description": "an array of bindings"
+        },
+        "description": "return an array of bindings",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,84 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.GraphicAttribute",
+      "name": "java.awt.font.GraphicAttribute",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "alignment"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if alignment is not one of the five defined values.",
+        "guard": {
+          "condition": "(alignment==1) == false",
+          "description": "if alignment is not one of the five defined values."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GraphicAttribute",
+      "name": "getAscent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getDescent())",
+          "description": "the ascent of this GraphicAttribute."
+        },
+        "description": "return the ascent of this GraphicAttribute.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.GraphicAttribute",
+      "name": "getDescent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getAscent())",
+          "description": "the descent of this GraphicAttribute."
+        },
+        "description": "return the descent of this GraphicAttribute.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

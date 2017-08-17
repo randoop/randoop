@@ -1,0 +1,581 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "java.lang.Integer",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the String does not contain a parsable integer.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the String does not contain a parsable integer."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "toString",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(i)",
+          "description": "a string representation of the argument in base 10."
+        },
+        "description": "return a string representation of the argument in base 10.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "toUnsignedString",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "i"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(i)",
+          "description": "an unsigned string representation of the argument."
+        },
+        "description": "return an unsigned string representation of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "parseInt",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "radix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the String does not contain a parsable int.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the String does not contain a parsable int."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "parseInt",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the string does not contain a parsable integer.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the string does not contain a parsable integer."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "parseUnsignedInt",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "radix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the String does not contain a parsable int.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the String does not contain a parsable int."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "parseUnsignedInt",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the string does not contain a parsable unsigned integer.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the string does not contain a parsable unsigned integer."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "valueOf",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "radix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the String does not contain a parsable int.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "if the String does not contain a parsable int."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "hashCode",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.hashCode())",
+          "description": "a hash code value for a int value."
+        },
+        "description": "return a hash code value for a int value.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "getInteger",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the Integer value of the property."
+        },
+        "description": "return the Integer value of the property.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "getInteger",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the Integer value of the property."
+        },
+        "description": "return the Integer value of the property.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "getInteger",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.Integer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the Integer value of the property."
+        },
+        "description": "return the Integer value of the property.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "decode",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the String does not contain a parsable integer.",
+        "guard": {
+          "condition": "(nm.contains(java.lang.CharSequence)) == false",
+          "description": "if the String does not contain a parsable integer."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "compare",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==x",
+          "description": "the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "compareUnsigned",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the value 0 if x == y; a value less than 0 if x < y as unsigned values; and a value greater than 0 if x > y as unsigned values"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y as unsigned values; and a value greater than 0 if x > y as unsigned values",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==x",
+          "description": "the value 0 if x == y; a value less than 0 if x < y as unsigned values; and a value greater than 0 if x > y as unsigned values"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y as unsigned values; and a value greater than 0 if x > y as unsigned values",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "sum",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the sum of a and b"
+        },
+        "description": "return the sum of a and b",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "max",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the greater of a and b"
+        },
+        "description": "return the greater of a and b",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Integer",
+      "name": "min",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the smaller of a and b"
+        },
+        "description": "return the smaller of a and b",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

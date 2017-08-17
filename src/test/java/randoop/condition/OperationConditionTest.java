@@ -17,12 +17,12 @@ import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
-import randoop.condition.specification.Operation;
+import randoop.condition.specification.OperationSignature;
 import randoop.condition.specification.OperationSpecification;
-import randoop.condition.specification.PostSpecification;
-import randoop.condition.specification.PreSpecification;
+import randoop.condition.specification.Postcondition;
+import randoop.condition.specification.Precondition;
 import randoop.condition.specification.Property;
-import randoop.condition.specification.ThrowsSpecification;
+import randoop.condition.specification.ThrowsCondition;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
@@ -54,11 +54,11 @@ public class OperationConditionTest {
 
     Object[] preValues;
     preValues = new Object[] {receiver, -1};
-    ExpectedOutcomeTable table = conditions.check(preValues);
+    ExpectedOutcomeTable table = conditions.checkPrestate(preValues);
     assertTrue("should fail param condition", table.isInvalidPrestate());
 
     preValues = new Object[] {receiver, 1};
-    table = conditions.check(preValues);
+    table = conditions.checkPrestate(preValues);
     assertFalse("should pass param condition", table.isInvalidPrestate());
 
     TestCheckGenerator gen = table.addPostCheckGenerator(new DummyCheckGenerator());
@@ -69,7 +69,7 @@ public class OperationConditionTest {
         gen.getGenerator() instanceof PostConditionCheckGenerator);
 
     preValues = new Object[] {receiver, 6};
-    table = conditions.check(preValues);
+    table = conditions.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertFalse("should pass param condition", table.isInvalidPrestate());
     assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
@@ -77,7 +77,7 @@ public class OperationConditionTest {
         "should be a return generator", gen.getGenerator() instanceof PostConditionCheckGenerator);
 
     preValues = new Object[] {receiver, 11};
-    table = conditions.check(preValues);
+    table = conditions.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalidPrestate());
     assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
@@ -85,7 +85,7 @@ public class OperationConditionTest {
         "should be a return generator", gen.getGenerator() instanceof PostConditionCheckGenerator);
 
     preValues = new Object[] {receiver, 16};
-    table = conditions.check(preValues);
+    table = conditions.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalidPrestate());
     assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
@@ -93,7 +93,7 @@ public class OperationConditionTest {
         "should be a return generator", gen.getGenerator() instanceof PostConditionCheckGenerator);
 
     preValues = new Object[] {receiver, 21};
-    table = conditions.check(preValues);
+    table = conditions.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalidPrestate());
     assertFalse(
@@ -128,11 +128,11 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+      for (BooleanExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for ONE",
             "x2.equals(ClassWithConditions.Range.ONE)",
-            condition.getConditionSource());
+            condition.getContractSource());
       }
     }
 
@@ -144,11 +144,11 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+      for (BooleanExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for TWO",
             "x2.equals(ClassWithConditions.Range.TWO)",
-            condition.getConditionSource());
+            condition.getContractSource());
       }
     }
 
@@ -160,11 +160,11 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+      for (BooleanExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for THREE",
             "x2.equals(ClassWithConditions.Range.THREE)",
-            condition.getConditionSource());
+            condition.getContractSource());
       }
     }
 
@@ -176,11 +176,11 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+      for (BooleanExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for FOUR",
             "x2.equals(ClassWithConditions.Range.FOUR)",
-            condition.getConditionSource());
+            condition.getContractSource());
       }
     }
 
@@ -287,45 +287,45 @@ public class OperationConditionTest {
     List<String> paramNames = new ArrayList<>();
     paramNames.add("value");
     OperationSpecification spec =
-        new OperationSpecification(Operation.of(method), new Identifiers(paramNames));
+        new OperationSpecification(OperationSignature.of(method), new Identifiers(paramNames));
 
-    List<PreSpecification> preSpecifications = new ArrayList<>();
+    List<Precondition> preSpecifications = new ArrayList<>();
     Guard paramGuard = new Guard("positive", "value > 0");
-    PreSpecification paramSpec = new PreSpecification("must be positive", paramGuard);
+    Precondition paramSpec = new Precondition("must be positive", paramGuard);
     preSpecifications.add(paramSpec);
     spec.addParamSpecifications(preSpecifications);
 
-    List<ThrowsSpecification> throwsSpecifications = new ArrayList<>();
+    List<ThrowsCondition> throwsSpecifications = new ArrayList<>();
     Guard throwsGuard = new Guard("greater than 4*getValue()", "value > 4*receiver.getValue()");
-    ThrowsSpecification throwsSpec =
-        new ThrowsSpecification(
+    ThrowsCondition throwsSpec =
+        new ThrowsCondition(
             "should be less than 4*getValue", throwsGuard, "java.lang.IllegalArgumentException");
     throwsSpecifications.add(throwsSpec);
-    spec.addThrowsSpecifications(throwsSpecifications);
+    spec.ThrowsConditions(throwsSpecifications);
 
-    List<PostSpecification> postSpecifications = new ArrayList<>();
+    List<Postcondition> postSpecifications = new ArrayList<>();
     Guard retGuard;
     Property retProperty;
-    PostSpecification returnSpec;
+    Postcondition returnSpec;
 
     retGuard = new Guard("value in first range", "value < receiver.getValue()");
     retProperty = new Property("return ONE", "result.equals(ClassWithConditions.Range.ONE)");
-    returnSpec = new PostSpecification("value in first range", retGuard, retProperty);
+    returnSpec = new Postcondition("value in first range", retGuard, retProperty);
     postSpecifications.add(returnSpec);
 
     retGuard = new Guard("value in second range", "value < 2*receiver.getValue()");
     retProperty = new Property("return TWO", "result.equals(ClassWithConditions.Range.TWO)");
-    returnSpec = new PostSpecification("value in second range", retGuard, retProperty);
+    returnSpec = new Postcondition("value in second range", retGuard, retProperty);
     postSpecifications.add(returnSpec);
 
     retGuard = new Guard("value in third range", "value < 3*receiver.getValue()");
     retProperty = new Property("return THREE", "result.equals(ClassWithConditions.Range.THREE)");
-    returnSpec = new PostSpecification("value in third range", retGuard, retProperty);
+    returnSpec = new Postcondition("value in third range", retGuard, retProperty);
     postSpecifications.add(returnSpec);
 
     retGuard = new Guard("otherwise", "true");
     retProperty = new Property("return FOUR", "result.equals(ClassWithConditions.Range.FOUR)");
-    returnSpec = new PostSpecification("otherwise, return FOUR", retGuard, retProperty);
+    returnSpec = new Postcondition("otherwise, return FOUR", retGuard, retProperty);
     postSpecifications.add(returnSpec);
     spec.addReturnSpecifications(postSpecifications);
 
@@ -333,7 +333,7 @@ public class OperationConditionTest {
     specMap.put(method, spec);
 
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    MultiMap<Operation, Method> signatureMap = new MultiMap<>();
+    MultiMap<OperationSignature, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(method);
@@ -347,26 +347,25 @@ public class OperationConditionTest {
     List<String> paramNames = new ArrayList<>();
     paramNames.add("value");
     OperationSpecification spec =
-        new OperationSpecification(Operation.of(constructor), new Identifiers(paramNames));
-    List<PreSpecification> preSpecifications = new ArrayList<>();
+        new OperationSpecification(OperationSignature.of(constructor), new Identifiers(paramNames));
+    List<Precondition> preSpecifications = new ArrayList<>();
     Guard paramGuard = new Guard("non-negative value", "value >= 0");
-    PreSpecification paramSpec = new PreSpecification("must be non-negative", paramGuard);
+    Precondition paramSpec = new Precondition("must be non-negative", paramGuard);
     preSpecifications.add(paramSpec);
     spec.addParamSpecifications(preSpecifications);
 
-    List<PostSpecification> postSpecifications = new ArrayList<>();
+    List<Postcondition> postSpecifications = new ArrayList<>();
     Guard retGuard = new Guard("always", "true");
     Property retProperty =
         new Property("should have value of argument", "value == 2*result.getValue()");
-    PostSpecification returnSpec =
-        new PostSpecification("value should be argument", retGuard, retProperty);
+    Postcondition returnSpec = new Postcondition("value should be argument", retGuard, retProperty);
     postSpecifications.add(returnSpec);
     spec.addReturnSpecifications(postSpecifications);
 
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(constructor, spec);
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    MultiMap<Operation, Method> signatureMap = new MultiMap<>();
+    MultiMap<OperationSignature, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(constructor);
@@ -377,25 +376,25 @@ public class OperationConditionTest {
     paramNames.add("range");
     paramNames.add("value");
     OperationSpecification spec =
-        new OperationSpecification(Operation.of(method), new Identifiers(paramNames));
-    List<ThrowsSpecification> throwsSpecifications = new ArrayList<>();
+        new OperationSpecification(OperationSignature.of(method), new Identifiers(paramNames));
+    List<ThrowsCondition> throwsSpecifications = new ArrayList<>();
     Guard throwsGuard = new Guard("non null", "range == null");
-    ThrowsSpecification throwsSpecification =
-        new ThrowsSpecification("non null", throwsGuard, "java.lang.NullPointerException");
+    ThrowsCondition throwsSpecification =
+        new ThrowsCondition("non null", throwsGuard, "java.lang.NullPointerException");
     throwsSpecifications.add(throwsSpecification);
 
     throwsGuard = new Guard("positive value", "value <= 0");
     throwsSpecification =
-        new ThrowsSpecification(
+        new ThrowsCondition(
             "value should be positive integer", throwsGuard, "java.lang.IllegalArgumentException");
     throwsSpecifications.add(throwsSpecification);
 
-    spec.addThrowsSpecifications(throwsSpecifications);
+    spec.ThrowsConditions(throwsSpecifications);
 
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(method, spec);
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    MultiMap<Operation, Method> signatureMap = new MultiMap<>();
+    MultiMap<OperationSignature, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(method);

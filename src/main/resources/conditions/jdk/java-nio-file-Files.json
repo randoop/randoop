@@ -1,0 +1,501 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "newByteChannel",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.util.Set",
+        "[Ljava.nio.file.attribute.FileAttribute;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "options",
+        "attrs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the set contains an invalid combination of options",
+        "guard": {
+          "condition": "options.contains(java.lang.Object)",
+          "description": "if the set contains an invalid combination of options"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "createFile",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "[Ljava.nio.file.attribute.FileAttribute;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "attrs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the file"
+        },
+        "description": "return the file",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "createDirectory",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "[Ljava.nio.file.attribute.FileAttribute;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dir",
+        "attrs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(dir)",
+          "description": "the directory"
+        },
+        "description": "return the directory",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "createDirectories",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "[Ljava.nio.file.attribute.FileAttribute;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dir",
+        "attrs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(dir)",
+          "description": "the directory"
+        },
+        "description": "return the directory",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "createLink",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.nio.file.Path"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "link",
+        "existing"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(link)",
+          "description": "the path to the link (directory entry)"
+        },
+        "description": "return the path to the link (directory entry)",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "delete",
+      "parameterTypes": [
+        "java.nio.file.Path"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.nio.file.DirectoryNotEmptyException",
+        "description": "throws DirectoryNotEmptyException if the file is a directory and could not otherwise be deleted because the directory is not empty (optional specific exception)",
+        "guard": {
+          "condition": "target.isDirectory(path)",
+          "description": "if the file is a directory and could not otherwise be deleted because the directory is not empty (optional specific exception)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "deleteIfExists",
+      "parameterTypes": [
+        "java.nio.file.Path"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.nio.file.DirectoryNotEmptyException",
+        "description": "throws DirectoryNotEmptyException if the file is a directory and could not otherwise be deleted because the directory is not empty (optional specific exception)",
+        "guard": {
+          "condition": "target.isDirectory(path)",
+          "description": "if the file is a directory and could not otherwise be deleted because the directory is not empty (optional specific exception)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "setPosixFilePermissions",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.util.Set"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "perms"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the sets contains elements that are not of type PosixFilePermission",
+        "guard": {
+          "condition": "perms.contains(java.lang.Object)",
+          "description": "if the sets contains elements that are not of type PosixFilePermission"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(path)",
+          "description": "The path"
+        },
+        "description": "return The path",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "setOwner",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.nio.file.attribute.UserPrincipal"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "owner"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(path)",
+          "description": "The path"
+        },
+        "description": "return The path",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "setLastModifiedTime",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.nio.file.attribute.FileTime"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "time"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(path)",
+          "description": "the path"
+        },
+        "description": "return the path",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "write",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "[B",
+        "[Ljava.nio.file.OpenOption;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "bytes",
+        "options"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(path)",
+          "description": "the path"
+        },
+        "description": "return the path",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "write",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.lang.Iterable",
+        "java.nio.charset.Charset",
+        "[Ljava.nio.file.OpenOption;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "lines",
+        "cs",
+        "options"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(path)",
+          "description": "the path"
+        },
+        "description": "return the path",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "write",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.lang.Iterable",
+        "[Ljava.nio.file.OpenOption;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "lines",
+        "options"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(path)",
+          "description": "the path"
+        },
+        "description": "return the path",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "lines",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "java.nio.charset.Charset"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "cs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.nio.file.Files.lines())",
+          "description": "the lines from the file as a Stream"
+        },
+        "description": "return the lines from the file as a Stream",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.Files",
+      "name": "lines",
+      "parameterTypes": [
+        "java.nio.file.Path"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the lines from the file as a Stream"
+        },
+        "description": "return the lines from the file as a Stream",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

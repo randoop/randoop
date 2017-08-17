@@ -1,0 +1,86 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Compiler",
+      "name": "compileClass",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "clazz"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If clazz is null",
+        "guard": {
+          "condition": "clazz==null",
+          "description": "If clazz is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Compiler",
+      "name": "compileClasses",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "string"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If string is null",
+        "guard": {
+          "condition": "string==null",
+          "description": "If string is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Compiler",
+      "name": "command",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "any"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If any is null",
+        "guard": {
+          "condition": "any==null",
+          "description": "If any is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

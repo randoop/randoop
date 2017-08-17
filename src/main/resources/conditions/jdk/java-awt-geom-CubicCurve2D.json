@@ -1,0 +1,112 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.geom.CubicCurve2D",
+      "name": "getFlatnessSq",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the square of the flatness of this curve."
+        },
+        "description": "return the square of the flatness of this curve.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.CubicCurve2D",
+      "name": "getFlatness",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the flatness of this curve."
+        },
+        "description": "return the flatness of this curve.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.CubicCurve2D",
+      "name": "solveCubic",
+      "parameterTypes": [
+        "[D",
+        "[D"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "eqn",
+        "res"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the array that contains the non-complex roots resulting from the solution of the cubic equation",
+        "guard": {
+          "condition": "target.contains(java.awt.geom.Rectangle2D)",
+          "description": "the array that contains the non-complex roots resulting from the solution of the cubic equation"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.CubicCurve2D",
+      "name": "clone",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a clone of this instance."
+        },
+        "description": "return a clone of this instance.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

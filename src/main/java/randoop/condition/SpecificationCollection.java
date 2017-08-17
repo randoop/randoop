@@ -20,14 +20,14 @@ import java.util.Map;
 import java.util.Set;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
-import randoop.condition.specification.Operation;
+import randoop.condition.specification.OperationSignature;
 import randoop.condition.specification.OperationSpecification;
 import randoop.reflection.TypeNames;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 
 /**
- * A collection of {@link OperationSpecification} objects that supports mapping an {@link
+ * A collection of {@link OperationSpecification} objects. Also a map from an {@link
  * AccessibleObject} reflection object to the {@link OperationConditions} for the corresponding
  * {@link randoop.operation.TypedClassOperation}.
  *
@@ -44,7 +44,7 @@ public class SpecificationCollection {
   private final Map<AccessibleObject, OperationSpecification> specificationMap;
 
   /** The map from method signatures to methods with that signature and specifications */
-  private final MultiMap<Operation, Method> signatureMap;
+  private final MultiMap<OperationSignature, Method> signatureMap;
 
   /** The map from reflection object to overridden method with specification */
   private final Map<AccessibleObject, Set<Method>> parentMap;
@@ -58,16 +58,17 @@ public class SpecificationCollection {
   /**
    * Creates a {@link SpecificationCollection} for the given specification map.
    *
-   * <p>This constructor is only accessible to allow testing. Randoop should use {@link
-   * #create(List)} instead.
+   * <p>This constructor is used internally. It is only accessible to allow testing. Clients should
+   * use {@link #create(List)} instead.
    *
    * @param specificationMap the map from reflection objects to {@link OperationSpecification}
    * @param signatureMap the multimap from a signature to methods with with the signature
-   * @param parentMap the map to overridden method with specification
+   * @param parentMap the map from a method to methods that it it overrides and that have a
+   *     specification
    */
   SpecificationCollection(
       Map<AccessibleObject, OperationSpecification> specificationMap,
-      MultiMap<Operation, Method> signatureMap,
+      MultiMap<OperationSignature, Method> signatureMap,
       Map<AccessibleObject, Set<Method>> parentMap) {
     this.specificationMap = specificationMap;
     this.signatureMap = signatureMap;
@@ -89,7 +90,7 @@ public class SpecificationCollection {
     if (specificationFiles == null) {
       return null;
     }
-    MultiMap<Operation, Method> signatureMap = new MultiMap<>();
+    MultiMap<OperationSignature, Method> signatureMap = new MultiMap<>();
     Map<AccessibleObject, OperationSpecification> specificationMap = new LinkedHashMap<>();
     for (File specificationFile : specificationFiles) {
 
@@ -110,8 +111,7 @@ public class SpecificationCollection {
       }
 
       for (OperationSpecification specification : specificationList) {
-        AccessibleObject accessibleObject;
-        Operation operation = specification.getOperation();
+        OperationSignature operation = specification.getOperation();
 
         // Check for bad input
         if (operation == null) { // deserialization could result in null operation
@@ -129,10 +129,10 @@ public class SpecificationCollection {
           continue;
         }
 
-        accessibleObject = getAccessibleObject(operation);
+        AccessibleObject accessibleObject = getAccessibleObject(operation);
         specificationMap.put(accessibleObject, specification);
         if (accessibleObject instanceof Method) {
-          Operation signature = Operation.of(accessibleObject);
+          OperationSignature signature = OperationSignature.of(accessibleObject);
           signatureMap.add(signature, (Method) accessibleObject);
         }
       }
@@ -144,13 +144,13 @@ public class SpecificationCollection {
   /**
    * Constructs a map between reflection objects representing override relationships among methods.
    *
-   * @param signatureMap the map from a {@link Operation} to methods with that signature
+   * @param signatureMap the map from a {@link OperationSignature} to methods with that signature
    * @return the map from an {@code AccessibleObject} to methods that it overrides
    */
   private static Map<AccessibleObject, Set<Method>> buildParentMap(
-      MultiMap<Operation, Method> signatureMap) {
+      MultiMap<OperationSignature, Method> signatureMap) {
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    for (Operation signature : signatureMap.keySet()) {
+    for (OperationSignature signature : signatureMap.keySet()) {
       for (Method method : signatureMap.getValues(signature)) {
         Class<?> declaringClass = method.getDeclaringClass();
         Set<Method> parents = findParents(declaringClass, signatureMap.getValues(signature));
@@ -185,12 +185,12 @@ public class SpecificationCollection {
   }
 
   /**
-   * Get the {@code java.lang.reflect.AccessibleObject} for the {@link Operation}.
+   * Get the {@code java.lang.reflect.AccessibleObject} for the {@link OperationSignature}.
    *
-   * @param operation the {@link Operation}
-   * @return the {@code java.lang.reflect.AccessibleObject} for the operation
+   * @param operation the {@link OperationSignature}
+   * @return the {@code java.lang.reflect.AccessibleObject} for {@code operation}
    */
-  private static AccessibleObject getAccessibleObject(Operation operation) {
+  private static AccessibleObject getAccessibleObject(OperationSignature operation) {
     if (operation.isValid()) {
       List<String> paramTypeNames = operation.getParameterTypeNames();
       Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
@@ -291,7 +291,7 @@ public class SpecificationCollection {
       Method method = (Method) accessibleObject;
       Set<Method> parents = parentMap.get(accessibleObject);
       if (parents == null) {
-        Set<Method> sigSet = signatureMap.getValues(Operation.of(method));
+        Set<Method> sigSet = signatureMap.getValues(OperationSignature.of(method));
         if (sigSet != null) {
           parents = findParents(method.getDeclaringClass(), sigSet);
         }

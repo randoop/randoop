@@ -19,7 +19,10 @@ package randoop.condition.specification;
  * <p>where {@code signalValue} is a declared identifier in the specification.
  *
  * <p>The identifiers in the property should be given in the {@link Identifiers} for the {@link
- * OperationSpecification} containing the {@link PostSpecification} where the property occurs.
+ * OperationSpecification} containing the {@link Postcondition} where the property occurs.
+ *
+ * <p>This is identical to {@link Property}, but has a different name to distinguish them in the
+ * JSON file.
  *
  * @see SpecificationClause
  */

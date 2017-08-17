@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.attribute.UserDefinedFileAttributeView",
+      "name": "read",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.nio.ByteBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "dst"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the destination buffer is read-only",
+        "guard": {
+          "condition": "dst.isReadOnly()",
+          "description": "If the destination buffer is read-only"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,327 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.TextLayout",
+      "name": "getAscent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getDescent())",
+          "description": "the ascent of this TextLayout."
+        },
+        "description": "return the ascent of this TextLayout.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextLayout",
+      "name": "getDescent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getAscent())",
+          "description": "the descent of this TextLayout."
+        },
+        "description": "return the descent of this TextLayout.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextLayout",
+      "name": "getNextRightHit",
+      "parameterTypes": [
+        "int",
+        "java.awt.font.TextLayout$CaretPolicy"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "policy"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "an insertion offset in this TextLayout. Cannot be less than 0 or greater than this TextLayout object's character count.",
+        "guard": {
+          "condition": "(offset<0) == false",
+          "description": "an insertion offset in this TextLayout. Cannot be less than 0 or greater than this TextLayout object's character count."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextLayout",
+      "name": "getNextRightHit",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "an insertion offset in this TextLayout. Cannot be less than 0 or greater than the TextLayout object's character count.",
+        "guard": {
+          "condition": "(offset<0) == false",
+          "description": "an insertion offset in this TextLayout. Cannot be less than 0 or greater than the TextLayout object's character count."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextLayout",
+      "name": "getNextLeftHit",
+      "parameterTypes": [
+        "int",
+        "java.awt.font.TextLayout$CaretPolicy"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "policy"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "an insertion offset in this TextLayout. Cannot be less than 0 or greater than this TextLayout object's character count.",
+        "guard": {
+          "condition": "(offset<0) == false",
+          "description": "an insertion offset in this TextLayout. Cannot be less than 0 or greater than this TextLayout object's character count."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextLayout",
+      "name": "getNextLeftHit",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "an insertion offset in this TextLayout. Cannot be less than 0 or greater than this TextLayout object's character count.",
+        "guard": {
+          "condition": "(offset<0) == false",
+          "description": "an insertion offset in this TextLayout. Cannot be less than 0 or greater than this TextLayout object's character count."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextLayout",
+      "name": "getLogicalRangesForVisualSelection",
+      "parameterTypes": [
+        "java.awt.font.TextHitInfo",
+        "java.awt.font.TextHitInfo"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "firstEndpoint",
+        "secondEndpoint"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the other endpoint of the visual range. This endpoint can be less than firstEndpoint.",
+        "guard": {
+          "condition": "target<firstEndpoint",
+          "description": "the other endpoint of the visual range. This endpoint can be less than firstEndpoint."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextLayout",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the specified Object equals this TextLayout; false otherwise."
+        },
+        "description": "return true if the specified Object equals this TextLayout; false otherwise.",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the specified Object equals this TextLayout; false otherwise."
+        },
+        "description": "return true if the specified Object equals this TextLayout; false otherwise.",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextLayout",
+      "name": "equals",
+      "parameterTypes": [
+        "java.awt.font.TextLayout"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rhs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the specified TextLayout equals this TextLayout."
+        },
+        "description": "return true if the specified TextLayout equals this TextLayout.",
+        "guard": {
+          "condition": "rhs.equals(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextLayout",
+      "name": "getLayoutPath",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the layout path"
+        },
+        "description": "return the layout path",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.TextLayout",
+      "name": "hitToPoint",
+      "parameterTypes": [
+        "java.awt.font.TextHitInfo",
+        "java.awt.geom.Point2D"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "hit",
+        "point"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if hit or point is null.",
+        "guard": {
+          "condition": "hit==null || point==null",
+          "description": "if hit or point is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

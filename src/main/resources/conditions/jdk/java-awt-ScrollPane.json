@@ -1,0 +1,262 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.ScrollPane",
+      "name": "addImpl",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comp",
+        "constraints",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "position of child component (must be <= 0)",
+        "guard": {
+          "condition": "index<=0",
+          "description": "position of child component (must be <= 0)"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.ScrollPane",
+      "name": "getScrollbarDisplayPolicy",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the display policy for the scrollbars"
+        },
+        "description": "return the display policy for the scrollbars",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.ScrollPane",
+      "name": "getViewportSize",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the size of the view port in pixels"
+        },
+        "description": "return the size of the view port in pixels",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.ScrollPane",
+      "name": "getHScrollbarHeight",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the height of a horizontal scrollbar in pixels"
+        },
+        "description": "return the height of a horizontal scrollbar in pixels",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.ScrollPane",
+      "name": "getVScrollbarWidth",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the width of a vertical scrollbar in pixels"
+        },
+        "description": "return the width of a vertical scrollbar in pixels",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.ScrollPane",
+      "name": "setScrollPosition",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the scrollpane does not contain a child",
+        "guard": {
+          "condition": "(target.contains(x,y)) == false",
+          "description": "if the scrollpane does not contain a child"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.ScrollPane",
+      "name": "setScrollPosition",
+      "parameterTypes": [
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if p is null",
+        "guard": {
+          "condition": "p==null",
+          "description": "if p is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.ScrollPane",
+      "name": "getScrollPosition",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the scrollpane does not contain a child",
+        "guard": {
+          "condition": "(target.contains(java.awt.Point)) == false",
+          "description": "if the scrollpane does not contain a child"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the coordinate position for the current scroll position"
+        },
+        "description": "return the coordinate position for the current scroll position",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.ScrollPane",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the parameter string of this scroll pane"
+        },
+        "description": "return the parameter string of this scroll pane",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

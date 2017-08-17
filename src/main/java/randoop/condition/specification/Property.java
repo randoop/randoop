@@ -21,6 +21,9 @@ package randoop.condition.specification;
  *
  * <p>The identifiers in the guard should be given in the {@link Identifiers} for the {@link
  * OperationSpecification} containing the {@code SpecificationClause} where the property occurs.
+ *
+ * <p>This is identical to {@link Guard}, but has a different name to distinguish them in the JSON
+ * file.
  */
 public class Property extends AbstractBooleanExpression {
 

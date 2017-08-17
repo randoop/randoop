@@ -31,6 +31,8 @@ import plume.UtilMDE;
  */
 public class Identifiers {
 
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+
   /** The default identifier name for receiver (value: "receiver") */
   private static final String DEFAULT_RECEIVER_NAME = "receiver";
 

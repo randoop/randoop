@@ -1,0 +1,113 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Throwable",
+      "name": "getMessage",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "the detail message string of this Throwable instance (which may be null)."
+        },
+        "description": "return the detail message string of this Throwable instance (which may be null).",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Throwable",
+      "name": "setStackTrace",
+      "parameterTypes": [
+        "[Ljava.lang.StackTraceElement;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "stackTrace"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if stackTrace is null or if any of the elements of stackTrace are null",
+        "guard": {
+          "condition": "stackTrace==null || stackTrace==null || target.getStackTrace()==null",
+          "description": "if stackTrace is null or if any of the elements of stackTrace are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Throwable",
+      "name": "getStackTraceElement",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if index < 0 || index >= getStackTraceDepth()",
+        "guard": {
+          "condition": "index<0",
+          "description": "if index < 0 || index >= getStackTraceDepth()"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Throwable",
+      "name": "addSuppressed",
+      "parameterTypes": [
+        "java.lang.Throwable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "exception"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if exception is null",
+        "guard": {
+          "condition": "exception==null",
+          "description": "if exception is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

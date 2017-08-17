@@ -1,0 +1,76 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.PopupFactory",
+      "name": "setSharedInstance",
+      "parameterTypes": [
+        "javax.swing.PopupFactory"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "factory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if factory is null",
+        "guard": {
+          "condition": "factory==null",
+          "description": "if factory is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.PopupFactory",
+      "name": "getPopup",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.awt.Component",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "owner",
+        "contents",
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if contents is null",
+        "guard": {
+          "condition": "contents==null",
+          "description": "if contents is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "Popup containing Contents"
+        },
+        "description": "return Popup containing Contents",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

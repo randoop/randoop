@@ -1,0 +1,66 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.Effect",
+      "name": "getEffectType",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "The effect type"
+        },
+        "description": "return The effect type",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.Effect",
+      "name": "applyEffect",
+      "parameterTypes": [
+        "java.awt.image.BufferedImage",
+        "java.awt.image.BufferedImage",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "dst",
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(w)",
+          "description": "The result of appl"
+        },
+        "description": "return The result of appl",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

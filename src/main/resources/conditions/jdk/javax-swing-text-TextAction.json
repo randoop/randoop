@@ -1,0 +1,69 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.TextAction",
+      "name": "getTextComponent",
+      "parameterTypes": [
+        "java.awt.event.ActionEvent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "the component"
+        },
+        "description": "return the component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.TextAction",
+      "name": "augmentList",
+      "parameterTypes": [
+        "[Ljavax.swing.Action;",
+        "[Ljavax.swing.Action;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "list1",
+        "list2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the first list, may be empty but not null",
+        "guard": {
+          "condition": "(list1==null) == false",
+          "description": "the first list, may be empty but not null"
+        }
+      },
+      {
+        "description": "the second list, may be empty but not null",
+        "guard": {
+          "condition": "(list2==null) == false",
+          "description": "the second list, may be empty but not null"
+        }
+      }
+    ]
+  }
+]

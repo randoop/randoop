@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.RGBImageFilter",
+      "name": "filterIndexColorModel",
+      "parameterTypes": [
+        "java.awt.image.IndexColorModel"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "icm"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if icm is null",
+        "guard": {
+          "condition": "icm==null",
+          "description": "if icm is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

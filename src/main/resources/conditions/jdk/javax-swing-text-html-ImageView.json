@@ -1,0 +1,38 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.ImageView",
+      "name": "setSize",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the width >= 0",
+        "guard": {
+          "condition": "width>=0",
+          "description": "the width >= 0"
+        }
+      },
+      {
+        "description": "the height >= 0",
+        "guard": {
+          "condition": "height>=0",
+          "description": "the height >= 0"
+        }
+      }
+    ]
+  }
+]

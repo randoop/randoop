@@ -1,0 +1,114 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.FocusTraversalPolicy",
+      "name": "getFirstComponent",
+      "parameterTypes": [
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aContainer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aContainer is null",
+        "guard": {
+          "condition": "aContainer==null",
+          "description": "if aContainer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.FocusTraversalPolicy",
+      "name": "getLastComponent",
+      "parameterTypes": [
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aContainer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aContainer is null",
+        "guard": {
+          "condition": "aContainer==null",
+          "description": "if aContainer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.FocusTraversalPolicy",
+      "name": "getDefaultComponent",
+      "parameterTypes": [
+        "java.awt.Container"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "aContainer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if aContainer is null",
+        "guard": {
+          "condition": "aContainer==null",
+          "description": "if aContainer is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.FocusTraversalPolicy",
+      "name": "getInitialComponent",
+      "parameterTypes": [
+        "java.awt.Window"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "window"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if window is null",
+        "guard": {
+          "condition": "window==null",
+          "description": "if window is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

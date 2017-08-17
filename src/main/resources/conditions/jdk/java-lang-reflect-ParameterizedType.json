@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.reflect.ParameterizedType",
+      "name": "getOwnerType",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "a Type object representing the type that this type is a member of. If this type is a top-level type, null is returned"
+        },
+        "description": "return a Type object representing the type that this type is a member of. If this type is a top-level type, null is returned",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.MultipleMaster",
+      "name": "deriveMMFont",
+      "parameterTypes": [
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "resultinstanceofMultipleMaster",
+          "description": "a Font object that is an instance of MultipleMaster and is based on the design axis values provided by axes."
+        },
+        "description": "return a Font object that is an instance of MultipleMaster and is based on the design axis values provided by axes.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

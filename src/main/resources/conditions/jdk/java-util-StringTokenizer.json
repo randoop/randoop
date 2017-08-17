@@ -1,0 +1,147 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.StringTokenizer",
+      "name": "java.util.StringTokenizer",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "str",
+        "delim",
+        "returnDelims"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if str is null",
+        "guard": {
+          "condition": "str==null",
+          "description": "if str is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.StringTokenizer",
+      "name": "java.util.StringTokenizer",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "str",
+        "delim"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if str is null",
+        "guard": {
+          "condition": "str==null",
+          "description": "if str is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.StringTokenizer",
+      "name": "java.util.StringTokenizer",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "str"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if str is null",
+        "guard": {
+          "condition": "str==null",
+          "description": "if str is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.StringTokenizer",
+      "name": "nextToken",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "delim"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if delim is null",
+        "guard": {
+          "condition": "delim==null",
+          "description": "if delim is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.StringTokenizer",
+      "name": "nextElement",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.nextToken())",
+          "description": "the next token in the string."
+        },
+        "description": "return the next token in the string.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

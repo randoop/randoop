@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.function.BinaryOperator",
+      "name": "minBy",
+      "parameterTypes": [
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comparator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "comparator==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.function.BinaryOperator",
+      "name": "maxBy",
+      "parameterTypes": [
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comparator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "comparator==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.DisplayMode",
+      "name": "getBitDepth",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.wait())",
+          "description": "the bit depth of the display, in bits per pixel."
+        },
+        "description": "return the bit depth of the display, in bits per pixel.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

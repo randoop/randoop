@@ -5,7 +5,7 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.condition.PostCondition;
+import randoop.condition.BooleanExpression;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 
@@ -13,14 +13,14 @@ import randoop.sequence.Variable;
 public class PostConditionCheckGenerator implements TestCheckGenerator {
 
   /** the post-conditions */
-  private final List<PostCondition> postConditions;
+  private final List<BooleanExpression> postConditions;
 
   /**
    * Create a {@link TestCheckGenerator} to test the given post-condition.
    *
    * @param postConditions the post-condition to be tested in generated {@link TestChecks}
    */
-  public PostConditionCheckGenerator(List<PostCondition> postConditions) {
+  public PostConditionCheckGenerator(List<BooleanExpression> postConditions) {
     this.postConditions = postConditions;
   }
 
@@ -44,14 +44,14 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
     if (result instanceof NotExecuted) {
       throw new Error("Abnormal execution in sequence: " + s);
     } else if (result instanceof NormalExecution) {
-      List<PostCondition> failed = new ArrayList<>();
+      List<BooleanExpression> failed = new ArrayList<>();
       ArrayList<Variable> inputs = new ArrayList<>(s.sequence.getInputs(finalIndex));
       inputs.add(s.sequence.getVariable(finalIndex));
       Object[] inputValues = s.getRuntimeInputs(inputs);
       if (s.sequence.getStatement(finalIndex).getOperation().isStatic()) {
         inputValues = addNullReceiver(inputValues);
       }
-      for (PostCondition postCondition : postConditions) {
+      for (BooleanExpression postCondition : postConditions) {
         if (!postCondition.check(inputValues)) {
           failed.add(postCondition);
         }

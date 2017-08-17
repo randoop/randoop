@@ -1,0 +1,231 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicLongFieldUpdater",
+      "name": "newUpdater",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tclass",
+        "fieldName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the updater"
+        },
+        "description": "return the updater",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicLongFieldUpdater",
+      "name": "getAndSet",
+      "parameterTypes": [
+        "java.lang.Object",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "newValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicLongFieldUpdater",
+      "name": "getAndIncrement",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicLongFieldUpdater",
+      "name": "getAndDecrement",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicLongFieldUpdater",
+      "name": "getAndAdd",
+      "parameterTypes": [
+        "java.lang.Object",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "delta"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicLongFieldUpdater",
+      "name": "getAndUpdate",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.LongUnaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "updateFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicLongFieldUpdater",
+      "name": "getAndAccumulate",
+      "parameterTypes": [
+        "java.lang.Object",
+        "long",
+        "java.util.function.LongBinaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "x",
+        "accumulatorFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

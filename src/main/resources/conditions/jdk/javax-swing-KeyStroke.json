@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.KeyStroke",
+      "name": "getKeyStroke",
+      "parameterTypes": [
+        "java.lang.Character",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyChar",
+        "modifiers"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if keyChar is null",
+        "guard": {
+          "condition": "keyChar==null",
+          "description": "if keyChar is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.KeyStroke",
+      "name": "getKeyStrokeForEvent",
+      "parameterTypes": [
+        "java.awt.event.KeyEvent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "anEvent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if anEvent is null",
+        "guard": {
+          "condition": "anEvent==null",
+          "description": "if anEvent is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.SecureDirectoryStream",
+      "name": "newByteChannel",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.Set",
+        "[Ljava.nio.file.attribute.FileAttribute;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "path",
+        "options",
+        "attrs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the set contains an invalid combination of options",
+        "guard": {
+          "condition": "options.contains(java.lang.Object)",
+          "description": "if the set contains an invalid combination of options"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

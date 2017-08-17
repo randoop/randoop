@@ -1,0 +1,38 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.MultipleGradientPaint",
+      "name": "java.awt.MultipleGradientPaint",
+      "parameterTypes": [
+        "[F",
+        "[Ljava.awt.Color;",
+        "java.awt.MultipleGradientPaint$CycleMethod",
+        "java.awt.MultipleGradientPaint$ColorSpaceType",
+        "java.awt.geom.AffineTransform"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fractions",
+        "colors",
+        "cycleMethod",
+        "colorSpace",
+        "gradientTransform"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fractions array is null, or colors array is null, or gradientTransform is null, or cycleMethod is null, or colorSpace is null",
+        "guard": {
+          "condition": "fractions==null || fractions==null",
+          "description": "if fractions array is null, or colors array is null, or gradientTransform is null, or cycleMethod is null, or colorSpace is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

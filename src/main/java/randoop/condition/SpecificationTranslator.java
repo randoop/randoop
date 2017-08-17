@@ -9,169 +9,135 @@ import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
 import randoop.condition.specification.OperationSpecification;
-import randoop.condition.specification.PostSpecification;
-import randoop.condition.specification.PreSpecification;
+import randoop.condition.specification.Postcondition;
+import randoop.condition.specification.Precondition;
 import randoop.condition.specification.Property;
-import randoop.condition.specification.ThrowsSpecification;
+import randoop.condition.specification.ThrowsCondition;
 import randoop.main.GenInputsAbstract;
 import randoop.reflection.RawSignature;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 
-/**
- * Implements translation of an {@link OperationSpecification} object to an {@link
- * OperationConditions} object.
- */
+/** Translates an {@link OperationSpecification} object to an {@link OperationConditions} object. */
 public class SpecificationTranslator {
 
   /** The name of dummy variables used by {@link randoop.contract.ObjectContract}. */
   private static final String DUMMY_VARIABLE_NAME = "x";
 
-  /** The map of variable name replacements */
+  /** The {@link RawSignature} for a guard expression method. */
+  private RawSignature guardExpressionSignature;
+
+  /** The parameter declaration string, with parentheses, for a guard expression method. */
+  private final String guardExpressionDeclaration;
+
+  /** The {@link RawSignature} for a property expression method. */
+  private RawSignature propertyExpressionSignature;
+
+  /** The parameter declaration string, with parentheses, for a property expression method. */
+  private final String propertyExpressionDeclarations;
+
+  /** The map of expression identifiers to dummy variables. */
   private final NameReplacementMap replacementMap;
 
-  /** The {@link SequenceCompiler} for compiling condition methods */
+  /** The {@link SequenceCompiler} for compiling expression methods. */
   private final SequenceCompiler compiler;
-
-  /** The signature string for a precondition */
-  private RawSignature preConditionSignature;
-
-  /** The parameter declaration string for a precondition method */
-  private final String preConditionDeclarations;
-
-  /** The signature string for a post-condition */
-  private RawSignature postConditionSignature;
-
-  /** The parameter declaration string, with parentheses, for a post-condition method */
-  private final String postConditionDeclarations;
 
   /**
    * Creates a {@link SpecificationTranslator} object in the given package with the signature
    * strings and variable replacementMap.
    *
-   * @param preConditionSignature the {@link RawSignature} for a precondition method
-   * @param preConditionDeclarations the parameter declaration string, with parentheses, for a
-   *     precondition method
-   * @param postConditionSignature the {@link RawSignature} for a post-condition method
-   * @param postConditionDeclarations the parameter declaration string, with parentheses, for a
-   *     post-condition method
-   * @param replacementMap the map of condition identifiers to dummy variables
-   * @param compiler the {@link SequenceCompiler} for creating condition methods
+   * @param guardExpressionSignature the {@link RawSignature} for a guard expression method
+   * @param guardExpressionDeclaration the parameter declaration string, with parentheses, for a
+   *     guard expression method
+   * @param propertyExpressionSignature the {@link RawSignature} for a property expression method
+   * @param propertyExpressionDeclaration the parameter declaration string, with parentheses, for a
+   *     property expression method
+   * @param replacementMap the map of expression identifiers to dummy variables
+   * @param compiler the {@link SequenceCompiler} for creating expression methods
    */
   private SpecificationTranslator(
-      RawSignature preConditionSignature,
-      String preConditionDeclarations,
-      RawSignature postConditionSignature,
-      String postConditionDeclarations,
+      RawSignature guardExpressionSignature,
+      String guardExpressionDeclaration,
+      RawSignature propertyExpressionSignature,
+      String propertyExpressionDeclaration,
       NameReplacementMap replacementMap,
       SequenceCompiler compiler) {
-    this.preConditionSignature = preConditionSignature;
-    this.preConditionDeclarations = preConditionDeclarations;
-    this.postConditionSignature = postConditionSignature;
-    this.postConditionDeclarations = postConditionDeclarations;
+    this.guardExpressionSignature = guardExpressionSignature;
+    this.guardExpressionDeclaration = guardExpressionDeclaration;
+    this.propertyExpressionSignature = propertyExpressionSignature;
+    this.propertyExpressionDeclarations = propertyExpressionDeclaration;
     this.replacementMap = replacementMap;
     this.compiler = compiler;
   }
 
   /**
    * Creates a {@link SpecificationTranslator} object to translate the {@link
-   * OperationSpecification} of {@code accessibleObject}.
+   * OperationSpecification} of {@code executable}.
    *
-   * @param accessibleObject the {@code java.lang.reflect.AccessibleObject} for the operation with
-   *     {@link OperationSpecification} to translate
+   * @param executable the {@code java.lang.reflect.AccessibleObject} for the operation with {@link
+   *     OperationSpecification} to translate
    * @param identifiers the {@link Identifiers} from the specification to be translated
-   * @param compiler the sequence compiler to use to create condition methods
-   * @return the translator object to convert the specifications for {@code accessibleObject}
+   * @param compiler the sequence compiler to use to create expression methods
+   * @return the translator object to convert the specifications for {@code executable}
    */
   static SpecificationTranslator createTranslator(
-      AccessibleObject accessibleObject, Identifiers identifiers, SequenceCompiler compiler) {
-    RawSignature preconditionSignature;
-    String preConditionDeclarations;
-    RawSignature postconditionSignature;
-    String postConditionDeclarations;
+      AccessibleObject executable, Identifiers identifiers, SequenceCompiler compiler) {
+
+    // Get expression method signatures.
+    RawSignature guardExpressionSignature = getExpressionSignature(executable, false);
+    RawSignature propertyExpressionSignature = getExpressionSignature(executable, true);
+
     List<String> parameterNames = new ArrayList<>();
-    if (accessibleObject instanceof Method) {
-      Method method = (Method) accessibleObject;
-      // get condition method signatures
-      preconditionSignature = getPreConditionSignature(method);
-      postconditionSignature = getPostConditionSignature(method);
 
-      // get condition method parameter declaration strings
+    // Get expression method parameter declaration strings.
+    if (executable instanceof Method) { // TODO: inner class constructors have a receiver
       parameterNames.add(identifiers.getReceiverName());
-      parameterNames.addAll(identifiers.getParameterNames());
-      preConditionDeclarations = preconditionSignature.getDeclarationArguments(parameterNames);
-      parameterNames.add(identifiers.getReturnName());
-      postConditionDeclarations = postconditionSignature.getDeclarationArguments(parameterNames);
-    } else if (accessibleObject instanceof Constructor) {
-      Constructor<?> constructor = (Constructor) accessibleObject;
-      // get condition method signatures
-      preconditionSignature = getPreConditionSignature(constructor);
-      postconditionSignature = getPostConditionSignature(constructor);
-
-      // get condition method parameter declaration strings
-      parameterNames.addAll(identifiers.getParameterNames());
-      preConditionDeclarations = preconditionSignature.getDeclarationArguments(parameterNames);
-      parameterNames.add(identifiers.getReturnName());
-      postConditionDeclarations = postconditionSignature.getDeclarationArguments(parameterNames);
-    } else {
-      throw new RandoopConditionError("Specification operation is neither a method or constructor");
     }
+    parameterNames.addAll(identifiers.getParameterNames());
+    String guardExpressionDeclarations =
+        guardExpressionSignature.getDeclarationArguments(parameterNames);
+
+    parameterNames.add(identifiers.getReturnName());
+    String propertyExpressionDeclarations =
+        propertyExpressionSignature.getDeclarationArguments(parameterNames);
+
     NameReplacementMap replacementMap = createReplacementMap(parameterNames);
     return new SpecificationTranslator(
-        preconditionSignature,
-        preConditionDeclarations,
-        postconditionSignature,
-        postConditionDeclarations,
+        guardExpressionSignature,
+        guardExpressionDeclarations,
+        propertyExpressionSignature,
+        propertyExpressionDeclarations,
         replacementMap,
         compiler);
   }
 
   /**
-   * Create the {@link RawSignature} for the condition method for evaluating a precondition for the
+   * Create the {@link RawSignature} for the expression method for evaluating an expression for the
    * given method or constructor.
    *
-   * <p>The parameter types of the RawSignature are the declaring class as the receiver type
-   * followed by the parameter types of {@code executable}.
+   * <p>The parameter types of the RawSignature are the declaring class as the receiver type,
+   * followed by the parameter types of {@code executable}, followed by the return type if {@code
+   * postState} is true and {@code executable} is not a void method.
    *
-   * <p>Note: The declaring class of the condition method is actually determined by {@link
-   * ConditionMethodCreator#createMethod(RawSignature, String, String, SequenceCompiler)}
+   * <p>Note: The declaring class of the expression method is actually determined by {@link
+   * BooleanExpression#createMethod(RawSignature, String, String, SequenceCompiler)}
    *
-   * @param executable the method or constructor to which the precondition belongs
-   * @return the {@link RawSignature} for a pre-condition method of {@code executable}
+   * @param executable the method or constructor to which the expression belongs
+   * @param postState if true, include a variable for the return value in the signature
+   * @return the {@link RawSignature} for a expression method of {@code executable}
    */
   // The type AccessibleObject should be Executable, but that class was introduced in Java 8
-  private static RawSignature getPreConditionSignature(AccessibleObject executable) {
+  private static RawSignature getExpressionSignature(
+      AccessibleObject executable, boolean postState) {
     boolean isMethod = executable instanceof Method;
     Class<?> declaringClass = getDeclaringClass(executable);
+    // TODO: a constructor for an inner class has a receiver (which is not the declaring class)
+    Class<?> receiverType = isMethod ? declaringClass : null;
     Class<?>[] parameterTypes = getParameterTypes(executable);
+    Class<?> returnType =
+        (!postState ? null : (isMethod ? ((Method) executable).getReturnType() : declaringClass));
     String packageName = getPackageName(declaringClass.getPackage());
-    return ConditionMethodCreator.getRawSignature(
-        packageName, declaringClass, parameterTypes, null, isMethod);
-  }
-
-  /**
-   * Create the {@link RawSignature} for the condition method for evaluating a post-condition for
-   * the given method or constructor.
-   *
-   * <p>The parameter types of the RawSignature are the declaring class as the receiver type
-   * followed by the parameter types of {@code executable}, and the return type (if {@code
-   * executable} is a method).
-   *
-   * <p>Note: The declaring class of the condition method is actually determined by {@link
-   * ConditionMethodCreator#createMethod(RawSignature, String, String, SequenceCompiler)}
-   *
-   * @param executable the method or constructor to which the post-condition belongs
-   * @return the {@link RawSignature} for a post-condition method of {@code executable}
-   */
-  // The type AccessibleObject should be Executable, but that class was introduced in Java 8
-  private static RawSignature getPostConditionSignature(AccessibleObject executable) {
-    boolean isMethod = executable instanceof Method;
-    Class<?> declaringClass = getDeclaringClass(executable);
-    Class<?>[] parameterTypes = getParameterTypes(executable);
-    Class<?> returnType = (isMethod ? ((Method) executable).getReturnType() : declaringClass);
-    String packageName = getPackageName(declaringClass.getPackage());
-    return ConditionMethodCreator.getRawSignature(
-        packageName, declaringClass, parameterTypes, returnType, isMethod);
+    return BooleanExpression.getRawSignature(packageName, receiverType, parameterTypes, returnType);
   }
 
   // In JDK 8, replace invocations of this by: executable.getDeclaringClass()
@@ -193,13 +159,13 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Gets the name of the package to use for the package of the condition method. If the package
+   * Gets the name of the package to use for the package of the expression method. If the package
    * name begins with {@code "java"} modifies it to begin with {@code "randoop"} instead, since user
    * classes cannot be added to the {@code java} package.
    *
    * @param aPackage the package to get the name of, may be null
-   * @return the name of the package, the empty string if there is none, and, if there is, updated
-   *     to start with "randoop" if the original begins with "java"
+   * @return the name of the package, updated to start with "randoop" if the original begins with
+   *     "java"; the empty string if {@code aPackage} is null
    */
   private static String getPackageName(Package aPackage) {
     if (aPackage == null) {
@@ -217,7 +183,7 @@ public class SpecificationTranslator {
    * Creates the replacement map from the given parameter names to numbered dummy variable names as
    * used in {@link randoop.contract.ObjectContract}.
    *
-   * @param parameterNames the parameter names of the condition methods
+   * @param parameterNames the parameter names of the expression methods
    * @return the map from the parameter names to dummy variables
    */
   private static NameReplacementMap createReplacementMap(List<String> parameterNames) {
@@ -233,88 +199,88 @@ public class SpecificationTranslator {
    * Create the {@link OperationConditions} object for the given {@link OperationSpecification}
    * using this {@link SpecificationTranslator}.
    *
-   * @param specification the specification from which the conditions are to be created
+   * @param specification the specification from which the expressions are to be created
    * @return the {@link OperationConditions} for the given specification
    */
   OperationConditions createConditions(OperationSpecification specification) {
 
     return new OperationConditions(
-        getPreConditions(specification.getPreSpecifications()),
-        getReturnConditions(specification.getPostSpecifications()),
-        getThrowsConditions(specification.getThrowsSpecifications()));
+        getGuardExpressions(specification.getPreconditions()),
+        getReturnConditions(specification.getPostconditions()),
+        getThrowsConditions(specification.getThrowsConditions()));
   }
 
   /**
-   * Get the list of {@link Condition} objects representing the pre-conditions from {@code
-   * specification}.
+   * Construct the list of {@link BooleanExpression} objects, one for each {@link Precondition}.
    *
-   * @param preSpecifications the list of {@link PreSpecification} pre-conditions that will be
-   *     converted
-   * @return the list of {@link Condition} objects obtained by converting the elements of {@code
-   *     preSpecifications}
+   * @param preconditions the list of {@link Precondition} objects that will be converted to {@link
+   *     BooleanExpression}
+   * @return the list of {@link BooleanExpression} objects obtained by converting each {@link
+   *     Precondition}
    */
-  private List<Condition> getPreConditions(List<PreSpecification> preSpecifications) {
-    List<Condition> paramConditions = new ArrayList<>();
-    for (PreSpecification preSpecification : preSpecifications) {
+  private List<BooleanExpression> getGuardExpressions(List<Precondition> preconditions) {
+    List<BooleanExpression> guardExpressions = new ArrayList<>();
+    for (Precondition precondition : preconditions) {
       try {
-        paramConditions.add(create(preSpecification.getGuard()));
+        guardExpressions.add(create(precondition.getGuard()));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;
         }
-        System.out.println("Warning: discarded uncompilable precondition: " + e.getMessage());
+        System.out.println("Warning: discarded uncompilable guard expression: " + e.getMessage());
       }
     }
-    return paramConditions;
+    return guardExpressions;
   }
 
   /**
-   * Get the list of pairs of {@link Condition} and {@link PostCondition} representing
-   * post-conditions from {@code postSpecifications}.
+   * Construct the list of {@link GuardPropertyPair} objects, one for each {@link Postcondition} in
+   * {@code postconditions}.
    *
-   * @param postSpecifications the list of {@link PostSpecification} that will be converted
-   * @return the list of {@link PrePostConditionPair} objects obtained by converting the elements of
-   *     {@code postSpecifications}
+   * @param postconditions the list of {@link Postcondition} that will be converted to {@link
+   *     GuardPropertyPair} objects
+   * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
+   *     Postcondition}
    */
-  private ArrayList<PrePostConditionPair> getReturnConditions(
-      List<PostSpecification> postSpecifications) {
-    ArrayList<PrePostConditionPair> returnConditions = new ArrayList<>();
-    for (PostSpecification postSpecification : postSpecifications) {
+  private ArrayList<GuardPropertyPair> getReturnConditions(List<Postcondition> postconditions) {
+    ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>();
+    for (Postcondition postcondition : postconditions) {
       try {
-        Condition preCondition = create(postSpecification.getGuard());
-        PostCondition postCondition = create(postSpecification.getProperty());
-        returnConditions.add(new PrePostConditionPair(preCondition, postCondition));
+        BooleanExpression guardExpression = create(postcondition.getGuard());
+        BooleanExpression booleanExpression = create(postcondition.getProperty());
+        returnConditions.add(new GuardPropertyPair(guardExpression, booleanExpression));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;
         }
-        System.out.println("Warning: discarding uncompilable postcondition: " + e.getMessage());
+        System.out.println(
+            "Warning: discarding uncompilable property expression: " + e.getMessage());
       }
     }
     return returnConditions;
   }
 
   /**
-   * Get the list of pairs of {@link Condition} and {@link ThrowsClause} representing
-   * throws-conditions from {@code throwsSpecifications}.
+   * Construct the list of {@link GuardThrowsPair} objects, one for each {@link ThrowsCondition} in
+   * {@code throwsConditions}.
    *
-   * @param throwsSpecifications the list of {@link ThrowsSpecification} that will be converted
-   * @return the list of {@link PrePostConditionPair} objects obtained by converting the elements of
-   *     {@code }
+   * @param throwsConditions the list of {@link ThrowsCondition} that will be converted to {@link
+   *     GuardPropertyPair} objects
+   * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
+   *     ThrowsCondition}
    */
-  private ArrayList<PreThrowsConditionPair> getThrowsConditions(
-      List<ThrowsSpecification> throwsSpecifications) {
-    ArrayList<PreThrowsConditionPair> throwsConditions = new ArrayList<>();
-    for (ThrowsSpecification throwsSpecification : throwsSpecifications) {
+  private ArrayList<GuardThrowsPair> getThrowsConditions(List<ThrowsCondition> throwsConditions) {
+    ArrayList<GuardThrowsPair> throwsPairs = new ArrayList<>();
+    for (ThrowsCondition throwsCondition : throwsConditions) {
       ClassOrInterfaceType exceptionType;
       try {
         exceptionType =
             (ClassOrInterfaceType)
-                ClassOrInterfaceType.forName(throwsSpecification.getExceptionTypeName());
+                ClassOrInterfaceType.forName(throwsCondition.getExceptionTypeName());
       } catch (ClassNotFoundException e) {
         String msg =
             "Error in specification "
-                + throwsSpecification
+                + throwsCondition
                 + ". Cannot find exception type: "
                 + e.getMessage();
         if (Log.isLoggingOn()) {
@@ -323,94 +289,99 @@ public class SpecificationTranslator {
         continue;
       }
       try {
-        Condition guardCondition = create(throwsSpecification.getGuard());
-        ThrowsClause exception =
-            new ThrowsClause(exceptionType, "// " + throwsSpecification.getDescription());
-        throwsConditions.add(new PreThrowsConditionPair(guardCondition, exception));
+        BooleanExpression guardExpression = create(throwsCondition.getGuard());
+        ThrowsClause throwsClause =
+            new ThrowsClause(exceptionType, throwsCondition.getDescription());
+        throwsPairs.add(new GuardThrowsPair(guardExpression, throwsClause));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;
         }
-        System.out.println("Warning: discarding uncompilable throws-condition: " + e.getMessage());
+        System.out.println("Warning: discarding uncompilable throws-expression: " + e.getMessage());
       }
     }
-    return throwsConditions;
+    return throwsPairs;
   }
 
   /**
-   * Creates a {@link Condition} object for the given {@link Guard} using the pre-condition
+   * Creates a {@link BooleanExpression} object for the given {@link
+   * randoop.condition.specification.AbstractBooleanExpression} using the guard expression signature
+   * of this {@link SpecificationTranslator}.
+   *
+   * @param expression the {@link randoop.condition.specification.AbstractBooleanExpression} to be
+   *     converted
+   * @return the {@link BooleanExpression} object for {@code expression}
+   */
+  private BooleanExpression create(Guard expression) {
+    String contractText = replacementMap.replaceNames(expression.getConditionSource());
+    return BooleanExpression.createBooleanExpression(
+        guardExpressionSignature,
+        guardExpressionDeclaration,
+        expression.getConditionSource(),
+        contractText,
+        expression.getDescription(),
+        compiler);
+  }
+
+  /**
+   * Creates a {@link BooleanExpression} object for the given {@link
+   * randoop.condition.specification.AbstractBooleanExpression} using the property expression
    * signature of this {@link SpecificationTranslator}.
    *
-   * @param guard the {@link Guard} to be converted
-   * @return the {@link Condition} object for {@code guard}
+   * @param expression the {@link randoop.condition.specification.AbstractBooleanExpression} to be
+   *     converted
+   * @return the {@link BooleanExpression} object for {@code expression}
    */
-  private Condition create(Guard guard) {
-    Method conditionMethod =
-        ConditionMethodCreator.createMethod(
-            preConditionSignature, preConditionDeclarations, guard.getConditionSource(), compiler);
-    String comment = guard.getDescription();
-    String conditionText = replacementMap.replaceNames(guard.getConditionSource());
-    return new Condition(conditionMethod, comment, conditionText);
+  public BooleanExpression create(Property expression) {
+    String contractText = replacementMap.replaceNames(expression.getConditionSource());
+    return BooleanExpression.createBooleanExpression(
+        propertyExpressionSignature,
+        propertyExpressionDeclarations,
+        expression.getConditionSource(),
+        contractText,
+        expression.getDescription(),
+        compiler);
   }
 
   /**
-   * Creates a {@link PostCondition} object for the given {@link Property} using the post-condition
-   * signature of this {@link SpecificationTranslator}.
-   *
-   * @param property the {@link Property} to be converted
-   * @return the {@link PostCondition} object for {@code property}
-   */
-  public PostCondition create(Property property) {
-    Method conditionMethod =
-        ConditionMethodCreator.createMethod(
-            postConditionSignature,
-            postConditionDeclarations,
-            property.getConditionSource(),
-            compiler);
-    String comment = property.getDescription();
-    String conditionText = replacementMap.replaceNames(property.getConditionSource());
-    return new PostCondition(conditionMethod, comment, conditionText);
-  }
-
-  /**
-   * Return the pre-condition method parameter declaration string. Includes parentheses.
+   * Return the guard expression method parameter declaration string. Includes parentheses.
    *
    * <p>Only used for testing.
    *
-   * @return the pre-condition method parameter declaration string
+   * @return the guard expression method parameter declaration string
    */
-  String getPreConditionDeclarations() {
-    return preConditionDeclarations;
+  String getGuardExpressionDeclaration() {
+    return guardExpressionDeclaration;
   }
 
   /**
-   * Return the post-condition method parameter declaration string. Includes parentheses.
+   * Return the property expression method parameter declaration string. Includes parentheses.
    *
    * <p>Only used for testing.
    *
-   * @return the post-condition method parameter declaration string
+   * @return the property expression method parameter declaration string
    */
-  String getPostConditionDeclarations() {
-    return postConditionDeclarations;
+  String getPropertyExpressionDeclarations() {
+    return propertyExpressionDeclarations;
   }
 
   /**
-   * Returns the post-condition method signature from this object. This signature includes the
-   * parameters of the pre-condition signature, plus the return type.
+   * Returns the property expression method signature from this object. This signature includes the
+   * parameters of the guard expression signature, plus the return type.
    *
    * <p>Used for testing.
    *
-   * @return the post-condition signature for this object
+   * @return the property expression method signature for this object
    */
-  RawSignature getPostConditionSignature() {
-    return postConditionSignature;
+  RawSignature getPropertyExpressionSignature() {
+    return propertyExpressionSignature;
   }
 
   /**
-   * Returns the replacement map for the identifiers in the condition to the dummy variables
+   * Returns the replacement map for the identifiers in the expression to the dummy variables
    * expected in contract assertions
    *
-   * @return the replacement map for the identifiers in the condition
+   * @return the replacement map for the identifiers in the expression
    */
   NameReplacementMap getReplacementMap() {
     return replacementMap;

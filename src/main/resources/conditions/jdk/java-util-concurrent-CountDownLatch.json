@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CountDownLatch",
+      "name": "java.util.concurrent.CountDownLatch",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "count"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if count is negative",
+        "guard": {
+          "condition": "count<0",
+          "description": "if count is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

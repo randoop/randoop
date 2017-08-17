@@ -1,0 +1,452 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "isPopupMenuVisible",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the menu is visible, else false"
+        },
+        "description": "return true if the menu is visible, else false",
+        "guard": {
+          "condition": "target.isVisible()",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the menu is visible, else false"
+        },
+        "description": "return true if the menu is visible, else false",
+        "guard": {
+          "condition": "target.isVisible()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "getDelay",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the delay property"
+        },
+        "description": "return the delay property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "setDelay",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "d"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if d is less than 0",
+        "guard": {
+          "condition": "d<0",
+          "description": "if d is less than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "createActionComponent",
+      "parameterTypes": [
+        "javax.swing.Action"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the new menu item"
+        },
+        "description": "return the new menu item",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "insert",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException when the value of pos < 0",
+        "guard": {
+          "condition": "pos<0",
+          "description": "when the value of pos < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "insert",
+      "parameterTypes": [
+        "javax.swing.JMenuItem",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mi",
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the value of pos < 0",
+        "guard": {
+          "condition": "pos<0",
+          "description": "if the value of pos < 0"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the new menu item"
+        },
+        "description": "return the new menu item",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "insert",
+      "parameterTypes": [
+        "javax.swing.Action",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the value of pos < 0",
+        "guard": {
+          "condition": "pos<0",
+          "description": "if the value of pos < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "insertSeparator",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the value of index < 0",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the value of index < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "getItem",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the value of pos < 0",
+        "guard": {
+          "condition": "pos<0",
+          "description": "if the value of pos < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "remove",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the value of pos < 0, or if pos is greater than the number of menu items",
+        "guard": {
+          "condition": "pos<0",
+          "description": "if the value of pos < 0, or if pos is greater than the number of menu items"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "createWinListener",
+      "parameterTypes": [
+        "javax.swing.JPopupMenu"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(p)",
+          "description": "the new window-closing listener"
+        },
+        "description": "return the new window-closing listener",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "menuSelectionChanged",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "isIncluded"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "true if this menu is active, false if it is not",
+        "guard": {
+          "condition": "target==false",
+          "description": "true if this menu is active, false if it is not"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "getSubElements",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "an array of MenuElement objects"
+        },
+        "description": "return an array of MenuElement objects",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "applyComponentOrientation",
+      "parameterTypes": [
+        "java.awt.ComponentOrientation"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if orientation is null.",
+        "guard": {
+          "condition": "o==null",
+          "description": "if orientation is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JMenu",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JMenu."
+        },
+        "description": "return a string representation of this JMenu.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.PropertyPermission",
+      "name": "java.util.PropertyPermission",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "actions"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if name is null.",
+        "guard": {
+          "condition": "name==null",
+          "description": "if name is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if name is empty or if actions is invalid.",
+        "guard": {
+          "condition": "name.isEmpty()",
+          "description": "if name is empty or if actions is invalid."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.PropertyPermission",
+      "name": "implies",
+      "parameterTypes": [
+        "java.security.Permission"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the specified permission is implied by this object, false if not."
+        },
+        "description": "return true if the specified permission is implied by this object, false if not.",
+        "guard": {
+          "condition": "p.implies(p)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the specified permission is implied by this object, false if not."
+        },
+        "description": "return true if the specified permission is implied by this object, false if not.",
+        "guard": {
+          "condition": "p.implies(p)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

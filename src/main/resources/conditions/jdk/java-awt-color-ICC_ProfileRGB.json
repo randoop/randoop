@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.color.ICC_ProfileRGB",
+      "name": "getGamma",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "component"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the gamma value as a float."
+        },
+        "description": "return the gamma value as a float.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,14 +1,24 @@
 package randoop.main;
 
+import static java.util.Collections.emptyMap;
+
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -249,6 +259,9 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Setup pre/post/throws-conditions for operations.
      */
+    if (GenInputsAbstract.use_jdk_specifications) {
+      GenInputsAbstract.specifications.addAll(getJDKSpecificationFiles());
+    }
     SpecificationCollection operationConditions = null;
     try {
       operationConditions = SpecificationCollection.create(GenInputsAbstract.specifications);
@@ -930,6 +943,55 @@ public class GenTests extends GenInputsAbstract {
     }
   }
 
+  /**
+   * Returns the list of JDK specification files from the {@code conditions/jdk} resources directory
+   * in the Randoop jar file.
+   *
+   * @throws BugInRandoopException if there is an error locating the specification files
+   * @return the list of JDK specification files
+   */
+  private Collection<? extends File> getJDKSpecificationFiles() {
+    List<File> fileList = new ArrayList<>();
+    final String specificationDirectory = "/conditions/jdk/";
+    Path directoryPath = getResourceDirectoryPath(specificationDirectory);
+
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(directoryPath, "json")) {
+      for (Path entry : stream) {
+        fileList.add(entry.toFile());
+      }
+    } catch (IOException e) {
+      throw new BugInRandoopException("Error reading JDK specification directory", e);
+    }
+
+    return fileList;
+  }
+
+  /**
+   * Returns the path for the resource directory in the jar file.
+   *
+   * @param resourceDirectory the resource directory relative to the root of the jar file, should
+   *     start with "/"
+   * @throws BugInRandoopException if an error occurs when locating the directory
+   * @return the {@code Path} for the resource directory
+   */
+  private Path getResourceDirectoryPath(String resourceDirectory) {
+    URI directoryURI;
+    try {
+      directoryURI = GenTests.class.getResource(resourceDirectory).toURI();
+    } catch (URISyntaxException e) {
+      throw new BugInRandoopException("Error locating directory " + resourceDirectory, e);
+    }
+
+    FileSystem fileSystem = null;
+    try {
+      fileSystem = FileSystems.newFileSystem(directoryURI, Collections.<String, Object>emptyMap());
+    } catch (IOException e) {
+      throw new BugInRandoopException("Error locating directory " + resourceDirectory, e);
+    }
+    return fileSystem.getPath(resourceDirectory);
+  }
+
+  /** Increments the count of sequence compilation failures. */
   public void countSequenceCompileFailure() {
     this.sequenceCompileFailureCount++;
   }

@@ -1,0 +1,110 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.Caret",
+      "name": "isSelectionVisible",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the caret is visible else false"
+        },
+        "description": "return true if the caret is visible else false",
+        "guard": {
+          "condition": "target.isVisible()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Caret",
+      "name": "setBlinkRate",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rate"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the delay in milliseconds >=0. If this is zero the caret will not blink.",
+        "guard": {
+          "condition": "target==0",
+          "description": "the delay in milliseconds >=0. If this is zero the caret will not blink."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Caret",
+      "name": "getBlinkRate",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==0",
+          "description": "the delay in milliseconds >=0. If this is zero the caret will not blink."
+        },
+        "description": "return the delay in milliseconds >=0. If this is zero the caret will not blink.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.Caret",
+      "name": "moveDot",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dot"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the new position to move the caret to >=0",
+        "guard": {
+          "condition": "dot>=0",
+          "description": "the new position to move the caret to >=0"
+        }
+      }
+    ]
+  }
+]

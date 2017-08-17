@@ -1,0 +1,250 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.AbstractQueuedLongSynchronizer",
+      "name": "tryAcquire",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "arg"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the acquire argument. This value is always the one passed to an acquire method, or is the value saved on entry to a condition wait. The value is otherwise uninterpreted and can represent anything you like.",
+        "guard": {
+          "condition": "target==1",
+          "description": "the acquire argument. This value is always the one passed to an acquire method, or is the value saved on entry to a condition wait. The value is otherwise uninterpreted and can represent anything you like."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.AbstractQueuedLongSynchronizer",
+      "name": "tryRelease",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "arg"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the release argument. This value is always the one passed to a release method, or the current state value upon entry to a condition wait. The value is otherwise uninterpreted and can represent anything you like.",
+        "guard": {
+          "condition": "target==1",
+          "description": "the release argument. This value is always the one passed to a release method, or the current state value upon entry to a condition wait. The value is otherwise uninterpreted and can represent anything you like."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.AbstractQueuedLongSynchronizer",
+      "name": "tryAcquireShared",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "arg"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the acquire argument. This value is always the one passed to an acquire method, or is the value saved on entry to a condition wait. The value is otherwise uninterpreted and can represent anything you like.",
+        "guard": {
+          "condition": "target==1",
+          "description": "the acquire argument. This value is always the one passed to an acquire method, or is the value saved on entry to a condition wait. The value is otherwise uninterpreted and can represent anything you like."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.AbstractQueuedLongSynchronizer",
+      "name": "tryReleaseShared",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "arg"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the release argument. This value is always the one passed to a release method, or the current state value upon entry to a condition wait. The value is otherwise uninterpreted and can represent anything you like.",
+        "guard": {
+          "condition": "target==1",
+          "description": "the release argument. This value is always the one passed to a release method, or the current state value upon entry to a condition wait. The value is otherwise uninterpreted and can represent anything you like."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.AbstractQueuedLongSynchronizer",
+      "name": "isQueued",
+      "parameterTypes": [
+        "java.lang.Thread"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "thread"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the thread is null",
+        "guard": {
+          "condition": "thread==null",
+          "description": "if the thread is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.AbstractQueuedLongSynchronizer",
+      "name": "owns",
+      "parameterTypes": [
+        "java.util.concurrent.locks.AbstractQueuedLongSynchronizer$ConditionObject"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "condition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the condition is null",
+        "guard": {
+          "condition": "condition==null",
+          "description": "if the condition is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.AbstractQueuedLongSynchronizer",
+      "name": "hasWaiters",
+      "parameterTypes": [
+        "java.util.concurrent.locks.AbstractQueuedLongSynchronizer$ConditionObject"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "condition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the condition is null",
+        "guard": {
+          "condition": "condition==null",
+          "description": "if the condition is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.AbstractQueuedLongSynchronizer",
+      "name": "getWaitQueueLength",
+      "parameterTypes": [
+        "java.util.concurrent.locks.AbstractQueuedLongSynchronizer$ConditionObject"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "condition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the condition is null",
+        "guard": {
+          "condition": "condition==null",
+          "description": "if the condition is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.AbstractQueuedLongSynchronizer",
+      "name": "getWaitingThreads",
+      "parameterTypes": [
+        "java.util.concurrent.locks.AbstractQueuedLongSynchronizer$ConditionObject"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "condition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the condition is null",
+        "guard": {
+          "condition": "condition==null",
+          "description": "if the condition is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,933 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "emptyIntSpliterator",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Spliterators.emptySpliterator())",
+          "description": "An empty spliterator"
+        },
+        "description": "return An empty spliterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "emptyLongSpliterator",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Spliterators.emptySpliterator())",
+          "description": "An empty spliterator"
+        },
+        "description": "return An empty spliterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "emptyDoubleSpliterator",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Spliterators.emptySpliterator())",
+          "description": "An empty spliterator"
+        },
+        "description": "return An empty spliterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "additionalCharacteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given array is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the given array is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Spliterators.spliterator())",
+          "description": "A spliterator for an array"
+        },
+        "description": "return A spliterator for an array",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "fromIndex",
+        "toIndex",
+        "additionalCharacteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given array is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the given array is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Spliterators.spliterator())",
+          "description": "A spliterator for an array"
+        },
+        "description": "return A spliterator for an array",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "additionalCharacteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given array is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the given array is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Spliterators.spliterator())",
+          "description": "A spliterator for an array"
+        },
+        "description": "return A spliterator for an array",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "fromIndex",
+        "toIndex",
+        "additionalCharacteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given array is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the given array is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Spliterators.spliterator())",
+          "description": "A spliterator for an array"
+        },
+        "description": "return A spliterator for an array",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "additionalCharacteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given array is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the given array is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Spliterators.spliterator())",
+          "description": "A spliterator for an array"
+        },
+        "description": "return A spliterator for an array",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "fromIndex",
+        "toIndex",
+        "additionalCharacteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given array is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the given array is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Spliterators.spliterator())",
+          "description": "A spliterator for an array"
+        },
+        "description": "return A spliterator for an array",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "additionalCharacteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given array is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the given array is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Spliterators.spliterator())",
+          "description": "A spliterator for an array"
+        },
+        "description": "return A spliterator for an array",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "fromIndex",
+        "toIndex",
+        "additionalCharacteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given array is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the given array is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Spliterators.spliterator())",
+          "description": "A spliterator for an array"
+        },
+        "description": "return A spliterator for an array",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "java.util.Collection",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "characteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the given collection is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(c)",
+          "description": "A spliterator from an iterator"
+        },
+        "description": "return A spliterator from an iterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "java.util.Iterator",
+        "long",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "iterator",
+        "size",
+        "characteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given iterator is null",
+        "guard": {
+          "condition": "iterator==null",
+          "description": "if the given iterator is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "A spliterator from an iterator"
+        },
+        "description": "return A spliterator from an iterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliteratorUnknownSize",
+      "parameterTypes": [
+        "java.util.Iterator",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "iterator",
+        "characteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given iterator is null",
+        "guard": {
+          "condition": "iterator==null",
+          "description": "if the given iterator is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "A spliterator from an iterator"
+        },
+        "description": "return A spliterator from an iterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "java.util.PrimitiveIterator$OfInt",
+        "long",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "iterator",
+        "size",
+        "characteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given iterator is null",
+        "guard": {
+          "condition": "iterator==null",
+          "description": "if the given iterator is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "A spliterator from an iterator"
+        },
+        "description": "return A spliterator from an iterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliteratorUnknownSize",
+      "parameterTypes": [
+        "java.util.PrimitiveIterator$OfInt",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "iterator",
+        "characteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given iterator is null",
+        "guard": {
+          "condition": "iterator==null",
+          "description": "if the given iterator is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "A spliterator from an iterator"
+        },
+        "description": "return A spliterator from an iterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "java.util.PrimitiveIterator$OfLong",
+        "long",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "iterator",
+        "size",
+        "characteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given iterator is null",
+        "guard": {
+          "condition": "iterator==null",
+          "description": "if the given iterator is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "A spliterator from an iterator"
+        },
+        "description": "return A spliterator from an iterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliteratorUnknownSize",
+      "parameterTypes": [
+        "java.util.PrimitiveIterator$OfLong",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "iterator",
+        "characteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given iterator is null",
+        "guard": {
+          "condition": "iterator==null",
+          "description": "if the given iterator is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "A spliterator from an iterator"
+        },
+        "description": "return A spliterator from an iterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliterator",
+      "parameterTypes": [
+        "java.util.PrimitiveIterator$OfDouble",
+        "long",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "iterator",
+        "size",
+        "characteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given iterator is null",
+        "guard": {
+          "condition": "iterator==null",
+          "description": "if the given iterator is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "A spliterator from an iterator"
+        },
+        "description": "return A spliterator from an iterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "spliteratorUnknownSize",
+      "parameterTypes": [
+        "java.util.PrimitiveIterator$OfDouble",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "iterator",
+        "characteristics"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given iterator is null",
+        "guard": {
+          "condition": "iterator==null",
+          "description": "if the given iterator is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "A spliterator from an iterator"
+        },
+        "description": "return A spliterator from an iterator",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "iterator",
+      "parameterTypes": [
+        "java.util.Spliterator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "spliterator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given spliterator is null",
+        "guard": {
+          "condition": "spliterator==null",
+          "description": "if the given spliterator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "iterator",
+      "parameterTypes": [
+        "java.util.Spliterator$OfInt"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "spliterator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given spliterator is null",
+        "guard": {
+          "condition": "spliterator==null",
+          "description": "if the given spliterator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "iterator",
+      "parameterTypes": [
+        "java.util.Spliterator$OfLong"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "spliterator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given spliterator is null",
+        "guard": {
+          "condition": "spliterator==null",
+          "description": "if the given spliterator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Spliterators",
+      "name": "iterator",
+      "parameterTypes": [
+        "java.util.Spliterator$OfDouble"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "spliterator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given spliterator is null",
+        "guard": {
+          "condition": "spliterator==null",
+          "description": "if the given spliterator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,926 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "java.util.concurrent.ConcurrentSkipListMap",
+      "parameterTypes": [
+        "java.util.Map"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified map or any of its keys or values are null",
+        "guard": {
+          "condition": "m==null",
+          "description": "if the specified map or any of its keys or values are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "java.util.concurrent.ConcurrentSkipListMap",
+      "parameterTypes": [
+        "java.util.SortedMap"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified sorted map or any of its keys or values are null",
+        "guard": {
+          "condition": "m==null",
+          "description": "if the specified sorted map or any of its keys or values are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "containsKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "get",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "getOrDefault",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "defaultValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "put",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or value is null",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if the specified key or value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "remove",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "containsValue",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified value is null",
+        "guard": {
+          "condition": "value==null",
+          "description": "if the specified value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "computeIfAbsent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "mappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null or the mappingFunction is null",
+        "guard": {
+          "condition": "key==null || mappingFunction==null",
+          "description": "if the specified key is null or the mappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "computeIfPresent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.BiFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "remappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null or the remappingFunction is null",
+        "guard": {
+          "condition": "key==null || remappingFunction==null",
+          "description": "if the specified key is null or the remappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "compute",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.BiFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "remappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null or the remappingFunction is null",
+        "guard": {
+          "condition": "key==null || remappingFunction==null",
+          "description": "if the specified key is null or the remappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "merge",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object",
+        "java.util.function.BiFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value",
+        "remappingFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or value is null or the remappingFunction is null",
+        "guard": {
+          "condition": "key==null || value==null || remappingFunction==null",
+          "description": "if the specified key or value is null or the remappingFunction is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "putIfAbsent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or value is null",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if the specified key or value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "remove",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "replace",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "oldValue",
+        "newValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any of the arguments are null",
+        "guard": {
+          "condition": "key==null || oldValue==null || newValue==null || target.get(java.lang.Object)==null",
+          "description": "if any of the arguments are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "replace",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key or value is null",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if the specified key or value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "firstKey",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this map is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this map is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "lastKey",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this map is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this map is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "subMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean",
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey",
+        "fromInclusive",
+        "toKey",
+        "toInclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey or toKey is null",
+        "guard": {
+          "condition": "fromKey==null || toKey==null",
+          "description": "if fromKey or toKey is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "headMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toKey",
+        "inclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if toKey is null",
+        "guard": {
+          "condition": "toKey==null",
+          "description": "if toKey is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "tailMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey",
+        "inclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey is null",
+        "guard": {
+          "condition": "fromKey==null",
+          "description": "if fromKey is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "subMap",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey",
+        "toKey"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey or toKey is null",
+        "guard": {
+          "condition": "fromKey==null || toKey==null",
+          "description": "if fromKey or toKey is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "headMap",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toKey"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if toKey is null",
+        "guard": {
+          "condition": "toKey==null",
+          "description": "if toKey is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "tailMap",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromKey"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fromKey is null",
+        "guard": {
+          "condition": "fromKey==null",
+          "description": "if fromKey is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "lowerEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "lowerKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "floorEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "floorKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "ceilingEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "ceilingKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "higherEntry",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.ConcurrentSkipListMap",
+      "name": "higherKey",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

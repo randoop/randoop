@@ -1,0 +1,351 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.DataFlavor",
+      "name": "java.awt.datatransfer.DataFlavor",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "representationClass",
+        "humanPresentableName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if representationClass is null",
+        "guard": {
+          "condition": "representationClass==null",
+          "description": "if representationClass is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.DataFlavor",
+      "name": "java.awt.datatransfer.DataFlavor",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mimeType",
+        "humanPresentableName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if mimeType is null",
+        "guard": {
+          "condition": "mimeType==null",
+          "description": "if mimeType is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.DataFlavor",
+      "name": "java.awt.datatransfer.DataFlavor",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "java.lang.ClassLoader"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mimeType",
+        "humanPresentableName",
+        "classLoader"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if mimeType is null",
+        "guard": {
+          "condition": "mimeType==null",
+          "description": "if mimeType is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.DataFlavor",
+      "name": "java.awt.datatransfer.DataFlavor",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mimeType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if mimeType is null",
+        "guard": {
+          "condition": "mimeType==null",
+          "description": "if mimeType is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.DataFlavor",
+      "name": "getReaderForText",
+      "parameterTypes": [
+        "java.awt.datatransfer.Transferable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "transferable"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the representation class is not one of the seven listed above",
+        "guard": {
+          "condition": "(target.getRepresentationClass()==1) == false",
+          "description": "if the representation class is not one of the seven listed above"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the Transferable is null",
+        "guard": {
+          "condition": "transferable==null",
+          "description": "if the Transferable is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.DataFlavor",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the Object to compare with this",
+        "guard": {
+          "condition": "o==target",
+          "description": "the Object to compare with this"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.DataFlavor",
+      "name": "equals",
+      "parameterTypes": [
+        "java.awt.datatransfer.DataFlavor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "that"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the DataFlavor to compare with this",
+        "guard": {
+          "condition": "that==target",
+          "description": "the DataFlavor to compare with this"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.DataFlavor",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the String (MimeType) is equal; false otherwise or if s is null"
+        },
+        "description": "return true if the String (MimeType) is equal; false otherwise or if s is null",
+        "guard": {
+          "condition": "s.equals(java.lang.Object)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the String (MimeType) is equal; false otherwise or if s is null"
+        },
+        "description": "return true if the String (MimeType) is equal; false otherwise or if s is null",
+        "guard": {
+          "condition": "s.equals(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.DataFlavor",
+      "name": "match",
+      "parameterTypes": [
+        "java.awt.datatransfer.DataFlavor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "that"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the DataFlavor to compare with this",
+        "guard": {
+          "condition": "that==target",
+          "description": "the DataFlavor to compare with this"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.DataFlavor",
+      "name": "isMimeTypeEqual",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mimeType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if mimeType is null",
+        "guard": {
+          "condition": "mimeType==null",
+          "description": "if mimeType is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.DataFlavor",
+      "name": "isMimeTypeEqual",
+      "parameterTypes": [
+        "java.awt.datatransfer.DataFlavor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dataFlavor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the MimeTypes are equal, otherwise false"
+        },
+        "description": "return true if the MimeTypes are equal, otherwise false",
+        "guard": {
+          "condition": "target.getMimeType().equals(java.lang.Object)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the MimeTypes are equal, otherwise false"
+        },
+        "description": "return true if the MimeTypes are equal, otherwise false",
+        "guard": {
+          "condition": "target.getMimeType().equals(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

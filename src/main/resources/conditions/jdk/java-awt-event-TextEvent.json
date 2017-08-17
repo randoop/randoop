@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.TextEvent",
+      "name": "java.awt.event.TextEvent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

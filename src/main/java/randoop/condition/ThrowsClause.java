@@ -39,7 +39,7 @@ public class ThrowsClause {
 
   @Override
   public String toString() {
-    return exceptionType + " " + comment;
+    return exceptionType + " // " + comment;
   }
 
   /**

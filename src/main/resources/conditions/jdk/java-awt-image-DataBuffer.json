@@ -1,0 +1,96 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.DataBuffer",
+      "name": "getDataTypeSize",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if type is less than zero or greater than TYPE_DOUBLE",
+        "guard": {
+          "condition": "type<0",
+          "description": "if type is less than zero or greater than TYPE_DOUBLE"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getSize())",
+          "description": "the size of the data type"
+        },
+        "description": "return the size of the data type",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.DataBuffer",
+      "name": "getOffset",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getOffsets())",
+          "description": "the offset of the default bank."
+        },
+        "description": "return the offset of the default bank.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.DataBuffer",
+      "name": "getOffsets",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getOffset())",
+          "description": "the offsets of all banks."
+        },
+        "description": "return the offsets of all banks.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

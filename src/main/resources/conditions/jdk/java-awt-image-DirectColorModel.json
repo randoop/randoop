@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.DirectColorModel",
+      "name": "createCompatibleWritableRaster",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if w or h is less than or equal to zero",
+        "guard": {
+          "condition": "w<=0 || h<=0",
+          "description": "if w or h is less than or equal to zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

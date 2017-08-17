@@ -1,0 +1,143 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.colorchooser.AbstractColorChooserPanel",
+      "name": "getDisplayName",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the name of the display panel"
+        },
+        "description": "return the name of the display panel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.colorchooser.AbstractColorChooserPanel",
+      "name": "getMnemonic",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result<=0",
+          "description": "KeyEvent.VK constant identifying the mnemonic; <= 0 for no mnemonic"
+        },
+        "description": "return KeyEvent.VK constant identifying the mnemonic; <= 0 for no mnemonic",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.colorchooser.AbstractColorChooserPanel",
+      "name": "getSmallDisplayIcon",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the small display icon"
+        },
+        "description": "return the small display icon",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.colorchooser.AbstractColorChooserPanel",
+      "name": "getLargeDisplayIcon",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the large display icon"
+        },
+        "description": "return the large display icon",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.colorchooser.AbstractColorChooserPanel",
+      "name": "getInt",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "defaultValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(defaultValue)",
+          "description": "the int"
+        },
+        "description": "return the int",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]
