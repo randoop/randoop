@@ -124,7 +124,7 @@ public class SequenceCompiler {
   @SuppressWarnings("unchecked")
   public <T> Class<T> loadClass(String packageName, String classname)
       throws ClassNotFoundException {
-    String qualifiedName = (packageName == null ? "" : packageName + ".") + classname;
+    String qualifiedName = (packageName == null ? "" : (packageName + ".")) + classname;
     return (Class<T>) classLoader.loadClass(qualifiedName);
   }
 }
