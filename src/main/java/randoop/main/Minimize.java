@@ -238,13 +238,12 @@ public class Minimize extends CommandHandler {
     }
 
     // Find the package name of the input file if it has one.
-    String packageName = null;
+    String packageName;
     try {
       PackageDeclaration classPackage = compUnit.getPackage();
-      if (classPackage != null) {
-        packageName = classPackage.getPackageName();
-      }
+      packageName = (classPackage == null) ? null : classPackage.getPackageName();
     } catch (NoSuchElementException e) {
+      packageName = null;
       // No package declaration.
     }
 
@@ -920,7 +919,7 @@ public class Minimize extends CommandHandler {
    *
    * @param file the Java file to be executed
    * @param packageName package name of input Java file
-   * @return the directory to execute the commands in. Null if packageName is null.
+   * @return the directory to execute the commands in, or null if packageName is null
    */
   private static File getExecutionDirectory(File file, String packageName) {
     if (packageName == null) {

@@ -18,7 +18,7 @@ import plume.UtilMDE;
  */
 public class RawSignature {
 
-  /** The package name of the class; empty string for the unnamed package. */
+  /** The package name of the class; null for the unnamed package. */
   private final String packageName;
 
   /** The name of the declaring class of the method. */
@@ -33,7 +33,7 @@ public class RawSignature {
   /**
    * Create a {@link RawSignature} object with the name and parameterTypes.
    *
-   * @param packageName the package name of the class; empty string for the unnamed package
+   * @param packageName the package name of the class; null for the unnamed package
    * @param classname the name of the class
    * @param name the method name; for a constructor, same as the classname
    * @param parameterTypes the method parameter types
@@ -87,7 +87,7 @@ public class RawSignature {
       return false;
     }
     RawSignature that = (RawSignature) object;
-    return this.packageName.equals(that.packageName)
+    return Objects.equals(this.packageName, that.packageName)
         && this.classname.equals(that.classname)
         && this.name.equals(that.name)
         && Arrays.equals(this.parameterTypes, that.parameterTypes);
@@ -111,7 +111,7 @@ public class RawSignature {
       typeNames.add(type.getCanonicalName());
     }
 
-    return ((packageName.isEmpty()) ? "" : packageName + ".")
+    return ((packageName == null) ? "" : packageName + ".")
         + ((classname.equals(name)) ? name : classname + "." + name)
         + "("
         + UtilMDE.join(typeNames, ",")
