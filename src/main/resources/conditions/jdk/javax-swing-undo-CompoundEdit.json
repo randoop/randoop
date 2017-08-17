@@ -1,0 +1,44 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.undo.CompoundEdit",
+      "name": "addEdit",
+      "parameterTypes": [
+        "javax.swing.undo.UndoableEdit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "anEdit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the edit is inProgress; otherwise returns false"
+        },
+        "description": "return true if the edit is inProgress; otherwise returns false",
+        "guard": {
+          "condition": "target.isInProgress()",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the edit is inProgress; otherwise returns false"
+        },
+        "description": "return true if the edit is inProgress; otherwise returns false",
+        "guard": {
+          "condition": "target.isInProgress()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

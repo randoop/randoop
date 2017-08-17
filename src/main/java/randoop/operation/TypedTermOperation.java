@@ -7,7 +7,10 @@ import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/** Represents operations that have no declaring class. */
+/**
+ * Represents operations that have no declaring class, such as cast or array
+ * creation/access/assignment.
+ */
 class TypedTermOperation extends TypedOperation {
 
   /**
@@ -48,22 +51,5 @@ class TypedTermOperation extends TypedOperation {
   @Override
   public String toParsableString() {
     return this.getOperation().toParsableString(null, getInputTypes(), getOutputType());
-  }
-
-  /**
-   * Compares this operation to another {@link TypedOperation}. Ensures that any {@link
-   * TypedTermOperation} objects precedes a {@link TypedClassOperation}. Otherwise, orders {@link
-   * TypedTermOperation} objects with {@link TypedOperation#compareTo(TypedOperation)}.
-   *
-   * @param op the {@link TypedOperation} to compare with this operation
-   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the operations are identical,
-   *     and &gt; 0 if this operation succeeds op
-   */
-  @Override
-  public int compareTo(TypedOperation op) {
-    if (op instanceof TypedClassOperation) {
-      return -1;
-    }
-    return super.compareTo(op);
   }
 }

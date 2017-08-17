@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.DoubleSummaryStatistics",
+      "name": "combine",
+      "parameterTypes": [
+        "java.util.DoubleSummaryStatistics"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "other"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if other is null",
+        "guard": {
+          "condition": "other==null",
+          "description": "if other is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

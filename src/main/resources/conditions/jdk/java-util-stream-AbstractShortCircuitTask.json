@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.stream.AbstractShortCircuitTask",
+      "name": "taskCanceled",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this task or any parent is canceled."
+        },
+        "description": "return true if this task or any parent is canceled.",
+        "guard": {
+          "condition": "target.isCancelled()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

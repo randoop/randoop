@@ -2,7 +2,7 @@ package randoop.main;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import plume.EntryReader;
@@ -19,20 +19,23 @@ class RandoopOptions {
   /** The list of classnames for running Randoop */
   private final Set<String> classnames;
 
-  /** The package name for Randoop generated test classes. */
+  /** The package name for Randoopsgenerated test classes; null if default package. */
   private String packageName;
 
-  /** The basename for generated regression test classes */
+  /** The basename for generated regression test classes. */
   private String regressionBasename;
 
   /** The basename for generated error test classes */
   private String errorBasename;
 
-  /** Creates an empty set of options. */
+  /**
+   * Creates an empty set of options. The regression basename is "RegressionTest" and the error
+   * basename is "ErrorTest".
+   */
   private RandoopOptions() {
     this.options = new ArrayList<>();
-    this.classnames = new HashSet<>();
-    this.packageName = "";
+    this.classnames = new LinkedHashSet<>();
+    this.packageName = null;
     this.regressionBasename = "RegressionTest";
     this.errorBasename = "ErrorTest";
   }
@@ -48,7 +51,22 @@ class RandoopOptions {
     RandoopOptions options = new RandoopOptions();
     options.setOption("junit-output-dir", testEnvironment.sourceDir.toString());
     options.setOption("log", testEnvironment.workingDir + "/randoop-log.txt");
-    options.unsetFlag("check-compilable");
+    options.setFlag("deterministic");
+    options.setOption("timeLimit", "0");
+    options.unsetFlag("minimize-error-test");
+
+    // Use value from environment variable if command-line argument was not set
+    String selectionLog = System.getProperty("randoop.selection.log");
+    if (selectionLog != null && !selectionLog.isEmpty()) {
+      options.setOption("selection-log", selectionLog);
+    }
+
+    // Use value from environment variable if command-line argument was not set
+    String operationLog = System.getProperty("randoop.operation.history.log");
+    if (operationLog != null && !operationLog.isEmpty()) {
+      options.setOption("operation-history-log", operationLog);
+    }
+
     return options;
   }
 
@@ -81,12 +99,25 @@ class RandoopOptions {
   }
 
   /**
+   * Adds an option-flag set to the given value
+   *
+   * @param option the name of the option flag to be set to false
+   */
+  void setFlag(String option, boolean value) {
+    if (value) {
+      setFlag(option);
+    } else {
+      unsetFlag(option);
+    }
+  }
+
+  /**
    * Sets the package name for generated tests, and adds the option to this set.
    *
    * @param packageName the package name
    */
   void setPackageName(String packageName) {
-    if (packageName.length() > 0) {
+    if (packageName != null) {
       setOption("junit-package-name", packageName);
       this.packageName = packageName;
     }

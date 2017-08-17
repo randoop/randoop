@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.event.TreeModelEvent",
+      "name": "getPath",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==1",
+          "description": "an array of Objects, where the first Object is the one stored at the root and the last object is the one stored at the node identified by the path"
+        },
+        "description": "return an array of Objects, where the first Object is the one stored at the root and the last object is the one stored at the node identified by the path",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

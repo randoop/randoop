@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import plume.Option;
@@ -133,23 +134,8 @@ public abstract class AbstractGenerator {
    */
   public final Timer timer = new Timer();
 
-  /**
-   * Time limit for generation. If generation reaches the specified time limit (in milliseconds),
-   * the generator stops generating sequences.
-   */
-  public final long maxTimeMillis;
-
-  /**
-   * Sequence limit for generation. If generation reaches the specified sequence limit, the
-   * generator stops generating sequences.
-   */
-  public final int maxGeneratedSequences;
-
-  /**
-   * Limit for output. Once the specified number of sequences are in the output lists, the generator
-   * will stop.
-   */
-  public final int maxOutputSequences;
+  /** Limits for generation, after which the generator will stop. */
+  public final GenInputsAbstract.Limits limits;
 
   /**
    * The list of statement kinds (methods, constructors, primitive value declarations, etc.) used to
@@ -188,13 +174,13 @@ public abstract class AbstractGenerator {
    * The list of error test sequences to be output as JUnit tests. May include subsequences of other
    * sequences in the list.
    */
-  public List<ExecutableSequence> outErrorSeqs = new ArrayList<>();
+  public List<ExecutableSequence> outErrorSeqs;
 
   /**
    * The list of regression sequences to be output as JUnit tests. May include subsequences of other
    * sequences in the list.
    */
-  public List<ExecutableSequence> outRegressionSeqs = new ArrayList<>();
+  public List<ExecutableSequence> outRegressionSeqs;
 
   /** A filter to determine whether a sequence should be added to the output sequence lists. */
   public Predicate<ExecutableSequence> outputTest;
@@ -204,15 +190,14 @@ public abstract class AbstractGenerator {
 
   private int returnPostConditionCount = 0;
   private int returnPostConditionFailureCount = 0;
+  protected OperationHistoryLogInterface operationHistory;
 
   /**
    * Constructs a generator with the given parameters.
    *
    * @param operations Statements (e.g. methods and constructors) used to create sequences. Cannot
    *     be null.
-   * @param timeMillis maximum time to spend in generation. Must be non-negative.
-   * @param maxGeneratedSequences the maximum number of sequences to generate. Must be non-negative.
-   * @param maxOutSequences the maximum number of sequences to output. Must be non-negative.
+   * @param limits maximum time and number of sequences to generate/output
    * @param componentManager the component manager to use to store sequences during component-based
    *     generation. Can be null, in which case the generator's component manager is initialized as
    *     <code>new ComponentManager()</code>.
@@ -222,18 +207,14 @@ public abstract class AbstractGenerator {
    */
   public AbstractGenerator(
       List<TypedOperation> operations,
-      long timeMillis,
-      int maxGeneratedSequences,
-      int maxOutSequences,
+      GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager,
       FileWriter transitionLog) {
     assert operations != null;
 
-    this.maxTimeMillis = timeMillis;
-    this.maxGeneratedSequences = maxGeneratedSequences;
-    this.maxOutputSequences = maxOutSequences;
+    this.limits = limits;
     this.operations = operations;
     this.executionVisitor = new DummyVisitor();
     this.outputTest = new AlwaysFalse<>();
@@ -247,6 +228,10 @@ public abstract class AbstractGenerator {
     this.stopper = stopper;
     this.listenerMgr = listenerManager;
     this.transitionLog = transitionLog;
+
+    operationHistory = new DefaultOperationHistoryLogger();
+    outRegressionSeqs = new ArrayList<>();
+    outErrorSeqs = new ArrayList<>();
   }
 
   /**
@@ -288,35 +273,42 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Tests stopping criteria and determines whether generation should stop. Criteria are checked in
-   * this order:
+   * Tests stopping criteria.
    *
-   * <ul>
-   *   <li>if there is a listener manager, {@link RandoopListenerManager#stopGeneration()} returns
-   *       true,
-   *   <li>the elapsed generation time is greater than or equal to the max time in milliseconds,
-   *   <li>the number of output sequences is equal to the maximum output,
-   *   <li>the number of generated sequences is equal to the maximum generated sequence count, or
-   *   <li>if there is a stopper, {@link IStopper#stop()} returns true.
-   * </ul>
-   *
-   * @return true if any of stopping criteria are met, otherwise false
+   * @return true iff any stopping criterion is met
    */
-  protected boolean stop() {
-    return (listenerMgr != null && listenerMgr.stopGeneration())
-        || (timer.getTimeElapsedMillis() >= maxTimeMillis)
+  protected boolean shouldStop() {
+    return (limits.timeLimitMillis != 0 && timer.getTimeElapsedMillis() >= limits.timeLimitMillis)
+        || (numAttemptedSequences() >= limits.attemptedLimit)
+        || (numGeneratedSequences() >= limits.generatedLimit)
+        || (numOutputSequences() >= limits.outputLimit)
         || (GenInputsAbstract.stop_on_error_test && numErrorSequences() > 0)
-        || (numOutputSequences() >= maxOutputSequences)
-        || (numGeneratedSequences() >= maxGeneratedSequences)
-        || (stopper != null && stopper.stop());
+        || (stopper != null && stopper.shouldStop())
+        || (listenerMgr != null && listenerMgr.shouldStopGeneration());
   }
 
   /**
-   * Generate an individual test sequence
+   * Attempt to generate a test (a sequence).
    *
    * @return a test sequence, may be null
    */
   public abstract ExecutableSequence step();
+
+  /**
+   * Returns the count of attempts to generate a sequence so far.
+   *
+   * @return the number of attempts to generate a sequence so far
+   */
+  public int numAttemptedSequences() {
+    return num_steps;
+  }
+
+  /**
+   * Returns the count of sequences generated so far by the generator.
+   *
+   * @return the number of sequences generated
+   */
+  public abstract int numGeneratedSequences();
 
   /**
    * Returns the count of generated sequence currently for output.
@@ -337,16 +329,9 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Returns the count of sequences generated so far by the generator.
-   *
-   * @return the number of sequences generated
-   */
-  public abstract int numGeneratedSequences();
-
-  /**
    * Creates and executes new sequences until stopping criteria is met.
    *
-   * @see AbstractGenerator#stop()
+   * @see AbstractGenerator#shouldStop()
    * @see AbstractGenerator#step()
    */
   public void explore() {
@@ -356,8 +341,8 @@ public abstract class AbstractGenerator {
 
     timer.startTiming();
 
-    if (!GenInputsAbstract.noprogressdisplay) {
-      progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE, 200);
+    if (GenInputsAbstract.progressdisplay) {
+      progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE);
       progressDisplay.start();
     }
 
@@ -373,7 +358,7 @@ public abstract class AbstractGenerator {
       listenerMgr.explorationStart();
     }
 
-    while (!stop()) {
+    while (!shouldStop()) {
 
       // Notify listeners we are about to perform a generation step.
       if (listenerMgr != null) {
@@ -393,6 +378,11 @@ public abstract class AbstractGenerator {
         listenerMgr.generationStepPost(eSeq);
       }
 
+      if ((GenInputsAbstract.progressintervalsteps != -1)
+          && (num_steps % GenInputsAbstract.progressintervalsteps == 0)) {
+        progressDisplay.displayWithoutTime();
+      }
+
       if (eSeq == null) {
         continue;
       }
@@ -402,8 +392,10 @@ public abstract class AbstractGenerator {
       handleConditionTransition(eSeq);
 
       if (outputTest.test(eSeq)) {
+        TypedOperation operation = eSeq.getOperation();
         if (!eSeq.hasInvalidBehavior()) {
           if (eSeq.hasFailure()) {
+            operationHistory.add(operation, OperationOutcome.ERROR_SEQUENCE);
             num_failing_sequences++;
             outErrorSeqs.add(eSeq);
           } else {
@@ -419,18 +411,16 @@ public abstract class AbstractGenerator {
         System.out.printf("allSequences.size() = %d%n", numGeneratedSequences());
       }
 
-      if (Log.isLoggingOn()) {
-        Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());
-        Log.logLine("allSequences.size()=" + numGeneratedSequences());
-      }
+      Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());
+      Log.logLine("allSequences.size()=" + numGeneratedSequences());
     }
 
-    if (!GenInputsAbstract.noprogressdisplay && progressDisplay != null) {
-      progressDisplay.display();
+    if (GenInputsAbstract.progressdisplay && progressDisplay != null) {
+      progressDisplay.displayWithTime();
       progressDisplay.shouldStop = true;
     }
 
-    if (!GenInputsAbstract.noprogressdisplay) {
+    if (GenInputsAbstract.progressdisplay) {
       System.out.println();
       System.out.println("Normal method executions: " + ReflectionExecutor.normalExecs());
       System.out.println("Exceptional method executions: " + ReflectionExecutor.excepExecs());
@@ -454,7 +444,7 @@ public abstract class AbstractGenerator {
    *
    * @return return all generated sequences
    */
-  public abstract Set<Sequence> getAllSequences();
+  public abstract LinkedHashSet<Sequence> getAllSequences();
 
   /**
    * Returns the set of sequences that are used as inputs in other sequences (and can thus be
@@ -479,7 +469,10 @@ public abstract class AbstractGenerator {
     Set<Sequence> subsumed_seqs = this.getSubsumedSequences();
     for (ExecutableSequence es : outRegressionSeqs) {
       if (!subsumed_seqs.contains(es.sequence)) {
+        operationHistory.add(es.getOperation(), OperationOutcome.REGRESSION_SEQUENCE);
         unique_seqs.add(es);
+      } else {
+        operationHistory.add(es.getOperation(), OperationOutcome.SEQUENCE_DISCARDED);
       }
     }
     return unique_seqs;
@@ -509,7 +502,25 @@ public abstract class AbstractGenerator {
    *
    * @param s the current sequence
    */
-  protected void setCurrentSequence(Sequence s) {
+  void setCurrentSequence(Sequence s) {
     currSeq = s;
+  }
+
+  /**
+   * Sets the operation history logger for this generator.
+   *
+   * @param logger the operation history logger to use for this generator
+   */
+  public void setOperationHistoryLogger(OperationHistoryLogInterface logger) {
+    operationHistory = logger;
+  }
+
+  /**
+   * Return the operation history logger for this generator
+   *
+   * @return the operation history logger for this generator
+   */
+  public OperationHistoryLogInterface getOperationHistory() {
+    return operationHistory;
   }
 }

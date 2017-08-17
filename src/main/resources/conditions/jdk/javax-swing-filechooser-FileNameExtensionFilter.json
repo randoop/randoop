@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.filechooser.FileNameExtensionFilter",
+      "name": "javax.swing.filechooser.FileNameExtensionFilter",
+      "parameterTypes": [
+        "java.lang.String",
+        "[Ljava.lang.String;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "description",
+        "extensions"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if extensions is null, empty, contains null, or contains an empty string",
+        "guard": {
+          "condition": "extensions.length==0",
+          "description": "if extensions is null, empty, contains null, or contains an empty string"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

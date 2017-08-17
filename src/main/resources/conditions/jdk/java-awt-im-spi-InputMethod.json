@@ -1,0 +1,86 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.im.spi.InputMethod",
+      "name": "setInputMethodContext",
+      "parameterTypes": [
+        "java.awt.im.spi.InputMethodContext"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "context"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if context is null",
+        "guard": {
+          "condition": "context==null",
+          "description": "if context is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.im.spi.InputMethod",
+      "name": "setLocale",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale is null",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.im.spi.InputMethod",
+      "name": "dispatchEvent",
+      "parameterTypes": [
+        "java.awt.AWTEvent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "event"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if event is null",
+        "guard": {
+          "condition": "event==null",
+          "description": "if event is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

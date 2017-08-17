@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletionService",
+      "name": "submit",
+      "parameterTypes": [
+        "java.util.concurrent.Callable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletionService",
+      "name": "submit",
+      "parameterTypes": [
+        "java.lang.Runnable",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "task",
+        "result"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the task is null",
+        "guard": {
+          "condition": "task==null",
+          "description": "if the task is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

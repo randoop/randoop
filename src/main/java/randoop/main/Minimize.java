@@ -1,12 +1,13 @@
 package randoop.main;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
@@ -15,7 +16,6 @@ import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.DoubleLiteralExpr;
 import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.LongLiteralExpr;
@@ -29,17 +29,15 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,6 +61,13 @@ import plume.Option;
 import plume.OptionGroup;
 import plume.Options;
 import plume.TimeLimitProcess;
+import randoop.Globals;
+import randoop.output.ClassRenamingVisitor;
+import randoop.output.ClassTypeNameSimplifyVisitor;
+import randoop.output.ClassTypeVisitor;
+import randoop.output.FieldAccessTypeNameSimplifyVisitor;
+import randoop.output.MethodTypeNameSimplifyVisitor;
+import randoop.output.PrimitiveAndWrappedTypeVarNameCollector;
 
 /**
  * This program minimizes a failing JUnit test suite. Its three command-line arguments are:
@@ -87,8 +92,9 @@ import plume.TimeLimitProcess;
  * version of the current statement and continues.
  */
 public class Minimize extends CommandHandler {
-  @OptionGroup(value = "Test case minimization options")
   /** The Java file whose failing tests will be minimized. */
+  @SuppressWarnings("WeakerAccess")
+  @OptionGroup(value = "Test case minimization options")
   @Option("File containing the JUnit test suite to be minimized")
   public static String suitepath;
 
@@ -96,18 +102,21 @@ public class Minimize extends CommandHandler {
    * Classpath that includes dependencies needed to compile and run the JUnit test suite being
    * minimized.
    */
+  @SuppressWarnings("WeakerAccess")
   @Option("Classpath to compile and run the JUnit test suite")
   public static String suiteclasspath;
 
   /** The maximum number of seconds allowed for the entire test suite to run. */
+  @SuppressWarnings("WeakerAccess")
   @Option("Timeout, in seconds, for the whole test suite")
   public static int testsuitetimeout = 30;
 
   /** Output verbose output to standard output if true. */
+  @SuppressWarnings("WeakerAccess")
   @Option("Verbose, flag for verbose output")
   public static boolean verboseminimizer = false;
 
-  public Minimize() {
+  Minimize() {
     super(
         "minimize",
         "Minimize a failing JUnit test suite.",
@@ -170,8 +179,11 @@ public class Minimize extends CommandHandler {
       System.exit(1);
     }
 
+    // File object pointing to the file to be minimized.
+    File originalFile = new File(suitepath);
+
     // Call the main minimize method.
-    return mainMinimize(suitepath, suiteclasspath, testsuitetimeout, verboseminimizer);
+    return mainMinimize(originalFile, suiteclasspath, testsuitetimeout, verboseminimizer);
   }
 
   /**
@@ -192,7 +204,7 @@ public class Minimize extends CommandHandler {
    * The "expected output" will be used during subsequent runs of the modified test suite to
    * determine whether or not the test suite still fails in the same way.
    *
-   * @param filePath the path to the Java file that is being minimized
+   * @param file the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @param verboseOutput whether to produce verbose output
@@ -200,60 +212,65 @@ public class Minimize extends CommandHandler {
    *     the original file
    */
   public static boolean mainMinimize(
-      String filePath, String classPath, int timeoutLimit, boolean verboseOutput) {
-    System.out.println("Reading and parsing: " + filePath);
+      File file, String classPath, int timeoutLimit, boolean verboseOutput) {
+    System.out.println("Minimizing: " + file.getName() + ".");
+
+    if (verboseOutput) {
+      System.out.println("Reading and parsing file.");
+    }
 
     // Read and parse input Java file.
     CompilationUnit compUnit;
-    try (FileInputStream inputStream = new FileInputStream(filePath)) {
+    try (FileInputStream inputStream = new FileInputStream(file)) {
       compUnit = JavaParser.parse(inputStream);
     } catch (ParseException e) {
-      System.err.println("Error parsing Java file: " + filePath);
+      System.err.println("Error parsing Java file: " + file);
       e.printStackTrace();
       return false;
     } catch (IOException e) {
-      System.err.println("Error reading Java file: " + filePath);
+      System.err.println("Error reading Java file: " + file);
       e.printStackTrace();
       return false;
     }
 
-    System.out.println("Getting expected output.");
+    if (verboseOutput) {
+      System.out.println("Getting expected output.");
+    }
 
     // Find the package name of the input file if it has one.
-    String packageName = null;
+    String packageName;
     try {
       PackageDeclaration classPackage = compUnit.getPackage();
-      if (classPackage != null) {
-        packageName = classPackage.getPackageName();
-      }
+      packageName = (classPackage == null) ? null : classPackage.getPackageName();
     } catch (NoSuchElementException e) {
+      packageName = null;
       // No package declaration.
     }
 
-    File originalFile = new File(filePath);
-
-    // Create a new file; the file and the class within will have "Minimized" postpended.
+    // Create a new file; the file and the class within will have
+    // "Minimized" postpended.
+    String fileNameStr = file.getAbsolutePath();
     String minimizedFileName =
-        new StringBuilder(filePath).insert(filePath.lastIndexOf('.'), SUFFIX).toString();
+        new StringBuilder(fileNameStr).insert(fileNameStr.lastIndexOf('.'), SUFFIX).toString();
     File minimizedFile = new File(minimizedFileName);
+
     // Rename the overall class to [original class name][suffix].
-    String origClassName = FilenameUtils.removeExtension(originalFile.getName());
-    new ClassRenamer().visit(compUnit, new String[] {origClassName, SUFFIX});
+    String origClassName = FilenameUtils.removeExtension(file.getName());
+    new ClassRenamingVisitor().visit(compUnit, new String[] {origClassName, SUFFIX});
+
     // Write the compilation unit to the minimized file.
     writeToFile(compUnit, minimizedFile);
 
     // Compile the Java file and check that the exit value is 0.
     if (compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit) != 0) {
-      System.err.println("Error when compiling file " + filePath + ". Aborting.");
+      System.err.println("Error when compiling file " + file + ". Aborting.");
       return false;
     }
 
+    // expectedOutput is a map from method name to failure stack trace with
+    // line numbers removed.
     String runResult = runJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
-
-    // expectedOutput is a map from method name to failure stack trace with line numbers removed.
     Map<String, String> expectedOutput = normalizeJUnitOutput(runResult);
-
-    System.out.println("Minimizing: " + filePath);
 
     // Minimize the Java test suite.
     minimizeTestSuite(
@@ -268,12 +285,20 @@ public class Minimize extends CommandHandler {
     // Cleanup: simplify type names and sort the import statements.
     compUnit =
         simplifyTypeNames(
-            compUnit, packageName, minimizedFile, classPath, expectedOutput, timeoutLimit);
+            compUnit,
+            packageName,
+            minimizedFile,
+            classPath,
+            expectedOutput,
+            timeoutLimit,
+            verboseOutput);
 
     writeToFile(compUnit, minimizedFile);
 
-    System.out.println("Minimizing complete.\n");
-    System.out.println("Original file length: " + getFileLength(originalFile) + " lines.");
+    // Delete the .class file associated with the minimized Java file.
+    cleanUp(minimizedFile, verboseOutput);
+
+    System.out.println("Original file length: " + getFileLength(file) + " lines.");
     System.out.println("Minimized file length: " + getFileLength(minimizedFile) + " lines.");
 
     return true;
@@ -288,7 +313,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput whether to print information about minimization status
+   * @param verboseOutput whether or not to output information about minimization status
    */
   private static void minimizeTestSuite(
       CompilationUnit cu,
@@ -298,6 +323,11 @@ public class Minimize extends CommandHandler {
       Map<String, String> expectedOutput,
       int timeoutLimit,
       boolean verboseOutput) {
+    System.out.println("Minimizing test suite.");
+
+    int numberOfTestMethods = getNumberOfTestMethods(cu);
+    int numberOfMinimizedTests = 0;
+
     for (TypeDeclaration type : cu.getTypes()) {
       for (BodyDeclaration member : type.getMembers()) {
         if (member instanceof MethodDeclaration) {
@@ -306,10 +336,7 @@ public class Minimize extends CommandHandler {
           // Minimize the method only if it is a JUnit test method.
           if (isTestMethod(method)) {
             minimizeMethod(method, cu, packageName, file, classpath, expectedOutput, timeoutLimit);
-
-            if (verboseOutput) {
-              System.out.println("Minimized method " + method.getName() + ".");
-            }
+            printProgress(++numberOfMinimizedTests, numberOfTestMethods, method.getName());
           }
         }
       }
@@ -356,18 +383,20 @@ public class Minimize extends CommandHandler {
       int timeoutLimit) {
     List<Statement> statements = method.getBody().getStmts();
 
-    // Map from primitive variable name to the variable's value extracted from a passing assertion.
-    Map<String, String> primitiveValues = new HashMap<String, String>();
+    // Map from primitive variable name to the variable's value extracted
+    // from a passing assertion.
+    Map<String, String> primitiveValues = new HashMap<>();
 
     // Find all the names of the primitive and wrapped types.
-    Set<String> primitiveAndWrappedTypes = new HashSet<String>();
+    Set<String> primitiveAndWrappedTypes = new HashSet<>();
     new PrimitiveAndWrappedTypeVarNameCollector().visit(compUnit, primitiveAndWrappedTypes);
 
     // Iterate through the list of statements, from last to first.
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
 
-      // Remove the current statement. We will re-insert simplifications of it.
+      // Remove the current statement. We will re-insert simplifications
+      // of it.
       statements.remove(i);
 
       // Obtain a list of possible replacements for the current statement.
@@ -444,8 +473,7 @@ public class Minimize extends CommandHandler {
             BinaryExpr binaryExp = (BinaryExpr) mExp;
             // Check that the operator is an equality operator.
             if (binaryExp.getOperator().equals(BinaryExpr.Operator.equals)) {
-              // Retrieve and store the value associated with the
-              // variable in the assertion.
+              // Retrieve and store the value associated with the variable in the assertion.
               Expression leftExpr = binaryExp.getLeft();
               Expression rightExpr = binaryExp.getRight();
 
@@ -492,7 +520,7 @@ public class Minimize extends CommandHandler {
    */
   private static List<Statement> getStatementReplacements(
       Statement currStmt, Map<String, String> primitiveValues) {
-    List<Statement> replacements = new ArrayList<Statement>();
+    List<Statement> replacements = new ArrayList<>();
 
     // Null represents removal of the statement.
     replacements.add(null);
@@ -502,10 +530,12 @@ public class Minimize extends CommandHandler {
       if (exp instanceof VariableDeclarationExpr) {
         VariableDeclarationExpr vdExpr = (VariableDeclarationExpr) exp;
 
-        // Simplify right hand side to zero-equivalent value: 0, false, or null.
+        // Simplify right hand side to zero-equivalent value: 0, false,
+        // or null.
         replacements.addAll(rhsAssignZeroValue(vdExpr));
 
-        // Simplify right hand side to a value that was previously found in a passing assertion.
+        // Simplify right hand side to a value that was previously found
+        // in a passing assertion.
         Statement rhsAssertValStmt = rhsAssignValueFromPassingAssertion(vdExpr, primitiveValues);
         if (rhsAssertValStmt != null) {
           replacements.add(rhsAssertValStmt);
@@ -531,7 +561,7 @@ public class Minimize extends CommandHandler {
    *     expression
    */
   private static List<Statement> rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
-    List<Statement> resultList = new ArrayList<Statement>();
+    List<Statement> resultList = new ArrayList<>();
 
     if (vdExpr.getVars().size() != 1) {
       // Number of variables declared in this expression is not 1.
@@ -719,6 +749,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @param verboseOutput whether or not to output information about minimization status
    * @return {@code CompilationUnit} with fully-qualified type names simplified to simple type names
    */
   private static CompilationUnit simplifyTypeNames(
@@ -727,11 +758,15 @@ public class Minimize extends CommandHandler {
       File file,
       String classpath,
       Map<String, String> expectedOutput,
-      int timeoutLimit) {
-    // Set of fully-qualified type names that are used in variable
-    // declarations.
+      int timeoutLimit,
+      boolean verboseOutput) {
+    if (verboseOutput) {
+      System.out.println("Adding imports and simplifying type names.");
+    }
+
+    // Set of fully-qualified type names that are used in variable declarations.
     Set<ClassOrInterfaceType> fullyQualifiedNames =
-        new TreeSet<ClassOrInterfaceType>(
+        new TreeSet<>(
             new Comparator<ClassOrInterfaceType>() {
               @Override
               public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
@@ -745,7 +780,7 @@ public class Minimize extends CommandHandler {
       // Copy and modify the compilation unit.
       CompilationUnit compUnitWithSimpleTypeNames = (CompilationUnit) result.clone();
 
-      // String representation of the fully qualified type name.
+      // String representation of the fully-qualified type name.
       String typeName = type.getScope() + "." + type.getName();
 
       // Check that the type is not in the java.lang package.
@@ -755,6 +790,7 @@ public class Minimize extends CommandHandler {
       }
 
       // Simplify class type names, method call names, and field names.
+      //XXX this should be handled by a single visitor that uses the full set of types
       new ClassTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
       new MethodTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
       new FieldAccessTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
@@ -789,6 +825,7 @@ public class Minimize extends CommandHandler {
       String packageName,
       Map<String, String> expectedOutput,
       int timeoutLimit) {
+
     // Zero exit status means success.
     if (compileJavaFile(file, classpath, packageName, timeoutLimit) != 0) {
       return false;
@@ -882,7 +919,7 @@ public class Minimize extends CommandHandler {
    *
    * @param file the Java file to be executed
    * @param packageName package name of input Java file
-   * @return the directory to execute the commands in. Null if packageName is null.
+   * @return the directory to execute the commands in, or null if packageName is null
    */
   private static File getExecutionDirectory(File file, String packageName) {
     if (packageName == null) {
@@ -956,31 +993,31 @@ public class Minimize extends CommandHandler {
     Future<String> errOutput = fixedThreadPool.submit(errCallable);
     fixedThreadPool.shutdown();
 
+    String stdOutputString;
+    String errOutputString;
+    int exitValue;
+
     // Wait for the TimeLimitProcess to finish.
     try {
       timeLimitProcess.waitFor();
-    } catch (InterruptedException e) {
-      return new Outputs("", "Process was interrupted while waiting.", 1);
-    }
-    if (timeLimitProcess.timed_out()) {
-      timeLimitProcess.destroy();
-      return new Outputs("", "Process timed out after " + timeoutLimit + " seconds.", 1);
-    }
-
-    String stdOutputString;
-    String errOutputString;
-    try {
       stdOutputString = stdOutput.get();
       errOutputString = errOutput.get();
+      exitValue = timeLimitProcess.exitValue();
     } catch (InterruptedException e) {
       return new Outputs("", "Process was interrupted while waiting.", 1);
     } catch (ExecutionException e) {
       return new Outputs("", "A computation in the process threw an exception.", 1);
+    } finally {
+      timeLimitProcess.destroy();
+    }
+
+    if (timeLimitProcess.timed_out()) {
+      return new Outputs("", "Process timed out after " + timeoutLimit + " seconds.", 1);
     }
 
     // Collect and return the results from the standard output and error
     // output.
-    return new Outputs(stdOutputString, errOutputString, timeLimitProcess.exitValue());
+    return new Outputs(stdOutputString, errOutputString, exitValue);
   }
 
   /**
@@ -996,7 +1033,7 @@ public class Minimize extends CommandHandler {
     BufferedReader bufReader = new BufferedReader(new StringReader(input));
 
     String methodName = null;
-    Map<String, String> resultMap = new HashMap<String, String>();
+    Map<String, String> resultMap = new HashMap<>();
 
     StringBuilder result = new StringBuilder();
     try {
@@ -1032,7 +1069,7 @@ public class Minimize extends CommandHandler {
             // Remove the substring containing the line number.
             line = line.substring(0, lParenIndex);
           }
-          result.append(line + "\n");
+          result.append(line).append(Globals.lineSep);
         }
       }
       bufReader.close();
@@ -1055,183 +1092,12 @@ public class Minimize extends CommandHandler {
    */
   private static void writeToFile(CompilationUnit compUnit, File file) {
     // Write the compilation unit to the file.
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+    try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), UTF_8)) {
       bw.write(compUnit.toString());
     } catch (IOException e) {
       System.err.println("Error writing to file: " + file);
       e.printStackTrace();
       System.exit(1);
-    }
-  }
-
-  /** Visit every class or interface type. */
-  private static class ClassRenamer extends VoidVisitorAdapter<Object> {
-    /**
-     * Rename the overall class to class name + suffix.
-     *
-     * @param arg a String array where the first element is the class name and the second element is
-     *     the suffix that we will append
-     */
-    @Override
-    public void visit(ClassOrInterfaceDeclaration n, Object arg) {
-      String[] params = (String[]) arg;
-      String className = params[0];
-      String suffix = params[1];
-      if (className.equals(n.getName())) {
-        n.setName(className + suffix);
-      }
-    }
-  }
-
-  /** Visit every class or interface type. */
-  private static class ClassTypeVisitor extends VoidVisitorAdapter<Object> {
-    /**
-     * If the class or interface type is in a package that's not visible by default, add the type to
-     * the set of types that is passed in as an argument. For instance, suppose that the type {@code
-     * org.apache.commons.lang3.MutablePair} appears in the program. This type will be added to the
-     * set of types. This is used for type name simplifications to simplify {@code
-     * org.apache.commons.lang3.MutablePair} into {@code MutablePair} after adding the import
-     * statement {@code import org.apache.commons.lang3.MutablePair;}.
-     *
-     * @param arg a set of {@code Type} objects; will be modified if the class or interface type is
-     *     a non-visible type by default
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public void visit(ClassOrInterfaceType n, Object arg) {
-      Set<ClassOrInterfaceType> params = (Set<ClassOrInterfaceType>) arg;
-
-      // If the class type is a generic types, visit each one of the
-      // parameter types as well.
-      for (Type argType : n.getTypeArgs()) {
-        ReferenceType rType = (ReferenceType) argType;
-        if (rType.getType() instanceof ClassOrInterfaceType) {
-          this.visit((ClassOrInterfaceType) rType.getType(), arg);
-        }
-      }
-
-      // Add the type to the set if it's not a visible type be default.
-      if (n.getScope() != null) {
-        // Add a copy, so that modifying removing the scope later won't
-        // affect this instance which is used for comparisons only.
-        params.add((ClassOrInterfaceType) n.clone());
-      }
-    }
-  }
-
-  /**
-   * Visit every variable declaration. Adds to a set of strings for all the names of variables that
-   * are either primitive or wrapped types.
-   */
-  private static class PrimitiveAndWrappedTypeVarNameCollector extends VoidVisitorAdapter<Object> {
-    /**
-     * Visit every variable declaration.
-     *
-     * @param arg a set containing the names of all the variables that are of primitive or wrapped
-     *     types.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public void visit(VariableDeclarationExpr n, Object arg) {
-      Set<String> variables = (Set<String>) arg;
-
-      ClassOrInterfaceType classType = null;
-      if (n.getType() instanceof ReferenceType) {
-        ReferenceType rType = (ReferenceType) n.getType();
-        if (rType.getType() instanceof ClassOrInterfaceType) {
-          classType = (ClassOrInterfaceType) rType.getType();
-        }
-      }
-
-      // Check if the variable's type is a primitive or a wrapped type.
-      if (n.getType() instanceof PrimitiveType || (classType != null && classType.isBoxedType())) {
-        for (VariableDeclarator vd : n.getVars()) {
-          variables.add(vd.getId().getName());
-        }
-      }
-    }
-  }
-
-  /** Visit every class or interface type. */
-  private static class ClassTypeNameSimplifyVisitor extends VoidVisitorAdapter<Object> {
-    /**
-     * Visit every class or interface type. Simplify the type name by removing the scope component
-     * if the visited object is of the same type as that contained in the argument that is passed
-     * in.
-     *
-     * @param arg a {@code ClassOrInterfaceType} object
-     */
-    @Override
-    public void visit(ClassOrInterfaceType n, Object arg) {
-      ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
-
-      // Remove the scope component of the type.
-      if (n.getScope() != null
-          && typeName.getScope() != null
-          && typeName.getScope().equals(n.getScope())
-          && typeName.getName().equals(n.getName())) {
-        n.setScope(null);
-      }
-
-      // If the class type is a generic types, visit each one of the
-      // parameter types as well.
-      for (Type argType : n.getTypeArgs()) {
-        ReferenceType rType = (ReferenceType) argType;
-        if (rType.getType() instanceof ClassOrInterfaceType) {
-          this.visit((ClassOrInterfaceType) rType.getType(), arg);
-        }
-      }
-    }
-  }
-
-  /** Visit every method call expression. */
-  private static class MethodTypeNameSimplifyVisitor extends VoidVisitorAdapter<Object> {
-    /**
-     * Visit every method call expression. Simplify the type name by removing the scope component if
-     * the visited object is of the same type as that contained in the argument that is passed in.
-     *
-     * @param arg a {@code ClassOrInterfaceType} object
-     */
-    @Override
-    public void visit(MethodCallExpr n, Object arg) {
-      ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
-      if (n.getScope() != null
-          && typeName.getScope() != null
-          && n.getScope().toString().equals(typeName.getScope() + "." + typeName.getName())) {
-        try {
-          // Set scope to be just the name of the type.
-          n.setScope(JavaParser.parseExpression(typeName.getName()));
-        } catch (ParseException e) {
-          // Error parsing type name.
-          e.printStackTrace();
-        }
-      }
-    }
-  }
-
-  /** Visit every field access expression. */
-  private static class FieldAccessTypeNameSimplifyVisitor extends VoidVisitorAdapter<Object> {
-    /**
-     * Visit every field access expression. Simplify the type name by removing the scope component
-     * if the visited object is of the same type as that contained in the argument that is passed
-     * in.
-     *
-     * @param arg a {@code ClassOrInterfaceType} object
-     */
-    @Override
-    public void visit(FieldAccessExpr n, Object arg) {
-      ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
-      if (n.getScope() != null
-          && typeName.getScope() != null
-          && n.getScope().toString().equals(typeName.getScope() + "." + typeName.getName())) {
-        try {
-          // Set scope to be just the name of the type.
-          n.setScope(JavaParser.parseExpression(typeName.getName()));
-        } catch (ParseException e) {
-          // Error parsing type name.
-          e.printStackTrace();
-        }
-      }
     }
   }
 
@@ -1259,7 +1125,8 @@ public class Minimize extends CommandHandler {
     for (ImportDeclaration im : importDeclarations) {
       String currImportStr = im.toString().trim();
 
-      // Check if the compilation unit already includes the import exactly.
+      // Check if the compilation unit already includes the import
+      // exactly.
       if (importStr.equals(currImportStr)) {
         return;
       }
@@ -1330,7 +1197,7 @@ public class Minimize extends CommandHandler {
   /**
    * Calculate the length of a file, by number of lines.
    *
-   * @param file the file to compute the length of.
+   * @param file the file to compute the length of
    * @return the number of lines in the file. Returns -1 if an exception occurs while reading the
    *     file
    */
@@ -1338,7 +1205,7 @@ public class Minimize extends CommandHandler {
     int lines = 0;
     try {
       // Read and count the number of lines in the file.
-      BufferedReader reader = new BufferedReader(new FileReader(file));
+      BufferedReader reader = Files.newBufferedReader(file.toPath(), UTF_8);
       while (reader.readLine() != null) {
         lines++;
       }
@@ -1351,6 +1218,62 @@ public class Minimize extends CommandHandler {
       System.exit(1);
     }
     return lines;
+  }
+
+  /**
+   * Deletes the .class file associated with the outputFile.
+   *
+   * @param outputFile the source file for the class file to be removed
+   * @param verboseOutput whether to print information about minimization status
+   */
+  private static void cleanUp(File outputFile, boolean verboseOutput) {
+    System.out.println("Minimizing complete.");
+
+    String outputClassFileStr =
+        FilenameUtils.removeExtension(outputFile.getAbsolutePath()).concat(".class");
+    File outputClassFile = new File(outputClassFileStr);
+    try {
+      boolean success = Files.deleteIfExists(outputClassFile.toPath());
+
+      if (verboseOutput && success) {
+        System.out.println("Minimizer cleanup: Removed .class file.");
+      }
+    } catch (IOException e) {
+      System.err.println("IOException when cleaning up .class file.");
+    }
+  }
+
+  /**
+   * Return the number of JUnit test methods in a compilation unit
+   *
+   * @param compUnit the compilation unit to count the number of unit test methods
+   * @return the number of unit test methods in compUnit
+   */
+  private static int getNumberOfTestMethods(CompilationUnit compUnit) {
+    int numberOfTestMethods = 0;
+    for (TypeDeclaration type : compUnit.getTypes()) {
+      for (BodyDeclaration member : type.getMembers()) {
+        if (member instanceof MethodDeclaration) {
+          MethodDeclaration method = (MethodDeclaration) member;
+          if (isTestMethod(method)) {
+            numberOfTestMethods += 1;
+          }
+        }
+      }
+    }
+    return numberOfTestMethods;
+  }
+
+  /**
+   * Output the minimizer's current progress
+   *
+   * @param currentTestIndex the number of tests that have been minimized so far
+   * @param totalTests the total number of tests in the input test suite
+   * @param testName the current test method being minimized
+   */
+  private static void printProgress(int currentTestIndex, int totalTests, String testName) {
+    System.out.println(
+        currentTestIndex + "/" + totalTests + " tests minimized, Minimized method: " + testName);
   }
 
   /**

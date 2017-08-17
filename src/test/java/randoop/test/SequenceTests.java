@@ -1,5 +1,6 @@
 package randoop.test;
 
+import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -8,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -99,7 +99,7 @@ public class SequenceTests {
 
     RecordListReader reader = new RecordListReader("TEST", processor);
     InputStream stream = SequenceTests.class.getResourceAsStream("/sequence_tests_script.txt");
-    BufferedReader b = new BufferedReader(new InputStreamReader(stream));
+    BufferedReader b = new BufferedReader(new InputStreamReader(stream, UTF_8));
     reader.parse(b);
   }
 
@@ -116,18 +116,13 @@ public class SequenceTests {
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
-    ExpectedExceptionCheckGen expectation;
-    expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
     testGen =
         new ExtendGenerator(
             new ContractCheckingVisitor(
                 contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
             new RegressionCaptureVisitor(
-                expectation,
-                new MultiMap<Type, TypedOperation>(),
-                new LinkedHashSet<TypedOperation>(),
-                visibility,
-                true));
+                expectation, new MultiMap<Type, TypedOperation>(), visibility, true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886

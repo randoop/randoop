@@ -1,0 +1,88 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.event.SwingPropertyChangeSupport",
+      "name": "javax.swing.event.SwingPropertyChangeSupport",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "sourceBean"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if sourceBean is null",
+        "guard": {
+          "condition": "sourceBean==null",
+          "description": "if sourceBean is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.event.SwingPropertyChangeSupport",
+      "name": "javax.swing.event.SwingPropertyChangeSupport",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "sourceBean",
+        "notifyOnEDT"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if sourceBean is null",
+        "guard": {
+          "condition": "sourceBean==null",
+          "description": "if sourceBean is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.event.SwingPropertyChangeSupport",
+      "name": "firePropertyChange",
+      "parameterTypes": [
+        "java.beans.PropertyChangeEvent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "evt"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if evt is null",
+        "guard": {
+          "condition": "evt==null",
+          "description": "if evt is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

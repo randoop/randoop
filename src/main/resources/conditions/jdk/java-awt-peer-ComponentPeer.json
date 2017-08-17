@@ -1,0 +1,74 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.peer.ComponentPeer",
+      "name": "requestFocus",
+      "parameterTypes": [
+        "java.awt.Component",
+        "boolean",
+        "boolean",
+        "long",
+        "sun.awt.CausedFocusEvent$Cause"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "lightweightChild",
+        "temporary",
+        "focusedWindowChangeAllowed",
+        "time",
+        "cause"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "true if the focus change is temporary, false otherwise",
+        "guard": {
+          "condition": "focusedWindowChangeAllowed==false",
+          "description": "true if the focus change is temporary, false otherwise"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.peer.ComponentPeer",
+      "name": "checkImage",
+      "parameterTypes": [
+        "java.awt.Image",
+        "int",
+        "int",
+        "java.awt.image.ImageObserver"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "img",
+        "w",
+        "h",
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(w)",
+          "description": "the status as bitwise ORed ImageObserver flags"
+        },
+        "description": "return the status as bitwise ORed ImageObserver flags",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

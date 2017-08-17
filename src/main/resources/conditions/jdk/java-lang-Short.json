@@ -1,0 +1,249 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Short",
+      "name": "java.lang.Short",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException If the String does not contain a parsable short.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "If the String does not contain a parsable short."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Short",
+      "name": "toString",
+      "parameterTypes": [
+        "short"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(s)",
+          "description": "the string representation of the specified short"
+        },
+        "description": "return the string representation of the specified short",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Short",
+      "name": "parseShort",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "radix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException If the String does not contain a parsable short.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "If the String does not contain a parsable short."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Short",
+      "name": "parseShort",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException If the string does not contain a parsable short.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "If the string does not contain a parsable short."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Short",
+      "name": "valueOf",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s",
+        "radix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException If the String does not contain a parsable short.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "If the String does not contain a parsable short."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Short",
+      "name": "valueOf",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException If the String does not contain a parsable short.",
+        "guard": {
+          "condition": "(s.contains(java.lang.CharSequence)) == false",
+          "description": "If the String does not contain a parsable short."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Short",
+      "name": "decode",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NumberFormatException",
+        "description": "throws NumberFormatException if the String does not contain a parsable short.",
+        "guard": {
+          "condition": "(nm.contains(java.lang.CharSequence)) == false",
+          "description": "if the String does not contain a parsable short."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Short",
+      "name": "compare",
+      "parameterTypes": [
+        "short",
+        "short"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==x",
+          "description": "the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y"
+        },
+        "description": "return the value 0 if x == y; a value less than 0 if x < y; and a value greater than 0 if x > y",
+        "guard": {
+          "condition": "x==y",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.CheckboxGroup",
+      "name": "getSelectedCheckbox",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "the check box that is currently in the \"on\" state, or null."
+        },
+        "description": "return the check box that is currently in the \"on\" state, or null.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

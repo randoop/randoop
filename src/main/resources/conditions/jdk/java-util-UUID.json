@@ -1,0 +1,56 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.UUID",
+      "name": "getLeastSignificantBits",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "The least significant 64 bits of this UUID's 128 bit value"
+        },
+        "description": "return The least significant 64 bits of this UUID's 128 bit value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.UUID",
+      "name": "getMostSignificantBits",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "The most significant 64 bits of this UUID's 128 bit value"
+        },
+        "description": "return The most significant 64 bits of this UUID's 128 bit value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

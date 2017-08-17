@@ -1,0 +1,93 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.SizeSequence",
+      "name": "javax.swing.SizeSequence",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "numEntries"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if numEntries < 0",
+        "guard": {
+          "condition": "numEntries<0",
+          "description": "if numEntries < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SizeSequence",
+      "name": "getSize",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getSizes())",
+          "description": "the size of the entry"
+        },
+        "description": "return the size of the entry",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.SizeSequence",
+      "name": "insertEntries",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "length",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if the parameters are outside of the range: (0 <= start < (getSizes().length)) AND (length >= 0)",
+        "guard": {
+          "condition": "length>=0",
+          "description": "if the parameters are outside of the range: (0 <= start < (getSizes().length)) AND (length >= 0)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

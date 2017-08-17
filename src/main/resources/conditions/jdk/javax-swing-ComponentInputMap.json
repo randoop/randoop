@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.ComponentInputMap",
+      "name": "javax.swing.ComponentInputMap",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "component"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if component is null",
+        "guard": {
+          "condition": "component==null",
+          "description": "if component is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

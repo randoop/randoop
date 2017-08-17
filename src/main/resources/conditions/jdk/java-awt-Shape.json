@@ -1,0 +1,92 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Shape",
+      "name": "contains",
+      "parameterTypes": [
+        "double",
+        "double",
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the interior of the Shape entirely contains the specified rectangular area; false otherwise or, if the Shape contains the rectangular area and the intersects method returns true and the containment calculations would be too expensive to perform."
+        },
+        "description": "return true if the interior of the Shape entirely contains the specified rectangular area; false otherwise or, if the Shape contains the rectangular area and the intersects method returns true and the containment calculations would be too expensive to perform.",
+        "guard": {
+          "condition": "target.contains(x,y,w,h)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the interior of the Shape entirely contains the specified rectangular area; false otherwise or, if the Shape contains the rectangular area and the intersects method returns true and the containment calculations would be too expensive to perform."
+        },
+        "description": "return true if the interior of the Shape entirely contains the specified rectangular area; false otherwise or, if the Shape contains the rectangular area and the intersects method returns true and the containment calculations would be too expensive to perform.",
+        "guard": {
+          "condition": "target.contains(x,y,w,h)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Shape",
+      "name": "contains",
+      "parameterTypes": [
+        "java.awt.geom.Rectangle2D"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "r"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the interior of the Shape entirely contains the Rectangle2D; false otherwise or, if the Shape contains the Rectangle2D and the intersects method returns true and the containment calculations would be too expensive to perform."
+        },
+        "description": "return true if the interior of the Shape entirely contains the Rectangle2D; false otherwise or, if the Shape contains the Rectangle2D and the intersects method returns true and the containment calculations would be too expensive to perform.",
+        "guard": {
+          "condition": "target.contains(java.awt.geom.Point2D)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the interior of the Shape entirely contains the Rectangle2D; false otherwise or, if the Shape contains the Rectangle2D and the intersects method returns true and the containment calculations would be too expensive to perform."
+        },
+        "description": "return true if the interior of the Shape entirely contains the Rectangle2D; false otherwise or, if the Shape contains the Rectangle2D and the intersects method returns true and the containment calculations would be too expensive to perform.",
+        "guard": {
+          "condition": "target.contains(java.awt.geom.Point2D)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

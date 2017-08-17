@@ -29,7 +29,7 @@ import org.junit.runners.MethodSorters;
  * <p>Each of the test methods
  *
  * <ul>
- *   <li>creates it's own subdirectory,
+ *   <li>creates its own subdirectory,
  *   <li>runs Randoop and saves generated tests to the subdirectory, and
  *   <li>compiles the generated test files.
  * </ul>
@@ -43,6 +43,11 @@ import org.junit.runners.MethodSorters;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RandoopSystemTest {
+
+  // Keep this in synch with GenTests.NO_OPERATIONS_TO_TEST.
+  // (XXX Can factor into module of shared dependencies, but...  Since we are avoiding dependencies
+  // of the system tests on Randoop code, the tests can't directly use GenTests.NO_METHODS_TO_TEST.)
+  private static final String NO_OPERATIONS_TO_TEST = "There are no operations to test. Exiting.";
 
   private static SystemTestEnvironment systemTestEnvironment;
 
@@ -138,9 +143,9 @@ public class RandoopSystemTest {
    *     The expected-tests parameters are values of the ExpectedTests enumerated type.
    *     Use the value SOME if there must be at least one test, NONE if there should be no tests,
    *     and DONT_CARE if, well, it doesn't matter how many tests there are.
-   *     The generateAndTestWithCoverage() method handles the standard test behavior, checking the standard
-   *     assumptions about regression and error tests (given the quantifiers), and dumping output
-   *     when the results don't meet expectations.
+   *     The generateAndTestWithCoverage() method handles the standard test behavior, checking the
+   *     standard assumptions about regression and error tests (given the quantifiers), and dumping
+   *     output when the results don't meet expectations.
    *
    *     By default, coverage is checked against all methods returned by Class.getDeclaredMethods()
    *     for an input class. Some tests need to specifically exclude methods that Randoop should not
@@ -148,28 +153,7 @@ public class RandoopSystemTest {
    *     CoverageChecker object and adding these method names using either the exclude() or ignore()
    *     methods, and then giving the CoverageChecker as the last argument to the alternate version
    *     of generateAndTestWithCoverage(). When excluded methods are given, these methods may not be
-   *    covered, and, unless ignored, any method not excluded is expected to be covered.
-   *
-   *     As a stop-gap, the method
-   *       generateAndTest(
-   *         testEnvironment,
-   *         options,
-   *         expectedRegressionTests,
-   *         expectedErrorTests);
-   *     is used for tests where the coverage is non-deterministic. This is not meant to be a
-   *     permanent solution, and new tests should not be written this way.
-   *
-   *     There are cases where the test may not follow this standard pattern. In that case, the
-   *     test should minimally make a call like
-   *       RandoopRunStatus randoopRunDesc =
-   *           RandoopRunStatus.generateAndCompile(
-   *              testEnvironment,
-   *              options);
-   *     where the arguments are defined in steps 1 and 2.
-   *     This call will run Randoop to generate tests and then compile them.  All tests should
-   *     minimally confirm that generated tests compile before testing anything else.
-   *     Information about the Randoop run is included in the return value, including the output
-   *     from the execution.
+   *     covered, and, unless ignored, any method not excluded is expected to be covered.
    */
 
   /**
@@ -188,7 +172,7 @@ public class RandoopSystemTest {
     options.addTestClass("java2.util2.TreeSet");
     options.addTestClass("java2.util2.Collections");
     options.setFlag("no-error-revealing-tests");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
     options.setOption("observers", "resources/systemTest/randoop1_observers.txt");
@@ -200,7 +184,9 @@ public class RandoopSystemTest {
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
     coverageChecker.exclude(
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    coverageChecker.exclude("java2.util2.Collections.list(java2.util2.Enumeration)");
     coverageChecker.exclude("java2.util2.Collections.rotate2(java2.util2.List, int)");
+    coverageChecker.exclude("java2.util2.Collections.shuffle(java2.util2.List)");
     coverageChecker.exclude("java2.util2.Collections.swap(java.lang.Object[], int, int)");
     coverageChecker.exclude("java2.util2.Collections.swap(java2.util2.List, int, int)");
     coverageChecker.exclude(
@@ -210,6 +196,7 @@ public class RandoopSystemTest {
     coverageChecker.exclude(
         "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object)");
     coverageChecker.exclude("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableMap(java2.util2.Map)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
     coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
@@ -231,22 +218,21 @@ public class RandoopSystemTest {
   /** Test formerly known as randoop2. Previously did a diff on generated test. */
   @Test
   public void runNaiveCollectionsTest() {
-
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("naive-collections-test");
+    String directoryName = "naive-collections-test";
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment(directoryName);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
     options.addTestClass("java2.util2.TreeSet");
     options.addTestClass("java2.util2.ArrayList");
     options.addTestClass("java2.util2.LinkedList");
     options.addTestClass("java2.util2.Collections");
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
+    options.setOption("operation-history-log", "-"); //log to stdout
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
-    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.get(int)");
     coverageChecker.exclude("java2.util2.ArrayList.lastIndexOf(java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.readObject(java.io.ObjectInputStream)");
@@ -262,10 +248,13 @@ public class RandoopSystemTest {
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
     coverageChecker.exclude(
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    coverageChecker.exclude("java2.util2.Collections.max(java2.util2.Collection)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.max(java2.util2.Collection, java2.util2.Comparator)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.min(java2.util2.Collection, java2.util2.Comparator)");
     coverageChecker.exclude("java2.util2.Collections.rotate2(java2.util2.List, int)");
     coverageChecker.exclude("java2.util2.Collections.shuffle(java2.util2.List)");
-    coverageChecker.exclude(
-        "java2.util2.Collections.shuffle(java2.util2.List, java2.util2.Random)");
     coverageChecker.exclude("java2.util2.Collections.swap(java.lang.Object[], int, int)");
     coverageChecker.exclude("java2.util2.Collections.swap(java2.util2.List, int, int)");
     coverageChecker.exclude(
@@ -277,13 +266,13 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableList(java2.util2.List)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
-    coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedSet(java2.util2.SortedSet)");
     coverageChecker.exclude("java2.util2.LinkedList.add(int, java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.addFirst(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.addLast(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.get(int)");
+    coverageChecker.exclude("java2.util2.LinkedList.add(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.getLast()");
     coverageChecker.exclude("java2.util2.LinkedList.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.LinkedList.remove(int)");
+    coverageChecker.exclude("java2.util2.LinkedList.removeLast()");
+    coverageChecker.exclude("java2.util2.LinkedList.set(int, java.lang.Object)");
     coverageChecker.exclude("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.first()");
     coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
@@ -312,11 +301,11 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    options.setOption("inputlimit", "1000");
+    options.setOption("generatedLimit", "3000");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setFlag("small-tests");
-    options.setFlag("clear=100");
+    options.setFlag("clear=200");
     options.addClassList("resources/systemTest/jdk_classlist.txt");
 
     // omit methods that use Random
@@ -326,7 +315,85 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+    coverageChecker.exclude("java2.util2.ArrayList.readObject(java.io.ObjectInputStream)");
+    coverageChecker.exclude("java2.util2.ArrayList.removeRange(int, int)");
+    coverageChecker.exclude("java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream)");
+    coverageChecker.exclude("java2.util2.Arrays.med3(byte[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.med3(char[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.med3(double[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.med3(float[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.med3(int[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.med3(long[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.med3(short[], int, int, int)");
+    coverageChecker.exclude(
+        "java2.util2.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int, java2.util2.Comparator)");
+    coverageChecker.exclude("java2.util2.Arrays.sort(char[], int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.swap(double[], int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.vecswap(byte[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.vecswap(char[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.vecswap(double[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.vecswap(float[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.vecswap(int[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.vecswap(long[], int, int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.vecswap(short[], int, int, int)");
+    coverageChecker.exclude("java2.util2.BitSet.getBits(int)");
+    coverageChecker.exclude("java2.util2.BitSet.hashCode()");
+    coverageChecker.exclude("java2.util2.BitSet.readObject(java.io.ObjectInputStream)");
+    coverageChecker.exclude("java2.util2.BitSet.trailingZeroCnt(long)");
+    coverageChecker.exclude("java2.util2.Collections.get(java2.util2.ListIterator, int)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    coverageChecker.exclude("java2.util2.Collections.rotate2(java2.util2.List, int)");
+    coverageChecker.exclude("java2.util2.Collections.shuffle(java2.util2.List)");
+    coverageChecker.exclude("java2.util2.Collections.swap(java.lang.Object[], int, int)");
+    coverageChecker.exclude("java2.util2.Hashtable.readObject(java.io.ObjectInputStream)");
+    coverageChecker.exclude("java2.util2.Hashtable.rehash()");
+    coverageChecker.exclude("java2.util2.Hashtable.writeObject(java.io.ObjectOutputStream)");
+    coverageChecker.exclude("java2.util2.LinkedHashMap.transfer(java2.util2.HashMap.Entry[])");
+    coverageChecker.exclude("java2.util2.LinkedList.get(int)");
+    coverageChecker.exclude("java2.util2.LinkedList.readObject(java.io.ObjectInputStream)");
+    coverageChecker.exclude("java2.util2.LinkedList.set(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
+    coverageChecker.exclude("java2.util2.Observable.addObserver(java2.util2.Observer)");
+    coverageChecker.exclude("java2.util2.Observable.clearChanged()");
+    coverageChecker.exclude("java2.util2.Observable.countObservers()");
+    coverageChecker.exclude("java2.util2.Observable.deleteObservers()");
+    coverageChecker.exclude("java2.util2.Observable.setChanged()");
+    coverageChecker.exclude("java2.util2.Stack.pop()");
+    coverageChecker.exclude("java2.util2.TreeMap.colorOf(java2.util2.TreeMap.Entry)");
+    coverageChecker.exclude("java2.util2.TreeMap.fixAfterDeletion(java2.util2.TreeMap.Entry)");
+    coverageChecker.exclude("java2.util2.TreeMap.fixAfterInsertion(java2.util2.TreeMap.Entry)");
+    coverageChecker.exclude("java2.util2.TreeMap.getCeilEntry(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeMap.getPrecedingEntry(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeMap.leftOf(java2.util2.TreeMap.Entry)");
+    coverageChecker.exclude("java2.util2.TreeMap.parentOf(java2.util2.TreeMap.Entry)");
+    coverageChecker.exclude("java2.util2.TreeMap.readObject(java.io.ObjectInputStream)");
+    coverageChecker.exclude(
+        "java2.util2.TreeMap.readTreeSet(int, java.io.ObjectInputStream, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeMap.rightOf(java2.util2.TreeMap.Entry)");
+    coverageChecker.exclude("java2.util2.TreeMap.rotateLeft(java2.util2.TreeMap.Entry)");
+    coverageChecker.exclude("java2.util2.TreeMap.rotateRight(java2.util2.TreeMap.Entry)");
+    coverageChecker.exclude("java2.util2.TreeMap.setColor(java2.util2.TreeMap.Entry, boolean)");
+    coverageChecker.exclude("java2.util2.TreeMap.subMap(java.lang.Object, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeMap.valEquals(java.lang.Object, java.lang.Object)");
+    coverageChecker.exclude(
+        "java2.util2.TreeMap.valueSearchNonNull(java2.util2.TreeMap.Entry, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeMap.valueSearchNull(java2.util2.TreeMap.Entry)");
+    coverageChecker.exclude("java2.util2.TreeMap.values()");
+    coverageChecker.exclude("java2.util2.TreeMap.writeObject(java.io.ObjectOutputStream)");
+    coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
+    coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
+    coverageChecker.exclude("java2.util2.Vector.removeRange(int, int)");
+    coverageChecker.exclude("java2.util2.Vector.writeObject(java.io.ObjectOutputStream)");
+    coverageChecker.exclude("java2.util2.WeakHashMap.containsNullValue()");
+    coverageChecker.exclude("java2.util2.WeakHashMap.eq(java.lang.Object, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.WeakHashMap.removeMapping(java.lang.Object)");
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /**
@@ -350,7 +417,9 @@ public class RandoopSystemTest {
     options.setErrorBasename("BuggyTest");
 
     options.setFlag("no-regression-tests");
-    options.setOption("inputlimit", "1000");
+    options.setOption("generatedLimit", "1000");
+    // Don't minimize the tests because it would take too long to finish.
+    options.setOption("minimize_error_test", "false");
     options.addClassList("resources/systemTest/buggyclasses.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
@@ -393,7 +462,8 @@ public class RandoopSystemTest {
     options.setErrorBasename("CheckRepTest");
 
     options.setFlag("no-regression-tests");
-    options.setOption("timelimit", "2");
+    options.setOption("attemptedLimit", "1000");
+    options.setOption("generatedLimit", "200");
     options.addTestClass("examples.CheckRep1");
     options.addTestClass("examples.CheckRep2");
 
@@ -412,11 +482,11 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("literals-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("LiteralsReg");
     options.setErrorBasename("LiteralsErr");
 
-    options.setOption("inputlimit", "1000");
+    options.setOption("generatedLimit", "1000");
     options.addTestClass("randoop.literals.A");
     options.addTestClass("randoop.literals.A2");
     options.addTestClass("randoop.literals.B");
@@ -438,11 +508,12 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("longstring-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("LongString");
     options.setErrorBasename("");
 
-    options.setOption("timelimit", "1");
+    options.setOption("attemptedLimit", "1000");
+    options.setOption("generatedLimit", "100");
     options.addTestClass("randoop.test.LongString");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -461,11 +532,12 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("visibility-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("VisibilityTest");
     options.setErrorBasename("");
 
-    options.setOption("timelimit", "2");
+    options.setOption("attemptedLimit", "1000");
+    options.setOption("generatedLimit", "200");
     options.addTestClass("examples.Visibility");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -480,21 +552,21 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test formerly known as randoop-no-output. Runs with <tt>--noprogressdisplay</tt> and so should
-   * have no output.
+   * Test formerly known as randoop-no-output. Runs with <tt>--progressdisplay=false</tt> and so
+   * should have no output.
    */
   @Test
   public void runNoOutputTest() {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("no-output-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("NoOutputTest");
     options.setErrorBasename("");
 
-    options.setOption("timelimit", "1");
+    options.setOption("generatedLimit", "100");
     options.addTestClass("java.util.LinkedList");
-    options.setFlag("noprogressdisplay");
+    options.setOption("progressdisplay", "false");
 
     RandoopRunStatus randoopRunDesc =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
@@ -510,12 +582,12 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("inner-class-test");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("InnerClassRegression");
     options.setErrorBasename("InnerClassError");
     options.addTestClass("randoop.test.ClassWithInnerClass");
     options.addTestClass("randoop.test.ClassWithInnerClass$A");
-    options.setOption("inputlimit", "20");
+    options.setOption("generatedLimit", "40");
     options.setFlag("silently-ignore-bad-class-names");
     options.setOption("unchecked-exception", "ERROR");
     options.setOption("npe-on-null-input", "ERROR");
@@ -532,12 +604,12 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("parameterized-type");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("ParamTypeReg");
     options.setErrorBasename("ParamTypeErr");
     options.addTestClass("muse.SortContainer");
-    options.setOption("outputlimit", "100");
-    options.setOption("timelimit", "300");
+    options.setOption("generatedLimit", "30000");
+    options.setOption("outputLimit", "100");
     options.setFlag("forbid-null");
     options.setOption("null-ratio", "0");
 
@@ -556,8 +628,8 @@ public class RandoopSystemTest {
     options.setRegressionBasename("BoundsReg");
     options.setErrorBasename("BoundsErr");
     options.addTestClass("muse.RecursiveBound");
-    options.setOption("outputlimit", "100");
-    options.setOption("timelimit", "300");
+    options.setOption("generatedLimit", "30000");
+    options.setOption("outputLimit", "100");
     options.setFlag("forbid-null");
     options.setOption("null-ratio", "0");
 
@@ -573,11 +645,11 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("default-package");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("DefaultPackageReg");
     options.setErrorBasename("DefaultPackageErr");
     options.addTestClass("ClassInDefaultPackage");
-    options.setOption("inputlimit", "20");
+    options.setOption("generatedLimit", "20");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
@@ -595,7 +667,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("RegressionTest");
     options.setErrorBasename("ErrorTest");
     options.addTestClass("misc.ThrowsAnonymousException");
-    options.setOption("outputlimit", "2");
+    options.setOption("outputLimit", "2");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
@@ -627,7 +699,7 @@ public class RandoopSystemTest {
     options.addTestClass("collectiongen.Day");
     options.addTestClass("collectiongen.AnInputClass");
     options.setFlag("small-tests");
-    options.setOption("inputlimit", "500");
+    options.setOption("generatedLimit", "500");
     options.setOption("omitmethods", "hashCode\\(\\)");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
@@ -656,7 +728,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("EnumCheckError");
     options.addTestClass("examples.Option");
     options.setFlag("small-tests");
-    options.setOption("inputlimit", "20");
+    options.setOption("generatedLimit", "20");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
@@ -670,15 +742,16 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("empty-names");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addClassList("resources/systemTest/emptyclasslist.txt");
+    options.setOption("attemptedLimit", "20");
 
-    RandoopRunStatus result = generateAndCompile(testEnvironment, options, true);
+    ProcessStatus result = generate(testEnvironment, options);
 
-    Iterator<String> it = result.processStatus.outputLines.iterator();
+    Iterator<String> it = result.outputLines.iterator();
     String line = "";
-    while (!line.contains("No classes to test") && it.hasNext()) {
+    while (!line.contains(NO_OPERATIONS_TO_TEST) && it.hasNext()) {
       line = it.next();
     }
-    assertTrue("should fail to find class names in file", line.contains("No classes to test"));
+    assertTrue("should fail to find class names in file", line.contains(NO_OPERATIONS_TO_TEST));
   }
 
   /**
@@ -693,7 +766,7 @@ public class RandoopSystemTest {
     options.addTestClass("examples.NaNBadness");
     options.setRegressionBasename("NaNRegression");
     options.setErrorBasename("NaNError");
-    options.setOption("inputlimit", "200");
+    options.setOption("generatedLimit", "200");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
@@ -712,7 +785,7 @@ public class RandoopSystemTest {
     options.setOption("junit-after-all", "resources/systemTest/afterallcode.txt");
     options.setOption("junit-before-each", "resources/systemTest/beforeeachcode.txt");
     options.setOption("junit-after-each", "resources/systemTest/aftereachcode.txt");
-    options.setOption("inputlimit", "200");
+    options.setOption("generatedLimit", "200");
     options.setFlag("no-error-revealing-tests");
 
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
@@ -762,7 +835,7 @@ public class RandoopSystemTest {
     options.setOption("junit-after-all", "resources/systemTest/afterallcode.txt");
     options.setOption("junit-before-each", "resources/systemTest/beforeeachcode.txt");
     options.setOption("junit-after-each", "resources/systemTest/aftereachcode.txt");
-    options.setOption("inputlimit", "200");
+    options.setOption("generatedLimit", "200");
     options.setFlag("no-error-revealing-tests");
     options.unsetFlag("junit-reflection-allowed");
 
@@ -816,10 +889,11 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.ClassWithConditions");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/classwithconditions.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "60");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
     //TODO should check for invalid test count
     generateAndTestWithCoverage(
@@ -834,10 +908,11 @@ public class RandoopSystemTest {
     options.addTestClass("net.Connection");
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
     //TODO should check for invalid test count
     generateAndTestWithCoverage(
@@ -853,10 +928,11 @@ public class RandoopSystemTest {
     options.addTestClass("net.Connection");
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
     options.setOption("checked-exception", "INVALID");
     options.setOption("unchecked-exception", "INVALID");
 
@@ -872,10 +948,11 @@ public class RandoopSystemTest {
     options.addTestClass("net.Connection");
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
     options.setOption("checked-exception", "ERROR");
     options.setOption("unchecked-exception", "ERROR");
 
@@ -891,15 +968,22 @@ public class RandoopSystemTest {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("pkg.SubClass");
     options.setOption("specifications", "resources/systemTest/pkg/pkg_subclass_toradocu_spec.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
+  /**
+   * Tests pre-conditions that throw exceptions. The methods in the class under test with failing
+   * preconditions should not be covered by the generated tests.
+   *
+   * <p>The generation limits are set carefully, since only a few sequences are generated.
+   */
   @Test
   public void runConditionWithExceptionTest() {
     TestEnvironment testEnvironment =
@@ -908,12 +992,21 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.ConditionWithException");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/condition_with_exception.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
+    options.setOption("attemptedLimit", "16");
 
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+
+    // These methods should not be called because the pre-conditions throw exceptions
+    coverageChecker.exclude("randoop.condition.ConditionWithException.getOne()");
+    coverageChecker.exclude("randoop.condition.ConditionWithException.getZero()");
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   @Test
@@ -924,12 +1017,13 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/overridingconditionsclass.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   @Test
@@ -940,12 +1034,13 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsuperclass.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   @Test
@@ -956,12 +1051,13 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsinterface.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   @Test
@@ -972,17 +1068,18 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsupersuperclass.json");
+    options.unsetFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   /**
    * recreate problem with tests over Google Guava where value from private enum returned by public
-   * method and value used in {@link randoop.test.ObjectCheck} surfaces in test code, creating
+   * method and value used in {@code randoop.test.ObjectCheck} surfaces in test code, creating
    * uncompilable code.
    */
   @Test
@@ -992,12 +1089,14 @@ public class RandoopSystemTest {
     options.addTestClass("generror.Ints");
     options.setErrorBasename("LexError");
     options.setRegressionBasename("LexRegression");
-    options.setOption("timelimit", "30");
+    options.setOption("attemptedLimit", "10000");
+    options.setOption("generatedLimit", "3000");
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
+  /** This test uses input classes that result in uncompilable tests. */
   @Test
   public void runInstantiationErrorTest() {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("compile-error");
@@ -1005,7 +1104,7 @@ public class RandoopSystemTest {
     options.addTestClass("compileerr.WildcardCollection");
     options.setErrorBasename("CompError");
     options.setRegressionBasename("CompRegression");
-    options.setOption("timelimit", "30");
+    options.setOption("attemptedLimit", "3000");
     options.setFlag("check-compilable");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
@@ -1017,17 +1116,15 @@ public class RandoopSystemTest {
   }
 
   @Test
-  public void runExercisedClassFilter() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("exercised-class");
-    testEnvironment.addJavaAgent(systemTestEnvironment.excercisedClassAgentPath);
+  public void runCoveredClassFilterTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("covered-class");
+    testEnvironment.addJavaAgent(systemTestEnvironment.coveredClassAgentPath);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addClassList("resources/systemTest/instrument/testcase/allclasses.txt");
     options.setOption(
-        "include-if-class-exercised",
-        "resources/systemTest/instrument/testcase/coveredclasses.txt");
-    options.setOption("outputlimit", "250");
-    options.setOption("inputlimit", "500");
+        "require-covered-classes", "resources/systemTest/instrument/testcase/coveredclasses.txt");
+    options.setOption("generatedLimit", "500");
+    options.setOption("outputLimit", "250");
     options.setErrorBasename("ExError");
     options.setRegressionBasename("ExRegression");
 
@@ -1059,10 +1156,389 @@ public class RandoopSystemTest {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("generation.Dim5Matrix");
     options.addTestClass("generation.Dim6Matrix");
-    options.setOption("outputlimit", "200");
-    options.setOption("timelimit", "20");
+    options.setOption("generatedLimit", "2000");
+    options.setOption("outputLimit", "200");
 
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
+  /* Test based on classes from the olajgo library. Has an instantiation error for
+      <N> randoop.types.CompoundFunction<N>.<init> : () -> randoop.types.CompoundFunction<N>
+      and generates no sequences
+  @Test
+  public void runAbstractWithRecursiveBoundTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("abstract-recursive-bound");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.types.AbstractMultiary"); // abstract shouldn't load
+    options.addTestClass("randoop.types.CompoundFunction"); //uses AbstractMultiary
+    options.setOption("generatedLimit", "1");
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.SOME);
+  }
+  */
+
+  /**
+   * This test uses classes from (or based on) the <a
+   * href="http://docs.oracle.com/javase/tutorial/uiswing/examples/components/index.html">Swing
+   * Tutorial Examples</a>.
+   *
+   * <p>Notes:
+   *
+   * <ul>
+   *   <li>Setting <code>timeout=5</code> for this test results in multiple <code>ThreadDeath</code>
+   *       exceptions during Randoop generation. The test still completes.
+   *   <li>Even though the default replacements attempt to suppress calls to methods that throw
+   *       <code>HeadlessException</code>, they still happen. So, this test may fail in a headless
+   *       environment. On Travis CI, this is resolved by running <code>xvfb</code>.
+   *   <li>There are differences in coverage between JDK 7 and 8 when running on Travis.
+   * </ul>
+   */
+  @Test
+  public void runDirectSwingTest() {
+    String classpath =
+        systemTestEnvironment.classpath + ":" + systemTestEnvironment.replacecallAgentPath;
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment(
+            "swing-direct-test", classpath, systemTestEnvironment.replacecallAgentPath.toString());
+
+    String genDebugDir = testEnvironment.workingDir.resolve("replacecall-generation").toString();
+    String testDebugDir = testEnvironment.workingDir.resolve("replacecall-testing").toString();
+    testEnvironment.addJavaAgent(
+        systemTestEnvironment.replacecallAgentPath,
+        "--dont-transform=resources/systemTest/replacecall-exclusions.txt,--debug,--debug-directory="
+            + genDebugDir,
+        "--dont-transform=resources/systemTest/replacecall-exclusions.txt,--debug,--debug-directory="
+            + testDebugDir);
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("components");
+    options.addTestClass("components.ArrowIcon");
+    options.addTestClass("components.ConversionPanel");
+    options.addTestClass("components.Converter");
+    options.addTestClass("components.ConverterRangeModel");
+    options.addTestClass("components.Corner");
+    options.addTestClass("components.CrayonPanel");
+    options.addTestClass("components.CustomDialog");
+    options.addTestClass("components.DialogRunner");
+    options.addTestClass("components.DynamicTree");
+    options.addTestClass("components.FollowerRangeModel");
+    options.addTestClass("components.Framework");
+    options.addTestClass("components.GenealogyModel");
+    options.addTestClass("components.GenealogyTree");
+    options.addTestClass("components.ImageFileView");
+    options.addTestClass("components.ImageFilter");
+    options.addTestClass("components.ImagePreview");
+    options.addTestClass("components.ListDialog");
+    options.addTestClass("components.ListDialogRunner");
+    options.addTestClass("components.MissingIcon");
+    options.addTestClass("components.MyInternalFrame");
+    options.addTestClass("components.Converter");
+    options.addTestClass("components.Person");
+    options.addTestClass("components.Rule");
+    options.addTestClass("components.ScrollablePicture");
+    options.addTestClass("components.Unit");
+    options.addTestClass("components.Utils");
+
+    options.setOption("omit-field-list", "resources/systemTest/components/omitfields.txt");
+    //
+    options.setOption("outputLimit", "400");
+    options.setOption("generatedLimit", "800");
+    options.setFlag("ignore-flaky-tests");
+    options.setOption("operation-history-log", "-");
+    options.setFlag("usethreads");
+    options.unsetFlag("deterministic");
+
+    CoverageChecker checker = new CoverageChecker(options);
+
+    // these are ignored/excluded on jdk 7 and 8
+    checker.ignore("components.ArrowIcon.getIconHeight()");
+    checker.ignore("components.ArrowIcon.getIconWidth()");
+    checker.ignore(
+        "components.ArrowIcon.paintIcon(java.awt.Component, java.awt.Graphics, int, int)");
+    checker.ignore("components.ConversionPanel.actionPerformed(java.awt.event.ActionEvent)");
+    checker.ignore("components.ConversionPanel.getMaximumSize()");
+    checker.ignore("components.ConversionPanel.getValue()");
+    checker.ignore("components.ConversionPanel.getMultiplier()");
+    checker.ignore("components.ConversionPanel.propertyChange(java.beans.PropertyChangeEvent)");
+    checker.ignore("components.ConversionPanel.stateChanged(javax.swing.event.ChangeEvent)");
+    checker.ignore("components.Converter.createAndShowGUI()");
+    checker.ignore("components.Converter.initLookAndFeel()");
+    checker.ignore("components.Converter.main(java.lang.String[])");
+    checker.ignore("components.Converter.resetMaxValues(boolean)");
+    checker.ignore("components.ConverterRangeModel.getExtent()");
+    checker.ignore("components.ConverterRangeModel.getDoubleValue()");
+    checker.ignore("components.ConverterRangeModel.getMaximum()");
+    checker.ignore("components.ConverterRangeModel.getMinimum()");
+    checker.ignore("components.ConverterRangeModel.getMultiplier()");
+    checker.ignore("components.ConverterRangeModel.getValue()");
+    checker.ignore("components.ConverterRangeModel.getValueIsAdjusting()");
+    checker.ignore("components.ConverterRangeModel.setDoubleValue(double)");
+    checker.ignore("components.ConverterRangeModel.setExtent(int)");
+    checker.ignore("components.ConverterRangeModel.setMaximum(int)");
+    checker.ignore("components.ConverterRangeModel.setMinimum(int)");
+    checker.ignore("components.ConverterRangeModel.setMultiplier(double)");
+    checker.ignore(
+        "components.ConverterRangeModel.setRangeProperties(double, int, int, int, boolean)");
+    checker.ignore(
+        "components.ConverterRangeModel.setRangeProperties(int, int, int, int, boolean)");
+    checker.ignore("components.ConverterRangeModel.setValue(int)");
+    checker.ignore("components.ConverterRangeModel.setValueIsAdjusting(boolean)");
+    checker.ignore(
+        "components.ConverterRangeModel.removeChangeListener(javax.swing.event.ChangeListener)");
+    checker.ignore("components.Corner.paintComponent(java.awt.Graphics)");
+    checker.ignore("components.CrayonPanel.actionPerformed(java.awt.event.ActionEvent)");
+    checker.ignore("components.CrayonPanel.getDisplayName()");
+    checker.ignore("components.CrayonPanel.getLargeDisplayIcon()");
+    checker.ignore("components.CrayonPanel.getSmallDisplayIcon()");
+    checker.ignore("components.CrayonPanel.buildChooser()");
+    checker.ignore(
+        "components.CrayonPanel.createCrayon(java.lang.String, javax.swing.border.Border)");
+    checker.exclude("components.CustomDialog.actionPerformed(java.awt.event.ActionEvent)");
+    checker.ignore("components.CustomDialog.clearAndHide()");
+    checker.ignore("components.CustomDialog.getValidatedText()");
+    checker.ignore("components.DialogRunner.runDialogDemo()");
+    checker.ignore("components.DynamicTree.addObject(java.lang.Object)");
+    checker.ignore(
+        "components.DynamicTree.addObject(javax.swing.tree.DefaultMutableTreeNode, java.lang.Object)");
+    checker.ignore(
+        "components.DynamicTree.addObject(javax.swing.tree.DefaultMutableTreeNode, java.lang.Object, boolean)");
+    checker.ignore("components.DynamicTree.removeCurrentNode()");
+    checker.ignore("components.FollowerRangeModel.getDoubleValue()");
+    checker.ignore("components.FollowerRangeModel.getExtent()");
+    checker.ignore("components.FollowerRangeModel.getMaximum()");
+    checker.ignore("components.FollowerRangeModel.getValue()");
+    checker.ignore("components.FollowerRangeModel.setDoubleValue(double)");
+    checker.ignore("components.FollowerRangeModel.setExtent(int)");
+    checker.ignore("components.FollowerRangeModel.setMaximum(int)");
+    checker.ignore("components.FollowerRangeModel.setRangeProperties(int, int, int, int, boolean)");
+    checker.ignore("components.FollowerRangeModel.setValue(int)");
+    checker.ignore("components.Framework.createAndShowGUI()");
+    checker.ignore("components.Framework.main(java.lang.String[])");
+    checker.ignore("components.Framework.quit(javax.swing.JFrame)");
+    checker.ignore("components.Framework.quitConfirmed(javax.swing.JFrame)");
+    checker.ignore("components.Framework.windowClosed(java.awt.event.WindowEvent)");
+    checker.ignore("components.GenealogyModel.getChild(java.lang.Object, int)");
+    checker.ignore("components.GenealogyModel.getChildCount(java.lang.Object)");
+    checker.ignore("components.GenealogyModel.getIndexOfChild(java.lang.Object, java.lang.Object)");
+    checker.ignore("components.GenealogyModel.isLeaf(java.lang.Object)");
+    checker.ignore(
+        "components.GenealogyModel.removeTreeModelListener(javax.swing.event.TreeModelListener)");
+    checker.ignore(
+        "components.GenealogyModel.valueForPathChanged(javax.swing.tree.TreePath, java.lang.Object)");
+    checker.ignore(
+        "components.GenealogyModel.addTreeModelListener(javax.swing.event.TreeModelListener)");
+    checker.ignore("components.GenealogyModel.fireTreeStructureChanged(components.Person)");
+    checker.ignore("components.GenealogyModel.getRoot()");
+    checker.ignore("components.GenealogyModel.showAncestor(boolean, java.lang.Object)");
+    checker.ignore("components.GenealogyTree.showAncestor(boolean)");
+    checker.ignore("components.MissingIcon.getIconHeight()");
+    checker.ignore("components.ImageFileView.getDescription(java.io.File)");
+    checker.ignore("components.ImageFileView.getIcon(java.io.File)");
+    checker.ignore("components.ImageFileView.getName(java.io.File)");
+    checker.ignore("components.ImageFileView.getTypeDescription(java.io.File)");
+    checker.ignore("components.ImageFileView.isTraversable(java.io.File)");
+    checker.ignore("components.ImageFilter.accept(java.io.File)");
+    checker.ignore("components.ImageFilter.getDescription()");
+    checker.ignore("components.ImagePreview.loadImage()");
+    checker.ignore("components.ImagePreview.paintComponent(java.awt.Graphics)");
+    checker.ignore("components.ImagePreview.propertyChange(java.beans.PropertyChangeEvent)");
+    checker.ignore("components.ListDialog.actionPerformed(java.awt.event.ActionEvent)");
+    checker.ignore("components.ListDialog.setValue(java.lang.String)");
+    checker.ignore(
+        "components.ListDialog.showDialog(java.awt.Component, java.awt.Component, java.lang.String, java.lang.String, java.lang.String[], java.lang.String, java.lang.String)");
+    checker.ignore("components.ListDialogRunner.createAndShowGUI()");
+    checker.ignore("components.ListDialogRunner.createUI()");
+    checker.ignore("components.ListDialogRunner.getAFont()");
+    checker.ignore("components.ListDialogRunner.main(java.lang.String[])");
+    checker.ignore(
+        "components.MissingIcon.paintIcon(java.awt.Component, java.awt.Graphics, int, int)");
+    checker.ignore("components.Person.getChildAt(int)");
+    checker.ignore("components.Person.getChildCount()");
+    checker.ignore("components.Person.getFather()");
+    checker.ignore("components.Person.getIndexOfChild(components.Person)");
+    checker.ignore("components.Person.getMother()");
+    checker.ignore("components.Person.getName()");
+    checker.ignore("components.Person.toString()");
+    checker.ignore(
+        "components.Person.linkFamily(components.Person, components.Person, components.Person[])");
+    checker.ignore("components.Rule.paintComponent(java.awt.Graphics)");
+    checker.ignore("components.Rule.getIncrement()");
+    checker.ignore("components.Rule.isMetric()");
+    checker.ignore("components.Rule.setIncrementAndUnits()");
+    checker.ignore("components.Rule.setIsMetric(boolean)");
+    checker.ignore("components.Rule.setPreferredHeight(int)");
+    checker.ignore("components.Rule.setPreferredWidth(int)");
+    checker.ignore("components.ScrollablePicture.getPreferredScrollableViewportSize()");
+    checker.ignore("components.ScrollablePicture.getPreferredSize()");
+    checker.ignore(
+        "components.ScrollablePicture.getScrollableBlockIncrement(java.awt.Rectangle, int, int)");
+    checker.ignore("components.ScrollablePicture.getScrollableTracksViewportHeight()");
+    checker.ignore("components.ScrollablePicture.getScrollableTracksViewportWidth()");
+    checker.ignore(
+        "components.ScrollablePicture.getScrollableUnitIncrement(java.awt.Rectangle, int, int)");
+    checker.ignore("components.ScrollablePicture.mouseDragged(java.awt.event.MouseEvent)");
+    checker.ignore("components.ScrollablePicture.mouseMoved(java.awt.event.MouseEvent)");
+    checker.ignore("components.ScrollablePicture.setMaxUnitIncrement(int)");
+    checker.ignore("components.Unit.toString()");
+    checker.ignore("components.Utils.getExtension(java.io.File)");
+
+    // These are not covered on jdk7 on travis
+    checker.ignore(
+        "components.ConverterRangeModel.addChangeListener(javax.swing.event.ChangeListener)");
+    checker.ignore("components.ConverterRangeModel.fireStateChanged()");
+    checker.ignore("components.CrayonPanel.updateChooser()");
+    checker.ignore("components.CustomDialog.propertyChange(java.beans.PropertyChangeEvent)");
+    checker.ignore("components.DynamicTree.clear()");
+    checker.ignore("components.FollowerRangeModel.stateChanged(javax.swing.event.ChangeEvent)");
+    checker.ignore("components.Framework.makeNewWindow()");
+    checker.ignore("components.MissingIcon.getIconWidth()");
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+  }
+
+  /**
+   * This test uses classes from (or based on) the <a
+   * href="http://docs.oracle.com/javase/tutorial/uiswing/examples/components/index.html">Swing
+   * Tutorial Examples</a>.
+   */
+  @Test
+  public void runIndirectSwingTest() {
+    String classpath =
+        systemTestEnvironment.classpath + ":" + systemTestEnvironment.replacecallAgentPath;
+
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment(
+            "swing-indirect-test",
+            classpath,
+            systemTestEnvironment.replacecallAgentPath.toString());
+
+    String genDebugDir = testEnvironment.workingDir.resolve("replacecall-generation").toString();
+    String testDebugDir = testEnvironment.workingDir.resolve("replacecall-testing").toString();
+    testEnvironment.addJavaAgent(
+        systemTestEnvironment.replacecallAgentPath,
+        "--dont-transform=resources/systemTest/replacecall-exclusions.txt,--debug,--debug-directory="
+            + genDebugDir,
+        "--dont-transform=resources/systemTest/replacecall-exclusions.txt,--debug,--debug-directory="
+            + testDebugDir);
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("components");
+    options.addTestClass("components.DialogRunner");
+
+    options.setOption("outputLimit", "4");
+    options.setOption("generatedLimit", "10");
+    options.setFlag("ignore-flaky-tests");
+
+    CoverageChecker checker = new CoverageChecker(options);
+
+    //this is actually run but since there is a ThreadDeath, JaCoCo doesn't see it
+    checker.ignore("components.DialogRunner.runDialogDemo()");
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+  }
+
+  @Test
+  public void runSystemExitTest() {
+    String classpath =
+        systemTestEnvironment.classpath + ":" + systemTestEnvironment.replacecallAgentPath;
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment(
+            "system-exit-test", classpath, systemTestEnvironment.replacecallAgentPath.toString());
+    testEnvironment.addJavaAgent(
+        systemTestEnvironment.replacecallAgentPath,
+        "--dont-transform=resources/systemTest/replacecall-exclusions.txt");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("input.SystemExitClass");
+    options.setOption("outputLimit", "20");
+    options.setOption("generatedLimit", "80");
+    CoverageChecker checker = new CoverageChecker(options);
+    checker.ignore("input.SystemExitClass.hashCode()");
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+  }
+
+  @Test
+  public void runNoReplacementsTest() {
+    String classpath =
+        systemTestEnvironment.classpath + ":" + systemTestEnvironment.replacecallAgentPath;
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment(
+            "no-replacement-test",
+            classpath,
+            systemTestEnvironment.replacecallAgentPath.toString());
+    testEnvironment.addJavaAgent(
+        systemTestEnvironment.replacecallAgentPath,
+        "--dont-transform=resources/systemTest/replacecall-exclusions.txt");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("input.NoExitClass");
+    options.setOption("outputLimit", "20");
+    options.setOption("generatedLimit", "40");
+    CoverageChecker checker = new CoverageChecker(options);
+    checker.exclude("input.NoExitClass.hashCode()");
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+  }
+
+  @Test
+  public void runJDKSpecificationsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("jdk-specification-test");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("java.util.ArrayList");
+    options.addTestClass("java.util.LinkedHashSet");
+    options.setFlag("use-jdk-specifications");
+    options.setFlag("fail-on-condition-error");
+    options.setOption("outputLimit", "400");
+    options.setOption("generatedLimit", "800");
+
+    CoverageChecker checker = new CoverageChecker(options);
+    checker.exclude("java.util.ArrayList.add(int, java.lang.Object)");
+    checker.exclude("java.util.ArrayList.add(java.lang.Object)");
+    checker.exclude("java.util.ArrayList.addAll(int, java.util.Collection)");
+    checker.exclude("java.util.ArrayList.addAll(java.util.Collection)");
+    checker.exclude("java.util.ArrayList.batchRemove(java.util.Collection, boolean)");
+    checker.exclude("java.util.ArrayList.clear()");
+    checker.exclude("java.util.ArrayList.clone()");
+    checker.exclude("java.util.ArrayList.contains(java.lang.Object)");
+    checker.exclude("java.util.ArrayList.elementData(int)");
+    checker.exclude("java.util.ArrayList.ensureCapacity(int)");
+    checker.exclude("java.util.ArrayList.ensureCapacityInternal(int)");
+    checker.exclude("java.util.ArrayList.ensureExplicitCapacity(int)");
+    checker.exclude("java.util.ArrayList.fastRemove(int)");
+    checker.exclude("java.util.ArrayList.forEach(java.util.function.Consumer)");
+    checker.exclude("java.util.ArrayList.get(int)");
+    checker.exclude("java.util.ArrayList.grow(int)");
+    checker.exclude("java.util.ArrayList.hugeCapacity(int)");
+    checker.exclude("java.util.ArrayList.indexOf(java.lang.Object)");
+    checker.exclude("java.util.ArrayList.isEmpty()");
+    checker.exclude("java.util.ArrayList.iterator()");
+    checker.exclude("java.util.ArrayList.lastIndexOf(java.lang.Object)");
+    checker.exclude("java.util.ArrayList.listIterator()");
+    checker.exclude("java.util.ArrayList.listIterator(int)");
+    checker.exclude("java.util.ArrayList.outOfBoundsMsg(int)");
+    checker.exclude("java.util.ArrayList.rangeCheck(int)");
+    checker.exclude("java.util.ArrayList.rangeCheckForAdd(int)");
+    checker.exclude("java.util.ArrayList.readObject(java.io.ObjectInputStream)");
+    checker.exclude("java.util.ArrayList.remove(int)");
+    checker.exclude("java.util.ArrayList.remove(java.lang.Object)");
+    checker.exclude("java.util.ArrayList.removeAll(java.util.Collection)");
+    checker.exclude("java.util.ArrayList.removeIf(java.util.function.Predicate)");
+    checker.exclude("java.util.ArrayList.removeRange(int, int)");
+    checker.exclude("java.util.ArrayList.replaceAll(java.util.function.UnaryOperator)");
+    checker.exclude("java.util.ArrayList.retainAll(java.util.Collection)");
+    checker.exclude("java.util.ArrayList.set(int, java.lang.Object)");
+    checker.exclude("java.util.ArrayList.size()");
+    checker.exclude("java.util.ArrayList.sort(java.util.Comparator)");
+    checker.exclude("java.util.ArrayList.spliterator()");
+    checker.exclude("java.util.ArrayList.subList(int, int)");
+    checker.exclude("java.util.ArrayList.subListRangeCheck(int, int, int)");
+    checker.exclude("java.util.ArrayList.toArray()");
+    checker.exclude("java.util.ArrayList.toArray(java.lang.Object[])");
+    checker.exclude("java.util.ArrayList.trimToSize()");
+    checker.exclude("java.util.ArrayList.writeObject(java.io.ObjectOutputStream)");
+    checker.exclude("java.util.LinkedHashSet.spliterator()");
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
@@ -1118,35 +1594,6 @@ public class RandoopSystemTest {
       ExpectedTests expectedError) {
     generateAndTestWithCoverage(
         environment, options, expectedRegression, expectedError, new CoverageChecker(options));
-  }
-
-  /**
-   * Performs the standard test except does not check coverage. This method is used (presumably)
-   * temporarily by some tests where the coverage is non-deterministic, and should eventually not be
-   * needed.
-   *
-   * @see #runJDKTest()
-   * @see #runCollectionsTest()
-   * @see #runNaiveCollectionsTest()
-   * @param environment the working environment for the test
-   * @param options the Randoop options for the test
-   * @param expectedRegression the quantifier for generated regression tests
-   * @param expectedError the quantifier for generated error tests
-   */
-  private void generateAndTest(
-      TestEnvironment environment,
-      RandoopOptions options,
-      ExpectedTests expectedRegression,
-      ExpectedTests expectedError) {
-    RandoopRunStatus runStatus = generateAndCompile(environment, options);
-
-    String packageName = options.getPackageName();
-
-    // the result of running the tests is not used
-    runRegressionTests(environment, options, expectedRegression, runStatus, packageName);
-
-    // the result of running the tests is not used
-    runErrorTests(environment, options, expectedError, runStatus, packageName);
   }
 
   /**
@@ -1272,15 +1719,18 @@ public class RandoopSystemTest {
     return runStatus;
   }
 
-  /**
-   * Runs Randoop given the test environment and options, printing captured output to standard
-   * output.
-   *
-   * @param environment the working environment for the test
-   * @param options the Randoop options
-   * @return the captured {@link RandoopRunStatus} from running Randoop
-   */
-  private RandoopRunStatus generateAndCompile(TestEnvironment environment, RandoopOptions options) {
-    return generateAndCompile(environment, options, false);
+  private ProcessStatus generate(TestEnvironment testEnvironment, RandoopOptions options) {
+    ProcessStatus status = RandoopRunStatus.generate(testEnvironment, options);
+
+    System.out.println("Randoop:");
+    boolean prevLineIsBlank = false;
+    for (String line : status.outputLines) {
+      if ((line.isEmpty() && !prevLineIsBlank)
+          || (!line.isEmpty() && !line.startsWith("Progress update:"))) {
+        System.out.println(line);
+      }
+      prevLineIsBlank = line.isEmpty();
+    }
+    return status;
   }
 }

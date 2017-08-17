@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.spi.ResourceBundleControlProvider",
+      "name": "getControl",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "baseName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if baseName is null",
+        "guard": {
+          "condition": "baseName==null",
+          "description": "if baseName is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

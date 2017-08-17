@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A specification of a constructor or method, aka, an operation. Consists of the {@code
- * java.lang.reflect.AccessibleObject} for the operation, and lists of {@link ThrowsSpecification},
- * {@link PostSpecification}, and {@link PreSpecification} objects that describe contracts on the
- * operation.
+ * A specification of a constructor or method, aka, an <i>operation</i>. Consists of the {@code
+ * java.lang.reflect.AccessibleObject} for the operation, and lists of {@link ThrowsCondition},
+ * {@link Postcondition}, and {@link Precondition} objects that describe contracts on the operation.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
@@ -26,7 +25,7 @@ import java.util.Objects;
  *     },
  *    "identifiers": {
  *       "parameters": [
- *         "code"
+ *         "signalValue"
  *        ],
  *       "receiverName": "receiver",
  *       "returnName": "result"
@@ -35,40 +34,43 @@ import java.util.Objects;
  *    "postSpecifications": [],
  *    "preSpecifications": [
  *      {
- *        "description": "the code must be positive",
+ *        "description": "the signalValue must be positive",
  *        "guard": {
- *          "conditionText": {@code "code > 0"},
- *          "description": "the code must be positive"
+ *          "conditionText": {@code "signalValue > 0"},
+ *          "description": "the signalValue must be positive"
  *         }
  *      }
  *    ]
  *   }
  * </pre>
  *
- * See the classes {@link Operation}, {@link Identifiers}, {@link PreSpecification}, {@link
- * PostSpecification}, and {@link ThrowsSpecification} for details on specifying those objects.
+ * See the classes {@link OperationSignature}, {@link Identifiers}, {@link Precondition}, {@link
+ * Postcondition}, and {@link ThrowsCondition} for details on specifying those objects.
  */
 public class OperationSpecification {
 
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+
   /** The reflection object for the operation */
-  private final Operation operation;
+  private final OperationSignature operation;
 
   /** The identifier names used in the specifications */
   private final Identifiers identifiers;
 
+  /** The list of pre-conditions for the operation */
+  @SerializedName("pre")
+  private final List<Precondition> preSpecifications;
+
+  /** The list of post-conditions for the operation */
+  @SerializedName("post")
+  private final List<Postcondition> postSpecifications;
+
   /** The specification of expected exceptions for the operation */
   @SerializedName("throws")
-  private final List<ThrowsSpecification> throwsSpecifications;
-
-  /** The list of post-conditions on the return value of the operation */
-  @SerializedName("post")
-  private final List<PostSpecification> postSpecifications;
-
-  /** The list of pre-conditions on the parameters of the operation */
-  @SerializedName("pre")
-  private final List<PreSpecification> preSpecifications;
+  private final List<ThrowsCondition> throwsSpecifications;
 
   /** Default constructor is needed for Gson serialization */
+  @SuppressWarnings("unused")
   private OperationSpecification() {
     this.operation = null;
     this.identifiers = new Identifiers();
@@ -78,28 +80,18 @@ public class OperationSpecification {
   }
 
   /**
-   * Creates an {@link OperationSpecification} for the given operation with no specifications and
-   * the default receiver and return value identifiers.
-   *
-   * @param operation the {@link Operation} object, must be non-null
-   */
-  public OperationSpecification(Operation operation) {
-    this(operation, new Identifiers());
-  }
-
-  /**
    * Creates an {@link OperationSpecification} for the given operation with no specifications.
    *
-   * @param operation the {@link Operation} object, must be non-null
+   * @param operation the {@link OperationSignature} object, must be non-null
    * @param identifiers the {@link Identifiers} object, must be non-null
    */
-  public OperationSpecification(Operation operation, Identifiers identifiers) {
+  public OperationSpecification(OperationSignature operation, Identifiers identifiers) {
     this(
         operation,
         identifiers,
-        new ArrayList<ThrowsSpecification>(),
-        new ArrayList<PostSpecification>(),
-        new ArrayList<PreSpecification>());
+        new ArrayList<ThrowsCondition>(),
+        new ArrayList<Postcondition>(),
+        new ArrayList<Precondition>());
   }
 
   /**
@@ -113,11 +105,11 @@ public class OperationSpecification {
    * @param preSpecifications the list of param specifications for the operation
    */
   public OperationSpecification(
-      Operation operation,
+      OperationSignature operation,
       Identifiers identifiers,
-      List<ThrowsSpecification> throwsSpecifications,
-      List<PostSpecification> postSpecifications,
-      List<PreSpecification> preSpecifications) {
+      List<ThrowsCondition> throwsSpecifications,
+      List<Postcondition> postSpecifications,
+      List<Precondition> preSpecifications) {
     this.operation = operation;
     this.identifiers = identifiers;
     this.throwsSpecifications = throwsSpecifications;
@@ -150,55 +142,55 @@ public class OperationSpecification {
 
   @Override
   public String toString() {
-    return "{ operation: "
+    return "{ \"operation\": "
         + this.operation.toString()
         + ", "
-        + "identifiers: "
+        + "\"identifiers\": "
         + this.identifiers
         + ", "
-        + "throwsSpecifications: "
+        + "\"throwsSpecifications\": "
         + this.throwsSpecifications
         + ", "
-        + "postSpecifications: "
+        + "\"postSpecifications\": "
         + this.postSpecifications
         + ", "
-        + "preSpecifications: "
+        + "\"preSpecifications\": "
         + this.preSpecifications
         + " }";
   }
 
   /**
-   * Adds {@link ThrowsSpecification} objects from the list to this {@link OperationSpecification}.
+   * Adds {@link ThrowsCondition} objects from the list to this {@link OperationSpecification}.
    *
-   * @param specifications the list of {@link ThrowsSpecification} objects
+   * @param specifications the list of {@link ThrowsCondition} objects
    */
-  public void addThrowsSpecifications(List<ThrowsSpecification> specifications) {
+  public void ThrowsConditions(List<ThrowsCondition> specifications) {
     throwsSpecifications.addAll(specifications);
   }
 
   /**
-   * Adds {@link PostSpecification} objects from the list to this {@link OperationSpecification}.
+   * Adds {@link Postcondition} objects from the list to this {@link OperationSpecification}.
    *
-   * @param specifications the list of {@link PostSpecification} objects
+   * @param specifications the list of {@link Postcondition} objects
    */
-  public void addReturnSpecifications(List<PostSpecification> specifications) {
+  public void addReturnSpecifications(List<Postcondition> specifications) {
     postSpecifications.addAll(specifications);
   }
 
   /**
-   * Adds {@link PreSpecification} objects from the list to this {@link OperationSpecification}.
+   * Adds {@link Precondition} objects from the list to this {@link OperationSpecification}.
    *
-   * @param specifications the list of {@link PreSpecification} objects
+   * @param specifications the list of {@link Precondition} objects
    */
-  public void addParamSpecifications(List<PreSpecification> specifications) {
+  public void addParamSpecifications(List<Precondition> specifications) {
     preSpecifications.addAll(specifications);
   }
 
   /**
-   * Indicates whether this {@link OperationSpecification} contains any pre-, post- or
+   * Indicates whether this {@link OperationSpecification} contains any pre-, post-, or
    * throws-specifications.
    *
-   * @return {@code true} if there are no pre-, post- or throws-specifications, false otherwise
+   * @return {@code true} if there are no pre-, post-, or throws-specifications, false otherwise
    */
   public boolean isEmpty() {
     return throwsSpecifications.isEmpty()
@@ -207,11 +199,11 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the {@code java.lang.reflect.AccessibleObject} for the operation
+   * Return the {@link OperationSignature} for the operation
    *
    * @return the reflection object for the operation
    */
-  public Operation getOperation() {
+  public OperationSignature getOperation() {
     return operation;
   }
 
@@ -225,29 +217,29 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link ThrowsSpecification} objects for this {@link OperationSpecification}.
+   * Return the list of {@link ThrowsCondition} objects for this {@link OperationSpecification}.
    *
    * @return the list of specifications for this operation specification, is non-null
    */
-  public List<ThrowsSpecification> getThrowsSpecifications() {
+  public List<ThrowsCondition> getThrowsConditions() {
     return throwsSpecifications;
   }
 
   /**
-   * Return the list of {@link PostSpecification} objects for this {@link OperationSpecification}.
+   * Return the list of {@link Postcondition} objects for this {@link OperationSpecification}.
    *
-   * @return the list of {@link PostSpecification} objects for this specification
+   * @return the list of {@link Postcondition} objects for this specification
    */
-  public List<PostSpecification> getPostSpecifications() {
+  public List<Postcondition> getPostconditions() {
     return postSpecifications;
   }
 
   /**
-   * Return the list of {@link PreSpecification} objects for this {@link OperationSpecification}.
+   * Return the list of {@link Precondition} objects for this {@link OperationSpecification}.
    *
-   * @return the list of {@link PreSpecification} objects for this specification
+   * @return the list of {@link Precondition} objects for this specification
    */
-  public List<PreSpecification> getPreSpecifications() {
+  public List<Precondition> getPreconditions() {
     return preSpecifications;
   }
 }

@@ -1,0 +1,32 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.BufferedWriter",
+      "name": "java.io.BufferedWriter",
+      "parameterTypes": [
+        "java.io.Writer",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "sz"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If sz <= 0",
+        "guard": {
+          "condition": "sz<=0",
+          "description": "If sz <= 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

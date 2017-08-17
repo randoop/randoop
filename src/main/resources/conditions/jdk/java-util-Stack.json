@@ -1,0 +1,119 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Stack",
+      "name": "push",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "item"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(item)",
+          "description": "the item argument."
+        },
+        "description": "return the item argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Stack",
+      "name": "pop",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.EmptyStackException",
+        "description": "throws EmptyStackException if this stack is empty.",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this stack is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Stack",
+      "name": "peek",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.EmptyStackException",
+        "description": "throws EmptyStackException if this stack is empty.",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this stack is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Stack",
+      "name": "empty",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if and only if this stack contains no items; false otherwise."
+        },
+        "description": "return true if and only if this stack contains no items; false otherwise.",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if and only if this stack contains no items; false otherwise."
+        },
+        "description": "return true if and only if this stack contains no items; false otherwise.",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

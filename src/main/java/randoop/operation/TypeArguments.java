@@ -6,7 +6,7 @@ import randoop.reflection.TypeNames;
  * TypeArguments provides static methods for creating and recognizing strings representing the type
  * arguments of a method or constructor.
  *
- * <p>Type arguments are given as comma separated lists of fully qualified class and primitive type
+ * <p>Type arguments are given as comma separated lists of fully-qualified class and primitive type
  * names. For example:
  *
  * <ul>
@@ -32,15 +32,12 @@ class TypeArguments {
       for (int i = 0; i < argsStrs.length; i++) {
         String typeName = argsStrs[i].trim();
 
-        Class<?> c;
         try {
-          c = TypeNames.getTypeForName(typeName);
+          argTypes[i] = TypeNames.getTypeForName(typeName);
         } catch (ClassNotFoundException e) {
           throw new OperationParseException(
               "Argument type \"" + typeName + "\" not recognized in arguments " + argStr);
         }
-
-        argTypes[i] = c;
       }
     }
     return argTypes;

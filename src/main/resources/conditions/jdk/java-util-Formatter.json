@@ -1,0 +1,255 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Formatter",
+      "name": "java.util.Formatter",
+      "parameterTypes": [
+        "java.lang.Appendable"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "Destination for the formatted output. If a is null then a StringBuilder will be created.",
+        "guard": {
+          "condition": "a==null",
+          "description": "Destination for the formatted output. If a is null then a StringBuilder will be created."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Formatter",
+      "name": "java.util.Formatter",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The locale to apply during formatting. If l is null then no localization is applied.",
+        "guard": {
+          "condition": "l==null",
+          "description": "The locale to apply during formatting. If l is null then no localization is applied."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Formatter",
+      "name": "java.util.Formatter",
+      "parameterTypes": [
+        "java.lang.Appendable",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "Destination for the formatted output. If a is null then a StringBuilder will be created.",
+        "guard": {
+          "condition": "a==null",
+          "description": "Destination for the formatted output. If a is null then a StringBuilder will be created."
+        }
+      },
+      {
+        "description": "The locale to apply during formatting. If l is null then no localization is applied.",
+        "guard": {
+          "condition": "l==null",
+          "description": "The locale to apply during formatting. If l is null then no localization is applied."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Formatter",
+      "name": "java.util.Formatter",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fileName",
+        "csn",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The locale to apply during formatting. If l is null then no localization is applied.",
+        "guard": {
+          "condition": "l==null",
+          "description": "The locale to apply during formatting. If l is null then no localization is applied."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Formatter",
+      "name": "java.util.Formatter",
+      "parameterTypes": [
+        "java.io.File",
+        "java.lang.String",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "file",
+        "csn",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The locale to apply during formatting. If l is null then no localization is applied.",
+        "guard": {
+          "condition": "l==null",
+          "description": "The locale to apply during formatting. If l is null then no localization is applied."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Formatter",
+      "name": "java.util.Formatter",
+      "parameterTypes": [
+        "java.io.OutputStream",
+        "java.lang.String",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "os",
+        "csn",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The locale to apply during formatting. If l is null then no localization is applied.",
+        "guard": {
+          "condition": "l==null",
+          "description": "The locale to apply during formatting. If l is null then no localization is applied."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Formatter",
+      "name": "format",
+      "parameterTypes": [
+        "java.lang.String",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "format",
+        "args"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.IllegalFormatException",
+        "description": "throws IllegalFormatException If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification.",
+        "guard": {
+          "condition": "format.contains(java.lang.CharSequence)",
+          "description": "If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Formatter",
+      "name": "format",
+      "parameterTypes": [
+        "java.util.Locale",
+        "java.lang.String",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "l",
+        "format",
+        "args"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.IllegalFormatException",
+        "description": "throws IllegalFormatException If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification.",
+        "guard": {
+          "condition": "format.contains(java.lang.CharSequence)",
+          "description": "If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "The locale to apply during formatting. If l is null then no localization is applied. This does not change this object's locale that was set during construction.",
+        "guard": {
+          "condition": "l==null",
+          "description": "The locale to apply during formatting. If l is null then no localization is applied. This does not change this object's locale that was set during construction."
+        }
+      }
+    ]
+  }
+]

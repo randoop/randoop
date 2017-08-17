@@ -7,8 +7,9 @@ import java.util.Set;
 import plume.UtilMDE;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
+import randoop.Globals;
 import randoop.NotExecuted;
-import randoop.condition.ExpectedException;
+import randoop.condition.ThrowsClause;
 import randoop.sequence.Execution;
 import randoop.types.ClassOrInterfaceType;
 
@@ -20,7 +21,7 @@ import randoop.types.ClassOrInterfaceType;
 public class MissingExceptionCheck implements Check {
 
   /** The type of the expected exception */
-  private final List<Set<ExpectedException>> expected;
+  private final List<Set<ThrowsClause>> expected;
 
   /** The index of the statement where the exception should be thrown */
   private final int index;
@@ -32,7 +33,7 @@ public class MissingExceptionCheck implements Check {
    * @param expected the expected exceptions
    * @param index the statement index
    */
-  MissingExceptionCheck(List<Set<ExpectedException>> expected, int index) {
+  MissingExceptionCheck(List<Set<ThrowsClause>> expected, int index) {
     this.expected = expected;
     this.index = index;
   }
@@ -52,10 +53,20 @@ public class MissingExceptionCheck implements Check {
   }
 
   @Override
+  public String toString() {
+    StringBuilder result =
+        new StringBuilder("MissingExceptionCheck at line " + index + Globals.lineSep);
+    for (Set<ThrowsClause> set : expected) {
+      result.append(set.toString()).append(Globals.lineSep);
+    }
+    return result.toString();
+  }
+
+  @Override
   public String toCodeStringPreStatement() {
     StringBuilder msg = new StringBuilder(String.format("// this statement should throw one of%n"));
-    for (Set<ExpectedException> exceptionSet : expected) {
-      for (ExpectedException exception : exceptionSet) {
+    for (Set<ThrowsClause> exceptionSet : expected) {
+      for (ThrowsClause exception : exceptionSet) {
         msg.append(
             String.format(
                 "//   %s %s%n", exception.getExceptionType().getName(), exception.getComment()));
@@ -67,9 +78,9 @@ public class MissingExceptionCheck implements Check {
   @Override
   public String toCodeStringPostStatement() {
     List<String> exceptionNameList = new ArrayList<>();
-    for (Set<ExpectedException> set : expected) {
+    for (Set<ThrowsClause> set : expected) {
       List<String> expectedNames = new ArrayList<>();
-      for (ExpectedException exception : set) {
+      for (ThrowsClause exception : set) {
         expectedNames.add(exception.getExceptionType().getName());
       }
       exceptionNameList.add("\"[ " + UtilMDE.join(expectedNames, ", ") + " ]\"");
@@ -109,8 +120,8 @@ public class MissingExceptionCheck implements Check {
     ExceptionalExecution exec = (ExceptionalExecution) outcomeAtIndex;
     Throwable t = exec.getException();
     ClassOrInterfaceType thrownType = ClassOrInterfaceType.forClass(t.getClass());
-    for (Set<ExpectedException> exceptionSet : expected) {
-      for (ExpectedException exception : exceptionSet) {
+    for (Set<ThrowsClause> exceptionSet : expected) {
+      for (ThrowsClause exception : exceptionSet) {
         if (!thrownType.isSubtypeOf(exception.getExceptionType())) {
           return false;
         }

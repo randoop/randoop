@@ -1,10 +1,67 @@
-Version ?, released May ?, 2017
+Version 4.0.0, released August ??, 2017
 
-Adds a minimize command that can be run from the command line to simplify
-failing tests to make it easier to understand the test sequence.
+Randoop contains a test suite minimizer.  Given a test suite containing
+failing tests, it creates a test suite with smaller tests that fail the
+same way.
+ * You can run this minimizer on any test suite, whether it was created by
+   Randoop or not.
+ * Randoop automatically runs the minimizer on fault-revealing tests before
+   it outputs them; this makes the failures easier to understand.  You can
+   disable this behavior.
+
+Randoop's mapcall agent has been renamed replacecall and has been improved.
+The replacecall agent prevents Randoop, or a test suite, from calling certain
+methods such as System.exit(); `instead, at runtime a replacement method is called.
+ * The file format for specifying replacements has changed, and the file argument
+   is now named --replacements.
+ * The replacecall agent applies default replacements for System.exit() and
+   display of AWT/Swing components.
+ * Randoop does not make direct calls to methods whose calls are replaced.
+   You can disable this with option --dont-omit-replaced-methods.
+
+Command-line argument --omitmethods can now be supplied multiple times.  New
+argument --omitmethods-list enables providing many patterns in a file.
+
+Improves how --omitmethods works so that it matches against the signature
+of a method or constructor rather than java.lang.reflect.Method.toString().
+Also, omits the method throughout the inheritance hierarchy. See the
+documentation of --omitmethods in the user manual for details.
+
+Changes --methodlist to use method or constructor signatures similar to
+those used for --omitmethods. See the documentation of --methodlist in the
+user manual for details. Also, makes the handling of methods from
+--methodlist consistent with what is done for methods of classes in
+--testclass or --classlist.
+
+Fixes a bug that required input using --testclass or --classlist, preventing
+exclusive use of --methodlist.
+
+New option --operation-history-log will write table of operation used during
+generation to either a file or standard out as indicated by the argument.
 
 Fixes a problem in progress reporting where the wrong count was being used for
-error-revealing sequences
+error-revealing sequences.
+
+Added the --deterministic command-line argument (default = false).  When
+set to true, Randoop is deterministic and produces the same test suite when
+run twice.  When set to false, Randoop may or may not produce the same test
+suite when run twice.  Use --randomseed to produce a different test suite.
+
+The --usethreads command-line option defaults to false.  This makes Randoop
+run faster and generate more tests, but Randoop will hang if it calls a
+method that does not terminate and return.
+
+The --timelimit command-line option has been renamed to --timeLimit.
+The --inputlimit command-line option has been renamed to --generatedLimit.
+The --outputlimit command-line option has been renamed to --outputLimit.
+New --attemptedLimit command-line option is a new way to limit test generation.
+
+The option --include-if-classname-appears has been renamed to
+--require-classname-in-test.
+The option --include-if-class-exercised has been renamed to
+--require-covered-classes.  The "exercised-class.jar" is now "covered-class.jar".
+
+The option --noprogressdisplay has been renamed to --progressdisplay=false.
 
 
 Version 3.1.5, released April 28, 2017

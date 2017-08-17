@@ -6,8 +6,10 @@
 # Fail if any command fails
 set -e
 
-# Includes checking of the manual, but checking the manual is too slow.
-# ./gradlew assemble manual validate verifyGoogleJavaFormat
-
+# Be certain that all code compiles, the code is formatted correctly
+# (compile tasks run verifyGoogleJavaFormat)
 # The manual is rarely changed, and Travis validates the manual anyway.
-./gradlew assemble verifyGoogleJavaFormat
+./gradlew compileJava compileTestJava \
+  :covered-class:compileJava :covered-class:compileTestJava \
+  :replacecall:compileJava :covered-class:compileTestJava \
+  compileCoveredTestJava compileReplacecallTestJava compileSystemTestJava

@@ -1,0 +1,111 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.colorchooser.ColorModelHSL",
+      "name": "min",
+      "parameterTypes": [
+        "float",
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "red",
+        "green",
+        "blue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the smaller of red, green and blue"
+        },
+        "description": "return the smaller of red, green and blue",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.colorchooser.ColorModelHSL",
+      "name": "max",
+      "parameterTypes": [
+        "float",
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "red",
+        "green",
+        "blue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the larger of red, green and blue"
+        },
+        "description": "return the larger of red, green and blue",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.colorchooser.ColorModelHSL",
+      "name": "getHue",
+      "parameterTypes": [
+        "float",
+        "float",
+        "float",
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "red",
+        "green",
+        "blue",
+        "max",
+        "min"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the hue component"
+        },
+        "description": "return the hue component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

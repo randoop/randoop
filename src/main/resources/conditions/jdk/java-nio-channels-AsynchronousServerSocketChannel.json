@@ -1,0 +1,123 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousServerSocketChannel",
+      "name": "open",
+      "parameterTypes": [
+        "java.nio.channels.AsynchronousChannelGroup"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "group"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "ShutdownChannelGroupException",
+        "description": "throws ShutdownChannelGroupException If the channel group is shutdown",
+        "guard": {
+          "condition": "group.isShutdown()",
+          "description": "If the channel group is shutdown"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousServerSocketChannel",
+      "name": "bind",
+      "parameterTypes": [
+        "java.net.SocketAddress"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "local"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This channel"
+        },
+        "description": "return This channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousServerSocketChannel",
+      "name": "bind",
+      "parameterTypes": [
+        "java.net.SocketAddress",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "local",
+        "backlog"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This channel"
+        },
+        "description": "return This channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.AsynchronousServerSocketChannel",
+      "name": "accept",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.nio.channels.CompletionHandler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "attachment",
+        "handler"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The object to attach to the I/O operation; can be null",
+        "guard": {
+          "condition": "attachment==null",
+          "description": "The object to attach to the I/O operation; can be null"
+        }
+      }
+    ]
+  }
+]

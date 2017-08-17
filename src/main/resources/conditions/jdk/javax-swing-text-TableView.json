@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.TableView",
+      "name": "createTableRow",
+      "parameterTypes": [
+        "javax.swing.text.Element"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "elem"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.TOP)",
+          "description": "the row"
+        },
+        "description": "return the row",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

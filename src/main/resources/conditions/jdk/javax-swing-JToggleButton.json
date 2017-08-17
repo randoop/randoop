@@ -1,0 +1,118 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JToggleButton",
+      "name": "javax.swing.JToggleButton",
+      "parameterTypes": [
+        "javax.swing.Icon",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "icon",
+        "selected"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "if true, the button is initially selected; otherwise, the button is initially unselected",
+        "guard": {
+          "condition": "target.isSelected()",
+          "description": "if true, the button is initially selected; otherwise, the button is initially unselected"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JToggleButton",
+      "name": "javax.swing.JToggleButton",
+      "parameterTypes": [
+        "java.lang.String",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "text",
+        "selected"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "if true, the button is initially selected; otherwise, the button is initially unselected",
+        "guard": {
+          "condition": "target.isSelected()",
+          "description": "if true, the button is initially selected; otherwise, the button is initially unselected"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JToggleButton",
+      "name": "javax.swing.JToggleButton",
+      "parameterTypes": [
+        "java.lang.String",
+        "javax.swing.Icon",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "text",
+        "icon",
+        "selected"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "if true, the button is initially selected; otherwise, the button is initially unselected",
+        "guard": {
+          "condition": "target.isSelected()",
+          "description": "if true, the button is initially selected; otherwise, the button is initially unselected"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JToggleButton",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JToggleButton."
+        },
+        "description": "return a string representation of this JToggleButton.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

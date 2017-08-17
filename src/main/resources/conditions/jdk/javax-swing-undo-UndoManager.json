@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.undo.UndoManager",
+      "name": "setLimit",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.RuntimeException",
+        "description": "throws RuntimeException if this UndoManager is not in progress (end has been invoked)",
+        "guard": {
+          "condition": "(target.isInProgress()) == false",
+          "description": "if this UndoManager is not in progress (end has been invoked)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

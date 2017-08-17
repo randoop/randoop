@@ -36,7 +36,7 @@ public class RecordListReader {
 
   public RecordListReader(String recordType, RecordProcessor proc) {
     if (recordType == null || recordType.length() == 0) {
-      throw new IllegalArgumentException("Invalid record type:" + recordType);
+      throw new IllegalArgumentException("Invalid record type: " + recordType);
     }
     if (proc == null) throw new IllegalArgumentException("proc cannot be null.");
     this.processor = proc;

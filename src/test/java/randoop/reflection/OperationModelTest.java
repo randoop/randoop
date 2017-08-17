@@ -21,7 +21,6 @@ import randoop.NormalExecution;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
 import randoop.main.WarnOnBadClassName;
-import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.supertypetest.InheritedEnum;
@@ -37,7 +36,7 @@ public class OperationModelTest {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("java.util.LinkedList");
-    Set<String> exercisedClassnames = new LinkedHashSet<>();
+    Set<String> coveredClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
@@ -48,11 +47,11 @@ public class OperationModelTest {
               visibility,
               reflectionPredicate,
               classnames,
-              exercisedClassnames,
+              coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
@@ -77,11 +76,11 @@ public class OperationModelTest {
     }
     assertThat("concrete operation count ", concreteOpCount, is(equalTo(1)));
     assertThat("generic operation count (JDK7: 51, JDK8: 58)", genericOpCount, isOneOf(50, 57));
-    assertEquals("wildcard operation count", 0, wildcardTypeCount);
+    assertEquals("wildcard operation count", 1, wildcardTypeCount);
     assertEquals(
         "all operations generic or concrete",
-        model.getOperations().size(),
-        concreteOpCount + genericOpCount);
+        concreteOpCount + genericOpCount + 1,
+        model.getOperations().size());
   }
 
   @Test
@@ -91,7 +90,7 @@ public class OperationModelTest {
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.test.ClassWithInnerClass");
     classnames.add("randoop.test.ClassWithInnerClass$A");
-    Set<String> exercisedClassname = new LinkedHashSet<>();
+    Set<String> coveredClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
     List<String> literalsFileList = new ArrayList<>();
@@ -102,11 +101,11 @@ public class OperationModelTest {
               visibilityPredicate,
               reflectionPredicate,
               classnames,
-              exercisedClassname,
+              coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
@@ -146,12 +145,16 @@ public class OperationModelTest {
       }
     }
     assertEquals("should be 20 generic operations", 20, genericOpCount);
-    assertEquals("should be no wildcard operations", 0, wildcardOpCount);
+    assertEquals("should be no wildcard operations other than getClass", 1, wildcardOpCount);
     assertEquals(
         "all operations should be concrete or generic ",
-        model.getOperations().size() - genericOpCount,
+        model.getOperations().size() - genericOpCount - 1,
         concreteOpCount);
-    assertEquals("should have 21 operations", 21, model.getOperations().size());
+    int expectedCount = 22;
+    assertEquals(
+        "should have " + expectedCount + " operations",
+        expectedCount,
+        model.getOperations().size());
   }
 
   /**
@@ -164,7 +167,7 @@ public class OperationModelTest {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.supertypetest.InheritedEnum");
-    Set<String> exercisedClassnames = new LinkedHashSet<>();
+    Set<String> coveredClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
@@ -175,13 +178,13 @@ public class OperationModelTest {
               visibilityPredicate,
               reflectionPredicate,
               classnames,
-              exercisedClassnames,
+              coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     }
     assert model != null : "model was not initialized";
@@ -275,9 +278,12 @@ public class OperationModelTest {
 
     List<TypedOperation> operations = model.getOperations();
     for (TypedOperation operation : operations) {
-      if (!operation.isConstructorCall() && !operation.getOutputType().isVoid()) {
+      if (!operation.isConstructorCall()
+          && !operation.getOutputType().isVoid()
+          && !operation.getName().equals("java.lang.Object.getClass")) {
         assertTrue(
-            "is member class", ((ClassOrInterfaceType) operation.getOutputType()).isMemberClass());
+            "is member class: " + operation.getOutputType(),
+            ((ClassOrInterfaceType) operation.getOutputType()).isMemberClass());
         assertFalse("is not parameterized", operation.getOutputType().isParameterized());
         assertTrue("is generic", operation.getOutputType().isGeneric());
       }
@@ -346,7 +352,7 @@ public class OperationModelTest {
   private OperationModel getOperationModel(Set<String> classnames) {
     VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> exercisedClassname = new LinkedHashSet<>();
+    Set<String> coveredClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
     List<String> literalsFileList = new ArrayList<>();
@@ -357,11 +363,11 @@ public class OperationModelTest {
               visibilityPredicate,
               reflectionPredicate,
               classnames,
-              exercisedClassname,
+              coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
-    } catch (OperationParseException e) {
+    } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());

@@ -28,6 +28,7 @@ public final class MethodReflectionCode extends ReflectionCode {
     this.inputs = inputs;
   }
 
+  @SuppressWarnings("Finally")
   @Override
   public void runReflectionCodeRaw() throws IllegalAccessException, InvocationTargetException {
 
@@ -39,7 +40,7 @@ public final class MethodReflectionCode extends ReflectionCode {
 
     if (!this.method.isAccessible()) {
       this.method.setAccessible(true);
-      Log.logLine("not accessible:" + this.method);
+      Log.logLine("not accessible: " + this.method);
       // TODO something is bizarre - it seems that a public method can be
       // not-accessible sometimes. RatNum(int,int)
       // TODO you cannot just throw the exception below - because no
@@ -104,9 +105,14 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    String ret = "Call to " + method + " receiver:" + receiver + " args:" + Arrays.toString(inputs);
-    if (!hasRunAlready()) return ret + " not run yet";
-    else if (exceptionThrown == null) return ret + " returned:" + retval;
-    else return ret + " threw:" + exceptionThrown;
+    String ret =
+        "Call to " + method + " receiver: " + receiver + " args: " + Arrays.toString(inputs);
+    if (!hasRunAlready()) {
+      return ret + " not run yet";
+    } else if (exceptionThrown == null) {
+      return ret + " returned: " + retval;
+    } else {
+      return ret + " threw: " + exceptionThrown;
+    }
   }
 }

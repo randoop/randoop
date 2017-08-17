@@ -1,0 +1,92 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.MimeType",
+      "name": "java.awt.datatransfer.MimeType",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rawdata"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rawdata is null",
+        "guard": {
+          "condition": "rawdata==null",
+          "description": "if rawdata is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.MimeType",
+      "name": "java.awt.datatransfer.MimeType",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "primary",
+        "sub"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either primary or sub is null",
+        "guard": {
+          "condition": "primary==null || sub==null",
+          "description": "if either primary or sub is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.datatransfer.MimeType",
+      "name": "java.awt.datatransfer.MimeType",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "java.awt.datatransfer.MimeTypeParameterList"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "primary",
+        "sub",
+        "mtpl"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either primary, sub or mtpl is null",
+        "guard": {
+          "condition": "primary==null || mtpl==null",
+          "description": "if either primary, sub or mtpl is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

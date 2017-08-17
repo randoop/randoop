@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.OperationParseException;
@@ -319,6 +320,7 @@ public final class Sequence implements WeightedElement {
    * @param value the variable
    * @return the statement that assigned to this variable
    */
+  @SuppressWarnings("ReferenceEquality")
   public Statement getCreatingStatement(Variable value) {
     if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
     return statements.get((value).index);
@@ -359,9 +361,13 @@ public final class Sequence implements WeightedElement {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
-      // don't dump primitive initializations, if using literals
-      if (canUseShortForm() && getStatement(i).getShortForm() != null) {
-        continue;
+      // Don't dump primitive initializations, if using literals.
+      // But do print them if they are the last statement;
+      // otherwise, the sequence might print as the empty string.
+      if (i != size() - 1) {
+        if (canUseShortForm() && getStatement(i).getShortForm() != null) {
+          continue;
+        }
       }
       appendCode(b, i);
       b.append(Globals.lineSep);
@@ -508,7 +514,7 @@ public final class Sequence implements WeightedElement {
       // No nulls.
       if (statementWithInputs == null) {
         throw new IllegalStateException(
-            "Null statement in sequence:" + Globals.lineSep + this.toString());
+            "Null statement in sequence: " + Globals.lineSep + this.toString());
       }
       if (statementWithInputs.inputs == null) {
         throw new IllegalArgumentException("parameters cannot be null.");
@@ -528,10 +534,14 @@ public final class Sequence implements WeightedElement {
       }
       for (int i = 0; i < statementWithInputs.inputs.size(); i++) {
         int index = statementWithInputs.inputs.get(i).index;
-        if (index >= 0) throw new IllegalStateException();
+        if (index >= 0) {
+          throw new IllegalStateException();
+        }
         Type newRefConstraint =
             statements.get(si + statementWithInputs.inputs.get(i).index).getOutputType();
-        if (newRefConstraint == null) throw new IllegalStateException();
+        if (newRefConstraint == null) {
+          throw new IllegalStateException();
+        }
         if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
           throw new IllegalArgumentException(
               i
@@ -552,10 +562,15 @@ public final class Sequence implements WeightedElement {
   }
 
   /** Two sequences are equal if their statements(+inputs) are element-wise equal. */
+  @SuppressWarnings("ReferenceEquality")
   @Override
   public final boolean equals(Object o) {
-    if (!(o instanceof Sequence)) return false;
-    if (o == this) return true;
+    if (!(o instanceof Sequence)) {
+      return false;
+    }
+    if (o == this) {
+      return true;
+    }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
       return GenInputsAbstract.debug_checks && verifyFalse("size", other);
@@ -636,7 +651,9 @@ public final class Sequence implements WeightedElement {
         possibleIndices.add(i);
       }
     }
-    if (possibleIndices.isEmpty()) return null;
+    if (possibleIndices.isEmpty()) {
+      return null;
+    }
     return Randomness.randomMember(possibleIndices);
   }
 
@@ -647,6 +664,7 @@ public final class Sequence implements WeightedElement {
 
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
+  @SuppressWarnings("ReferenceEquality")
   private void checkInputs(TypedOperation operation, List<Variable> inputVariables) {
     if (operation.getInputTypes().size() != inputVariables.size()) {
       String msg =
@@ -1017,12 +1035,12 @@ public final class Sequence implements WeightedElement {
       return;
     }
     try {
-      GenInputsAbstract.log.write(Globals.lineSep + Globals.lineSep);
+      GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.write(this.toFullCodeString());
+      GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new BugInRandoopException("Error while logging sequence", e);
     }
   }
 
@@ -1031,7 +1049,7 @@ public final class Sequence implements WeightedElement {
    * in operation arguments. If true, the initialization of the variable will not be included in the
    * sequence when dumped to a file.
    *
-   * @return true if the short form of variables can be used for this sequence, and false otherwise.
+   * @return true if the short form of variables can be used for this sequence, and false otherwise
    */
   boolean canUseShortForm() {
     return allowShortForm;
@@ -1079,6 +1097,16 @@ public final class Sequence implements WeightedElement {
       }
     }
     return netSize;
+  }
+
+  /**
+   * Returns the operation from which this sequence was constructed. (Also known as the operation in
+   * the last statement of this sequence.
+   *
+   * @return the last operation of this sequence
+   */
+  public TypedOperation getOperation() {
+    return this.statements.get(this.statements.size() - 1).getOperation();
   }
 
   /**

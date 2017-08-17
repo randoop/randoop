@@ -38,12 +38,17 @@ public class OperationExtractorTest {
     assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        c);
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, c);
+    operations.addAll(extractor.getOperations());
     assertThat("name should be", classType.getName(), is(equalTo(c.getName())));
 
-    assertThat("class has 12 operations", operations.size(), is(equalTo(12)));
+    int expectedCount = 14;
+    assertThat(
+        "class has " + expectedCount + " operations",
+        operations.size(),
+        is(equalTo(expectedCount)));
 
     int genericOpCount = 0;
     int wildcardOpCount = 0;
@@ -55,8 +60,11 @@ public class OperationExtractorTest {
         wildcardOpCount++;
       }
     }
-    assertThat("class has one generic operation", genericOpCount, is(equalTo(1)));
-    assertThat("class has no operations with wildcards", wildcardOpCount, is(equalTo(0)));
+    assertThat("class has one generic operation", 1, is(equalTo(genericOpCount)));
+    assertThat(
+        "class has no operations with wildcards other than getClass",
+        1,
+        is(equalTo(wildcardOpCount)));
   }
 
   @Test
@@ -79,11 +87,15 @@ public class OperationExtractorTest {
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.apply(substitution);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        c);
-
-    assertThat("there should be 20 operations", operations.size(), is(equalTo(20)));
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, c);
+    operations.addAll(extractor.getOperations());
+    int expectedCount = 21;
+    assertThat(
+        "there should be " + expectedCount + " operations",
+        expectedCount,
+        is(equalTo(operations.size())));
   }
 
   @Test
@@ -107,10 +119,12 @@ public class OperationExtractorTest {
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.apply(substitution);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        c);
-    assertThat("should be three operations", operations.size(), is(equalTo(3)));
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, c);
+    operations.addAll(extractor.getOperations());
+    int expectedCount = 4;
+    assertThat("should be " + expectedCount + " operations", expectedCount, is(equalTo(4)));
 
     ClassOrInterfaceType memberType = null;
     for (TypedOperation operation : operations) {
@@ -146,11 +160,15 @@ public class OperationExtractorTest {
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
     assertFalse("static member is not parameterized", classType.isParameterized());
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        classType.getRuntimeClass());
-
-    assertThat("should be two operations", operations.size(), is(equalTo(2)));
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, classType.getRuntimeClass());
+    operations.addAll(extractor.getOperations());
+    int expectedCount = 3;
+    assertThat(
+        "should be " + expectedCount + " operations",
+        expectedCount,
+        is(equalTo(operations.size())));
   }
 
   @Test
@@ -173,10 +191,15 @@ public class OperationExtractorTest {
     assertFalse("class type is not parameterized", classType.isParameterized());
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        classType.getRuntimeClass());
-    assertThat("should be 3 operations", operations.size(), is(equalTo(3)));
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, classType.getRuntimeClass());
+    operations.addAll(extractor.getOperations());
+    int expectedCount = 4;
+    assertThat(
+        "should be " + expectedCount + " operations",
+        expectedCount,
+        is(equalTo(operations.size())));
   }
 
   @Test
@@ -193,10 +216,11 @@ public class OperationExtractorTest {
     }
     assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
-        classType.getRuntimeClass());
-    assertTrue("should be two usable operations", operations.size() == 2);
+    final OperationExtractor extractor =
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+    mgr.apply(extractor, classType.getRuntimeClass());
+    operations.addAll(extractor.getOperations());
+    assertTrue("should be three usable operations", operations.size() == 3);
     for (TypedOperation operation : operations) {
       assertThat(
           "should be wildcard or variable",
@@ -205,9 +229,8 @@ public class OperationExtractorTest {
               is(
                   equalTo(
                       "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mTypeVariable")),
-              is(
-                  equalTo(
-                      "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mWildcard"))));
+              is(equalTo("randoop.reflection.visibilitytest.InaccessibleArgumentInput.mWildcard")),
+              is(equalTo("java.lang.Object.getClass"))));
     }
   }
 }

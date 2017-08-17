@@ -1,0 +1,66 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.NetworkChannel",
+      "name": "bind",
+      "parameterTypes": [
+        "java.net.SocketAddress"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "local"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This channel"
+        },
+        "description": "return This channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.NetworkChannel",
+      "name": "setOption",
+      "parameterTypes": [
+        "java.net.SocketOption",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This channel"
+        },
+        "description": "return This channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,354 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "isAssignableFrom",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cls"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified Class parameter is null.",
+        "guard": {
+          "condition": "cls==null",
+          "description": "if the specified Class parameter is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "getField",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "getMethod",
+      "parameterTypes": [
+        "java.lang.String",
+        "[Ljava.lang.Class;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "parameterTypes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "getDeclaredField",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "getDeclaredMethod",
+      "parameterTypes": [
+        "java.lang.String",
+        "[Ljava.lang.Class;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "parameterTypes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "getResourceAsStream",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "If name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "cast",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the object is not null and is not assignable to the type T.",
+        "guard": {
+          "condition": "(obj==null) == false",
+          "description": "if the object is not null and is not assignable to the type T."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(obj)",
+          "description": "the object after casting, or null if obj is null"
+        },
+        "description": "return the object after casting, or null if obj is null",
+        "guard": {
+          "condition": "obj==null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "getAnnotation",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "isAnnotationPresent",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "getAnnotationsByType",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "getDeclaredAnnotation",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Class",
+      "name": "getDeclaredAnnotationsByType",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -51,18 +51,22 @@ class RandoopRunStatus {
   }
 
   /**
-   * Runs Randoop and compiles.
+   * Runs Randoop.
+   *
+   * <p>Should only be called if a test only runs Randoop.
    *
    * @param testEnvironment the {@link TestEnvironment} for this run
    * @param options the command-line arguments to Randoop
-   * @return the status information collected from generation and compilation
+   * @return the status information collected from generation
    */
-  static RandoopRunStatus generateAndCompile(
-      TestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
-
+  static ProcessStatus generate(TestEnvironment testEnvironment, RandoopOptions options) {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
+    if (testEnvironment.getBootClassPath() != null
+        && !testEnvironment.getBootClassPath().isEmpty()) {
+      command.add("-Xbootclasspath/a:" + testEnvironment.getBootClassPath());
+    }
     command.add("-classpath");
     command.add(testEnvironment.getSystemTestClasspath());
     if (testEnvironment.getJavaAgentPath() != null) {
@@ -76,7 +80,21 @@ class RandoopRunStatus {
     command.add("randoop.main.Main");
     command.add("gentests");
     command.addAll(options.getOptions());
-    ProcessStatus randoopExitStatus = ProcessStatus.runCommand(command);
+    System.out.format("Randoop command:%n%s%n", command);
+    return ProcessStatus.runCommand(command);
+  }
+
+  /**
+   * Runs Randoop and compiles.
+   *
+   * @param testEnvironment the {@link TestEnvironment} for this run
+   * @param options the command-line arguments to Randoop
+   * @return the status information collected from generation and compilation
+   */
+  static RandoopRunStatus generateAndCompile(
+      TestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
+
+    ProcessStatus randoopExitStatus = generate(testEnvironment, options);
 
     if (randoopExitStatus.exitStatus != 0) {
       if (allowRandoopFailure) {
@@ -89,7 +107,8 @@ class RandoopRunStatus {
       }
     }
 
-    String packagePathString = options.getPackageName().replace('.', '/');
+    String packageName = options.getPackageName();
+    String packagePathString = packageName == null ? "" : packageName.replace('.', '/');
     String regressionBasename = options.getRegressionBasename();
     String errorBasename = options.getErrorBasename();
 
@@ -109,8 +128,10 @@ class RandoopRunStatus {
 
     Path classDir = testEnvironment.classDir;
     CompilationStatus compileStatus =
-        CompilationStatus.compileTests(testClassSourceFiles, classDir.toString());
+        CompilationStatus.compileTests(
+            testClassSourceFiles, testEnvironment.getSystemTestClasspath(), classDir.toString());
     if (!compileStatus.succeeded) {
+      System.out.println("Compilation: ");
       if (randoopExitStatus.exitStatus == 0) {
         for (String line : randoopExitStatus.outputLines) {
           System.err.println(line);

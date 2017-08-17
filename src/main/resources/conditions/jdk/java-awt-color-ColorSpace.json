@@ -1,0 +1,148 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.color.ColorSpace",
+      "name": "toRGB",
+      "parameterTypes": [
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "colorvalue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(colorvalue)",
+          "description": "a float array of length 3"
+        },
+        "description": "return a float array of length 3",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.color.ColorSpace",
+      "name": "toCIEXYZ",
+      "parameterTypes": [
+        "[F"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "colorvalue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(colorvalue)",
+          "description": "a float array of length 3"
+        },
+        "description": "return a float array of length 3",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.color.ColorSpace",
+      "name": "getName",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "idx"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if idx is less than 0 or greater than numComponents - 1",
+        "guard": {
+          "condition": "idx<0 || idx>target.getNumComponents()",
+          "description": "if idx is less than 0 or greater than numComponents - 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.color.ColorSpace",
+      "name": "getMinValue",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "component"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if component is less than 0 or greater than numComponents - 1",
+        "guard": {
+          "condition": "component<0 || component>target.getNumComponents()",
+          "description": "if component is less than 0 or greater than numComponents - 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.color.ColorSpace",
+      "name": "getMaxValue",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "component"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if component is less than 0 or greater than numComponents - 1",
+        "guard": {
+          "condition": "component<0 || component>target.getNumComponents()",
+          "description": "if component is less than 0 or greater than numComponents - 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

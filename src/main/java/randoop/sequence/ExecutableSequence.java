@@ -15,7 +15,7 @@ import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.condition.OutcomeTable;
+import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
@@ -242,8 +242,8 @@ public class ExecutableSequence {
 
   /**
    * Execute this sequence, invoking the given visitor as the execution unfolds. After invoking this
-   * method, the client can query the outcome of executing each statement via the method <code>
-   * getResult(i)</code>.
+   * method, the client can query the outcome of executing each statement via the method {@code
+   * getResult(i)}.
    *
    * <ul>
    *   <li>Before the sequence is executed, clears execution results and calls <code>
@@ -251,9 +251,12 @@ public class ExecutableSequence {
    *   <li>Executes each statement in the sequence. Before executing each statement calls the given
    *       visitor's <code>visitBefore</code> method. After executing each statement, calls the
    *       visitor's <code>visitAfter</code> method.
+   *   <li>Tests the pre-, post-, and throws-conditions for the last statement. (See {@link
+   *       randoop.condition} for details.)
    *   <li>Execution stops if one of the following conditions holds:
    *       <ul>
    *         <li>All statements in the sequences have been executed.
+   *         <li>A pre-condition for the final statement fails
    *         <li>A statement's execution results in an exception and <code>stop_on_exception==true
    *             </code>.
    *         <li>A <code>null</code> input value is implicitly passed to the statement (i.e., not
@@ -267,7 +270,9 @@ public class ExecutableSequence {
    * @param visitor the {@code ExecutionVisitor}
    * @param gen the check generator
    * @param ignoreException the flag to indicate exceptions should be ignored
+   * @see randoop.condition
    */
+  @SuppressWarnings("SameParameterValue")
   private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
 
     visitor.initialize(this);
@@ -294,13 +299,13 @@ public class ExecutableSequence {
       if (i == this.sequence.size() - 1) {
         TypedOperation operation = this.sequence.getStatement(i).getOperation();
         if (operation.isConstructorCall() || operation.isMethodCall()) {
-          OutcomeTable outcome = operation.checkConditions(inputValues);
-          if (outcome.isInvalid()) {
-            conditionChecks = new InvalidChecks();
-            conditionChecks.add(new InvalidValueCheck(this, i));
+          ExpectedOutcomeTable outcomeTable = operation.checkConditions(inputValues);
+          if (outcomeTable.isInvalidPrestate()) {
+            checks = new InvalidChecks();
+            checks.add(new InvalidValueCheck(this, i));
+            return;
           }
-          expected = outcome.addPostCheckGenerator(gen);
-          //note: condition type set by generator
+          gen = outcomeTable.addPostCheckGenerator(gen);
         }
       }
 
@@ -558,7 +563,9 @@ public class ExecutableSequence {
 
   public int getNonNormalExecutionIndex() {
     for (int i = 0; i < this.sequence.size(); i++) {
-      if (!isNormalExecution(i)) return i;
+      if (!isNormalExecution(i)) {
+        return i;
+      }
     }
     return -1;
   }
@@ -576,11 +583,14 @@ public class ExecutableSequence {
     if (exceptionClass == null) {
       throw new IllegalArgumentException("exceptionClass<?> cannot be null");
     }
-    for (int i = 0; i < this.sequence.size(); i++)
+    for (int i = 0; i < this.sequence.size(); i++) {
       if ((getResult(i) instanceof ExceptionalExecution)) {
         ExceptionalExecution e = (ExceptionalExecution) getResult(i);
-        if (exceptionClass.isAssignableFrom(e.getException().getClass())) return i;
+        if (exceptionClass.isAssignableFrom(e.getException().getClass())) {
+          return i;
+        }
       }
+    }
     return -1;
   }
 
@@ -612,8 +622,11 @@ public class ExecutableSequence {
   public int getNonExecutedIndex() {
     // Starting from the end of the sequence is always faster to find
     // non-executed statements.
-    for (int i = this.sequence.size() - 1; i >= 0; i--)
-      if (getResult(i) instanceof NotExecuted) return i;
+    for (int i = this.sequence.size() - 1; i >= 0; i--) {
+      if (getResult(i) instanceof NotExecuted) {
+        return i;
+      }
+    }
     return -1;
   }
 
@@ -624,10 +637,16 @@ public class ExecutableSequence {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof ExecutableSequence)) return false;
+    if (!(obj instanceof ExecutableSequence)) {
+      return false;
+    }
     ExecutableSequence that = (ExecutableSequence) obj;
-    if (!this.sequence.equals(that.sequence)) return false;
-    if (this.checks == null) return (that.checks == null);
+    if (!this.sequence.equals(that.sequence)) {
+      return false;
+    }
+    if (this.checks == null) {
+      return (that.checks == null);
+    }
     return this.checks.equals(that.checks);
   }
 
@@ -683,5 +702,15 @@ public class ExecutableSequence {
    */
   public boolean coversClass(Class<?> c) {
     return executionResults.getCoveredClasses().contains(c);
+  }
+
+  /**
+   * Return the operation from which this sequence was generated -- the operation of the last
+   * statement of this sequence.
+   *
+   * @return the operation of the last statement of this sequence
+   */
+  public TypedOperation getOperation() {
+    return this.sequence.getOperation();
   }
 }

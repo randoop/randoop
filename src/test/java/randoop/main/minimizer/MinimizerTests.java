@@ -47,6 +47,7 @@ public class MinimizerTests {
     String expectedFilePath = inputFilePath + ".expected";
 
     // Obtain file object references.
+    File inputFile = new File(inputFilePath);
     File outputFile = new File(outputFilePath);
     File expectedFile = new File(expectedFilePath);
 
@@ -60,7 +61,7 @@ public class MinimizerTests {
     }
 
     // Create the arguments array and invoke the minimizer.
-    Minimize.mainMinimize(inputFilePath, classPath, timeoutLimit, verboseOutput);
+    Minimize.mainMinimize(inputFile, classPath, timeoutLimit, verboseOutput);
 
     // Compare obtained and expected output.
     assertTrue(FileUtils.contentEqualsIgnoreEOL(outputFile, expectedFile, null));
@@ -141,13 +142,10 @@ public class MinimizerTests {
     // Obtain file object references.
     File inputFile = new File(inputFilePath);
 
-    // Obtain the complete path to the input, output, and expected files.
-    inputFilePath = inputFile.getAbsolutePath();
-
     // Classpath obtained by adding the necessary components together.
     String classPath = null;
 
     // Create the arguments array and invoke the minimizer.
-    assertFalse(Minimize.mainMinimize(inputFilePath, classPath, Integer.parseInt(timeout), false));
+    assertFalse(Minimize.mainMinimize(inputFile, classPath, Integer.parseInt(timeout), false));
   }
 }

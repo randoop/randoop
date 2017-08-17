@@ -2,7 +2,7 @@ package randoop.condition.specification;
 
 /**
  * The representation of a boolean expression over the values of parameters and receiver object of
- * an operation (e.g., a method or constructor). The identifiers refer to the values before the
+ * an operation (i.e., a method or constructor). The identifiers refer to the values before the
  * operation is called.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
@@ -11,22 +11,25 @@ package randoop.condition.specification;
  *
  * <pre>
  *   {
- *      "conditionText": {@code "code > 0"},
- *      "description": "the code must be positive"
+ *      "conditionText": {@code "signalValue > 0"},
+ *      "description": "the signal value must be positive"
  *   }
  * </pre>
  *
- * <p>where {@code code} is a declared identifier in the specification.
+ * <p>where {@code signalValue} is a declared identifier in the specification.
  *
  * <p>The identifiers in the property should be given in the {@link Identifiers} for the {@link
- * OperationSpecification} containing the {@link PostSpecification} where the property occurs.
+ * OperationSpecification} containing the {@link Postcondition} where the property occurs.
  *
- * @see Specification
+ * <p>This is identical to {@link Property}, but has a different name to distinguish them in the
+ * JSON file.
+ *
+ * @see SpecificationClause
  */
 public class Guard extends AbstractBooleanExpression {
 
   /**
-   * Creates a {@link Guard} with the given description and condition code.
+   * Creates a {@link Guard} with the given description and condition source code.
    *
    * @param description the description of this boolean condition
    * @param conditionText the text of the Java code for the created condition

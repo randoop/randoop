@@ -22,6 +22,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
@@ -86,13 +87,14 @@ public class ICSE07ContainersTest {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(
+      final OperationExtractor extractor =
           new OperationExtractor(
               classType,
-              model,
-              new DefaultReflectionPredicate(omitMethodPatterns, excludeNames),
-              visibility),
-          c);
+              new DefaultReflectionPredicate(excludeNames),
+              new OmitMethodsPredicate(omitMethodPatterns),
+              visibility);
+      mgr.apply(extractor, c);
+      model.addAll(extractor.getOperations());
     }
     assertTrue("model should not be empty", !model.isEmpty());
     System.out.println("Number of operations: " + model.size());
@@ -106,9 +108,8 @@ public class ICSE07ContainersTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            120000 /* two minutes */,
-            Integer.MAX_VALUE,
-            Integer.MAX_VALUE,
+            new GenInputsAbstract.Limits(
+                120 /* 2 minutes */, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),
             componentMgr,
             stopper,
             null,
@@ -123,11 +124,11 @@ public class ICSE07ContainersTest {
     List<Class<?>> classList = new ArrayList<>();
     classList.add(FibHeap.class);
     FibHeap.rand.setSeed(0);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return FibHeap.tests.size() >= 96;
           }
         };
@@ -150,11 +151,11 @@ public class ICSE07ContainersTest {
     GenInputsAbstract.null_ratio = 0.5;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinTree.class);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return BinTree.tests.size() >= 54;
           }
         };
@@ -175,11 +176,11 @@ public class ICSE07ContainersTest {
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(TreeMap.class);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return TreeMap.tests.size() >= 106;
           }
         };
@@ -202,11 +203,11 @@ public class ICSE07ContainersTest {
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinomialHeap.class);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return BinomialHeap.tests.size() >= 101;
           }
         };

@@ -2,9 +2,9 @@ package randoop.condition.specification;
 
 /**
  * The representation of a boolean expression over the the values of parameters, receiver object,
- * and return value of a method. The identifiers refer to the values of after the method is called.
- * The value of expressions prior to the method call can be referred to by wrapping the expression
- * in "{@code \old(-)}". For instance, an expression that states that the method call increases the
+ * and return value of a method. The identifiers refer to the values after the method is called. The
+ * value of expressions prior to the method call can be referred to by wrapping the expression in
+ * "{@code \old(-)}". For instance, an expression that states that the method call increases the
  * length of a {@code List} object named {@code list} by one would be written "{@code list.size() +
  * 1 == \old(list.size())}".
  *
@@ -20,7 +20,10 @@ package randoop.condition.specification;
  * </pre>
  *
  * <p>The identifiers in the guard should be given in the {@link Identifiers} for the {@link
- * OperationSpecification} containing the {@code Specification} where the property occurs.
+ * OperationSpecification} containing the {@code SpecificationClause} where the property occurs.
+ *
+ * <p>This is identical to {@link Guard}, but has a different name to distinguish them in the JSON
+ * file.
  */
 public class Property extends AbstractBooleanExpression {
 

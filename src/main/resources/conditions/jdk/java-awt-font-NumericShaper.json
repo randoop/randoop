@@ -1,0 +1,230 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.NumericShaper",
+      "name": "getShaper",
+      "parameterTypes": [
+        "java.awt.font.NumericShaper$Range"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "singleRange"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if singleRange is null",
+        "guard": {
+          "condition": "singleRange==null",
+          "description": "if singleRange is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.NumericShaper",
+      "name": "getContextualShaper",
+      "parameterTypes": [
+        "java.util.Set"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ranges"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if ranges is null.",
+        "guard": {
+          "condition": "ranges==null",
+          "description": "if ranges is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.NumericShaper",
+      "name": "getContextualShaper",
+      "parameterTypes": [
+        "java.util.Set",
+        "java.awt.font.NumericShaper$Range"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ranges",
+        "defaultContext"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if ranges or defaultContext is null",
+        "guard": {
+          "condition": "ranges==null || defaultContext==null",
+          "description": "if ranges or defaultContext is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.NumericShaper",
+      "name": "shape",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "text",
+        "start",
+        "count"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if text is null",
+        "guard": {
+          "condition": "text==null",
+          "description": "if text is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.NumericShaper",
+      "name": "shape",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "text",
+        "start",
+        "count",
+        "context"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if text is null",
+        "guard": {
+          "condition": "text==null",
+          "description": "if text is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.NumericShaper",
+      "name": "shape",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int",
+        "java.awt.font.NumericShaper$Range"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "text",
+        "start",
+        "count",
+        "context"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if text or context is null",
+        "guard": {
+          "condition": "text==null || context==null",
+          "description": "if text or context is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.font.NumericShaper",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if o is an instance of NumericShaper and shapes in the same way; false otherwise."
+        },
+        "description": "return true if o is an instance of NumericShaper and shapes in the same way; false otherwise.",
+        "guard": {
+          "condition": "oinstanceofNumericShaper",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if o is an instance of NumericShaper and shapes in the same way; false otherwise."
+        },
+        "description": "return true if o is an instance of NumericShaper and shapes in the same way; false otherwise.",
+        "guard": {
+          "condition": "oinstanceofNumericShaper",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

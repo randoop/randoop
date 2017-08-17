@@ -1,0 +1,692 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "newInstance",
+      "parameterTypes": [
+        "java.lang.Class",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "componentType",
+        "length"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if the specified length is negative",
+        "guard": {
+          "condition": "length<0",
+          "description": "if the specified length is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "newInstance",
+      "parameterTypes": [
+        "java.lang.Class",
+        "[I"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "componentType",
+        "dimensions"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified componentType argument is null",
+        "guard": {
+          "condition": "dimensions==null",
+          "description": "if the specified componentType argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "get",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the specified object is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "If the specified object is null"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "getBoolean",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the specified object is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "If the specified object is null"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "getByte",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the specified object is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "If the specified object is null"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "getChar",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the specified object is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "If the specified object is null"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "getShort",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the specified object is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "If the specified object is null"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "getInt",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the specified object is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "If the specified object is null"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "getLong",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the specified object is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "If the specified object is null"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "getFloat",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the specified object is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "If the specified object is null"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "getDouble",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the specified object is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "If the specified object is null"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "set",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "setBoolean",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index",
+        "z"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "setByte",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "byte"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "setChar",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "setShort",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "short"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index",
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "setInt",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index",
+        "i"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "setLong",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "setFloat",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index",
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Array",
+      "name": "setDouble",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "index",
+        "d"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException If the specified index argument is negative, or if it is greater than or equal to the length of the specified array",
+        "guard": {
+          "condition": "index<0",
+          "description": "If the specified index argument is negative, or if it is greater than or equal to the length of the specified array"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

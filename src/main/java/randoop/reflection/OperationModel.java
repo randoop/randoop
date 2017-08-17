@@ -3,13 +3,17 @@ package randoop.reflection;
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 import java.io.IOException;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
+import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
@@ -29,7 +33,6 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
-import randoop.operation.OperationParser;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -58,14 +61,11 @@ public class OperationModel {
   /** The set of class declaration types for this model */
   private Set<ClassOrInterfaceType> classTypes;
 
-  /** The count of classes under test for this model */
-  private int classCount;
-
   /** The set of input types for this model */
   private Set<Type> inputTypes;
 
-  /** The set of class objects used in the exercised-class test filter */
-  private final LinkedHashSet<Class<?>> exercisedClasses;
+  /** The set of class objects used in the covered-class test filter */
+  private final LinkedHashSet<Class<?>> coveredClasses;
 
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
@@ -81,6 +81,7 @@ public class OperationModel {
 
   /** Create an empty model of test context. */
   private OperationModel() {
+    // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
@@ -98,38 +99,39 @@ public class OperationModel {
     contracts.add(CompareToSubs.getInstance());
     contracts.add(CompareToTransitive.getInstance());
 
-    exercisedClasses = new LinkedHashSet<>();
+    coveredClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();
-    classCount = 0;
   }
 
   /**
    * Factory method to construct an operation model for a particular set of classes.
    *
-   * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
-   *     classes and class members
+   * @param visibility the {@link VisibilityPredicate} to test accessibility of classes and class
+   *     members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
+   * @param omitmethods the patterns for operations that should be omitted
    * @param classnames the names of classes under test
-   * @param exercisedClassnames the names of classes to be tested by exercised heuristic
+   * @param coveredClassnames the names of classes to be tested by covered class heuristic
    * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
-   * @param operationCollection the collection of specifications for operations
-   * @return the operation model for the parameters
-   * @throws OperationParseException if a method signature is ill-formed
+   * @param operationCollection the collection of operation specifications
+   * @return the {@link OperationModel} constructed with the given arguments
+   * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   public static OperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
+      List<Pattern> omitmethods,
       Set<String> classnames,
-      Set<String> exercisedClassnames,
+      Set<String> coveredClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
       SpecificationCollection operationCollection)
-      throws OperationParseException, NoSuchMethodException {
+      throws SignatureParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
 
@@ -137,48 +139,93 @@ public class OperationModel {
         visibility,
         reflectionPredicate,
         classnames,
-        exercisedClassnames,
+        coveredClassnames,
         errorHandler,
         literalsFileList);
 
-    model.addOperations(model.classTypes, visibility, reflectionPredicate, operationCollection);
-    model.addOperations(methodSignatures);
+    OmitMethodsPredicate omitPredicate = new OmitMethodsPredicate(omitmethods);
+
+    model.addOperationsFromClasses(
+        model.classTypes, visibility, reflectionPredicate, omitPredicate, operationCollection);
+    model.addOperationsUsingSignatures(
+        methodSignatures, visibility, reflectionPredicate, omitPredicate);
     model.addObjectConstructor();
 
     return model;
   }
 
   /**
-   * Factory method to construct an operation model for a particular set of classes without behavior
-   * specifications.
+   * Factory method to construct an operation model for a particular set of classes without an
+   * omitmethods list or behavior specifications.
    *
    * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
    *     classes and class members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
    * @param classnames the names of classes under test
-   * @param exercisedClassnames the names of classes to be tested by exercised heuristic
+   * @param coveredClassnames the names of classes to be tested by exercised heuristic
    * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
    * @return the operation model for the parameters
-   * @throws OperationParseException if a method signature is ill-formed
+   * @throws SignatureParseException if a method signature is ill-formed
+   * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   */
+  static OperationModel createModel(
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      Set<String> classnames,
+      Set<String> coveredClassnames,
+      Set<String> methodSignatures,
+      ClassNameErrorHandler errorHandler,
+      List<String> literalsFileList)
+      throws NoSuchMethodException, SignatureParseException {
+    return createModel(
+        visibility,
+        reflectionPredicate,
+        new ArrayList<Pattern>(),
+        classnames,
+        coveredClassnames,
+        methodSignatures,
+        errorHandler,
+        literalsFileList,
+        null);
+  }
+
+  /**
+   * Factory method to construct an operation model for a particular set of classes without behavior
+   * specifications.
+   *
+   * @param visibility the {@link VisibilityPredicate} to test accessibility of classes and class
+   *     members
+   * @param reflectionPredicate the reflection predicate to determine which classes and class
+   *     members are used
+   * @param omitmethods the patterns for operations that should be omitted
+   * @param classnames the names of classes under test
+   * @param coveredClassnames the names of classes to be tested by covered class heuristic
+   * @param methodSignatures the signatures of methods to be added to the model
+   * @param errorHandler the handler for bad file name errors
+   * @param literalsFileList the list of literals file names
+   * @return the {@link OperationModel} constructed with the given arguments
+   * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   public static OperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
+      List<Pattern> omitmethods,
       Set<String> classnames,
-      Set<String> exercisedClassnames,
+      Set<String> coveredClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList)
-      throws NoSuchMethodException, OperationParseException {
+      ArrayList<String> literalsFileList)
+      throws NoSuchMethodException, SignatureParseException {
     return createModel(
         visibility,
         reflectionPredicate,
+        omitmethods,
         classnames,
-        exercisedClassnames,
+        coveredClassnames,
         methodSignatures,
         errorHandler,
         literalsFileList,
@@ -261,19 +308,19 @@ public class OperationModel {
   }
 
   /**
-   * Returns the set of identified {@code Class<?>} objects for the exercised class heuristic.
+   * Returns the set of identified {@code Class<?>} objects for the covered class heuristic.
    *
-   * @return the set of exercised classes
+   * @return the set of covered classes
    */
-  public Set<Class<?>> getExercisedClasses() {
-    return exercisedClasses;
+  public Set<Class<?>> getCoveredClasses() {
+    return coveredClasses;
   }
 
   /**
    * Returns the set of input types that occur as parameters in classes under test.
    *
-   * @see TypeExtractor
    * @return the set of input types that occur in classes under test
+   * @see TypeExtractor
    */
   public Set<Type> getInputTypes() {
     //TODO this is not used, should it be? or should it even be here?
@@ -281,14 +328,10 @@ public class OperationModel {
   }
 
   /**
-   * Indicate whether the model has class types.
+   * Return the operations of this model as a list.
    *
-   * @return true if the model has class types, and false if the class type set is empty
+   * @return the operations of this model
    */
-  public boolean hasClasses() {
-    return classCount > 0;
-  }
-
   public List<TypedOperation> getOperations() {
     return new ArrayList<>(operations);
   }
@@ -320,21 +363,20 @@ public class OperationModel {
         GenInputsAbstract.log.flush();
       }
     } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new BugInRandoopException("Error while logging operations", e);
     }
   }
 
   /**
    * Gathers class types to be used in a run of Randoop and adds them to this {@code
-   * OperationModel}. Specifically, collects types for classes-under-test, objects for
-   * exercised-class heuristic, concrete input types, annotated test values, and literal values.
-   * Also collects annotated test values, and class literal values used in test generation.
+   * OperationModel}. Specifically, collects types for classes-under-test, objects for covered-class
+   * heuristic, concrete input types, annotated test values, and literal values. Also collects
+   * annotated test values, and class literal values used in test generation.
    *
    * @param visibility the visibility predicate
    * @param reflectionPredicate the predicate to determine which reflection objects are used
    * @param classnames the names of classes-under-test
-   * @param exercisedClassnames the names of classes used in exercised-class heuristic
+   * @param coveredClassnames the names of classes used in covered-class heuristic
    * @param errorHandler the handler for bad class names
    * @param literalsFileList the list of literals file names
    */
@@ -342,7 +384,7 @@ public class OperationModel {
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       Set<String> classnames,
-      Set<String> exercisedClassnames,
+      Set<String> coveredClassnames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList) {
     ReflectionManager mgr = new ReflectionManager(visibility);
@@ -374,7 +416,10 @@ public class OperationModel {
           System.out.println(
               "Ignoring non-visible " + c + " specified via --classlist or --testclass.");
         } else if (c.isInterface()) {
-          System.out.println("Ignoring " + c + " specified via --classlist or --testclass.");
+          System.out.println(
+              "Ignoring "
+                  + c
+                  + " specified via --classlist or --testclass; provide classes, not interfaces.");
         } else {
           if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
             System.out.println(
@@ -382,16 +427,15 @@ public class OperationModel {
           } else {
             mgr.apply(c);
           }
-          if (exercisedClassnames.contains(classname)) {
-            exercisedClasses.add(c);
+          if (coveredClassnames.contains(classname)) {
+            coveredClasses.add(c);
           }
         }
       }
     }
-    classCount = this.classTypes.size();
 
-    // Collect exercised classes
-    for (String classname : exercisedClassnames) {
+    // Collect covered classes
+    for (String classname : coveredClassnames) {
       if (!classnames.contains(classname)) {
         Class<?> c = null;
         try {
@@ -404,12 +448,11 @@ public class OperationModel {
         if (c != null) {
           if (!visibility.isVisible(c)) {
             System.out.println(
-                "Ignoring non-visible " + c + " specified as include-if-class-exercised target");
+                "Ignoring non-visible " + c + " specified as --require-covered-classes target");
           } else if (c.isInterface()) {
-            System.out.println(
-                "Ignoring " + c + " specified as include-if-class-exercised target.");
+            System.out.println("Ignoring " + c + " specified as --require-covered-classes target.");
           } else {
-            exercisedClasses.add(c);
+            coveredClasses.add(c);
           }
         }
       }
@@ -417,53 +460,71 @@ public class OperationModel {
   }
 
   /**
-   * Iterates through a set of simple and instantiated class types and uses reflection to extract
-   * the operations that satisfy both the visibility and reflection predicates, and then adds them
-   * to the operation set of this model.
+   * Adds operations to this {@link OperationModel} from all of the given classes.
    *
-   * @param concreteClassTypes the declaring class types for the operations
+   * @param classTypes the set of declaring class types for the operations, must be non-null
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
+   * @param omitPredicate the predicate for omitting operations
    * @param operationConditions the collection of {@link
    *     randoop.condition.specification.OperationSpecification}
    */
-  private void addOperations(
-      Set<ClassOrInterfaceType> concreteClassTypes,
+  private void addOperationsFromClasses(
+      Set<ClassOrInterfaceType> classTypes,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
+      OmitMethodsPredicate omitPredicate,
       SpecificationCollection operationConditions) {
     ReflectionManager mgr = new ReflectionManager(visibility);
-    for (ClassOrInterfaceType classType : concreteClassTypes) {
-      mgr.apply(
+    for (ClassOrInterfaceType classType : classTypes) {
+      OperationExtractor extractor =
           new OperationExtractor(
-              classType, operations, reflectionPredicate, visibility, operationConditions),
-          classType.getRuntimeClass());
+              classType, reflectionPredicate, omitPredicate, visibility, operationConditions);
+      mgr.apply(extractor, classType.getRuntimeClass());
+      operations.addAll(extractor.getOperations());
     }
   }
 
   /**
-   * Create operations obtained by parsing method signatures and add each to this model.
+   * Adds an operation to this {@link OperationModel} for each of the method signatures.
    *
-   * @param methodSignatures the set of method signatures
-   * @throws OperationParseException if any signature is invalid
+   * @param methodSignatures the set of signatures
+   * @param visibility the visibility predicate
+   * @param reflectionPredicate the reflection predicate
+   * @param omitPredicate the predicate for omitting operations
+   * @throws SignatureParseException if any signature is invalid
    */
-  // TODO collect input types from added methods
-  // TODO add operation conditions
-  private void addOperations(Set<String> methodSignatures) throws OperationParseException {
+  private void addOperationsUsingSignatures(
+      Set<String> methodSignatures,
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      OmitMethodsPredicate omitPredicate)
+      throws SignatureParseException {
     for (String sig : methodSignatures) {
-      TypedOperation operation = OperationParser.parse(sig);
-      operations.add(operation);
+      AccessibleObject accessibleObject =
+          SignatureParser.parse(sig, visibility, reflectionPredicate);
+      if (accessibleObject != null) {
+        TypedClassOperation operation;
+        if (accessibleObject instanceof Constructor) {
+          operation = TypedOperation.forConstructor((Constructor) accessibleObject);
+        } else {
+          operation = TypedOperation.forMethod((Method) accessibleObject);
+        }
+        if (!omitPredicate.shouldOmit(operation)) {
+          operations.add(operation);
+        }
+      }
     }
   }
 
   /** Creates and adds the Object class default constructor call to the concrete operations. */
   private void addObjectConstructor() {
-    Constructor<?> objectConstructor = null;
+    Constructor<?> objectConstructor;
     try {
       objectConstructor = Object.class.getConstructor();
     } catch (NoSuchMethodException e) {
-      System.err.println("Something is wrong. Please report: unable to load Object()");
-      System.exit(1);
+      throw new BugInRandoopException(
+          "Something is wrong. Please report: unable to load Object()", e);
     }
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());

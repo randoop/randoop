@@ -8,9 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import randoop.ExecutionOutcome;
-import randoop.condition.Condition;
+import randoop.condition.ExpectedOutcomeTable;
 import randoop.condition.OperationConditions;
-import randoop.condition.OutcomeTable;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -72,25 +71,47 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Compares this {@link TypedOperation} to another. Orders operations by lexicographical
-   * comparison, alphabetically comparing operation names, then input type names, and finally output
-   * type names.
+   * Compares this {@link TypedOperation} to another. Orders operations by type (any {@link
+   * TypedTermOperation} object precedes a {@link TypedClassOperation}) then lexicographically
+   * (alphabetically comparing class names, then operation names, then input type names, and finally
+   * output type names).
    *
-   * @param op the {@link TypedOperation} to compare with this operation
+   * @param other the {@link TypedOperation} to compare with this operation
    * @return value &lt; 0 if this operation precedes {@code op}, 0 if the operations are identical,
    *     and &gt; 0 if this operation succeeds op
    */
   @Override
-  public int compareTo(TypedOperation op) {
-    int result = this.getName().compareTo(op.getName());
+  public final int compareTo(TypedOperation other) {
+    // term operations precede any class operation
+    if (this instanceof TypedTermOperation && other instanceof TypedClassOperation) {
+      return -1;
+    }
+    if (this instanceof TypedClassOperation && other instanceof TypedTermOperation) {
+      return 1;
+    }
+
+    if (this instanceof TypedClassOperation && other instanceof TypedClassOperation) {
+      // for class operations, first compare declaring class
+      TypedClassOperation thisOp = (TypedClassOperation) this;
+      TypedClassOperation otherOp = (TypedClassOperation) other;
+      int result = thisOp.getDeclaringType().compareTo(otherOp.getDeclaringType());
+      if (result != 0) {
+        return result;
+      }
+    }
+
+    // do lexicographical comparison of name
+    int result = this.getName().compareTo(other.getName());
     if (result != 0) {
       return result;
     }
-    result = this.inputTypes.compareTo(op.inputTypes);
+    // then input types
+    result = this.inputTypes.compareTo(other.inputTypes);
     if (result != 0) {
       return result;
     }
-    return this.outputType.compareTo(op.outputType);
+    // and then output type
+    return this.outputType.compareTo(other.outputType);
   }
 
   @Override
@@ -106,6 +127,15 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   @Override
   public String getName() {
     return operation.getName();
+  }
+
+  /**
+   * Returns the signature string for this operation.
+   *
+   * @return a string with the fully-qualified operation name and input type-tuple
+   */
+  public String getSignatureString() {
+    return getName() + inputTypes;
   }
 
   /**
@@ -302,21 +332,23 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   /**
    * Constructs a {@link TypedOperation} for an enum from a method object that is a member of an
-   * anonymous class for an enum constant. Will return null if the method is
+   * anonymous class for an enum constant. Will return null if no matching method is found in the
+   * enum.
    *
    * @param method the method of the anonymous class
    * @param methodParamTypes the parameter types of the method
    * @param enumClass the declaring class
-   * @return the typed operation for the given method
+   * @return the typed operation for the given method, null if no matching method is found in {@code
+   *     enumClass}
    */
   private static TypedClassOperation getAnonEnumOperation(
       Method method, List<Type> methodParamTypes, Class<?> enumClass) {
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
 
     /*
-     * have to determine whether parameter types match
-     * if method comes from a generic type, the parameters for method will be instantiated
-     * and it is necessary to build the instantiated parameter list
+     * Have to determine whether parameter types match.
+     * If the method comes from a generic type, the parameters for the method will be instantiated
+     * and it is necessary to build the instantiated parameter list.
      */
     // TODO verify that subsignature conditions on erasure met (JLS 8.4.2)
     for (Method m : enumClass.getMethods()) {
@@ -360,7 +392,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     /*
      * When dredging methods from anonymous classes, end up with methods that have Object instead
      * of generic type parameter. These just cause pain when generating code, and this code
-     * assumes that current method is one of these if we cannot find a match.
+     * assumes that the current method is one of these if we cannot find a match.
      */
     System.out.println(
         method.getName()
@@ -521,15 +553,25 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         || type.getRuntimeClass().equals(Class.class);
   }
 
+  @Override
   public boolean isUncheckedCast() {
     return operation.isUncheckedCast();
   }
 
-  public OutcomeTable checkConditions(Object[] values) {
+  /**
+   * Tests the conditions for this operation against the argument values and returns the {@link
+   * ExpectedOutcomeTable} indicating the results of checking the pre-conditions of the
+   * specifications of the oepration.
+   *
+   * @param values the argument values
+   * @return the {@link ExpectedOutcomeTable} indicating the results of checking the pre-conditions
+   *     of the specifications of the operation
+   */
+  public ExpectedOutcomeTable checkConditions(Object[] values) {
     if (conditions != null) {
-      return conditions.check(addNullReceiver(values));
+      return conditions.checkPrestate(addNullReceiver(values));
     }
-    return new OutcomeTable();
+    return new ExpectedOutcomeTable();
   }
 
   /**
@@ -537,7 +579,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * argument when this operation is static.
    *
    * @param values the argument array for this operation
-   * @return the corresponding operation array for checking a {@link Condition}
+   * @return the corresponding operation array for checking a {@link
+   *     randoop.condition.BooleanExpression}
    */
   private Object[] addNullReceiver(Object[] values) {
     Object[] args = values;

@@ -24,6 +24,7 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
     super(op, declaringType, inputTypes, outputType);
   }
 
+  @Override
   public TypedClassOperationWithCast apply(Substitution<ReferenceType> substitution) {
     if (substitution.isEmpty()) {
       return this;

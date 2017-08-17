@@ -5,10 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import plume.UtilMDE;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
- * OperationSpecification}. These names need not match the actual declaration of the method.
+ * OperationSpecification}. The order of the names is significant, but the names need not match the
+ * actual declaration of the method.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
@@ -17,7 +19,7 @@ import java.util.Set;
  * <pre>
  *   {
  *     "parameters": [
- *       "code"
+ *       "signalValue"
  *      ],
  *     "receiverName": "receiver",
  *     "returnName": "result"
@@ -25,9 +27,11 @@ import java.util.Set;
  * </pre>
  *
  * <p>When using the class, if names are not given for the receiver and return value, then the
- * defaults will be used.
+ * defaults {@link #DEFAULT_RECEIVER_NAME} and {@link #DEFAULT_RETURN_NAME} will be used.
  */
 public class Identifiers {
+
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
 
   /** The default identifier name for receiver (value: "receiver") */
   private static final String DEFAULT_RECEIVER_NAME = "receiver";
@@ -35,19 +39,19 @@ public class Identifiers {
   /** The default identifier name for the return value (value: "result") */
   private static final String DEFAULT_RETURN_NAME = "result";
 
-  /** The parameter names for the operation */
+  /** The formal parameter names (not including the receiver name) */
   private final List<String> parameters;
 
-  /** The receiver name for the specifications */
+  /** The receiver name. */
   private final String receiverName;
 
-  /** The return value identifier for the specifications */
+  /** The return value identifier. */
   private final String returnName;
 
   /**
    * Create an {@link Identifiers} object with the given names.
    *
-   * @param parameters the list of identifiers for the operation parameters
+   * @param parameters the list of identifiers for the operation formal parameters
    * @param receiverName the receiver name
    * @param returnName the return name
    */
@@ -93,12 +97,18 @@ public class Identifiers {
 
   @Override
   public String toString() {
-    return "{ parameters: "
-        + parameters
-        + ", receiverName: "
+    return "{ \"parameters\": "
+        + "[ \""
+        + UtilMDE.join(parameters, "\", \"")
+        + "\"]"
+        + ", \"receiverName\": "
+        + "\""
         + receiverName
-        + ", returnName: "
+        + "\""
+        + ", \"returnName\": "
+        + "\""
         + returnName
+        + "\""
         + " }";
   }
 
@@ -134,31 +144,11 @@ public class Identifiers {
    *
    * @return true if a name occurs more than once, false otherwise
    */
-  public boolean hasNameConflict() {
+  public boolean hasDuplicatedName() {
     Set<String> names = new HashSet<>(parameters);
     return names.size() != parameters.size()
         || parameters.contains(receiverName)
-        || parameters.contains(returnName);
-  }
-
-  /**
-   * Returns the set of identifier names that occur more than once in this {@link Identifiers}
-   * object.
-   *
-   * @return the set of identifier names that occur more than once in this object
-   */
-  public Set<String> getConflictingNames() {
-    Set<String> conflictingNames = new HashSet<>();
-    Set<String> names = new HashSet<>();
-    names.add(receiverName);
-    if (!names.add(returnName)) {
-      conflictingNames.add(returnName);
-    }
-    for (String parameter : parameters) {
-      if (!names.add(parameter)) {
-        conflictingNames.add(parameter);
-      }
-    }
-    return conflictingNames;
+        || parameters.contains(returnName)
+        || receiverName.equals(returnName);
   }
 }

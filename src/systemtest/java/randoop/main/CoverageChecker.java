@@ -91,6 +91,8 @@ class CoverageChecker {
         c = Class.forName(classname);
 
         boolean firstLine = true;
+        // Using Class method instead of randoop.reflection.ClassUtils.
+        // It shouldn't matter here that the Class method is nondeterministic.
         for (Method m : c.getDeclaredMethods()) {
           String methodname = methodName(m);
           if (!isIgnoredMethod(methodname) && !dontCareMethods.contains(methodname)) {

@@ -153,8 +153,7 @@ public class FieldSet extends CallableOperation {
 
     AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
     ClassOrInterfaceType classType = accessibleField.getDeclaringType();
-    Type fieldType;
-    fieldType = Type.forType(accessibleField.getRawField().getGenericType());
+    Type fieldType = Type.forType(accessibleField.getRawField().getGenericType());
 
     if (accessibleField.isFinal()) {
       throw new OperationParseException(
@@ -211,11 +210,11 @@ public class FieldSet extends CallableOperation {
    * Determines whether enclosed {@link java.lang.reflect.Field Field} satisfies the given
    * predicate.
    *
-   * @param predicate the {@link ReflectionPredicate} to be checked
+   * @param reflectionPredicate the {@link ReflectionPredicate} to be checked
    * @return true only if the field used in this setter satisfies predicate.canUse.
    */
   @Override
-  public boolean satisfies(ReflectionPredicate predicate) {
-    return field.satisfies(predicate);
+  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+    return field.satisfies(reflectionPredicate);
   }
 }

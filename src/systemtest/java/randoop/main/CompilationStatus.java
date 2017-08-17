@@ -16,7 +16,6 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
-import randoop.compile.CompilerUtil;
 
 /** Captures the compilation status for a set of test files. */
 class CompilationStatus {
@@ -44,16 +43,20 @@ class CompilationStatus {
    * status as a {@link CompilationStatus} object.
    *
    * @param testSourceFiles the Java source for the tests
+   * @param classpath the classpath for compiling
    * @param destinationDir the path to the desination directory
    * @return true if compile succeeded, false otherwise
    */
-  static CompilationStatus compileTests(List<File> testSourceFiles, String destinationDir) {
+  static CompilationStatus compileTests(
+      List<File> testSourceFiles, String classpath, String destinationDir) {
     final Locale locale = null; // use default locale
     final Charset charset = null; // use default charset
     final Writer writer = null; // use System.err for output
     final List<String> annotatedClasses = null; // no classes
 
     List<String> options = new ArrayList<>();
+    options.add("-classpath");
+    options.add(classpath);
     options.add("-d");
     options.add(destinationDir);
 
@@ -81,6 +84,21 @@ class CompilationStatus {
    * @param err the {@code PrintStream}
    */
   void printDiagnostics(PrintStream err) {
-    CompilerUtil.printDiagnostics(err, diagnostics);
+    for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
+      if (diag != null) {
+        if (diag.getSource() != null) {
+          String sourceName = diag.getSource().toUri().toString();
+          if (diag.getLineNumber() >= 0) {
+            err.printf(
+                "Error on line %d, col %d of %s%n%s%n",
+                diag.getLineNumber(), diag.getColumnNumber(), sourceName, diag.getMessage(null));
+          } else {
+            err.printf("%s%n", diag.getMessage(null));
+          }
+        } else {
+          err.printf("%s%n", diag.getMessage(null));
+        }
+      }
+    }
   }
 }

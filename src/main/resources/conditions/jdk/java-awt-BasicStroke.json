@@ -1,0 +1,204 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.BasicStroke",
+      "name": "java.awt.BasicStroke",
+      "parameterTypes": [
+        "float",
+        "int",
+        "int",
+        "float",
+        "[F",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "cap",
+        "join",
+        "miterlimit",
+        "dash",
+        "dash_phase"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width is negative",
+        "guard": {
+          "condition": "width<0",
+          "description": "if width is negative"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if miterlimit is less than 1 and join is JOIN_MITER",
+        "guard": {
+          "condition": "miterlimit<1",
+          "description": "if miterlimit is less than 1 and join is JOIN_MITER"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if dash_phase is negative and dash is not null",
+        "guard": {
+          "condition": "dash_phase<0 && (dash==null) == false",
+          "description": "if dash_phase is negative and dash is not null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the width of this BasicStroke. The width must be greater than or equal to 0.0f. If width is set to 0.0f, the stroke is rendered as the thinnest possible line for the target device and the antialias hint setting.",
+        "guard": {
+          "condition": "width>=0.0",
+          "description": "the width of this BasicStroke. The width must be greater than or equal to 0.0f. If width is set to 0.0f, the stroke is rendered as the thinnest possible line for the target device and the antialias hint setting."
+        }
+      },
+      {
+        "description": "the limit to trim the miter join. The miterlimit must be greater than or equal to 1.0f.",
+        "guard": {
+          "condition": "miterlimit>=1.0",
+          "description": "the limit to trim the miter join. The miterlimit must be greater than or equal to 1.0f."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.BasicStroke",
+      "name": "java.awt.BasicStroke",
+      "parameterTypes": [
+        "float",
+        "int",
+        "int",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "cap",
+        "join",
+        "miterlimit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width is negative",
+        "guard": {
+          "condition": "width<0",
+          "description": "if width is negative"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if miterlimit is less than 1 and join is JOIN_MITER",
+        "guard": {
+          "condition": "miterlimit<1",
+          "description": "if miterlimit is less than 1 and join is JOIN_MITER"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.BasicStroke",
+      "name": "java.awt.BasicStroke",
+      "parameterTypes": [
+        "float",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "cap",
+        "join"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width is negative",
+        "guard": {
+          "condition": "width<0",
+          "description": "if width is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.BasicStroke",
+      "name": "java.awt.BasicStroke",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width is negative",
+        "guard": {
+          "condition": "width<0",
+          "description": "if width is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.BasicStroke",
+      "name": "createStrokedShape",
+      "parameterTypes": [
+        "java.awt.Shape"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(s)",
+          "description": "the Shape of the stroked outline."
+        },
+        "description": "return the Shape of the stroked outline.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

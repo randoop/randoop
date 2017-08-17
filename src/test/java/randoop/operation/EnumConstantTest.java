@@ -180,6 +180,6 @@ public class EnumConstantTest {
     StringBuilder b = new StringBuilder();
     st.appendCode(var, new ArrayList<Variable>(), b);
     assertEquals(
-        "Expect fully qualified initialization of variable by constant.", expected, b.toString());
+        "Expect fully-qualified initialization of variable by constant.", expected, b.toString());
   }
 }

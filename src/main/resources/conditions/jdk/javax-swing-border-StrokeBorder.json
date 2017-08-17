@@ -1,0 +1,128 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.border.StrokeBorder",
+      "name": "javax.swing.border.StrokeBorder",
+      "parameterTypes": [
+        "java.awt.BasicStroke"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "stroke"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified stroke is null",
+        "guard": {
+          "condition": "stroke==null",
+          "description": "if the specified stroke is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.border.StrokeBorder",
+      "name": "javax.swing.border.StrokeBorder",
+      "parameterTypes": [
+        "java.awt.BasicStroke",
+        "java.awt.Paint"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "stroke",
+        "paint"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified stroke is null",
+        "guard": {
+          "condition": "stroke==null",
+          "description": "if the specified stroke is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.border.StrokeBorder",
+      "name": "paintBorder",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.awt.Graphics",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "g",
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified g is null",
+        "guard": {
+          "condition": "g==null",
+          "description": "if the specified g is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.border.StrokeBorder",
+      "name": "getBorderInsets",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.awt.Insets"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "insets"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified insets is null",
+        "guard": {
+          "condition": "insets==null",
+          "description": "if the specified insets is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

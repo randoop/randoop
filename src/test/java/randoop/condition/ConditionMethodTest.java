@@ -6,13 +6,12 @@ import static org.junit.Assert.assertTrue;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaFileObject;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
+import randoop.reflection.RawSignature;
 
 public class ConditionMethodTest {
 
@@ -20,14 +19,19 @@ public class ConditionMethodTest {
 
   @Test
   public void testSimpleConditionMethod() {
-    Condition simple = createCondition("", "(String s)", "true", "// always true");
+    RawSignature signature =
+        new RawSignature(null, "SimpleCondition", "test", new Class<?>[] {String.class});
+    BooleanExpression simple = createCondition(signature, "(String s)", "true", "// always true");
     Object[] values = new Object[] {"dummy"};
     assertTrue("condition is always true", simple.check(values));
   }
 
   @Test
   public void testSingleArgumentMethod() {
-    Condition simple = createCondition("", "(String s)", "s.length() > 2", "// has two characters");
+    RawSignature signature =
+        new RawSignature(null, "SingleArgumentCondition", "test", new Class<?>[] {String.class});
+    BooleanExpression simple =
+        createCondition(signature, "(String s)", "s.length() > 2", "// has two characters");
     assertTrue("string has more than two characters", simple.check(new Object[] {"dummy"}));
     assertFalse("string has two characters", simple.check(new Object[] {"01"}));
   }
@@ -35,22 +39,33 @@ public class ConditionMethodTest {
   @Test
   public void testWrongIdentifier() {
     thrown.expect(RandoopConditionError.class);
-
-    Condition simple =
-        createCondition("", "(String s)", "t.length() > 2", "// condition has wrong identifier");
+    RawSignature signature =
+        new RawSignature(null, "WrongIdentifierCondition", "test", new Class<?>[] {String.class});
+    BooleanExpression simple =
+        createCondition(
+            signature, "(String s)", "t.length() > 2", "// condition has wrong identifier");
   }
 
   @Test
   public void testWrongType() {
     thrown.expect(RandoopConditionError.class);
-    Condition simple = createCondition("", "(String s)", "s.length()", "// int is not a boolean");
+    RawSignature signature =
+        new RawSignature(null, "WrongTypeCondition", "test", new Class<?>[] {String.class});
+    BooleanExpression simple =
+        createCondition(signature, "(String s)", "s.length()", "// int is not a boolean");
   }
 
   @Test
   public void testErrorThrown() {
-    Condition error =
-        createCondition(
+    RawSignature signature =
+        new RawSignature(
             "randoop.condition",
+            "ErrorThrownCondition",
+            "test",
+            new Class<?>[] {ConditionWithException.class});
+    BooleanExpression error =
+        createCondition(
+            signature,
             "(randoop.condition.ConditionWithException r)",
             "r.errorPredicate()",
             "throws an Error");
@@ -61,9 +76,15 @@ public class ConditionMethodTest {
 
   @Test
   public void testThrowableThrown() {
-    Condition throwable =
-        createCondition(
+    RawSignature signature =
+        new RawSignature(
             "randoop.condition",
+            "ThrowableThrownCondition",
+            "test",
+            new Class<?>[] {ConditionWithException.class});
+    BooleanExpression throwable =
+        createCondition(
+            signature,
             "(randoop.condition.ConditionWithException r)",
             "r.throwablePredicate()",
             "throws a Throwable");
@@ -72,15 +93,14 @@ public class ConditionMethodTest {
         throwable.check(new Object[] {new ConditionWithException()}));
   }
 
-  private Condition createCondition(
-      String packageName, String signature, String conditionText, String comment) {
+  private BooleanExpression createCondition(
+      RawSignature signature, String declarations, String conditionText, String comment) {
     Method method =
-        ConditionMethodCreator.create(packageName, signature, conditionText, getCompiler());
-    return new Condition(method, comment, conditionText);
+        BooleanExpression.createMethod(signature, declarations, conditionText, getCompiler());
+    return new BooleanExpression(method, comment, conditionText);
   }
 
   private SequenceCompiler getCompiler() {
-    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> options = new ArrayList<>();
     return new SequenceCompiler(sequenceClassLoader, options);

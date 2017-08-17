@@ -1,0 +1,210 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.HTMLDocument",
+      "name": "setParagraphAttributes",
+      "parameterTypes": [
+        "int",
+        "int",
+        "javax.swing.text.AttributeSet",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "length",
+        "s",
+        "replace"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the offset into the paragraph (must be at least 0)",
+        "guard": {
+          "condition": "offset==0",
+          "description": "the offset into the paragraph (must be at least 0)"
+        }
+      },
+      {
+        "description": "the number of characters affected (must be at least 0)",
+        "guard": {
+          "condition": "length==0",
+          "description": "the number of characters affected (must be at least 0)"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.HTMLDocument",
+      "name": "createLeafElement",
+      "parameterTypes": [
+        "javax.swing.text.Element",
+        "javax.swing.text.AttributeSet",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "a",
+        "p0",
+        "p1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the new element"
+        },
+        "description": "return the new element",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the beginning of the range (must be at least 0)",
+        "guard": {
+          "condition": "p0==0",
+          "description": "the beginning of the range (must be at least 0)"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.HTMLDocument",
+      "name": "createBranchElement",
+      "parameterTypes": [
+        "javax.swing.text.Element",
+        "javax.swing.text.AttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(parent)",
+          "description": "the element"
+        },
+        "description": "return the element",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.HTMLDocument",
+      "name": "setInnerHTML",
+      "parameterTypes": [
+        "javax.swing.text.Element",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "elem",
+        "htmlText"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if elem is a leaf",
+        "guard": {
+          "condition": "elem.isLeaf()",
+          "description": "if elem is a leaf"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.HTMLDocument",
+      "name": "insertAfterStart",
+      "parameterTypes": [
+        "javax.swing.text.Element",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "elem",
+        "htmlText"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if elem is a leaf",
+        "guard": {
+          "condition": "elem.isLeaf()",
+          "description": "if elem is a leaf"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.HTMLDocument",
+      "name": "insertBeforeEnd",
+      "parameterTypes": [
+        "javax.swing.text.Element",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "elem",
+        "htmlText"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if elem is a leaf",
+        "guard": {
+          "condition": "elem.isLeaf()",
+          "description": "if elem is a leaf"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

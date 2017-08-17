@@ -1,0 +1,144 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.EnumMap",
+      "name": "java.util.EnumMap",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if keyType is null",
+        "guard": {
+          "condition": "keyType==null",
+          "description": "if keyType is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumMap",
+      "name": "java.util.EnumMap",
+      "parameterTypes": [
+        "java.util.EnumMap"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if m is null",
+        "guard": {
+          "condition": "m==null",
+          "description": "if m is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumMap",
+      "name": "java.util.EnumMap",
+      "parameterTypes": [
+        "java.util.Map"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if m is null",
+        "guard": {
+          "condition": "m==null",
+          "description": "if m is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumMap",
+      "name": "put",
+      "parameterTypes": [
+        "java.lang.Enum",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if the specified key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.EnumMap",
+      "name": "putAll",
+      "parameterTypes": [
+        "java.util.Map"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException the specified map is null, or if one or more keys in the specified map are null",
+        "guard": {
+          "condition": "m==null",
+          "description": "the specified map is null, or if one or more keys in the specified map are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

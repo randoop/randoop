@@ -4,10 +4,9 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import java.util.ArrayList;
 import java.util.List;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaFileObject;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
+import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
 import randoop.output.NameGenerator;
 import randoop.sequence.ExecutableSequence;
@@ -27,14 +26,17 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
   /** The name generator for temporary class names */
   private final NameGenerator nameGenerator;
 
+  /** The {@link GenTests} instance that created this predicate */
+  private final GenTests genTests;
+
   /**
    * Creates a predicate using the given {@link JUnitCreator} to construct the test class for each
    * sequence.
    *
    * @param junitCreator the {@link JUnitCreator} for this Randoop run
+   * @param genTests the {@link GenTests} instance to report compilation failures
    */
-  public CompilableTestPredicate(JUnitCreator junitCreator) {
-    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+  public CompilableTestPredicate(JUnitCreator junitCreator, GenTests genTests) {
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> options = new ArrayList<>();
     // only need to know an error exists:
@@ -51,6 +53,7 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
     this.compiler = new SequenceCompiler(sequenceClassLoader, options);
     this.junitCreator = junitCreator;
     this.nameGenerator = new NameGenerator("RandoopTemporarySeqTest");
+    this.genTests = genTests;
   }
 
   /**
@@ -69,12 +72,12 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
     CompilationUnit source =
         junitCreator.createTestClass(testClassName, methodNamePrefix, sequences);
     PackageDeclaration pkg = source.getPackage();
-    String packageName = "";
-    if (pkg != null) {
-      packageName = pkg.getPackageName();
+    String packageName = pkg == null ? null : pkg.getPackageName();
+    boolean result = testSource(testClassName, source, packageName);
+    if (!result && genTests != null) {
+      genTests.countSequenceCompileFailure();
     }
-
-    return testSource(testClassName, source, packageName);
+    return result;
   }
 
   /**
@@ -84,11 +87,11 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
    *
    * @param testClassName the name of the test class
    * @param source the source text for the class
-   * @param packageName the package name for the test
+   * @param packageName the package name for the test, null if no package
    * @return true if the code compiles (without error), false otherwise
    */
   boolean testSource(String testClassName, CompilationUnit source, String packageName) {
     String sourceText = source.toString();
-    return compiler.compileCheck(packageName, testClassName, sourceText);
+    return compiler.isCompilable(packageName, testClassName, sourceText);
   }
 }

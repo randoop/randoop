@@ -2,7 +2,7 @@ package randoop.test;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.main.GenInputsAbstract.include_if_classname_appears;
+import static randoop.main.GenInputsAbstract.require_classname_in_test;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -15,6 +15,7 @@ import randoop.BugInRandoopException;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
+import randoop.generation.TestUtils;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
@@ -51,6 +52,8 @@ public class ForwardExplorerTests {
   public static void setup() {
     optionsCache = new OptionsCache();
     optionsCache.saveState();
+
+    TestUtils.setSelectionLog();
   }
 
   @AfterClass
@@ -72,15 +75,15 @@ public class ForwardExplorerTests {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            Long.MAX_VALUE,
-            5000,
-            5000,
+            new GenInputsAbstract.Limits(0, 1000, 1000, 1000),
             mgr,
             null,
             null);
     explorer.addTestCheckGenerator(createChecker(new ContractSet()));
     explorer.addTestPredicate(createOutputTest());
+    TestUtils.setOperationLog(explorer);
     explorer.explore();
+    explorer.getOperationHistory().outputTable();
     GenInputsAbstract.dontexecute = false;
     assertTrue(explorer.numGeneratedSequences() != 0);
   }
@@ -91,9 +94,10 @@ public class ForwardExplorerTests {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(
-          new OperationExtractor(classType, model, new DefaultReflectionPredicate(), visibility),
-          c);
+      final OperationExtractor extractor =
+          new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+      mgr.apply(extractor, c);
+      model.addAll(extractor.getOperations());
     }
     return model;
   }
@@ -110,26 +114,35 @@ public class ForwardExplorerTests {
     List<Class<?>> classes = new ArrayList<>();
     classes.add(randoop.test.BiSortVal.class);
     classes.add(BiSort.class);
-    //GenFailures.noprogressdisplay = true;
+    //GenFailures.progressdisplay = false;
     //Log.log = new FileWriter("templog.txt");
     int oldTimeout = ReflectionExecutor.timeout;
-    ReflectionExecutor.timeout = 200;
+    ReflectionExecutor.timeout = 500;
+    long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
+    GenInputsAbstract.progressintervalsteps = 100;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
-    GenInputsAbstract.ignore_flaky_tests = true;
-    ForwardGenerator exp =
+    ForwardGenerator explorer =
         new ForwardGenerator(
-            model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
-    exp.addTestCheckGenerator(createChecker(new ContractSet()));
-    exp.addTestPredicate(createOutputTest());
+            model,
+            new LinkedHashSet<TypedOperation>(),
+            new GenInputsAbstract.Limits(0, 200, 200, 200),
+            mgr,
+            null,
+            null);
+    explorer.addTestCheckGenerator(createChecker(new ContractSet()));
+    explorer.addTestPredicate(createOutputTest());
+    TestUtils.setOperationLog(explorer);
     try {
-      exp.explore();
+      explorer.explore();
     } catch (Throwable t) {
       fail("Exception during generation: " + t);
     }
+    explorer.getOperationHistory().outputTable();
     ReflectionExecutor.timeout = oldTimeout;
-    for (Sequence s : exp.getAllSequences()) {
+    GenInputsAbstract.progressintervalsteps = oldProgressintervalsteps;
+    for (Sequence s : explorer.getAllSequences()) {
       String str = s.toCodeString();
       if (str.contains("bisort")) bisort = true;
       if (str.contains("bimerge")) bimerge = true;
@@ -166,22 +179,28 @@ public class ForwardExplorerTests {
     classes.add(Tree.class);
 
     System.out.println(classes);
-    GenInputsAbstract.ignore_flaky_tests = true;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
-    ForwardGenerator exp =
+    ForwardGenerator explorer =
         new ForwardGenerator(
-            model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
+            model,
+            new LinkedHashSet<TypedOperation>(),
+            new GenInputsAbstract.Limits(0, 200, 200, 200),
+            mgr,
+            null,
+            null);
     GenInputsAbstract.forbid_null = false;
-    exp.addTestCheckGenerator(createChecker(new ContractSet()));
-    exp.addTestPredicate(createOutputTest());
+    explorer.addTestCheckGenerator(createChecker(new ContractSet()));
+    explorer.addTestPredicate(createOutputTest());
+    TestUtils.setOperationLog(explorer);
     try {
-      exp.explore();
+      explorer.explore();
     } catch (Throwable t) {
       fail("Exception during generation: " + t);
     }
-    for (Sequence s : exp.getAllSequences()) {
+    explorer.getOperationHistory().outputTable();
+    for (Sequence s : explorer.getAllSequences()) {
       String str = s.toCodeString();
       if (str.contains("BH")) bh = true;
       if (str.contains("Body")) body = true;
@@ -201,10 +220,7 @@ public class ForwardExplorerTests {
   private static TestCheckGenerator createChecker(ContractSet contracts) {
     return (new GenTests())
         .createTestCheckGenerator(
-            new PublicVisibilityPredicate(),
-            contracts,
-            new MultiMap<Type, TypedOperation>(),
-            new LinkedHashSet<TypedOperation>());
+            new PublicVisibilityPredicate(), contracts, new MultiMap<Type, TypedOperation>());
   }
 
   private static Predicate<ExecutableSequence> createOutputTest() {
@@ -221,6 +237,6 @@ public class ForwardExplorerTests {
     sequences.add((new Sequence().extend(op, new ArrayList<Variable>())));
     return (new GenTests())
         .createTestOutputPredicate(
-            sequences, new LinkedHashSet<Class<?>>(), include_if_classname_appears);
+            sequences, new LinkedHashSet<Class<?>>(), require_classname_in_test);
   }
 }

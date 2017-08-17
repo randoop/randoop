@@ -21,6 +21,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
     this.inputs = inputs;
   }
 
+  @SuppressWarnings("Finally")
   @Override
   public void runReflectionCodeRaw()
       throws InstantiationException, IllegalAccessException, InvocationTargetException {
@@ -33,7 +34,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
     if (!this.constructor.isAccessible()) {
       this.constructor.setAccessible(true);
-      Log.logLine("not accessible:" + this.constructor);
+      Log.logLine("not accessible: " + this.constructor);
       // TODO something is bizarre - it seems that a public method can be
       // not-accessible sometimes. RatNum(int,int)
       // TODO you cannot just throw the exception below - because no sequences
@@ -75,9 +76,13 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    String ret = "Call to " + constructor + " args:" + Arrays.toString(inputs);
-    if (hasRunAlready()) return ret + " not run yet";
-    else if (exceptionThrown == null) return ret + " returned:" + ret;
-    else return ret + " threw:" + exceptionThrown;
+    String ret = "Call to " + constructor + ", args: " + Arrays.toString(inputs);
+    if (hasRunAlready()) {
+      return ret + " not run yet";
+    } else if (exceptionThrown == null) {
+      return ret + " returned: " + ret;
+    } else {
+      return ret + " threw: " + exceptionThrown;
+    }
   }
 }

@@ -1,0 +1,485 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "java.awt.Window",
+      "parameterTypes": [
+        "java.awt.GraphicsConfiguration"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "gc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the GraphicsConfiguration of the target screen device. If gc is null, the system default GraphicsConfiguration is assumed",
+        "guard": {
+          "condition": "gc==null",
+          "description": "the GraphicsConfiguration of the target screen device. If gc is null, the system default GraphicsConfiguration is assumed"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "java.awt.Window",
+      "parameterTypes": [
+        "java.awt.Window",
+        "java.awt.GraphicsConfiguration"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "owner",
+        "gc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the GraphicsConfiguration of the target screen device; if gc is null, the system default GraphicsConfiguration is assumed",
+        "guard": {
+          "condition": "gc==null",
+          "description": "the GraphicsConfiguration of the target screen device; if gc is null, the system default GraphicsConfiguration is assumed"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "setVisible",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "if true, makes the Window visible, otherwise hides the Window. If the Window and/or its owner are not yet displayable, both are made displayable. The Window will be validated prior to being made visible. If the Window is already visible, this will bring the Window to the front. If false, hides this Window, its subcomponents, and all of its owned children. The Window and its subcomponents can be made visible again with a call to #setVisible(true).",
+        "guard": {
+          "condition": "target.isVisible()",
+          "description": "if true, makes the Window visible, otherwise hides the Window. If the Window and/or its owner are not yet displayable, both are made displayable. The Window will be validated prior to being made visible. If the Window is already visible, this will bring the Window to the front. If false, hides this Window, its subcomponents, and all of its owned children. The Window and its subcomponents can be made visible again with a call to #setVisible(true)."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "getToolkit",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the toolkit of this window."
+        },
+        "description": "return the toolkit of this window.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "getModalExclusionType",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the modal exclusion type of this window"
+        },
+        "description": "return the modal exclusion type of this window",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "getListeners",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "listenerType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if listenerType is null",
+        "guard": {
+          "condition": "listenerType==null",
+          "description": "if listenerType is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "getFocusOwner",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the child Component with focus, or null if this Window is not focused"
+        },
+        "description": "return the child Component with focus, or null if this Window is not focused",
+        "guard": {
+          "condition": "(target.isFocused())==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "getFocusTraversalKeys",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS",
+        "guard": {
+          "condition": "(id==1) == false",
+          "description": "if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "isFocusCycleRoot",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "isValidateRoot",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "setType",
+      "parameterTypes": [
+        "java.awt.Window$Type"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if the window is displayable.",
+        "guard": {
+          "condition": "target.isDisplayable()",
+          "description": "if the window is displayable."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the type is null",
+        "guard": {
+          "condition": "type==null",
+          "description": "if the type is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "createBufferStrategy",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "numBuffers"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if numBuffers is less than 1.",
+        "guard": {
+          "condition": "numBuffers<1",
+          "description": "if numBuffers is less than 1."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalStateException",
+        "description": "throws IllegalStateException if the component is not displayable",
+        "guard": {
+          "condition": "(target.getComponent(int).isDisplayable()) == false",
+          "description": "if the component is not displayable"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "createBufferStrategy",
+      "parameterTypes": [
+        "int",
+        "java.awt.BufferCapabilities"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "numBuffers",
+        "caps"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if numBuffers is less than 1, or if caps is null",
+        "guard": {
+          "condition": "numBuffers<1 || caps==null",
+          "description": "if numBuffers is less than 1, or if caps is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the required capabilities for creating the buffer strategy; cannot be null",
+        "guard": {
+          "condition": "(caps==null) == false",
+          "description": "the required capabilities for creating the buffer strategy; cannot be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "setLocationByPlatform",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "locationByPlatform"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if the window is showing on screen and locationByPlatform is true.",
+        "guard": {
+          "condition": "locationByPlatform==true",
+          "description": "if the window is showing on screen and locationByPlatform is true."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "getOpacity",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the opacity of the window"
+        },
+        "description": "return the opacity of the window",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Window",
+      "name": "setShape",
+      "parameterTypes": [
+        "java.awt.Shape"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "shape"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if the shape is not null and the window is decorated",
+        "guard": {
+          "condition": "(shape==null) == false",
+          "description": "if the shape is not null and the window is decorated"
+        }
+      },
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if the shape is not null and the window is in full-screen mode",
+        "guard": {
+          "condition": "(shape==null) == false",
+          "description": "if the shape is not null and the window is in full-screen mode"
+        }
+      },
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException if the shape is not null and PERPIXEL_TRANSPARENT translucency is not supported",
+        "guard": {
+          "condition": "(shape==null) == false",
+          "description": "if the shape is not null and PERPIXEL_TRANSPARENT translucency is not supported"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

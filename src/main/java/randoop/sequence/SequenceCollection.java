@@ -53,10 +53,13 @@ public class SequenceCollection {
 
   private Set<Type> sequenceTypes = new TreeSet<>();
 
+  /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
 
   private void checkRep() {
-    if (!GenInputsAbstract.debug_checks) return;
+    if (!GenInputsAbstract.debug_checks) {
+      return;
+    }
     if (sequenceMap.size() != typeSet.size()) {
       String b =
           "activesequences types="
@@ -151,7 +154,7 @@ public class SequenceCollection {
       if (sequence.isActive(argument.getDeclIndex())) {
         Type type = formalTypes.get(i);
         sequenceTypes.add(type);
-        if (type.isClassType()) {
+        if (type.isClassOrInterfaceType()) {
           sequenceTypes.addAll(((ClassOrInterfaceType) type).getSuperTypes());
         }
         typeSet.add(type);
@@ -175,8 +178,8 @@ public class SequenceCollection {
     }
     if (Log.isLoggingOn()) Log.logLine("Adding sequence of type " + type);
     boolean added = set.add(sequence);
-    sequenceCount++;
     assert added;
+    sequenceCount++;
   }
 
   /**

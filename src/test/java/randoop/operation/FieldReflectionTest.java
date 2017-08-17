@@ -18,6 +18,7 @@ import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
 import randoop.field.SubclassWithFields;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
@@ -50,7 +51,7 @@ public class FieldReflectionTest {
     //number of operations is twice number of fields plus constructor and getter minus one for each constant
     //in this case, 11
     assertEquals(
-        "number of operations twice number of fields", 2 * fields.size(), operations.size());
+        "number of operations twice number of fields", 2 * fields.size() + 1, operations.size());
 
     //exclude private or protected fields
     List<Field> exclude = new ArrayList<>();
@@ -88,14 +89,17 @@ public class FieldReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(
-      Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+      Class<?> c,
+      ReflectionPredicate reflectionPredicate,
+      VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
+
     OperationExtractor extractor =
-        new OperationExtractor(classType, operations, predicate, visibilityPredicate);
+        new OperationExtractor(
+            classType, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.apply(extractor, c);
-    return operations;
+    return new LinkedHashSet<>(extractor.getOperations());
   }
 
   /**
@@ -144,7 +148,7 @@ public class FieldReflectionTest {
     } catch (RandoopTypeException e) {
       fail("type error: " + e);
     }
-    assertEquals("number of operations ", 2 * expected.size() - 1 + 2, actual.size());
+    assertEquals("number of operations ", 2 * expected.size() - 1 + 3, actual.size());
   }
 
   /** filteredFields checks to ensure we don't get any fields that should be removed */
@@ -160,10 +164,10 @@ public class FieldReflectionTest {
       exclude.add(f);
     }
 
-    ReflectionPredicate filter = new DefaultReflectionPredicate(null, excludeNames);
+    ReflectionPredicate filter = new DefaultReflectionPredicate(excludeNames);
     Set<TypedOperation> actual = getConcreteOperations(c, filter, new PublicVisibilityPredicate());
 
-    assertEquals("number of operations ", 2, actual.size());
+    assertEquals("number of operations ", 3, actual.size());
 
     for (Field f : exclude) {
       try {

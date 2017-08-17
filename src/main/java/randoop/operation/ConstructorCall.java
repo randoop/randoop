@@ -212,8 +212,8 @@ public final class ConstructorCall extends CallableOperation {
    * java.util.ArrayList.<init>(java.util.Collection)
    * }</pre>
    *
-   * @see #parse(String)
    * @return signature string for constructor
+   * @see #parse(String)
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
@@ -230,10 +230,10 @@ public final class ConstructorCall extends CallableOperation {
    * ConstructorCall#toParsableString(Type, TypeTuple, Type)} and returns the corresponding {@link
    * ConstructorCall} object.
    *
-   * @see OperationParser#parse(String)
    * @param signature a string descriptor of a constructor call
    * @return the constructor call for the given string descriptor
    * @throws OperationParseException if no constructor found for signature
+   * @see OperationParser#parse(String)
    */
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
@@ -297,7 +297,7 @@ public final class ConstructorCall extends CallableOperation {
    *     ReflectionPredicate#test(Constructor)} implemented by predicate.
    */
   @Override
-  public boolean satisfies(ReflectionPredicate predicate) {
-    return predicate.test(constructor);
+  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+    return reflectionPredicate.test(constructor);
   }
 }
