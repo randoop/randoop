@@ -18,7 +18,7 @@ import plume.UtilMDE;
  */
 public class RawSignature {
 
-  /** The package name of the class; empty string for the unnamed package. */
+  /** The package name of the class; null for the unnamed package. */
   private final String packageName;
 
   /** The name of the declaring class of the method. */
@@ -33,13 +33,14 @@ public class RawSignature {
   /**
    * Create a {@link RawSignature} object with the name and parameterTypes.
    *
-   * @param packageName the package name of the class; empty string for the unnamed package
+   * @param packageName the package name of the class; null for the unnamed package
    * @param classname the name of the class
    * @param name the method name; for a constructor, same as the classname
    * @param parameterTypes the method parameter types, including the receiver type if any
    */
   public RawSignature(
       String packageName, String classname, String name, Class<?>[] parameterTypes) {
+    assert packageName == null || !packageName.isEmpty();
     this.packageName = packageName;
     this.classname = classname;
     this.name = name;
@@ -54,8 +55,10 @@ public class RawSignature {
    */
   public static RawSignature of(Method method) {
     Package classPackage = method.getDeclaringClass().getPackage();
-    String packageName = (classPackage != null) ? classPackage.getName() : "";
-    String classname = method.getDeclaringClass().getName().substring(packageName.length() + 1);
+    String packageName = (classPackage == null) ? null : classPackage.getName();
+    String fullclassname = method.getDeclaringClass().getName();
+    String classname =
+        packageName == null ? fullclassname : fullclassname.substring(packageName.length() + 1);
 
     return new RawSignature(packageName, classname, method.getName(), method.getParameterTypes());
   }
@@ -68,10 +71,13 @@ public class RawSignature {
    */
   public static RawSignature of(Constructor<?> constructor) {
     Package classPackage = constructor.getDeclaringClass().getPackage();
-    String packageName = (classPackage != null) ? classPackage.getName() : "";
+    String packageName = (classPackage == null) ? null : classPackage.getName();
+    String fullclassname = constructor.getDeclaringClass().getName();
     String classname =
-        constructor.getDeclaringClass().getName().substring(packageName.length() + 1);
-    String name = constructor.getName().substring(packageName.length() + 1);
+        packageName == null ? fullclassname : fullclassname.substring(packageName.length() + 1);
+    String constructorname = constructor.getName();
+    String name =
+        packageName == null ? constructorname : constructorname.substring(packageName.length() + 1);
 
     return new RawSignature(packageName, classname, name, constructor.getParameterTypes());
   }
@@ -82,7 +88,7 @@ public class RawSignature {
       return false;
     }
     RawSignature that = (RawSignature) object;
-    return this.packageName.equals(that.packageName)
+    return Objects.equals(this.packageName, that.packageName)
         && this.classname.equals(that.classname)
         && this.name.equals(that.name)
         && Arrays.equals(this.parameterTypes, that.parameterTypes);
@@ -106,7 +112,7 @@ public class RawSignature {
       typeNames.add(type.getCanonicalName());
     }
 
-    return ((packageName.isEmpty()) ? "" : packageName + ".")
+    return ((packageName == null) ? "" : packageName + ".")
         + ((classname.equals(name)) ? name : classname + "." + name)
         + "("
         + UtilMDE.join(typeNames, ",")
@@ -116,7 +122,7 @@ public class RawSignature {
   /**
    * Return package name for method in this signature.
    *
-   * @return the package name for this signature
+   * @return the package name for this signature, null if default package
    */
   public String getPackageName() {
     return packageName;

@@ -20,7 +20,7 @@ public class ConditionMethodTest {
   @Test
   public void testSimpleConditionMethod() {
     RawSignature signature =
-        new RawSignature("", "SimpleCondition", "test", new Class<?>[] {String.class});
+        new RawSignature(null, "SimpleCondition", "test", new Class<?>[] {String.class});
     BooleanExpression simple = createCondition(signature, "(String s)", "true", "// always true");
     Object[] values = new Object[] {"dummy"};
     assertTrue("condition is always true", simple.check(values));
@@ -29,7 +29,7 @@ public class ConditionMethodTest {
   @Test
   public void testSingleArgumentMethod() {
     RawSignature signature =
-        new RawSignature("", "SingleArgumentCondition", "test", new Class<?>[] {String.class});
+        new RawSignature(null, "SingleArgumentCondition", "test", new Class<?>[] {String.class});
     BooleanExpression simple =
         createCondition(signature, "(String s)", "s.length() > 2", "// has two characters");
     assertTrue("string has more than two characters", simple.check(new Object[] {"dummy"}));
@@ -40,7 +40,7 @@ public class ConditionMethodTest {
   public void testWrongIdentifier() {
     thrown.expect(RandoopConditionError.class);
     RawSignature signature =
-        new RawSignature("", "WrongIdentifierCondition", "test", new Class<?>[] {String.class});
+        new RawSignature(null, "WrongIdentifierCondition", "test", new Class<?>[] {String.class});
     BooleanExpression simple =
         createCondition(
             signature, "(String s)", "t.length() > 2", "// condition has wrong identifier");
@@ -50,7 +50,7 @@ public class ConditionMethodTest {
   public void testWrongType() {
     thrown.expect(RandoopConditionError.class);
     RawSignature signature =
-        new RawSignature("", "WrongTypeCondition", "test", new Class<?>[] {String.class});
+        new RawSignature(null, "WrongTypeCondition", "test", new Class<?>[] {String.class});
     BooleanExpression simple =
         createCondition(signature, "(String s)", "s.length()", "// int is not a boolean");
   }
