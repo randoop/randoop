@@ -50,36 +50,36 @@ public class RawSignature {
   /**
    * Create a {@link RawSignature} object from the {@code java.lang.reflect.Method}.
    *
-   * @param method the method from which to extract the signature
-   * @return the {@link RawSignature} object for {@code method}
+   * @param executable the method from which to extract the signature
+   * @return the {@link RawSignature} object for {@code executable}
    */
-  public static RawSignature of(Method method) {
-    Package classPackage = method.getDeclaringClass().getPackage();
+  public static RawSignature of(Method executable) {
+    Package classPackage = executable.getDeclaringClass().getPackage();
     String packageName = (classPackage == null) ? null : classPackage.getName();
-    String fullclassname = method.getDeclaringClass().getName();
+    String fullclassname = executable.getDeclaringClass().getName();
     String classname =
-        packageName == null ? fullclassname : fullclassname.substring(packageName.length() + 1);
+        (packageName == null) ? fullclassname : fullclassname.substring(packageName.length() + 1);
 
-    return new RawSignature(packageName, classname, method.getName(), method.getParameterTypes());
+    return new RawSignature(
+        packageName, classname, executable.getName(), executable.getParameterTypes());
   }
 
   /**
    * Create a {@link RawSignature} object from the {@code java.lang.reflect.Constructor}.
    *
-   * @param constructor the constructor from which signature is extracted
-   * @return the {@link RawSignature} object for {@code constructor}
+   * @param executable the constructor from which signature is extracted
+   * @return the {@link RawSignature} object for {@code executable}
    */
-  public static RawSignature of(Constructor<?> constructor) {
-    Package classPackage = constructor.getDeclaringClass().getPackage();
+  public static RawSignature of(Constructor<?> executable) {
+    Package classPackage = executable.getDeclaringClass().getPackage();
     String packageName = (classPackage == null) ? null : classPackage.getName();
-    String fullclassname = constructor.getDeclaringClass().getName();
+    String fullclassname = executable.getDeclaringClass().getName();
     String classname =
-        packageName == null ? fullclassname : fullclassname.substring(packageName.length() + 1);
-    String constructorname = constructor.getName();
-    String name =
-        packageName == null ? constructorname : constructorname.substring(packageName.length() + 1);
+        (packageName == null) ? fullclassname : fullclassname.substring(packageName.length() + 1);
+    String fullname = executable.getName();
+    String name = (packageName == null) ? fullname : fullname.substring(packageName.length() + 1);
 
-    return new RawSignature(packageName, classname, name, constructor.getParameterTypes());
+    return new RawSignature(packageName, classname, name, executable.getParameterTypes());
   }
 
   @Override
