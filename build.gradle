@@ -774,7 +774,7 @@ task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishS
 /* Declares the Gradle version to be used when the wrapper is built */
 task wrapper(type: Wrapper) {
   description "Configure Gradle Wrapper for this project"
-  gradleVersion = '4.0'
+  gradleVersion = '4.1'
 }
 
 /*************** Other tool configs *************/
