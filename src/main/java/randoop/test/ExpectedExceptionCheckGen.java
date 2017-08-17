@@ -42,7 +42,15 @@ public class ExpectedExceptionCheckGen {
   ExceptionCheck getExceptionCheck(
       ExceptionalExecution exec, ExecutableSequence s, int statementIndex) {
     Throwable e = exec.getException();
+
     String catchClassName = getCatchClassName(e.getClass());
+
+    if (e instanceof NoClassDefFoundError) {
+      System.err.println("Ignoring NoClassDefFoundError thrown: " + e + " Please report.");
+      e.printStackTrace();
+      return new InvalidExceptionCheck(e, statementIndex, catchClassName);
+    }
+
     if (isExpected.test(exec, s)) {
       return new ExpectedExceptionCheck(e, statementIndex, catchClassName);
     } else {

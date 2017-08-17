@@ -205,8 +205,7 @@ public class SimpleTypeTest {
     Type shortType = new PrimitiveType(short.class);
     Type subclassType = new NonParameterizedType(randoop.types.test.Subclass.class);
     Type intArrayType = ArrayType.ofComponentType(intType);
-    Type intArrayListType;
-    intArrayListType =
+    Type intArrayListType =
         GenericClassType.forClass(ArrayList.class)
             .instantiate(ReferenceType.forClass(Integer.class));
 
@@ -276,8 +275,7 @@ public class SimpleTypeTest {
   @Test
   public void testRawtypeAssignability() {
     Type rawALType = new NonParameterizedType(ArrayList.class);
-    Type parameterizedALType;
-    parameterizedALType =
+    Type parameterizedALType =
         GenericClassType.forClass(ArrayList.class)
             .instantiate(new NonParameterizedType(String.class));
     assertTrue(

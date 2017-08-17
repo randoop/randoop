@@ -12,17 +12,16 @@ public class SignatureParser {
 
   // TODO: The duplicated regular expressions should be factored into a separate source set (aka,
   // module) so that it can also be used in javagents. The patterns are duplicated from {@code
-  // ReplacementFileReader} from the mapcall agent.
+  // ReplacementFileReader} from the replacecall agent.
 
   /** Regex for Java identifiers */
-  private static final String ID_STRING =
-      "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+  public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**
    * Regex to match a sequence of identifiers (or {@code <init>}) separated by periods. Corresponds
    * to package names, fully-qualified classnames, or method names with fully-qualified classname.
    */
-  private static final String DOT_DELIMITED_IDS =
+  public static final String DOT_DELIMITED_IDS =
       ID_STRING + "(?:\\." + ID_STRING + ")*" + "(?:\\.<init>)?";
 
   /**

@@ -5,6 +5,8 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -23,6 +25,7 @@ import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
+import randoop.MethodReplacements;
 import randoop.MultiVisitor;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
@@ -47,6 +50,7 @@ import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.RandoopInstantiationError;
+import randoop.reflection.RawSignature;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
 import randoop.reflection.VisibilityPredicate;
@@ -224,6 +228,9 @@ public class GenTests extends GenInputsAbstract {
     }
 
     omitmethods.addAll(readOmitMethods(omitmethods_list));
+    if (!GenInputsAbstract.dont_omit_replaced_methods) {
+      omitmethods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
+    }
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
@@ -331,8 +338,7 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Create the generator for this session.
      */
-    AbstractGenerator explorer;
-    explorer =
+    AbstractGenerator explorer =
         new ForwardGenerator(
             operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
 
@@ -470,8 +476,15 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (!GenInputsAbstract.no_regression_tests) {
-      FailingTestFilter codeWriter =
-          new FailingTestFilter(new TestEnvironment(classpath), javaFileWriter);
+      final TestEnvironment testEnvironment = new TestEnvironment(classpath);
+      String agentPathString = MethodReplacements.getAgentPath();
+      String agentArgs = MethodReplacements.getAgentArgs();
+      if (agentPathString != null && !agentPathString.isEmpty()) {
+        Path agentPath = Paths.get(agentPathString);
+        testEnvironment.setReplaceCallAgent(agentPath, agentArgs);
+      }
+
+      FailingTestFilter codeWriter = new FailingTestFilter(testEnvironment, javaFileWriter);
       writeTestFiles(
           junitCreator,
           explorer.getRegressionSequences(),
@@ -616,7 +629,7 @@ public class GenTests extends GenInputsAbstract {
    */
   private Set<Pattern> readOmitMethods(File file) {
     Set<Pattern> result = new LinkedHashSet<>();
-    // Read method omissions from user provided file
+    // Read method omissions from user-provided file
     if (file != null) {
       try (EntryReader er = new EntryReader(file, "^#.*", null)) {
         for (String line : er) {
@@ -633,6 +646,41 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     return result;
+  }
+
+  /**
+   * Creates a list of signature strings (see {@link RawSignature#toString()} to a list of {@code
+   * Pattern}.
+   *
+   * @param signatures the list of signature strings
+   * @return the list of patterns for the signature strings
+   */
+  private List<Pattern> createPatternsFromSignatures(List<String> signatures) {
+    List<Pattern> patterns = new ArrayList<>();
+    for (String signatureString : signatures) {
+      patterns.add(signatureToPattern(signatureString));
+    }
+    return patterns;
+  }
+
+  /**
+   * Converts a signature string (see {@link RawSignature#toString()} to a {@code Pattern} that
+   * matches that string.
+   *
+   * @param signatureString the string representation of a signature
+   * @return the pattern to match {@code signatureString}
+   */
+  private Pattern signatureToPattern(String signatureString) {
+    String patternString =
+        signatureString
+            .replaceAll(" ", "")
+            .replaceAll("\\.", "\\\\.")
+            .replaceAll("\\(", "\\\\(")
+            .replaceAll("\\)", "\\\\)")
+            .replaceAll("\\$", "\\\\$")
+            .replaceAll("\\[", "\\\\[")
+            .replaceAll("\\]", "\\\\]");
+    return Pattern.compile(patternString);
   }
 
   /**
@@ -818,11 +866,9 @@ public class GenTests extends GenInputsAbstract {
       } else {
         isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
       }
-      ExpectedExceptionCheckGen expectation;
-      expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+      ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
 
-      RegressionCaptureVisitor regressionVisitor;
-      regressionVisitor =
+      RegressionCaptureVisitor regressionVisitor =
           new RegressionCaptureVisitor(expectation, observerMap, visibility, includeAssertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);

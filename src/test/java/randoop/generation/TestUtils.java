@@ -28,8 +28,8 @@ public class TestUtils {
   public static void setOperationLog(ForwardGenerator generator) {
     String operationLog = System.getProperty("randoop.operation.history.log");
     if (operationLog != null && !operationLog.isEmpty()) {
-      OperationHistoryLogger historyLogger;
-      historyLogger = new OperationHistoryLogger(new SimpleLog(operationLog));
+      OperationHistoryLogger historyLogger =
+          new OperationHistoryLogger(new SimpleLog(operationLog));
       generator.setOperationHistoryLogger(historyLogger);
     }
   }

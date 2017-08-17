@@ -84,6 +84,7 @@ public class FileCompiler {
      *
      * @param message the exception message
      * @param sourceFiles the list of source files
+     * @param options the list of compiler options
      * @param diagnostics the compiler diagnostics
      */
     FileCompilerException(

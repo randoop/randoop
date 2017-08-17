@@ -331,8 +331,7 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public Substitution<ReferenceType> getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
     assert goalType.isGeneric();
-    Substitution<ReferenceType> substitution;
-    substitution = super.getInstantiatingSubstitution(goalType);
+    Substitution<ReferenceType> substitution = super.getInstantiatingSubstitution(goalType);
     if (goalType instanceof InstantiatedType) {
       InstantiatedType otherInstType = (InstantiatedType) goalType;
       if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
