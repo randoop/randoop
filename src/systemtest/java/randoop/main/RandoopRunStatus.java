@@ -107,7 +107,8 @@ class RandoopRunStatus {
       }
     }
 
-    String packagePathString = options.getPackageName().replace('.', '/');
+    String packageName = options.getPackageName();
+    String packagePathString = packageName == null ? "" : packageName.replace('.', '/');
     String regressionBasename = options.getRegressionBasename();
     String errorBasename = options.getErrorBasename();
 

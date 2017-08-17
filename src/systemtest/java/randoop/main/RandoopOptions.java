@@ -19,7 +19,7 @@ class RandoopOptions {
   /** The list of classnames for running Randoop */
   private final Set<String> classnames;
 
-  /** The package name for Randoop generated test classes. */
+  /** The package name for Randoopsgenerated test classes; null if default package. */
   private String packageName;
 
   /** The basename for generated regression test classes. */
@@ -35,7 +35,7 @@ class RandoopOptions {
   private RandoopOptions() {
     this.options = new ArrayList<>();
     this.classnames = new LinkedHashSet<>();
-    this.packageName = "";
+    this.packageName = null;
     this.regressionBasename = "RegressionTest";
     this.errorBasename = "ErrorTest";
   }
@@ -117,7 +117,7 @@ class RandoopOptions {
    * @param packageName the package name
    */
   void setPackageName(String packageName) {
-    if (packageName.length() > 0) {
+    if (packageName != null) {
       setOption("junit-package-name", packageName);
       this.packageName = packageName;
     }

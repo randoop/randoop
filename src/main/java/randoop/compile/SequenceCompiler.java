@@ -54,7 +54,7 @@ public class SequenceCompiler {
   /**
    * Indicates whether the given class is compilable.
    *
-   * @param packageName the package name for the class
+   * @param packageName the package name for the class, null if default package
    * @param classname the simple name of the class
    * @param javaSource the source text of the class
    * @return true if class source was successfully compiled, false otherwise
@@ -68,7 +68,7 @@ public class SequenceCompiler {
   /**
    * Compiles the given class. If this method returns normally, compilation was successful.
    *
-   * @param packageName the package of the class
+   * @param packageName the package of the class, null if default package
    * @param classname the simple name of the class
    * @param javaSource the source text of the class
    * @throws SequenceCompilerException if the compilation fails
@@ -89,7 +89,7 @@ public class SequenceCompiler {
    * #isCompilable(String, String, String)} methods: compiles the given class using the given
    * diagnostics collector.
    *
-   * @param packageName the package of the class
+   * @param packageName the package of the class, null if default package
    * @param classname the simple name of the class
    * @param javaSource the source text of the class
    * @param diagnostics the {@code DiagnosticsCollector} object to use for the compilation. Always
@@ -115,7 +115,7 @@ public class SequenceCompiler {
   /**
    * Loads the {@code Class<T>} object for the named class.
    *
-   * @param packageName the package of the class
+   * @param packageName the package of the class, null if default package
    * @param classname the name of the class
    * @param <T> the class type
    * @return the {@code Class<T>} object with the class name
@@ -124,10 +124,7 @@ public class SequenceCompiler {
   @SuppressWarnings("unchecked")
   public <T> Class<T> loadClass(String packageName, String classname)
       throws ClassNotFoundException {
-    String qualifiedName = packageName + "." + classname;
-    if (packageName.isEmpty()) {
-      qualifiedName = classname;
-    }
+    String qualifiedName = (packageName == null ? "" : packageName + ".") + classname;
     return (Class<T>) classLoader.loadClass(qualifiedName);
   }
 }

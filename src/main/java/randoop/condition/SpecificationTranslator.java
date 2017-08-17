@@ -202,10 +202,11 @@ public class SpecificationTranslator {
    *     to start with "randoop" if the original begins with "java"
    */
   private static String getPackageName(Package aPackage) {
-    String packageName = "";
-    if (aPackage != null) {
-      packageName = aPackage.getName();
+    if (aPackage == null) {
+      return null;
     }
+
+    String packageName = aPackage.getName();
     if (packageName.startsWith("java.")) {
       packageName = "randoop." + packageName;
     }

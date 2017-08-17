@@ -75,7 +75,7 @@ public class ConditionMethodCreator {
    * @param methodName the name of the condition method
    * @param conditionText the condition source code -- a boolean Java expression
    * @param parameterDeclarations the signature string for the condition method
-   * @param packageName the package of the condition class
+   * @param packageName the package of the condition class, null if default package
    * @param conditionClassName the name of the condition class
    * @return the Java source code for the condition class
    */
@@ -86,7 +86,7 @@ public class ConditionMethodCreator {
       String packageName,
       String conditionClassName) {
     String packageDeclaration = "";
-    if (packageName != null && !packageName.isEmpty()) {
+    if (packageName != null) {
       packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
     return UtilMDE.join(
@@ -111,7 +111,7 @@ public class ConditionMethodCreator {
    * so {@link #createMethod(RawSignature, String, String, SequenceCompiler)} replaces the classname
    * to ensure a unique name.
    *
-   * @param packageName the package name for the condition class
+   * @param packageName the package name for the condition class, null if default package
    * @param receiverType the declaring class of the method or constructor, used as receiver type if
    *     {@code firstArgumentIsReceiver} is true
    * @param parameterTypes the parameter types for the original method or constructor

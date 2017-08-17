@@ -482,7 +482,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("literals-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("LiteralsReg");
     options.setErrorBasename("LiteralsErr");
 
@@ -508,7 +508,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("longstring-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("LongString");
     options.setErrorBasename("");
 
@@ -532,7 +532,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("visibility-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("VisibilityTest");
     options.setErrorBasename("");
 
@@ -560,7 +560,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("no-output-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("NoOutputTest");
     options.setErrorBasename("");
 
@@ -582,7 +582,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("inner-class-test");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("InnerClassRegression");
     options.setErrorBasename("InnerClassError");
     options.addTestClass("randoop.test.ClassWithInnerClass");
@@ -604,7 +604,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("parameterized-type");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("ParamTypeReg");
     options.setErrorBasename("ParamTypeErr");
     options.addTestClass("muse.SortContainer");
@@ -645,7 +645,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("default-package");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("DefaultPackageReg");
     options.setErrorBasename("DefaultPackageErr");
     options.addTestClass("ClassInDefaultPackage");
