@@ -75,7 +75,9 @@ public final class InitializedArrayCreation extends CallableOperation {
     long startTime = System.currentTimeMillis();
     assert statementInput.length == this.length;
     Object theArray = Array.newInstance(this.elementType.getRuntimeClass(), this.length);
-    for (int i = 0; i < statementInput.length; i++) Array.set(theArray, i, statementInput[i]);
+    for (int i = 0; i < statementInput.length; i++) {
+      Array.set(theArray, i, statementInput[i]);
+    }
     long totalTime = System.currentTimeMillis() - startTime;
     return new NormalExecution(theArray, totalTime);
   }
