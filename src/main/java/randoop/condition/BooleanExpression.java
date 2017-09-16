@@ -14,7 +14,6 @@ import randoop.compile.SequenceCompilerException;
 import randoop.contract.ObjectContract;
 import randoop.output.NameGenerator;
 import randoop.reflection.RawSignature;
-import randoop.util.Log;
 
 /**
  * A {@code BooleanExpression} is an expression constructed from the Java source for a Boolean
@@ -144,11 +143,8 @@ public class BooleanExpression {
               + " (invoke threw "
               + e.getCause()
               + "). This indicates a bug in the expression method creation.";
-      if (Log.isLoggingOn()) {
-        Log.logLine(message);
-      }
+      throw new RandoopConditionError(message);
     }
-    return false;
   }
 
   /**

@@ -10,14 +10,23 @@ import randoop.test.PostConditionCheckGenerator;
 import randoop.test.TestCheckGenerator;
 
 /**
- * Records the outcome of checking all of the prestate {@link BooleanExpression}s: for the {@link
- * randoop.condition.specification.Precondition}, the {@link GuardPropertyPair}, and {@link
- * GuardThrowsPair} for an operation call.
+ * An ExpectedOutcomeTable collects all the permitted outcomes for a set of methods (where the
+ * methods are all in an overriding relationship). Given a set of prestate values, there is a set of
+ * expected or permitted outcomes for a method: those whose preconditions or conditions are
+ * satisfied.
  *
- * <p>Conceptually, represents a table, in which each table entry represents the specification for
- * one declared method. There may be multiple entries in a table, because a method implementation
- * must satisfy not only the specification written on it, but also any written on method
- * declarations that it overrides or implements.
+ * <p>A method implementation must satisfy not only the specification written on it, but also any
+ * written on method declarations that it overrides or implements.
+ *
+ * <p>One possible implementation would be to record a collection of single-method outcomes, where
+ * each single-method outcome represents checks of the prestate {@link BooleanExpression}s: for the
+ * {@link randoop.condition.specification.Precondition}, the {@link GuardPropertyPair}, and {@link
+ * GuardThrowsPair} for an operation call. ExpectedOutcomeTable is not implemented that way: it does
+ * some pre-processing and throws away certain of the information as it is added. (It's unclear
+ * whether this is the best choice, or whether the more straightforward implementation would enable
+ * easier debugging at the cost of a bit of extra processing to be done later.)
+ *
+ * <p>This implementation records:
  *
  * <ol>
  *   <li>Whether any guard expression for the {@link randoop.condition.specification.Precondition}
@@ -27,11 +36,9 @@ import randoop.test.TestCheckGenerator;
  *   <li>The expected {@link BooleanExpression}, if any.
  * </ol>
  *
- * <p>For a particular operation call, a table is constructed by calling {@link
- * OperationConditions#checkPrestate(Object[])} and represents the expected outcome(s) from the
- * call. The table is used to create a {@link TestCheckGenerator} by calling {@link
- * #addPostCheckGenerator(TestCheckGenerator)} that, when given to the sequence generator, will
- * classify the call as follows
+ * <p>To create an ExpectedOutcomeTable, call {@link OperationConditions#checkPrestate(Object[])}.
+ * To use an ExpectedOutcomeTable, call {@link #addPostCheckGenerator(TestCheckGenerator)} to create
+ * a {@link TestCheckGenerator} that classifies a method call as follows:
  *
  * <ol>
  *   <li>For each table entry with a non-empty expected exception set
@@ -57,8 +64,8 @@ public class ExpectedOutcomeTable {
   /** Indicates whether this table is empty. */
   private boolean isEmpty = true;
 
-  /** Indicates whether a precondition was satisfied. */
-  private boolean hasSatisfiedGuardExpression = false;
+  /** Indicates whether the precondition was satisfied for at least one row of the table. */
+  private boolean hasSatisfiedPrecondition = false;
 
   /** The list of post-conditions whose guard expression was satisfied. */
   private final List<BooleanExpression> postConditions;
@@ -92,7 +99,7 @@ public class ExpectedOutcomeTable {
       if (booleanExpression != null) {
         postConditions.add(booleanExpression);
       }
-      hasSatisfiedGuardExpression = true;
+      hasSatisfiedPrecondition = true;
     }
     if (!throwsClauses.isEmpty()) {
       exceptionSets.add(throwsClauses);
@@ -113,7 +120,7 @@ public class ExpectedOutcomeTable {
    *     expected exceptions; false, otherwise
    */
   public boolean isInvalidPrestate() {
-    return !isEmpty && !hasSatisfiedGuardExpression && exceptionSets.isEmpty();
+    return !isEmpty && !hasSatisfiedPrecondition && exceptionSets.isEmpty();
   }
 
   /**
@@ -143,7 +150,7 @@ public class ExpectedOutcomeTable {
     }
 
     // had conflict with throws guard expressions
-    if (!hasSatisfiedGuardExpression) {
+    if (!hasSatisfiedPrecondition) {
       gen = new InvalidCheckGenerator();
     }
 
