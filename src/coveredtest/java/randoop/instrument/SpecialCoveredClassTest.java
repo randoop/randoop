@@ -58,6 +58,7 @@ public class SpecialCoveredClassTest {
     ReflectionExecutor.usethreads = false;
     GenInputsAbstract.generatedLimit = 10000;
     GenInputsAbstract.outputLimit = 5000;
+    randoop.util.Randomness.setSeed(0);
 
     Set<String> classnames = null;
     Set<String> coveredClassnames = null;
