@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import plume.UtilMDE;
 
 /**
  * A JUnit test class that runs the Randoop system tests. These are tests that were run from within
@@ -575,8 +576,11 @@ public class RandoopSystemTest {
     RandoopRunStatus randoopRunDesc =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
+    String lineSep = System.getProperty("line.separator");
     assertThat(
-        "There should be no output",
+        "There should be no output; got:"
+            + lineSep
+            + UtilMDE.join(randoopRunDesc.processStatus.outputLines, lineSep),
         randoopRunDesc.processStatus.outputLines.size(),
         is(equalTo(0)));
   }

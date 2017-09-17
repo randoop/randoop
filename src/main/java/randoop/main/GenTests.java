@@ -31,10 +31,10 @@ import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
-import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
+import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
@@ -424,10 +424,7 @@ public class GenTests extends GenInputsAbstract {
       Log.logLine("Initial sequences (seeds):");
       componentMgr.log();
     }
-    if (GenInputsAbstract.operation_history_log != null) {
-      SimpleLog logger = new SimpleLog(GenInputsAbstract.operation_history_log);
-      explorer.setOperationHistoryLogger(new OperationHistoryLogger(logger));
-    }
+    TestUtils.setOperationLog(GenInputsAbstract.operation_history_log, explorer);
 
     /* Generate tests */
     try {
