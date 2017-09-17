@@ -144,6 +144,8 @@ public class BooleanExpression {
               + " (invoke threw "
               + e.getCause()
               + "). This indicates a bug in the expression method creation.";
+      // TODO: throwing seems like better behavior than logging, but it breaks the tests.  Need to
+      // investigate.
       // throw new RandoopConditionError(message);
       if (Log.isLoggingOn()) {
         Log.logLine(message);
