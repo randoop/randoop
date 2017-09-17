@@ -73,6 +73,7 @@ public class TestClassificationTest {
    */
   @Test
   public void allInvalidTest() {
+    randoop.util.Randomness.setSeed(0);
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.INVALID;
@@ -114,6 +115,7 @@ public class TestClassificationTest {
    */
   @Test
   public void allErrorTest() {
+    randoop.util.Randomness.setSeed(0);
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.ERROR;
@@ -169,6 +171,7 @@ public class TestClassificationTest {
    */
   @Test
   public void allExpectedTest() {
+    randoop.util.Randomness.setSeed(0);
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
@@ -212,6 +215,7 @@ public class TestClassificationTest {
    */
   @Test
   public void defaultsTest() {
+    randoop.util.Randomness.setSeed(0);
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
@@ -270,6 +274,7 @@ public class TestClassificationTest {
    */
   @Test
   public void defaultsWithNoRegressionAssertions() {
+    randoop.util.Randomness.setSeed(0);
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = true;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
@@ -329,6 +334,7 @@ public class TestClassificationTest {
    */
   @Test
   public void regressionTestGeneration() {
+    randoop.util.Randomness.setSeed(0);
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.generatedLimit = 100;
     Class<?> c = FlakyStore.class;
