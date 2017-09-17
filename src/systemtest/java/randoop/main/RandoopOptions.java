@@ -40,6 +40,7 @@ class RandoopOptions {
     this.errorBasename = "ErrorTest";
   }
 
+  // Note that this is only used in (some??) system tests, not in coveredTest and the like.
   /**
    * Creates an initial set of options based on the test environment consisting of the output
    * directory for generated tests, and log file location.
@@ -49,18 +50,22 @@ class RandoopOptions {
    */
   static RandoopOptions createOptions(TestEnvironment testEnvironment) {
     RandoopOptions options = new RandoopOptions();
-    options.setOption("junit-output-dir", testEnvironment.sourceDir.toString());
-    options.setOption("log", testEnvironment.workingDir + "/randoop-log.txt");
+    if (testEnvironment != null) {
+      options.setOption("junit-output-dir", testEnvironment.sourceDir.toString());
+      options.setOption("log", testEnvironment.workingDir + "/randoop-log.txt");
+    }
     options.setFlag("deterministic");
     options.setOption("timeLimit", "0");
     options.unsetFlag("minimize-error-test");
 
     String selectionLog = System.getProperty("randoop.selection.log");
+    // System.out.println("selection log = " + selectionLog);
     if (selectionLog != null && !selectionLog.isEmpty()) {
       options.setOption("selection-log", selectionLog);
     }
 
     String operationLog = System.getProperty("randoop.operation.history.log");
+    // System.out.println("operation log = " + operationLog);
     if (operationLog != null && !operationLog.isEmpty()) {
       options.setOption("operation-history-log", operationLog);
     }
