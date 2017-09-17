@@ -18,6 +18,7 @@ import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
+import randoop.generation.TestUtils;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
@@ -291,6 +292,10 @@ public class CoveredClassTest {
         genTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new CoveredClassVisitor(operationModel.getCoveredClasses()));
+
+    TestUtils.setOperationLog(testGenerator);
+    TestUtils.setSelectionLog();
+
     return testGenerator;
   }
 }

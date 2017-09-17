@@ -152,7 +152,8 @@ public class SpecialCoveredClassTest {
         genTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClasses));
-    //    TestUtils.setOperationLog(testGenerator);
+    TestUtils.setOperationLog(testGenerator);
+    TestUtils.setSelectionLog();
     testGenerator.explore();
     //    testGenerator.getOperationHistory().outputTable();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
