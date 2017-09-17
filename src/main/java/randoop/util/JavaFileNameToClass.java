@@ -1,8 +1,8 @@
 package randoop.util;
 
 /**
- * Takes a String representing a list of files "a/b/C.java ... d/e/f/G.java" and returns "a.b.C ...
- * d.e.f.G"
+ * Takes as arguments a list of files "a/b/C.java ... d/e/f/G.java" and prints, on standard out,
+ * "a.b.C ... d.e.f.G"
  *
  * <p>(This is probably a perl one-liner, but I am better with Java).
  */
