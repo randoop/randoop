@@ -77,11 +77,13 @@ public final class ReflectionExecutor {
       normal_exec_accum += duration;
       assert normal_exec_accum > 0; // check no overflow.
       normal_exec_count++;
+      System.out.println("normal execution: " + code);
     } else {
       // Add duration to running average for exceptional execution.
       excep_exec_accum += duration;
       assert excep_exec_accum > 0; // check no overflow.
       excep_exec_count++;
+      System.out.println("exceptional execution: " + code);
     }
 
     return ret;
