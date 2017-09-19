@@ -94,7 +94,7 @@ class SystemTestEnvironment {
     } catch (IOException e) {
       fail("unable to get build directory contents");
     }
-    assert randoopJarPath != null;
+    assert randoopJarPath != null : "libsPath = " + libsPath;
     return new SystemTestEnvironment(
         classpath + File.pathSeparator + randoopJarPath,
         workingDir,
