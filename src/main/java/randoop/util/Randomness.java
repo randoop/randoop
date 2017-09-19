@@ -189,6 +189,8 @@ public final class Randomness {
   /**
    * Produces a printed representation of the object, depending on the verbosity level.
    *
+   * @param o the object to produce a printed representation of
+   * @return a printed representation of the argument
    * @see #verbosity
    */
   private static String toString(Object o) {
