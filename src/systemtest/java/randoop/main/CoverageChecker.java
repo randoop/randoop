@@ -4,6 +4,8 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -91,9 +93,8 @@ class CoverageChecker {
         c = Class.forName(classname);
 
         boolean firstLine = true;
-        // Using Class method instead of randoop.reflection.ClassUtils.
-        // It shouldn't matter here that the Class method is nondeterministic.
-        for (Method m : c.getDeclaredMethods()) {
+        // Deterministic order is needed because of println within the loop.
+        for (Method m : getDeclaredMethods(c)) {
           String methodname = methodName(m);
           if (!isIgnoredMethod(methodname) && !dontCareMethods.contains(methodname)) {
             if (excludedMethods.contains(methodname)) {
@@ -188,5 +189,60 @@ class CoverageChecker {
   private boolean isIgnoredMethod(String methodname) {
     Matcher matcher = IGNORE_PATTERN.matcher(methodname);
     return matcher.find();
+  }
+
+  /**
+   * Like {@link Class#getDeclaredMethods()}, but returns the methods in deterministic order.
+   *
+   * @param c the Class whose declared methods to return
+   * @return the class's declared methods
+   */
+  public static Method[] getDeclaredMethods(Class<?> c) {
+    Method[] result = c.getDeclaredMethods();
+    Arrays.sort(result, methodComparator);
+    return result;
+  }
+
+  static ClassComparator classComparator = new ClassComparator();
+
+  /** Compares Class objects by name. */
+  private static class ClassComparator implements Comparator<Class<?>> {
+
+    @Override
+    public int compare(Class<?> c1, Class<?> c2) {
+      return c1.getName().compareTo(c2.getName());
+    }
+  }
+
+  static MethodComparator methodComparator = new MethodComparator();
+
+  /**
+   * Compares Method objcets by signature: compares name, number of parameters, and parameter type
+   * names.
+   */
+  private static class MethodComparator implements Comparator<Method> {
+
+    @Override
+    public int compare(Method m1, Method m2) {
+      int result = classComparator.compare(m1.getDeclaringClass(), m2.getDeclaringClass());
+      if (result != 0) {
+        return result;
+      }
+      result = m1.getName().compareTo(m2.getName());
+      if (result != 0) {
+        return result;
+      }
+      result = m1.getParameterTypes().length - m2.getParameterTypes().length;
+      if (result != 0) {
+        return result;
+      }
+      for (int i = 0; i < m1.getParameterTypes().length; i++) {
+        result = classComparator.compare(m1.getParameterTypes()[i], m2.getParameterTypes()[i]);
+        if (result != 0) {
+          return result;
+        }
+      }
+      return result;
+    }
   }
 }
