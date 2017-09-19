@@ -102,6 +102,19 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
     for (int i = 0; i < varArray.length; i++) {
       List<Variable> variables = s.getVariables(values[i]);
       varArray[i] = Randomness.randomMember(variables);
+      // Debugging
+      if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
+        Randomness.selectionLog.log("varArray[%d] = %s%n", i, varArray[i]);
+        Randomness.selectionLog.log("  from variables = %s%n", variables);
+        String valuesIString;
+        try {
+          // the toString() of class Buggy throws an exception
+          valuesIString = values[i].toString();
+        } catch (Throwable t) {
+          valuesIString = "of class " + values[i].getClass();
+        }
+        Randomness.selectionLog.log("  from values[%d] = %s%n", i, valuesIString);
+      }
     }
 
     return new ObjectCheck(contract, varArray);
