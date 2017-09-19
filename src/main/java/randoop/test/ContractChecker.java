@@ -76,6 +76,13 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
    * @return a {@link ObjectCheck} if the contract fails, null otherwise
    */
   private Check checkContract(ObjectContract contract, Object[] values) {
+    if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
+      Randomness.selectionLog.log("ObjectContract: contract=%s%n", contract);
+      for (Object value : values) {
+        Randomness.selectionLog.log("  %s%n", toStringHandleExceptions(value));
+      }
+    }
+
     ExecutionOutcome outcome = ObjectContractUtils.execute(contract, values);
 
     if (outcome instanceof NormalExecution) {
@@ -106,18 +113,21 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
       if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
         Randomness.selectionLog.log("varArray[%d] = %s%n", i, varArray[i]);
         Randomness.selectionLog.log("  from variables = %s%n", variables);
-        String valuesIString;
-        try {
-          // the toString() of class Buggy throws an exception
-          valuesIString = values[i].toString();
-        } catch (Throwable t) {
-          valuesIString = "of class " + values[i].getClass();
-        }
-        Randomness.selectionLog.log("  from values[%d] = %s%n", i, valuesIString);
+        Randomness.selectionLog.log(
+            "  from values[%d] = %s%n", i, toStringHandleExceptions(values[i]));
       }
     }
 
     return new ObjectCheck(contract, varArray);
+  }
+
+  // the toString() of class Buggy throws an exception
+  String toStringHandleExceptions(Object o) {
+    try {
+      return o.toString();
+    } catch (Throwable t) {
+      return "of " + o.getClass();
+    }
   }
 
   /**
