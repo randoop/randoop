@@ -113,10 +113,12 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
       varArray[i] = Randomness.randomMember(variables);
       // Debugging
       if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
-        Randomness.selectionLog.log("varArray[%d] = %s%n", i, varArray[i]);
-        Randomness.selectionLog.log("  from variables = %s%n", variables);
         Randomness.selectionLog.log(
-            "  from values[%d] = %s%n", i, toStringHandleExceptions(values[i]));
+            "values[%d] = %s %s%n",
+            i, toStringHandleExceptions(values[i]), System.identityHashCode(values[i]));
+        Randomness.selectionLog.log("  candidate variables = %s%n", variables);
+        Randomness.selectionLog.log(
+            "  varArray[%d] = %s %s%n", i, varArray[i], System.identityHashCode(varArray[i]));
       }
     }
 
