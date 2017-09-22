@@ -389,7 +389,7 @@ public class Buggy {
     @Override
     public int compareTo(BuggyCompareToNormal o) {
       if (this == one) {
-        throw new RuntimeException("CompareTo purposely fails here");
+        throw new RuntimeException("compareTo purposely fails here");
       }
       return 0;
     }
