@@ -79,7 +79,8 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
     if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
       Randomness.selectionLog.log("ObjectContract: contract=%s%n", contract);
       for (Object value : values) {
-        Randomness.selectionLog.log("  %s%n", toStringHandleExceptions(value));
+        Randomness.selectionLog.log(
+            "  %s %s%n", toStringHandleExceptions(value), System.identityHashCode(value));
       }
     }
 
@@ -101,7 +102,8 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
         return null;
       }
     } else {
-      throw new BugInRandoopException("Contract failed to execute during evaluation");
+      throw new BugInRandoopException(
+          "Contract " + contract + " failed to execute during evaluation");
     }
 
     // the contract failed
@@ -126,7 +128,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
     try {
       return o.toString();
     } catch (Throwable t) {
-      return "of " + o.getClass();
+      return "of " + o.getClass() + " with identityHashCode=" + System.identityHashCode(o);
     }
   }
 
