@@ -25,9 +25,9 @@ public class IdentityMultiMap<K, V> {
     Set<V> set = map.get(key);
     if (set == null) {
       set = new LinkedHashSet<>();
+      map.put(key, set);
     }
     set.add(value);
-    map.put(key, set);
   }
 
   /**

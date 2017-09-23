@@ -423,6 +423,8 @@ task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingD
   reports.html.enabled = false
 }
 
+systemTest.dependsOn shadowJar
+
 /*
  * Link the systemTest task into the project check task.
  * Includes system tests into the project build task.

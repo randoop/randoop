@@ -16,8 +16,8 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
     map = new LinkedHashMap<>();
   }
 
-  public MultiMap(int i) {
-    map = new LinkedHashMap<>(i);
+  public MultiMap(int initialCapacity) {
+    map = new LinkedHashMap<>(initialCapacity);
   }
 
   public void put(T1 key, Collection<? extends T2> values) {
