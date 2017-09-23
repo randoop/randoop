@@ -1,14 +1,13 @@
 package randoop.instrument;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.lang.ClassNotFoundException;
+import java.lang.NoSuchMethodException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -30,6 +29,7 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.SignatureParseException;
 import randoop.reflection.TypeNames;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -49,7 +49,9 @@ import randoop.util.predicate.Predicate;
 public class SpecialCoveredClassTest {
 
   @Test
-  public void abstractClassTest() {
+  public void abstractClassTest()
+      throws ClassNotFoundException, NoSuchMethodException, RandoopInputException,
+          SignatureParseException {
     TestUtils.setSelectionLog();
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("instrument/testcase/special-allclasses.txt");
@@ -60,60 +62,45 @@ public class SpecialCoveredClassTest {
     GenInputsAbstract.outputLimit = 5000;
     randoop.util.Randomness.setSeed(0);
 
-    Set<String> classnames = null;
-    Set<String> coveredClassnames = null;
+    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
+    Set<String> coveredClassnames =
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.require_covered_classes, "coverage class names");
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     Set<String> omitFields = new HashSet<>();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
-    Set<String> methodSignatures = null;
-    try {
-      classnames = GenInputsAbstract.getClassnamesFromArgs();
-      coveredClassnames =
-          GenInputsAbstract.getStringSetFromFile(
-              GenInputsAbstract.require_covered_classes, "coverage class names");
-      methodSignatures =
-          GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.methodlist, "method list");
-    } catch (RandoopInputException e) {
-      fail("Input error: " + e.getMessage());
-    }
+    Set<String> methodSignatures =
+        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.methodlist, "method list");
+
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
 
-    OperationModel operationModel = null;
-    try {
-      operationModel =
-          OperationModel.createModel(
-              visibility,
-              reflectionPredicate,
-              GenInputsAbstract.omitmethods,
-              classnames,
-              coveredClassnames,
-              methodSignatures,
-              classNameErrorHandler,
-              GenInputsAbstract.literals_file);
-    } catch (Throwable e) {
-      fail("Error: " + e);
-    }
-    assert operationModel != null;
+    OperationModel operationModel =
+        OperationModel.createModel(
+            visibility,
+            reflectionPredicate,
+            GenInputsAbstract.omitmethods,
+            classnames,
+            coveredClassnames,
+            methodSignatures,
+            classNameErrorHandler,
+            GenInputsAbstract.literals_file);
 
     Set<Class<?>> coveredClasses = operationModel.getCoveredClasses();
-    Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
-    //
-    assertThat("should be one covered classes", coveredClasses.size(), is(equalTo(1)));
+    assertEquals("should be one covered classes", coveredClasses.size(), 1);
     for (Class<?> c : coveredClasses) {
       assertEquals(
           "name should be AbstractTarget", "instrument.testcase.AbstractTarget", c.getName());
     }
 
-    // 2 classes plus Object
-    assertEquals("should have classes", 3, classes.size());
+    Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
+    assertEquals("should have classes", 3, classes.size()); // 2 classes plus Object
     for (Type c : classes) {
       assertTrue("should not be interface: " + c.getName(), !c.isInterface());
     }
-    //
+
     List<TypedOperation> model = operationModel.getOperations();
-    //
     assertEquals("model operations", 7, model.size());
-    //
+
     Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     components.addAll(operationModel.getAnnotatedTestValues());
@@ -129,17 +116,10 @@ public class SpecialCoveredClassTest {
             model, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
     GenTests genTests = new GenTests();
 
-    TypedOperation objectConstructor = null;
-    try {
-      objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
-    } catch (NoSuchMethodException e) {
-      assert false : "failed to get Object constructor: " + e;
-    }
-    assert objectConstructor != null;
+    TypedOperation objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
 
-    Sequence newObj = new Sequence().extend(objectConstructor);
     Set<Sequence> excludeSet = new LinkedHashSet<>();
-    excludeSet.add(newObj);
+    excludeSet.add(new Sequence().extend(objectConstructor));
 
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(
@@ -157,23 +137,19 @@ public class SpecialCoveredClassTest {
     TestUtils.setSelectionLog();
     testGenerator.explore();
     //    testGenerator.getOperationHistory().outputTable();
+
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
-    List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
-    //
     System.out.println("number of regression tests: " + rTests.size());
     assertTrue("should have some regression tests", !rTests.isEmpty());
+
+    List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
     assertFalse("don't expect error tests", !eTests.isEmpty());
-    //
-    Class<?> at = null;
-    try {
-      at = TypeNames.getTypeForName("instrument.testcase.AbstractTarget");
-    } catch (ClassNotFoundException e) {
-      fail("cannot find class: " + e);
-    }
+
+    Class<?> atClass = TypeNames.getTypeForName("instrument.testcase.AbstractTarget");
 
     Set<TypedOperation> opSet = new LinkedHashSet<>();
     for (ExecutableSequence e : rTests) {
-      assertTrue("should cover the class: " + at.getName(), e.coversClass(at));
+      assertTrue(e.coversClass(atClass));
       for (int i = 0; i < e.sequence.size(); i++) {
         TypedOperation op = e.sequence.getStatement(i).getOperation();
         if (model.contains(op)) {
@@ -182,20 +158,23 @@ public class SpecialCoveredClassTest {
       }
     }
 
-    Type it = null;
-    try {
-      it = Type.forName("instrument.testcase.ImplementorOfTarget");
-    } catch (ClassNotFoundException e) {
-      fail("cannot find implementor class " + e);
-    }
+    List<TypedOperation> unused = new ArrayList<>();
+    Type iotType = Type.forName("instrument.testcase.ImplementorOfTarget");
     for (TypedOperation op : model) {
       if (op instanceof TypedClassOperation) {
-        assertTrue(
-            "all model operations should be used or from wrong implementor",
-            opSet.contains(op) || ((TypedClassOperation) op).getDeclaringType().equals(it));
+        if (!(opSet.contains(op)
+            || ((TypedClassOperation) op).getDeclaringType().equals(iotType))) {
+          unused.add(op);
+        }
       } else {
-        assertTrue("all model operations should be used", opSet.contains(op));
+        if (!opSet.contains(op)) {
+          unused.add(op);
+        }
       }
+    }
+    if (!unused.isEmpty()) {
+      // TODO: could output the generated tests too.
+      throw new Error("Unused operations: " + unused);
     }
   }
 }
