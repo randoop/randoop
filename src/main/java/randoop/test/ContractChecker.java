@@ -130,7 +130,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
     try {
       return o.toString();
     } catch (Throwable t) {
-      return "of " + o.getClass() + " with identityHashCode=" + System.identityHashCode(o);
+      return "of " + o.getClass() + " with identityHashCode=@" + System.identityHashCode(o);
     }
   }
 
