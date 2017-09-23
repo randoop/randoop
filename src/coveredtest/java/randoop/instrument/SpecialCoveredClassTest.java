@@ -61,14 +61,14 @@ public class SpecialCoveredClassTest {
     randoop.util.Randomness.setSeed(0);
 
     Set<String> classnames = null;
-    Set<String> coveredClassnames = null;
+    Set<String> coveredClassesGoalNames = null;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     Set<String> omitFields = new HashSet<>();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     Set<String> methodSignatures = null;
     try {
       classnames = GenInputsAbstract.getClassnamesFromArgs();
-      coveredClassnames =
+      coveredClassesGoalNames =
           GenInputsAbstract.getStringSetFromFile(
               GenInputsAbstract.require_covered_classes, "coverage class names");
       methodSignatures =
@@ -86,7 +86,7 @@ public class SpecialCoveredClassTest {
               reflectionPredicate,
               GenInputsAbstract.omitmethods,
               classnames,
-              coveredClassnames,
+              coveredClassesGoalNames,
               methodSignatures,
               classNameErrorHandler,
               GenInputsAbstract.literals_file);
@@ -95,11 +95,11 @@ public class SpecialCoveredClassTest {
     }
     assert operationModel != null;
 
-    Set<Class<?>> coveredClasses = operationModel.getCoveredClasses();
+    Set<Class<?>> coveredClassesGoal = operationModel.getCoveredClassesGoal();
     Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
     //
-    assertThat("should be one covered classes", coveredClasses.size(), is(equalTo(1)));
-    for (Class<?> c : coveredClasses) {
+    assertThat("should be one covered classes", coveredClassesGoal.size(), is(equalTo(1)));
+    for (Class<?> c : coveredClassesGoal) {
       assertEquals(
           "name should be AbstractTarget", "instrument.testcase.AbstractTarget", c.getName());
     }
@@ -144,7 +144,7 @@ public class SpecialCoveredClassTest {
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(
             excludeSet,
-            operationModel.getCoveredClasses(),
+            operationModel.getCoveredClassesGoal(),
             GenInputsAbstract.require_classname_in_test);
     testGenerator.addTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
@@ -152,7 +152,7 @@ public class SpecialCoveredClassTest {
     TestCheckGenerator checkGenerator =
         genTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.addTestCheckGenerator(checkGenerator);
-    testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClasses));
+    testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setOperationLog(testGenerator);
     TestUtils.setSelectionLog();
     testGenerator.explore();
