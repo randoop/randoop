@@ -54,6 +54,9 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
               + tuple.size()
               + " must match contract arity "
               + contract.getArity();
+      if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
+        Randomness.selectionLog.log("ContractChecker.apply: considering contract=%s%n", contract);
+      }
       if (typesMatch(contract.getInputTypes(), tuple)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Checking contract " + contract.getClass());
@@ -77,7 +80,8 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
    */
   private Check checkContract(ObjectContract contract, Object[] values) {
     if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
-      Randomness.selectionLog.log("ObjectContract: contract=%s%n", contract);
+      Randomness.selectionLog.log("ContractChecker.checkContract: contract=%s%n", contract);
+      Randomness.selectionLog.log("  values (%d) =%n", values.length);
       for (Object value : values) {
         Randomness.selectionLog.log(
             "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
