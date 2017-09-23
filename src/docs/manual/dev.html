@@ -29,6 +29,7 @@
     </ul></li>
   <li><a href="#testing-randoop">Testing Randoop</a>
     <ul>
+      <li><a href="#travis-tests">Running tests under Travis-CI</a></li>
       <li><a href="#addtests">Adding tests</a>
         <ul>
           <li><a href="#unit-tests">Unit tests</a></li>
@@ -314,17 +315,6 @@ To run the Randoop tests:
 <pre><code>./gradlew check</code></pre>
 
 <p>
-A standard practice is to create a
-branch and push it to the Randoop repository or to your own fork.  Travis will
-test it; if it succeeds, you can merge it.  If it fails, you will be notified by
-email, and you can fix it without having destabilized the master branch.
-The <a href="https://travis-ci.org/randoop/randoop">Travis tests</a> are
-equivalent to <code>./gradlew clean build</code>, and they
-currently pass on the master branch if this icon is green:
-<img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>.
-</p>
-
-<p>
 You can run a subset of the tests by using the <code>--tests</code>
 option on the command line.
 For instance,
@@ -352,6 +342,40 @@ will write the operation log to the file
 Note that this works for system tests only, not for unit tests or other types of
 tests.
 </p>
+
+
+<h2 id="travis-tests">Running tests under Travis-CI</h2>
+
+<p>
+<a href="https://travis-ci.org/randoop/randoop">Travis-CI runs the Randoop tests</a>.
+The Travis tests are
+equivalent to <code>./gradlew clean build</code>, and they
+currently pass on the master branch if this icon is green:
+<img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>.
+</p>
+
+<p>
+A standard practice is to create a
+branch and push it to the Randoop repository or to your own fork.  Travis will
+test it; if it succeeds, you can merge it.  If it fails, you will be notified by
+email, and you can fix it without having destabilized the master branch.
+</p>
+
+<p>
+The Travis tests run in a Docker container.  If you are not able to reproduce a Travis test failure, then run the Randoop tests under Docker.  To do so, first start a Docker container:
+</p>
+<pre>
+docker pull mdernst/ubuntu-for-randoop-jdk8
+docker run -it mdernst/ubuntu-for-randoop-jdk8 /bin/bash
+</pre>
+<p>
+Then, in the Docker container:
+</p>
+<pre>
+git clone --quiet -b BRANCHNAME --depth 9 https://github.com/USER/randoop randoop-fork-USER-branch-BRANCHNAME
+cd randoop-fork-USER-branch-BRANCHNAME
+./.travis-build.sh test
+</pre>
 
 
 <h2 id="addtests">Adding tests</h2>

@@ -86,17 +86,17 @@ public class OperationModel {
     classLiteralMap = new MultiMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
-    contracts.add(EqualsReflexive.getInstance());
-    contracts.add(EqualsSymmetric.getInstance());
-    contracts.add(EqualsHashcode.getInstance());
-    contracts.add(EqualsToNullRetFalse.getInstance());
-    contracts.add(EqualsReturnsNormally.getInstance());
-    contracts.add(EqualsTransitive.getInstance());
-    contracts.add(CompareToReflexive.getInstance());
-    contracts.add(CompareToAntiSymmetric.getInstance());
-    contracts.add(CompareToEquals.getInstance());
-    contracts.add(CompareToSubs.getInstance());
-    contracts.add(CompareToTransitive.getInstance());
+    contracts.add(EqualsReflexive.getInstance()); // arity=1
+    contracts.add(EqualsSymmetric.getInstance()); // arity=2
+    contracts.add(EqualsHashcode.getInstance()); // arity=2
+    contracts.add(EqualsToNullRetFalse.getInstance()); // arity=1
+    contracts.add(EqualsReturnsNormally.getInstance()); // arity=1
+    contracts.add(EqualsTransitive.getInstance()); // arity=3
+    contracts.add(CompareToReflexive.getInstance()); // arity=1
+    contracts.add(CompareToAntiSymmetric.getInstance()); // arity=2
+    contracts.add(CompareToEquals.getInstance()); // arity=2
+    contracts.add(CompareToSubs.getInstance()); // arity=3
+    contracts.add(CompareToTransitive.getInstance()); // arity=3
 
     coveredClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();

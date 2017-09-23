@@ -32,6 +32,7 @@ import randoop.test.TestCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.MultiMap;
+import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
 
 public class TestFilteringTest {
@@ -56,6 +57,9 @@ public class TestFilteringTest {
    */
   @Test
   public void nonemptyOutputTest() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.dont_output_tests = false;
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_error_revealing_tests = false;
@@ -85,6 +89,9 @@ public class TestFilteringTest {
    */
   @Test
   public void noOutputTest() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.dont_output_tests = true;
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_error_revealing_tests = false;
@@ -113,6 +120,9 @@ public class TestFilteringTest {
   /** Make sure get no error test output when no-error-revealing-tests is set. */
   @Test
   public void noErrorOutputTest() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.dont_output_tests = false;
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_error_revealing_tests = true;
@@ -143,6 +153,9 @@ public class TestFilteringTest {
    */
   @Test
   public void noRegressionOutputTest() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.dont_output_tests = false;
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_error_revealing_tests = false;
@@ -171,6 +184,9 @@ public class TestFilteringTest {
   /** Having both Error and Regression tests turned off should give nothing. Set generatedLimit. */
   @Test
   public void noErrorOrRegressionOutputTest() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.dont_output_tests = false;
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_error_revealing_tests = true;
@@ -199,6 +215,9 @@ public class TestFilteringTest {
   /** Filtering tests matching CUT should produce output tests. */
   @Test
   public void matchOutputTest() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.dont_output_tests = false;
     GenInputsAbstract.require_classname_in_test = Pattern.compile("randoop\\.sequence\\.Flaky");
     GenInputsAbstract.no_error_revealing_tests = false;
