@@ -54,9 +54,9 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
               + tuple.size()
               + " must match contract arity "
               + contract.getArity();
-      if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
-        Randomness.selectionLog.log("ContractChecker.apply: considering contract=%s%n", contract);
-      }
+      // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
+      //   Randomness.selectionLog.log("ContractChecker.apply: considering contract=%s%n", contract);
+      // }
       if (typesMatch(contract.getInputTypes(), tuple)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Checking contract " + contract.getClass());
@@ -79,14 +79,14 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
    * @return a {@link ObjectCheck} if the contract fails, null otherwise
    */
   private Check checkContract(ObjectContract contract, Object[] values) {
-    if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
-      Randomness.selectionLog.log("ContractChecker.checkContract: contract=%s%n", contract);
-      Randomness.selectionLog.log("  values (%d) =%n", values.length);
-      for (Object value : values) {
-        Randomness.selectionLog.log(
-            "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
-      }
-    }
+    // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
+    //   Randomness.selectionLog.log("ContractChecker.checkContract: contract=%s%n", contract);
+    //   Randomness.selectionLog.log("  values (%d) =%n", values.length);
+    //   for (Object value : values) {
+    //     Randomness.selectionLog.log(
+    //         "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
+    //   }
+    // }
 
     ExecutionOutcome outcome = ObjectContractUtils.execute(contract, values);
 
@@ -115,21 +115,20 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
     for (int i = 0; i < varArray.length; i++) {
       List<Variable> variables = s.getVariables(values[i]);
       varArray[i] = Randomness.randomMember(variables);
-      // Debugging
-      if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
-        Randomness.selectionLog.log(
-            "values[%d] = %s @%s%n",
-            i, toStringHandleExceptions(values[i]), System.identityHashCode(values[i]));
-        Randomness.selectionLog.log("  candidate variables = %s%n", variables);
-        Randomness.selectionLog.log(
-            "  varArray[%d] = %s @%s%n", i, varArray[i], System.identityHashCode(varArray[i]));
-      }
+      // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
+      //   Randomness.selectionLog.log(
+      //       "values[%d] = %s @%s%n",
+      //       i, toStringHandleExceptions(values[i]), System.identityHashCode(values[i]));
+      //   Randomness.selectionLog.log("  candidate variables = %s%n", variables);
+      //   Randomness.selectionLog.log(
+      //       "  varArray[%d] = %s @%s%n", i, varArray[i], System.identityHashCode(varArray[i]));
+      // }
     }
 
     return new ObjectCheck(contract, varArray);
   }
 
-  // the toString() of class Buggy throws an exception
+  // The toString() of class Buggy throws an exception.
   String toStringHandleExceptions(Object o) {
     try {
       return o.toString();

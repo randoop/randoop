@@ -21,7 +21,8 @@ import plume.UtilMDE;
 
 /**
  * A JUnit test class that runs the Randoop system tests, each within its own new JVM. (Thus, there
- * is no need to run Randomness.setSeed(0) or ReflectionExecutor.resetStatistics().)
+ * is no need to run Randomness.setSeed(0) or ReflectionExecutor.resetStatistics() at the beginning
+ * of each test.)
  *
  * <p>The test methods in this class assume that the current working directory has subdirectories
  * <tt>resources/systemTest</tt> where resources files are located (standard Gradle organization),
@@ -40,8 +41,8 @@ import plume.UtilMDE;
  * the number of error-revealing tests, or that the number of passed tests matches the number of
  * regression tests.
  *
- * <p>These are tests that were run from within the original Makefile using shell commands. The
- * Makefile also checked diffs of generated tests for some of the tests. These methods do not do
+ * <p>These are tests that used to be run from within the original Makefile using shell commands.
+ * The Makefile also checked diffs of generated tests for some of the tests. These methods do not do
  * this check.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
