@@ -63,6 +63,9 @@ public class ForwardExplorerTests {
 
   @Test
   public void test1() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     List<Class<?>> classes = new ArrayList<>();
     classes.add(Long.class);
 
@@ -104,6 +107,9 @@ public class ForwardExplorerTests {
 
   @Test
   public void test2() throws Throwable {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     boolean bisort = false;
     boolean bimerge = false;
     boolean inorder = false;
@@ -162,6 +168,8 @@ public class ForwardExplorerTests {
 
   @Test
   public void test4() throws Exception {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
 
     boolean bh = false;
     boolean body = false;

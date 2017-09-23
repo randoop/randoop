@@ -64,7 +64,13 @@ public class MinimizerTests {
     Minimize.mainMinimize(inputFile, classPath, timeoutLimit, verboseOutput);
 
     // Compare obtained and expected output.
-    assertTrue(FileUtils.contentEqualsIgnoreEOL(outputFile, expectedFile, null));
+    if (!FileUtils.contentEqualsIgnoreEOL(outputFile, expectedFile, null)) {
+      System.out.println("expectedFile:");
+      System.out.println(FileUtils.readFileToString(expectedFile, (String) null));
+      System.out.println("outputFile:");
+      System.out.println(FileUtils.readFileToString(outputFile, (String) null));
+      assertTrue(false);
+    }
   }
 
   @Test

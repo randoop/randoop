@@ -32,6 +32,7 @@ import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
 import randoop.test.issta2006.TreeMap;
 import randoop.types.ClassOrInterfaceType;
+import randoop.util.ReflectionExecutor;
 
 /**
  * This test ensures that Randoop achieves a certain level of coverage across 4 data structures. The
@@ -119,6 +120,9 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testFibHeap() throws IOException {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(FibHeap.class);
@@ -147,6 +151,9 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testBinTree() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.null_ratio = 0.5;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinTree.class);
@@ -172,6 +179,9 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testTreeMap() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(TreeMap.class);
@@ -199,6 +209,9 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testBinomialHeap() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinomialHeap.class);

@@ -41,6 +41,21 @@ public class ObjectCheck implements Check {
   private final ObjectContract contract;
   private final Variable[] vars;
 
+  public ObjectCheck(ObjectContract cc, Variable... vars) {
+    if (cc == null) {
+      throw new IllegalArgumentException("first argument cannot be null.");
+    }
+    if (vars.length != cc.getArity()) {
+      throw new IllegalArgumentException("vars.size() != template.getArity().");
+    }
+    this.contract = cc;
+    this.vars = new Variable[vars.length];
+    int count = 0;
+    for (Variable v : vars) {
+      this.vars[count++] = v;
+    }
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == null) {
@@ -59,21 +74,6 @@ public class ObjectCheck implements Check {
   @Override
   public int hashCode() {
     return Objects.hash(contract, Arrays.hashCode(vars));
-  }
-
-  public ObjectCheck(ObjectContract cc, Variable... vars) {
-    if (cc == null) {
-      throw new IllegalArgumentException("first argument cannot be null.");
-    }
-    if (vars.length != cc.getArity()) {
-      throw new IllegalArgumentException("vars.size() != template.getArity().");
-    }
-    this.contract = cc;
-    this.vars = new Variable[vars.length];
-    int count = 0;
-    for (Variable v : vars) {
-      this.vars[count++] = v;
-    }
   }
 
   @Override

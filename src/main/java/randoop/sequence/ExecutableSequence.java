@@ -467,7 +467,7 @@ public class ExecutableSequence {
       skipSet.add(inputVariable.index);
     }
 
-    Set<ReferenceValue> values = new HashSet<>();
+    Set<ReferenceValue> values = new LinkedHashSet<>();
     for (int i = 0; i < sequence.size() - 1; i++) {
       if (!skipSet.contains(i)) {
         Object value = getValue(i);

@@ -31,6 +31,8 @@ fi
 
 ./.travis-build-without-test.sh
 
+# If you don't have xvfb running, then you should probably run gradle directly
+# rather than running this script.
 if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
   # need gui for running tests of replace call agent with Swing/AWT
   # run xvfb
