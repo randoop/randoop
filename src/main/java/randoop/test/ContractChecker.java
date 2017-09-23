@@ -80,7 +80,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
       Randomness.selectionLog.log("ObjectContract: contract=%s%n", contract);
       for (Object value : values) {
         Randomness.selectionLog.log(
-            "  %s %s%n", toStringHandleExceptions(value), System.identityHashCode(value));
+            "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
       }
     }
 
@@ -114,11 +114,11 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
       // Debugging
       if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
         Randomness.selectionLog.log(
-            "values[%d] = %s %s%n",
+            "values[%d] = %s @%s%n",
             i, toStringHandleExceptions(values[i]), System.identityHashCode(values[i]));
         Randomness.selectionLog.log("  candidate variables = %s%n", variables);
         Randomness.selectionLog.log(
-            "  varArray[%d] = %s %s%n", i, varArray[i], System.identityHashCode(varArray[i]));
+            "  varArray[%d] = %s @%s%n", i, varArray[i], System.identityHashCode(varArray[i]));
       }
     }
 
