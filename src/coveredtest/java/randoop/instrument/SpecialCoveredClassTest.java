@@ -1,8 +1,5 @@
 package randoop.instrument;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -98,7 +95,7 @@ public class SpecialCoveredClassTest {
     Set<Class<?>> coveredClassesGoal = operationModel.getCoveredClassesGoal();
     Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
     //
-    assertThat("should be one covered classes", coveredClassesGoal.size(), is(equalTo(1)));
+    assertEquals(coveredClassesGoal.size(), 1);
     for (Class<?> c : coveredClassesGoal) {
       assertEquals(
           "name should be AbstractTarget", "instrument.testcase.AbstractTarget", c.getName());
