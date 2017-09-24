@@ -429,13 +429,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @see #literals_level
    */
   public enum ClassLiteralsMode {
-    /** do not use literals specified in a literals file */
+    /** Do not use literals specified in a literals file. */
     NONE,
-    /** a literal for a given class is used as input only to methods of that class */
+    /** A literal for a given class is used as input only to methods of that class. */
     CLASS,
-    /** a literal is used as input to methods of any classes in the same package */
+    /** A literal is used as input to methods of any classes in the same package. */
     PACKAGE,
-    /** each literal is used as input to any method under test */
+    /** Each literal is used as input to any method under test. */
     ALL
   }
 
