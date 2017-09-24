@@ -338,6 +338,10 @@ public class OperationModel {
         } else if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
           System.out.println(
               "Ignoring abstract " + c + " specified via --classlist or --testclass.");
+          // TODO: Why is this code here?  It's needed in order to make tests pass.
+          if (coveredClassesGoalNames.contains(classname)) {
+            coveredClassesGoal.add(c);
+          }
         } else {
           mgr.apply(c);
           if (coveredClassesGoalNames.contains(classname)) {
