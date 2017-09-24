@@ -173,8 +173,20 @@ public class SpecialCoveredClassTest {
       }
     }
     if (!unused.isEmpty()) {
-      // TODO: could output the generated tests too.
+      System.out.println("Unused operations: " + unused);
+      for (ExecutableSequence rTest : rTests) {
+        System.out.println("TEST:");
+        System.out.println(rTest);
+      }
       throw new Error("Unused operations: " + unused);
+    } else {
+      // TEMPORARY
+      if (false) {
+        for (ExecutableSequence rTest : rTests) {
+          System.out.println("TEST:");
+          System.out.println(rTest);
+        }
+      }
     }
   }
 }

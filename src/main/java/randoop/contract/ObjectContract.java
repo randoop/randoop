@@ -94,6 +94,8 @@ public interface ObjectContract {
    */
   String toCodeString();
 
+  // TODO: how is this different than toString, in terms of contract and in
+  // terms of intended use?
   /**
    * Returns a string describing the observer.
    *
