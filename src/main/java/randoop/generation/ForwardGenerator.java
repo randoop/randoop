@@ -750,4 +750,17 @@ public class ForwardGenerator extends AbstractGenerator {
   public int numGeneratedSequences() {
     return allSequences.size();
   }
+
+  @Override
+  public String toString() {
+    return "randoop.generation.ForwardGenerator("
+        + ("allSequences.size()=" + allSequences.size())
+        + ","
+        + ("observers.size()=" + observers.size())
+        + ","
+        + ("subsumed_sequences.size()=" + subsumed_sequences.size())
+        + ","
+        + ("runtimePrimitivesSeen.size()=" + runtimePrimitivesSeen.size())
+        + ")";
+  }
 }
