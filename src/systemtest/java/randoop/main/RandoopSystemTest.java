@@ -405,16 +405,14 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test formerly known as randoop-contracts. Takes a long time. Evidence from running <tt>time
-   * make randoop-contracts</tt> with previous Makefile. Reports: <tt>
+   * Test formerly known as randoop-contracts. Takes a long time. Evidence from running {@code time
+   * make randoop-contracts} with previous Makefile. Reports:
    *
    * <pre>
    *  real	0m15.976s
    *  user	0m17.902s
    *  sys	0m9.814s
    * </pre>
-   *
-   * </tt>
    */
   @Test
   public void runContractsTest() {

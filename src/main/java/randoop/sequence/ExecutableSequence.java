@@ -132,7 +132,10 @@ public class ExecutableSequence {
       sequence.appendCode(b, i);
       // It's a bit confusing, but the commented execution results refer
       // to the statement ABOVE, not below as is standard for comments.
-      if (executionResults.size() > i) b.append(executionResults.get(i).toString());
+      if (executionResults.size() > i) {
+        b.append(" // ");
+        b.append(executionResults.get(i).toString());
+      }
       if ((i == sequence.size() - 1) && (checks != null)) {
         Map<Check, Boolean> ckMap = checks.get();
         for (Map.Entry<Check, Boolean> entry : ckMap.entrySet()) {
