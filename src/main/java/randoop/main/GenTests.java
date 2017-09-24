@@ -371,7 +371,7 @@ public class GenTests extends GenInputsAbstract {
     Predicate<ExecutableSequence> isOutputTest =
         createTestOutputPredicate(
             excludeSet,
-            operationModel.getCoveredClasses(),
+            operationModel.getCoveredClassesGoal(),
             GenInputsAbstract.require_classname_in_test);
 
     explorer.addTestPredicate(isOutputTest);
@@ -384,7 +384,7 @@ public class GenTests extends GenInputsAbstract {
 
     // instrumentation visitor
     if (GenInputsAbstract.require_covered_classes != null) {
-      visitors.add(new CoveredClassVisitor(operationModel.getCoveredClasses()));
+      visitors.add(new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));
     }
 
     // Install any user-specified visitors.
