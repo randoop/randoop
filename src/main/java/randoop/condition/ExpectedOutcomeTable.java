@@ -31,8 +31,9 @@ import randoop.test.TestCheckGenerator;
  * <ol>
  *   <li>Whether any guard expression for the {@link randoop.condition.specification.Precondition}
  *       fails, or all are satisfied.
- *   <li>The set of {@link ThrowsCondition} objects for expected exceptions. An exception is
- *       expected if the guard of a {@link GuardThrowsPair} is satisfied.
+ *   <li>The set of {@link randoop.condition.specification.ThrowsCondition} objects for expected
+ *       exceptions. An exception is expected if the guard of a {@link GuardThrowsPair} is
+ *       satisfied.
  *   <li>The expected {@link BooleanExpression}, if any.
  * </ol>
  *
