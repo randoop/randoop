@@ -24,7 +24,11 @@ plugins {
    */
   id 'com.github.sherter.google-java-format' version '0.6'
 
-  /* Need to exclude src/testinput from directories examined by Error Prone */
+  /*
+   * Plugin that applies Google's Error Prone linter (http://errorprone.info/).
+   * https://github.com/tbroyer/gradle-errorprone-plugin
+   * Elsewhere this file excludes src/testinput from directories examined by Error Prone.
+   */
   id "net.ltgt.errorprone-base" version "0.0.11"
 }
 
@@ -222,21 +226,22 @@ compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
 /*
- * Configuration for using error-prone compiler.
+ * Configuration for using Error Prone linter.
  *
  * Only works in Java 8+.
  */
-// TODO: once we run the Interning Checker on Randoop
-// tasks.withType(JavaCompile) {
-//   options.compilerArgs += [ '-Xep:ReferenceEquality:OFF' ]
-// }
-
 import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
 tasks.withType(JavaCompile).each { t ->
   if (JavaVersion.current().isJava8Compatible()) {
     if (!t.name.equals("compileTestInputJava")) {
       t.toolChain ErrorProneToolChain.create(project)
+      t.options.compilerArgs += [
+        // undocumented, and suggestion seems bad
+        '-Xep:NamedParameters:OFF'
+        // TODO: uncomment once we run the Interning Checker on Randoop
+        // '-Xep:ReferenceEquality:OFF'
+        ]
     }
   }
 }
@@ -426,6 +431,8 @@ task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingD
   /* Turn off HTML reports -- handled by testReport task */
   reports.html.enabled = false
 }
+
+systemTest.dependsOn shadowJar
 
 /*
  * Link the systemTest task into the project check task.

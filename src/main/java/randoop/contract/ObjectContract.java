@@ -55,6 +55,8 @@ public interface ObjectContract {
    */
   boolean evaluate(Object... objects) throws Throwable;
 
+  // TODO: What is an example of a contract for which throwing an exception is success?
+  // I don't see one in the code.  Can this be removed?
   /**
    * Communicates to Randoop how to interpret exceptional behavior from the <code>evaluate</code>
    * method.

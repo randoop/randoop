@@ -31,10 +31,12 @@ public class SeedSequencesTests {
 
     try {
       manager.apply(MissingPublicMod.class);
-    } catch (RuntimeException e) {
+    } catch (RuntimeException tolerated) {
       assertTrue(
-          e.getMessage(),
-          e.getMessage().contains("public")); // message should at least mention static modifier.
+          tolerated.getMessage(),
+          tolerated
+              .getMessage()
+              .contains("public")); // message should at least mention static modifier.
     }
     assertTrue(
         "shouldn't get anything but have " + annotatedTestValues.size() + " value(s)",
@@ -42,37 +44,39 @@ public class SeedSequencesTests {
 
     try {
       manager.apply(MissingStaticMod.class);
-    } catch (RuntimeException e) {
+    } catch (RuntimeException tolerated) {
       assertTrue(
-          e.getMessage(),
-          e.getMessage().contains("static")); // message should at least mention static modifier.
+          tolerated.getMessage(),
+          tolerated
+              .getMessage()
+              .contains("static")); // message should at least mention static modifier.
     }
     assertTrue("didn't get anything ", annotatedTestValues.isEmpty());
 
     try {
       manager.apply(BadType0.class);
-    } catch (RuntimeException e) {
+    } catch (RuntimeException tolerated) {
       assertTrue(
-          e.getMessage(),
-          e.getMessage().contains("type")); // message should at least mention type problem.
+          tolerated.getMessage(),
+          tolerated.getMessage().contains("type")); // message should at least mention type problem.
     }
     assertTrue("got nothing ", annotatedTestValues.isEmpty());
 
     try {
       manager.apply(BadType1.class);
-    } catch (RuntimeException e) {
+    } catch (RuntimeException tolerated) {
       assertTrue(
-          e.getMessage(),
-          e.getMessage().contains("type")); // message should at least mention type problem.
+          tolerated.getMessage(),
+          tolerated.getMessage().contains("type")); // message should at least mention type problem.
     }
     assertTrue("got nothing ", annotatedTestValues.isEmpty());
 
     try {
       manager.apply(BadType2.class);
-    } catch (RuntimeException e) {
+    } catch (RuntimeException tolerated) {
       assertTrue(
-          e.getMessage(),
-          e.getMessage().contains("type")); // message should at least mention type problem.
+          tolerated.getMessage(),
+          tolerated.getMessage().contains("type")); // message should at least mention type problem.
     }
     assertTrue("and still nothing... ", annotatedTestValues.isEmpty());
 

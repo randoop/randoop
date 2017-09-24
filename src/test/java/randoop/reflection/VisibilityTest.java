@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
-import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.operation.CallableOperation;
 import randoop.operation.ConstructorCall;
@@ -499,21 +498,10 @@ public class VisibilityTest {
           ExecutionOutcome result;
           if (op.getInputTypes().size() == 2) {
             Object[] input = new Object[] {o, 10};
-            try {
-              result = op.execute(input, null);
-              assertTrue("result should be normal execution", (result instanceof NormalExecution));
-            } catch (Throwable t) {
-              fail("should not throw exception: " + t);
-            }
-
+            result = op.execute(input, null);
           } else {
             Object[] input = new Object[] {o};
-            try {
-              result = op.execute(input, null);
-              assertTrue("result should be normal execution", (result instanceof NormalExecution));
-            } catch (Throwable t) {
-              fail("should not throw exception: " + t);
-            }
+            result = op.execute(input, null);
           }
         }
       }

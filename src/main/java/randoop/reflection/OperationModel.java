@@ -58,14 +58,14 @@ import randoop.util.MultiMap;
  */
 public class OperationModel {
 
-  /** The set of class declaration types for this model */
+  /** The set of class declaration types for this model. */
   private Set<ClassOrInterfaceType> classTypes;
 
-  /** The set of input types for this model */
+  /** The set of input types for this model. */
   private Set<Type> inputTypes;
 
-  /** The set of class objects used in the covered-class test filter */
-  private final LinkedHashSet<Class<?>> coveredClasses;
+  /** The set of classes used as goals in the covered-class test filter. */
+  private final LinkedHashSet<Class<?>> coveredClassesGoal;
 
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
@@ -87,19 +87,19 @@ public class OperationModel {
     classLiteralMap = new MultiMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
-    contracts.add(EqualsReflexive.getInstance());
-    contracts.add(EqualsSymmetric.getInstance());
-    contracts.add(EqualsHashcode.getInstance());
-    contracts.add(EqualsToNullRetFalse.getInstance());
-    contracts.add(EqualsReturnsNormally.getInstance());
-    contracts.add(EqualsTransitive.getInstance());
-    contracts.add(CompareToReflexive.getInstance());
-    contracts.add(CompareToAntiSymmetric.getInstance());
-    contracts.add(CompareToEquals.getInstance());
-    contracts.add(CompareToSubs.getInstance());
-    contracts.add(CompareToTransitive.getInstance());
+    contracts.add(EqualsReflexive.getInstance()); // arity=1
+    contracts.add(EqualsSymmetric.getInstance()); // arity=2
+    contracts.add(EqualsHashcode.getInstance()); // arity=2
+    contracts.add(EqualsToNullRetFalse.getInstance()); // arity=1
+    contracts.add(EqualsReturnsNormally.getInstance()); // arity=1
+    contracts.add(EqualsTransitive.getInstance()); // arity=3
+    contracts.add(CompareToReflexive.getInstance()); // arity=1
+    contracts.add(CompareToAntiSymmetric.getInstance()); // arity=2
+    contracts.add(CompareToEquals.getInstance()); // arity=2
+    contracts.add(CompareToSubs.getInstance()); // arity=3
+    contracts.add(CompareToTransitive.getInstance()); // arity=3
 
-    coveredClasses = new LinkedHashSet<>();
+    coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
   }
 
@@ -112,7 +112,8 @@ public class OperationModel {
    *     members are used
    * @param omitmethods the patterns for operations that should be omitted
    * @param classnames the names of classes under test
-   * @param coveredClassnames the names of classes to be tested by covered class heuristic
+   * @param coveredClassesGoalNames the coverage goal: the names of classes to be tested by the
+   *     covered class heuristic
    * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
@@ -126,7 +127,7 @@ public class OperationModel {
       ReflectionPredicate reflectionPredicate,
       List<Pattern> omitmethods,
       Set<String> classnames,
-      Set<String> coveredClassnames,
+      Set<String> coveredClassesGoalNames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
@@ -139,7 +140,7 @@ public class OperationModel {
         visibility,
         reflectionPredicate,
         classnames,
-        coveredClassnames,
+        coveredClassesGoalNames,
         errorHandler,
         literalsFileList);
 
@@ -218,7 +219,7 @@ public class OperationModel {
       Set<String> coveredClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      ArrayList<String> literalsFileList)
+      List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
     return createModel(
         visibility,
@@ -308,12 +309,12 @@ public class OperationModel {
   }
 
   /**
-   * Returns the set of identified {@code Class<?>} objects for the covered class heuristic.
+   * Returns the set of {@code Class<?>} objects that are the goals for the covered class heuristic.
    *
    * @return the set of covered classes
    */
-  public Set<Class<?>> getCoveredClasses() {
-    return coveredClasses;
+  public Set<Class<?>> getCoveredClassesGoal() {
+    return coveredClassesGoal;
   }
 
   /**
@@ -370,13 +371,15 @@ public class OperationModel {
   /**
    * Gathers class types to be used in a run of Randoop and adds them to this {@code
    * OperationModel}. Specifically, collects types for classes-under-test, objects for covered-class
-   * heuristic, concrete input types, annotated test values, and literal values. Also collects
-   * annotated test values, and class literal values used in test generation.
+   * heuristic, concrete input types, annotated test values, and literal values. It operates by
+   * converting from strings to {@code Class} objects. Also collects annotated test values, and
+   * class literal values used in test generation.
    *
    * @param visibility the visibility predicate
    * @param reflectionPredicate the predicate to determine which reflection objects are used
    * @param classnames the names of classes-under-test
-   * @param coveredClassnames the names of classes used in covered-class heuristic
+   * @param coveredClassesGoalNames the names of classes used as goals in the covered-class
+   *     heuristic
    * @param errorHandler the handler for bad class names
    * @param literalsFileList the list of literals file names
    */
@@ -384,7 +387,7 @@ public class OperationModel {
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       Set<String> classnames,
-      Set<String> coveredClassnames,
+      Set<String> coveredClassesGoalNames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList) {
     ReflectionManager mgr = new ReflectionManager(visibility);
@@ -397,16 +400,9 @@ public class OperationModel {
     }
 
     // Collect classes under test
-    Set<Class<?>> visitedClasses = new LinkedHashSet<>();
+    Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
     for (String classname : classnames) {
-      Class<?> c = null;
-      try {
-        c = TypeNames.getTypeForName(classname);
-      } catch (ClassNotFoundException e) {
-        errorHandler.handle(classname);
-      } catch (Throwable e) {
-        errorHandler.handle(classname, e.getCause());
-      }
+      Class<?> c = getClass(classname, errorHandler);
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null && !visitedClasses.contains(c)) {
         visitedClasses.add(c);
@@ -420,31 +416,26 @@ public class OperationModel {
               "Ignoring "
                   + c
                   + " specified via --classlist or --testclass; provide classes, not interfaces.");
-        } else {
-          if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
-            System.out.println(
-                "Ignoring abstract " + c + " specified via --classlist or --testclass.");
-          } else {
-            mgr.apply(c);
+        } else if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
+          System.out.println(
+              "Ignoring abstract " + c + " specified via --classlist or --testclass.");
+          // TODO: Why is this code here?  It's needed in order to make tests pass.
+          if (coveredClassesGoalNames.contains(classname)) {
+            coveredClassesGoal.add(c);
           }
-          if (coveredClassnames.contains(classname)) {
-            coveredClasses.add(c);
+        } else {
+          mgr.apply(c);
+          if (coveredClassesGoalNames.contains(classname)) {
+            coveredClassesGoal.add(c);
           }
         }
       }
     }
 
     // Collect covered classes
-    for (String classname : coveredClassnames) {
+    for (String classname : coveredClassesGoalNames) {
       if (!classnames.contains(classname)) {
-        Class<?> c = null;
-        try {
-          c = TypeNames.getTypeForName(classname);
-        } catch (ClassNotFoundException e) {
-          errorHandler.handle(classname);
-        } catch (Throwable e) {
-          errorHandler.handle(classname, e.getCause());
-        }
+        Class<?> c = getClass(classname, errorHandler);
         if (c != null) {
           if (!visibility.isVisible(c)) {
             System.out.println(
@@ -452,11 +443,23 @@ public class OperationModel {
           } else if (c.isInterface()) {
             System.out.println("Ignoring " + c + " specified as --require-covered-classes target.");
           } else {
-            coveredClasses.add(c);
+            coveredClassesGoal.add(c);
           }
         }
       }
     }
+  }
+
+  /* May return null if errorHandler just warns on bad names. */
+  private static Class<?> getClass(String classname, ClassNameErrorHandler errorHandler) {
+    try {
+      return TypeNames.getTypeForName(classname);
+    } catch (ClassNotFoundException e) {
+      errorHandler.handle(classname);
+    } catch (Throwable e) {
+      errorHandler.handle(classname, e.getCause());
+    }
+    return null;
   }
 
   /**

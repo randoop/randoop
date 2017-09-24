@@ -1,7 +1,10 @@
 package randoop.generation;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import plume.SimpleLog;
 import randoop.operation.TypedOperation;
@@ -25,7 +28,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
    */
   public OperationHistoryLogger(SimpleLog logger) {
     this.logger = logger;
-    this.operationMap = new LinkedHashMap<>();
+    this.operationMap = new HashMap<>();
     this.logger.line_oriented = false; // don't want the logger to manage newlines
   }
 
@@ -55,9 +58,10 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
       maxNameLength = Math.max(nameLength, maxNameLength);
     }
     Map<OperationOutcome, String> formatMap = printHeader(maxNameLength);
-    for (Map.Entry<TypedOperation, Map<OperationOutcome, Integer>> entry :
-        operationMap.entrySet()) {
-      printRow(maxNameLength, formatMap, entry.getKey(), entry.getValue());
+    List<TypedOperation> keys = new ArrayList<>(operationMap.keySet());
+    Collections.sort(keys);
+    for (TypedOperation key : keys) {
+      printRow(maxNameLength, formatMap, key, operationMap.get(key));
     }
   }
 

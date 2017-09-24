@@ -44,26 +44,6 @@ public class ObjectCheck implements Check {
   /** The variables for the contract */
   private final Variable[] vars;
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == null) {
-      return false;
-    }
-    if (o == this) {
-      return true;
-    }
-    if (!(o instanceof ObjectCheck)) {
-      return false;
-    }
-    ObjectCheck other = (ObjectCheck) o;
-    return contract.equals(other.contract) && Arrays.equals(vars, other.vars);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(contract, Arrays.hashCode(vars));
-  }
-
   /**
    * Creates an {@link ObjectCheck} for the given contract using the variables as input.
    *
@@ -83,6 +63,26 @@ public class ObjectCheck implements Check {
     for (Variable v : vars) {
       this.vars[count++] = v;
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null) {
+      return false;
+    }
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof ObjectCheck)) {
+      return false;
+    }
+    ObjectCheck other = (ObjectCheck) o;
+    return contract.equals(other.contract) && Arrays.equals(vars, other.vars);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(contract, Arrays.hashCode(vars));
   }
 
   @Override

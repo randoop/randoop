@@ -16,6 +16,8 @@ import randoop.BugInRandoopException;
 public final class Randomness {
 
   public static SimpleLog selectionLog = new SimpleLog(false);
+  /** 0 = no output, 1 = brief output, 2 = verbose output */
+  public static int verbosity = 1;
 
   private Randomness() {
     throw new IllegalStateException("no instances");
@@ -24,8 +26,8 @@ public final class Randomness {
   public static final long SEED = 0;
 
   /**
-   * The random number used any testtime a random choice is made. (Developer note: do not declare
-   * new Random objects; use this one instead).
+   * The random generator that makes random choices. (Developer note: do not declare new Random
+   * objects; use this one instead).
    */
   static Random random = new Random(SEED);
 
@@ -141,7 +143,7 @@ public final class Randomness {
   public static <T> T randomSetMember(Collection<T> set) {
     int setSize = set.size();
     int randIndex = Randomness.nextRandomInt(setSize);
-    logSelection(randIndex, "randomSetMember", "collection of size " + setSize);
+    logSelection(randIndex, "randomSetMember", set);
     return CollectionsExt.getNthIteratedElement(set, randIndex);
   }
 
@@ -172,27 +174,48 @@ public final class Randomness {
    * @param argument the method argument
    */
   private static void logSelection(Object returnValue, String methodName, Object argument) {
-    if (selectionLog.enabled()) {
+    if (selectionLog.enabled() && verbosity > 0) {
       StackTraceElement[] trace = Thread.currentThread().getStackTrace();
       String methodWithArg = methodName;
       if (argument != null) {
-        methodWithArg += "(" + argument + ")";
+        methodWithArg += "(" + toString(argument) + ")";
       }
       selectionLog.log(
-          "%s => %s; seed %s; called from %s%n", methodWithArg, returnValue, getSeed(), trace[3]);
+          "#%d: %s => %s; seed %s; called from %s%n",
+          totalCallsToRandom, methodWithArg, returnValue, getSeed(), trace[3]);
     }
   }
 
   /**
-   * Logs the value that was randomly selected, along with the calling method and its lint argument.
+   * Produces a printed representation of the object, depending on the verbosity level.
    *
-   * @param returnValue the value randomly selected
-   * @param methodName the name of the method called
-   * @param argList the method argument, which is a list
+   * @param o the object to produce a printed representation of
+   * @return a printed representation of the argument
+   * @see #verbosity
    */
-  private static void logSelection(Object returnValue, String methodName, List<?> argList) {
-    if (selectionLog.enabled()) {
-      logSelection(returnValue, methodName, "list of length " + argList.size());
+  private static String toString(Object o) {
+    if (o instanceof Collection<?>) {
+      Collection<?> coll = (Collection<?>) o;
+      switch (verbosity) {
+        case 1:
+          return coll.getClass() + " of size " + coll.size();
+        case 2:
+          return coll.toString();
+        default:
+          throw new Error("verbosity = " + verbosity);
+      }
+    } else if (o instanceof SimpleList<?>) {
+      SimpleList<?> sl = (SimpleList<?>) o;
+      switch (verbosity) {
+        case 1:
+          return sl.getClass() + " of size " + sl.size();
+        case 2:
+          return sl.toJDKList().toString();
+        default:
+          throw new Error("verbosity = " + verbosity);
+      }
+    } else {
+      return o.toString();
     }
   }
 }

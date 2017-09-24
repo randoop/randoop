@@ -40,10 +40,17 @@ public final class ReflectionExecutor {
   public static int timeout = 5000;
 
   // Execution statistics.
-  private static long normal_exec_accum = 0;
+  private static long normal_exec_duration = 0;
   private static int normal_exec_count = 0;
-  private static long excep_exec_accum = 0;
+  private static long excep_exec_duration = 0;
   private static int excep_exec_count = 0;
+
+  public static void resetStatistics() {
+    normal_exec_duration = 0;
+    normal_exec_count = 0;
+    excep_exec_duration = 0;
+    excep_exec_count = 0;
+  }
 
   public static int normalExecs() {
     return normal_exec_count;
@@ -54,11 +61,11 @@ public final class ReflectionExecutor {
   }
 
   public static double normalExecAvgMillis() {
-    return ((normal_exec_accum / (double) normal_exec_count) / Math.pow(10, 6));
+    return ((normal_exec_duration / (double) normal_exec_count) / Math.pow(10, 6));
   }
 
   public static double excepExecAvgMillis() {
-    return ((excep_exec_accum / (double) excep_exec_count) / Math.pow(10, 6));
+    return ((excep_exec_duration / (double) excep_exec_count) / Math.pow(10, 6));
   }
 
   public static Throwable executeReflectionCode(ReflectionCode code, PrintStream out) {
@@ -74,14 +81,16 @@ public final class ReflectionExecutor {
 
     if (ret == null) {
       // Add duration to running average for normal execution.
-      normal_exec_accum += duration;
-      assert normal_exec_accum > 0; // check no overflow.
+      normal_exec_duration += duration;
+      assert normal_exec_duration > 0; // check no overflow.
       normal_exec_count++;
+      // System.out.println("normal execution: " + code);
     } else {
       // Add duration to running average for exceptional execution.
-      excep_exec_accum += duration;
-      assert excep_exec_accum > 0; // check no overflow.
+      excep_exec_duration += duration;
+      assert excep_exec_duration > 0; // check no overflow.
       excep_exec_count++;
+      // System.out.println("exceptional execution: " + code);
     }
 
     return ret;

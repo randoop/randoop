@@ -43,10 +43,10 @@ import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
-import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
+import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
@@ -368,7 +368,9 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Create the generator for this session.
      */
-    AbstractGenerator explorer =
+    AbstractGenerator explorer;
+
+    explorer =
         new ForwardGenerator(
             operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
 
@@ -399,7 +401,7 @@ public class GenTests extends GenInputsAbstract {
     Predicate<ExecutableSequence> isOutputTest =
         createTestOutputPredicate(
             excludeSet,
-            operationModel.getCoveredClasses(),
+            operationModel.getCoveredClassesGoal(),
             GenInputsAbstract.require_classname_in_test);
 
     explorer.addTestPredicate(isOutputTest);
@@ -412,7 +414,7 @@ public class GenTests extends GenInputsAbstract {
 
     // instrumentation visitor
     if (GenInputsAbstract.require_covered_classes != null) {
-      visitors.add(new CoveredClassVisitor(operationModel.getCoveredClasses()));
+      visitors.add(new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));
     }
 
     // Install any user-specified visitors.
@@ -454,10 +456,7 @@ public class GenTests extends GenInputsAbstract {
       Log.logLine("Initial sequences (seeds):");
       componentMgr.log();
     }
-    if (GenInputsAbstract.operation_history_log != null) {
-      SimpleLog logger = new SimpleLog(GenInputsAbstract.operation_history_log);
-      explorer.setOperationHistoryLogger(new OperationHistoryLogger(logger));
-    }
+    TestUtils.setOperationLog(GenInputsAbstract.operation_history_log, explorer);
 
     /* Generate tests */
     try {

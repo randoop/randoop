@@ -3,7 +3,12 @@ package randoop.util;
 import java.lang.reflect.InvocationTargetException;
 import randoop.util.RandoopSecurityManager.Status;
 
-/** Implemented by parts of randoop that want to execute reflection code via ReflectionExecutor. */
+/**
+ * Wraps a method or constructor together with its arguments, ready for execution. Can be run only
+ * once.
+ *
+ * <p>Implemented by parts of Randoop that want to execute reflection code via ReflectionExecutor.
+ */
 public abstract class ReflectionCode {
 
   /** has this been executed already */
