@@ -85,9 +85,9 @@ public class SpecialCoveredClassTest {
             classNameErrorHandler,
             GenInputsAbstract.literals_file);
 
-    Set<Class<?>> coveredClasses = operationModel.getCoveredClasses();
-    assertEquals("should be one covered classes", coveredClasses.size(), 1);
-    for (Class<?> c : coveredClasses) {
+    Set<Class<?>> coveredClassesGoal = operationModel.getCoveredClassesGoal();
+    assertEquals("should be one covered classes goal", coveredClassesGoal.size(), 1);
+    for (Class<?> c : coveredClassesGoal) {
       assertEquals(
           "name should be AbstractTarget", "instrument.testcase.AbstractTarget", c.getName());
     }
@@ -124,7 +124,7 @@ public class SpecialCoveredClassTest {
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(
             excludeSet,
-            operationModel.getCoveredClasses(),
+            operationModel.getCoveredClassesGoal(),
             GenInputsAbstract.require_classname_in_test);
     testGenerator.addTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
@@ -132,7 +132,7 @@ public class SpecialCoveredClassTest {
     TestCheckGenerator checkGenerator =
         genTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.addTestCheckGenerator(checkGenerator);
-    testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClasses));
+    testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setOperationLog(testGenerator);
     TestUtils.setSelectionLog();
     testGenerator.explore();
@@ -173,8 +173,20 @@ public class SpecialCoveredClassTest {
       }
     }
     if (!unused.isEmpty()) {
-      // TODO: could output the generated tests too.
+      System.out.println("Unused operations: " + unused);
+      for (ExecutableSequence rTest : rTests) {
+        System.out.println("TEST:");
+        System.out.println(rTest);
+      }
       throw new Error("Unused operations: " + unused);
+    } else {
+      // TEMPORARY
+      if (false) {
+        for (ExecutableSequence rTest : rTests) {
+          System.out.println("TEST:");
+          System.out.println(rTest);
+        }
+      }
     }
   }
 }
