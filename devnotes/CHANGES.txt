@@ -5,9 +5,9 @@ failing tests, it creates a test suite with smaller tests that fail the
 same way.
  * You can run this minimizer on any test suite, whether it was created by
    Randoop or not.
- * Randoop automatically runs the minimizer on fault-revealing tests before
-   it outputs them; this makes the failures easier to understand.  You can
-   disable this behavior.
+ * Command-line option --minimize-error-test makes Randoop automatically
+   run the minimizer on fault-revealing tests before it outputs them; this
+   makes the failures easier to understand.
 
 Randoop's mapcall agent has been renamed replacecall and has been improved.
 The replacecall agent prevents Randoop, or a test suite, from calling certain
