@@ -859,7 +859,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:minimize-error-test"><b>--minimize-error-test=</b><i>boolean</i>.
              Flag indicating whether or not to automatically minimize error-revealing tests. Both original
  and minimized versions of each test class will be output. Setting this option may cause long
- Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests. [default true]
+ Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests. [default false]
       </ul>
   <li id="optiongroup:Test-classification">Test classification
       <ul>
@@ -990,10 +990,10 @@ Randoop about your application, and that is how we recommend using Randoop.
              How to use literal values that are specified via the <code>--literals-file</code> command-line
  option. See: <code>ClassLiteralsMode</code>. [default CLASS]
 <ul>
-  <li><b>NONE</b> do not use literals specified in a literals file
-  <li><b>CLASS</b> a literal for a given class is used as input only to methods of that class
-  <li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package
-  <li><b>ALL</b> each literal is used as input to any method under test
+  <li><b>NONE</b> Do not use literals specified in a literals file.
+  <li><b>CLASS</b> A literal for a given class is used as input only to methods of that class.
+  <li><b>PACKAGE</b> A literal is used as input to methods of any classes in the same package.
+  <li><b>ALL</b> Each literal is used as input to any method under test.
 </ul>
 
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
