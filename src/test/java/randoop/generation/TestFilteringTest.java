@@ -44,6 +44,7 @@ public class TestFilteringTest {
     optionsCache = new OptionsCache();
     optionsCache.saveState();
 
+    TestUtils.setRandoopLog();
     TestUtils.setSelectionLog();
   }
 
@@ -278,7 +279,7 @@ public class TestFilteringTest {
                 visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());
-    TestUtils.setOperationLog(gen);
+    TestUtils.setAllLogs(gen);
     gen.explore();
     gen.getOperationHistory().outputTable();
     return gen;

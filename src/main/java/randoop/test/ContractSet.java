@@ -1,7 +1,7 @@
 package randoop.test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import randoop.contract.ObjectContract;
@@ -17,7 +17,7 @@ public class ContractSet {
 
   /** Creates an contract set with no elements. */
   public ContractSet() {
-    contractMap = new HashMap<>();
+    contractMap = new LinkedHashMap<>();
     maxArity = 0;
   }
 

@@ -13,6 +13,8 @@ import randoop.util.MultiMap;
 /**
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
  * of each class visited, adding a sequence for each to a map associating a sequence with a type.
+ *
+ * @see OperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
 

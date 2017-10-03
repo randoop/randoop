@@ -795,7 +795,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>If the regular expression contains anchors "<code>^</code>" and "<code>$</code>", they refer to the
  beginning and the end of the signature string.
-            <li id="option:omitmethods-list"><b>--omitmethods-list=</b><i>filename</i>.
+            <li id="option:omitmethods-file"><b>--omitmethods-file=</b><i>filename</i>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>
  --omitmethods</code>, and the default omissions.
@@ -859,7 +859,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:minimize-error-test"><b>--minimize-error-test=</b><i>boolean</i>.
              Flag indicating whether or not to automatically minimize error-revealing tests. Both original
  and minimized versions of each test class will be output. Setting this option may cause long
- Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests. [default true]
+ Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests. [default false]
       </ul>
   <li id="optiongroup:Test-classification">Test classification
       <ul>
@@ -988,14 +988,21 @@ Randoop about your application, and that is how we recommend using Randoop.
  test.
             <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>.
              How to use literal values that are specified via the <code>--literals-file</code> command-line
- option. See: <code>ClassLiteralsMode</code>. [default CLASS]
+ option. [default CLASS_OR_ALL]
 <ul>
-  <li><b>NONE</b> do not use literals specified in a literals file
-  <li><b>CLASS</b> a literal for a given class is used as input only to methods of that class
-  <li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package
-  <li><b>ALL</b> each literal is used as input to any method under test
+  <li><b>NONE</b> Do not use literals specified in a literals file.
+  <li><b>CLASS</b> A literal for a given class is used as input only to methods of that class.
+  <li><b>PACKAGE</b> A literal is used as input to methods of any classes in the same package.
+  <li><b>CLASS_OR_ALL</b> A literal for a given class is used as input only to methods of that class with probability
+ <code>--prob-extracted-literals</code>, otherwise each literal is used as input to any method
+ under test.
+  <li><b>ALL</b> Each literal is used as input to any method under test.
 </ul>
 
+            <li id="option:prob-extracted-literals"><b>--prob-extracted-literals=</b><i>double</i>.
+             What probability to select from only extracted literal sequences during sequence selection. In
+ other words, at least this fraction of method inputs are guaranteed to be literals from the
+ classfile. [default 0.01]
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
              Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
  (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
@@ -1011,7 +1018,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  at most once as an argument in a method call. A ratio of 1 tries to maximize the number of
  times values are used as inputs to parameters within a test. [default 0.0]
             <li id="option:small-tests"><b>--small-tests=</b><i>boolean</i>.
-             Favor shorter sequences when assembling new sequences out of old ones.
+             Favor shorter sequences when assembling new sequences out of old ones. Randoop already favors
+ shorter sequences by default while striving for higher coverage, but this option may be
+ beneficial in some cases.
 
  <p>Randoop generates new tests by combining old previously-generated tests. If this option is
  given, tests with fewer calls are given greater weight during its random selection. This has
@@ -1279,10 +1288,10 @@ The replacecall agent is able to use the implementation classes to discover repl
 </p>
 
 <p>
-Give the replacement file to the replacecall agent using the <code>--replacements</code> argument:
+Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--replacements=replacement-file.txt
+    -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--replacement-file=replacement-file.txt
 </pre>
 
 <p>

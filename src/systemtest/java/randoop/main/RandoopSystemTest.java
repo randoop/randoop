@@ -48,9 +48,9 @@ import plume.UtilMDE;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RandoopSystemTest {
 
-  // Keep this in synch with GenTests.NO_OPERATIONS_TO_TEST.
-  // (XXX Can factor into module of shared dependencies, but...  Since we are avoiding dependencies
+  // Keep this in synch with GenTests.NO_OPERATIONS_TO_TEST.  (Since we are avoiding dependencies
   // of the system tests on Randoop code, the tests can't directly use GenTests.NO_METHODS_TO_TEST.)
+  // XXX Factor into module of shared dependencies.
   private static final String NO_OPERATIONS_TO_TEST = "There are no operations to test. Exiting.";
 
   private static SystemTestEnvironment systemTestEnvironment;
@@ -1204,6 +1204,10 @@ public class RandoopSystemTest {
     checker.ignore("components.Framework.makeNewWindow()");
     checker.ignore("components.MissingIcon.getIconWidth()");
 
+    // Inconsistent between JDK7 and JDK8, because of differences in JDK implementation of
+    // JComponent.getAccessibleContext.
+    checker.ignore("components.CrayonPanel.createImageIcon(java.lang.String)");
+
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
   }
@@ -1427,11 +1431,17 @@ public class RandoopSystemTest {
           for (String line : regressionRunDesc.processStatus.outputLines) {
             System.err.println(line);
           }
-          fail("all regression tests should pass, but " + regressionRunDesc.testsFail + " failed");
+          fail(
+              "All regression tests should pass, but "
+                  + regressionRunDesc.testsFail
+                  + " regression tests failed");
         }
         break;
       case NONE:
-        assertThat("...has no regression tests", runStatus.regressionTestCount, is(equalTo(0)));
+        if (runStatus.errorTestCount != 0) {
+          // TODO: should output the error tests.  Print the file?
+          fail("Test suite should have no error tests, but has " + runStatus.errorTestCount);
+        }
         break;
       case DONT_CARE:
         break;

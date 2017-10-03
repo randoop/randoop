@@ -25,3 +25,6 @@ bin/
 
 # NetBeans
 /.nb-gradle/
+
+# Temporary file
+gradle-build-output.txt

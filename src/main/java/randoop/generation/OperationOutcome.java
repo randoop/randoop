@@ -14,6 +14,9 @@ public enum OperationOutcome {
   /** The operation was removed from the list. */
   REMOVED,
 
+  /** The generated sequence was discarded because it was subsumed. */
+  SUBSUMED,
+
   /** The generated sequence was discarded for one of several reasons. */
   SEQUENCE_DISCARDED
 }
