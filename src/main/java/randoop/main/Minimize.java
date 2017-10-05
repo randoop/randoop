@@ -35,7 +35,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,19 +47,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Options;
-import plume.TimeLimitProcess;
 import randoop.Globals;
+import randoop.compile.FileCompiler;
+import randoop.execution.RunCommand;
 import randoop.output.ClassRenamingVisitor;
 import randoop.output.ClassTypeNameSimplifyVisitor;
 import randoop.output.ClassTypeVisitor;
@@ -865,19 +859,16 @@ public class Minimize extends CommandHandler {
     // Obtain directory to carry out compilation and execution step.
     File executionDir = getExecutionDirectory(file, packageName);
 
-    // Command to compile the input Java file.
-    String command = "javac -classpath " + SYSTEM_CLASS_PATH;
-    // Add current directory to class path.
-    command += PATH_SEPARATOR + ".";
-    if (classpath != null) {
-      // Add specified classpath to command.
-      command += PATH_SEPARATOR + classpath;
+    List<File> filesToCompile = new ArrayList<File>();
+    filesToCompile.add(file);
+
+    FileCompiler fileCompiler = new FileCompiler();
+    try {
+      fileCompiler.compile(filesToCompile, executionDir.toPath());
+    } catch (FileCompiler.FileCompilerException e) {
+      return 1;
     }
-
-    command += " " + file.getAbsolutePath();
-
-    // Compile specified Java file.
-    return runProcess(command, executionDir, timeoutLimit).exitValue;
+    return 0;
   }
 
   /**
@@ -914,8 +905,17 @@ public class Minimize extends CommandHandler {
 
     String command = "java -classpath " + classpath + " org.junit.runner.JUnitCore " + fqClassName;
 
-    // Run the specified Java file and return the standard output.
-    return runProcess(command, executionDir, timeoutLimit).stdout;
+    List<String> commands = new ArrayList<String>();
+    commands.add(command);
+
+    try {
+      // Run the specified Java file and return the standard output.
+      RunCommand.Status status = RunCommand.run(commands, executionDir, timeoutLimit);
+
+      return StringUtils.join(status.standardOutputLines);
+    } catch (RunCommand.CommandException e) {
+      return null;
+    }
   }
 
   /**
@@ -949,88 +949,6 @@ public class Minimize extends CommandHandler {
 
     // Return the directory.
     return file;
-  }
-
-  /**
-   * Run a command given as a String and return the output and error results in an Outputs object.
-   *
-   * @param command the input command to be run
-   * @param executionDir the directory where the process commands should be executed
-   * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @return an {@code Outputs} object containing the standard and error output
-   */
-  private static Outputs runProcess(String command, File executionDir, int timeoutLimit) {
-    Process process;
-
-    if (executionDir != null && executionDir.toString().isEmpty()) {
-      // Execute command in the default directory.
-      executionDir = null;
-    }
-
-    try {
-      process = Runtime.getRuntime().exec(command, null, executionDir);
-    } catch (IOException e) {
-      return new Outputs("", "I/O error occurred when running process.", 1);
-    }
-
-    final TimeLimitProcess timeLimitProcess = new TimeLimitProcess(process, timeoutLimit * 1000);
-
-    Callable<String> stdCallable =
-        new Callable<String>() {
-          @Override
-          public String call() throws Exception {
-            try {
-              return IOUtils.toString(timeLimitProcess.getInputStream(), Charset.defaultCharset());
-            } catch (IOException e) {
-              // Error reading from process's input stream.
-              return "Error reading from process's input stream.";
-            }
-          }
-        };
-
-    Callable<String> errCallable =
-        new Callable<String>() {
-          @Override
-          public String call() throws Exception {
-            try {
-              return IOUtils.toString(timeLimitProcess.getErrorStream(), Charset.defaultCharset());
-            } catch (IOException e) {
-              // Error reading from process's error stream.
-              return "Error reading from process's error stream.";
-            }
-          }
-        };
-
-    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(2);
-    Future<String> stdOutput = fixedThreadPool.submit(stdCallable);
-    Future<String> errOutput = fixedThreadPool.submit(errCallable);
-    fixedThreadPool.shutdown();
-
-    String stdOutputString;
-    String errOutputString;
-    int exitValue;
-
-    // Wait for the TimeLimitProcess to finish.
-    try {
-      timeLimitProcess.waitFor();
-      stdOutputString = stdOutput.get();
-      errOutputString = errOutput.get();
-      exitValue = timeLimitProcess.exitValue();
-    } catch (InterruptedException e) {
-      return new Outputs("", "Process was interrupted while waiting.", 1);
-    } catch (ExecutionException e) {
-      return new Outputs("", "A computation in the process threw an exception.", 1);
-    } finally {
-      timeLimitProcess.destroy();
-    }
-
-    if (timeLimitProcess.timed_out()) {
-      return new Outputs("", "Process timed out after " + timeoutLimit + " seconds.", 1);
-    }
-
-    // Collect and return the results from the standard output and error
-    // output.
-    return new Outputs(stdOutputString, errOutputString, exitValue);
   }
 
   /**
