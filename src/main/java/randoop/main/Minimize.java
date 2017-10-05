@@ -33,7 +33,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
@@ -160,30 +159,35 @@ public class Minimize extends CommandHandler {
       }
     } catch (Options.ArgException ae) {
       usage("while parsing command-line arguments: %s", ae.getMessage());
+      throw new RandoopTextuiException("See usage.");
     }
 
     if (Minimize.suitepath == null) {
-      System.out.println("You must specify an input file path.");
-      System.out.println("Use the --suitepath option.");
-      System.exit(1);
+      throw new RandoopTextuiException(
+          "You must specify an input file path to the 'minimize' command. Use the --suitepath option.");
     }
 
     // Check that the input file is a Java file.
     if (!FilenameUtils.getExtension(Minimize.suitepath).equals("java")) {
-      System.out.println("The input file must be a Java file.");
-      System.exit(1);
+      throw new RandoopTextuiException("The input file must be a Java file.");
     }
 
     if (Minimize.testsuitetimeout <= 0) {
-      System.out.println("You must specify a positive timeout value.");
-      System.exit(1);
+      throw new RandoopTextuiException("You must specify a positive timeout value.");
     }
 
     // File object pointing to the file to be minimized.
     File originalFile = new File(suitepath);
 
     // Call the main minimize method.
-    return mainMinimize(originalFile, suiteclasspath, testsuitetimeout, verboseminimizer);
+    boolean success = false;
+    try {
+      success = mainMinimize(originalFile, suiteclasspath, testsuitetimeout, verboseminimizer);
+    } catch (IOException e) {
+      System.err.println("IOException: " + e.getMessage());
+      e.printStackTrace();
+    }
+    return success;
   }
 
   /**
@@ -210,9 +214,10 @@ public class Minimize extends CommandHandler {
    * @param verboseOutput whether to produce verbose output
    * @return true if minimization produced a (possibly unchanged) file that fails the same way as
    *     the original file
+   * @throws IOException thrown if write to file fails
    */
   public static boolean mainMinimize(
-      File file, String classPath, int timeoutLimit, boolean verboseOutput) {
+      File file, String classPath, int timeoutLimit, boolean verboseOutput) throws IOException {
     System.out.println("Minimizing: " + file.getName() + ".");
 
     if (verboseOutput) {
@@ -314,6 +319,7 @@ public class Minimize extends CommandHandler {
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @param verboseOutput whether or not to output information about minimization status
+   * @throws IOException thrown if minimized method can't be written to file
    */
   private static void minimizeTestSuite(
       CompilationUnit cu,
@@ -322,7 +328,8 @@ public class Minimize extends CommandHandler {
       String classpath,
       Map<String, String> expectedOutput,
       int timeoutLimit,
-      boolean verboseOutput) {
+      boolean verboseOutput)
+      throws IOException {
     System.out.println("Minimizing test suite.");
 
     int numberOfTestMethods = getNumberOfTestMethods(cu);
@@ -372,6 +379,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected output from running the JUnit test suite
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @throws IOException thrown if write to file fails
    */
   private static void minimizeMethod(
       MethodDeclaration method,
@@ -380,7 +388,8 @@ public class Minimize extends CommandHandler {
       File file,
       String classpath,
       Map<String, String> expectedOutput,
-      int timeoutLimit) {
+      int timeoutLimit)
+      throws IOException {
     List<Statement> statements = method.getBody().getStmts();
 
     // Map from primitive variable name to the variable's value extracted
@@ -751,6 +760,7 @@ public class Minimize extends CommandHandler {
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @param verboseOutput whether or not to output information about minimization status
    * @return {@code CompilationUnit} with fully-qualified type names simplified to simple type names
+   * @throws IOException thrown if write to file fails
    */
   private static CompilationUnit simplifyTypeNames(
       CompilationUnit compUnit,
@@ -759,7 +769,8 @@ public class Minimize extends CommandHandler {
       String classpath,
       Map<String, String> expectedOutput,
       int timeoutLimit,
-      boolean verboseOutput) {
+      boolean verboseOutput)
+      throws IOException {
     if (verboseOutput) {
       System.out.println("Adding imports and simplifying type names.");
     }
@@ -818,13 +829,15 @@ public class Minimize extends CommandHandler {
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return true if there are no compilation and no run-time errors and the output is equal to the
    *     expected output
+   * @throws IOException thrown if normalizeJUnitOutput throws the exception
    */
   private static boolean checkCorrectlyMinimized(
       File file,
       String classpath,
       String packageName,
       Map<String, String> expectedOutput,
-      int timeoutLimit) {
+      int timeoutLimit)
+      throws IOException {
 
     // Zero exit status means success.
     if (compileJavaFile(file, classpath, packageName, timeoutLimit) != 0) {
@@ -1028,58 +1041,51 @@ public class Minimize extends CommandHandler {
    * @param input the {@code String} produced from running a JUnit test suite
    * @return a map from method name to the method's failure stack trace. The stack trace will not
    *     contain any line numbers.
+   * @throws IOException thrown if buffered reader's readLine() fails
    */
-  private static Map<String, String> normalizeJUnitOutput(String input) {
+  private static Map<String, String> normalizeJUnitOutput(String input) throws IOException {
     BufferedReader bufReader = new BufferedReader(new StringReader(input));
 
     String methodName = null;
     Map<String, String> resultMap = new HashMap<>();
 
     StringBuilder result = new StringBuilder();
-    try {
-      // JUnit output starts with index 1 for first failure.
-      int index = 1;
+    // JUnit output starts with index 1 for first failure.
+    int index = 1;
 
-      for (String line; (line = bufReader.readLine()) != null; ) {
-        String indexStr = index + ") ";
-        // Check if the current line is the start of a failure stack
-        // trace for a method.
-        if (line.startsWith(indexStr)) {
-          // If a previous failure stack trace is being read, add the
-          // existing method name and stack trace to the map.
-          if (methodName != null) {
-            resultMap.put(methodName, result.toString());
-
-            // Reset the string builder.
-            result.setLength(0);
-          }
-          // Set the method name to the current line.
-          methodName = line;
-          index += 1;
-        } else if (line.isEmpty()) {
-          // Reached an empty line which marks the end of the JUnit
-          // output.
+    for (String line; (line = bufReader.readLine()) != null; ) {
+      String indexStr = index + ") ";
+      // Check if the current line is the start of a failure stack
+      // trace for a method.
+      if (line.startsWith(indexStr)) {
+        // If a previous failure stack trace is being read, add the
+        // existing method name and stack trace to the map.
+        if (methodName != null) {
           resultMap.put(methodName, result.toString());
-          break;
-        } else if (methodName != null) {
-          // Look for a left-parentheses which marks the position
-          // where a line number will appear.
-          int lParenIndex = line.indexOf('(');
-          if (lParenIndex >= 0) {
-            // Remove the substring containing the line number.
-            line = line.substring(0, lParenIndex);
-          }
-          result.append(line).append(Globals.lineSep);
+
+          // Reset the string builder.
+          result.setLength(0);
         }
+        // Set the method name to the current line.
+        methodName = line;
+        index += 1;
+      } else if (line.isEmpty()) {
+        // Reached an empty line which marks the end of the JUnit
+        // output.
+        resultMap.put(methodName, result.toString());
+        break;
+      } else if (methodName != null) {
+        // Look for a left-parentheses which marks the position
+        // where a line number will appear.
+        int lParenIndex = line.indexOf('(');
+        if (lParenIndex >= 0) {
+          // Remove the substring containing the line number.
+          line = line.substring(0, lParenIndex);
+        }
+        result.append(line).append(Globals.lineSep);
       }
-      bufReader.close();
-    } catch (IOException e) {
-      // Error with readLine() or close().
-      System.err.println("I/O error reading line from trace.");
-      e.printStackTrace();
-      System.exit(1);
-      return null;
     }
+    bufReader.close();
 
     return resultMap;
   }
@@ -1090,15 +1096,11 @@ public class Minimize extends CommandHandler {
    * @param compUnit the compilation unit to write to file
    * @param file file to write to
    */
-  private static void writeToFile(CompilationUnit compUnit, File file) {
+  private static void writeToFile(CompilationUnit compUnit, File file) throws IOException {
     // Write the compilation unit to the file.
-    try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), UTF_8)) {
-      bw.write(compUnit.toString());
-    } catch (IOException e) {
-      System.err.println("Error writing to file: " + file);
-      e.printStackTrace();
-      System.exit(1);
-    }
+    BufferedWriter bw = Files.newBufferedWriter(file.toPath(), UTF_8);
+    bw.write(compUnit.toString());
+    bw.close();
   }
 
   /**
@@ -1200,23 +1202,16 @@ public class Minimize extends CommandHandler {
    * @param file the file to compute the length of
    * @return the number of lines in the file. Returns -1 if an exception occurs while reading the
    *     file
+   * @throws IOException thrown if error reading file
    */
-  private static int getFileLength(File file) {
+  private static int getFileLength(File file) throws IOException {
     int lines = 0;
-    try {
-      // Read and count the number of lines in the file.
-      BufferedReader reader = Files.newBufferedReader(file.toPath(), UTF_8);
-      while (reader.readLine() != null) {
-        lines++;
-      }
-      reader.close();
-    } catch (FileNotFoundException e) {
-      System.err.println("File length not calculated, file not found exception for file " + file);
-      System.exit(1);
-    } catch (IOException e) {
-      System.err.println("File length not calculated, file read exception for file " + file);
-      System.exit(1);
+    // Read and count the number of lines in the file.
+    BufferedReader reader = Files.newBufferedReader(file.toPath(), UTF_8);
+    while (reader.readLine() != null) {
+      lines++;
     }
+    reader.close();
     return lines;
   }
 
@@ -1287,6 +1282,5 @@ public class Minimize extends CommandHandler {
     System.out.printf(format, args);
     System.out.println();
     System.out.println(foptions.usage());
-    System.exit(-1);
   }
 }
