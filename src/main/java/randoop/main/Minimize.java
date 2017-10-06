@@ -269,6 +269,10 @@ public class Minimize extends CommandHandler {
     // expectedOutput is a map from method name to failure stack trace with
     // line numbers removed.
     String runResult = runJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
+
+    System.out.println(runResult);
+    System.out.println("__________________");
+
     Map<String, String> expectedOutput = normalizeJUnitOutput(runResult);
 
     // Minimize the Java test suite.
@@ -899,14 +903,13 @@ public class Minimize extends CommandHandler {
 
     // Fully-qualified classname.
     String fqClassName = FilenameUtils.removeExtension(file.getName());
+
     if (packageName != null) {
       fqClassName = packageName + "." + fqClassName;
     }
 
     String command = "java -classpath " + classpath + " org.junit.runner.JUnitCore " + fqClassName;
-
-    List<String> commands = new ArrayList<String>();
-    commands.add(command);
+    List<String> commands = new ArrayList<String>(Arrays.asList(command.split("\\s+")));
 
     try {
       // Run the specified Java file and return the standard output.
@@ -914,7 +917,7 @@ public class Minimize extends CommandHandler {
 
       return StringUtils.join(status.standardOutputLines);
     } catch (RunCommand.CommandException e) {
-      return null;
+      return e.getMessage();
     }
   }
 
@@ -936,7 +939,7 @@ public class Minimize extends CommandHandler {
    */
   private static File getExecutionDirectory(File file, String packageName) {
     if (packageName == null) {
-      return null;
+      return new File(System.getProperty("user.dir"));
     }
 
     // Determine how many layers above we should be executing the process
