@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,14 +48,16 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.*;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Options;
+import plume.TimeLimitProcess;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
-import randoop.execution.RunCommand;
 import randoop.output.ClassRenamingVisitor;
 import randoop.output.ClassTypeNameSimplifyVisitor;
 import randoop.output.ClassTypeVisitor;
@@ -889,6 +892,8 @@ public class Minimize extends CommandHandler {
     // Obtain directory to carry out compilation and execution step.
     File executionDir = getExecutionDirectory(file, packageName);
 
+    System.out.println(executionDir);
+
     // Directory path for the classpath.
     String dirPath = ".";
     if (file.getParentFile() != null) {
@@ -909,16 +914,82 @@ public class Minimize extends CommandHandler {
     }
 
     String command = "java -classpath " + classpath + " org.junit.runner.JUnitCore " + fqClassName;
+
+    return runProcess(command, executionDir, timeoutLimit);
+    /*
+    //System.out.println(command);
     List<String> commands = new ArrayList<String>(Arrays.asList(command.split("\\s+")));
 
     try {
       // Run the specified Java file and return the standard output.
       RunCommand.Status status = RunCommand.run(commands, executionDir, timeoutLimit);
-
-      return StringUtils.join(status.standardOutputLines);
+      return StringUtils.join(StringUtils.join(status.standardOutputLines));
     } catch (RunCommand.CommandException e) {
       return e.getMessage();
+    }*/
+  }
+
+  /**
+   * Run a command given as a String and return the standard output.
+   *
+   * @param command the input command to be run
+   * @param executionDir the directory where the process commands should be executed
+   * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @return a {@code String} containing the standard output
+   */
+  private static String runProcess(String command, File executionDir, int timeoutLimit) {
+    Process process;
+
+    if (executionDir != null && executionDir.toString().isEmpty()) {
+      // Execute command in the default directory.
+      executionDir = null;
     }
+
+    try {
+      process = Runtime.getRuntime().exec(command, null, executionDir);
+    } catch (IOException e) {
+      return "I/O error occurred when running process.";
+    }
+
+    final TimeLimitProcess timeLimitProcess = new TimeLimitProcess(process, timeoutLimit * 1000);
+
+    Callable<String> stdCallable =
+        new Callable<String>() {
+          @Override
+          public String call() throws Exception {
+            try {
+              return IOUtils.toString(timeLimitProcess.getInputStream(), Charset.defaultCharset());
+            } catch (IOException e) {
+              // Error reading from process's input stream.
+              return "Error reading from process's input stream.";
+            }
+          }
+        };
+
+    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(1);
+    Future<String> stdOutput = fixedThreadPool.submit(stdCallable);
+    fixedThreadPool.shutdown();
+
+    String stdOutputString;
+
+    // Wait for the TimeLimitProcess to finish.
+    try {
+      timeLimitProcess.waitFor();
+      stdOutputString = stdOutput.get();
+    } catch (InterruptedException e) {
+      return "Process was interrupted while waiting.";
+    } catch (ExecutionException e) {
+      return "A computation in the process threw an exception.";
+    } finally {
+      timeLimitProcess.destroy();
+    }
+
+    if (timeLimitProcess.timed_out()) {
+      return "Process timed out after " + timeoutLimit + " seconds.";
+    }
+
+    // Collect and return the results from the standard output and error output.
+    return stdOutputString;
   }
 
   /**
@@ -1091,30 +1162,6 @@ public class Minimize extends CommandHandler {
         });
 
     compilationUnit.setImports(imports);
-  }
-
-  /** Contains the standard output, standard error, and exit status from running a process. */
-  private static class Outputs {
-    /** The standard output. */
-    private String stdout;
-    /** The error output. */
-    private String errout;
-
-    /** Exit value from running a process. */
-    private int exitValue;
-
-    /**
-     * Create an Outputs object.
-     *
-     * @param stdout standard output
-     * @param errout error output
-     * @param exitValue exit value of process
-     */
-    private Outputs(String stdout, String errout, int exitValue) {
-      this.stdout = stdout;
-      this.errout = errout;
-      this.exitValue = exitValue;
-    }
   }
 
   /**
