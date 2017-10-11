@@ -48,9 +48,9 @@ import plume.UtilMDE;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RandoopSystemTest {
 
-  // Keep this in synch with GenTests.NO_OPERATIONS_TO_TEST.
-  // (XXX Can factor into module of shared dependencies, but...  Since we are avoiding dependencies
+  // Keep this in synch with GenTests.NO_OPERATIONS_TO_TEST.  (Since we are avoiding dependencies
   // of the system tests on Randoop code, the tests can't directly use GenTests.NO_METHODS_TO_TEST.)
+  // XXX Factor into module of shared dependencies.
   private static final String NO_OPERATIONS_TO_TEST = "There are no operations to test. Exiting.";
 
   private static SystemTestEnvironment systemTestEnvironment;
@@ -676,7 +676,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("RegressionTest");
     options.setErrorBasename("ErrorTest");
     options.addTestClass("misc.ThrowsAnonymousException");
-    options.setOption("outputLimit", "2");
+    options.setOption("outputLimit", "5");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
@@ -1365,7 +1365,8 @@ public class RandoopSystemTest {
     TestRunStatus errorRunDesc = null;
     switch (expectedError) {
       case SOME:
-        assertThat("...has error tests", runStatus.errorTestCount, is(greaterThan(0)));
+        assertThat(
+            "Test suite should have error tests", runStatus.errorTestCount, is(greaterThan(0)));
         String errorBasename = options.getErrorBasename();
         try {
           errorRunDesc = TestRunStatus.runTests(environment, packageName, errorBasename);
@@ -1377,11 +1378,17 @@ public class RandoopSystemTest {
           for (String line : errorRunDesc.processStatus.outputLines) {
             System.err.println(line);
           }
-          fail("all error tests should fail, but " + errorRunDesc.testsSucceed + " passed");
+          fail(
+              "All error tests should fail, but "
+                  + errorRunDesc.testsSucceed
+                  + " error tests passed");
         }
         break;
       case NONE:
-        assertThat("...has no error tests", runStatus.errorTestCount, is(equalTo(0)));
+        if (runStatus.errorTestCount != 0) {
+          // TODO: should output the error tests.  Print the file?
+          fail("Test suite should have no error tests, but has " + runStatus.errorTestCount);
+        }
         break;
       case DONT_CARE:
         break;
@@ -1427,11 +1434,18 @@ public class RandoopSystemTest {
           for (String line : regressionRunDesc.processStatus.outputLines) {
             System.err.println(line);
           }
-          fail("all regression tests should pass, but " + regressionRunDesc.testsFail + " failed");
+          fail(
+              "All regression tests should pass, but "
+                  + regressionRunDesc.testsFail
+                  + " regression tests failed");
         }
         break;
       case NONE:
-        assertThat("...has no regression tests", runStatus.regressionTestCount, is(equalTo(0)));
+        if (runStatus.regressionTestCount != 0) {
+          fail(
+              "Test suite should have no regression tests, but has "
+                  + runStatus.regressionTestCount);
+        }
         break;
       case DONT_CARE:
         break;
