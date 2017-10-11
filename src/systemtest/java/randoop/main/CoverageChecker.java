@@ -20,7 +20,7 @@ import plume.UtilMDE;
 /** Checks coverage for a test, managing information needed to perform the coverage checks. */
 class CoverageChecker {
 
-  /** The classes to check for coverage */
+  /** The classes whose methods must be covered. */
   private final Set<String> classnames;
 
   /** The methods that must not be covered */
@@ -68,10 +68,10 @@ class CoverageChecker {
   }
 
   /**
-   * Performs a coverage check for the given set of classes relative to the full set of tests. Each
-   * declared method of a class that does not satisfy {@link #isIgnoredMethod(String)} is checked
-   * for coverage. If the method occurs in the excluded methods, then it must not be covered by any
-   * test. Otherwise, the method must be covered by some test.
+   * Performs a coverage check for the given set of classes. Each declared method of a class that
+   * does not satisfy {@link #isIgnoredMethod(String)} is checked for coverage. If the method occurs
+   * in the excluded methods, then it must not be covered by any test. Otherwise, the method must be
+   * covered by some test.
    *
    * @param regressionStatus the {@link TestRunStatus} from the regression tests
    * @param errorStatus the {@link TestRunStatus} from the error tests
@@ -119,19 +119,23 @@ class CoverageChecker {
       }
     }
 
+    StringBuilder failureMessage = new StringBuilder();
     if (!missingMethods.isEmpty()) {
-      StringBuilder msg = new StringBuilder(String.format("Expected methods not covered:%n"));
+      failureMessage.append(String.format("Expected methods not covered:%n"));
       for (String name : missingMethods) {
-        msg.append(String.format("  %s%n", name));
+        failureMessage.append(String.format("  %s%n", name));
       }
-      fail(msg.toString());
     }
     if (!shouldBeMissingMethods.isEmpty()) {
-      StringBuilder msg = new StringBuilder(String.format("Excluded methods that are covered:%n"));
+      failureMessage.append(
+          String.format("Excluded methods that are covered (test can be made more strict:%n"));
       for (String name : shouldBeMissingMethods) {
-        msg.append(String.format("  %s%n", name));
+        failureMessage.append(String.format("  %s%n", name));
       }
-      fail(msg.toString());
+    }
+    String msg = failureMessage.toString();
+    if (!msg.isEmpty()) {
+      fail(msg);
     }
   }
 
