@@ -19,7 +19,11 @@ public class ProgressDisplay extends Thread {
   /** Global lock to prevent interleaving of progress display messages. */
   public static final Object print_synchro = new Object();
 
-  private static int exit_if_no_new_sequences_after_milliseconds = 10000;
+  /**
+   * Give up after this many milliseconds, if the generator has not taken a step. That is, if it has
+   * not attempted to generate a new test sequence.
+   */
+  private static int exit_if_no_steps_after_milliseconds = 10 * 1000;
 
   public enum Mode {
     SINGLE_LINE_OVERWRITE,
@@ -82,9 +86,9 @@ public class ProgressDisplay extends Thread {
       if (!ReflectionExecutor.usethreads) {
         // Check that we're still making progress.  If no new inputs are generated
         // for several seconds, we're probably in an infinite loop, and should exit.
-        updateLastSeqGen();
+        updateLastStep();
         long now = System.currentTimeMillis();
-        if (now - lastNumSeqsIncrease > exit_if_no_new_sequences_after_milliseconds) {
+        if (now - lastNumStepsIncrease > exit_if_no_steps_after_milliseconds) {
           printStackTraceAndExit();
         }
       }
@@ -101,7 +105,7 @@ public class ProgressDisplay extends Thread {
 
     System.out.println();
     System.out.print("*** Randoop has detected no input generation attempts after ");
-    System.out.println((exit_if_no_new_sequences_after_milliseconds / 1000) + " seconds.");
+    System.out.println((exit_if_no_steps_after_milliseconds / 1000) + " seconds.");
     System.out.println("This indicates Randoop may be executing a sequence");
     System.out.println("that leads to nonterminating behavior.");
     System.out.println("Last sequence generated:");
@@ -122,14 +126,14 @@ public class ProgressDisplay extends Thread {
     System.exit(1);
   }
 
-  private long lastNumSeqsIncrease = System.currentTimeMillis();
-  private long lastNumSeqs = 0;
+  private long lastNumStepsIncrease = System.currentTimeMillis();
+  private long lastNumSteps = 0;
 
-  private void updateLastSeqGen() {
+  private void updateLastStep() {
     long seqs = generator.num_steps;
-    if (seqs > lastNumSeqs) {
-      lastNumSeqsIncrease = System.currentTimeMillis();
-      lastNumSeqs = seqs;
+    if (seqs > lastNumSteps) {
+      lastNumStepsIncrease = System.currentTimeMillis();
+      lastNumSteps = seqs;
     }
   }
 

@@ -41,12 +41,24 @@ class CoverageChecker {
   }
 
   /**
-   * Create a coverage checker using the classnames from the option set.
+   * Create a coverage checker using the classnames from the option set. All other parts of the
+   * options are ignored.
    *
    * @param options the options
    */
   CoverageChecker(RandoopOptions options) {
     this(options.getClassnames());
+  }
+
+  /**
+   * Create a coverage checker using the classnames from the option set, and the given method
+   * exclusions.
+   *
+   * @param options the options
+   */
+  CoverageChecker(RandoopOptions options, String... methodSpecs) {
+    this(options.getClassnames());
+    methods(methodSpecs);
   }
 
   /**
@@ -65,6 +77,40 @@ class CoverageChecker {
    */
   void ignore(String methodName) {
     dontCareMethods.add(methodName);
+  }
+
+  /**
+   * Add method names to be excluded, ignored, or included (included has no effect).
+   *
+   * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
+   * "include". For example: "java2.util2.ArrayList.readObject(java.io.ObjectInputStream) exclude"
+   *
+   * <p>This format is intended to make it easy to sort the arguments.
+   */
+  void methods(String... methodSpecs) {
+    for (String s : methodSpecs) {
+      int spacepos = s.lastIndexOf(" ");
+      if (spacepos == -1) {
+        // Not BugInRandoopException because that isn't available here.
+        throw new Error("Bad method spec: " + s);
+      }
+      String methodName = s.substring(0, spacepos);
+      String action = s.substring(spacepos + 1);
+      switch (action) {
+        case "exclude":
+          exclude(methodName);
+          break;
+        case "ignore":
+          ignore(methodName);
+          break;
+        case "include":
+          // nothing to do
+          break;
+        default:
+          // Not BugInRandoopException because that isn't available here.
+          throw new Error("Unrecognized action " + action + " in method spec: " + s);
+      }
+    }
   }
 
   /**
