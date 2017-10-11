@@ -130,4 +130,9 @@ public class OmitMethodsPredicate {
 
     return false;
   }
+
+  @Override
+  public String toString() {
+    return "OmitMethodsPredicate: " + omitPatterns;
+  }
 }

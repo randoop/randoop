@@ -85,18 +85,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       return 1;
     }
 
-    if (this instanceof TypedClassOperation) {
-      // for class operations, first compare declaring class
-      TypedClassOperation thisOp = (TypedClassOperation) this;
-      TypedClassOperation otherOp = (TypedClassOperation) other;
-      int result = thisOp.getDeclaringType().compareTo(otherOp.getDeclaringType());
-      if (result != 0) {
-        return result;
-      }
-    }
+    int result;
 
     // do lexicographical comparison of name
-    int result = this.getName().compareTo(other.getName());
+    result = this.getName().compareTo(other.getName());
     if (result != 0) {
       return result;
     }
@@ -105,8 +97,28 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     if (result != 0) {
       return result;
     }
-    // and then output type
-    return this.outputType.compareTo(other.outputType);
+
+    if (this instanceof TypedClassOperation) {
+      // For class operations, compare declaring class last to reduce size of diffs
+      // (though it makes the log harder for a person to read!).
+      TypedClassOperation thisOp = (TypedClassOperation) this;
+      TypedClassOperation otherOp = (TypedClassOperation) other;
+      result = thisOp.getDeclaringType().compareTo(otherOp.getDeclaringType());
+      if (result != 0) {
+        return result;
+      }
+    }
+
+    // the output type
+    // (TODO: Why is this necessary?  MethodComparator ignores the output type, and this makes this
+    // comparator inconsistent with MethodComparator.)
+    result = this.outputType.compareTo(other.outputType);
+    if (result != 0) {
+      return result;
+    }
+
+    assert result == 0;
+    return result;
   }
 
   @Override

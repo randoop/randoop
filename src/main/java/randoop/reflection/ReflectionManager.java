@@ -106,20 +106,44 @@ public class ReflectionManager {
         applyToEnum(visitor, c);
       } else {
 
+        if (Log.isLoggingOn()) {
+          Log.logLine("ReflectionManager.apply for class " + c);
+          Log.logLine("  getMethods => " + ClassUtil.getMethods(c).length);
+          Log.logLine("  getDeclaredMethods => " + ClassUtil.getDeclaredMethods(c).length);
+        }
+        // System.out.println("ReflectionManager.apply for class " + c);
+        // System.out.println("  getMethods => " + ClassUtil.getMethods(c).length);
+        // System.out.println("  getDeclaredMethods => " + ClassUtil.getDeclaredMethods(c).length);
+
         // Methods
         Set<Method> methods = new HashSet<>(); // used only for containment check
         for (Method m : ClassUtil.getMethods(c)) { // for all class methods
+          if (Log.isLoggingOn()) {
+            Log.logLine("ReflectionManager.apply considering method " + m);
+          }
           methods.add(m); // remember to avoid duplicates
           if (isVisible(m)) { // if satisfies predicate then visit
             applyTo(visitor, m);
           }
         }
+        if (Log.isLoggingOn()) {
+          Log.logLine("ReflectionManager.apply done with getMethods for class " + c);
+        }
+        // System.out.println("ReflectionManager.apply done with getMethods for class " + c);
+
         for (Method m : ClassUtil.getDeclaredMethods(c)) { // for all methods declared by c
+          if (Log.isLoggingOn()) {
+            Log.logLine("ReflectionManager.apply considering declared method " + m);
+          }
           // if not duplicate and satisfies predicate
           if ((!methods.contains(m)) && predicate.isVisible(m)) {
             applyTo(visitor, m);
           }
         }
+        if (Log.isLoggingOn()) {
+          Log.logLine("ReflectionManager.apply done with getDeclaredMethods for class " + c);
+        }
+        // System.out.println("ReflectionManager.apply done with getDeclaredMethods for class " + c);
 
         // Constructors
         for (Constructor<?> co : ClassUtil.getDeclaredConstructors(c)) {

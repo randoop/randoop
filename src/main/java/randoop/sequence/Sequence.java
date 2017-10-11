@@ -44,18 +44,19 @@ public final class Sequence implements WeightedElement {
   public final SimpleList<Statement> statements;
 
   /**
-   * The variables that are inputs or output for the last statement of this sequence. These hold the
-   * values "produced" by some statement of the sequence. Should be final but cannot because of
+   * The variables that are inputs or output for the last statement of this sequence: first the
+   * return variable if any (ie, if the operation is non-void), then the input variables. These hold
+   * the values "produced" by some statement of the sequence. Should be final but cannot because of
    * serialization. This info is used by some generators.
    */
-  private transient /* final */ List<Variable> lastStatementVariables;
+  private transient /*final*/ List<Variable> lastStatementVariables;
 
   /**
-   * The types of the inputs and output for the last statement of this sequence. Excludes void in
-   * the case the output type of the operation of the last statement is void. Should be final but
+   * The types of the inputs and output for the last statement of this sequence: first the return
+   * type if any (ie, if the operation is non-void), then the input types. Should be final but
    * cannot because of serialization. This info is used by some generators.
    */
-  private transient /* final */ List<Type> lastStatementTypes;
+  private transient /*final*/ List<Type> lastStatementTypes;
 
   private transient boolean allowShortForm;
 
@@ -481,7 +482,7 @@ public final class Sequence implements WeightedElement {
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
     for (int i = 0; i < statements.size(); i++) {
-      if (!(statements.get(i).isPrimitiveInitialization())) {
+      if (!(statements.get(i).isNonreceivingInitialization())) {
         netSize++;
       }
     }
@@ -676,23 +677,38 @@ public final class Sequence implements WeightedElement {
     return this.getStatementsWithInputs().get(index);
   }
 
-  public Variable randomVariableForTypeLastStatement(Type type) {
-    if (type == null) throw new IllegalArgumentException("type cannot be null.");
+  /**
+   * The last statement produces multiple values of type {@code type}. Choose one of them at random.
+   */
+  public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
+    if (type == null) {
+      throw new IllegalArgumentException("type cannot be null.");
+    }
     List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
     for (Variable i : this.lastStatementVariables) {
       Statement s = statements.get(i.index);
-      if (type.isAssignableFrom(s.getOutputType())) {
+      Type outputType = s.getOutputType();
+      if (type.isAssignableFrom(outputType)
+          && (!(onlyReceivers && outputType.isNonreceiverType()))) {
         possibleIndices.add(i);
       }
     }
     if (possibleIndices.isEmpty()) {
-      return null;
+      Statement lastStatement = this.statements.get(this.statements.size() - 1);
+      throw new BugInRandoopException(
+          "Failed to select variable with input type " + type + " from statment " + lastStatement);
     }
-    return Randomness.randomMember(possibleIndices);
+    if (possibleIndices.size() == 1) {
+      return possibleIndices.get(0);
+    } else {
+      return Randomness.randomMember(possibleIndices);
+    }
   }
 
   void checkIndex(int i) {
-    if (i < 0 || i > size() - 1) throw new IllegalArgumentException();
+    if (i < 0 || i > size() - 1) {
+      throw new IllegalArgumentException();
+    }
   }
 
   // Argument checker for extend method.
@@ -1026,12 +1042,12 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * A sequence representing a single primitive values, like "Foo var0 = null" or "int var0 = 1".
+   * A sequence representing a single primitive value, like "Foo var0 = null" or "int var0 = 1".
    *
    * @return true if this sequence is a single primitive initialization statement, false otherwise
    */
-  public boolean isPrimitive() {
-    return (size() == 1 && getStatement(0).isPrimitiveInitialization());
+  public boolean isNonreceiver() {
+    return (size() == 1 && getStatement(0).isNonreceivingInitialization());
   }
 
   /**

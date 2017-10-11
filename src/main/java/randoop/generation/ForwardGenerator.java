@@ -53,13 +53,13 @@ public class ForwardGenerator extends AbstractGenerator {
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
 
   /**
-   * For testing purposes only. If {@link GenInputsAbstract#debug_checks}==false then the array is
-   * never populated or queried. This set contains the same set of components as the set
-   * "allsequences" above, but stores them as strings obtained via the toCodeString() method.
+   * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This set contains the same
+   * set of components as the set "allsequences" above, but stores them as strings obtained via the
+   * toCodeString() method.
    */
   private final List<String> allsequencesAsCode = new ArrayList<>();
 
-  /** For testing purposes only. */
+  /** Set and used only if {@link GenInputsAbstract#debug_checks}==true. */
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
   private final TypeInstantiator instantiator;
@@ -85,7 +85,6 @@ public class ForwardGenerator extends AbstractGenerator {
       ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager) {
-
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
@@ -428,7 +427,8 @@ public class ForwardGenerator extends AbstractGenerator {
     return retval;
   }
 
-  // Adds the string corresponding to the given newSequences to the
+  // If debugging is enabled,
+  // adds the string corresponding to the given newSequences to the
   // set allSequencesAsCode. The latter set is intended to mirror
   // the set allSequences, but stores strings instead of Sequences.
   private void randoopConsistencyTest2(Sequence newSequence) {
@@ -494,8 +494,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // object and returned. If an appropriate collection of sequences and indices
   // was not found (e.g. because there are no sequences in the componentManager
   // that create values of some type required by the statement), the success
-  // flag
-  // of the returned object is false.
+  // flag of the returned object is false.
   @SuppressWarnings("unchecked")
   private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
 
@@ -503,6 +502,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // statement given as a parameter to the selectInputs method.
 
     TypeTuple inputTypes = operation.getInputTypes();
+    Log.logLine("selectInputs:  inputTypes=" + inputTypes);
 
     // The rest of the code in this method will attempt to create
     // a sequence that creates at least one value of type T for
@@ -549,8 +549,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Type inputType = inputTypes.get(i);
 
       // true if statement st represents an instance method, and we are
-      // currently
-      // selecting a value to act as the receiver for the method.
+      // currently selecting a value to act as the receiver for the method.
       boolean isReceiver = (i == 0 && (operation.isMessage()) && (!operation.isStatic()));
 
       // If alias ratio is given, attempt with some probability to use a
@@ -583,86 +582,7 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      // If we got here, it means we will not attempt to use a value already
-      // defined in S,
-      // so we will have to augment S with new statements that yield a value of
-      // type inputTypes[i].
-      // We will do this by assembling a list of candidate sequences n(stored in
-      // the list declared
-      // immediately below) that create one or more values of the appropriate
-      // type,
-      // randomly selecting a single sequence from this list, and appending it
-      // to S.
-      SimpleList<Sequence> l;
-
-      // We use one of two ways to gather candidate sequences, but the second
-      // case below
-      // is by far the most common.
-
-      if (inputType.isArray()) {
-
-        // 1. If T=inputTypes[i] is an array type, ask the component manager for
-        // all sequences
-        // of type T (list l1), but also try to directly build some sequences
-        // that create arrays (list l2).
-        Log.logLine("Array creation heuristic: will create helper array of type " + inputType);
-        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
-        SimpleList<Sequence> l2 =
-            HelperSequenceCreator.createArraySequence(componentManager, inputType);
-        l = new ListOfLists<>(l1, l2);
-
-      } else if (inputType.isParameterized()
-          && ((InstantiatedType) inputType)
-              .getGenericClassType()
-              .isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
-        InstantiatedType classType = (InstantiatedType) inputType;
-
-        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
-        Log.logLine("Collection creation heuristic: will create helper of type " + classType);
-        ArrayListSimpleList<Sequence> l2 = new ArrayListSimpleList<>();
-        Sequence creationSequence =
-            HelperSequenceCreator.createCollection(componentManager, classType);
-        if (creationSequence != null) {
-          l2.add(creationSequence);
-        }
-        l = new ListOfLists<>(l1, l2);
-
-      } else {
-
-        // 2. COMMON CASE: ask the component manager for all sequences that
-        // yield the required type.
-        Log.logLine("Will query component set for objects of type " + inputType);
-        l = componentManager.getSequencesForType(operation, i);
-      }
-      assert l != null;
-      Log.logLine("components: " + l.size());
-
-      // If we were not able to find (or create) any sequences of type
-      // inputTypes[i], and we are
-      // allowed the use null values, use null. If we're not allowed, then
-      // return with failure.
-      if (l.isEmpty()) {
-        if (isReceiver || GenInputsAbstract.forbid_null) {
-          Log.logLine("forbid-null option is true. Failed to create new sequence.");
-          return new InputsAndSuccessFlag(false, null, null);
-        } else {
-          Log.logLine("Will use null as " + i + "-th input");
-          TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
-          Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
-          variables.add(totStatements);
-          sequences.add(seq);
-          assert seq.size() == 1;
-          totStatements++;
-          // Null is not an interesting value to add to the set of
-          // possible values to reuse, so we don't update typesToVars or types.
-          continue;
-        }
-      }
-
-      // At this point, we have one or more sequences that create non-null
-      // values of type inputTypes[i].
-      // However, the user may have requested that we use null values as inputs
-      // with some given frequency.
+      // The user may have requested that we use null values as inputs with some given frequency.
       // If this is the case, then use null instead with some probability.
       if (!isReceiver
           && GenInputsAbstract.null_ratio != 0
@@ -677,40 +597,104 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // At this point, we have a list of candidate sequences and need to select
-      // a
+      // If we got here, it means we will not attempt to use null or a value already defined in S,
+      // so we will have to augment S with new statements that yield a value of type inputTypes[i].
+      // We will do this by assembling a list of candidate sequences (stored in the list declared
+      // immediately below) that create one or more values of the appropriate type,
+      // randomly selecting a single sequence from this list, and appending it to S.
+      SimpleList<Sequence> candidates;
+
+      // We use one of two ways to gather candidate sequences, but the second
+      // case below is by far the most common.
+
+      if (inputType.isArray()) {
+
+        // 1. If T=inputTypes[i] is an array type, ask the component manager for all sequences
+        // of type T (list l1), but also try to directly build some sequences
+        // that create arrays (list l2).
+        Log.logLine("Array creation heuristic: will create helper array of type " + inputType);
+        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
+        SimpleList<Sequence> l2 =
+            HelperSequenceCreator.createArraySequence(componentManager, inputType);
+        candidates = new ListOfLists<>(l1, l2);
+
+      } else if (inputType.isParameterized()
+          && ((InstantiatedType) inputType)
+              .getGenericClassType()
+              .isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
+        InstantiatedType classType = (InstantiatedType) inputType;
+
+        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
+        Log.logLine("Collection creation heuristic: will create helper of type " + classType);
+        ArrayListSimpleList<Sequence> l2 = new ArrayListSimpleList<>();
+        Sequence creationSequence =
+            HelperSequenceCreator.createCollection(componentManager, classType);
+        if (creationSequence != null) {
+          l2.add(creationSequence);
+        }
+        candidates = new ListOfLists<>(l1, l2);
+
+      } else {
+
+        // 2. COMMON CASE: ask the component manager for all sequences that
+        // yield the required type.
+        Log.logLine("Will query component set for objects of type " + inputType);
+        candidates = componentManager.getSequencesForType(operation, i, isReceiver);
+      }
+      assert candidates != null;
+      Log.logLine("number of candidate components: " + candidates.size());
+
+      if (candidates.isEmpty()) {
+        // We were not able to find (or create) any sequences of type inputTypes[i].
+        // Try to use null if allowed.
+        if (isReceiver) {
+          Log.logLine("No sequences of receiver type.");
+          return new InputsAndSuccessFlag(false, null, null);
+        } else if (GenInputsAbstract.forbid_null) {
+          Log.logLine(
+              "No sequences of type, and forbid-null option is true. Failed to create new sequence.");
+          return new InputsAndSuccessFlag(false, null, null);
+        } else {
+          Log.logLine("Found no sequences of required type; will use null as " + i + "-th input");
+          TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
+          Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
+          variables.add(totStatements);
+          sequences.add(seq);
+          assert seq.size() == 1;
+          totStatements++;
+          // Null is not an interesting value to add to the set of
+          // possible values to reuse, so we don't update typesToVars or types.
+          continue;
+        }
+      }
+
+      // At this point, we have a list of candidate sequences and need to select a
       // randomly-chosen sequence from the list.
       Sequence chosenSeq;
       if (GenInputsAbstract.small_tests) {
-        chosenSeq = Randomness.randomMemberWeighted(l);
+        chosenSeq = Randomness.randomMemberWeighted(candidates);
       } else {
-        chosenSeq = Randomness.randomMember(l);
+        chosenSeq = Randomness.randomMember(candidates);
       }
 
-      // Now, find values that satisfy the constraint set.
-      Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType);
+      Log.logLine("chosenSeq: " + chosenSeq);
 
       // We are not done yet: we have chosen a sequence that yields a value of the required
-      // type inputTypes[i], but there may be more than one such value. Our last random
-      // selection step is to select from among all possible values.
-      // if (i == 0 && statement.isInstanceMethod()) m = Match.EXACT_TYPE;
-      if (randomVariable == null) {
-        throw new BugInRandoopException(
-            "Failed to select variable with input type: "
-                + inputType
-                + " for sequence: "
-                + chosenSeq);
-      }
+      // type inputTypes[i], but it may produce more than one such value. Our last random
+      // selection step is to select from among all possible values produced by the sequence.
+      Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType, isReceiver);
 
-      // Fail, if we were unlucky and selected a null or primitive value as the
-      // receiver for a method call.
-      if (i == 0
-          && operation.isMessage()
-          && !(operation.isStatic())
-          && (chosenSeq.getCreatingStatement(randomVariable).isPrimitiveInitialization()
+      if (isReceiver
+          && (chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
               || randomVariable.getType().isPrimitive())) {
-
-        return new InputsAndSuccessFlag(false, null, null);
+        System.out.printf("Selected null or a primitive as the receiver for a method call.");
+        System.out.printf(
+            "  " + chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
+        System.out.printf("  " + chosenSeq.getCreatingStatement(randomVariable));
+        System.out.printf("  " + randomVariable.getType().isPrimitive());
+        System.out.printf("  " + randomVariable);
+        throw new BugInRandoopException(
+            "Selected null or primitive value as the receiver for a method call");
       }
 
       // [Optimization.] Update optimization-related variables "types" and
@@ -719,7 +703,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // Update types and typesToVars.
         for (int j = 0; j < chosenSeq.size(); j++) {
           Statement stk = chosenSeq.getStatement(j);
-          if (stk.isPrimitiveInitialization()) {
+          if (stk.isNonreceivingInitialization()) {
             continue; // Prim decl not an interesting candidate for multiple
           }
           // uses.

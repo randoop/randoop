@@ -227,7 +227,7 @@ public class GenTests extends GenInputsAbstract {
       visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
 
-    omitmethods.addAll(readOmitMethods(omitmethods_list));
+    omitmethods.addAll(readOmitMethods(omitmethods_file));
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
       omitmethods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
     }
@@ -295,6 +295,7 @@ public class GenTests extends GenInputsAbstract {
      */
     if (operations.size() <= 1) {
       System.out.println(NO_OPERATIONS_TO_TEST);
+      operationModel.dumpModel(System.out);
       System.exit(1);
     }
     if (GenInputsAbstract.progressdisplay) {
@@ -422,6 +423,9 @@ public class GenTests extends GenInputsAbstract {
 
     /* log setup */
     operationModel.log();
+    // These two debugging lines make runNoOutputTest() fail:
+    // operationModel.dumpModel(System.out);
+    // System.out.println("isLoggingOn = " + Log.isLoggingOn());
     if (Log.isLoggingOn()) {
       Log.logLine("Initial sequences (seeds):");
       componentMgr.log();
@@ -626,8 +630,8 @@ public class GenTests extends GenInputsAbstract {
    * @param file the file to read from, may be null
    * @return contents of the file, as a set of Patterns
    */
-  private Set<Pattern> readOmitMethods(File file) {
-    Set<Pattern> result = new LinkedHashSet<>();
+  private List<Pattern> readOmitMethods(File file) {
+    List<Pattern> result = new ArrayList<>();
     // Read method omissions from user-provided file
     if (file != null) {
       try (EntryReader er = new EntryReader(file, "^#.*", null)) {

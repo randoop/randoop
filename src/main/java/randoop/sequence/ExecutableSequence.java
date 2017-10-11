@@ -85,7 +85,7 @@ public class ExecutableSequence {
    * sequence. Invariant: sequence.size() == executionResults.size(). Transient because it can
    * contain arbitrary objects that may not be serializable.
    */
-  private transient /* final */ Execution executionResults;
+  private transient /*final*/ Execution executionResults;
 
   /**
    * How long it took to generate this sequence in nanoseconds, excluding execution time. Must be

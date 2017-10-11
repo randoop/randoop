@@ -191,14 +191,15 @@ public class SequenceCollection {
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
-  public SimpleList<Sequence> getSequencesForType(Type type, boolean exactMatch) {
+  public SimpleList<Sequence> getSequencesForType(
+      Type type, boolean exactMatch, boolean onlyReceivers) {
 
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
     }
 
     if (Log.isLoggingOn()) {
-      Log.logLine("getSequencesForType: entering method, type=" + type.toString());
+      Log.logPrintf("getSequencesForType(%s, %s, %s)%n", type, exactMatch, onlyReceivers);
     }
 
     List<SimpleList<Sequence>> resultList = new ArrayList<>();
@@ -210,7 +211,14 @@ public class SequenceCollection {
       }
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
-        resultList.add(this.sequenceMap.get(compatibleType));
+        Log.logLine(
+            "candidate compatibleType ("
+                + compatibleType.isNonreceiverType()
+                + "): "
+                + compatibleType);
+        if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
+          resultList.add(this.sequenceMap.get(compatibleType));
+        }
       }
     }
 

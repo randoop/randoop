@@ -49,12 +49,14 @@ public class MappedSequences<T> {
    * @return the list of sequences for the key and query type
    */
   public SimpleList<Sequence> getSequences(T key, Type desiredType) {
-    if (key == null) throw new IllegalArgumentException("key is null");
+    if (key == null) {
+      throw new IllegalArgumentException("key is null");
+    }
     SequenceCollection c = map.get(key);
     if (c == null) {
       return emptyList;
     }
-    return map.get(key).getSequencesForType(desiredType, true);
+    return map.get(key).getSequencesForType(desiredType, true, false);
   }
 
   // Cached empty list used by getSequences method.

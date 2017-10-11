@@ -795,7 +795,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>If the regular expression contains anchors "<code>^</code>" and "<code>$</code>", they refer to the
  beginning and the end of the signature string.
-            <li id="option:omitmethods-list"><b>--omitmethods-list=</b><i>filename</i>.
+            <li id="option:omitmethods-file"><b>--omitmethods-file=</b><i>filename</i>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>
  --omitmethods</code>, and the default omissions.
@@ -1279,10 +1279,10 @@ The replacecall agent is able to use the implementation classes to discover repl
 </p>
 
 <p>
-Give the replacement file to the replacecall agent using the <code>--replacements</code> argument:
+Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--replacements=replacement-file.txt
+    -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--replacement-file=replacement-file.txt
 </pre>
 
 <p>
