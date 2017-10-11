@@ -185,10 +185,11 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.exclude("java2.util2.Collections.get(java2.util2.ListIterator, int)");
     coverageChecker.exclude(
+        "java2.util2.Collections.indexOfSubList(java2.util2.List, java2.util2.List)");
+    coverageChecker.exclude(
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
     coverageChecker.exclude(
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
-    coverageChecker.exclude("java2.util2.Collections.list(java2.util2.Enumeration)");
     coverageChecker.exclude("java2.util2.Collections.rotate2(java2.util2.List, int)");
     coverageChecker.exclude("java2.util2.Collections.shuffle(java2.util2.List)");
     coverageChecker.exclude("java2.util2.Collections.swap(java.lang.Object[], int, int)");
@@ -200,8 +201,8 @@ public class RandoopSystemTest {
     coverageChecker.exclude(
         "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object)");
     coverageChecker.exclude("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
-    coverageChecker.exclude("java2.util2.Collections.unmodifiableMap(java2.util2.Map)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
+    coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
@@ -237,50 +238,51 @@ public class RandoopSystemTest {
     options.setOption("operation-history-log", "-"); //log to stdout
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
+    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.ArrayList.add(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.ArrayList.addAll(int, java2.util2.Collection)");
     coverageChecker.exclude("java2.util2.ArrayList.get(int)");
-    coverageChecker.exclude("java2.util2.ArrayList.lastIndexOf(java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.ArrayList.remove(int)");
     coverageChecker.exclude("java2.util2.ArrayList.removeRange(int, int)");
     coverageChecker.exclude("java2.util2.ArrayList.set(int, java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream)");
     coverageChecker.exclude("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.Collections.fill(java2.util2.List, java.lang.Object)");
     coverageChecker.exclude("java2.util2.Collections.get(java2.util2.ListIterator, int)");
-    coverageChecker.exclude(
-        "java2.util2.Collections.indexOfSubList(java2.util2.List, java2.util2.List)");
     coverageChecker.exclude(
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
     coverageChecker.exclude(
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.lastIndexOfSubList(java2.util2.List, java2.util2.List)");
     coverageChecker.exclude("java2.util2.Collections.max(java2.util2.Collection)");
-    coverageChecker.exclude(
-        "java2.util2.Collections.max(java2.util2.Collection, java2.util2.Comparator)");
-    coverageChecker.exclude(
-        "java2.util2.Collections.min(java2.util2.Collection, java2.util2.Comparator)");
     coverageChecker.exclude("java2.util2.Collections.rotate2(java2.util2.List, int)");
-    coverageChecker.exclude("java2.util2.Collections.shuffle(java2.util2.List)");
+    coverageChecker.exclude("java2.util2.Collections.singleton(java.lang.Object)");
     coverageChecker.exclude("java2.util2.Collections.swap(java.lang.Object[], int, int)");
     coverageChecker.exclude("java2.util2.Collections.swap(java2.util2.List, int, int)");
     coverageChecker.exclude(
         "java2.util2.Collections.synchronizedCollection(java2.util2.Collection, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.Collections.synchronizedList(java2.util2.List)");
     coverageChecker.exclude(
         "java2.util2.Collections.synchronizedList(java2.util2.List, java.lang.Object)");
     coverageChecker.exclude(
         "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object)");
     coverageChecker.exclude("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
-    coverageChecker.exclude("java2.util2.Collections.unmodifiableList(java2.util2.List)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableSet(java2.util2.Set)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
     coverageChecker.exclude("java2.util2.LinkedList.add(int, java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.add(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.getLast()");
+    coverageChecker.exclude("java2.util2.LinkedList.get(int)");
+    coverageChecker.exclude("java2.util2.LinkedList.getFirst()");
     coverageChecker.exclude("java2.util2.LinkedList.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.LinkedList.remove(int)");
     coverageChecker.exclude("java2.util2.LinkedList.removeLast()");
     coverageChecker.exclude("java2.util2.LinkedList.set(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.toArray(java.lang.Object[])");
     coverageChecker.exclude("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
+    coverageChecker.exclude("java2.util2.TreeSet.contains(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.first()");
     coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.TreeSet.last()");
     coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.tailSet(java.lang.Object)");
@@ -332,7 +334,10 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.Arrays.med3(short[], int, int, int)");
     coverageChecker.exclude(
         "java2.util2.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int, java2.util2.Comparator)");
-    coverageChecker.exclude("java2.util2.Arrays.sort(char[], int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.sort(float[], int, int)");
+    coverageChecker.exclude("java2.util2.Arrays.sort(int[], int, int)");
+    coverageChecker.exclude(
+        "java2.util2.Arrays.sort(java.lang.Object[], int, int, java2.util2.Comparator)");
     coverageChecker.exclude("java2.util2.Arrays.swap(java.lang.Object[], int, int)");
     coverageChecker.exclude("java2.util2.Arrays.vecswap(byte[], int, int, int)");
     coverageChecker.exclude("java2.util2.Arrays.vecswap(char[], int, int, int)");
@@ -341,13 +346,12 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.Arrays.vecswap(int[], int, int, int)");
     coverageChecker.exclude("java2.util2.Arrays.vecswap(long[], int, int, int)");
     coverageChecker.exclude("java2.util2.Arrays.vecswap(short[], int, int, int)");
-    coverageChecker.exclude("java2.util2.BitSet.bitCount(long)");
     coverageChecker.exclude("java2.util2.BitSet.getBits(int)");
     coverageChecker.exclude("java2.util2.BitSet.hashCode()");
     coverageChecker.exclude("java2.util2.BitSet.readObject(java.io.ObjectInputStream)");
-    coverageChecker.exclude("java2.util2.BitSet.size()");
-    coverageChecker.exclude("java2.util2.BitSet.trailingZeroCnt(long)");
     coverageChecker.exclude("java2.util2.Collections.get(java2.util2.ListIterator, int)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.indexedBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
     coverageChecker.exclude(
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
     coverageChecker.exclude(
@@ -355,26 +359,33 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.Collections.rotate2(java2.util2.List, int)");
     coverageChecker.exclude("java2.util2.Collections.shuffle(java2.util2.List)");
     coverageChecker.exclude("java2.util2.Collections.swap(java.lang.Object[], int, int)");
-    coverageChecker.exclude("java2.util2.Collections.swap(java2.util2.List, int, int)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.synchronizedList(java2.util2.List, java.lang.Object)");
     coverageChecker.exclude("java2.util2.Hashtable.readObject(java.io.ObjectInputStream)");
-    coverageChecker.exclude("java2.util2.Hashtable.rehash()");
     coverageChecker.exclude("java2.util2.Hashtable.writeObject(java.io.ObjectOutputStream)");
     coverageChecker.exclude("java2.util2.LinkedHashMap.newValueIterator()");
-    coverageChecker.exclude("java2.util2.LinkedList.get(int)");
-    coverageChecker.exclude("java2.util2.LinkedList.getLast()");
+    coverageChecker.exclude("java2.util2.LinkedList.add(int, java.lang.Object)");
     coverageChecker.exclude("java2.util2.LinkedList.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.LinkedList.remove(int)");
-    coverageChecker.exclude("java2.util2.LinkedList.set(int, java.lang.Object)");
     coverageChecker.exclude("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
     coverageChecker.exclude("java2.util2.Observable.addObserver(java2.util2.Observer)");
     coverageChecker.exclude("java2.util2.Observable.clearChanged()");
     coverageChecker.exclude("java2.util2.Observable.countObservers()");
+    coverageChecker.exclude("java2.util2.Observable.deleteObserver(java2.util2.Observer)");
     coverageChecker.exclude("java2.util2.Observable.deleteObservers()");
+    coverageChecker.exclude("java2.util2.Observable.hasChanged()");
+    coverageChecker.exclude("java2.util2.Observable.notifyObservers()");
+    coverageChecker.exclude("java2.util2.Observable.notifyObservers(java.lang.Object)");
     coverageChecker.exclude("java2.util2.Observable.setChanged()");
+    coverageChecker.exclude("java2.util2.Stack.empty()");
+    coverageChecker.exclude("java2.util2.Stack.peek()");
     coverageChecker.exclude("java2.util2.Stack.pop()");
+    coverageChecker.exclude("java2.util2.Stack.push(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.Stack.search(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeMap.colorOf(java2.util2.TreeMap.Entry)");
+    coverageChecker.exclude("java2.util2.TreeMap.decrementSize()");
+    coverageChecker.exclude("java2.util2.TreeMap.deleteEntry(java2.util2.TreeMap.Entry)");
     coverageChecker.exclude("java2.util2.TreeMap.fixAfterDeletion(java2.util2.TreeMap.Entry)");
-    coverageChecker.exclude("java2.util2.TreeMap.fixAfterInsertion(java2.util2.TreeMap.Entry)");
     coverageChecker.exclude("java2.util2.TreeMap.getPrecedingEntry(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeMap.leftOf(java2.util2.TreeMap.Entry)");
     coverageChecker.exclude("java2.util2.TreeMap.parentOf(java2.util2.TreeMap.Entry)");
@@ -390,15 +401,13 @@ public class RandoopSystemTest {
     coverageChecker.exclude(
         "java2.util2.TreeMap.valueSearchNonNull(java2.util2.TreeMap.Entry, java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeMap.valueSearchNull(java2.util2.TreeMap.Entry)");
-    coverageChecker.exclude("java2.util2.TreeMap.values()");
     coverageChecker.exclude("java2.util2.TreeMap.writeObject(java.io.ObjectOutputStream)");
-    coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
     coverageChecker.exclude("java2.util2.Vector.removeRange(int, int)");
+    coverageChecker.exclude("java2.util2.Vector.subList(int, int)");
     coverageChecker.exclude("java2.util2.Vector.writeObject(java.io.ObjectOutputStream)");
-    coverageChecker.exclude("java2.util2.WeakHashMap.eq(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.WeakHashMap.removeMapping(java.lang.Object)");
     generateAndTestWithCoverage(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
@@ -1194,6 +1203,7 @@ public class RandoopSystemTest {
     checker.ignore("components.Utils.getExtension(java.io.File)");
 
     // These are not covered on jdk7 on travis
+    checker.ignore("components.CustomDialog.actionPerformed(java.awt.event.ActionEvent)");
     checker.ignore(
         "components.ConverterRangeModel.addChangeListener(javax.swing.event.ChangeListener)");
     checker.ignore("components.ConverterRangeModel.fireStateChanged()");
@@ -1203,6 +1213,10 @@ public class RandoopSystemTest {
     checker.ignore("components.FollowerRangeModel.stateChanged(javax.swing.event.ChangeEvent)");
     checker.ignore("components.Framework.makeNewWindow()");
     checker.ignore("components.MissingIcon.getIconWidth()");
+
+    // Inconsistent between JDK7 and JDK8, because of differences in JDK implementation of
+    // JComponent.getAccessibleContext.
+    checker.ignore("components.CrayonPanel.createImageIcon(java.lang.String)");
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);

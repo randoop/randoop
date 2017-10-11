@@ -276,6 +276,20 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
+   * Indicates whether this is a primitive type.
+   *
+   * @return true if this type is primitive, false otherwise
+   * @see randoop.operation.NonreceiverTerm
+   * @see randoop.operation.NonreceiverTerm#isNonreceiverType
+   */
+  public boolean isNonreceiverType() {
+    return isPrimitive()
+        || isBoxedPrimitive()
+        || getRuntimeClass() == String.class
+        || getRuntimeClass() == Class.class;
+  }
+
+  /**
    * Indicate whether this type is a rawtype of a generic class. The rawtype is the runtime type of
    * the class that has type parameters erased.
    *

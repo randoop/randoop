@@ -120,6 +120,16 @@ public class PrimitiveType extends Type {
   /**
    * {@inheritDoc}
    *
+   * @return true since this object represents a non-receiver type
+   */
+  @Override
+  public boolean isNonreceiverType() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
    * <p>Specifically implements tests for primitive types as defined in <a
    * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.1">section 4.10.1
    * of JLS for JavaSE 8</a>.

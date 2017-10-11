@@ -93,7 +93,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
           NormalExecution execution = (NormalExecution) result;
           // If value is like x in "int x = 3" don't capture
           // checks (nothing interesting).
-          if (statement.isPrimitiveInitialization()) {
+          if (statement.isNonreceivingInitialization()) {
             continue;
           }
 

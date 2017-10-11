@@ -9,6 +9,8 @@ import java.util.Map;
 import plume.SimpleLog;
 import randoop.operation.TypedOperation;
 
+// TODO: It's weird to call this a "history log" when it is just a summary, printed at the end of
+// execution.
 /**
  * The working implementation of a {@link OperationHistoryLogInterface} that will collect and print
  * the operation history log to the {@code PrintWriter} given when constructed.
