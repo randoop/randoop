@@ -159,11 +159,6 @@ public class OperationExtractor extends DefaultClassVisitor {
     }
   }
 
-  // @Override
-  // public void visit(Class<?> c, ReflectionManager rm) {
-  //   System.out.println("OperationExtractor.visit: class=" + c);
-  // }
-
   /**
    * Creates a {@link MethodCall} object for the {@link Method}.
    *

@@ -215,7 +215,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // Regardless of this option's setting, minimization is enabled when
   // <code>--stop-on-error-test</code> is set.
   @Option("<boolean> to indicate automatic minimization of error-revealing tests")
-  // Defaulting to true causes unacceptable slowdowns in many (not all) situations.
+  // Defaulting to true sometimes causes unacceptable slowdowns.
   public static boolean minimize_error_test = false;
 
   /**
