@@ -1,0 +1,4 @@
+instrument.testcase.AbstractTarget
+instrument.testcase.ChildOfTarget
+instrument.testcase.InterfaceTarget
+instrument.testcase.ImplementorOfTarget

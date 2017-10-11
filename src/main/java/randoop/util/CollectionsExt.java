@@ -33,24 +33,24 @@ public final class CollectionsExt {
       iter.next();
       counter++;
     }
-    throw new IllegalArgumentException("invalid index:" + index + " size:" + counter);
+    throw new IllegalArgumentException("invalid index: " + index + ", size: " + counter);
   }
 
   /**
-   * Prints out the String.valueOf() of all elements of the collection, inserting a new line after
-   * each element. The order is specified by the collection's iterator.
+   * Returns the String.valueOf() of all elements of the collection, one on each line.
    *
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings as lines
    */
   static String toStringInLines(Collection<?> c) {
-    if (c.isEmpty()) return "";
+    if (c.isEmpty()) {
+      return "";
+    }
     return UtilMDE.join(toStringLines(c), Globals.lineSep) + Globals.lineSep;
   }
 
   /**
-   * List of String.valueOf() of all elements of the collection. The order is specified by the
-   * collection's iterator.
+   * List of String.valueOf() of all elements of the collection.
    *
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings
@@ -85,7 +85,7 @@ public final class CollectionsExt {
       List<T> subList = list.subList(i * maxLength, (i + 1) * maxLength);
       if (subList.size() != maxLength) {
         throw new IllegalStateException(
-            "the sublist length:" + subList.size() + " should be " + maxLength);
+            "the sublist length " + subList.size() + " should be " + maxLength);
       }
       result.add(subList);
     }

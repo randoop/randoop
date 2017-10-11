@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.OperationParseException;
@@ -43,18 +44,19 @@ public final class Sequence implements WeightedElement {
   public final SimpleList<Statement> statements;
 
   /**
-   * The variables that are inputs or output for the last statement of this sequence. These hold the
-   * values "produced" by some statement of the sequence. Should be final but cannot because of
+   * The variables that are inputs or output for the last statement of this sequence: first the
+   * return variable if any (ie, if the operation is non-void), then the input variables. These hold
+   * the values "produced" by some statement of the sequence. Should be final but cannot because of
    * serialization. This info is used by some generators.
    */
-  private transient /* final */ List<Variable> lastStatementVariables;
+  private transient /*final*/ List<Variable> lastStatementVariables;
 
   /**
-   * The types of the inputs and output for the last statement of this sequence. Excludes void in
-   * the case the output type of the operation of the last statement is void. Should be final but
+   * The types of the inputs and output for the last statement of this sequence: first the return
+   * type if any (ie, if the operation is non-void), then the input types. Should be final but
    * cannot because of serialization. This info is used by some generators.
    */
-  private transient /* final */ List<Type> lastStatementTypes;
+  private transient /*final*/ List<Type> lastStatementTypes;
 
   private transient boolean allowShortForm;
 
@@ -319,6 +321,7 @@ public final class Sequence implements WeightedElement {
    * @param value the variable
    * @return the statement that assigned to this variable
    */
+  @SuppressWarnings("ReferenceEquality")
   public Statement getCreatingStatement(Variable value) {
     if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
     return statements.get((value).index);
@@ -359,9 +362,13 @@ public final class Sequence implements WeightedElement {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
-      // don't dump primitive initializations, if using literals
-      if (canUseShortForm() && getStatement(i).getShortForm() != null) {
-        continue;
+      // Don't dump primitive initializations, if using literals.
+      // But do print them if they are the last statement;
+      // otherwise, the sequence might print as the empty string.
+      if (i != size() - 1) {
+        if (canUseShortForm() && getStatement(i).getShortForm() != null) {
+          continue;
+        }
       }
       appendCode(b, i);
       b.append(Globals.lineSep);
@@ -475,7 +482,7 @@ public final class Sequence implements WeightedElement {
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
     for (int i = 0; i < statements.size(); i++) {
-      if (!(statements.get(i).isPrimitiveInitialization())) {
+      if (!(statements.get(i).isNonreceivingInitialization())) {
         netSize++;
       }
     }
@@ -542,7 +549,7 @@ public final class Sequence implements WeightedElement {
       // No nulls.
       if (statementWithInputs == null) {
         throw new IllegalStateException(
-            "Null statement in sequence:" + Globals.lineSep + this.toString());
+            "Null statement in sequence: " + Globals.lineSep + this.toString());
       }
       if (statementWithInputs.inputs == null) {
         throw new IllegalArgumentException("parameters cannot be null.");
@@ -562,10 +569,14 @@ public final class Sequence implements WeightedElement {
       }
       for (int i = 0; i < statementWithInputs.inputs.size(); i++) {
         int index = statementWithInputs.inputs.get(i).index;
-        if (index >= 0) throw new IllegalStateException();
+        if (index >= 0) {
+          throw new IllegalStateException();
+        }
         Type newRefConstraint =
             statements.get(si + statementWithInputs.inputs.get(i).index).getOutputType();
-        if (newRefConstraint == null) throw new IllegalStateException();
+        if (newRefConstraint == null) {
+          throw new IllegalStateException();
+        }
         if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
           throw new IllegalArgumentException(
               i
@@ -586,10 +597,15 @@ public final class Sequence implements WeightedElement {
   }
 
   /** Two sequences are equal if their statements(+inputs) are element-wise equal. */
+  @SuppressWarnings("ReferenceEquality")
   @Override
   public final boolean equals(Object o) {
-    if (!(o instanceof Sequence)) return false;
-    if (o == this) return true;
+    if (!(o instanceof Sequence)) {
+      return false;
+    }
+    if (o == this) {
+      return true;
+    }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
       return GenInputsAbstract.debug_checks && verifyFalse("size", other);
@@ -661,25 +677,43 @@ public final class Sequence implements WeightedElement {
     return this.getStatementsWithInputs().get(index);
   }
 
-  public Variable randomVariableForTypeLastStatement(Type type) {
-    if (type == null) throw new IllegalArgumentException("type cannot be null.");
+  /**
+   * The last statement produces multiple values of type {@code type}. Choose one of them at random.
+   */
+  public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
+    if (type == null) {
+      throw new IllegalArgumentException("type cannot be null.");
+    }
     List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
     for (Variable i : this.lastStatementVariables) {
       Statement s = statements.get(i.index);
-      if (type.isAssignableFrom(s.getOutputType())) {
+      Type outputType = s.getOutputType();
+      if (type.isAssignableFrom(outputType)
+          && (!(onlyReceivers && outputType.isNonreceiverType()))) {
         possibleIndices.add(i);
       }
     }
-    if (possibleIndices.isEmpty()) return null;
-    return Randomness.randomMember(possibleIndices);
+    if (possibleIndices.isEmpty()) {
+      Statement lastStatement = this.statements.get(this.statements.size() - 1);
+      throw new BugInRandoopException(
+          "Failed to select variable with input type " + type + " from statment " + lastStatement);
+    }
+    if (possibleIndices.size() == 1) {
+      return possibleIndices.get(0);
+    } else {
+      return Randomness.randomMember(possibleIndices);
+    }
   }
 
   void checkIndex(int i) {
-    if (i < 0 || i > size() - 1) throw new IllegalArgumentException();
+    if (i < 0 || i > size() - 1) {
+      throw new IllegalArgumentException();
+    }
   }
 
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
+  @SuppressWarnings("ReferenceEquality")
   private void checkInputs(TypedOperation operation, List<Variable> inputVariables) {
     if (operation.getInputTypes().size() != inputVariables.size()) {
       String msg =
@@ -1008,12 +1042,12 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * A sequence representing a single primitive values, like "Foo var0 = null" or "int var0 = 1".
+   * A sequence representing a single primitive value, like "Foo var0 = null" or "int var0 = 1".
    *
    * @return true if this sequence is a single primitive initialization statement, false otherwise
    */
-  public boolean isPrimitive() {
-    return (size() == 1 && getStatement(0).isPrimitiveInitialization());
+  public boolean isNonreceiver() {
+    return (size() == 1 && getStatement(0).isNonreceivingInitialization());
   }
 
   /**
@@ -1050,18 +1084,28 @@ public final class Sequence implements WeightedElement {
     }
 
     try {
-      GenInputsAbstract.log.write(Globals.lineSep + Globals.lineSep);
+      GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.write(this.toFullCodeString());
+      GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.flush();
 
     } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new BugInRandoopException("Error while logging sequence", e);
     }
   }
 
   boolean canUseShortForm() {
     return allowShortForm;
+  }
+
+  /**
+   * Returns the operation from which this sequence was constructed. (Also known as the operation in
+   * the last statement of this sequence.
+   *
+   * @return the last operation of this sequence
+   */
+  public TypedOperation getOperation() {
+    return this.statements.get(this.statements.size() - 1).getOperation();
   }
 
   /**

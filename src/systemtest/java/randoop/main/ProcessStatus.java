@@ -1,10 +1,12 @@
 package randoop.main;
 
+import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import plume.TimeLimitProcess;
@@ -70,12 +72,15 @@ class ProcessStatus {
     }
 
     List<String> outputLines = new ArrayList<>();
-    try (BufferedReader rdr = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+    try (BufferedReader rdr =
+        new BufferedReader(new InputStreamReader(p.getInputStream(), UTF_8))) {
       String line = rdr.readLine();
       while (line != null) {
         outputLines.add(line);
         line = rdr.readLine();
       }
+    } catch (UnsupportedEncodingException e) {
+      fail("unsupported encoding " + e);
     } catch (IOException e) {
       fail("Exception getting output " + e);
     }

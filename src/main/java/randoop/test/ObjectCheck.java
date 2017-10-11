@@ -41,22 +41,6 @@ public class ObjectCheck implements Check {
   private final ObjectContract contract;
   private final Variable[] vars;
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == null) return false;
-    if (o == this) return true;
-    if (!(o instanceof ObjectCheck)) {
-      return false;
-    }
-    ObjectCheck other = (ObjectCheck) o;
-    return contract.equals(other.contract) && Arrays.equals(vars, other.vars);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(contract, vars);
-  }
-
   public ObjectCheck(ObjectContract cc, Variable... vars) {
     if (cc == null) {
       throw new IllegalArgumentException("first argument cannot be null.");
@@ -73,8 +57,28 @@ public class ObjectCheck implements Check {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (o == null) {
+      return false;
+    }
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof ObjectCheck)) {
+      return false;
+    }
+    ObjectCheck other = (ObjectCheck) o;
+    return contract.equals(other.contract) && Arrays.equals(vars, other.vars);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(contract, Arrays.hashCode(vars));
+  }
+
+  @Override
   public String toString() {
-    return "<" + contract.toString() + " " + Arrays.toString(vars) + " ";
+    return "<" + contract.toString() + " " + Arrays.toString(vars) + ">";
   }
 
   @Override

@@ -1,7 +1,7 @@
 package randoop.test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import randoop.contract.ObjectContract;
@@ -9,15 +9,15 @@ import randoop.contract.ObjectContract;
 /** Manages the set of {@link ObjectContract} objects. Contracts are organized by arity. */
 public class ContractSet {
 
-  /** the collection of contracts */
-  private final Map<Integer, List<ObjectContract>> contractMap;
+  /** Maps from arity to all all contracts of that arity. */
+  private final Map<Integer, List<ObjectContract>> contractMap; // used only for containment check
 
-  /** the maximum arity of a contract */
+  /** The maximum arity of a contract; the maximum key in the map. */
   private int maxArity;
 
   /** Creates an contract set with no elements. */
   public ContractSet() {
-    contractMap = new HashMap<>();
+    contractMap = new LinkedHashMap<>();
     maxArity = 0;
   }
 
@@ -27,7 +27,7 @@ public class ContractSet {
    * @param arity the arity
    * @return the list of contracts with the given arity
    */
-  public List<ObjectContract> getArity(int arity) {
+  public List<ObjectContract> getWithArity(int arity) {
     List<ObjectContract> contractList = contractMap.get(arity);
     if (contractList == null) {
       contractList = new ArrayList<>();
@@ -41,19 +41,20 @@ public class ContractSet {
    * @param contract the contract
    */
   public void add(ObjectContract contract) {
-    List<ObjectContract> contractList = contractMap.get(contract.getArity());
+    int arity = contract.getArity();
+    List<ObjectContract> contractList = contractMap.get(arity);
     if (contractList == null) {
       contractList = new ArrayList<>();
+      if (arity > maxArity) {
+        maxArity = contract.getArity();
+      }
     }
     contractList.add(contract);
-    contractMap.put(contract.getArity(), contractList);
-    if (contract.getArity() > maxArity) {
-      maxArity = contract.getArity();
-    }
+    contractMap.put(arity, contractList);
   }
 
   /**
-   * Returns the maximum arity of a contract in this set.
+   * Returns the maximum arity of any contract in this set.
    *
    * @return the maximum contract arity
    */

@@ -6,19 +6,34 @@ import java.util.HashMap;
 import javax.tools.JavaFileObject;
 
 /**
- * based on {@code javaxtools.compiler.ClassLoaderImpl} from <a
+ * A {@code ClassLoader} for loading classes managed in memory.
+ *
+ * <p>Based on {@code javaxtools.compiler.ClassLoaderImpl} from <a
  * href="https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
  * with javax.tools</a>.
  */
 public final class SequenceClassLoader extends ClassLoader {
 
+  /** The map from fully-qualified class name to the class object */
   private final HashMap<String, JavaFileObject> classes;
 
+  /**
+   * Creates a {@link SequenceClassLoader} that forwards to the parent loader.
+   *
+   * @param parent the class loader to call if a class is not found in this loader
+   */
   public SequenceClassLoader(final ClassLoader parent) {
     super(parent);
     this.classes = new HashMap<>();
   }
 
+  /**
+   * Returns the class for the qualified class name.
+   *
+   * @param qualifiedClassName the fully-qualified name of the class
+   * @return the {@code Class<?>} object for the class with the name
+   * @throws ClassNotFoundException if the class is not found
+   */
   @Override
   protected Class<?> findClass(final String qualifiedClassName) throws ClassNotFoundException {
     JavaFileObject file = classes.get(qualifiedClassName);
@@ -35,6 +50,12 @@ public final class SequenceClassLoader extends ClassLoader {
     return super.findClass(qualifiedClassName);
   }
 
+  /**
+   * Add the class to this {@code ClassLoader}.
+   *
+   * @param qualifiedName the name of the class
+   * @param file the class file object
+   */
   void add(String qualifiedName, JavaFileObject file) {
     classes.put(qualifiedName, file);
   }

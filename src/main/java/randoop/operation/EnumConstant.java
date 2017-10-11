@@ -35,12 +35,12 @@ public class EnumConstant extends CallableOperation {
   public boolean equals(Object obj) {
     if (obj instanceof EnumConstant) {
       EnumConstant e = (EnumConstant) obj;
-      return equals(e);
+      return equalsEnumConstant(e);
     }
     return false;
   }
 
-  public boolean equals(EnumConstant e) {
+  public boolean equalsEnumConstant(EnumConstant e) {
     return (this.value.equals(e.value));
   }
 

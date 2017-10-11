@@ -14,14 +14,16 @@ import randoop.util.SimpleList;
 
 /**
  * For a given class C, ClassLiterals maps C (if present) to a collection of literals (represented
- * as single-element sequences) that can be used as inputs to members of the given class.
+ * as single-element sequences) that are defined in C.
+ *
+ * <p>These are used preferentially as arguments to methods of class C.
  */
 public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
 
   @Override
   public void addSequence(ClassOrInterfaceType key, Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
-    if (!seq.isPrimitive()) {
+    if (!seq.isNonreceiver()) {
       throw new IllegalArgumentException("seq is not a primitive sequence");
     }
     super.addSequence(key, seq);

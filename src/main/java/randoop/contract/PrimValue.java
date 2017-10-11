@@ -34,8 +34,12 @@ public final class PrimValue implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) return false;
-    if (o == this) return true;
+    if (o == null) {
+      return false;
+    }
+    if (o == this) {
+      return true;
+    }
     if (!(o instanceof PrimValue)) {
       return false;
     }
@@ -130,6 +134,9 @@ public final class PrimValue implements ObjectContract {
     } else {
       assert printMode.equals(PrintMode.EQUALSEQUALS);
       b.append("org.junit.Assert.assertTrue(");
+      b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
+          .append(Value.toCodeString(value))
+          .append("+ \"'\", ");
       b.append("x0 == ").append(Value.toCodeString(value));
       b.append(");");
     }

@@ -56,15 +56,19 @@ public class ComponentManager {
   /**
    * A set of additional components representing literals that should only be used as input to
    * specific classes.
+   *
+   * <p>Null if class literals are not used or none were found. At most one of classLiterals and
+   * packageliterals is non-null.
    */
-  // May be null, which represents no class literals present.
   private ClassLiterals classLiterals = null;
 
   /**
    * A set of additional components representing literals that should only be used as input to
    * specific packages.
+   *
+   * <p>Null if package literals are not used or none were found. At most one of classLiterals and
+   * packageliterals is non-null.
    */
-  // May be null, which represents no package literals present.
   private PackageLiterals packageLiterals = null;
 
   private Set<Type> sequenceTypes;
@@ -160,7 +164,7 @@ public class ComponentManager {
    * @return the sequences that create values of the given type
    */
   SimpleList<Sequence> getSequencesForType(Type cls) {
-    return gralComponents.getSequencesForType(cls, false);
+    return gralComponents.getSequencesForType(cls, false, false);
   }
 
   /**
@@ -173,36 +177,53 @@ public class ComponentManager {
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
-  SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
+  SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
 
-    SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
-    if (operation instanceof TypedClassOperation) {
-      if (classLiterals != null || packageLiterals != null) {
+    SimpleList<Sequence> literals = null;
+    if (operation instanceof TypedClassOperation
+        // Don't add literals for the receiver
+        && !onlyReceivers) {
+      // The operation is a method call, where the method is defined in class C.  Augment the
+      // returned list with literals that appear in class C or in its package.  At most one of
+      // classLiterals and packageLiterals is non-null.
 
-        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-        if (declaringCls != null) {
-          if (classLiterals != null) {
-            SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
-            if (!sl.isEmpty()) {
-              ret = new ListOfLists<>(ret, sl);
-            }
-          }
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
 
-          if (packageLiterals != null) {
-            Package pkg = declaringCls.getPackage();
-            if (pkg != null) {
-              SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
-              if (!sl.isEmpty()) {
-                ret = new ListOfLists<>(ret, sl);
-              }
-            }
+      if (classLiterals != null) {
+        SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
+        if (!sl.isEmpty()) {
+          literals = sl;
+        }
+      }
+
+      if (packageLiterals != null) {
+        Package pkg = declaringCls.getPackage();
+        if (pkg != null) {
+          SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
+          if (!sl.isEmpty()) {
+            literals = (literals == null) ? sl : new ListOfLists<>(literals, sl);
           }
         }
       }
     }
-    return ret;
+
+    SimpleList<Sequence> result =
+        gralComponents.getSequencesForType(neededType, false, onlyReceivers);
+
+    if (literals != null) {
+      // append literals to result
+      if (result == null) {
+        result = literals;
+      } else if (literals == null) {
+        // nothing to do
+      } else {
+        result = new ListOfLists<>(result, literals);
+      }
+    }
+    return result;
   }
 
   /**
@@ -213,18 +234,19 @@ public class ComponentManager {
    */
   Set<Sequence> getAllPrimitiveSequences() {
 
-    Set<Sequence> ret = new LinkedHashSet<>();
+    Set<Sequence> result = new LinkedHashSet<>();
     if (classLiterals != null) {
-      ret.addAll(classLiterals.getAllSequences());
+      result.addAll(classLiterals.getAllSequences());
     }
     if (packageLiterals != null) {
-      ret.addAll(packageLiterals.getAllSequences());
+      result.addAll(packageLiterals.getAllSequences());
     }
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
-      ret.addAll(gralComponents.getSequencesForType(type, true).toJDKList());
+      result.addAll(gralComponents.getSequencesForType(type, true, false).toJDKList());
     }
-    ret.addAll(gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true).toJDKList());
-    return ret;
+    result.addAll(
+        gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false).toJDKList());
+    return result;
   }
 
   TypeInstantiator getTypeInstantiator() {

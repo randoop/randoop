@@ -104,8 +104,12 @@ public final class NonreceiverTerm extends CallableOperation {
   /** Indicates whether this object is equal to o */
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof NonreceiverTerm)) return false;
-    if (this == o) return true;
+    if (!(o instanceof NonreceiverTerm)) {
+      return false;
+    }
+    if (this == o) {
+      return true;
+    }
     NonreceiverTerm other = (NonreceiverTerm) o;
 
     return this.type.equals(other.type) && Util.equalsWithNull(this.value, other.value);
@@ -188,7 +192,9 @@ public final class NonreceiverTerm extends CallableOperation {
     if (type.isBoxedPrimitive()) {
       type = ((NonParameterizedType) type).toPrimitive();
     }
-    if (type.isString()) return new NonreceiverTerm(type, "");
+    if (type.isString()) {
+      return new NonreceiverTerm(type, "");
+    }
     if (type.equals(JavaTypes.CHAR_TYPE)) {
       return new NonreceiverTerm(type, 'a'); // TODO This is not null or zero...
     }

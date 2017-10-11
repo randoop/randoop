@@ -128,7 +128,9 @@ public final class Util {
 
       // Add indent.
       if (!firstLine) {
-        for (int spaces = 0; spaces < indentWidth; spaces++) b.append(" ");
+        for (int spaces = 0; spaces < indentWidth; spaces++) {
+          b.append(" ");
+        }
       }
 
       b.append(line);

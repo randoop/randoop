@@ -46,8 +46,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   /**
    * {@inheritDoc}
    *
-   * @see #getName()
    * @return the name of this type
+   * @see #getName()
    */
   @Override
   public String toString() {
@@ -124,7 +124,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
         return ClassOrInterfaceType.forType(supertype);
       }
     }
-    return null;
+    return JavaTypes.OBJECT_TYPE;
   }
 
   @Override

@@ -1,0 +1,3 @@
+instrument.testcase.A
+instrument.testcase.B
+instrument.testcase.C

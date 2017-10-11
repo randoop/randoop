@@ -6,8 +6,8 @@ public class RunnerThread extends Thread {
   private ReflectionCode code;
 
   // Fields assigned when calling run()
-  public boolean runFinished;
-  public Throwable exceptionThrown;
+  boolean runFinished;
+  Throwable exceptionThrown;
 
   // The state of the thread.
   private NextCallMustBe state;
@@ -22,8 +22,8 @@ public class RunnerThread extends Thread {
    *
    * @param threadGroup the group for this thread
    */
-  public RunnerThread(ThreadGroup threadGroup) {
-    super(threadGroup, "");
+  RunnerThread(ThreadGroup threadGroup) {
+    super(threadGroup, "randoop.util.RunnerThread");
     this.code = null;
     this.runFinished = false;
     this.exceptionThrown = null;
@@ -51,10 +51,8 @@ public class RunnerThread extends Thread {
     try {
       code.runReflectionCode();
       // exceptionThrown remains null.
-    } catch (ThreadDeath e) { // can't stop these guys
-      throw e;
-    } catch (ReflectionCode.NotCaughtIllegalStateException e) { // bug in randoop
-      // code
+    } catch (ThreadDeath
+        | ReflectionCode.NotCaughtIllegalStateException e) { // can't stop these guys
       throw e;
     } catch (Throwable e) {
       if (e instanceof java.lang.reflect.InvocationTargetException) e = e.getCause();

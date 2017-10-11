@@ -44,6 +44,7 @@ import randoop.test.TestChecks;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.MultiMap;
+import randoop.util.ReflectionExecutor;
 import randoop.util.SimpleList;
 import randoop.util.predicate.AlwaysTrue;
 import randoop.util.predicate.Predicate;
@@ -73,7 +74,10 @@ public class TestClassificationTest {
    */
   @Test
   public void allInvalidTest() {
-    GenInputsAbstract.include_if_classname_appears = null;
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.INVALID;
     GenInputsAbstract.unchecked_exception = BehaviorType.INVALID;
@@ -81,7 +85,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputlimit = 1000;
+    GenInputsAbstract.outputLimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -114,7 +118,10 @@ public class TestClassificationTest {
    */
   @Test
   public void allErrorTest() {
-    GenInputsAbstract.include_if_classname_appears = null;
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.ERROR;
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
@@ -122,7 +129,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.ERROR;
     GenInputsAbstract.sof_exception = BehaviorType.ERROR;
-    GenInputsAbstract.outputlimit = 1000;
+    GenInputsAbstract.outputLimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -169,7 +176,10 @@ public class TestClassificationTest {
    */
   @Test
   public void allExpectedTest() {
-    GenInputsAbstract.include_if_classname_appears = null;
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
@@ -177,7 +187,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.oom_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.sof_exception = BehaviorType.EXPECTED;
-    GenInputsAbstract.outputlimit = 1000;
+    GenInputsAbstract.outputLimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -212,7 +222,10 @@ public class TestClassificationTest {
    */
   @Test
   public void defaultsTest() {
-    GenInputsAbstract.include_if_classname_appears = null;
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
@@ -220,7 +233,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputlimit = 1000;
+    GenInputsAbstract.outputLimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -270,7 +283,10 @@ public class TestClassificationTest {
    */
   @Test
   public void defaultsWithNoRegressionAssertions() {
-    GenInputsAbstract.include_if_classname_appears = null;
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = true;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
@@ -278,7 +294,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputlimit = 1000;
+    GenInputsAbstract.outputLimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -329,18 +345,18 @@ public class TestClassificationTest {
    */
   @Test
   public void regressionTestGeneration() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
-    GenInputsAbstract.inputlimit = 100;
+    GenInputsAbstract.generatedLimit = 100;
     Class<?> c = FlakyStore.class;
     ComponentManager componentManager = getComponentManager();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     TestCheckGenerator checkGenerator =
         (new GenTests())
             .createTestCheckGenerator(
-                visibility,
-                new ContractSet(),
-                new MultiMap<Type, TypedOperation>(),
-                new LinkedHashSet<TypedOperation>());
+                visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
     ForwardGenerator gen = buildGenerator(c, componentManager, visibility, checkGenerator);
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
@@ -374,14 +390,14 @@ public class TestClassificationTest {
     classnames.add(c.getName());
     Set<String> omitfields = new HashSet<>();
 
-    ReflectionPredicate predicate =
-        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitfields);
     OperationModel operationModel = null;
     try {
       operationModel =
           OperationModel.createModel(
               visibility,
-              predicate,
+              reflectionPredicate,
+              GenInputsAbstract.omitmethods,
               classnames,
               new HashSet<String>(),
               new HashSet<String>(),
@@ -397,9 +413,7 @@ public class TestClassificationTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            GenInputsAbstract.timelimit * 1000,
-            GenInputsAbstract.inputlimit,
-            GenInputsAbstract.outputlimit,
+            new GenInputsAbstract.Limits(),
             componentMgr,
             null,
             listenerMgr);
@@ -417,10 +431,7 @@ public class TestClassificationTest {
     TestCheckGenerator checkGenerator =
         (new GenTests())
             .createTestCheckGenerator(
-                visibility,
-                new ContractSet(),
-                new MultiMap<Type, TypedOperation>(),
-                new LinkedHashSet<TypedOperation>());
+                visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
     return buildGenerator(c, componentMgr, visibility, checkGenerator);
   }
 

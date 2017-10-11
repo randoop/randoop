@@ -66,7 +66,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
             && (fieldType.getComponentType().isPrimitive()
                 || fieldType.getComponentType().equals(String.class)))) {
 
-      if (!GenInputsAbstract.noprogressdisplay) {
+      if (GenInputsAbstract.progressdisplay) {
         printDetectedAnnotatedFieldMsg(f);
       }
       f.setAccessible(true);

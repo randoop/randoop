@@ -19,8 +19,12 @@ public final class IsNull implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) return false;
-    if (o == this) return true;
+    if (o == null) {
+      return false;
+    }
+    if (o == this) {
+      return true;
+    }
     return o instanceof IsNull;
   }
 
@@ -71,6 +75,6 @@ public final class IsNull implements ObjectContract {
   public boolean evalExceptionMeansFailure() {
     // Should never actually reach here: no way evaluating "objects[0] == null"
     // will throw an exception.
-    return false;
+    return true;
   }
 }

@@ -29,17 +29,13 @@ public class NormalExecution extends ExecutionOutcome {
   }
 
   /**
-   * Warning: this method calls toString() of code under test, which may have arbitrary behavior. We
+   * This method avoids calling toString() of code under test, which may have arbitrary behavior. We
    * use this method in randoop.test.SequenceTests.
    */
   @Override
   public String toString() {
-    StringBuilder b = new StringBuilder();
-    b.append("// <NormalExecution object=");
-    if (result == null) b.append("null");
-    else b.append("object-of-type-" + result.getClass().getName());
-    b.append(">;");
-    return b.toString();
+    return String.format(
+        "[NormalExecution %s]", (result == null ? "null" : result.getClass().getName()));
   }
 
   @Override

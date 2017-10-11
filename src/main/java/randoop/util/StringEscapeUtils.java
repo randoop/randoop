@@ -85,11 +85,11 @@ public class StringEscapeUtils {
    *
    * <p>A <code>null</code> string input has no effect.
    *
-   * @see #escapeJava(java.lang.String)
    * @param out writer to write escaped string into
    * @param str string to escape values in, may be null
    * @throws IllegalArgumentException if the Writer is <code>null</code>
    * @throws IOException if error occurs on underlying Writer
+   * @see #escapeJava(java.lang.String)
    */
   public static void escapeJava(Writer out, String str) throws IOException {
     escapeJavaStyleString(out, str, false);
@@ -119,8 +119,7 @@ public class StringEscapeUtils {
       return;
     }
 
-    int sz;
-    sz = str.length();
+    int sz = str.length();
     for (int i = 0; i < sz; i++) {
       char ch = str.charAt(i);
 
