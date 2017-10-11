@@ -689,11 +689,14 @@ public class ForwardGenerator extends AbstractGenerator {
           && (chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
               || randomVariable.getType().isPrimitive())) {
         System.out.println("Selected null or a primitive as the receiver for a method call.");
-        System.out.println(
-            "  " + chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
-        System.out.println("  " + chosenSeq.getCreatingStatement(randomVariable));
-        System.out.println("  " + randomVariable.getType().isPrimitive());
-        System.out.println("  " + randomVariable);
+        System.out.printf(
+            "  getCreatingStatement %s%n", chosenSeq.getCreatingStatement(randomVariable));
+        System.out.printf(
+            "  isNonreceivingInitialization %s%n",
+            chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
+        System.out.printf("  randomVariable %s%n", randomVariable);
+        System.out.printf("  getType() %s%n", randomVariable.getType());
+        System.out.printf("  isPrimitive %s%n", randomVariable.getType().isPrimitive());
         throw new BugInRandoopException(
             "Selected null or primitive value as the receiver for a method call");
       }
