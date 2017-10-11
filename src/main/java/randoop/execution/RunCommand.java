@@ -23,7 +23,7 @@ public class RunCommand {
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
    */
-  static Status run(List<String> command, File workingDirectory, long timeout)
+  public static Status run(List<String> command, File workingDirectory, long timeout)
       throws CommandException {
     ProcessBuilder processBuilder = new ProcessBuilder(command);
     processBuilder.directory(workingDirectory);
