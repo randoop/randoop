@@ -315,6 +315,7 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logLine("Error selecting inputs for operation: " + operation);
         Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
+        e.printStackTrace();
         sequences = null;
       }
     }
