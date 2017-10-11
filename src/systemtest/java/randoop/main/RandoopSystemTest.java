@@ -1448,9 +1448,10 @@ public class RandoopSystemTest {
         }
         break;
       case NONE:
-        if (runStatus.errorTestCount != 0) {
-          // TODO: should output the error tests.  Print the file?
-          fail("Test suite should have no error tests, but has " + runStatus.errorTestCount);
+        if (runStatus.regressionTestCount != 0) {
+          fail(
+              "Test suite should have no regression tests, but has "
+                  + runStatus.regressionTestCount);
         }
         break;
       case DONT_CARE:
