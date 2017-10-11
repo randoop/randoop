@@ -690,6 +690,8 @@ public class ForwardGenerator extends AbstractGenerator {
               || randomVariable.getType().isPrimitive())) {
         System.out.println();
         System.out.println("Selected null or a primitive as the receiver for a method call.");
+        System.out.printf("  operation %s%n", operation);
+        System.out.printf("  isReceiver %s%n", isReceiver);
         System.out.printf("  chosenSeq %s%n", chosenSeq);
         System.out.printf(
             "  getCreatingStatement %s%n", chosenSeq.getCreatingStatement(randomVariable));
