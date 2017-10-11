@@ -294,8 +294,7 @@ public class CoveredClassTest {
     testGenerator.addExecutionVisitor(
         new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));
 
-    TestUtils.setOperationLog(testGenerator);
-    TestUtils.setSelectionLog();
+    TestUtils.setAllLogs(testGenerator);
 
     return testGenerator;
   }

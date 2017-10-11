@@ -23,10 +23,10 @@ class CoverageChecker {
   /** The classes whose methods must be covered. */
   private final Set<String> classnames;
 
-  /** The methods that must not be covered */
+  /** The methods that must not be covered. */
   private final HashSet<String> excludedMethods;
 
-  /** The methods whose coverage should be ignored */
+  /** The methods whose coverage should be ignored. */
   private final HashSet<String> dontCareMethods;
 
   /**
@@ -128,7 +128,7 @@ class CoverageChecker {
     }
     if (!shouldBeMissingMethods.isEmpty()) {
       failureMessage.append(
-          String.format("Excluded methods that are covered (test can be made more strict:%n"));
+          String.format("Excluded methods that are covered (test can be made more strict):%n"));
       for (String name : shouldBeMissingMethods) {
         failureMessage.append(String.format("  %s%n", name));
       }

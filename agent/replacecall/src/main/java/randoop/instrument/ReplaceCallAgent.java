@@ -64,7 +64,7 @@ public class ReplaceCallAgent {
   /** The file from which to read the user replacements for replacing calls. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing methods whose calls to replace by substitute methods")
-  public static File replacements = null;
+  public static File replacement_file = null;
 
   /** Exclude transformation of classes in the the listed packages. */
   @SuppressWarnings("WeakerAccess")
@@ -136,8 +136,8 @@ public class ReplaceCallAgent {
       }
 
       /*
-       * The agent is called when classes are loaded. If Randoop is using threads, this can result in
-       * multiple threads accessing the map to apply replacements.
+       * The agent is called when classes are loaded. If Randoop is using threads, this can result
+       * in multiple threads accessing the map to apply replacements.
        */
       ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap =
           new ConcurrentHashMap<>();
@@ -159,16 +159,16 @@ public class ReplaceCallAgent {
       // If the user has provided a replacement file, load user replacements and put them into the
       // map, possibly overriding default replacements that already appear in the map.
       Path replacementFilePath = null;
-      if (replacements != null) {
+      if (replacement_file != null) {
         try {
-          replacementMap.putAll(ReplacementFileReader.readReplacements(replacements));
+          replacementMap.putAll(ReplacementFileReader.readReplacements(replacement_file));
         } catch (Throwable e) {
           System.err.printf(
-              "Error reading replacement file %s:%n  %s%n", replacements, e.getMessage());
+              "Error reading replacement file %s:%n  %s%n", replacement_file, e.getMessage());
           System.exit(1);
         }
         // Get path for replacement file to use in argument string given to Randoop.
-        replacementFilePath = replacements.toPath();
+        replacementFilePath = replacement_file.toPath();
       }
 
       /*
@@ -264,7 +264,7 @@ public class ReplaceCallAgent {
   private static String createAgentArgs(Path replacementFilePath, Path exclusionFilePath) {
     List<String> args = new ArrayList<>();
     if (replacementFilePath != null) {
-      args.add("--replacements=" + replacementFilePath.toAbsolutePath());
+      args.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
     }
     if (exclusionFilePath != null) {
       args.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());

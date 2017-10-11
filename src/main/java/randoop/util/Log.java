@@ -6,11 +6,15 @@ import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 
-/** Methods that log to GenInputsAbstract.log, if that is non-null. */
+/** Static methods that log to GenInputsAbstract.log, if that is non-null. */
 public final class Log {
 
   private Log() {
     throw new IllegalStateException("no instance");
+  }
+
+  public static boolean isLoggingOn() {
+    return GenInputsAbstract.log != null;
   }
 
   /**
@@ -51,6 +55,25 @@ public final class Log {
   }
 
   /**
+   * Log using {@code String.format} to GenInputsAbstract.log, if that is non-null.
+   *
+   * @param fmt the format string
+   * @param args arguments to the format string
+   */
+  public static void logPrintf(String fmt, Object... args) {
+    if (!isLoggingOn()) {
+      return;
+    }
+
+    try {
+      GenInputsAbstract.log.write(String.format(fmt, args));
+      GenInputsAbstract.log.flush();
+    } catch (IOException e) {
+      throw new BugInRandoopException("Exception while writing to log", e);
+    }
+  }
+
+  /**
    * Log to GenInputsAbstract.log, if that is non-null.
    *
    * @param t the Throwable whose stack trace to log
@@ -69,9 +92,5 @@ public final class Log {
     } catch (IOException e) {
       throw new BugInRandoopException("Exception while writing to log", e);
     }
-  }
-
-  public static boolean isLoggingOn() {
-    return GenInputsAbstract.log != null;
   }
 }

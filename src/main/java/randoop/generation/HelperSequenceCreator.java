@@ -354,7 +354,7 @@ class HelperSequenceCreator {
     for (int i = 0; i < length; i++) {
       Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
       sequences.add(sequence);
-      Variable element = sequence.randomVariableForTypeLastStatement(elementType);
+      Variable element = sequence.randomVariableForTypeLastStatement(elementType, false);
       assert element != null;
       variables.add(element.index);
     }

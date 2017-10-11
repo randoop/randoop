@@ -10,7 +10,7 @@ public class PackageLiterals extends MappedSequences<Package> {
   @Override
   public void addSequence(Package key, Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
-    if (!seq.isPrimitive()) {
+    if (!seq.isNonreceiver()) {
       throw new IllegalArgumentException("seq is not a primitive sequence");
     }
     super.addSequence(key, seq);

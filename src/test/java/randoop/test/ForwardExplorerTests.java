@@ -52,8 +52,6 @@ public class ForwardExplorerTests {
   public static void setup() {
     optionsCache = new OptionsCache();
     optionsCache.saveState();
-
-    TestUtils.setSelectionLog();
   }
 
   @AfterClass
@@ -84,7 +82,7 @@ public class ForwardExplorerTests {
             null);
     explorer.addTestCheckGenerator(createChecker(new ContractSet()));
     explorer.addTestPredicate(createOutputTest());
-    TestUtils.setOperationLog(explorer);
+    TestUtils.setAllLogs(explorer);
     explorer.explore();
     explorer.getOperationHistory().outputTable();
     GenInputsAbstract.dontexecute = false;
@@ -139,7 +137,7 @@ public class ForwardExplorerTests {
             null);
     explorer.addTestCheckGenerator(createChecker(new ContractSet()));
     explorer.addTestPredicate(createOutputTest());
-    TestUtils.setOperationLog(explorer);
+    TestUtils.setAllLogs(explorer);
     try {
       explorer.explore();
     } catch (Throwable t) {
@@ -201,7 +199,7 @@ public class ForwardExplorerTests {
     GenInputsAbstract.forbid_null = false;
     explorer.addTestCheckGenerator(createChecker(new ContractSet()));
     explorer.addTestPredicate(createOutputTest());
-    TestUtils.setOperationLog(explorer);
+    TestUtils.setAllLogs(explorer);
     try {
       explorer.explore();
     } catch (Throwable t) {

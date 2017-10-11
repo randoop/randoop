@@ -23,7 +23,7 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
   @Override
   public void addSequence(ClassOrInterfaceType key, Sequence seq) {
     if (seq == null) throw new IllegalArgumentException("seq is null");
-    if (!seq.isPrimitive()) {
+    if (!seq.isNonreceiver()) {
       throw new IllegalArgumentException("seq is not a primitive sequence");
     }
     super.addSequence(key, seq);

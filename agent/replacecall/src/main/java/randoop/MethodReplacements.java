@@ -2,6 +2,7 @@ package randoop;
 
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -55,7 +56,9 @@ public class MethodReplacements {
    *     list if that method hasn't been called
    */
   public static synchronized List<String> getSignatureList() {
-    return new ArrayList<>(signatureList);
+    List<String> result = new ArrayList<>(signatureList);
+    Collections.sort(result);
+    return result;
   }
 
   /**

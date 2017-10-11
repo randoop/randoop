@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Captures the status of a Randoop run, along with status from the compilation of the Randoop
- * generated tests.
+ * Captures the status of a Randoop run, along with status from the compilation of the
+ * Randoop-generated tests.
  */
 class RandoopRunStatus {
 
@@ -113,12 +113,12 @@ class RandoopRunStatus {
 
     // determine whether files are really there and have the right names
     Path srcDir = testEnvironment.sourceDir.resolve(packagePathString);
-    List<File> testClassSourceFiles = getFiles(srcDir, "*.java", regressionBasename, errorBasename);
+    List<File> testSourceFiles = getFiles(srcDir, "*.java", regressionBasename, errorBasename);
 
-    // definitely cannot do anything useful if no generated test files
-    // but not sure that this is the right way to deal with it
-    // what if test is meant not to generate anything ?
-    if (testClassSourceFiles.size() == 0) {
+    // Definitely cannot do anything useful if no generated test files
+    // but not sure that this is the right way to deal with it.
+    // What if test is meant not to generate anything ?
+    if (testSourceFiles.size() == 0) {
       for (String line : randoopExitStatus.outputLines) {
         System.err.println(line);
       }
@@ -128,7 +128,7 @@ class RandoopRunStatus {
     Path classDir = testEnvironment.classDir;
     CompilationStatus compileStatus =
         CompilationStatus.compileTests(
-            testClassSourceFiles, testEnvironment.getSystemTestClasspath(), classDir.toString());
+            testSourceFiles, testEnvironment.getSystemTestClasspath(), classDir.toString());
     if (!compileStatus.succeeded) {
       System.out.println("Compilation: ");
       if (randoopExitStatus.exitStatus == 0) {
@@ -142,12 +142,12 @@ class RandoopRunStatus {
     }
 
     Path classFileDir = classDir.resolve(packagePathString);
-    List<File> testClassClassFiles =
+    List<File> testClassFiles =
         getFiles(classFileDir, "*.class", regressionBasename, errorBasename);
     assertThat(
-        "Number of compiled tests equals source tests",
-        testClassClassFiles.size(),
-        is(equalTo(testClassSourceFiles.size())));
+        "Number of compiled test files must equal source test files",
+        testClassFiles.size(),
+        is(equalTo(testSourceFiles.size())));
 
     return getRandoopRunStatus(randoopExitStatus);
   }
