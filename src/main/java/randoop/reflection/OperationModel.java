@@ -1,8 +1,15 @@
 package randoop.reflection;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.lang.Error;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -79,6 +86,9 @@ public class OperationModel {
   /** Set of concrete operations extracted from classes */
   private final Set<TypedOperation> operations;
 
+  /** For debugging only */
+  private List<Pattern> omitMethods;
+
   /** Create an empty model of test context. */
   private OperationModel() {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
@@ -135,6 +145,9 @@ public class OperationModel {
       throws SignatureParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
+
+    // for debugging only
+    model.omitMethods = omitmethods;
 
     model.addClassTypes(
         visibility,
@@ -352,19 +365,57 @@ public class OperationModel {
   }
 
   public void log() {
-    if (!Log.isLoggingOn()) {
-      return;
+    if (Log.isLoggingOn()) {
+      logOperations(GenInputsAbstract.log);
     }
+  }
 
+  /** Output the operations of this model, if logging is enabled. */
+  public void logOperations(PrintStream out) {
+    logOperations(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, UTF_8))));
+  }
+
+  /** Output the operations of this model, if logging is enabled. */
+  public void logOperations(Writer out) {
     try {
-      GenInputsAbstract.log.write("Operations: " + Globals.lineSep);
-      for (TypedOperation t : this.operations) {
-        GenInputsAbstract.log.write(t.toString());
-        GenInputsAbstract.log.write(Globals.lineSep);
-        GenInputsAbstract.log.flush();
+      out.write("Operations: " + Globals.lineSep);
+      for (TypedOperation t : operations) {
+        out.write(t.toString());
+        out.write(Globals.lineSep);
+        out.flush();
       }
     } catch (IOException e) {
       throw new BugInRandoopException("Error while logging operations", e);
+    }
+  }
+
+  /** Print a verbose representation of the model, if logging is enabled. */
+  public void dumpModel() {
+    if (Log.isLoggingOn()) {
+      dumpModel(GenInputsAbstract.log);
+    }
+  }
+
+  /** Print a verbose representation of the model to {@code out}. */
+  public void dumpModel(PrintStream out) {
+    dumpModel(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, UTF_8))));
+  }
+
+  /** Print a verbose representation of the model to {@code out}. */
+  public void dumpModel(Writer out) {
+    try {
+      out.write(String.format("Model with hashcode %s:%n", hashCode()));
+      out.write(String.format("  classTypes = %s%n", classTypes));
+      out.write(String.format("  inputTypes = %s%n", inputTypes));
+      out.write(String.format("  coveredClassesGoal = %s%n", coveredClassesGoal));
+      out.write(String.format("  classLiteralMap = %s%n", classLiteralMap));
+      out.write(String.format("  annotatedTestValues = %s%n", annotatedTestValues));
+      out.write(String.format("  contracts = %s%n", contracts));
+      out.write(String.format("  omitMethods = %s%n", omitMethods));
+      // Use logOperations instead: out.write(String.format("  operations = %s%n", operations));
+      logOperations(out);
+    } catch (IOException ioe) {
+      throw new Error(ioe);
     }
   }
 

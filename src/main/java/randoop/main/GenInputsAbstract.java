@@ -94,7 +94,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --omitmethods</code>, and the default omissions.
    */
   @Option("File containing regular expressions for methods to omit")
-  public static File omitmethods_list = null;
+  public static File omitmethods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
@@ -215,7 +215,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // Regardless of this option's setting, minimization is enabled when
   // <code>--stop-on-error-test</code> is set.
   @Option("<boolean> to indicate automatic minimization of error-revealing tests")
-  public static boolean minimize_error_test = true;
+  // Defaulting to true sometimes causes unacceptable slowdowns.
+  public static boolean minimize_error_test = false;
 
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
@@ -468,13 +469,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @see #literals_level
    */
   public enum ClassLiteralsMode {
-    /** do not use literals specified in a literals file */
+    /** Do not use literals specified in a literals file. */
     NONE,
-    /** a literal for a given class is used as input only to methods of that class */
+    /** A literal for a given class is used as input only to methods of that class. */
     CLASS,
-    /** a literal is used as input to methods of any classes in the same package */
+    /** A literal is used as input to methods of any classes in the same package. */
     PACKAGE,
-    /** each literal is used as input to any method under test */
+    /** Each literal is used as input to any method under test. */
     ALL
   }
 

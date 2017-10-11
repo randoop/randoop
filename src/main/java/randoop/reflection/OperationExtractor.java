@@ -170,6 +170,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visit(Constructor<?> constructor) {
+    // System.out.println("OperationExtractor.visit: constructor=" + constructor);
     assert constructor.getDeclaringClass().equals(classType.getRuntimeClass())
         : "classType "
             + classType
@@ -180,6 +181,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       return;
     }
     TypedClassOperation operation = instantiateTypes(TypedOperation.forConstructor(constructor));
+    // System.out.println("OperationExtractor.visit: operation=" + operation);
     checkSubTypes(operation);
     if (!omitPredicate.shouldOmit(operation)) {
       if (operationSpecifications != null) {
@@ -189,6 +191,7 @@ public class OperationExtractor extends DefaultClassVisitor {
           operation.addConditions(conditions);
         }
       }
+      // System.out.println("OperationExtractor.visit: add operation " + operation);
       operations.add(operation);
     }
   }
@@ -204,10 +207,12 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visit(Method method) {
+    // System.out.println("OperationExtractor.visit: method=" + method);
     if (!reflectionPredicate.test(method)) {
       return;
     }
     TypedClassOperation operation = instantiateTypes(TypedOperation.forMethod(method));
+    // System.out.println("OperationExtractor.visit: operation=" + operation);
     checkSubTypes(operation);
 
     if (operation.isStatic()) {
@@ -217,11 +222,13 @@ public class OperationExtractor extends DefaultClassVisitor {
           method.getDeclaringClass().getModifiers() & Modifier.classModifiers();
       if (!Modifier.isPublic(declaringClassMods)) {
         operation = operation.getOperationForType(classType);
+        // System.out.println("OperationExtractor.visit: operation changed to " + operation);
       }
     }
 
     // The declaring type of the method is not necessarily the classType, but may want to omit
-    // method in classType. So, create operation with the classType as declaring type for omit search.
+    // method in classType. So, create operation with the classType as declaring type for omit
+    // search.
     if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
       if (operationSpecifications != null) {
         OperationConditions conditions = operationSpecifications.getOperationConditions(method);
@@ -229,6 +236,7 @@ public class OperationExtractor extends DefaultClassVisitor {
           operation.addConditions(conditions);
         }
       }
+      // System.out.println("OperationExtractor.visit: add operation " + operation);
       operations.add(operation);
     }
   }

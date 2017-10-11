@@ -379,7 +379,7 @@ public abstract class AbstractGenerator {
         operationHistory.add(es.getOperation(), OperationOutcome.REGRESSION_SEQUENCE);
         unique_seqs.add(es);
       } else {
-        operationHistory.add(es.getOperation(), OperationOutcome.SEQUENCE_DISCARDED);
+        operationHistory.add(es.getOperation(), OperationOutcome.SUBSUMED);
       }
     }
     return unique_seqs;

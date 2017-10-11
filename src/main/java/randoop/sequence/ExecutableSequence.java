@@ -88,7 +88,7 @@ public class ExecutableSequence {
    * sequence. Invariant: sequence.size() == executionResults.size(). Transient because it can
    * contain arbitrary objects that may not be serializable.
    */
-  private transient /* final */ Execution executionResults;
+  private transient /*final*/ Execution executionResults;
 
   /**
    * How long it took to generate this sequence in nanoseconds, excluding execution time. Must be
@@ -135,7 +135,10 @@ public class ExecutableSequence {
       sequence.appendCode(b, i);
       // It's a bit confusing, but the commented execution results refer
       // to the statement ABOVE, not below as is standard for comments.
-      if (executionResults.size() > i) b.append(executionResults.get(i).toString());
+      if (executionResults.size() > i) {
+        b.append(" // ");
+        b.append(executionResults.get(i).toString());
+      }
       if ((i == sequence.size() - 1) && (checks != null)) {
         Map<Check, Boolean> ckMap = checks.get();
         for (Map.Entry<Check, Boolean> entry : ckMap.entrySet()) {

@@ -52,7 +52,6 @@ public class SpecialCoveredClassTest {
   public void abstractClassTest()
       throws ClassNotFoundException, NoSuchMethodException, RandoopInputException,
           SignatureParseException {
-    TestUtils.setSelectionLog();
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("instrument/testcase/special-allclasses.txt");
     GenInputsAbstract.require_covered_classes =
@@ -133,8 +132,8 @@ public class SpecialCoveredClassTest {
         genTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
-    TestUtils.setOperationLog(testGenerator);
-    TestUtils.setSelectionLog();
+    TestUtils.setAllLogs(testGenerator);
+    // for debugging:  operationModel.dumpModel();
     testGenerator.explore();
     //    testGenerator.getOperationHistory().outputTable();
 
@@ -173,8 +172,22 @@ public class SpecialCoveredClassTest {
       }
     }
     if (!unused.isEmpty()) {
-      // TODO: could output the generated tests too.
+      System.out.println("Unused operations: " + unused);
+      System.out.println("Number of tests: " + rTests.size());
+      for (ExecutableSequence rTest : rTests) {
+        System.out.println("TEST:");
+        System.out.println(rTest);
+      }
       throw new Error("Unused operations: " + unused);
+    } else {
+      // TEMPORARY
+      if (false) {
+        System.out.println("Number of tests: " + rTests.size());
+        for (ExecutableSequence rTest : rTests) {
+          System.out.println("TEST:");
+          System.out.println(rTest);
+        }
+      }
     }
   }
 }
