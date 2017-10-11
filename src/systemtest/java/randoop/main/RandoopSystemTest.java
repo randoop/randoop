@@ -685,7 +685,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("RegressionTest");
     options.setErrorBasename("ErrorTest");
     options.addTestClass("misc.ThrowsAnonymousException");
-    options.setOption("outputLimit", "2");
+    options.setOption("outputLimit", "5");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
