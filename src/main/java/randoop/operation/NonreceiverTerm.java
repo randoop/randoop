@@ -212,7 +212,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * {@inheritDoc}
    *
    * <p>Returns a string representing this primitive declaration. The string is of the form:<br>
-   * <code>TYPE:VALUE</code><br>
+   * {@code TYPE:VALUE}<br>
    * Where TYPE is the type of the primitive declaration, and VALUE is its value. If VALUE is "null"
    * then the value is null (not the String "null"). If TYPE is "char" then
    * (char)Integer.parseInt(VALUE, 16) yields the character value.

@@ -64,8 +64,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file containing a list of methods and constructors to test, each given as a <a
    * href="#fully-qualified-signature">fully-qualified signature</a> on a separate line.
    *
-   * <p>These methods augment any methods from classes given by the <code>--testclass</code> or
-   * <code>--classlist</code> options.
+   * <p>These methods augment any methods from classes given by the {@code --testclass} or {@code
+   * --classlist} options.
    *
    * <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
    * file</a>.
@@ -90,39 +90,39 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * A file containing a list of regular expressions that indicate methods that should not be
-   * included in generated tests. These patterns are used along with those provided with <code>
-   * --omitmethods</code>, and the default omissions.
+   * included in generated tests. These patterns are used along with those provided with {@code
+   * --omitmethods}, and the default omissions.
    */
   @Option("File containing regular expressions for methods to omit")
   public static File omitmethods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
-   * method replaced by the <code>replacecall</code> agent is treated as if it had been supplied as
-   * an argument to <code>--omitmethods</code>.
+   * method replaced by the {@code replacecall} agent is treated as if it had been supplied as an
+   * argument to {@code --omitmethods}.
    */
   @Option("Include methods that are omitted by default")
   public static boolean dont_omit_replaced_methods = false;
 
   /**
    * A fully-qualified field name of a field to be excluded from test generation. An accessible
-   * field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
+   * field is used unless it is omitted by this or the {@code --omit-field-list} option.
    */
   @Option("Omit field from generated tests")
   public static List<String> omit_field = null;
 
   /**
    * File that contains fully-qualified field names to be excluded from test generation. An
-   * accessible field is used unless it is omitted by this or the <code>--omit-field</code> option.
+   * accessible field is used unless it is omitted by this or the {@code --omit-field} option.
    */
   @Option("File containing field names to omit from generated tests")
   public static File omit_field_list = null;
 
   /**
-   * Restrict tests to only include public members of classes. Ordinarily, the setting of <code>
-   * --junit-package-name</code> and package accessibility is used to determine which members will
-   * be used in tests. Using this option restricts the tests to only use public members even if the
-   * class is a member of the same package as the generated tests.
+   * Restrict tests to only include public members of classes. Ordinarily, the setting of {@code
+   * --junit-package-name} and package accessibility is used to determine which members will be used
+   * in tests. Using this option restricts the tests to only use public members even if the class is
+   * a member of the same package as the generated tests.
    */
   @Option("Only use public members in tests")
   public static boolean only_test_public_members = false;
@@ -151,9 +151,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean ignore_flaky_tests = false;
 
   /**
-   * Whether to output error-revealing tests. Disables all output when used with <code>
-   * --no-regression-tests</code>. Restricting output can result in long runs if the default values
-   * of <code>--generatedLimit</code> and <code>--timeLimit</code> are used.
+   * Whether to output error-revealing tests. Disables all output when used with {@code
+   * --no-regression-tests}. Restricting output can result in long runs if the default values of
+   * {@code --generatedLimit} and {@code --timeLimit} are used.
    */
   ///////////////////////////////////////////////////////////////////////////
   @OptionGroup("Which tests to output")
@@ -161,9 +161,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean no_error_revealing_tests = false;
 
   /**
-   * Whether to output regression tests. Disables all output when used with <code>
-   * --no-error-revealing-tests</code>. Restricting output can result in long runs if the default
-   * values of <code>--generatedLimit</code> and <code>--timeLimit</code> are used.
+   * Whether to output regression tests. Disables all output when used with {@code
+   * --no-error-revealing-tests}. Restricting output can result in long runs if the default values
+   * of {@code --generatedLimit} and {@code --timeLimit} are used.
    */
   @Option("Whether to output regression tests")
   public static boolean no_regression_tests = false;
@@ -213,7 +213,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   // Omit this to keep the documentation short:
   // Regardless of this option's setting, minimization is enabled when
-  // <code>--stop-on-error-test</code> is set.
+  // {@code --stop-on-error-test} is set.
   @Option("<boolean> to indicate automatic minimization of error-revealing tests")
   // Defaulting to true sometimes causes unacceptable slowdowns.
   public static boolean minimize_error_test = false;
@@ -242,37 +242,35 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType checked_exception = BehaviorType.EXPECTED;
 
   /**
-   * If a test throws an unchecked exception other than <code>OutOfMemoryError</code>, <code>
-   * StackOverflowError</code>, and <code>NullPointerException</code>, should the test be included
-   * in the error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or
-   * should it be discarded (value: INVALID)?
+   * If a test throws an unchecked exception other than {@code OutOfMemoryError}, {@code
+   * StackOverflowError}, and {@code NullPointerException}, should the test be included in the
+   * error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
+   * it be discarded (value: INVALID)?
    *
-   * <p>The arguments <code>--npe-on-null-input</code>, <code>--npe-on-non-null-input</code>, <code>
-   * --oom-exception</code>, and <code>--sof-exception</code> handle special cases of unchecked
-   * exceptions.
+   * <p>The arguments {@code --npe-on-null-input}, {@code --npe-on-non-null-input}, {@code
+   * --oom-exception}, and {@code --sof-exception} handle special cases of unchecked exceptions.
    */
   @Option("Whether unchecked exception is an ERROR, EXPECTED or INVALID")
   public static BehaviorType unchecked_exception = BehaviorType.EXPECTED;
 
   /**
-   * If a test that passes <code>null</code> as an argument throws a <code>NullPointerException
-   * </code>, should the test be be included in the error-revealing test suite (value: ERROR),
-   * regression test suite (value: EXPECTED), or should it be discarded (value: INVALID)?
+   * If a test that passes {@code null} as an argument throws a {@code NullPointerException}, should
+   * the test be be included in the error-revealing test suite (value: ERROR), regression test suite
+   * (value: EXPECTED), or should it be discarded (value: INVALID)?
    */
   @Option("Whether NullPointerException on null inputs is an ERROR, EXPECTED or INVALID")
   public static BehaviorType npe_on_null_input = BehaviorType.EXPECTED;
 
   /**
-   * If a test that never passes <code>null</code> as an argument throws a <code>
-   * NullPointerException</code>, should the test be included in the error-revealing test suite
-   * (value: ERROR), regression test suite (value: EXPECTED), or should it be discarded (value:
-   * INVALID)?
+   * If a test that never passes {@code null} as an argument throws a {@code NullPointerException},
+   * should the test be included in the error-revealing test suite (value: ERROR), regression test
+   * suite (value: EXPECTED), or should it be discarded (value: INVALID)?
    */
   @Option("Whether NullPointerException on non-null inputs is an ERROR, EXPECTED or INVALID")
   public static BehaviorType npe_on_non_null_input = BehaviorType.ERROR;
 
   /**
-   * If a test throws an <code>OutOfMemoryError</code> exception, should it be included in the
+   * If a test throws an {@code OutOfMemoryError} exception, should it be included in the
    * error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
    * it be discarded (value: INVALID)?
    */
@@ -280,7 +278,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType oom_exception = BehaviorType.INVALID;
 
   /**
-   * If a test throws a <code>StackOverflowError</code> exception, should it be included in the
+   * If a test throws a {@code StackOverflowError} exception, should it be included in the
    * error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
    * it be discarded (value: INVALID)?
    */
@@ -360,9 +358,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * The maximum number of regression and error-revealing tests to output. If there is no output,
-   * this limit has no effect. There is no output when using either <code>
-   * --dont-output-tests</code> or <code>--no-error-revealing-tests</code> together with <code>
-   * --no-regression-tests</code>.
+   * this limit has no effect. There is no output when using either {@code --dont-output-tests} or
+   * {@code --no-error-revealing-tests} together with {@code --no-regression-tests}.
    *
    * <p>In the current implementation, the number of tests in the output can be substantially
    * smaller than this limit.
@@ -420,13 +417,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Use null with the given frequency as an argument to method calls.
    *
-   * <p>For example, a null ratio of 0.05 directs Randoop to use <code>null</code> as an input 5
-   * percent of the time when a non-<code>null</code> value of the appropriate type is available.
+   * <p>For example, a null ratio of 0.05 directs Randoop to use {@code null} as an input 5 percent
+   * of the time when a non-{@code null} value of the appropriate type is available.
    *
-   * <p>Unless --forbid_null is true, a <code>null</code> value will still be used if no other value
-   * can be passed as an argument even if --null-ratio=0.
+   * <p>Unless --forbid_null is true, a {@code null} value will still be used if no other value can
+   * be passed as an argument even if --null-ratio=0.
    *
-   * <p>Randoop never uses <code>null</code> for receiver values.
+   * <p>Randoop never uses {@code null} for receiver values.
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Values used in tests")
@@ -434,8 +431,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static double null_ratio = 0.05;
 
   /**
-   * Do not use <code>null</code> as input to methods or constructors, even when no other argument
-   * value can be generated.
+   * Do not use {@code null} as input to methods or constructors, even when no other argument value
+   * can be generated.
    *
    * <p>If true, Randoop will not generate a test when unable to find a non-null value of
    * appropriate type as an input. This could result in certain class members being untested.
@@ -455,7 +452,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<String> literals_file = new ArrayList<>();
 
   /**
-   * How to use literal values that are specified via the <code>--literals-file</code> command-line
+   * How to use literal values that are specified via the {@code --literals-file} command-line
    * option.
    *
    * @see ClassLiteralsMode
@@ -541,51 +538,51 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Name of the package for the generated JUnit files. When the package is the same as the package
    * of a class under test, then package visibility rules are used to determine whether to include
    * the class or class members in a test. Tests can be restricted to public members only by using
-   * the option <code>--only-test-public-members</code>.
+   * the option {@code --only-test-public-members}.
    */
   @Option("Name of the package for the generated JUnit files")
   public static String junit_package_name = "";
 
   /**
    * Name of file containing code text to be added to the <a
-   * href="http://junit.sourceforge.net/javadoc/org/junit/Before.html"><code>@Before</code>
-   * </a>-annotated method of each generated test class. Code is uninterpreted, and, so, is not run
-   * during generation. Intended for use when run-time behavior of classes under test requires setup
-   * behavior that is not needed for execution by reflection. (The annotation <code>@Before</code>
-   * is JUnit 4, and <code>@BeforeEach</code> is JUnit 5.)
+   * href="http://junit.sourceforge.net/javadoc/org/junit/Before.html">{@code @Before}</a>-annotated
+   * method of each generated test class. Code is uninterpreted, and, so, is not run during
+   * generation. Intended for use when run-time behavior of classes under test requires setup
+   * behavior that is not needed for execution by reflection. (The annotation {@code @Before} is
+   * JUnit 4, and {@code @BeforeEach} is JUnit 5.)
    */
   @Option("Filename for code to include in Before-annotated method of test classes")
   public static String junit_before_each = null;
 
   /**
    * Name of file containing code text to be added to the <a
-   * href="http://junit.sourceforge.net/javadoc/org/junit/After.html"><code>@After</code>
-   * </a>-annotated method of each generated test class. Intended for use when run-time behavior of
-   * classes under test requires tear-down behavior that is not needed for execution by reflection.
-   * Code is uninterpreted, and, so, is not run during generation. (The annotation <code>@After
-   * </code> is JUnit 4, and <code>@AfterEach</code> is JUnit 5.)
+   * href="http://junit.sourceforge.net/javadoc/org/junit/After.html">{@code @After} </a>-annotated
+   * method of each generated test class. Intended for use when run-time behavior of classes under
+   * test requires tear-down behavior that is not needed for execution by reflection. Code is
+   * uninterpreted, and, so, is not run during generation. (The annotation {@ode @After} is JUnit 4,
+   * and {@code @AfterEach} is JUnit 5.)
    */
   @Option("Filename for code to include in After-annotated method of test classes")
   public static String junit_after_each = null;
 
   /**
    * Name of file containing code text to be added to the <a
-   * href="http://junit.sourceforge.net/javadoc/org/junit/BeforeClass.html"><code>@BeforeClass
-   * </code></a>-annotated method of each generated test class. Intended for use when run-time
-   * behavior of classes under test requires setup behavior that is not needed for execution by
-   * reflection. Code is uninterpreted, and, so, is not run during generation. (The annotation
-   * <code>@BeforeClass</code> is JUnit 4, and <code>@BeforeAll</code> is JUnit 5.)
+   * href="http://junit.sourceforge.net/javadoc/org/junit/BeforeClass.html">{@code @BeforeClass}</a>-annotated
+   * method of each generated test class. Intended for use when run-time behavior of classes under
+   * test requires setup behavior that is not needed for execution by reflection. Code is
+   * uninterpreted, and, so, is not run during generation. (The annotation {@code @BeforeClass} is
+   * JUnit 4, and {@code @BeforeAll} is JUnit 5.)
    */
   @Option("Filename for code to include in BeforeClass-annotated method of test classes")
   public static String junit_before_all = null;
 
   /**
    * Name of file containing code text to be added to the <a
-   * href="http://junit.sourceforge.net/javadoc/org/junit/AfterClass.html"><code>@AfterClass</code>
-   * </a>-annotated method of each generated test class. Intended for use when run-time behavior of
-   * classes under test requires tear-down behavior that is not needed for execution by reflection.
-   * Code is uninterpreted, and, so, is not run during generation. (The annotation <code>@AfterClass
-   * </code> is JUnit 4, and <code>@AfterAll</code> is JUnit 5.)
+   * href="http://junit.sourceforge.net/javadoc/org/junit/AfterClass.html">{@code @AfterClass}</a>-annotated
+   * method of each generated test class. Intended for use when run-time behavior of classes under
+   * test requires tear-down behavior that is not needed for execution by reflection. Code is
+   * uninterpreted, and, so, is not run during generation. (The annotation {@code @AfterClass} is
+   * JUnit 4, and {@code @AfterAll} is JUnit 5.)
    */
   @Option("Filename for code to include in AfterClass-annotated method of test classes")
   public static String junit_after_all = null;
@@ -597,9 +594,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Run test generation without output. May be desirable when running with a visitor.
    *
-   * <p>NOTE: Because there is no output, the value of <code>--outputLimit</code> will never be met,
-   * so be sure to set <code>--generatedLimit</code> or <code>--timeLimit</code> to a reasonable
-   * value when using this option.
+   * <p>NOTE: Because there is no output, the value of {@code --outputLimit} will never be met, so
+   * be sure to set {@code --generatedLimit} or {@code --timeLimit} to a reasonable value when using
+   * this option.
    */
   @Option("Run Randoop but do not output JUnit tests")
   public static boolean dont_output_tests = false;
@@ -608,8 +605,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Whether to use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
    * invocations can interfere with code instrumentation, such as by the DynComp tool. If that is a
    * problem, then set this to false and Randoop will output tests that use direct method calls
-   * instead of reflection. The tests will include a <code>main</code> method and will execute
-   * methods and assertions, but won't be JUnit suites.
+   * instead of reflection. The tests will include a {@code main} method and will execute methods
+   * and assertions, but won't be JUnit suites.
    */
   @Option("If true, use JUnit's reflective invocation; if false, use direct method calls")
   public static boolean junit_reflection_allowed = true;

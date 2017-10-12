@@ -36,8 +36,7 @@ import randoop.util.Log;
  *
  * <ul>
  *   <li>all enum constants.
- *   <li>methods of the enum satisfying predicate other than <code>values</code> and <code>valueOf
- *       </code>.
+ *   <li>methods of the enum satisfying predicate other than {@code values} and {@code valueOf}.
  *   <li>methods defined for enum constants that satisfy predicate.
  * </ul>
  *
@@ -190,8 +189,8 @@ public class ReflectionManager {
    * anonymous class for constant e, e.getClass() returns the anonymous class. This is used to check
    * for method overrides (that could include Object methods) within the constant.
    *
-   * <p>Heuristically exclude methods <code>values</code> and <code>valueOf</code> since their
-   * definition is implicit, and we aren't testing Java enum implementation.
+   * <p>Heuristically exclude methods {@code values} and {@code valueOf} since their definition is
+   * implicit, and we aren't testing Java enum implementation.
    *
    * @param visitor the {@link ClassVisitor}
    * @param c the enum class object from which constants and methods are extracted

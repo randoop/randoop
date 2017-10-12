@@ -1218,11 +1218,11 @@ public class RandoopSystemTest {
    * <p>Notes:
    *
    * <ul>
-   *   <li>Setting <code>timeout=5</code> for this test results in multiple <code>ThreadDeath</code>
+   *   <li>Setting {@code timeout=5} for this test results in multiple {@code ThreadDeath}
    *       exceptions during Randoop generation. The test still completes.
    *   <li>Even though the default replacements attempt to suppress calls to methods that throw
-   *       <code>HeadlessException</code>, they still happen. So, this test may fail in a headless
-   *       environment. On Travis CI, this is resolved by running <code>xvfb</code>.
+   *       {@code HeadlessException}, they still happen. So, this test may fail in a headless
+   *       environment. On Travis CI, this is resolved by running {@code xvfb}.
    *   <li>There are differences in coverage between JDK 7 and 8 when running on Travis.
    * </ul>
    */
@@ -1654,7 +1654,8 @@ public class RandoopSystemTest {
     TestRunStatus errorRunDesc = null;
     switch (expectedError) {
       case SOME:
-        assertThat("...has error tests", runStatus.errorTestCount, is(greaterThan(0)));
+        assertThat(
+            "Test suite should have error tests", runStatus.errorTestCount, is(greaterThan(0)));
         String errorBasename = options.getErrorBasename();
         try {
           errorRunDesc = TestRunStatus.runTests(environment, packageName, errorBasename);
@@ -1666,11 +1667,17 @@ public class RandoopSystemTest {
           for (String line : errorRunDesc.processStatus.outputLines) {
             System.err.println(line);
           }
-          fail("all error tests should fail, but " + errorRunDesc.testsSucceed + " passed");
+          fail(
+              "All error tests should fail, but "
+                  + errorRunDesc.testsSucceed
+                  + " error tests passed");
         }
         break;
       case NONE:
-        assertThat("...has no error tests", runStatus.errorTestCount, is(equalTo(0)));
+        if (runStatus.errorTestCount != 0) {
+          // TODO: should output the error tests.  Print the file?
+          fail("Test suite should have no error tests, but has " + runStatus.errorTestCount);
+        }
         break;
       case DONT_CARE:
         break;
