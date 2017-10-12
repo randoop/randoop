@@ -19,7 +19,7 @@ import randoop.types.Type;
  * ordered list of {@link Type} objects, and the output type is a single {@link Type} object.
  *
  * <p>For a non-static method call or instance field access, the first input type is always the
- * declaring class of the method or field. If we have a method <code>int A.m(double d)</code>, it is
+ * declaring class of the method or field. If we have a method {@code int A.m(double d)}, it is
  * represented as an operation m : [A, double] &rarr; int. A value, such as an int or enum constant,
  * can be represented as an operation with no input types, and its own type as the output type. So,
  * the number 5 is represented by the operation 5 : [] &rarr; int. Non-class values are represented
@@ -34,8 +34,8 @@ import randoop.types.Type;
  * <ul>
  *   <li>A public static String field that contains a unique ID for the operation.
  *   <li>A public static parse(String) method that returns a new Operation given a string
- *       description. The following property should hold: <code>
- *           C.parse(x.toParsableString()).equals(x)</code>
+ *       description. The following property should hold: {@code
+ *       C.parse(x.toParsableString()).equals(x)}
  *   <li>Update method OperationParser.parse(String) to parse operations of type C.
  *   <li>Update method OperationParser.getId(Operation) to handle operations of type C.
  * </ul>
@@ -111,8 +111,8 @@ public interface Operation {
   Object getValue();
 
   /**
-   * Determines whether the reflective object in this {@link Operation} satisfies the <code>canUse
-   * </code> criteria of the given {@link ReflectionPredicate}.
+   * Determines whether the reflective object in this {@link Operation} satisfies the {@code canUse}
+   * criteria of the given {@link ReflectionPredicate}.
    *
    * @param reflectionPredicate a {@link ReflectionPredicate} to be checked
    * @return result of applying reflectionPredicate to object

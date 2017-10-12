@@ -20,7 +20,7 @@ import randoop.util.ReflectionExecutor;
  * reflective Method object, and caches values of computed reflective calls.
  *
  * <p>An an {@link Operation}, a call to a non-static method<br>
- * <code>T mname (T1,...,Tn)</code><br>
+ * {@code T mname (T1,...,Tn)}<br>
  * of class C can be represented formally as an operation<br>
  * <i>mname</i>: [<i>C, T1,...,Tn</i>] &rarr; <i>T</i>.<br>
  * If this method is static, then we could write the operation as<br>
@@ -212,7 +212,7 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * Parses a method call in a string descriptor and returns a {@link MethodCall} object. Should
-   * satisfy <code>parse(op.toParsableString()).equals(op)</code> for Operation op.
+   * satisfy {@code parse(op.toParsableString()).equals(op)} for Operation op.
    *
    * @param signature a string descriptor
    * @return the method call operation for the given string descriptor

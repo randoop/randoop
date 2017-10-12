@@ -7,9 +7,8 @@ import plume.UtilMDE;
 
 /**
  * Represents a parameterized type. A <i>parameterized type</i> is a type {@code C<T1,...,Tk>} where
- * {@code C<F1,...,Fk>} is a generic class instantiated by a substitution <code>[Fi:=Ti]</code>, and
- * <code>Ti</code> is a subtype of the upper bound <code>Bi</code> of the type parameter <code>Fi
- * </code>.
+ * {@code C<F1,...,Fk>} is a generic class instantiated by a substitution {@code [Fi:=Ti]}, and
+ * {@code Ti} is a subtype of the upper bound {@code Bi} of the type parameter {@code Fi}.
  *
  * @see GenericClassType
  * @see InstantiatedType

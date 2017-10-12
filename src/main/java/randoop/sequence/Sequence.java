@@ -29,8 +29,7 @@ import randoop.util.WeightedElement;
  * Immutable.
  *
  * <p>A sequence of {@link Statement}s. Each element in the sequence represents a particular {@link
- * Statement}, like a method call <code>Foo f = m(i1...iN)</code> or a declaration <code>int x = 0
- * </code>.
+ * Statement}, like a method call {@code Foo f = m(i1...iN)} or a declaration {@code int x = 0}.
  *
  * <p>This class represents only the structure of a well-formed sequence of statements, and does not
  * contain any information about the runtime behavior of the sequence. The class
@@ -474,7 +473,7 @@ public final class Sequence implements WeightedElement {
 
   /**
    * Counts the number of statements in a list that are not initializations with a primitive type.
-   * For instance <code>int var7 = 0</code>.
+   * For instance {@code int var7 = 0}.
    *
    * @param statements the list of {@link Statement} objects
    * @return count of statements other than primitive initializations

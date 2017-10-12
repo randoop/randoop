@@ -272,8 +272,8 @@ public class GenericClassType extends ParameterizedType {
    * <ol>
    *   <li>the direct superclass,
    *   <li>the direct superinterfaces,
-   *   <li>the type <code>Object</code>, and
-   *   <li>the raw type <code>C</code>
+   *   <li>the type {@code Object}, and
+   *   <li>the raw type {@code C}
    * </ol>
    */
   @Override

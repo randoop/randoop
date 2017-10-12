@@ -8,7 +8,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * The contract: <code>x != null</code>.
+ * The contract: {@code x != null}.
  *
  * <p>Obviously, this is not a property that must hold of all objects in a test. Randoop creates an
  * instance of this contract when, during execution of a sequence, it determines that the above

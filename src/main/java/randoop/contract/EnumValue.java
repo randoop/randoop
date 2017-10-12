@@ -7,8 +7,8 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * A check for a particular value of an <code>Enum</code>. To be used in regression tests when
- * <code>Enum</code> values are created.
+ * A check for a particular value of an {@code Enum}. To be used in regression tests when {@code
+ * Enum} values are created.
  */
 public final class EnumValue implements ObjectContract {
 
