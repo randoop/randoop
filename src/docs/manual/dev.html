@@ -329,18 +329,27 @@ The system tests write logs to the directory
 You can create additional logs (as produced by
 <a href="index.html#option:selection-log"><code>--selection-log</code></a> or
 <a href="index.html#option:operation-history-log"><code>--operation-history-log</code></a>)
-can be set from the command-line by setting the system properties
+by setting the system properties
 <code>randoop.selection.log</code> or
-<code>randoop.operation.history.log</code> on the Gradle command-line.
+<code>randoop.operation.history.log</code> on the Gradle command line.
 For instance:
 </p>
-<pre><code>./gradlew systemtest --tests="*Collection*" -Drandoop.selection.log=selection-log.txt -Drandoop.operation.history.log=operation-log.txt
+
+<pre><code>  ./gradlew systemtest --tests="*Collection*" \
+    -Drandoop.selection.log=selection-log.txt -Drandoop.operation.history.log=operation-log.txt
 </code></pre>
 <p>
-will write <code>build/operation-log.txt</code> and
-<code>build/working-directories/<em>test-name</em>/randoop-log.txt</code>.
+  will create the files
+</p>
+<pre><code>  build/working-directories/<em>test-name</em>/randoop-log.txt
+  build/selection-log.txt
+  build/operation-log.txt
+</code></pre>
+<p>
 Note that this works for system tests only, not for unit tests or other types of
 tests.
+Further note that selection logging can slow down the system tests so much that
+they fail.
 </p>
 
 
