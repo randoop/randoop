@@ -100,10 +100,8 @@ class RandoopRunStatus {
       if (allowRandoopFailure) {
         return getRandoopRunStatus(randoopExitStatus);
       } else {
-        for (String line : randoopExitStatus.outputLines) {
-          System.out.println(line);
-        }
-        fail("Randoop exited badly, exit value = " + randoopExitStatus.exitStatus);
+        System.out.println(randoopExitStatus.dump());
+        fail("Randoop exited badly, see details above.");
       }
     }
 

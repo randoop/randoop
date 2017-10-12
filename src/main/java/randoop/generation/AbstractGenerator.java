@@ -37,7 +37,7 @@ public abstract class AbstractGenerator {
   public static boolean dump_sequences = false;
 
   @RandoopStat(
-      "Number of generation steps (one step consists of an attempt to generate and execute a new, distinct sequence)")
+      "Number of generation steps (each an attempt to generate and execute a new, distinct sequence)")
   public int num_steps = 0;
 
   @RandoopStat("Number of sequences generated.")
@@ -316,6 +316,8 @@ public abstract class AbstractGenerator {
       if (dump_sequences) {
         System.out.printf("Sequence after execution:%n%s%n", eSeq.toString());
         System.out.printf("allSequences.size() = %d%n", numGeneratedSequences());
+        // Selection logging can slow the system tests down so much that they fail!
+        // System.out.println(new Date());
       }
 
       Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());

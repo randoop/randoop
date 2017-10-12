@@ -210,9 +210,8 @@ public class ForwardGenerator extends AbstractGenerator {
     // Clear the active flags of some statements
     for (int i = 0; i < seq.sequence.size(); i++) {
 
-      // If there is no return value, clear its active flag
-      // Cast succeeds because of isNormalExecution clause earlier in this
-      // method.
+      // If there is no return value, clear its active flag.
+      // Cast succeeds because of isNormalExecution clause earlier in this method.
       NormalExecution e = (NormalExecution) seq.getResult(i);
       Object runtimeValue = e.getRuntimeValue();
       if (runtimeValue == null) {
@@ -222,9 +221,9 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       // If it is a call to an observer method, clear the active flag of
-      // its receiver. (This method doesn't side effect the receiver, so
-      // Randoop should use the other shorter sequence that produces the
-      // receiver.)
+      // its receiver. (This method doesn't side effect the receiver or
+      // any argument, so Randoop should use some other shorter sequence
+      // that produces the value.)
       Sequence stmts = seq.sequence;
       Statement stmt = stmts.statements.get(i);
       if (stmt.isMethodCall() && observers.contains(stmt.getOperation())) {
@@ -272,6 +271,7 @@ public class ForwardGenerator extends AbstractGenerator {
   private ExecutableSequence createNewUniqueSequence() {
 
     Log.logLine("-------------------------------------------");
+    // Log.logLine(new Date());
 
     if (this.operations.isEmpty()) {
       return null;
@@ -315,6 +315,7 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logLine("Error selecting inputs for operation: " + operation);
         Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
+        e.printStackTrace();
         sequences = null;
       }
     }
@@ -687,18 +688,24 @@ public class ForwardGenerator extends AbstractGenerator {
       if (isReceiver
           && (chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
               || randomVariable.getType().isPrimitive())) {
-        System.out.printf("Selected null or a primitive as the receiver for a method call.");
+        System.out.println();
+        System.out.println("Selected null or a primitive as the receiver for a method call.");
+        System.out.printf("  operation = %s%n", operation);
+        System.out.printf("  isReceiver = %s%n", isReceiver);
+        System.out.printf("  randomVariable = %s%n", randomVariable);
+        System.out.printf("    getType() = %s%n", randomVariable.getType());
+        System.out.printf("    isPrimitive = %s%n", randomVariable.getType().isPrimitive());
+        System.out.printf("  chosenSeq = {%n%s}%n", chosenSeq);
         System.out.printf(
-            "  " + chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
-        System.out.printf("  " + chosenSeq.getCreatingStatement(randomVariable));
-        System.out.printf("  " + randomVariable.getType().isPrimitive());
-        System.out.printf("  " + randomVariable);
+            "    getCreatingStatement = %s%n", chosenSeq.getCreatingStatement(randomVariable));
+        System.out.printf(
+            "    isNonreceivingInitialization = %s%n",
+            chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
         throw new BugInRandoopException(
             "Selected null or primitive value as the receiver for a method call");
       }
 
-      // [Optimization.] Update optimization-related variables "types" and
-      // "typesToVars".
+      // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {
         // Update types and typesToVars.
         for (int j = 0; j < chosenSeq.size(); j++) {
