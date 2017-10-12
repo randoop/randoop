@@ -1191,7 +1191,6 @@ public class RandoopSystemTest {
     CoverageChecker checker =
         new CoverageChecker(
             options,
-
             //this is actually run but since there is a ThreadDeath, JaCoCo doesn't see it
             "components.DialogRunner.runDialogDemo() ignore");
     generateAndTestWithCoverage(
