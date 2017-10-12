@@ -681,8 +681,12 @@ public final class Sequence implements WeightedElement {
     return this.getStatementsWithInputs().get(index);
   }
 
+  // TODO: This seems wrong.  Most of Randoop works in terms of active statements -- the statements
+  // whose variable that may be chosen.  Then, this only considers the last statement, but it
+  // considers all its variables, even ones that are not active.
   /**
-   * The last statement produces multiple values of type {@code type}. Choose one of them at random.
+   * The last statement may produce multiple values of type {@code type}. Choose one of them at
+   * random.
    */
   public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
     if (type == null) {
@@ -707,6 +711,36 @@ public final class Sequence implements WeightedElement {
     } else {
       return Randomness.randomMember(possibleIndices);
     }
+  }
+
+  /** Choose one of the statements that produces a values of type {@code type}. */
+  public Variable randomVariableForType(Type type, boolean onlyReceivers) {
+    if (type == null) {
+      throw new IllegalArgumentException("type cannot be null.");
+    }
+    List<Integer> possibleIndices = new ArrayList<>();
+    for (int i = 0; i < size(); i++) {
+      Statement s = statements.get(i);
+      if (isActive(i)) {
+        Type outputType = s.getOutputType();
+        if (type.isAssignableFrom(outputType)
+            && (!(onlyReceivers && outputType.isNonreceiverType()))) {
+          possibleIndices.add(i);
+        }
+      }
+    }
+    if (possibleIndices.isEmpty()) {
+      throw new BugInRandoopException(
+          "Failed to select variable with input type " + type + " from sequence " + this);
+    }
+
+    int index;
+    if (possibleIndices.size() == 1) {
+      index = possibleIndices.get(0);
+    } else {
+      index = Randomness.randomMember(possibleIndices);
+    }
+    return new Variable(this, index);
   }
 
   void checkIndex(int i) {

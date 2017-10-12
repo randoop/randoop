@@ -271,6 +271,7 @@ public class ForwardGenerator extends AbstractGenerator {
   private ExecutableSequence createNewUniqueSequence() {
 
     Log.logLine("-------------------------------------------");
+    // Log.logLine(new Date());
 
     if (this.operations.isEmpty()) {
       return null;
@@ -679,10 +680,18 @@ public class ForwardGenerator extends AbstractGenerator {
 
       Log.logLine("chosenSeq: " + chosenSeq);
 
+      // TODO: the last statement might not be active -- it might not create a usable variable of
+      // such a type.  An example is a void method that is called with only null arguments.
+      // More generally, paying attention to only the last statement here seems like a reasonable
+      // design choice, but it is inconsistent with how Randoop behaves in general, and all parts
+      // of Randoop should be made consistent.
+
       // We are not done yet: we have chosen a sequence that yields a value of the required
       // type inputTypes[i], but it may produce more than one such value. Our last random
       // selection step is to select from among all possible values produced by the sequence.
-      Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType, isReceiver);
+      // Variable randomVariable
+      //   = chosenSeq.randomVariableForTypeLastStatement(inputType, isReceiver);
+      Variable randomVariable = chosenSeq.randomVariableForType(inputType, isReceiver);
 
       if (isReceiver
           && (chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
@@ -704,8 +713,7 @@ public class ForwardGenerator extends AbstractGenerator {
             "Selected null or primitive value as the receiver for a method call");
       }
 
-      // [Optimization.] Update optimization-related variables "types" and
-      // "typesToVars".
+      // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {
         // Update types and typesToVars.
         for (int j = 0; j < chosenSeq.size(); j++) {

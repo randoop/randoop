@@ -316,6 +316,8 @@ public abstract class AbstractGenerator {
       if (dump_sequences) {
         System.out.printf("Sequence after execution:%n%s%n", eSeq.toString());
         System.out.printf("allSequences.size() = %d%n", numGeneratedSequences());
+        // Selection logging can slow the system tests down so much that they fail!
+        // System.out.println(new Date());
       }
 
       Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());

@@ -183,6 +183,7 @@ public class ComponentManager {
     SimpleList<Sequence> result =
         gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
+    // Compute relevant literals.
     SimpleList<Sequence> literals = null;
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
@@ -212,8 +213,8 @@ public class ComponentManager {
       }
     }
 
+    // Append literals to result.
     if (literals != null) {
-      // append literals to result
       if (result == null) {
         result = literals;
       } else if (literals == null) {

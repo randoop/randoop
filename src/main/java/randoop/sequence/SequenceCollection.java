@@ -27,8 +27,7 @@ import randoop.util.SimpleList;
  *
  * <p>When creating new sequences, Randoop often needs to search for all the previously-generated
  * sequences that create one or more values of a given type. Since this set can contain thousands of
- * sequences, finding these sequences can can be time-consuming and a bottleneck in generation (as
- * we discovered during profiling).
+ * sequences. Profiling showed that finding these sequences was a bottleneck in generation.
  *
  * <p>This class makes the above search faster by maintaining two data structures:
  *
@@ -221,7 +220,7 @@ public class SequenceCollection {
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
         Log.logLine(
-            "candidate compatibleType ("
+            "candidate compatibleType (isNonreceiverType="
                 + compatibleType.isNonreceiverType()
                 + "): "
                 + compatibleType);
