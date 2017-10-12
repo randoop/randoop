@@ -23,9 +23,9 @@ import randoop.util.predicate.Predicate;
 /**
  * Algorithm template for implementing a test generator.
  *
- * <p>The main generation loop is defined in method <code>explore()</code>, which repeatedly
- * generates a new sequence, determines if it a failing sequence, and stops the process when the
- * time or sequence limit expires. The process of generating a new sequences is left abstract.
+ * <p>The main generation loop is defined in method {@code explore()}, which repeatedly generates a
+ * new sequence, determines if it a failing sequence, and stops the process when the time or
+ * sequence limit expires. The process of generating a new sequences is left abstract.
  *
  * @see ForwardGenerator
  */
@@ -119,7 +119,7 @@ public abstract class AbstractGenerator {
    * @param limits maximum time and number of sequences to generate/output
    * @param componentManager the component manager to use to store sequences during component-based
    *     generation. Can be null, in which case the generator's component manager is initialized as
-   *     <code>new ComponentManager()</code>.
+   *     {@code new ComponentManager()}.
    * @param stopper optional, additional stopping criterion for the generator. Can be null.
    * @param listenerManager manager that stores and calls any listeners to use during generation.
    *     Can be null.

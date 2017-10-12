@@ -91,7 +91,7 @@ public class SubTypeSet {
   }
 
   /**
-   * Returns all the classes in the set that can-be-used-as the given <code>c</code>.
+   * Returns all the classes in the set that can-be-used-as the given {@code c}.
    *
    * @param type the query type
    * @return the set of types that can be used in place of the query type

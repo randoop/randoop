@@ -2,7 +2,7 @@ package randoop.output;
 
 import java.io.IOException;
 
-/** Exception for test output errors in Randoop. */
+/** An exception (usually an IOException) occurred while writing tests to a file. */
 public class RandoopOutputException extends Throwable {
 
   private static final long serialVersionUID = -9104568425559719500L;
@@ -24,5 +24,15 @@ public class RandoopOutputException extends Throwable {
    */
   public RandoopOutputException(String message, IOException cause) {
     super(message, cause);
+  }
+
+  /**
+   * Creates a {@link RandoopOutputException} with the cause.
+   *
+   * @param message the error message
+   * @param cause the exception for the error
+   */
+  public RandoopOutputException(IOException cause) {
+    super(cause);
   }
 }

@@ -194,11 +194,10 @@ public class InstantiatedType extends ParameterizedType {
    * Constructs the superclass type for this parameterized type.
    *
    * <p>Implementation note: we can think of an {@link InstantiatedType} {@code A<T1,...,Tk>} as
-   * being represented as a generic class {@code A<F1,...,Fk>} with a substitution <code>
-   * [ Fi := Ti]</code> for all of the type parameters <code>Fi
-   * </code>. So, when we compute a superclass, we first find the supertype of the generic class
-   * {@code B<F1,...,Fk>}, and then apply the substitution <code>[ Fi := Ti]</code> using the method
-   * {@link GenericClassType#getSuperclass(Substitution)}.
+   * being represented as a generic class {@code A<F1,...,Fk>} with a substitution {@code [ Fi :=
+   * Ti]} for all of the type parameters {@code Fi}. So, when we compute a superclass, we first find
+   * the supertype of the generic class {@code B<F1,...,Fk>}, and then apply the substitution {@code
+   * [ Fi := Ti]} using the method {@link GenericClassType#getSuperclass(Substitution)}.
    *
    * @return the superclass type for this parameterized type
    */
@@ -291,16 +290,14 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * Checks whether this type is an instantiation of the given instantiated type. This is only
-   * possible if this type is {@code A<T1,...,Tk>} where all <code>Ti</code> are instantiated by
-   * ground types (e.g., does not have type variables), the other type is {@code A<S1,...,Sk>}, and
-   * each <code>Ti</code> matches <code>Si</code> for <code>i = 1,...,k
-   * </code> as follows:
+   * possible if this type is {@code A<T1,...,Tk>} where all {@code Ti} are instantiated by ground
+   * types (e.g., does not have type variables), the other type is {@code A<S1,...,Sk>}, and each
+   * {@code Ti} matches {@code Si} for {@code i = 1,...,k} as follows:
    *
    * <ol>
-   *   <li>If <code>Si</code> is the variable <code>X</code> with lower bound <code>L
-   *       </code> and upper bound <code>U</code>, then <code>Ti</code> is a supertype of <code>L
-   *       </code> and a subtype of <code>U</code>
-   *   <li><code>Si</code> is identical to <code>Ti</code>
+   *   <li>If {@code Si} is the variable {@code X} with lower bound {@code L} and upper bound {@code
+   *       U}, then {@code Ti} is a supertype of {@code L} and a subtype of {@code U}
+   *   <li>{@code Si} is identical to {@code Ti}
    * </ol>
    *
    * @param otherType the other {@link InstantiatedType}
@@ -395,8 +392,8 @@ public class InstantiatedType extends ParameterizedType {
    *   <li>{@code D<U1}&theta;{@code ,...,Uk}&theta;{@code >} where {@code D<U1,...,Uk>} is a
    *       supertype of {@code C<F1,...,Fn>}.
    *   <li>{@code C<S1,...,Sn>} where Si <i>contains</i> Ti (JLS section 4.5.1).
-   *   <li>The rawtype <code>C</code>.
-   *   <li><code>Object</code> if generic form is interface with no interfaces as supertypes.
+   *   <li>The rawtype {@code C}.
+   *   <li>{@code Object} if generic form is interface with no interfaces as supertypes.
    * </ol>
    */
   @Override

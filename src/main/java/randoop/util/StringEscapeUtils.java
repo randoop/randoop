@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Escapes and unescapes <code>String</code>s for Java, JavaScript, HTML, XML, and SQL.
+ * Escapes and unescapes {@code String}s for Java, JavaScript, HTML, XML, and SQL.
  *
  * @author Apache Jakarta Turbine
  * @author GenerationJavaCore library
@@ -40,7 +40,7 @@ import java.io.Writer;
 public class StringEscapeUtils {
 
   /**
-   * <code>StringEscapeUtils</code> instances should NOT be constructed in standard programming.
+   * {@code StringEscapeUtils} instances should NOT be constructed in standard programming.
    *
    * <p>Instead, the class should be used as:
    *
@@ -56,11 +56,11 @@ public class StringEscapeUtils {
   // Java and JavaScript
   // --------------------------------------------------------------------------
   /**
-   * Escapes the characters in a <code>String</code> using Java String rules.
+   * Escapes the characters in a {@code String} using Java String rules.
    *
    * <p>Deals correctly with quotes and control-chars (tab, backslash, cr, ff, etc.)
    *
-   * <p>So a tab becomes the characters <code>'\\'</code> and <code>'t'</code>.
+   * <p>So a tab becomes the characters {@code '\\'} and {@code 't'}.
    *
    * <p>The only difference between Java strings and JavaScript strings is that in JavaScript, a
    * single quote must be escaped.
@@ -73,21 +73,20 @@ public class StringEscapeUtils {
    * </pre>
    *
    * @param str string to escape values in, may be null
-   * @return a String with escaped values, <code>null</code> if input string was null
+   * @return a String with escaped values, {@code null} if input string was null
    */
   public static String escapeJava(String str) {
     return escapeJavaStyleString(str, false);
   }
 
   /**
-   * Escapes the characters in a <code>String</code> using Java String rules to a <code>Writer
-   * </code>.
+   * Escapes the characters in a {@code String} using Java String rules to a {@code Writer}.
    *
-   * <p>A <code>null</code> string input has no effect.
+   * <p>A {@code null} string input has no effect.
    *
    * @param out writer to write escaped string into
    * @param str string to escape values in, may be null
-   * @throws IllegalArgumentException if the Writer is <code>null</code>
+   * @throws IllegalArgumentException if the Writer is {@code null}
    * @throws IOException if error occurs on underlying Writer
    * @see #escapeJava(java.lang.String)
    */
@@ -185,10 +184,10 @@ public class StringEscapeUtils {
   }
 
   /**
-   * Returns an upper case hexadecimal <code>String</code> for the given character.
+   * Returns an upper case hexadecimal {@code String} for the given character.
    *
    * @param ch the character to convert
-   * @return an upper case hexadecimal <code>String</code>
+   * @return an upper case hexadecimal {@code String}
    */
   private static String hex(char ch) {
     return Integer.toHexString(ch).toUpperCase();
