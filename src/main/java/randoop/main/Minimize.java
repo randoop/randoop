@@ -209,7 +209,7 @@ public class Minimize extends CommandHandler {
     }
 
     try {
-      // Wait 5 seconds to terminate processes.
+      // Wait 5 more seconds to terminate processes.
       if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
         // Force terminate the process.
         executor.shutdownNow();
