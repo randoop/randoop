@@ -334,11 +334,11 @@ can be set from the command-line by setting the system properties
 <code>randoop.operation.history.log</code> on the Gradle command-line.
 For instance:
 </p>
-<pre><code>  ./gradlew systemtest --tests="*Collection*" -Drandoop.operation.history.log=operation-log.txt
+<pre><code>./gradlew systemtest --tests="*Collection*" -Drandoop.selection.log=selection-log.txt -Drandoop.operation.history.log=operation-log.txt
 </code></pre>
 <p>
-will write the operation log to the file
-<code>build/working-directories/<em>test-name</em>/operation-log.txt</code>
+will write <code>build/operation-log.txt</code> and
+<code>build/working-directories/<em>test-name</em>/randoop-log.txt</code>.
 Note that this works for system tests only, not for unit tests or other types of
 tests.
 </p>
