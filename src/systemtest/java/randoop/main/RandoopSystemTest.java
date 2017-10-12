@@ -235,12 +235,13 @@ public class RandoopSystemTest {
             "java2.util2.ArrayList.remove(int) exclude",
             "java2.util2.ArrayList.removeRange(int, int) exclude",
             "java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
+            "java2.util2.Collections.eq(java.lang.Object, java.lang.Object) ignore",
             "java2.util2.Collections.get(java2.util2.ListIterator, int) exclude",
             "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object) exclude",
             "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator) exclude",
             "java2.util2.Collections.rotate2(java2.util2.List, int) exclude",
             "java2.util2.Collections.swap(java.lang.Object[], int, int) exclude",
-            "java2.util2.Collections.swap(java2.util2.List, int, int) exclude",
+            "java2.util2.Collections.swap(java2.util2.List, int, int) ignore",
             "java2.util2.Collections.synchronizedCollection(java2.util2.Collection, java.lang.Object) exclude",
             "java2.util2.Collections.synchronizedList(java2.util2.List, java.lang.Object) exclude",
             "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object) exclude",
@@ -248,10 +249,10 @@ public class RandoopSystemTest {
             "java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap) exclude",
             "java2.util2.LinkedList.readObject(java.io.ObjectInputStream) exclude",
             "java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
-            "java2.util2.TreeSet.last() exclude",
+            "java2.util2.TreeSet.last() ignore",
             "java2.util2.TreeSet.readObject(java.io.ObjectInputStream) exclude",
             "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) exclude",
-            "java2.util2.TreeSet.tailSet(java.lang.Object) exclude",
+            "java2.util2.TreeSet.tailSet(java.lang.Object) ignore",
             "java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream) exclude"
             // line break to permit easier sorting
             );
@@ -319,20 +320,21 @@ public class RandoopSystemTest {
             "java2.util2.Collections.shuffle(java2.util2.List) exclude",
             "java2.util2.Collections.swap(java.lang.Object[], int, int) exclude",
             "java2.util2.Hashtable.readObject(java.io.ObjectInputStream) exclude",
-            "java2.util2.Hashtable.rehash() exclude",
+            "java2.util2.Hashtable.rehash() ignore", // Travis
             "java2.util2.Hashtable.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.LinkedList.readObject(java.io.ObjectInputStream) exclude",
             "java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.Observable.clearChanged() exclude",
             "java2.util2.Observable.setChanged() exclude",
-            "java2.util2.Stack.empty() exclude",
-            "java2.util2.Stack.push(java.lang.Object) exclude",
-            "java2.util2.TreeMap.addAllForTreeSet(java2.util2.SortedSet, java.lang.Object) exclude",
+            "java2.util2.Stack.empty() ignore", // Travis
+            "java2.util2.Stack.push(java.lang.Object) ignore", // Travis
+            "java2.util2.TreeMap.addAllForTreeSet(java2.util2.SortedSet, java.lang.Object) ignore",
             "java2.util2.TreeMap.colorOf(java2.util2.TreeMap.Entry) exclude",
-            "java2.util2.TreeMap.decrementSize() exclude",
-            "java2.util2.TreeMap.deleteEntry(java2.util2.TreeMap.Entry) exclude",
+            "java2.util2.TreeMap.decrementSize() ignore", // Travis
+            "java2.util2.TreeMap.deleteEntry(java2.util2.TreeMap.Entry) ignore", // Travis
             "java2.util2.TreeMap.fixAfterDeletion(java2.util2.TreeMap.Entry) exclude",
             "java2.util2.TreeMap.fixAfterInsertion(java2.util2.TreeMap.Entry) exclude",
+            "java2.util2.TreeMap.getCeilEntry(java.lang.Object) ignore", // Travis
             "java2.util2.TreeMap.getPrecedingEntry(java.lang.Object) exclude",
             "java2.util2.TreeMap.leftOf(java2.util2.TreeMap.Entry) exclude",
             "java2.util2.TreeMap.parentOf(java2.util2.TreeMap.Entry) exclude",
@@ -350,6 +352,7 @@ public class RandoopSystemTest {
             "java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.Vector.removeRange(int, int) exclude",
             "java2.util2.Vector.writeObject(java.io.ObjectOutputStream) exclude",
+            "java2.util2.WeakHashMap.eq(java.lang.Object, java.lang.Object) ignore", // Travis
             "java2.util2.WeakHashMap.removeMapping(java.lang.Object) exclude"
             // end of list (line break to permit easier sorting)
             );
