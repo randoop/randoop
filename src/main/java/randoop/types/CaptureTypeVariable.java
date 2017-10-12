@@ -90,19 +90,19 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * <p>Creates an upper bound on a type variable resulting from a capture conversion (JLS section
    * 5.1.10) in the case that a wildcard has an upper bound other than Object. In particular, each
-   * object represents a bound on a variable <code>Si</code> in a parameterized type {@code
-   * C<S1,...,Sn>} defined as {@code glb(Bi, Ui[Ai:=Si])} where
+   * object represents a bound on a variable {@code Si} in a parameterized type {@code C<S1,...,Sn>}
+   * defined as {@code glb(Bi, Ui[Ai:=Si])} where
    *
    * <ul>
-   *   <li><code>Ui</code> is the upper bound on the type variable <code>Ai</code> in the declared
-   *       class {@code C<A1,...,An>},
-   *   <li><code>glb(S, T)</code> for types <code>S</code> and <code>T</code> is the intersection
-   *       type {@code S & T}.
+   *   <li>{@code Ui} is the upper bound on the type variable {@code Ai} in the declared class
+   *       {@code C<A1,...,An>},
+   *   <li>{@code glb(S, T)} for types {@code S} and {@code T} is the intersection type {@code S &
+   *       T}.
    * </ul>
    *
-   * The JLS states that if <code>S</code> and <code>T</code> are both class types not related as
-   * subtypes, then the greatest lower bound of the two types is a compiler error. Technically it is
-   * the null type.
+   * The JLS states that if {@code S} and {@code T} are both class types not related as subtypes,
+   * then the greatest lower bound of the two types is a compiler error. Technically it is the null
+   * type.
    *
    * @param typeParameter the formal type parameter of the generic type
    * @param substitution the capture conversion substitution
