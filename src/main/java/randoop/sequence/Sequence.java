@@ -398,9 +398,13 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * A set of bits, where there is one bit associated with each index. Active flags are used during
-   * generation, to determine what values in an existing sequence are useful to be used as inputs
-   * when creating a new sequence out of the existing one.
+   * A set of bits, where there is one bit associated with each index (that is, each statement in
+   * the sequence). Active flags are used during generation, to determine what values in an existing
+   * sequence are useful to be used as inputs when creating a new sequence out of the existing one.
+   *
+   * <p>Note that each statement's result is treated as active or not. If a statement might
+   * side-effect a variable's value, the variable name is used from the previous statement that
+   * defined it.
    */
   private BitSet activeFlags;
 
