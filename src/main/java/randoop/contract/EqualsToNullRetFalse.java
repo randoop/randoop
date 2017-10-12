@@ -7,7 +7,7 @@ import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/** The contract: <code>x0.equals(null)==false</code>. */
+/** The contract: {@code x0.equals(null)==false}. */
 public final class EqualsToNullRetFalse implements ObjectContract {
   private static final EqualsToNullRetFalse instance = new EqualsToNullRetFalse();
 

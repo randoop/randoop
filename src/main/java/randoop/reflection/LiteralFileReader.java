@@ -32,8 +32,8 @@ import randoop.util.RecordProcessor;
  * <ul>
  *   <li>classname is the fully-qualified name of a valid class. More specifically,
  *       TypeNames.getTypeForName(classname) must return a valid Class object.
- *   <li>Each type:value pair describes the type and value of a literal (for example, <code>int:3
- *       </code>).
+ *   <li>Each type:value pair describes the type and value of a literal (for example, {@code
+ *       int:3}).
  * </ul>
  *
  * Blank lines and comment lines (lines starting with "#") are ignored, both between records and

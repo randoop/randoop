@@ -10,9 +10,9 @@ import randoop.reflection.TypeNames;
  * names. For example:
  *
  * <ul>
- *   <li><code>int</code>
- *   <li><code>int,double,java.lang.String</code>
- *   <li><code>randoop.operation.Operation</code>
+ *   <li>{@code int}
+ *   <li>{@code int,double,java.lang.String}
+ *   <li>{@code randoop.operation.Operation}
  * </ul>
  */
 class TypeArguments {

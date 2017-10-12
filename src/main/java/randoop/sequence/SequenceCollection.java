@@ -40,9 +40,9 @@ import randoop.util.SimpleList;
  *       relationships among the types in the set.
  * </ul>
  *
- * To find all the sequences that create values of a given type, Randoop first uses the <code>
- * SubTypeSet</code> to find the set <code>S</code> of feasible subtypes in set of sequences, and
- * returns the range of <code>S</code> in the sequence map.
+ * To find all the sequences that create values of a given type, Randoop first uses the {@code
+ * SubTypeSet} to find the set {@code S} of feasible subtypes in set of sequences, and returns the
+ * range of {@code S} in the sequence map.
  */
 public class SequenceCollection {
 
