@@ -111,6 +111,7 @@ public class ExecutableSequence {
 
   private static PrintStream ps_output_buffer = new PrintStream(output_buffer);
 
+  /* Maps values to the variables that hold them. */
   private IdentityMultiMap<Object, Variable> variableMap;
 
   /**
