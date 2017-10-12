@@ -57,7 +57,7 @@ public class ForwardExplorerTests2 {
 
   /**
    * The input scenario for this test results in the generation of a sequence with repeated calls to
-   * a non-terminating method. If <code>--usethreads</code> is set, the generator is not able to
+   * a non-terminating method. If {@code --usethreads} is set, the generator is not able to
    * interrupt the executor, and will never terminate. Otherwise, a timeout exception will be thrown
    * and the executor will throw an exception, which since it is not the last statement is
    * considered "flaky".

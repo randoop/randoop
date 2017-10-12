@@ -14,10 +14,10 @@ import randoop.types.TypeTuple;
  * <p>Implementing classes provide two key pieces functionality:
  *
  * <ul>
- *   <li>A method <code>{@link #evaluate}(Object... objects)</code> that determines if the given
+ *   <li>A method {@link #evaluate}{@code (Object... objects)} that determines if the given
  *       object(s) satisfy the property.
- *   <li>A method <code>{@link #toCodeString}()</code> that emits Java code that can be inserted
- *       into a unit test to check for the given property.
+ *   <li>A method {@link #toCodeString}{@code ()} that emits Java code that can be inserted into a
+ *       unit test to check for the given property.
  * </ul>
  *
  * <p>See the various implementing classes for examples (for an example, see {@link
@@ -42,12 +42,11 @@ public interface ObjectContract {
   /**
    * Evaluates the contract on the given values.
    *
-   * <p>When calling this method during execution of a test, Randoop guarantees that <code>objects
-   * </code> does not contain any <code>null</code> objects, and that <code>
-   * objects.length == getArity()</code>.
+   * <p>When calling this method during execution of a test, Randoop guarantees that {@code objects}
+   * does not contain any {@code null} objects, and that {@code objects.length == getArity()}.
    *
-   * <p>This method should return <code>true</code> if the contract was satisfied and <code>false
-   * </code> if it was violated.
+   * <p>This method should return {@code true} if the contract was satisfied and {@code false} if it
+   * was violated.
    *
    * @param objects the actual parameters to this contract
    * @return true if this contract evaluates to true for the given values, and false otherwise
@@ -58,13 +57,12 @@ public interface ObjectContract {
   // TODO: What is an example of a contract for which throwing an exception is success?
   // I don't see one in the code.  Can this be removed?
   /**
-   * Communicates to Randoop how to interpret exceptional behavior from the <code>evaluate</code>
-   * method.
+   * Communicates to Randoop how to interpret exceptional behavior from the {@code evaluate} method.
    *
-   * <p>If this method returns <code>true</code>, Randoop will interpret an exception that escapes
-   * during evaluation as a failure of the contract.
+   * <p>If this method returns {@code true}, Randoop will interpret an exception that escapes during
+   * evaluation as a failure of the contract.
    *
-   * <p>If the method returns <code>false</code>, Randoop will interpret an exception as passing
+   * <p>If the method returns {@code false}, Randoop will interpret an exception as passing
    * behavior.
    *
    * @return true if an exception in evaluating this contract should be interpreted as a failure,
