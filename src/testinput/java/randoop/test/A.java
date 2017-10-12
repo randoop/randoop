@@ -32,7 +32,7 @@ public class A {
     return 1;
   }
 
-  //overloaded function a3
+  // overloaded function a3
   public int a3(B b) {
     return 3;
   }

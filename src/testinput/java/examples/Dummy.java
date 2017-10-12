@@ -2,9 +2,7 @@ package examples;
 
 import java.util.Objects;
 
-/**
- * Simple class that should behave itself during regression tests.
- */
+/** Simple class that should behave itself during regression tests. */
 public class Dummy {
 
   private int theNumber;
@@ -21,7 +19,7 @@ public class Dummy {
     if (!(obj instanceof Dummy)) {
       return false;
     }
-    Dummy other = (Dummy)obj;
+    Dummy other = (Dummy) obj;
     return theNumber == other.theNumber;
   }
 

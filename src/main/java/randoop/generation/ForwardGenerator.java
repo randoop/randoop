@@ -298,7 +298,7 @@ public class ForwardGenerator extends AbstractGenerator {
           operation = null;
         }
       }
-      if (operation == null) { //failed to instantiate generic
+      if (operation == null) { // failed to instantiate generic
         return null;
       }
     }

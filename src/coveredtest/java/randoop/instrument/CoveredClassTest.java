@@ -114,9 +114,9 @@ public class CoveredClassTest {
   public void testNameFilter() {
     System.out.println("name filter");
     GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
-    require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); //null;
+    require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); // null;
     GenInputsAbstract.require_covered_classes =
-        null; //"tests/instrument/testcase/coveredclasses.txt";
+        null; // "tests/instrument/testcase/coveredclasses.txt";
     // setup classes
 
     ForwardGenerator testGenerator;

@@ -36,7 +36,7 @@ public class TestUtils {
    * @param file the file to write the log to
    */
   @SuppressWarnings(
-      "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer.  Requires work on command-line arguments.
+      "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer; change command-line args
   public static void setRandoopLog(String file) {
     if (debug) {
       System.out.println("setRandoopLog(" + file + ")");

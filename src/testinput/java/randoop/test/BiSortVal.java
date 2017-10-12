@@ -161,7 +161,7 @@ public class BiSortVal {
   /** Print out the nodes in the binary tree in infix order. */
   public void inOrder() {
     if (left != null) left.inOrder();
-    //System.out.println(value + " " + hashCode());
+    // System.out.println(value + " " + hashCode());
     if (right != null) right.inOrder();
   }
 

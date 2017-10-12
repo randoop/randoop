@@ -1,6 +1,6 @@
 package randoop.literals;
 
-//Class for testing literal files.
+// Class for testing literal files.
 public class A {
 
   public A(int i) {

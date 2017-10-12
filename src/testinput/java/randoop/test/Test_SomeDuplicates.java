@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 /* This class is a resource for ExtractDuplicatedFailingTestsTests.
  */
 public class Test_SomeDuplicates extends TestCase {
-  public Test_SomeDuplicates() { //empty
+  public Test_SomeDuplicates() { // empty
   }
 
   public void test1() throws Exception {
@@ -13,13 +13,13 @@ public class Test_SomeDuplicates extends TestCase {
     f.foo();
   }
 
-  public void test1dup1() throws Exception { //same bug as test1
+  public void test1dup1() throws Exception { // same bug as test1
     Faulty1 f = new Faulty1();
     f.toString();
     f.foo();
   }
 
-  public void test1dup2() throws Exception { //same bug as test1
+  public void test1dup2() throws Exception { // same bug as test1
     Faulty1 f = new Faulty1();
     f.toString();
     f.foo1();
@@ -49,7 +49,7 @@ public class Test_SomeDuplicates extends TestCase {
     }
 
     void bar() {
-      //empty
+      // empty
     }
 
     void foo1() {

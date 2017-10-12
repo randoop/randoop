@@ -1,8 +1,8 @@
 package generation;
 
 /**
- * Emulates an example from ejml library in Pascali corpus.
- * Results in reflection exception due to bad types after application of copy method.
+ * Emulates an example from ejml library in Pascali corpus. Results in reflection exception due to
+ * bad types after application of copy method.
  */
 public class Dim6Matrix implements Matrix {
 
@@ -21,6 +21,6 @@ public class Dim6Matrix implements Matrix {
 
   @Override
   public <T extends Matrix> T copy() {
-    return (T)new Dim6Matrix(this);
+    return (T) new Dim6Matrix(this);
   }
 }

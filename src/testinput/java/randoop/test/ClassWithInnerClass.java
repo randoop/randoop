@@ -1,9 +1,6 @@
 package randoop.test;
 
-/**
- * Input class
- * Inspired by a bug report from Martin Schaef
- */
+/** Input class inspired by a bug report from Martin Schaef. */
 public class ClassWithInnerClass {
   private int anInt;
 
@@ -34,5 +31,4 @@ public class ClassWithInnerClass {
   private void bar(A a) {
     a.toString();
   }
-
 }

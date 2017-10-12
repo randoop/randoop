@@ -4,7 +4,7 @@ import randoop.ExceptionalExecution;
 import randoop.sequence.ExecutableSequence;
 import randoop.test.predicate.ExceptionPredicate;
 
-//Dummy failure predicate -- everything fails! --- for tests
+// Dummy failure predicate -- everything fails! --- for tests
 public class DummyFailurePredicate implements ExceptionPredicate {
 
   @Override

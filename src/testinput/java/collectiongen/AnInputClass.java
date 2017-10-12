@@ -2,9 +2,7 @@ package collectiongen;
 
 import java.util.Objects;
 
-/**
- * An input class for generating collections
- */
+/** An input class for generating collections */
 public class AnInputClass {
   public final String string;
 
@@ -17,7 +15,7 @@ public class AnInputClass {
     if (!(obj instanceof AnInputClass)) {
       return false;
     }
-    AnInputClass aic = (AnInputClass)obj;
+    AnInputClass aic = (AnInputClass) obj;
     return this.string.equals(aic.string);
   }
 

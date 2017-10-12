@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * Input class for attempting to create a flaky test due to methods using a file.
- * One method creates the file and the others read from it.
+ * Input class for attempting to create a flaky test due to methods using a file. One method creates
+ * the file and the others read from it.
  */
 public class FlakyFileDependency {
 
@@ -22,7 +22,7 @@ public class FlakyFileDependency {
     if (!(object instanceof FlakyFileDependency)) {
       return false;
     }
-    FlakyFileDependency fileDependency = (FlakyFileDependency)object;
+    FlakyFileDependency fileDependency = (FlakyFileDependency) object;
     return this.name.equals(fileDependency.name);
   }
 
@@ -57,5 +57,4 @@ public class FlakyFileDependency {
   public boolean exists() {
     return (new File(name).exists());
   }
-
 }

@@ -291,7 +291,7 @@ public class OperationModelTest {
         assertTrue("is generic", operation.getOutputType().isGeneric());
       }
     }
-    //fail("incomplete");
+    // fail("incomplete");
   }
 
   @Test

@@ -278,7 +278,7 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean isGeneric() {
-    if (super.isGeneric()) { //enclosing type is generic
+    if (super.isGeneric()) { // enclosing type is generic
       return true;
     }
     for (TypeArgument argument : argumentList) {

@@ -1,13 +1,13 @@
 package randoop.test.issta2006;
 
-//Taken from JPF examples directory.
+// Taken from JPF examples directory.
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-//XXX not implemented, but keeping because historical and might want to implement eventually
-//import randoop.NotPartOfState;
+// XXX not implemented, but keeping because historical and might want to implement eventually
+// import randoop.NotPartOfState;
 
 // FibHeap.java
 // from : http://sciris.shu.edu/~borowski/Puzzle/Puzzle.html
@@ -25,7 +25,7 @@ public class FibHeap {
   //    --------------------------------------------------------------------
   private static void outputTestSequence(int number) {}
 
-  //public native boolean checkAbstractState(int which);
+  // public native boolean checkAbstractState(int which);
 
   // XXX see note above
   //   @NotPartOfState
@@ -84,8 +84,8 @@ public class FibHeap {
       temp = m.child;
       res += (temp == n) ? "1" : "0";
     }
-    //For Basic Block Coverage
-    //END comment here
+    // For Basic Block Coverage
+    // END comment here
 
     if (!tests.contains(res)) {
       tests.add(res);
@@ -97,12 +97,12 @@ public class FibHeap {
     return 0;
   }
 
-  private static void gen(int br, Node n, Node m) { //SPECIFY
-    int c = gen_native(br, n, m); //SPECIFY
+  private static void gen(int br, Node n, Node m) { // SPECIFY
+    int c = gen_native(br, n, m); // SPECIFY
     if (c != 0) outputTestSequence(c);
   }
 
-  //-------------------------------------------------------------------
+  // -------------------------------------------------------------------
 
   private void cascadingCut(Node y) {
     Node z = y.parent;
@@ -201,7 +201,7 @@ public class FibHeap {
 
   public void decreaseKey(Node x, int c) {
     if (c > x.cost) {
-      //System.err.println("Error: new key is greater than current key.");
+      // System.err.println("Error: new key is greater than current key.");
       return;
     }
     x.cost = c;
@@ -212,7 +212,7 @@ public class FibHeap {
       cascadingCut(y);
     }
 
-    //System.out.println("min = " + min);
+    // System.out.println("min = " + min);
 
     if (x.cost < min.cost) min = x;
   }

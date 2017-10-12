@@ -55,7 +55,8 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
               + " must match contract arity "
               + contract.getArity();
       // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
-      //   Randomness.selectionLog.log("ContractChecker.apply: considering contract=%s%n", contract);
+      //   Randomness.selectionLog.log("ContractChecker.apply: considering contract=%s%n",
+      //       contract);
       // }
       if (typesMatch(contract.getInputTypes(), tuple)) {
         if (Log.isLoggingOn()) {

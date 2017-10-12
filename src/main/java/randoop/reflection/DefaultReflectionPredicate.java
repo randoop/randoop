@@ -95,14 +95,14 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    //This is a special case handled here to avoid printing the reason for exclusion
+    // This is a special case handled here to avoid printing the reason for exclusion
     // Most Object methods are excluded. Allow getClass. Equals is used in contracts.
     // The rest are problematic (toString), involve threads, waiting, or are somehow problematic.
     if (m.getDeclaringClass().equals(java.lang.Object.class)) {
       return m.getName().equals("getClass");
     }
 
-    //This is a special case handled here to avoid printing the reason for exclusion
+    // This is a special case handled here to avoid printing the reason for exclusion
     if (m.getDeclaringClass().equals(java.lang.Thread.class)) {
       return false;
     }

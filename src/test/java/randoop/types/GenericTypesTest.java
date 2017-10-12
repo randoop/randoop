@@ -92,7 +92,7 @@ public class GenericTypesTest {
 
   @Test
   public void testParameterizedBounds() {
-    //being lazy, rather than building substitution, use instantiate
+    // being lazy, rather than building substitution, use instantiate
 
     Class<?> c1 = Parameterized1.class;
     GenericClassType a1 = GenericClassType.forClass(c1);
@@ -233,8 +233,8 @@ public class GenericTypesTest {
   @Test
   public void wildcardAssignabilityTest() {
     // List<? extends Number> list;
-    //ArrayList<? extends Number> arrayList = new ArrayList<>();
-    //list = arrayList;
+    // ArrayList<? extends Number> arrayList = new ArrayList<>();
+    // list = arrayList;
 
     ParameterBound bound = ParameterBound.forType(ReferenceType.forClass(Number.class));
     WildcardType wildcardType = new WildcardType(bound, true);

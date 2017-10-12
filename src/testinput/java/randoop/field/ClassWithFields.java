@@ -8,7 +8,7 @@ public class ClassWithFields {
   public ClassWithFields() {}
 
   public int oneField = 1;
-  //public int twoField; //not here!!!!
+  // public int twoField; //not here!!!!
   public int threeField = 3;
   public static int fourField = 4;
   public static final int FIVEFIELD = 5;

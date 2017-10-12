@@ -26,7 +26,7 @@ public class BinTree {
     root = null;
   }
 
-  //----
+  // ----
   private static void outputTestSequence(int number) {}
 
   public static Set<String> tests = new HashSet<>();
@@ -37,8 +37,8 @@ public class BinTree {
 
   public static int gen_native(int br, BTNode n0, int x, BTNode n1, BTNode n2) {
     String res = br + ",";
-    //For Basic Block Coverage
-    //START comment here
+    // For Basic Block Coverage
+    // START comment here
 
     BTNode temp;
     if (n0 == null) {
@@ -63,7 +63,7 @@ public class BinTree {
       temp = n2.right;
       res += (temp == null) ? "BR-" : "BR+";
     }
-    //End comment here
+    // End comment here
 
     if (!tests.contains(res)) {
       tests.add(res);
@@ -80,7 +80,7 @@ public class BinTree {
     if (c != 0) outputTestSequence(c);
   }
 
-  //----
+  // ----
 
   public void add(int x) {
     BTNode current = root;
@@ -138,7 +138,7 @@ public class BinTree {
   public boolean remove(int x) {
     BTNode current = root;
     BTNode parent = null;
-    boolean branch = true; //true =left, false =right
+    boolean branch = true; // true =left, false =right
 
     while (current != null) {
 
@@ -157,7 +157,8 @@ public class BinTree {
           }
         }
 
-        //        System.out.println("Remove: current "+current.value+" parent "+parent.value+" bigson "+bigson.value);
+        // System.out.println(
+        //     "Remove: current "+current.value+" parent "+parent.value+" bigson "+bigson.value);
         if (parent != null) {
           if (branch) {
             gen(10, current, x, bigson, parent);

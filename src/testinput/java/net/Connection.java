@@ -2,15 +2,17 @@ package net;
 
 /**
  * Note: this file is a slighly modified version of the tutorial file for Toradocu, and was used to
- * generate the {@code net_Connection} class at the top level of the testinput source set.
- * If this class is modified, it should be run through Toradocu again to generate that input file
- * again.
+ * generate the {@code net_Connection} class at the top level of the testinput source set. If this
+ * class is modified, it should be run through Toradocu again to generate that input file again.
+ *
+ * <pre>{@code
  * java -jar ../build/libs/toradocu-1.0-all.jar org.toradocu.Toradocu \
  * --target-class net.Connection \
  * --source-dir src --class-dir src \
  * --condition-translator-output ConnectionConditions.json \
  * --oracle-generation false \
  * --export-conditions connection-conditions
+ * }</pre>
  */
 public class Connection {
 
@@ -57,7 +59,7 @@ public class Connection {
   }
 
   /**
-   * @param code  the code, must be positive
+   * @param code the code, must be positive
    * @throws IllegalStateException if the connection is not open
    */
   public void send(int code) {

@@ -417,7 +417,7 @@ public class Minimize extends CommandHandler {
           // Use simplification of this statement and continue with next statement.
           replacementFound = true;
 
-          // Assertions are never simplified, only removed. If currStmt is an assertion, then stmt is null.
+          // Assertions are never simplified, only removed. If currStmt is an assertion, stmt=null.
           storeValueFromAssertion(currStmt, primitiveValues, primitiveAndWrappedTypes);
           break; // break replacement loop; continue statements loop.
         } else {
@@ -429,7 +429,7 @@ public class Minimize extends CommandHandler {
       }
 
       if (!replacementFound) {
-        // No correct simplification found. Add back the original statement to the list of statements.
+        // No simplification found. Add back the original statement to the list of statements.
         statements.add(i, currStmt);
       }
     }
@@ -790,7 +790,7 @@ public class Minimize extends CommandHandler {
       }
 
       // Simplify class type names, method call names, and field names.
-      //XXX this should be handled by a single visitor that uses the full set of types
+      // XXX this should be handled by a single visitor that uses the full set of types
       new ClassTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
       new MethodTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
       new FieldAccessTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);

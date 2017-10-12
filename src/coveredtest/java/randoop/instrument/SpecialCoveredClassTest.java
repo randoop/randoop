@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.lang.ClassNotFoundException;
-import java.lang.NoSuchMethodException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;

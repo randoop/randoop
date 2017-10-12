@@ -207,7 +207,7 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
 
-    //TODO after changed types to ordered set in OperationModel, failing on Travis, but not locally
+    // TODO after changed types to ordered set in OperationModel, failing on Travis, but not locally
     coverageChecker.ignore("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
     coverageChecker.ignore("java2.util2.Collections.synchronizedSortedSet(java2.util2.SortedSet)");
     coverageChecker.ignore("java2.util2.TreeSet.first()");
@@ -235,7 +235,7 @@ public class RandoopSystemTest {
     options.addTestClass("java2.util2.LinkedList");
     options.addTestClass("java2.util2.Collections");
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
-    options.setOption("operation-history-log", "-"); //log to stdout
+    options.setOption("operation-history-log", "-"); // log to stdout
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
@@ -535,7 +535,7 @@ public class RandoopSystemTest {
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
-    //XXX after adding compile check this method did not appear in JDK7 runs
+    // XXX after adding compile check this method did not appear in JDK7 runs
     coverageChecker.ignore("randoop.test.LongString.tooLongString()");
     generateAndTestWithCoverage(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
@@ -949,7 +949,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("ExRegression");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
-    //TODO figure out why this method not covered
+    // TODO figure out why this method not covered
     coverageChecker.ignore("instrument.testcase.A.toString()");
     coverageChecker.exclude("instrument.testcase.C.getValue()");
     coverageChecker.exclude("instrument.testcase.C.isZero()");
@@ -1256,7 +1256,7 @@ public class RandoopSystemTest {
 
     CoverageChecker checker = new CoverageChecker(options);
 
-    //this is actually run but since there is a ThreadDeath, JaCoCo doesn't see it
+    // this is actually run but since there is a ThreadDeath, JaCoCo doesn't see it
     checker.ignore("components.DialogRunner.runDialogDemo()");
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);

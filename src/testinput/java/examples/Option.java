@@ -1,9 +1,6 @@
 package examples;
 
-/**
- * Input class for generation of assertions on enum types.
- * Related to issue #87.
- */
+/** Input class for generation of assertions on enum types. Related to issue #87. */
 public class Option {
 
   public enum OptionType {

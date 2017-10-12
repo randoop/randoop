@@ -2,9 +2,7 @@ package generror;
 
 import java.util.Comparator;
 
-/**
- * Structure borrowed from Guava com.google.common.primitives
- */
+/** Structure borrowed from Guava com.google.common.primitives */
 public final class Ints {
 
   public static Comparator<int[]> lexicographicalComparator() {

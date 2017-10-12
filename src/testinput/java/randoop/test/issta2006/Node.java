@@ -3,7 +3,7 @@ package randoop.test.issta2006;
 import java.util.ArrayList;
 import java.util.List;
 
-//Taken from JPF examples directory.
+// Taken from JPF examples directory.
 
 public class Node {
 

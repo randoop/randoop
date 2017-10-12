@@ -1,8 +1,6 @@
 package collectiongen;
 
-/**
- * Enum for generating EnumSets
- */
+/** Enum for generating EnumSets */
 public enum Day {
   MONDAY,
   TUESDAY,

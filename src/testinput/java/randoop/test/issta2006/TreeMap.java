@@ -3,7 +3,7 @@ package randoop.test.issta2006;
 import java.util.HashSet;
 import java.util.Set;
 
-//Taken from JPF examples directory.
+// Taken from JPF examples directory.
 
 public class TreeMap {
 
@@ -26,7 +26,7 @@ public class TreeMap {
     size--;
   }
 
-  //--------------------------------------------------------------------
+  // --------------------------------------------------------------------
   private static void outputTestSequence(int number) {}
 
   private native boolean checkAbstractState(int which);
@@ -38,8 +38,8 @@ public class TreeMap {
   private static int gen_native(int br, Entry e, Entry root) {
 
     String res = br + ",";
-    //For Basic Block Coverage
-    //START comment here
+    // For Basic Block Coverage
+    // START comment here
 
     if (e == null) {
       res += "entry=null";
@@ -54,26 +54,26 @@ public class TreeMap {
       res += (e_color == false) ? "RED" : "BLACK";
       res += (e == root) ? "root" : "";
     }
-    //For Basic Block Coverage
-    //END comment here
+    // For Basic Block Coverage
+    // END comment here
 
     if (!tests.contains(res)) {
       tests.add(res);
       // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
       System.out.println("Test case number " + tests.size() + " for '" + res + "': ");
-      //System.out.println("tree = " + tree);
+      // System.out.println("tree = " + tree);
       counter = tests.size();
       return tests.size();
     }
     return 0;
   }
 
-  void gen(int branch, Entry e) { //SPECIFY
-    int c = gen_native(branch, e, root); //SPECIFY
+  void gen(int branch, Entry e) { // SPECIFY
+    int c = gen_native(branch, e, root); // SPECIFY
     if (c != 0) outputTestSequence(c);
   }
 
-  //-------------------------------------------------------------------
+  // -------------------------------------------------------------------
 
   public TreeMap() {}
 
@@ -140,9 +140,9 @@ public class TreeMap {
   }
 
   public void print() {
-    //System.out.println("*******************************************");
+    // System.out.println("*******************************************");
     if (root != null) root.print(0);
-    //System.out.println("*******************************************");
+    // System.out.println("*******************************************");
   }
 
   @Override
@@ -222,21 +222,21 @@ public class TreeMap {
 
     public void print(int k) {
       for (int i = 0; i < k; i++) {
-        //System.out.print(" ");
+        // System.out.print(" ");
       }
-      //System.out.println(key + (color == BLACK ? "(B)" : "(R)"));
+      // System.out.println(key + (color == BLACK ? "(B)" : "(R)"));
       for (int i = 0; i < k; i++) {
-        //System.out.print(" ");
+        // System.out.print(" ");
       }
-      //System.out.println("L:");
+      // System.out.println("L:");
       if (left != null) {
         left.print(k + 2);
       }
 
       for (int i = 0; i < k; i++) {
-        //System.out.print(" ");
+        // System.out.print(" ");
       }
-      //System.out.println("R:");
+      // System.out.println("R:");
       if (right != null) right.print(k + 2);
     }
   }
@@ -447,7 +447,7 @@ public class TreeMap {
         Entry sib = rightOf(parentOf(x));
 
         if (colorOf(sib) == RED) {
-          //assert false;
+          // assert false;
           gen(34, x);
           setColor(sib, BLACK);
           setColor(parentOf(x), RED);

@@ -70,7 +70,7 @@ public class BiSort {
       System.out.println("Time to sort backward = " + (end1 - start1) / 1000.0);
       System.out.println("Total: " + (end1 - start0) / 1000.0);
     }
-    //System.out.println("Done!");
+    // System.out.println("Done!");
   }
 
   /**

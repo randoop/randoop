@@ -6,9 +6,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * The primary input class for generating collections
- */
+/** The primary input class for generating collections */
 public class InputClass {
   public static boolean checkDayIn(Day day, EnumSet<Day> days) {
     return days.contains(day);
@@ -34,7 +32,8 @@ public class InputClass {
     return "Oh, what a " + e + "!";
   }
 
-  public static boolean checkMemberOfAnInputClassCollection(AnInputClass aic, Collection<AnInputClass> set) {
+  public static boolean checkMemberOfAnInputClassCollection(
+      AnInputClass aic, Collection<AnInputClass> set) {
     return set.contains(aic);
   }
 
@@ -50,15 +49,18 @@ public class InputClass {
     return list.contains(aic);
   }
 
-  public static boolean checkMemberOfANonInputClassCollection(ANonInputClass aic, Collection<ANonInputClass> set) {
+  public static boolean checkMemberOfANonInputClassCollection(
+      ANonInputClass aic, Collection<ANonInputClass> set) {
     return set.contains(aic);
   }
 
-  public static boolean checkMemberOfANonInputClassSet(ANonInputClass aic, Set<ANonInputClass> set) {
+  public static boolean checkMemberOfANonInputClassSet(
+      ANonInputClass aic, Set<ANonInputClass> set) {
     return set.contains(aic);
   }
 
-  public static boolean checkMemberOfANonInputClassList(ANonInputClass aic, List<ANonInputClass> list) {
+  public static boolean checkMemberOfANonInputClassList(
+      ANonInputClass aic, List<ANonInputClass> list) {
     return list.contains(aic);
   }
 

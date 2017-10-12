@@ -73,7 +73,7 @@ class SystemTestEnvironment {
   static SystemTestEnvironment createSystemTestEnvironment(String classpath, Path buildDir) {
     Path workingDir = buildDir.resolve("working-directories");
     Path testInputClassDir =
-        buildDir.resolve("classes/java/testInput"); //XXX breaks when Gradle changes
+        buildDir.resolve("classes/java/testInput"); // XXX breaks when Gradle changes
     Path jacocoAgentPath = buildDir.resolve("jacocoagent/jacocoagent.jar");
     Path libsPath = buildDir.resolve("libs");
     Path replacecallAgentPath = null;

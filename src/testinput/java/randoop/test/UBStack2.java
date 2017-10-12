@@ -35,7 +35,7 @@ public class UBStack2 {
         numberOfElements++;
         return;
       } else {
-        //System.out.println("Stack full, cannot push");
+        // System.out.println("Stack full, cannot push");
         return;
       }
     }
@@ -47,7 +47,7 @@ public class UBStack2 {
 
   public int top() {
     if (numberOfElements < 1) {
-      //System.out.println("Empty Stack");
+      // System.out.println("Empty Stack");
       return -1;
     } else return elems[numberOfElements - 1];
   }

@@ -75,7 +75,7 @@ public class ForwardExplorerTests2 {
 
     System.out.println(classes);
 
-    //SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
+    // SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
     List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());

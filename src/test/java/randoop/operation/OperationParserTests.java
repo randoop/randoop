@@ -20,7 +20,7 @@ public class OperationParserTests {
   @Test
   public void testNonreceiver() {
 
-    //Class
+    // Class
     checkParse(
         new NonreceiverTerm(JavaTypes.CLASS_TYPE, Comparable.class),
         new TypeTuple(),

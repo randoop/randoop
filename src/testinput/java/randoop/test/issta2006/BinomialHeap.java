@@ -8,7 +8,7 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
 
   // internal class BinomialHeapNode
   private static class BinomialHeapNode /*implements java.io.Serializable*/ {
-    //private static final long serialVersionUID=6495900899527469811L;
+    // private static final long serialVersionUID=6495900899527469811L;
 
     private int key; // element in current node
 
@@ -120,12 +120,12 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
 
   // end of helper class BinomialHeapNode
 
-  //--------------------------------------------------------------------
+  // --------------------------------------------------------------------
   private static void outputTestSequence(int number) {}
 
   private static long startTime = System.currentTimeMillis();
 
-  //private native boolean checkAbstractState(int which);
+  // private native boolean checkAbstractState(int which);
 
   public static Set<String> tests = new HashSet<>();
 
@@ -171,7 +171,7 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
       if (itemp == itemp2) res += "=";
       if (itemp > itemp2) res += ">";
     }
-    //END comment here
+    // END comment here
     if (!tests.contains(res)) {
       tests.add(res);
       // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
@@ -185,12 +185,12 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
   //     private native static int gen_native(int br, BinomialHeapNode n1,
   //             BinomialHeapNode n2); //SPECIFY
 
-  private static void gen(int br, BinomialHeapNode n1, BinomialHeapNode n2) { //SPECIFY
-    int c = gen_native(br, n1, n2); //SPECIFY
+  private static void gen(int br, BinomialHeapNode n1, BinomialHeapNode n2) { // SPECIFY
+    int c = gen_native(br, n1, n2); // SPECIFY
     if (c != 0) outputTestSequence(c);
   }
 
-  //-------------------------------------------------------------------
+  // -------------------------------------------------------------------
 
   private BinomialHeapNode Nodes;
 

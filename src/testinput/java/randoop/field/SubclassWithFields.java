@@ -5,6 +5,6 @@ package randoop.field;
  * by Reflection.getStatements.
  */
 public class SubclassWithFields extends ClassWithFields {
-  public int threeField = 33; //should hide superclass field
+  public int threeField = 33; // should hide superclass field
   public int tenField = 10;
 }
