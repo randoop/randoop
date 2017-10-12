@@ -169,8 +169,7 @@ public class ComponentManager {
 
   /**
    * Returns component sequences that create values of the type required by the i-th input value of
-   * the given statement. Any applicable class- or package-level literals, those are added to the
-   * collection as well.
+   * the given statement. Also includes any applicable class- or package-level literals.
    *
    * @param operation the statement
    * @param i the input value index of statement
@@ -180,6 +179,9 @@ public class ComponentManager {
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
+
+    SimpleList<Sequence> result =
+        gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
     SimpleList<Sequence> literals = null;
     if (operation instanceof TypedClassOperation
@@ -209,9 +211,6 @@ public class ComponentManager {
         }
       }
     }
-
-    SimpleList<Sequence> result =
-        gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
     if (literals != null) {
       // append literals to result

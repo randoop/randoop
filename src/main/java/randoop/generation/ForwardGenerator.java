@@ -210,9 +210,8 @@ public class ForwardGenerator extends AbstractGenerator {
     // Clear the active flags of some statements
     for (int i = 0; i < seq.sequence.size(); i++) {
 
-      // If there is no return value, clear its active flag
-      // Cast succeeds because of isNormalExecution clause earlier in this
-      // method.
+      // If there is no return value, clear its active flag.
+      // Cast succeeds because of isNormalExecution clause earlier in this method.
       NormalExecution e = (NormalExecution) seq.getResult(i);
       Object runtimeValue = e.getRuntimeValue();
       if (runtimeValue == null) {
@@ -222,9 +221,9 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       // If it is a call to an observer method, clear the active flag of
-      // its receiver. (This method doesn't side effect the receiver, so
-      // Randoop should use the other shorter sequence that produces the
-      // receiver.)
+      // its receiver. (This method doesn't side effect the receiver or
+      // any argument, so Randoop should use some other shorter sequence
+      // that produces the value.)
       Sequence stmts = seq.sequence;
       Statement stmt = stmts.statements.get(i);
       if (stmt.isMethodCall() && observers.contains(stmt.getOperation())) {
@@ -298,7 +297,7 @@ public class ForwardGenerator extends AbstractGenerator {
           operation = null;
         }
       }
-      if (operation == null) { //failed to instantiate generic
+      if (operation == null) { // failed to instantiate generic
         return null;
       }
     }
@@ -601,7 +600,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // If we got here, it means we will not attempt to use null or a value already defined in S,
       // so we will have to augment S with new statements that yield a value of type inputTypes[i].
       // We will do this by assembling a list of candidate sequences (stored in the list declared
-      // immediately below) that create one or more values of the appropriate type,
+      // immediately below) whose last statement creates one or more values of the appropriate type,
       // randomly selecting a single sequence from this list, and appending it to S.
       SimpleList<Sequence> candidates;
 
@@ -692,15 +691,15 @@ public class ForwardGenerator extends AbstractGenerator {
         System.out.println("Selected null or a primitive as the receiver for a method call.");
         System.out.printf("  operation = %s%n", operation);
         System.out.printf("  isReceiver = %s%n", isReceiver);
+        System.out.printf("  randomVariable = %s%n", randomVariable);
+        System.out.printf("    getType() = %s%n", randomVariable.getType());
+        System.out.printf("    isPrimitive = %s%n", randomVariable.getType().isPrimitive());
         System.out.printf("  chosenSeq = {%n%s}%n", chosenSeq);
         System.out.printf(
-            "  getCreatingStatement = %s%n", chosenSeq.getCreatingStatement(randomVariable));
+            "    getCreatingStatement = %s%n", chosenSeq.getCreatingStatement(randomVariable));
         System.out.printf(
-            "  isNonreceivingInitialization = %s%n",
+            "    isNonreceivingInitialization = %s%n",
             chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
-        System.out.printf("  randomVariable = %s%n", randomVariable);
-        System.out.printf("  getType() = %s%n", randomVariable.getType());
-        System.out.printf("  isPrimitive = %s%n", randomVariable.getType().isPrimitive());
         throw new BugInRandoopException(
             "Selected null or primitive value as the receiver for a method call");
       }
