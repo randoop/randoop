@@ -8,11 +8,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -47,6 +50,8 @@ import plume.UtilMDE;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RandoopSystemTest {
+
+  final String lineSep = System.getProperty("line.separator");
 
   // Keep this in synch with GenTests.NO_OPERATIONS_TO_TEST.  (Since we are avoiding dependencies
   // of the system tests on Randoop code, the tests can't directly use GenTests.NO_METHODS_TO_TEST.)
@@ -586,7 +591,6 @@ public class RandoopSystemTest {
     RandoopRunStatus randoopRunDesc =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
-    String lineSep = System.getProperty("line.separator");
     assertThat(
         "There should be no output; got:"
             + lineSep
@@ -1377,11 +1381,11 @@ public class RandoopSystemTest {
       RandoopRunStatus runStatus,
       String packageName) {
     TestRunStatus errorRunDesc = null;
+    String errorBasename = options.getErrorBasename();
     switch (expectedError) {
       case SOME:
         assertThat(
             "Test suite should have error tests", runStatus.errorTestCount, is(greaterThan(0)));
-        String errorBasename = options.getErrorBasename();
         try {
           errorRunDesc = TestRunStatus.runTests(environment, packageName, errorBasename);
         } catch (IOException e) {
@@ -1401,7 +1405,25 @@ public class RandoopSystemTest {
       case NONE:
         if (runStatus.errorTestCount != 0) {
           // TODO: should output the error tests.  Print the file?
-          fail("Test suite should have no error tests, but has " + runStatus.errorTestCount);
+          StringBuilder message = new StringBuilder();
+          message.append(
+              String.format(
+                  "Test suite should have no error tests, but has %d:%n%n",
+                  runStatus.errorTestCount));
+
+          String packagePathString = options.getPackageName().replace('.', '/');
+          Path srcDir = environment.sourceDir.resolve(packagePathString);
+          try (DirectoryStream<Path> testFiles =
+              Files.newDirectoryStream(srcDir, errorBasename + "*.java")) {
+            for (Path path : testFiles) {
+              message.append(FileUtils.readFileToString(path.toFile(), (String) null));
+              message.append(lineSep);
+            }
+          } catch (IOException e) {
+            // The user can do nothing about this, and the test failure is more important.
+            e.printStackTrace();
+          }
+          fail(message.toString());
         }
         break;
       case DONT_CARE:
