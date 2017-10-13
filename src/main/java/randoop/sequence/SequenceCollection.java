@@ -188,6 +188,8 @@ public class SequenceCollection {
    *
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
