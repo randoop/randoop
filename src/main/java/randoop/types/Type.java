@@ -18,13 +18,13 @@ import java.lang.reflect.WildcardType;
  * parameterized types, where the {@code Class} object represents the raw type of the generic class,
  * but also carries the type parameters of the generic class. More information about types is
  * available through the subinterfaces of <a
- * href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html"><code>
- * java.lang.reflect.Type</code></a>, but working with generic and parameterized types is still
- * awkward. This is in part because the correspondence to the JLS is unclear, but also because the
- * provided methods do not implement all of the algorithms needed to work with types and type
- * hierarchies as needed in Randoop. Effectively, the concrete subclasses of this class are facades
- * for these reflective types, but they are identified with the definitions in the JLS, and provide
- * the methods needed to test for assignability and test for subtypes.
+ * href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html">{@code
+ * java.lang.reflect.Type}</a>, but working with generic and parameterized types is still awkward.
+ * This is in part because the correspondence to the JLS is unclear, but also because the provided
+ * methods do not implement all of the algorithms needed to work with types and type hierarchies as
+ * needed in Randoop. Effectively, the concrete subclasses of this class are facades for these
+ * reflective types, but they are identified with the definitions in the JLS, and provide the
+ * methods needed to test for assignability and test for subtypes.
  *
  * <p>{@link Type} objects are constructed using the methods {@link
  * #forType(java.lang.reflect.Type)}, {@link #forClass(Class)}, or {@link #forName(String)}. These
@@ -52,8 +52,8 @@ public abstract class Type implements Comparable<Type> {
 
   /**
    * Returns a {@code Type} object for the given type name in <a
-   * href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--"><code>
-   * Class.getName</code></a> format. Uses reflection to find the corresponding type.
+   * href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--">{@code
+   * Class.getName}</a> format. Uses reflection to find the corresponding type.
    *
    * <p>Note that {@link Type#getName()} does not return the type name in this format. To get the
    * name in this format from a {@link Type} object {@code t}, use {@code
