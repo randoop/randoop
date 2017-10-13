@@ -32,7 +32,7 @@ public class MinimizerWriter implements CodeWriter {
   public File writeClassCode(String packageName, String classname, String classCode)
       throws RandoopOutputException {
 
-    // Write the original class
+    // Write the original class.
     File testFile = javaFileWriter.writeClassCode(packageName, classname, classCode);
 
     // Minimize the error-revealing test that has been output.
@@ -40,10 +40,9 @@ public class MinimizerWriter implements CodeWriter {
       Minimize.mainMinimize(
           testFile, Minimize.suiteclasspath, Minimize.testsuitetimeout, Minimize.verboseminimizer);
     } catch (IOException e) {
-      System.err.println("IOException: " + e.getMessage());
       e.printStackTrace();
       throw new RandoopOutputException(
-          "Couldn't output minimized test suite due to an IOException.");
+          "Couldn't output minimized test suite due to an IOException for class: " + classname);
     }
 
     return testFile;

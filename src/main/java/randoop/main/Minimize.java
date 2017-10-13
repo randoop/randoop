@@ -160,7 +160,7 @@ public class Minimize extends CommandHandler {
       }
     } catch (Options.ArgException ae) {
       usage("while parsing command-line arguments: %s", ae.getMessage());
-      throw new RandoopTextuiException("See usage.");
+      throw new RandoopTextuiException("");
     }
 
     if (Minimize.suitepath == null) {
@@ -170,11 +170,17 @@ public class Minimize extends CommandHandler {
 
     // Check that the input file is a Java file.
     if (!FilenameUtils.getExtension(Minimize.suitepath).equals("java")) {
-      throw new RandoopTextuiException("The input file must be a Java file.");
+      throw new RandoopTextuiException("The input file must be a Java file: " + Minimize.suitepath);
     }
 
     if (Minimize.testsuitetimeout <= 0) {
-      throw new RandoopTextuiException("You must specify a positive timeout value.");
+      throw new RandoopTextuiException(
+          "You must specify a positive test suite timeout value: " + Minimize.testsuitetimeout);
+    }
+
+    if (Minimize.minimizetimeout <= 0) {
+      throw new RandoopTextuiException(
+          "You must specify a positive minimizer timeout value: " + Minimize.minimizetimeout);
     }
 
     // File object pointing to the file to be minimized.
@@ -242,7 +248,7 @@ public class Minimize extends CommandHandler {
    * @param verboseOutput whether to produce verbose output
    * @return true if minimization produced a (possibly unchanged) file that fails the same way as
    *     the original file
-   * @throws IOException thrown if write to file fails
+   * @throws IOException if write to file fails
    */
   public static boolean mainMinimize(
       File file, String classPath, int timeoutLimit, boolean verboseOutput) throws IOException {
@@ -1021,8 +1027,8 @@ public class Minimize extends CommandHandler {
             try {
               return IOUtils.toString(timeLimitProcess.getErrorStream(), Charset.defaultCharset());
             } catch (IOException e) {
-              // Error reading from process's error stream.
-              return "Error reading from process's error stream.";
+              // Error reading from process' error stream.
+              return "Error reading from process' error stream.";
             }
           }
         };
@@ -1113,7 +1119,7 @@ public class Minimize extends CommandHandler {
       }
       bufReader.close();
     } catch (IOException e) {
-      throw new RuntimeException("Buffered reader failed: " + e.getMessage());
+      throw new RuntimeException(e);
     }
 
     return resultMap;
