@@ -1310,7 +1310,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Print out usage error and stack trace and then exit.
+   * Print message, then print usage information.
    *
    * @param format the string format
    * @param args the arguments
