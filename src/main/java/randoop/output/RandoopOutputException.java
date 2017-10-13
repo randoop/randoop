@@ -29,7 +29,6 @@ public class RandoopOutputException extends Throwable {
   /**
    * Creates a {@link RandoopOutputException} with the cause.
    *
-   * @param message the error message
    * @param cause the exception for the error
    */
   public RandoopOutputException(IOException cause) {
