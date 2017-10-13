@@ -678,6 +678,11 @@ public final class Sequence implements WeightedElement {
 
   /**
    * The last statement produces multiple values of type {@code type}. Choose one of them at random.
+   *
+   * @param type return a sequence of this type
+   * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
+   *     call receiver
+   * @return a variable used in the last statement of the given type
    */
   public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
     if (type == null) {
