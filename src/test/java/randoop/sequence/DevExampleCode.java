@@ -76,9 +76,9 @@ public class DevExampleCode {
               + Globals.lineSep
               + "int int3 = strList0.size();"
               + Globals.lineSep
-              + "java.util.TreeSet<java.lang.String> strSet4 = new java.util.TreeSet<java.lang.String>((java.util.Collection<java.lang.String>)linkedlist_str0);"
+              + "java.util.TreeSet<java.lang.String> strSet4 = new java.util.TreeSet<java.lang.String>((java.util.Collection<java.lang.String>)strList0);"
               + Globals.lineSep
-              + "java.util.Set<java.lang.String> strSet5 = java.util.Collections.synchronizedSet((java.util.Set<java.lang.String>)treeset_str4);"
+              + "java.util.Set<java.lang.String> strSet5 = java.util.Collections.synchronizedSet((java.util.Set<java.lang.String>)strSet4);"
               + Globals.lineSep,
           s.toCodeString());
     } catch (NoSuchMethodException e) {

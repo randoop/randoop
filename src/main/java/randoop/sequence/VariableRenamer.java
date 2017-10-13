@@ -55,7 +55,7 @@ class VariableRenamer {
       return getVariableName(type) + arraySuffix;
     }
 
-    // Primitives.
+    // Primitives types.
     if (type.isPrimitive() || type.isBoxedPrimitive()) {
       if (type.isBoxedPrimitive()) {
         type = ((NonParameterizedType) type).toPrimitive();
@@ -97,10 +97,6 @@ class VariableRenamer {
     } else if (type.equals(JavaTypes.CLASS_TYPE)) {
       return "cls";
     }
-    // TODO: add more special cases:
-    //  * if it implements List, use "list"
-    //  * if it implements Iterator, use "itor"
-    // ... more?
 
     if (type.isParameterized()) {
       ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
@@ -148,18 +144,28 @@ class VariableRenamer {
           }
         }
       }
+
+      // Make sure last character is not a digit.
+      if (Character.isDigit(varName.charAt(varName.length() - 1))) {
+        varName += "_";
+      }
+
       return varName;
     }
 
-    // All other object types
+    // All other object types.
     String classname = type.getSimpleName();
     if (classname.length() == 0) {
       return "anonymous";
     }
+
+    // Make sure last character is not a digit.
     if (Character.isDigit(classname.charAt(classname.length() - 1))) {
       classname += "_";
     }
-    if (Character.isUpperCase(classname.charAt(0))) { // preserve camel case
+
+    // Preserve camel case.
+    if (Character.isUpperCase(classname.charAt(0))) {
       return classname.substring(0, 1).toLowerCase() + classname.substring(1);
     } else {
       return classname + "_instance";
