@@ -185,7 +185,7 @@ public class Minimize extends CommandHandler {
         executor.submit(
             new Callable<Boolean>() {
               @Override
-              public Boolean call() throws Exception {
+              public Boolean call() throws IOException {
                 return mainMinimize(
                     originalFile, suiteclasspath, testsuitetimeout, verboseminimizer);
               }
@@ -829,7 +829,7 @@ public class Minimize extends CommandHandler {
       }
 
       // Simplify class type names, method call names, and field names.
-      //XXX this should be handled by a single visitor that uses the full set of types
+      // XXX this should be handled by a single visitor that uses the full set of types.
       new ClassTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
       new MethodTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
       new FieldAccessTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
@@ -857,15 +857,13 @@ public class Minimize extends CommandHandler {
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return true if there are no compilation and no run-time errors and the output is equal to the
    *     expected output
-   * @throws IOException thrown if normalizeJUnitOutput throws the exception
    */
   private static boolean checkCorrectlyMinimized(
       File file,
       String classpath,
       String packageName,
       Map<String, String> expectedOutput,
-      int timeoutLimit)
-      throws IOException {
+      int timeoutLimit) {
 
     // Zero exit status means success.
     if (compileJavaFile(file, classpath, packageName, timeoutLimit) != 0) {
@@ -1069,9 +1067,8 @@ public class Minimize extends CommandHandler {
    * @param input the {@code String} produced from running a JUnit test suite
    * @return a map from method name to the method's failure stack trace. The stack trace will not
    *     contain any line numbers.
-   * @throws IOException thrown if buffered reader's readLine() fails
    */
-  private static Map<String, String> normalizeJUnitOutput(String input) throws IOException {
+  private static Map<String, String> normalizeJUnitOutput(String input) {
     BufferedReader bufReader = new BufferedReader(new StringReader(input));
 
     String methodName = null;
@@ -1081,39 +1078,43 @@ public class Minimize extends CommandHandler {
     // JUnit output starts with index 1 for first failure.
     int index = 1;
 
-    for (String line; (line = bufReader.readLine()) != null; ) {
-      String indexStr = index + ") ";
-      // Check if the current line is the start of a failure stack
-      // trace for a method.
-      if (line.startsWith(indexStr)) {
-        // If a previous failure stack trace is being read, add the
-        // existing method name and stack trace to the map.
-        if (methodName != null) {
-          resultMap.put(methodName, result.toString());
+    try {
+      for (String line; (line = bufReader.readLine()) != null; ) {
+        String indexStr = index + ") ";
+        // Check if the current line is the start of a failure stack
+        // trace for a method.
+        if (line.startsWith(indexStr)) {
+          // If a previous failure stack trace is being read, add the
+          // existing method name and stack trace to the map.
+          if (methodName != null) {
+            resultMap.put(methodName, result.toString());
 
-          // Reset the string builder.
-          result.setLength(0);
+            // Reset the string builder.
+            result.setLength(0);
+          }
+          // Set the method name to the current line.
+          methodName = line;
+          index += 1;
+        } else if (line.isEmpty()) {
+          // Reached an empty line which marks the end of the JUnit
+          // output.
+          resultMap.put(methodName, result.toString());
+          break;
+        } else if (methodName != null) {
+          // Look for a left-parentheses which marks the position
+          // where a line number will appear.
+          int lParenIndex = line.indexOf('(');
+          if (lParenIndex >= 0) {
+            // Remove the substring containing the line number.
+            line = line.substring(0, lParenIndex);
+          }
+          result.append(line).append(Globals.lineSep);
         }
-        // Set the method name to the current line.
-        methodName = line;
-        index += 1;
-      } else if (line.isEmpty()) {
-        // Reached an empty line which marks the end of the JUnit
-        // output.
-        resultMap.put(methodName, result.toString());
-        break;
-      } else if (methodName != null) {
-        // Look for a left-parentheses which marks the position
-        // where a line number will appear.
-        int lParenIndex = line.indexOf('(');
-        if (lParenIndex >= 0) {
-          // Remove the substring containing the line number.
-          line = line.substring(0, lParenIndex);
-        }
-        result.append(line).append(Globals.lineSep);
       }
+      bufReader.close();
+    } catch (IOException e) {
+      throw new RuntimeException("Buffered reader failed: " + e.getMessage());
     }
-    bufReader.close();
 
     return resultMap;
   }
@@ -1129,8 +1130,6 @@ public class Minimize extends CommandHandler {
     // Write the compilation unit to the file.
     try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), UTF_8)) {
       bw.write(compUnit.toString());
-    } catch (IOException e) {
-      throw e;
     }
   }
 
@@ -1237,12 +1236,14 @@ public class Minimize extends CommandHandler {
    */
   private static int getFileLength(File file) throws IOException {
     int lines = 0;
-    // Read and count the number of lines in the file.
-    BufferedReader reader = Files.newBufferedReader(file.toPath(), UTF_8);
-    while (reader.readLine() != null) {
-      lines++;
+
+    try (BufferedReader reader = Files.newBufferedReader(file.toPath(), UTF_8)) {
+      // Read and count the number of lines in the file.
+      while (reader.readLine() != null) {
+        lines++;
+      }
     }
-    reader.close();
+
     return lines;
   }
 
