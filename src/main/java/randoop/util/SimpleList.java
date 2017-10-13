@@ -3,7 +3,7 @@ package randoop.util;
 import java.util.List;
 
 /**
- * List implementation used by Randoop to store the sequence of <code>Statement</code>s making up a
+ * List implementation used by Randoop to store the sequence of {@code Statement}s making up a
  * Sequence.
  *
  * <p>IMPLEMENTATION NOTE

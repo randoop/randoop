@@ -1,8 +1,8 @@
 package randoop.types;
 
 /**
- * The <code>null</code> type is the type of the value <code>null</code>. As the subtype of all
- * reference types, it is the default lowerbound of a {@link CaptureTypeVariable}.
+ * The {@code null} type is the type of the value {@code null}. As the subtype of all reference
+ * types, it is the default lowerbound of a {@link CaptureTypeVariable}.
  */
 class NullReferenceType extends ReferenceType {
 

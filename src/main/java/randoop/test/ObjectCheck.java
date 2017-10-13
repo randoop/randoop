@@ -21,17 +21,17 @@ import randoop.sequence.Variable;
  * <ul>
  *   <li>Checking that the objects created during execution of a sequence respect reflexivity,
  *       transitivity and symmetry of equality.
- *   <li>Checking that calling <code>toString()</code> on the objects created during execution of a
+ *   <li>Checking that calling {@code toString()} on the objects created during execution of a
  *       sequence does not throw an exception.
  * </ul>
  *
- * <p>An <code>ObjectCheck</code> has two parts:
+ * <p>An {@code ObjectCheck} has two parts:
  *
  * <ul>
  *   <li>A {@link randoop.contract.ObjectContract} responsible for performing the actual check on a
  *       set of runtime values. For example. the class {@link randoop.contract.EqualsReflexive} is a
  *       checker code class that, given an object <i>o</i>, calls <i>o.equals(o)</i> and checks that
- *       it returns <code>true</code>.
+ *       it returns {@code true}.
  *   <li>A list of {@link Variable}s, which describe the specific objects in the sequence that the
  *       check is over.
  * </ul>

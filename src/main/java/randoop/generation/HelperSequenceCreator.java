@@ -382,7 +382,7 @@ class HelperSequenceCreator {
   }
 
   /**
-   * Create a method call operation for the <code>add()</code> method of the given collection type.
+   * Create a method call operation for the {@code add()} method of the given collection type.
    *
    * @param collectionType the collection type
    * @param elementType the element type of the collection

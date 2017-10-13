@@ -610,7 +610,8 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     } catch (RandoopOutputException e) {
-      System.out.printf("%nError writing " + testKind.toLowerCase() + " tests: " + e.getMessage());
+      System.out.printf("%nError writing %s tests%n", testKind.toLowerCase());
+      e.printStackTrace(System.out);
       System.exit(1);
     }
   }

@@ -177,8 +177,8 @@ public class ArrayType extends ReferenceType {
    *
    * <p>For an array type, check for assignability by reference widening. If not otherwise
    * assignable, check for unchecked conversion, which occurs when this type is {@code
-   * C<T1,...,Tk>[]} and other type is <code>C[]</code> (e.g., the component type is the rawtype
-   * <code>C</code>).
+   * C<T1,...,Tk>[]} and other type is {@code C[]} (e.g., the component type is the rawtype {@code
+   * C}).
    */
   @Override
   public boolean isAssignableFrom(Type otherType) {

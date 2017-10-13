@@ -18,7 +18,7 @@ public interface IEventListener {
 
   /**
    * Called by the AbstractGenerator during each generation iteration, immediately before a
-   * generation <code>step()</code> is performed.
+   * generation {@code step()} is performed.
    *
    * @see randoop.generation.AbstractGenerator
    */
@@ -26,7 +26,7 @@ public interface IEventListener {
 
   /**
    * Called by the AbstractGenerator during each generation iteration, immediately after a
-   * generation <code>step()</code> has completed.
+   * generation {@code step()} has completed.
    *
    * @param s sequence that was generated and executed in the last generation step. Can b null,
    *     which means the last step was unable to generate a sequence (e.g. due to a bad random
