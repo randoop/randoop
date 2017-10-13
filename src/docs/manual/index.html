@@ -779,8 +779,7 @@ Randoop about your application, and that is how we recommend using Randoop.
              A file containing a list of methods and constructors to test, each given as a <a
  href="#fully-qualified-signature">fully-qualified signature</a> on a separate line.
 
- <p>These methods augment any methods from classes given by the <code>--testclass</code> or
- <code>--classlist</code> options.
+ <p>These methods augment any methods from classes given by the <code>--testclass</code> or <code>--classlist</code> options.
 
  <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
  file</a>.
@@ -797,12 +796,11 @@ Randoop about your application, and that is how we recommend using Randoop.
  beginning and the end of the signature string.
             <li id="option:omitmethods-file"><b>--omitmethods-file=</b><i>filename</i>.
              A file containing a list of regular expressions that indicate methods that should not be
- included in generated tests. These patterns are used along with those provided with <code>
- --omitmethods</code>, and the default omissions.
+ included in generated tests. These patterns are used along with those provided with <code>--omitmethods</code>, and the default omissions.
             <li id="option:dont-omit-replaced-methods"><b>--dont-omit-replaced-methods=</b><i>boolean</i>.
              Include methods that are otherwise omitted by default. Unless you set this to true, every
- method replaced by the <code>replacecall</code> agent is treated as if it had been supplied as
- an argument to <code>--omitmethods</code>. [default false]
+ method replaced by the <code>replacecall</code> agent is treated as if it had been supplied as an
+ argument to <code>--omitmethods</code>. [default false]
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
              A fully-qualified field name of a field to be excluded from test generation. An accessible
  field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
@@ -810,10 +808,9 @@ Randoop about your application, and that is how we recommend using Randoop.
              File that contains fully-qualified field names to be excluded from test generation. An
  accessible field is used unless it is omitted by this or the <code>--omit-field</code> option.
             <li id="option:only-test-public-members"><b>--only-test-public-members=</b><i>boolean</i>.
-             Restrict tests to only include public members of classes. Ordinarily, the setting of <code>
- --junit-package-name</code> and package accessibility is used to determine which members will
- be used in tests. Using this option restricts the tests to only use public members even if the
- class is a member of the same package as the generated tests. [default false]
+             Restrict tests to only include public members of classes. Ordinarily, the setting of <code>--junit-package-name</code> and package accessibility is used to determine which members will be used
+ in tests. Using this option restricts the tests to only use public members even if the class is
+ a member of the same package as the generated tests. [default false]
             <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>.
              Ignore class names specified by user that cannot be found [default false]
             <li id="option:ignore-flaky-tests"><b>--ignore-flaky-tests=</b><i>boolean</i>.
@@ -827,13 +824,11 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Which-tests-to-output">Which tests to output
       <ul>
             <li id="option:no-error-revealing-tests"><b>--no-error-revealing-tests=</b><i>boolean</i>.
-             Whether to output error-revealing tests. Disables all output when used with <code>
- --no-regression-tests</code>. Restricting output can result in long runs if the default values
- of <code>--generatedLimit</code> and <code>--timeLimit</code> are used. [default false]
+             Whether to output error-revealing tests. Disables all output when used with <code>--no-regression-tests</code>. Restricting output can result in long runs if the default values of
+ <code>--generatedLimit</code> and <code>--timeLimit</code> are used. [default false]
             <li id="option:no-regression-tests"><b>--no-regression-tests=</b><i>boolean</i>.
-             Whether to output regression tests. Disables all output when used with <code>
- --no-error-revealing-tests</code>. Restricting output can result in long runs if the default
- values of <code>--generatedLimit</code> and <code>--timeLimit</code> are used. [default false]
+             Whether to output regression tests. Disables all output when used with <code>--no-error-revealing-tests</code>. Restricting output can result in long runs if the default values
+ of <code>--generatedLimit</code> and <code>--timeLimit</code> are used. [default false]
             <li id="option:no-regression-assertions"><b>--no-regression-assertions=</b><i>boolean</i>.
              Whether to include assertions in regression tests. If false, then the regression tests contain
  no assertions (except that if the test throws an exception, it should continue to throw an
@@ -874,14 +869,11 @@ Randoop about your application, and that is how we recommend using Randoop.
 </ul>
 
             <li id="option:unchecked-exception"><b>--unchecked-exception=</b><i>enum</i>.
-             If a test throws an unchecked exception other than <code>OutOfMemoryError</code>, <code>
- StackOverflowError</code>, and <code>NullPointerException</code>, should the test be included
- in the error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or
- should it be discarded (value: INVALID)?
+             If a test throws an unchecked exception other than <code>OutOfMemoryError</code>, <code>StackOverflowError</code>, and <code>NullPointerException</code>, should the test be included in the
+ error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
+ it be discarded (value: INVALID)?
 
- <p>The arguments <code>--npe-on-null-input</code>, <code>--npe-on-non-null-input</code>, <code>
- --oom-exception</code>, and <code>--sof-exception</code> handle special cases of unchecked
- exceptions. [default EXPECTED]
+ <p>The arguments <code>--npe-on-null-input</code>, <code>--npe-on-non-null-input</code>, <code>--oom-exception</code>, and <code>--sof-exception</code> handle special cases of unchecked exceptions. [default EXPECTED]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior
@@ -889,9 +881,9 @@ Randoop about your application, and that is how we recommend using Randoop.
 </ul>
 
             <li id="option:npe-on-null-input"><b>--npe-on-null-input=</b><i>enum</i>.
-             If a test that passes <code>null</code> as an argument throws a <code>NullPointerException
- </code>, should the test be be included in the error-revealing test suite (value: ERROR),
- regression test suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default EXPECTED]
+             If a test that passes <code>null</code> as an argument throws a <code>NullPointerException</code>, should
+ the test be be included in the error-revealing test suite (value: ERROR), regression test suite
+ (value: EXPECTED), or should it be discarded (value: INVALID)? [default EXPECTED]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior
@@ -899,10 +891,9 @@ Randoop about your application, and that is how we recommend using Randoop.
 </ul>
 
             <li id="option:npe-on-non-null-input"><b>--npe-on-non-null-input=</b><i>enum</i>.
-             If a test that never passes <code>null</code> as an argument throws a <code>
- NullPointerException</code>, should the test be included in the error-revealing test suite
- (value: ERROR), regression test suite (value: EXPECTED), or should it be discarded (value:
- INVALID)? [default ERROR]
+             If a test that never passes <code>null</code> as an argument throws a <code>NullPointerException</code>,
+ should the test be included in the error-revealing test suite (value: ERROR), regression test
+ suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default ERROR]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior
@@ -950,9 +941,8 @@ Randoop about your application, and that is how we recommend using Randoop.
              Maximum number of test method candidates generated internally. [default 100000000]
             <li id="option:outputLimit"><b>--outputLimit=</b><i>int</i>.
              The maximum number of regression and error-revealing tests to output. If there is no output,
- this limit has no effect. There is no output when using either <code>
- --dont-output-tests</code> or <code>--no-error-revealing-tests</code> together with <code>
- --no-regression-tests</code>.
+ this limit has no effect. There is no output when using either <code>--dont-output-tests</code> or
+ <code>--no-error-revealing-tests</code> together with <code>--no-regression-tests</code>.
 
  <p>In the current implementation, the number of tests in the output can be substantially
  smaller than this limit. [default 100000000]
@@ -966,16 +956,16 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:null-ratio"><b>--null-ratio=</b><i>double</i>.
              Use null with the given frequency as an argument to method calls.
 
- <p>For example, a null ratio of 0.05 directs Randoop to use <code>null</code> as an input 5
- percent of the time when a non-<code>null</code> value of the appropriate type is available.
+ <p>For example, a null ratio of 0.05 directs Randoop to use <code>null</code> as an input 5 percent
+ of the time when a non-<code>null</code> value of the appropriate type is available.
 
- <p>Unless --forbid_null is true, a <code>null</code> value will still be used if no other value
- can be passed as an argument even if --null-ratio=0.
+ <p>Unless --forbid_null is true, a <code>null</code> value will still be used if no other value can
+ be passed as an argument even if --null-ratio=0.
 
  <p>Randoop never uses <code>null</code> for receiver values. [default 0.05]
             <li id="option:forbid-null"><b>--forbid-null=</b><i>boolean</i>.
-             Do not use <code>null</code> as input to methods or constructors, even when no other argument
- value can be generated.
+             Do not use <code>null</code> as input to methods or constructors, even when no other argument value
+ can be generated.
 
  <p>If true, Randoop will not generate a test when unable to find a non-null value of
  appropriate type as an input. This could result in certain class members being untested. [default false]
@@ -1038,46 +1028,46 @@ Randoop about your application, and that is how we recommend using Randoop.
  the option <code>--only-test-public-members</code>. [default ]
             <li id="option:junit-before-each"><b>--junit-before-each=</b><i>string</i>.
              Name of file containing code text to be added to the <a
- href="http://junit.sourceforge.net/javadoc/org/junit/Before.html"><code>@Before</code>
- </a>-annotated method of each generated test class. Code is uninterpreted, and, so, is not run
- during generation. Intended for use when run-time behavior of classes under test requires setup
- behavior that is not needed for execution by reflection. (The annotation <code>@Before</code>
- is JUnit 4, and <code>@BeforeEach</code> is JUnit 5.)
+ href="http://junit.sourceforge.net/javadoc/org/junit/Before.html"><code>@Before</code></a>-annotated
+ method of each generated test class. Code is uninterpreted, and, so, is not run during
+ generation. Intended for use when run-time behavior of classes under test requires setup
+ behavior that is not needed for execution by reflection. (The annotation <code>@Before</code> is
+ JUnit 4, and <code>@BeforeEach</code> is JUnit 5.)
             <li id="option:junit-after-each"><b>--junit-after-each=</b><i>string</i>.
              Name of file containing code text to be added to the <a
- href="http://junit.sourceforge.net/javadoc/org/junit/After.html"><code>@After</code>
- </a>-annotated method of each generated test class. Intended for use when run-time behavior of
- classes under test requires tear-down behavior that is not needed for execution by reflection.
- Code is uninterpreted, and, so, is not run during generation. (The annotation <code>@After
- </code> is JUnit 4, and <code>@AfterEach</code> is JUnit 5.)
+ href="http://junit.sourceforge.net/javadoc/org/junit/After.html"><code>@After</code> </a>-annotated
+ method of each generated test class. Intended for use when run-time behavior of classes under
+ test requires tear-down behavior that is not needed for execution by reflection. Code is
+ uninterpreted, and, so, is not run during generation. (The annotation <code>@After</code> is JUnit
+ 4, and <code>@AfterEach</code> is JUnit 5.)
             <li id="option:junit-before-all"><b>--junit-before-all=</b><i>string</i>.
              Name of file containing code text to be added to the <a
- href="http://junit.sourceforge.net/javadoc/org/junit/BeforeClass.html"><code>@BeforeClass
- </code></a>-annotated method of each generated test class. Intended for use when run-time
- behavior of classes under test requires setup behavior that is not needed for execution by
- reflection. Code is uninterpreted, and, so, is not run during generation. (The annotation
- <code>@BeforeClass</code> is JUnit 4, and <code>@BeforeAll</code> is JUnit 5.)
+ href="http://junit.sourceforge.net/javadoc/org/junit/BeforeClass.html"><code>@BeforeClass</code></a>-annotated
+ method of each generated test class. Intended for use when run-time behavior of classes under
+ test requires setup behavior that is not needed for execution by reflection. Code is
+ uninterpreted, and, so, is not run during generation. (The annotation <code>@BeforeClass</code> is
+ JUnit 4, and <code>@BeforeAll</code> is JUnit 5.)
             <li id="option:junit-after-all"><b>--junit-after-all=</b><i>string</i>.
              Name of file containing code text to be added to the <a
- href="http://junit.sourceforge.net/javadoc/org/junit/AfterClass.html"><code>@AfterClass</code>
- </a>-annotated method of each generated test class. Intended for use when run-time behavior of
- classes under test requires tear-down behavior that is not needed for execution by reflection.
- Code is uninterpreted, and, so, is not run during generation. (The annotation <code>@AfterClass
- </code> is JUnit 4, and <code>@AfterAll</code> is JUnit 5.)
+ href="http://junit.sourceforge.net/javadoc/org/junit/AfterClass.html"><code>@AfterClass</code></a>-annotated
+ method of each generated test class. Intended for use when run-time behavior of classes under
+ test requires tear-down behavior that is not needed for execution by reflection. Code is
+ uninterpreted, and, so, is not run during generation. (The annotation <code>@AfterClass</code> is
+ JUnit 4, and <code>@AfterAll</code> is JUnit 5.)
             <li id="option:junit-output-dir"><b>--junit-output-dir=</b><i>string</i>.
              Name of the directory to which JUnit files should be written
             <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>.
              Run test generation without output. May be desirable when running with a visitor.
 
- <p>NOTE: Because there is no output, the value of <code>--outputLimit</code> will never be met,
- so be sure to set <code>--generatedLimit</code> or <code>--timeLimit</code> to a reasonable
- value when using this option. [default false]
+ <p>NOTE: Because there is no output, the value of <code>--outputLimit</code> will never be met, so
+ be sure to set <code>--generatedLimit</code> or <code>--timeLimit</code> to a reasonable value when using
+ this option. [default false]
             <li id="option:junit-reflection-allowed"><b>--junit-reflection-allowed=</b><i>boolean</i>.
              Whether to use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
  invocations can interfere with code instrumentation, such as by the DynComp tool. If that is a
  problem, then set this to false and Randoop will output tests that use direct method calls
- instead of reflection. The tests will include a <code>main</code> method and will execute
- methods and assertions, but won't be JUnit suites. [default true]
+ instead of reflection. The tests will include a <code>main</code> method and will execute methods
+ and assertions, but won't be JUnit suites. [default true]
       </ul>
   <li id="optiongroup:Runtime-environment">Runtime environment
       <ul>
