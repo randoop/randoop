@@ -249,7 +249,7 @@ see <a href="#minimize">Minimizing a failing JUnit test suite</a>.
 Example use:
 
 <pre class="code">
-java -ea -cp <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main minimize --suitepath=~/ErrorTestLang.java --suiteclasspath=~/commons-lang.jar
+java -ea -cp $(RANDOOP_JAR) randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=<em>myclasspath</em>
 </pre>
 </li>
 
@@ -701,19 +701,15 @@ Here is how Randoop attempts to generate a test:
 <p>
 Randoop includes a minimizer that, given a failing JUnit test suite file,
 produces a smaller one that fails in the same way as the original, having the
-same failing assertions with the same stack trace. Minimized test suites should
+same failing assertions with the same stack trace. Minimized test suites usually
 contain test cases that are easier to understand and debug.
+The minimizer can be used with any JUnit test suite:  it can
+minimize failing tests that Randoop did not create.
 </p>
-<ul>
-  <li>Same failing assertions as in the original input test suite.</li>
-  <li>Same stack trace produced by failing assertions.</li>
-</ul>
 
 <p>
 The minimizer works by removing and simplifying methods and statements in its
-input file, without changing the test suite's failure behavior. Additionally,
-the minimizer can be used with any JUnit test suite, making it useful for
-minimizing failing tests that Randoop did not create.
+input file, without changing the test suite's failure behavior.
 </p>
 
 <p>
@@ -721,7 +717,7 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -ea -cp bin:randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=~/ErrorTest1.java --suiteclasspath=~/commons-lang.jar --testsuitetimeout=30
+java -ea -cp randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
 <p>
@@ -1038,8 +1034,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  href="http://junit.sourceforge.net/javadoc/org/junit/After.html"><code>@After</code> </a>-annotated
  method of each generated test class. Intended for use when run-time behavior of classes under
  test requires tear-down behavior that is not needed for execution by reflection. Code is
- uninterpreted, and, so, is not run during generation. (The annotation @After is JUnit 4,
- and <code>@AfterEach</code> is JUnit 5.)
+ uninterpreted, and, so, is not run during generation. (The annotation <code>@After</code> is JUnit
+ 4, and <code>@AfterEach</code> is JUnit 5.)
             <li id="option:junit-before-all"><b>--junit-before-all=</b><i>string</i>.
              Name of file containing code text to be added to the <a
  href="http://junit.sourceforge.net/javadoc/org/junit/BeforeClass.html"><code>@BeforeClass</code></a>-annotated
