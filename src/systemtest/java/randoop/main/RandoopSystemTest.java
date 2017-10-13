@@ -1013,7 +1013,8 @@ public class RandoopSystemTest {
     options.addTestClass("components.ListDialog");
     options.addTestClass("components.ListDialogRunner");
     options.addTestClass("components.MissingIcon");
-    options.addTestClass("components.MyInternalFrame");
+    // getParent() returns null, which can cause NPE in javax.swing.JInternalFrame.setMaximum()
+    // options.addTestClass("components.MyInternalFrame");
     options.addTestClass("components.Converter");
     options.addTestClass("components.Person");
     options.addTestClass("components.Rule");
