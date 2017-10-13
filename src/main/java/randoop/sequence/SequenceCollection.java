@@ -40,9 +40,9 @@ import randoop.util.SimpleList;
  *       relationships among the types in the set.
  * </ul>
  *
- * To find all the sequences that create values of a given type, Randoop first uses the <code>
- * SubTypeSet</code> to find the set <code>S</code> of feasible subtypes in set of sequences, and
- * returns the range of <code>S</code> in the sequence map.
+ * To find all the sequences that create values of a given type, Randoop first uses the {@code
+ * SubTypeSet} to find the set {@code S} of feasible subtypes in set of sequences, and returns the
+ * range of {@code S} in the sequence map.
  */
 public class SequenceCollection {
 
@@ -188,6 +188,8 @@ public class SequenceCollection {
    *
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
