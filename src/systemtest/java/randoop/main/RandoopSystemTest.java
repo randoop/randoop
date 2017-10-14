@@ -299,6 +299,7 @@ public class RandoopSystemTest {
         new CoverageChecker(
             options,
             "java2.util2.ArrayList.readObject(java.io.ObjectInputStream) exclude",
+            "java2.util2.ArrayList.remove(int) ignore",
             "java2.util2.ArrayList.removeRange(int, int) exclude",
             "java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.Arrays.med3(byte[], int, int, int) exclude",
@@ -308,6 +309,7 @@ public class RandoopSystemTest {
             "java2.util2.Arrays.med3(int[], int, int, int) exclude",
             "java2.util2.Arrays.med3(long[], int, int, int) exclude",
             "java2.util2.Arrays.med3(short[], int, int, int) exclude",
+            "java2.util2.Arrays.swap(char[], int, int) ignore",
             "java2.util2.Arrays.swap(java.lang.Object[], int, int) exclude",
             "java2.util2.Arrays.vecswap(byte[], int, int, int) exclude",
             "java2.util2.Arrays.vecswap(char[], int, int, int) exclude",
@@ -351,6 +353,8 @@ public class RandoopSystemTest {
             "java2.util2.TreeMap.setColor(java2.util2.TreeMap.Entry, boolean) exclude",
             "java2.util2.TreeMap.subMap(java.lang.Object, java.lang.Object) exclude",
             "java2.util2.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude",
+            "java2.util2.TreeMap.valueSearchNonNull(java2.util2.TreeMap.Entry, java.lang.Object) ignore",
+            "java2.util2.TreeMap.valueSearchNull(java2.util2.TreeMap.Entry) ignore",
             "java2.util2.TreeMap.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.TreeSet.readObject(java.io.ObjectInputStream) exclude",
             "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) exclude",
@@ -358,7 +362,8 @@ public class RandoopSystemTest {
             "java2.util2.Vector.removeRange(int, int) exclude",
             "java2.util2.Vector.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.WeakHashMap.eq(java.lang.Object, java.lang.Object) ignore", // Travis
-            "java2.util2.WeakHashMap.removeMapping(java.lang.Object) exclude"
+            "java2.util2.WeakHashMap.removeMapping(java.lang.Object) exclude",
+            "java2.util2.WeakHashMap.unmaskNull(java.lang.Object) ignore"
             // end of list (line break to permit easier sorting)
             );
     generateAndTestWithCoverage(
