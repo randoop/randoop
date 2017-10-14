@@ -29,7 +29,7 @@
     </ul></li>
   <li><a href="#testing-randoop">Testing Randoop</a>
     <ul>
-      <li><a href="#travis-tests">Running tests under Travis-CI</a></li>
+      <li><a href="#travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</a></li>
       <li><a href="#addtests">Adding tests</a>
         <ul>
           <li><a href="#unit-tests">Unit tests</a></li>
@@ -352,8 +352,24 @@ Further note that selection logging can slow down the system tests so much that
 they fail.
 </p>
 
+<p>
+If Randoop generates an unexpected test (for example, Randoop's test suite outputs
+<code>java.lang.AssertionError: Test suite should have no error tests, but has 1:</code>),
+you can run the test with commands like these:
 
-<h2 id="travis-tests">Running tests under Travis-CI</h2>
+<pre>
+javac -cp .:junit-4.11.jar -sourcepath .:.../randoop/src/testinput/java/ ErrorTest.java
+java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.runner.JUnitCore ErrorTest
+</pre>
+
+You can minimize the test with a command like this:
+<pre>
+java -ea -cp randoop-all-3.1.5.jar randoop.main.Main minimize \
+  --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
+</pre>
+
+
+<h2 id="travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</h2>
 
 <p>
 <a href="https://travis-ci.org/randoop/randoop">Travis-CI runs the Randoop tests</a>.
