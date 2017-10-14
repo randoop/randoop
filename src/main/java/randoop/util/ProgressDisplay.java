@@ -1,7 +1,9 @@
 package randoop.util;
 
+import java.lang.InterruptedException;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import plume.UtilMDE;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
@@ -112,8 +114,22 @@ public class ProgressDisplay extends Thread {
     System.out.println();
     System.out.println(AbstractGenerator.currSeq);
     System.out.println();
-    System.out.println("Will print all thread stack traces and exit with code 1.");
+    System.out.println("Will print all thread stack traces (twice) and exit with code 1.");
+    System.out.println();
 
+    printAllStackTraces();
+    System.out.println();
+    try {
+      TimeUnit.SECONDS.sleep(1);
+    } catch (InterruptedException e) {
+      // if interrupted, just proceed
+    }
+    printAllStackTraces();
+
+    System.exit(1);
+  }
+
+  private void printAllStackTraces() {
     for (Map.Entry<Thread, StackTraceElement[]> trace : Thread.getAllStackTraces().entrySet()) {
       System.out.println("--------------------------------------------------");
       System.out.println("Thread " + trace.getKey().toString());
@@ -123,7 +139,7 @@ public class ProgressDisplay extends Thread {
         System.out.println(elt);
       }
     }
-    System.exit(1);
+    System.out.println("--------------------------------------------------");
   }
 
   private long lastNumStepsIncrease = System.currentTimeMillis();
