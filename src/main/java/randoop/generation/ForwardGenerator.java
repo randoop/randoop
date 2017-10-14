@@ -297,7 +297,7 @@ public class ForwardGenerator extends AbstractGenerator {
           operation = null;
         }
       }
-      if (operation == null) { //failed to instantiate generic
+      if (operation == null) { // failed to instantiate generic
         return null;
       }
     }
@@ -678,6 +678,13 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       Log.logLine("chosenSeq: " + chosenSeq);
+
+      // TODO: the last statement might not be active -- it might not create a usable variable of
+      // such a type.  An example is a void method that is called with only null arguments.
+      // More generally, paying attention to only the last statement here seems like a reasonable
+      // design choice, but it is inconsistent with how Randoop behaves in general, and all parts
+      // of Randoop should be made consistent.  Alternative to the below:
+      // Variable randomVariable = chosenSeq.randomVariableForType(inputType, isReceiver);
 
       // We are not done yet: we have chosen a sequence that yields a value of the required
       // type inputTypes[i], but it may produce more than one such value. Our last random
