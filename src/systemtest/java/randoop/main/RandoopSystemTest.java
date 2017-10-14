@@ -237,7 +237,7 @@ public class RandoopSystemTest {
         new CoverageChecker(
             options,
             "java2.util2.ArrayList.readObject(java.io.ObjectInputStream) exclude",
-            "java2.util2.ArrayList.remove(int) exclude",
+            "java2.util2.ArrayList.remove(int) ignore",
             "java2.util2.ArrayList.removeRange(int, int) exclude",
             "java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.Collections.eq(java.lang.Object, java.lang.Object) ignore",
@@ -253,7 +253,9 @@ public class RandoopSystemTest {
             "java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap) exclude",
             "java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap) exclude",
             "java2.util2.LinkedList.readObject(java.io.ObjectInputStream) exclude",
+            "java2.util2.LinkedList.remove(int) ignore",
             "java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
+            "java2.util2.TreeSet.first() ignore",
             "java2.util2.TreeSet.last() ignore",
             "java2.util2.TreeSet.readObject(java.io.ObjectInputStream) exclude",
             "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) exclude",
@@ -309,6 +311,7 @@ public class RandoopSystemTest {
             "java2.util2.Arrays.med3(int[], int, int, int) exclude",
             "java2.util2.Arrays.med3(long[], int, int, int) exclude",
             "java2.util2.Arrays.med3(short[], int, int, int) exclude",
+            "java2.util2.Arrays.sort(java.lang.Object[], int, int, java2.util2.Comparator) ignore",
             "java2.util2.Arrays.swap(char[], int, int) ignore",
             "java2.util2.Arrays.swap(java.lang.Object[], int, int) exclude",
             "java2.util2.Arrays.vecswap(byte[], int, int, int) exclude",
@@ -329,7 +332,9 @@ public class RandoopSystemTest {
             "java2.util2.Hashtable.readObject(java.io.ObjectInputStream) exclude",
             "java2.util2.Hashtable.rehash() ignore", // Travis
             "java2.util2.Hashtable.writeObject(java.io.ObjectOutputStream) exclude",
+            "java2.util2.LinkedHashMap.newValueIterator() ignore",
             "java2.util2.LinkedList.readObject(java.io.ObjectInputStream) exclude",
+            "java2.util2.LinkedList.set(int, java.lang.Object) ignore",
             "java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.Observable.clearChanged() exclude",
             "java2.util2.Observable.setChanged() exclude",
@@ -363,6 +368,8 @@ public class RandoopSystemTest {
             "java2.util2.Vector.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.WeakHashMap.eq(java.lang.Object, java.lang.Object) ignore", // Travis
             "java2.util2.WeakHashMap.removeMapping(java.lang.Object) exclude",
+            "java2.util2.WeakHashMap.resize(int) ignore",
+            "java2.util2.WeakHashMap.transfer(java2.util2.WeakHashMap.Entry[], java2.util2.WeakHashMap.Entry[]) ignore",
             "java2.util2.WeakHashMap.unmaskNull(java.lang.Object) ignore"
             // end of list (line break to permit easier sorting)
             );
