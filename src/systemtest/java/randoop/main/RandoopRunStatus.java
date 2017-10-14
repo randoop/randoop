@@ -63,6 +63,7 @@ class RandoopRunStatus {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
+    command.add("-Xmx3000m");
     if (testEnvironment.getBootClassPath() != null
         && !testEnvironment.getBootClassPath().isEmpty()) {
       command.add("-Xbootclasspath/a:" + testEnvironment.getBootClassPath());
@@ -100,10 +101,8 @@ class RandoopRunStatus {
       if (allowRandoopFailure) {
         return getRandoopRunStatus(randoopExitStatus);
       } else {
-        for (String line : randoopExitStatus.outputLines) {
-          System.out.println(line);
-        }
-        fail("Randoop exited badly, exit value = " + randoopExitStatus.exitStatus);
+        System.out.println(randoopExitStatus.dump());
+        fail("Randoop exited badly, see details above.");
       }
     }
 
