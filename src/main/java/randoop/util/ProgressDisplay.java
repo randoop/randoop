@@ -1,7 +1,9 @@
 package randoop.util;
 
+import java.lang.InterruptedException;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import plume.UtilMDE;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
@@ -104,16 +106,36 @@ public class ProgressDisplay extends Thread {
   private void printStackTraceAndExit() {
 
     System.out.println();
+    System.out.println();
     System.out.print("*** Randoop has detected no input generation attempts after ");
     System.out.println((exit_if_no_steps_after_milliseconds / 1000) + " seconds.");
-    System.out.println("This indicates Randoop may be executing a sequence");
-    System.out.println("that leads to nonterminating behavior.");
+    System.out.println("Two possible reasons are:");
+    System.out.println(" * Java has run out of memory and is thrashing.");
+    System.out.println("   This is likely if the progress update has become progressively slower.");
+    System.out.println("   Give Java more memory by running with, say, -Xmx3000m.");
+    System.out.println(" * Randoop is executing a sequence that contains nonterminating behavior.");
+    System.out.println(
+        "   Determine the nonterminating method and fix it or exclude it from Randoop.");
     System.out.println("Last sequence generated:");
     System.out.println();
     System.out.println(AbstractGenerator.currSeq);
     System.out.println();
-    System.out.println("Will print all thread stack traces and exit with code 1.");
+    System.out.println("Will print all thread stack traces (twice) and exit with code 1.");
+    System.out.println();
 
+    printAllStackTraces();
+    System.out.println();
+    try {
+      TimeUnit.SECONDS.sleep(1);
+    } catch (InterruptedException e) {
+      // if interrupted, just proceed
+    }
+    printAllStackTraces();
+
+    System.exit(1);
+  }
+
+  private void printAllStackTraces() {
     for (Map.Entry<Thread, StackTraceElement[]> trace : Thread.getAllStackTraces().entrySet()) {
       System.out.println("--------------------------------------------------");
       System.out.println("Thread " + trace.getKey().toString());
@@ -123,7 +145,7 @@ public class ProgressDisplay extends Thread {
         System.out.println(elt);
       }
     }
-    System.exit(1);
+    System.out.println("--------------------------------------------------");
   }
 
   private long lastNumStepsIncrease = System.currentTimeMillis();
