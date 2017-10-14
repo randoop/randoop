@@ -68,7 +68,11 @@ public final class Randomness {
   /** Number of calls to the underlying Random instance that this wraps. */
   private static int totalCallsToRandom = 0;
 
-  /** Call this before every use of Randomness.random. */
+  /**
+   * Call this before every use of Randomness.random.
+   *
+   * @param caller the name of the method that called Randomness.random.
+   */
   private static void incrementCallsToRandom(String caller) {
     totalCallsToRandom++;
     if (Log.isLoggingOn()) {
@@ -118,6 +122,10 @@ public final class Randomness {
    *
    * <p>Efficiency note: iterates through the entire list twice (once to compute interval length,
    * once to select element).
+   *
+   * @param <T> the type of elements of the list
+   * @param list the list from which to choose an element
+   * @return a member of {@code list}, chosen according to the weights
    */
   public static <T extends WeightedElement> T randomMemberWeighted(SimpleList<T> list) {
 
@@ -235,7 +243,14 @@ public final class Randomness {
     return mid;
   }
 
-  /** Return a random member of the set, selected uniformly at random. */
+  /**
+   * Return a random member of the set, selected uniformly at random.
+   *
+   * @param <T> the type of elements of the set param set the collection from which to choose an
+   *     element
+   * @param set the collection from which to select an element
+   * @return a randomly-selected member of the set
+   */
   public static <T> T randomSetMember(Collection<T> set) {
     int setSize = set.size();
     int randIndex = Randomness.nextRandomInt(setSize);
@@ -243,7 +258,12 @@ public final class Randomness {
     return CollectionsExt.getNthIteratedElement(set, randIndex);
   }
 
-  /** Return true with probability {@code trueProb}, otherwise false. */
+  /**
+   * Return true with probability {@code trueProb}, otherwise false.
+   *
+   * @param trueProb the likelihood that true is returned; must be within [0..1]
+   * @return true with likelihood {@code trueProb}; otherwise false
+   */
   public static boolean weightedCoinFlip(double trueProb) {
     if (trueProb < 0 || trueProb > 1) {
       throw new IllegalArgumentException("arg must be between 0 and 1.");
@@ -255,12 +275,21 @@ public final class Randomness {
     return result;
   }
 
-  /** Return true or false with the given relative probabilites, which need not add to 1. */
-  public static boolean randomBoolFromDistribution(double falseProb_, double trueProb_) {
-    double falseProb = falseProb_ / (falseProb_ + trueProb_);
+  /**
+   * Return true or false with the given relative probabilites, which need not add to 1.
+   *
+   * @param falseProb the likelihood that true is returned; an arbitrary non-negative number
+   * @param trueProb the likelihood that true is returned; an arbitrary non-negative number
+   * @return true or false, with the given probabilities
+   */
+  public static boolean randomBoolFromDistribution(double falseProb, double trueProb) {
+    if (trueProb < 0 || falseProb > 1) {
+      throw new IllegalArgumentException("arg must be between 0 and 1.");
+    }
+    double falseProbNormalized = falseProb / (falseProb + trueProb);
     incrementCallsToRandom("randomBoolFromDistribution");
-    boolean result = Randomness.random.nextDouble() >= falseProb;
-    logSelection(result, "randomBoolFromDistribution", falseProb_ + ", " + trueProb_);
+    boolean result = Randomness.random.nextDouble() >= falseProbNormalized;
+    logSelection(result, "randomBoolFromDistribution", falseProb + ", " + trueProb);
     return result;
   }
 
