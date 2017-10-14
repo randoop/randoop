@@ -700,7 +700,7 @@ public final class Sequence implements WeightedElement {
     if (possibleIndices.isEmpty()) {
       Statement lastStatement = this.statements.get(this.statements.size() - 1);
       throw new BugInRandoopException(
-          "Failed to select variable with input type " + type + " from statment " + lastStatement);
+          "Failed to select variable with input type " + type + " from statement " + lastStatement);
     }
     if (possibleIndices.size() == 1) {
       return possibleIndices.get(0);

@@ -39,6 +39,22 @@ class ProcessStatus {
     this.outputLines = outputLines;
   }
 
+  String lineSep = System.getProperty("line.separator");
+
+  /** Outputs a verbose representation of this. */
+  public String dump() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("ProcessStatus[").append(lineSep);
+    sb.append("  command = ").append(command).append(lineSep);
+    sb.append("  exitStatus = ").append(exitStatus).append(lineSep);
+    sb.append("  outputlines = ").append(lineSep);
+    for (String line : outputLines) {
+      sb.append("    ").append(line).append(lineSep);
+    }
+    sb.append("]");
+    return sb.toString();
+  }
+
   /**
    * Runs the given command in a new process using the given timeout.
    *
