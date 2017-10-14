@@ -106,12 +106,9 @@ public class SequenceCompiler {
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
     fileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, classFileName, source);
-    // long startTime = System.currentTimeMillis();
     JavaCompiler.CompilationTask task =
         compiler.getTask(null, fileManager, diagnostics, options, null, sources);
     Boolean succeeded = task.call();
-    // Helps diagnose thrashing; most compilations should be very fast.
-    // System.out.printf("compiled Java source in %d msec.%n", System.currentTimeMillis() - startTime);
     return (succeeded != null && succeeded);
   }
 

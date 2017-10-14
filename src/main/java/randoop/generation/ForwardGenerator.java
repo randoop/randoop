@@ -271,7 +271,6 @@ public class ForwardGenerator extends AbstractGenerator {
   private ExecutableSequence createNewUniqueSequence() {
 
     Log.logLine("-------------------------------------------");
-    // Log.logLine(new Date());
 
     if (this.operations.isEmpty()) {
       return null;
