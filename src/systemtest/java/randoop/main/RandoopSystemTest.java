@@ -281,7 +281,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    options.setOption("generatedLimit", "10000");
+    options.setOption("generatedLimit", "6000"); // runs out of memory if 10000
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setFlag("small-tests");
