@@ -610,6 +610,7 @@ javadoc {
   options.with {
     linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
   }
+  failOnError = true
 }
 
 // needed for javadoc.doLast

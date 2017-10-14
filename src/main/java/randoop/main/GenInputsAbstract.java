@@ -559,8 +559,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * href="http://junit.sourceforge.net/javadoc/org/junit/After.html">{@code @After} </a>-annotated
    * method of each generated test class. Intended for use when run-time behavior of classes under
    * test requires tear-down behavior that is not needed for execution by reflection. Code is
-   * uninterpreted, and, so, is not run during generation. (The annotation {@ode @After} is JUnit 4,
-   * and {@code @AfterEach} is JUnit 5.)
+   * uninterpreted, and, so, is not run during generation. (The annotation {@code @After} is JUnit
+   * 4, and {@code @AfterEach} is JUnit 5.)
    */
   @Option("Filename for code to include in After-annotated method of test classes")
   public static String junit_after_each = null;

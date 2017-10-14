@@ -174,6 +174,8 @@ public class ComponentManager {
    *
    * @param operation the statement
    * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
