@@ -110,8 +110,12 @@ public class ProgressDisplay extends Thread {
     System.out.print("*** Randoop has detected no input generation attempts after ");
     System.out.println((exit_if_no_steps_after_milliseconds / 1000) + " seconds.");
     System.out.println("Two possible reasons are:");
-    System.out.println(" * Java has run out of memory and is thrashing; give Java more memory.");
-    System.out.println(" * Randoop is executing a sequence that contains an infinite loop.");
+    System.out.println(" * Java has run out of memory and is thrashing.");
+    System.out.println("   This is likely if the progress update has become progressively slower.");
+    System.out.println("   Give Java more memory by running with, say, -Xmx3000m.");
+    System.out.println(" * Randoop is executing a sequence that contains nonterminating behavior.");
+    System.out.println(
+        "   Determine the nonterminating method and fix it or exclude it from Randoop.");
     System.out.println("Last sequence generated:");
     System.out.println();
     System.out.println(AbstractGenerator.currSeq);
