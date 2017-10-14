@@ -289,12 +289,20 @@ public class OperationModel {
     }
   }
 
-  /** Output the operations of this model, if logging is enabled. */
+  /**
+   * Output the operations of this model to {@code out}, if logging is enabled.
+   *
+   * @param out the PrintStream on which to produce output
+   */
   public void logOperations(PrintStream out) {
     logOperations(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, UTF_8))));
   }
 
-  /** Output the operations of this model, if logging is enabled. */
+  /**
+   * Output the operations of this model, if logging is enabled.
+   *
+   * @param out the Writer on which to produce output
+   */
   public void logOperations(Writer out) {
     try {
       out.write("Operations: " + Globals.lineSep);
@@ -315,12 +323,20 @@ public class OperationModel {
     }
   }
 
-  /** Print a verbose representation of the model to {@code out}. */
+  /**
+   * Print a verbose representation of the model to {@code out}.
+   *
+   * @param out the PrintStream on which to produce output
+   */
   public void dumpModel(PrintStream out) {
     dumpModel(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, UTF_8))));
   }
 
-  /** Print a verbose representation of the model to {@code out}. */
+  /**
+   * Print a verbose representation of the model to {@code out}.
+   *
+   * @param out the Writer on which to produce output
+   */
   public void dumpModel(Writer out) {
     try {
       out.write(String.format("Model with hashcode %s:%n", hashCode()));

@@ -15,7 +15,11 @@ public class TestUtils {
   // Setting to true causes system test runNoOutputTest to fail.
   static boolean debug = false;
 
-  /** Use system properties to set all logs. */
+  /**
+   * Use system properties to set all logs.
+   *
+   * @param generator the AbstractGenerator in which to set the operation log
+   */
   public static void setAllLogs(AbstractGenerator generator) {
     setRandoopLog();
     setSelectionLog();
