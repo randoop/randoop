@@ -199,7 +199,7 @@ Run Randoop by invoking its main class <code>randoop.main.Main</code>:
 </p>
 
 <pre class="code">
-java -ea randoop.main.Main <em>command</em> <em>args...</em>
+java randoop.main.Main <em>command</em> <em>args...</em>
 </pre>
 
 <p>
@@ -231,8 +231,9 @@ For details, see <a href="#getting_help">Getting Help</a>.
 Example uses:
 
 <pre class="code">
-java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help
-java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
+java -classpath $(RANDOOP_JAR) randoop.main.Main help
+java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
+java -classpath $(RANDOOP_JAR) randoop.main.Main help minimize
 </pre>
 </li>
 
@@ -240,7 +241,7 @@ java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
 <pre class="code">
-java -ea -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --timeLimit=60
+java -Xmx3000m -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --timeLimit=60
 </pre>
 </li>
 
@@ -249,7 +250,7 @@ see <a href="#minimize">Minimizing a failing JUnit test suite</a>.
 Example use:
 
 <pre class="code">
-java -ea -cp $(RANDOOP_JAR) randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=<em>myclasspath</em>
+java -cp $(RANDOOP_JAR) randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=<em>myclasspath</em>
 </pre>
 </li>
 
@@ -717,7 +718,7 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -ea -cp randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
+java -cp randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
 <p>
@@ -1531,14 +1532,14 @@ classes under test
 To print help for test generation (the <code>gentests</code> command), run:
 
 <pre class="code">
-java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
+java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
 </pre>
 
 To also include unpublicized (due to being experimental or unsupported)
  options for a command, use the <code>--unpub</code> flag:
 
 <pre class="code">
-java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help --unpub gentests
+java -classpath $(RANDOOP_JAR) randoop.main.Main help --unpub gentests
 </pre>
 
 
@@ -1847,9 +1848,11 @@ tests</a>.
   fix.  This generally includes
 </p>
   <ul>
-    <li>the version of Randoop (please use the most recent released
-  version, or the current version from the <a href="https://github.com/randoop/randoop">GitHub version control repository</a>),</li>
-    <li>the exact commands you ran (we recommend using the <code>-ea</code> option to java when running Randoop, which makes diagnosis easier),</li>
+    <li>the version of Randoop (please use the most recent released version,
+      or the current version from the
+      <a href="https://github.com/randoop/randoop">GitHub version control repository</a>),</li>
+    <li>the exact commands you ran (please use the <code>-ea</code> option to
+       <code>java</code> when running Randoop, which makes diagnosis easier),</li>
     <li>the exact and complete output of the commands, and</li>
     <li>all the files that are necessary to run those commands.</li>
   </ul>
