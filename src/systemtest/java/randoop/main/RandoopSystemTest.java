@@ -1621,7 +1621,8 @@ public class RandoopSystemTest {
                   "Test suite should have no error tests, but has %d:%n%n",
                   runStatus.errorTestCount));
 
-          String packagePathString = options.getPackageName().replace('.', '/');
+          String packageString = options.getPackageName();
+          String packagePathString = packageString == null ? "" : packageString.replace('.', '/');
           Path srcDir = environment.sourceDir.resolve(packagePathString);
           try (DirectoryStream<Path> testFiles =
               Files.newDirectoryStream(srcDir, errorBasename + "*.java")) {
