@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Objects;
 import plume.UtilMDE;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -127,7 +128,7 @@ public final class NonreceiverTerm extends CallableOperation {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
       return ((Class<?>) value).getName() + ".class";
     }
-    return value.toString();
+    return Objects.toString(value);
   }
 
   @Override

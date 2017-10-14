@@ -111,6 +111,7 @@ public class ExecutableSequence {
 
   private static PrintStream ps_output_buffer = new PrintStream(output_buffer);
 
+  /* Maps values to the variables that hold them. */
   private IdentityMultiMap<Object, Variable> variableMap;
 
   /**
@@ -414,6 +415,7 @@ public class ExecutableSequence {
     return checks;
   }
 
+  /** The result of executing the i-th element of the sequence. */
   private Object getValue(int index) {
     ExecutionOutcome result = getResult(index);
     if (result instanceof NormalExecution) {
@@ -424,7 +426,7 @@ public class ExecutableSequence {
 
   /**
    * Returns the list of (reference type) values created and used by the last statement of this
-   * sequence.
+   * sequence. Null output values are not included.
    *
    * @return the list of values created and used by the last statement of this sequence
    */

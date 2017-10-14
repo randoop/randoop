@@ -26,9 +26,7 @@ public class TestUtils {
     setOperationLog(generator);
   }
 
-  /**
-   * Uses the system property {@code randoop.selection.log} to set {@link GenInputsAbstract#log}.
-   */
+  /** Uses the system property {@code randoop.log} to set {@link GenInputsAbstract#log}. */
   public static void setRandoopLog() {
     String randoopLog = System.getProperty("randoop.log");
     setRandoopLog(randoopLog);
@@ -40,7 +38,7 @@ public class TestUtils {
    * @param file the file to write the log to
    */
   @SuppressWarnings(
-      "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer.  Requires work on command-line arguments.
+      "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
   public static void setRandoopLog(String file) {
     if (debug) {
       System.out.println("setRandoopLog(" + file + ")");
