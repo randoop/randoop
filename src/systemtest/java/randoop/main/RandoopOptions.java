@@ -19,7 +19,7 @@ class RandoopOptions {
   /** The list of classnames for running Randoop */
   private final Set<String> classnames;
 
-  /** The package name for Randoopsgenerated test classes; null if default package. */
+  /** The package name for Randoop-generated test classes; null if default package. */
   private String packageName;
 
   /** The basename for generated regression test classes. */
