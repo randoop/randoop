@@ -68,6 +68,14 @@ public final class ReflectionExecutor {
     return ((excep_exec_duration / (double) excep_exec_count) / Math.pow(10, 6));
   }
 
+  /**
+   * Executes code.runReflectionCode(). If no exception is thrown, returns null. Otherwise, returns
+   * the exception thrown.
+   *
+   * @param code the {@link ReflectionCode} to be executed
+   * @param out stream to print exception details to or null
+   * @return null or the exception thrown
+   */
   public static Throwable executeReflectionCode(ReflectionCode code, PrintStream out) {
     Throwable ret;
 
@@ -97,11 +105,11 @@ public final class ReflectionExecutor {
   }
 
   /**
-   * Executes code.runReflectionCode(). If no exception is thrown, returns null. Otherwise, returns
-   * the exception thrown.
+   * Executes code.runReflectionCode() in its own thread. If no exception is thrown, returns null.
+   * Otherwise, returns the exception thrown.
    *
    * @param code the {@link ReflectionCode} to be executed
-   * @param out stream to print message to or null if message is to be ignored
+   * @param out ignored
    * @return null or the exception thrown
    */
   @SuppressWarnings("deprecation")
@@ -140,11 +148,12 @@ public final class ReflectionExecutor {
   }
 
   /**
-   * without threads.
+   * Executes code.runReflectionCode() in the current thread. If no exception is thrown, returns
+   * null. Otherwise, returns the exception thrown.
    *
    * @param code the {@link ReflectionCode} to be executed
-   * @param out the string to print messages; null if no output
-   * @return null, or the exception thrown
+   * @param out stream to print exception details to or null
+   * @return null or the exception thrown
    */
   private static Throwable executeReflectionCodeUnThreaded(ReflectionCode code, PrintStream out) {
     try {
