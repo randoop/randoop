@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import plume.Pair;
 import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.Globals;
@@ -670,46 +671,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // At this point, we have a list of candidate sequences and need to select a
       // randomly-chosen sequence from the list.
-      Sequence chosenSeq;
-      if (GenInputsAbstract.small_tests) {
-        chosenSeq = Randomness.randomMemberWeighted(candidates);
-      } else {
-        chosenSeq = Randomness.randomMember(candidates);
-      }
-
-      Log.logLine("chosenSeq: " + chosenSeq);
-
-      // TODO: the last statement might not be active -- it might not create a usable variable of
-      // such a type.  An example is a void method that is called with only null arguments.
-      // More generally, paying attention to only the last statement here seems like a reasonable
-      // design choice, but it is inconsistent with how Randoop behaves in general, and all parts
-      // of Randoop should be made consistent.  Alternative to the below:
-      // Variable randomVariable = chosenSeq.randomVariableForType(inputType, isReceiver);
-
-      // We are not done yet: we have chosen a sequence that yields a value of the required
-      // type inputTypes[i], but it may produce more than one such value. Our last random
-      // selection step is to select from among all possible values produced by the sequence.
-      Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType, isReceiver);
-
-      if (isReceiver
-          && (chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
-              || randomVariable.getType().isPrimitive())) {
-        System.out.println();
-        System.out.println("Selected null or a primitive as the receiver for a method call.");
-        System.out.printf("  operation = %s%n", operation);
-        System.out.printf("  isReceiver = %s%n", isReceiver);
-        System.out.printf("  randomVariable = %s%n", randomVariable);
-        System.out.printf("    getType() = %s%n", randomVariable.getType());
-        System.out.printf("    isPrimitive = %s%n", randomVariable.getType().isPrimitive());
-        System.out.printf("  chosenSeq = {%n%s}%n", chosenSeq);
-        System.out.printf(
-            "    getCreatingStatement = %s%n", chosenSeq.getCreatingStatement(randomVariable));
-        System.out.printf(
-            "    isNonreceivingInitialization = %s%n",
-            chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
-        throw new BugInRandoopException(
-            "Selected null or primitive value as the receiver for a method call");
-      }
+      Pair<Variable, Sequence> varAndSeq = randomVariable(candidates, inputType, isReceiver);
+      Variable randomVariable = varAndSeq.a;
+      Sequence chosenSeq = varAndSeq.b;
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {
@@ -732,6 +696,77 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     return new InputsAndSuccessFlag(true, sequences, variables);
+  }
+
+  Pair<Variable, Sequence> randomVariable(
+      SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
+    for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
+
+      Sequence chosenSeq;
+      if (GenInputsAbstract.small_tests) {
+        chosenSeq = Randomness.randomMemberWeighted(candidates);
+      } else {
+        chosenSeq = Randomness.randomMember(candidates);
+      }
+
+      Log.logLine("chosenSeq: " + chosenSeq);
+
+      // TODO: the last statement might not be active -- it might not create a usable variable of
+      // such a type.  An example is a void method that is called with only null arguments.
+      // More generally, paying attention to only the last statement here seems like a reasonable
+      // design choice, but it is inconsistent with how Randoop behaves in general, and all parts
+      // of Randoop should be made consistent.  Alternative to the below (but this is a hack, and it
+      // would be better to make the design cleaner):
+
+      // Variable randomVariable = chosenSeq.randomVariableForType(inputType, isReceiver);
+
+      // We are not done yet: we have chosen a sequence that yields a value of the required
+      // type inputTypes[i], but it may produce more than one such value. Our last random
+      // selection step is to select from among all possible values produced by the sequence.
+      Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType, isReceiver);
+
+      if (randomVariable == null) {
+        continue;
+      }
+      if (isReceiver
+          && ((chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
+              || randomVariable.getType().isPrimitive()))) {
+        System.out.println();
+        System.out.println("Selected null or a primitive as the receiver for a method call.");
+        // System.out.printf("  operation = %s%n", operation);
+        System.out.printf("  isReceiver = %s%n", isReceiver);
+        System.out.printf("  randomVariable = %s%n", randomVariable);
+        System.out.printf("    getType() = %s%n", randomVariable.getType());
+        System.out.printf("    isPrimitive = %s%n", randomVariable.getType().isPrimitive());
+        System.out.printf("  chosenSeq = {%n%s}%n", chosenSeq);
+        System.out.printf(
+            "    getCreatingStatement = %s%n", chosenSeq.getCreatingStatement(randomVariable));
+        System.out.printf(
+            "    isNonreceivingInitialization = %s%n",
+            chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
+        continue;
+        // throw new BugInRandoopException(
+        //     "Selected null or primitive value as the receiver for a method call");
+      }
+
+      return new Pair<>(randomVariable, chosenSeq);
+    }
+    // Can't get here unless isReceiver is true.  TODO: fix design so this cannot happen.
+    assert isReceiver;
+    // Try every element of the list, in order.
+    List<Pair<Variable, Sequence>> validResults = new ArrayList<>();
+    for (int i = 0; i < candidates.size(); i++) {
+      Sequence s = candidates.get(i);
+      Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);
+      validResults.add(new Pair<>(randomVariable, s));
+    }
+    if (validResults.size() == 0) {
+      throw new BugInRandoopException(
+          String.format(
+              "Failed to select %svariable with input type %s",
+              (isReceiver ? "receiver " : ""), inputType));
+    }
+    return Randomness.randomMember(validResults);
   }
 
   /**
