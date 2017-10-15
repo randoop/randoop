@@ -59,6 +59,12 @@ public abstract class ReflectionCode {
 
       runReflectionCodeRaw();
 
+      // Not checked if runReflectionCodeRaw throws an exception, but this can't go in a finally
+      // block because exceptions thrown in a finally block have no effect.
+      if (retval != null && exceptionThrown != null) {
+        throw new NotCaughtIllegalStateException("cannot have both retval and exception not null");
+      }
+
     } finally {
 
       // Before exiting, restore the RandoopSecurityManager's status to its
@@ -66,10 +72,6 @@ public abstract class ReflectionCode {
       if (randoopsecurity != null) {
         assert oldStatus != null;
         randoopsecurity.status = oldStatus;
-      }
-
-      if (retval != null && exceptionThrown != null) {
-        throw new NotCaughtIllegalStateException("cannot have both retval and exception not null");
       }
     }
   }
