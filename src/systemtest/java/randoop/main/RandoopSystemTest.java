@@ -1100,7 +1100,6 @@ public class RandoopSystemTest {
     options.setErrorBasename("CompError");
     options.setRegressionBasename("CompRegression");
     options.setOption("attemptedLimit", "3000");
-    options.setFlag("check-compilable");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
