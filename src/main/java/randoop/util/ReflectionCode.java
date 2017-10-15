@@ -12,7 +12,13 @@ import randoop.util.RandoopSecurityManager.Status;
 public abstract class ReflectionCode {
 
   /** has this been executed already */
-  private boolean runAlready;
+  protected boolean runAlready;
+
+  // Before runReflectionCodeRaw is executed, both of these fields are null. After
+  // runReflectionCodeRaw is executed, exactly one of these fields is null (unless
+  // runReflectionCodeRaw itself threw an exception, in which case both fields remain null).
+  protected Object retval;
+  protected Throwable exceptionThrown;
 
   /**
    * Runs the reflection code that this object represents, but first, if System.getSecurityManager()
@@ -26,6 +32,11 @@ public abstract class ReflectionCode {
   public final void runReflectionCode()
       throws InstantiationException, IllegalAccessException, InvocationTargetException,
           NotCaughtIllegalStateException {
+
+    if (hasRunAlready()) {
+      throw new NotCaughtIllegalStateException("cannot run this twice " + this);
+    }
+    this.setRunAlready();
 
     // The following few lines attempt to find out if there is a
     // RandoopSecurityManager installed, and if so, record its status.
@@ -48,6 +59,12 @@ public abstract class ReflectionCode {
 
       runReflectionCodeRaw();
 
+      // Not checked if runReflectionCodeRaw throws an exception, but this can't go in a finally
+      // block because exceptions thrown in a finally block have no effect.
+      if (retval != null && exceptionThrown != null) {
+        throw new NotCaughtIllegalStateException("cannot have both retval and exception not null");
+      }
+
     } finally {
 
       // Before exiting, restore the RandoopSecurityManager's status to its
@@ -60,7 +77,7 @@ public abstract class ReflectionCode {
   }
 
   /**
-   * Executed the reflection code. All internal exceptions must be thrown as
+   * Execute the reflection code. All internal exceptions must be thrown as
    * NotCaughtIllegalStateException because everything else is caught.
    *
    * @throws InstantiationException if unable to create a new instance
@@ -74,15 +91,26 @@ public abstract class ReflectionCode {
           NotCaughtIllegalStateException;
 
   protected final void setRunAlready() {
-    // called from inside runReflectionCode, so use
-    // NotCaughtIllegalStateException
-    if (runAlready) throw new NotCaughtIllegalStateException("cannot call this twice");
+    // Called from inside runReflectionCode, so use NotCaughtIllegalStateException.
+    if (runAlready) {
+      throw new NotCaughtIllegalStateException("cannot call this twice");
+    }
     runAlready = true;
   }
 
-  public abstract Object getReturnVariable();
+  public Object getReturnValue() {
+    if (!hasRunAlready()) {
+      throw new IllegalStateException("run first, then ask");
+    }
+    return retval;
+  }
 
-  public abstract Throwable getExceptionThrown();
+  public Throwable getExceptionThrown() {
+    if (!hasRunAlready()) {
+      throw new IllegalStateException("run first, then ask");
+    }
+    return exceptionThrown;
+  }
 
   public final boolean hasRunAlready() {
     return runAlready;
