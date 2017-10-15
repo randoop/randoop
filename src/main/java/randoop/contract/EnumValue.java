@@ -58,11 +58,6 @@ public final class EnumValue implements ObjectContract {
   }
 
   @Override
-  public boolean evalExceptionMeansFailure() {
-    return true;
-  }
-
-  @Override
   public String toCommentString() {
     return null;
   }

@@ -30,12 +30,12 @@ public class ExceptionBehaviorPredicate implements ExceptionPredicate {
    * corresponds to the behavior set for this object.
    *
    * @param exec the exceptional execution
-   * @param s the sequence in which exception occurred
+   * @param eseq the sequence in which exception occurred
    * @return true if exception is classified with behavior, and false otherwise
    */
   @Override
-  public boolean test(ExceptionalExecution exec, ExecutableSequence s) {
+  public boolean test(ExceptionalExecution exec, ExecutableSequence eseq) {
     Throwable exception = exec.getException();
-    return ExceptionBehaviorClassifier.classify(exception, s) == behavior;
+    return ExceptionBehaviorClassifier.classify(exception, eseq) == behavior;
   }
 }

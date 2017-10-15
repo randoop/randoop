@@ -32,23 +32,23 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
    * <p>Note that the operation input values passed to the post-condition are the values
    * post-execution.
    *
-   * @param s the sequence for which checks are generated
+   * @param eseq the sequence for which checks are generated
    * @return the {@link ErrorRevealingChecks} with a {@link PostConditionCheck} if the
    *     post-condition fails on the sequence, an {@code null} otherwise
    */
   @Override
-  public TestChecks visit(ExecutableSequence s) {
-    int finalIndex = s.sequence.size() - 1;
-    ExecutionOutcome result = s.getResult(finalIndex);
+  public TestChecks visit(ExecutableSequence eseq) {
+    int finalIndex = eseq.sequence.size() - 1;
+    ExecutionOutcome result = eseq.getResult(finalIndex);
     TestChecks checks;
     if (result instanceof NotExecuted) {
-      throw new Error("Abnormal execution in sequence: " + s);
+      throw new Error("Abnormal execution in sequence: " + eseq);
     } else if (result instanceof NormalExecution) {
       List<BooleanExpression> failed = new ArrayList<>();
-      ArrayList<Variable> inputs = new ArrayList<>(s.sequence.getInputs(finalIndex));
-      inputs.add(s.sequence.getVariable(finalIndex));
-      Object[] inputValues = s.getRuntimeInputs(inputs);
-      if (s.sequence.getStatement(finalIndex).getOperation().isStatic()) {
+      ArrayList<Variable> inputs = new ArrayList<>(eseq.sequence.getInputs(finalIndex));
+      inputs.add(eseq.sequence.getVariable(finalIndex));
+      Object[] inputValues = eseq.getRuntimeInputs(inputs);
+      if (eseq.sequence.getStatement(finalIndex).getOperation().isStatic()) {
         inputValues = addNullReceiver(inputValues);
       }
       for (BooleanExpression postCondition : postConditions) {
@@ -63,7 +63,7 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
         checks = new ErrorRevealingChecks();
         checks.add(new PostConditionCheck(failed, inputs));
       }
-      s.sequence.disableShortForm();
+      eseq.sequence.disableShortForm();
     } else { // if execution was exceptional, return empty checks
       checks = new ErrorRevealingChecks();
     }

@@ -18,13 +18,13 @@ public class RegressionTestPredicate extends DefaultPredicate<ExecutableSequence
    * @return true if has no failures and does not involve a timeout exception, false otherwise
    */
   @Override
-  public boolean test(ExecutableSequence s) {
+  public boolean test(ExecutableSequence eseq) {
     // don't want error revealing test
-    if (s.hasFailure()) {
+    if (eseq.hasFailure()) {
       return false;
     }
 
-    TestChecks testChecks = s.getChecks();
+    TestChecks testChecks = eseq.getChecks();
 
     // if have exception
     ExceptionCheck ec = testChecks.getExceptionCheck();

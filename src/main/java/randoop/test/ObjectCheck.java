@@ -129,7 +129,8 @@ public class ObjectCheck implements Check {
     } catch (ThreadDeath t) {
       throw t;
     } catch (Throwable t) {
-      return contract.evalExceptionMeansFailure();
+      // ***** TODO: determine what the exception is
+      return false;
     }
   }
 

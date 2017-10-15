@@ -46,11 +46,11 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
    * @throws Error if any exception encountered before last statement of sequence
    */
   @Override
-  public TestChecks visit(ExecutableSequence s) {
+  public TestChecks visit(ExecutableSequence eseq) {
     InvalidChecks checks = new InvalidChecks();
-    int finalIndex = s.sequence.size() - 1;
-    for (int i = 0; i < s.sequence.size(); i++) {
-      ExecutionOutcome result = s.getResult(i);
+    int finalIndex = eseq.sequence.size() - 1;
+    for (int i = 0; i < eseq.sequence.size(); i++) {
+      ExecutionOutcome result = eseq.getResult(i);
       if (result instanceof ExceptionalExecution) {
         ExceptionalExecution exec = (ExceptionalExecution) result;
         Throwable e = exec.getException();
@@ -58,12 +58,12 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
         if (i != finalIndex) {
           if (throwExceptionOnFlakyTest
               && !((e instanceof OutOfMemoryError) || (e instanceof StackOverflowError))) {
-            throw new SequenceExceptionError(s, i, e);
+            throw new SequenceExceptionError(eseq, i, e);
           }
           checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));
         }
 
-        if (isInvalid.test(exec, s)) {
+        if (isInvalid.test(exec, eseq)) {
           checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));
         }
       }

@@ -15,10 +15,10 @@ public interface TestCheckGenerator {
    * Generate a {@code TestChecks} object for the executed sequence {@code s} based on the criteria
    * of this generator.
    *
-   * @param s the sequence for which checks are generated
+   * @param eseq the sequence for which checks are generated
    * @return the generated check set for the sequence
    */
-  TestChecks visit(ExecutableSequence s);
+  TestChecks visit(ExecutableSequence eseq);
 
   TestCheckGenerator getGenerator();
 }

@@ -50,11 +50,6 @@ public final class EqualsReflexive implements ObjectContract {
   }
 
   @Override
-  public boolean evalExceptionMeansFailure() {
-    return true;
-  }
-
-  @Override
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
