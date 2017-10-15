@@ -294,6 +294,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Whether StackOverflowError is an ERROR, EXPECTED or INVALID")
   public static BehaviorType sof_exception = BehaviorType.INVALID;
 
+  ///////////////////////////////////////////////////////////////////
   /**
    * Read JSON condition file to use specifications to control how tests are generated and
    * classified.

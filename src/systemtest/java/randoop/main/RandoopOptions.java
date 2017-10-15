@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import plume.EntryReader;
 
@@ -122,6 +123,9 @@ class RandoopOptions {
    * @param packageName the package name
    */
   void setPackageName(String packageName) {
+    if (Objects.equals(packageName, "")) {
+      throw new IllegalArgumentException();
+    }
     if (packageName != null) {
       setOption("junit-package-name", packageName);
       this.packageName = packageName;
