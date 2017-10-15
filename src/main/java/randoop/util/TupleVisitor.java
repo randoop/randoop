@@ -2,6 +2,8 @@ package randoop.util;
 
 import java.util.List;
 
+// TODO: This is gross, overly-abstract design.
+// The only implementor of TupleVisitor is ContractChecker.
 /** Interface for visitors on elements of {@link TupleSet}. */
 public interface TupleVisitor<E, T> {
 

@@ -83,6 +83,7 @@ public class TestClassificationTest {
     GenInputsAbstract.unchecked_exception = BehaviorType.INVALID;
     GenInputsAbstract.npe_on_null_input = BehaviorType.INVALID;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.INVALID;
+    GenInputsAbstract.cm_exception = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputLimit = 1000;
@@ -127,6 +128,7 @@ public class TestClassificationTest {
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.cm_exception = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.ERROR;
     GenInputsAbstract.sof_exception = BehaviorType.ERROR;
     GenInputsAbstract.outputLimit = 1000;
@@ -185,6 +187,7 @@ public class TestClassificationTest {
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.EXPECTED;
+    GenInputsAbstract.cm_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.oom_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.sof_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.outputLimit = 1000;
@@ -231,6 +234,7 @@ public class TestClassificationTest {
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.cm_exception = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputLimit = 1000;
@@ -292,6 +296,7 @@ public class TestClassificationTest {
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.cm_exception = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputLimit = 1000;

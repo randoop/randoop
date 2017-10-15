@@ -1,5 +1,6 @@
 package randoop.main;
 
+import java.util.ConcurrentModificationException;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
 
@@ -17,7 +18,8 @@ public class ExceptionBehaviorClassifier {
    * Classifies a {@code Throwable} thrown by the {@code ExecutableSequence} using the command-line
    * arguments {@link GenInputsAbstract#checked_exception}, {@link
    * GenInputsAbstract#unchecked_exception}, {@link GenInputsAbstract#npe_on_null_input}, {@link
-   * GenInputsAbstract#oom_exception}, and {@link GenInputsAbstract#sof_exception}.
+   * GenInputsAbstract#cm_exception}, {@link GenInputsAbstract#oom_exception}, and {@link
+   * GenInputsAbstract#sof_exception}.
    *
    * @param t the {@code Throwable} to classify
    * @param eseq the {@code ExecutableSequence} that threw exception
@@ -34,6 +36,10 @@ public class ExceptionBehaviorClassifier {
         } else { // formerly known as the NPE on non-null input contract
           return GenInputsAbstract.npe_on_non_null_input;
         }
+      }
+
+      if (t instanceof ConcurrentModificationException) {
+        return GenInputsAbstract.cm_exception;
       }
 
       if (t instanceof OutOfMemoryError) {

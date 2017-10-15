@@ -51,7 +51,7 @@ class TestRunStatus {
    * Runs the tests with the given basename, and captures and returns a description of the results.
    *
    * @param testEnvironment the environment for this test run
-   * @param packageName the package name of the JUnit tests
+   * @param packageName the package name of the JUnit tests, null if default package
    * @param basename the base name of the JUnit files
    * @return the {@link TestRunStatus} for the execution of the JUnit tests
    */
@@ -60,11 +60,7 @@ class TestRunStatus {
     String testClasspath = testEnvironment.testClassPath;
     Path jacocoDir = testEnvironment.jacocoDir;
     String execFile = jacocoDir.resolve(basename + "jacoco.exec").toString();
-    String jUnitTestSuiteName = "";
-    if (!packageName.isEmpty()) {
-      jUnitTestSuiteName = packageName + ".";
-    }
-    jUnitTestSuiteName += basename;
+    String jUnitTestSuiteName = ((packageName == null) ? "" : packageName + ".") + basename;
 
     List<String> command = new ArrayList<>();
     command.add("java");

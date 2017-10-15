@@ -72,11 +72,7 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
     CompilationUnit source =
         junitCreator.createTestClass(testClassName, methodNamePrefix, sequences);
     PackageDeclaration pkg = source.getPackage();
-    String packageName = "";
-    if (pkg != null) {
-      packageName = pkg.getPackageName();
-    }
-
+    String packageName = pkg == null ? null : pkg.getPackageName();
     boolean result = testSource(testClassName, source, packageName);
     if (!result && genTests != null) {
       genTests.countSequenceCompileFailure();
@@ -91,7 +87,7 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
    *
    * @param testClassName the name of the test class
    * @param source the source text for the class
-   * @param packageName the package name for the test
+   * @param packageName the package name for the test, null if no package
    * @return true if the code compiles (without error), false otherwise
    */
   boolean testSource(String testClassName, CompilationUnit source, String packageName) {
