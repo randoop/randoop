@@ -8,7 +8,7 @@ import randoop.condition.Condition;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 
-/** Checks the given post-condition */
+/** Checks the given post-conditions after the last statement of a sequence. */
 public class PostConditionCheckGenerator implements TestCheckGenerator {
 
   /** the post-condition */

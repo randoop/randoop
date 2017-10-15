@@ -124,11 +124,6 @@ public final class ObserverEqValue implements ObjectContract {
   }
 
   @Override
-  public boolean evalExceptionMeansFailure() {
-    return true;
-  }
-
-  @Override
   public String get_observer_str() {
     return observer.toString();
   }

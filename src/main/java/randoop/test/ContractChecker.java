@@ -44,10 +44,22 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
    * Applies the contracts of this checker to the given tuple.
    *
    * @param tuple the value tuple to use as input to the contracts
-   * @return a {@link Check} of a contract that failed on the tuple
+   * @return a {@link Check} of the first contract that failed on the tuple, or null if no contracts
+   *     failed
    */
   @Override
   public Check apply(List<ReferenceValue> tuple) {
+    return checkContracts(tuple);
+  }
+
+  /**
+   * Applies the contracts of this checker to the given tuple.
+   *
+   * @param tuple the value tuple to use as input to the contracts
+   * @return a {@link Check} of the first contract that failed on the tuple, or null if no contracts
+   *     failed
+   */
+  public Check checkContracts(List<ReferenceValue> tuple) {
     for (ObjectContract contract : contracts) {
       assert tuple.size() == contract.getArity()
           : "value tuple size "
@@ -90,6 +102,11 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
 
     ExecutionOutcome outcome = ObjectContractUtils.execute(contract, values);
 
+    if (Log.isLoggingOn()) {
+      Log.logLine("Executed contract " + contract.getClass());
+      Log.logLine(" Contract outcome " + outcome);
+    }
+
     if (outcome instanceof NormalExecution) {
       if (((NormalExecution) outcome).getRuntimeValue().equals(true)) {
         return null;
@@ -97,14 +114,16 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
     } else if (outcome instanceof ExceptionalExecution) {
       Throwable e = ((ExceptionalExecution) outcome).getException();
       if (Log.isLoggingOn()) {
-        Log.logLine("Contract threw exception: " + e.getMessage());
+        Log.logLine(
+            "Contract threw exception of class "
+                + e.getClass()
+                + " with message: "
+                + e.getMessage());
       }
       if (e instanceof BugInRandoopException) {
         throw (BugInRandoopException) e;
       }
-      if (!contract.evalExceptionMeansFailure()) {
-        return null;
-      }
+      // ***** TODO: determine what the exception is
     } else {
       throw new BugInRandoopException(
           "Contract " + contract + " failed to execute during evaluation");

@@ -7,8 +7,8 @@ import randoop.sequence.ExecutableSequence;
 import randoop.types.ClassOrInterfaceType;
 
 /**
- * A {@link TestCheckGenerator} that generates checks for exceptions that are expected at a
- * particular statement. Creates a {@link ExpectedExceptionCheck} that is returned in a {@link
+ * A {@link TestCheckGenerator} that generates checks for exceptions that are expected at the final
+ * statement of a sequence. Creates a {@link ExpectedExceptionCheck} that is returned in a {@link
  * RegressionChecks} collection if the exception occurs, or a {@link ErrorRevealingChecks}
  * collection if not.
  *

@@ -1,6 +1,7 @@
 package randoop.output;
 
 import static randoop.execution.RunCommand.CommandException;
+import static randoop.execution.RunCommand.Status;
 import static randoop.reflection.SignatureParser.DOT_DELIMITED_IDS;
 import static randoop.reflection.SignatureParser.ID_STRING;
 
@@ -17,7 +18,6 @@ import plume.UtilMDE;
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
-import randoop.execution.RunCommand;
 import randoop.execution.TestEnvironment;
 import randoop.main.GenTests;
 
@@ -83,7 +83,7 @@ public class FailingTestFilter implements CodeWriter {
 
       compileTestClass(packageName, classname, classSource, workingDirectory);
 
-      RunCommand.Status status;
+      Status status;
       try {
         status = testEnvironment.runTest(qualifiedClassname, workingDirectory.toFile());
       } catch (CommandException e) {
@@ -119,7 +119,7 @@ public class FailingTestFilter implements CodeWriter {
    *     Randoop-generated test method
    */
   private String commentFailingAssertions(
-      String packageName, String classname, String javaCode, RunCommand.Status status) {
+      String packageName, String classname, String javaCode, Status status) {
 
     /* Iterator to move through JUnit output. (JUnit only writes to standard output.) */
     Iterator<String> lineIterator = status.standardOutputLines.iterator();

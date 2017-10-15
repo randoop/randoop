@@ -148,9 +148,4 @@ public final class PrimValue implements ObjectContract {
   public String toCommentString() {
     return null;
   }
-
-  @Override
-  public boolean evalExceptionMeansFailure() {
-    return true;
-  }
 }

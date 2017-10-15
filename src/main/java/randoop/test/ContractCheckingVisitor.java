@@ -73,6 +73,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         Check check;
 
         // 1. check unary over values in last statement
+        // TODO: Why aren't unary contracts checked over all values like binary contracts are?
         List<ReferenceValue> statementValues = eseq.getLastStatementValues();
         List<ObjectContract> unaryContracts = contracts.getWithArity(1);
         if (!unaryContracts.isEmpty()) {
@@ -85,7 +86,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
           }
         }
 
-        // 2. check binary over all other values
+        // 2. check binary over all pairs of values.
+        // Rationale:  this call might have side-effected some previously-existing value.
         List<ReferenceValue> inputValues = eseq.getInputValues();
         TupleSet<ReferenceValue> inputTuples = new TupleSet<>();
         inputTuples = inputTuples.extend(inputValues).extend(inputValues);
