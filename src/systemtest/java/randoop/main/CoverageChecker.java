@@ -173,8 +173,7 @@ class CoverageChecker {
       }
     }
     if (!shouldBeMissingMethods.isEmpty()) {
-      failureMessage.append(
-          String.format("Excluded methods that are covered (test can be made more strict):%n"));
+      failureMessage.append(String.format("Excluded methods that are covered:%n"));
       for (String name : shouldBeMissingMethods) {
         failureMessage.append(String.format("  %s%n", name));
       }
