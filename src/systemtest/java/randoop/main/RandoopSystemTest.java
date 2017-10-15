@@ -311,8 +311,10 @@ public class RandoopSystemTest {
             "java2.util2.Arrays.med3(int[], int, int, int) exclude",
             "java2.util2.Arrays.med3(long[], int, int, int) exclude",
             "java2.util2.Arrays.med3(short[], int, int, int) exclude",
+            "java2.util2.Arrays.sort(char[], int, int) ignore",
             "java2.util2.Arrays.sort(java.lang.Object[], int, int, java2.util2.Comparator) ignore",
             "java2.util2.Arrays.swap(char[], int, int) ignore",
+            "java2.util2.Arrays.swap(int[], int, int) ignore",
             "java2.util2.Arrays.swap(java.lang.Object[], int, int) exclude",
             "java2.util2.Arrays.vecswap(byte[], int, int, int) exclude",
             "java2.util2.Arrays.vecswap(char[], int, int, int) exclude",
@@ -410,6 +412,7 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
+            "examples.Buggy.BuggyCompareToTransitive.getTwo() ignore",
             "examples.Buggy.StackOverflowError() ignore",
             "examples.Buggy.hashCode() ignore",
             "examples.Buggy.toString() ignore",
@@ -417,9 +420,9 @@ public class RandoopSystemTest {
             /* don't care about hashCode for compareTo input classes */
             "examples.Buggy.BuggyCompareToAntiSymmetric.hashCode() ignore",
             "examples.Buggy.BuggyCompareToEquals.hashCode() ignore",
-            "examples.Buggy.BuggyCompareToTransitive.hashCode() ignore",
             "examples.Buggy.BuggyCompareToReflexive.hashCode() ignore",
             "examples.Buggy.BuggyCompareToSubs.hashCode() ignore",
+            "examples.Buggy.BuggyCompareToTransitive.hashCode() ignore",
             "examples.Buggy.BuggyEqualsTransitive.hashCode() ignore",
 
             /* These should be covered, but are in failing assertions and won't show up in JaCoCo results. */
