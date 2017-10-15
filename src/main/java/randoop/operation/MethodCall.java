@@ -20,7 +20,7 @@ import randoop.util.ReflectionExecutor;
  * reflective Method object, and caches values of computed reflective calls.
  *
  * <p>An an {@link Operation}, a call to a non-static method<br>
- * <code>T mname (T1,...,Tn)</code><br>
+ * {@code T mname (T1,...,Tn)}<br>
  * of class C can be represented formally as an operation<br>
  * <i>mname</i>: [<i>C, T1,...,Tn</i>] &rarr; <i>T</i>.<br>
  * If this method is static, then we could write the operation as<br>
@@ -133,8 +133,12 @@ public final class MethodCall extends CallableOperation {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof MethodCall)) return false;
-    if (this == o) return true;
+    if (!(o instanceof MethodCall)) {
+      return false;
+    }
+    if (this == o) {
+      return true;
+    }
     MethodCall other = (MethodCall) o;
     return this.method.equals(other.method);
   }
@@ -208,12 +212,12 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * Parses a method call in a string descriptor and returns a {@link MethodCall} object. Should
-   * satisfy <code>parse(op.toParsableString()).equals(op)</code> for Operation op.
+   * satisfy {@code parse(op.toParsableString()).equals(op)} for Operation op.
    *
-   * @see OperationParser#parse(String)
    * @param signature a string descriptor
    * @return the method call operation for the given string descriptor
    * @throws OperationParseException if s does not match expected descriptor
+   * @see OperationParser#parse(String)
    */
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
@@ -294,11 +298,11 @@ public final class MethodCall extends CallableOperation {
    *
    * <p>Determines whether enclosed {@link Method} satisfies the given predicate.
    *
-   * @param predicate the {@link ReflectionPredicate} to be checked
+   * @param reflectionPredicate the {@link ReflectionPredicate} to be checked
    * @return true only if the method in this object satisfies the canUse(Method) of predicate
    */
   @Override
-  public boolean satisfies(ReflectionPredicate predicate) {
-    return predicate.test(method);
+  public boolean satisfies(ReflectionPredicate reflectionPredicate) {
+    return reflectionPredicate.test(method);
   }
 }

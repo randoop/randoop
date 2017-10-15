@@ -29,9 +29,20 @@ if [[ "$SLUGOWNER" == "" ]]; then
   SLUGOWNER=randoop
 fi
 
-./.travis-build-without-test.sh ${BUILDJDK}
+./.travis-build-without-test.sh
 
+# If you don't have xvfb running, then you should probably run gradle directly
+# rather than running this script.
 if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
+  # need gui for running tests of replace call agent with Swing/AWT
+  # run xvfb
+  export DISPLAY=:99.0
+  XVFB=/usr/bin/Xvfb
+  XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
+  PIDFILE=/var/xvfb_${DISPLAY:1}.pid
+  /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
+  sleep 3 # give xvfb some time to start
+
   # ./gradlew --info check
   ./gradlew --info check
 fi
@@ -39,8 +50,6 @@ fi
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
   ./gradlew javadoc
   ./gradlew manual
-  ./gradlew validateManual
-  ./gradlew verifyGoogleJavaFormat
 fi
 
 ## TODO Re-enable codecov.io code coverage tests.
@@ -50,4 +59,3 @@ fi
 ## introduce a feature that is best tested by system tests.
 # after_success:
 #  - bash <(curl -s https://codecov.io/bash)
-

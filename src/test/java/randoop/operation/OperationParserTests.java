@@ -60,8 +60,7 @@ public class OperationParserTests {
     }
 
     // Array.
-    Type arrayType;
-    arrayType = Type.forClass(new Object[][] {}.getClass());
+    Type arrayType = Type.forClass(new Object[][] {}.getClass());
     checkParse(new NonreceiverTerm(arrayType, null), new TypeTuple(), arrayType);
 
     // Primitives.
@@ -110,15 +109,13 @@ public class OperationParserTests {
   public void testRMethod() {
 
     for (Method m : ArrayList.class.getMethods()) {
-      ClassOrInterfaceType declaringType;
-      declaringType = ClassOrInterfaceType.forClass(m.getDeclaringClass());
+      ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(m.getDeclaringClass());
       List<Type> paramTypes = new ArrayList<>();
       for (java.lang.reflect.Type t : m.getGenericParameterTypes()) {
         paramTypes.add(Type.forType(t));
       }
       TypeTuple inputTypes = new TypeTuple(paramTypes);
-      Type outputType;
-      outputType = Type.forType(m.getGenericReturnType());
+      Type outputType = Type.forType(m.getGenericReturnType());
       checkParse(new MethodCall(m), declaringType, inputTypes, outputType);
     }
   }
@@ -127,8 +124,7 @@ public class OperationParserTests {
   public void testRConstructor() {
 
     for (Constructor<?> c : ArrayList.class.getConstructors()) {
-      ClassOrInterfaceType declaringType;
-      declaringType = ClassOrInterfaceType.forClass(c.getDeclaringClass());
+      ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(c.getDeclaringClass());
       List<Type> paramTypes = new ArrayList<>();
       for (java.lang.reflect.Type t : c.getGenericParameterTypes()) {
         paramTypes.add(Type.forType(t));

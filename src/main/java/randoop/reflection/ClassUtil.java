@@ -181,16 +181,13 @@ public class ClassUtil {
 
   /**
    * Compares Method objcets by signature: compares name, number of parameters, and parameter type
-   * names.
+   * names (but not return type).
    */
   private static class MethodComparator implements Comparator<Method> {
 
     @Override
     public int compare(Method m1, Method m2) {
-      int result = classComparator.compare(m1.getDeclaringClass(), m2.getDeclaringClass());
-      if (result != 0) {
-        return result;
-      }
+      int result;
       result = m1.getName().compareTo(m2.getName());
       if (result != 0) {
         return result;
@@ -205,6 +202,13 @@ public class ClassUtil {
           return result;
         }
       }
+      // Consider the declaring class last.  This minimizes differences in order when overriding
+      // relationships in a library have changed.
+      result = classComparator.compare(m1.getDeclaringClass(), m2.getDeclaringClass());
+      if (result != 0) {
+        return result;
+      }
+      assert result == 0;
       return result;
     }
   }

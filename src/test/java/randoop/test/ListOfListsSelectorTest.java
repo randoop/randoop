@@ -99,25 +99,25 @@ public class ListOfListsSelectorTest {
 
     callGetElementShouldFail(l3, -1);
     callGetElementShouldFail(l3, 2);
-    assertEquals(l3.get(0), new Integer(2));
-    assertEquals(l3.get(1), new Integer(3));
+    assertEquals(l3.get(0), Integer.valueOf(2));
+    assertEquals(l3.get(1), Integer.valueOf(3));
 
     callGetElementShouldFail(l1l2, -1);
     callGetElementShouldFail(l1l2, 1);
-    assertEquals(l1l2.get(0), new Integer(1));
+    assertEquals(l1l2.get(0), Integer.valueOf(1));
 
     callGetElementShouldFail(l1l2l3, -1);
     callGetElementShouldFail(l1l2l3, 3);
-    assertEquals(l1l2l3.get(0), new Integer(1));
-    assertEquals(l1l2l3.get(1), new Integer(2));
-    assertEquals(l1l2l3.get(2), new Integer(3));
+    assertEquals(l1l2l3.get(0), Integer.valueOf(1));
+    assertEquals(l1l2l3.get(1), Integer.valueOf(2));
+    assertEquals(l1l2l3.get(2), Integer.valueOf(3));
 
     callGetElementShouldFail(l3l3l1l2, -1);
     callGetElementShouldFail(l3l3l1l2, 5);
-    assertEquals(l3l3l1l2.get(0), new Integer(2));
-    assertEquals(l3l3l1l2.get(1), new Integer(3));
-    assertEquals(l3l3l1l2.get(2), new Integer(2));
-    assertEquals(l3l3l1l2.get(3), new Integer(3));
-    assertEquals(l3l3l1l2.get(4), new Integer(1));
+    assertEquals(l3l3l1l2.get(0), Integer.valueOf(2));
+    assertEquals(l3l3l1l2.get(1), Integer.valueOf(3));
+    assertEquals(l3l3l1l2.get(2), Integer.valueOf(2));
+    assertEquals(l3l3l1l2.get(3), Integer.valueOf(3));
+    assertEquals(l3l3l1l2.get(4), Integer.valueOf(1));
   }
 }

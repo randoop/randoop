@@ -68,6 +68,7 @@ public class FieldGetterTest {
     }
   }
 
+  @SuppressWarnings("ClassNewInstance")
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;

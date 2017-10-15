@@ -49,11 +49,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -105,6 +101,11 @@ public class Minimize extends CommandHandler {
   @SuppressWarnings("WeakerAccess")
   @Option("Classpath to compile and run the JUnit test suite")
   public static String suiteclasspath;
+
+  /** The maximum number of seconds allowed for the entire minimization process */
+  @SuppressWarnings("WeakerAccess")
+  @Option("Timeout, in seconds, for the whole minimization process")
+  public static int minimizetimeout = 600;
 
   /** The maximum number of seconds allowed for the entire test suite to run. */
   @SuppressWarnings("WeakerAccess")
@@ -180,10 +181,44 @@ public class Minimize extends CommandHandler {
     }
 
     // File object pointing to the file to be minimized.
-    File originalFile = new File(suitepath);
+    final File originalFile = new File(suitepath);
 
-    // Call the main minimize method.
-    return mainMinimize(originalFile, suiteclasspath, testsuitetimeout, verboseminimizer);
+    ExecutorService executor = Executors.newFixedThreadPool(1);
+    Future<Boolean> future =
+        executor.submit(
+            new Callable<Boolean>() {
+              @Override
+              public Boolean call() throws Exception {
+                return mainMinimize(
+                    originalFile, suiteclasspath, testsuitetimeout, verboseminimizer);
+              }
+            });
+
+    executor.shutdown();
+
+    boolean success = false;
+    try {
+      success = future.get(Minimize.minimizetimeout, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      System.err.println("Minimization process was interrupted.");
+    } catch (ExecutionException e) {
+      System.err.println("Minimizer exception: " + e.getCause());
+    } catch (TimeoutException e) {
+      future.cancel(true);
+      System.err.println("Minimization process timed out.");
+    }
+
+    try {
+      // Wait 5 more seconds to terminate processes.
+      if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+        // Force terminate the process.
+        executor.shutdownNow();
+      }
+    } catch (InterruptedException e) {
+      System.err.println("Minimization process force terminated.");
+    }
+
+    return success;
   }
 
   /**
@@ -238,13 +273,12 @@ public class Minimize extends CommandHandler {
     }
 
     // Find the package name of the input file if it has one.
-    String packageName = null;
+    String packageName;
     try {
       PackageDeclaration classPackage = compUnit.getPackage();
-      if (classPackage != null) {
-        packageName = classPackage.getPackageName();
-      }
+      packageName = (classPackage == null) ? null : classPackage.getPackageName();
     } catch (NoSuchElementException e) {
+      packageName = null;
       // No package declaration.
     }
 
@@ -920,7 +954,7 @@ public class Minimize extends CommandHandler {
    *
    * @param file the Java file to be executed
    * @param packageName package name of input Java file
-   * @return the directory to execute the commands in. Null if packageName is null.
+   * @return the directory to execute the commands in, or null if packageName is null
    */
   private static File getExecutionDirectory(File file, String packageName) {
     if (packageName == null) {
@@ -1198,7 +1232,7 @@ public class Minimize extends CommandHandler {
   /**
    * Calculate the length of a file, by number of lines.
    *
-   * @param file the file to compute the length of.
+   * @param file the file to compute the length of
    * @return the number of lines in the file. Returns -1 if an exception occurs while reading the
    *     file
    */

@@ -10,9 +10,9 @@ import randoop.reflection.TypeNames;
  * names. For example:
  *
  * <ul>
- *   <li><code>int</code>
- *   <li><code>int,double,java.lang.String</code>
- *   <li><code>randoop.operation.Operation</code>
+ *   <li>{@code int}
+ *   <li>{@code int,double,java.lang.String}
+ *   <li>{@code randoop.operation.Operation}
  * </ul>
  */
 class TypeArguments {
@@ -32,15 +32,12 @@ class TypeArguments {
       for (int i = 0; i < argsStrs.length; i++) {
         String typeName = argsStrs[i].trim();
 
-        Class<?> c;
         try {
-          c = TypeNames.getTypeForName(typeName);
+          argTypes[i] = TypeNames.getTypeForName(typeName);
         } catch (ClassNotFoundException e) {
           throw new OperationParseException(
               "Argument type \"" + typeName + "\" not recognized in arguments " + argStr);
         }
-
-        argTypes[i] = c;
       }
     }
     return argTypes;

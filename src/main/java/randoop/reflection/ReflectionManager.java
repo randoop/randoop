@@ -36,8 +36,7 @@ import randoop.util.Log;
  *
  * <ul>
  *   <li>all enum constants.
- *   <li>methods of the enum satisfying predicate other than <code>values</code> and <code>valueOf
- *       </code>.
+ *   <li>methods of the enum satisfying predicate other than {@code values} and {@code valueOf}.
  *   <li>methods defined for enum constants that satisfy predicate.
  * </ul>
  *
@@ -45,7 +44,10 @@ import randoop.util.Log;
  */
 public class ReflectionManager {
 
+  /** The visibility predicate for classes and class members. */
   private VisibilityPredicate predicate;
+
+  /** The visitors to apply. */
   private ArrayList<ClassVisitor> visitors;
 
   /**
@@ -103,20 +105,44 @@ public class ReflectionManager {
         applyToEnum(visitor, c);
       } else {
 
+        if (Log.isLoggingOn()) {
+          Log.logLine("ReflectionManager.apply for class " + c);
+          Log.logLine("  getMethods => " + ClassUtil.getMethods(c).length);
+          Log.logLine("  getDeclaredMethods => " + ClassUtil.getDeclaredMethods(c).length);
+        }
+        // System.out.println("ReflectionManager.apply for class " + c);
+        // System.out.println("  getMethods => " + ClassUtil.getMethods(c).length);
+        // System.out.println("  getDeclaredMethods => " + ClassUtil.getDeclaredMethods(c).length);
+
         // Methods
         Set<Method> methods = new HashSet<>(); // used only for containment check
         for (Method m : ClassUtil.getMethods(c)) { // for all class methods
+          if (Log.isLoggingOn()) {
+            Log.logLine("ReflectionManager.apply considering method " + m);
+          }
           methods.add(m); // remember to avoid duplicates
           if (isVisible(m)) { // if satisfies predicate then visit
             applyTo(visitor, m);
           }
         }
+        if (Log.isLoggingOn()) {
+          Log.logLine("ReflectionManager.apply done with getMethods for class " + c);
+        }
+        // System.out.println("ReflectionManager.apply done with getMethods for class " + c);
+
         for (Method m : ClassUtil.getDeclaredMethods(c)) { // for all methods declared by c
+          if (Log.isLoggingOn()) {
+            Log.logLine("ReflectionManager.apply considering declared method " + m);
+          }
           // if not duplicate and satisfies predicate
           if ((!methods.contains(m)) && predicate.isVisible(m)) {
             applyTo(visitor, m);
           }
         }
+        if (Log.isLoggingOn()) {
+          Log.logLine("ReflectionManager.apply done with getDeclaredMethods for class " + c);
+        }
+        // System.out.println("ReflectionManager.apply done with getDeclaredMethods for class " + c);
 
         // Constructors
         for (Constructor<?> co : ClassUtil.getDeclaredConstructors(c)) {
@@ -128,11 +154,7 @@ public class ReflectionManager {
         // member types
         for (Class<?> ic : ClassUtil.getDeclaredClasses(c)) {
           if (predicate.isVisible(ic)) {
-            visitBefore(visitor, ic);
-            if (ic.isEnum()) { // inner enums require special attention
-              applyToEnum(visitor, ic);
-            }
-            visitAfter(visitor, ic);
+            applyTo(visitor, ic);
           }
         }
 
@@ -167,12 +189,13 @@ public class ReflectionManager {
    * anonymous class for constant e, e.getClass() returns the anonymous class. This is used to check
    * for method overrides (that could include Object methods) within the constant.
    *
-   * <p>Heuristically exclude methods <code>values</code> and <code>valueOf</code> since their
-   * definition is implicit, and we aren't testing Java enum implementation.
+   * <p>Heuristically exclude methods {@code values} and {@code valueOf} since their definition is
+   * implicit, and we aren't testing Java enum implementation.
    *
    * @param visitor the {@link ClassVisitor}
    * @param c the enum class object from which constants and methods are extracted
    */
+  @SuppressWarnings("GetClassOnEnum")
   private void applyToEnum(ClassVisitor visitor, Class<?> c) {
     // Maps from a name to a set of methods.
     Map<String, Set<Method>> overrideMethods = new HashMap<>();
@@ -223,6 +246,23 @@ public class ReflectionManager {
       Log.logLine(String.format("Visiting field %s", f.toGenericString()));
     }
     v.visit(f);
+  }
+
+  /**
+   * Apply a visitor to the member class.
+   *
+   * <p>The {@link ReflectionManager} does not apply itself to the member class, since it could
+   * violate assumptions in the visitor. And, so instead allows the visitor to implement that call
+   * if it is necessary.
+   *
+   * @param v the {@link ClassVisitor}
+   * @param c the member class to be visited
+   */
+  private void applyTo(ClassVisitor v, Class<?> c) {
+    if (Log.isLoggingOn()) {
+      Log.logLine(String.format("Visiting member class %s", c.toString()));
+    }
+    v.visit(c, this);
   }
 
   /**

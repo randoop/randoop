@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.OperationParseException;
@@ -28,8 +29,7 @@ import randoop.util.WeightedElement;
  * Immutable.
  *
  * <p>A sequence of {@link Statement}s. Each element in the sequence represents a particular {@link
- * Statement}, like a method call <code>Foo f = m(i1...iN)</code> or a declaration <code>int x = 0
- * </code>.
+ * Statement}, like a method call {@code Foo f = m(i1...iN)} or a declaration {@code int x = 0}.
  *
  * <p>This class represents only the structure of a well-formed sequence of statements, and does not
  * contain any information about the runtime behavior of the sequence. The class
@@ -43,18 +43,19 @@ public final class Sequence implements WeightedElement {
   public final SimpleList<Statement> statements;
 
   /**
-   * The variables that are inputs or output for the last statement of this sequence. These hold the
-   * values "produced" by some statement of the sequence. Should be final but cannot because of
+   * The variables that are inputs or output for the last statement of this sequence: first the
+   * return variable if any (ie, if the operation is non-void), then the input variables. These hold
+   * the values "produced" by some statement of the sequence. Should be final but cannot because of
    * serialization. This info is used by some generators.
    */
-  private transient /* final */ List<Variable> lastStatementVariables;
+  private transient /*final*/ List<Variable> lastStatementVariables;
 
   /**
-   * The types of the inputs and output for the last statement of this sequence. Excludes void in
-   * the case the output type of the operation of the last statement is void. Should be final but
+   * The types of the inputs and output for the last statement of this sequence: first the return
+   * type if any (ie, if the operation is non-void), then the input types. Should be final but
    * cannot because of serialization. This info is used by some generators.
    */
-  private transient /* final */ List<Type> lastStatementTypes;
+  private transient /*final*/ List<Type> lastStatementTypes;
 
   private transient boolean allowShortForm;
 
@@ -472,7 +473,7 @@ public final class Sequence implements WeightedElement {
 
   /**
    * Counts the number of statements in a list that are not initializations with a primitive type.
-   * For instance <code>int var7 = 0</code>.
+   * For instance {@code int var7 = 0}.
    *
    * @param statements the list of {@link Statement} objects
    * @return count of statements other than primitive initializations
@@ -480,7 +481,7 @@ public final class Sequence implements WeightedElement {
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
     for (int i = 0; i < statements.size(); i++) {
-      if (!(statements.get(i).isPrimitiveInitialization())) {
+      if (!(statements.get(i).isNonreceivingInitialization())) {
         netSize++;
       }
     }
@@ -547,7 +548,7 @@ public final class Sequence implements WeightedElement {
       // No nulls.
       if (statementWithInputs == null) {
         throw new IllegalStateException(
-            "Null statement in sequence:" + Globals.lineSep + this.toString());
+            "Null statement in sequence: " + Globals.lineSep + this.toString());
       }
       if (statementWithInputs.inputs == null) {
         throw new IllegalArgumentException("parameters cannot be null.");
@@ -567,10 +568,14 @@ public final class Sequence implements WeightedElement {
       }
       for (int i = 0; i < statementWithInputs.inputs.size(); i++) {
         int index = statementWithInputs.inputs.get(i).index;
-        if (index >= 0) throw new IllegalStateException();
+        if (index >= 0) {
+          throw new IllegalStateException();
+        }
         Type newRefConstraint =
             statements.get(si + statementWithInputs.inputs.get(i).index).getOutputType();
-        if (newRefConstraint == null) throw new IllegalStateException();
+        if (newRefConstraint == null) {
+          throw new IllegalStateException();
+        }
         if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
           throw new IllegalArgumentException(
               i
@@ -594,8 +599,12 @@ public final class Sequence implements WeightedElement {
   @SuppressWarnings("ReferenceEquality")
   @Override
   public final boolean equals(Object o) {
-    if (!(o instanceof Sequence)) return false;
-    if (o == this) return true;
+    if (!(o instanceof Sequence)) {
+      return false;
+    }
+    if (o == this) {
+      return true;
+    }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
       return GenInputsAbstract.debug_checks && verifyFalse("size", other);
@@ -667,21 +676,59 @@ public final class Sequence implements WeightedElement {
     return this.getStatementsWithInputs().get(index);
   }
 
-  public Variable randomVariableForTypeLastStatement(Type type) {
-    if (type == null) throw new IllegalArgumentException("type cannot be null.");
-    List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
+  /**
+   * Return all values of type {@code type} that are produced by, or might be side-effected by, the
+   * last statement. May return an empty list if {@code onlyReceivers} is true and the only values
+   * of the given type are nulls that are passed to the last statement as arguments.
+   *
+   * @param type return a list of sequences of this type
+   * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
+   *     call receiver
+   * @return a variable used in the last statement of the given type
+   */
+  public List<Variable> allVariablesForTypeLastStatement(Type type, boolean onlyReceivers) {
+    List<Variable> possibleVars = new ArrayList<>(this.lastStatementVariables.size());
     for (Variable i : this.lastStatementVariables) {
       Statement s = statements.get(i.index);
-      if (type.isAssignableFrom(s.getOutputType())) {
-        possibleIndices.add(i);
+      Type outputType = s.getOutputType();
+      if (type.isAssignableFrom(outputType)
+          && (!(onlyReceivers && outputType.isNonreceiverType()))
+          && (!(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization()))) {
+        possibleVars.add(i);
       }
     }
-    if (possibleIndices.isEmpty()) return null;
-    return Randomness.randomMember(possibleIndices);
+    return possibleVars;
+  }
+
+  /**
+   * The last statement produces multiple values of type {@code type}. Choose one of them at random.
+   *
+   * @param type return a sequence of this type
+   * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
+   *     call receiver
+   * @return a variable used in the last statement of the given type
+   */
+  public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
+    List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
+    if (possibleVars.isEmpty()) {
+      Statement lastStatement = this.statements.get(this.statements.size() - 1);
+      return null; // deal with the problem elsewhere.  TODO: fix so this cannot happen.
+      // throw new BugInRandoopException(
+      //     String.format(
+      //         "Failed to select %svariable with input type %s from statement %s",
+      //         (onlyReceivers ? "receiver " : ""), type, lastStatement));
+    }
+    if (possibleVars.size() == 1) {
+      return possibleVars.get(0);
+    } else {
+      return Randomness.randomMember(possibleVars);
+    }
   }
 
   void checkIndex(int i) {
-    if (i < 0 || i > size() - 1) throw new IllegalArgumentException();
+    if (i < 0 || i > size() - 1) {
+      throw new IllegalArgumentException();
+    }
   }
 
   // Argument checker for extend method.
@@ -1015,12 +1062,12 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * A sequence representing a single primitive values, like "Foo var0 = null" or "int var0 = 1".
+   * A sequence representing a single primitive value, like "Foo var0 = null" or "int var0 = 1".
    *
    * @return true if this sequence is a single primitive initialization statement, false otherwise
    */
-  public boolean isPrimitive() {
-    return (size() == 1 && getStatement(0).isPrimitiveInitialization());
+  public boolean isNonreceiver() {
+    return (size() == 1 && getStatement(0).isNonreceivingInitialization());
   }
 
   /**
@@ -1063,8 +1110,7 @@ public final class Sequence implements WeightedElement {
       GenInputsAbstract.log.flush();
 
     } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new BugInRandoopException("Error while logging sequence", e);
     }
   }
 

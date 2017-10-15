@@ -27,8 +27,7 @@ import randoop.util.SimpleList;
  *
  * <p>When creating new sequences, Randoop often needs to search for all the previously-generated
  * sequences that create one or more values of a given type. Since this set can contain thousands of
- * sequences, finding these sequences can can be time-consuming and a bottleneck in generation (as
- * we discovered during profiling).
+ * sequences. Profiling showed that finding these sequences was a bottleneck in generation.
  *
  * <p>This class makes the above search faster by maintaining two data structures:
  *
@@ -40,9 +39,9 @@ import randoop.util.SimpleList;
  *       relationships among the types in the set.
  * </ul>
  *
- * To find all the sequences that create values of a given type, Randoop first uses the <code>
- * SubTypeSet</code> to find the set <code>S</code> of feasible subtypes in set of sequences, and
- * returns the range of <code>S</code> in the sequence map.
+ * To find all the sequences that create values of a given type, Randoop first uses the {@code
+ * SubTypeSet} to find the set {@code S} of feasible subtypes in set of sequences, and returns the
+ * range of {@code S} in the sequence map.
  */
 public class SequenceCollection {
 
@@ -57,13 +56,15 @@ public class SequenceCollection {
   private int sequenceCount = 0;
 
   private void checkRep() {
-    if (!GenInputsAbstract.debug_checks) return;
+    if (!GenInputsAbstract.debug_checks) {
+      return;
+    }
     if (sequenceMap.size() != typeSet.size()) {
       String b =
-          "activesequences types="
+          "sequenceMap.keySet()="
               + Globals.lineSep
               + sequenceMap.keySet()
-              + ", typesWithsequencesMap types="
+              + ", typeSet.typesWithsequences="
               + Globals.lineSep
               + typeSet.typesWithsequences;
       throw new IllegalStateException(b);
@@ -152,7 +153,7 @@ public class SequenceCollection {
       if (sequence.isActive(argument.getDeclIndex())) {
         Type type = formalTypes.get(i);
         sequenceTypes.add(type);
-        if (type.isClassType()) {
+        if (type.isClassOrInterfaceType()) {
           sequenceTypes.addAll(((ClassOrInterfaceType) type).getSuperTypes());
         }
         typeSet.add(type);
@@ -186,17 +187,20 @@ public class SequenceCollection {
    *
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
    *     by nullOk
    */
-  public SimpleList<Sequence> getSequencesForType(Type type, boolean exactMatch) {
+  public SimpleList<Sequence> getSequencesForType(
+      Type type, boolean exactMatch, boolean onlyReceivers) {
 
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
     }
 
     if (Log.isLoggingOn()) {
-      Log.logLine("getSequencesForType: entering method, type=" + type.toString());
+      Log.logPrintf("getSequencesForType(%s, %s, %s)%n", type, exactMatch, onlyReceivers);
     }
 
     List<SimpleList<Sequence>> resultList = new ArrayList<>();
@@ -208,7 +212,14 @@ public class SequenceCollection {
       }
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
-        resultList.add(this.sequenceMap.get(compatibleType));
+        Log.logLine(
+            "candidate compatibleType (isNonreceiverType="
+                + compatibleType.isNonreceiverType()
+                + "): "
+                + compatibleType);
+        if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
+          resultList.add(this.sequenceMap.get(compatibleType));
+        }
       }
     }
 

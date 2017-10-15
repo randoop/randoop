@@ -66,25 +66,59 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Compares this {@link TypedOperation} to another. Orders operations by lexicographical
-   * comparison, alphabetically comparing operation names, then input type names, and finally output
-   * type names.
+   * Compares this {@link TypedOperation} to another. Orders operations by type (any {@link
+   * TypedTermOperation} object precedes a {@link TypedClassOperation}) then lexicographically
+   * (alphabetically comparing class names, then operation names, then input type names, and finally
+   * output type names).
    *
-   * @param op the {@link TypedOperation} to compare with this operation
+   * @param other the {@link TypedOperation} to compare with this operation
    * @return value &lt; 0 if this operation precedes {@code op}, 0 if the operations are identical,
    *     and &gt; 0 if this operation succeeds op
    */
   @Override
-  public int compareTo(TypedOperation op) {
-    int result = this.getName().compareTo(op.getName());
+  public final int compareTo(TypedOperation other) {
+    // term operations precede any class operation
+    if (this instanceof TypedTermOperation && other instanceof TypedClassOperation) {
+      return -1;
+    }
+    if (this instanceof TypedClassOperation && other instanceof TypedTermOperation) {
+      return 1;
+    }
+
+    int result;
+
+    // do lexicographical comparison of name
+    result = this.getName().compareTo(other.getName());
     if (result != 0) {
       return result;
     }
-    result = this.inputTypes.compareTo(op.inputTypes);
+    // then input types
+    result = this.inputTypes.compareTo(other.inputTypes);
     if (result != 0) {
       return result;
     }
-    return this.outputType.compareTo(op.outputType);
+
+    if (this instanceof TypedClassOperation) {
+      // For class operations, compare declaring class last to reduce size of diffs
+      // (though it makes the log harder for a person to read!).
+      TypedClassOperation thisOp = (TypedClassOperation) this;
+      TypedClassOperation otherOp = (TypedClassOperation) other;
+      result = thisOp.getDeclaringType().compareTo(otherOp.getDeclaringType());
+      if (result != 0) {
+        return result;
+      }
+    }
+
+    // the output type
+    // (TODO: Why is this necessary?  MethodComparator ignores the output type, and this makes this
+    // comparator inconsistent with MethodComparator.)
+    result = this.outputType.compareTo(other.outputType);
+    if (result != 0) {
+      return result;
+    }
+
+    assert result == 0;
+    return result;
   }
 
   @Override
@@ -320,7 +354,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
     /*
      * Have to determine whether parameter types match.
-     * If method comes from a generic type, the parameters for method will be instantiated
+     * If the method comes from a generic type, the parameters for the method will be instantiated
      * and it is necessary to build the instantiated parameter list.
      */
     // TODO verify that subsignature conditions on erasure met (JLS 8.4.2)

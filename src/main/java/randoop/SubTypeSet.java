@@ -59,7 +59,9 @@ public class SubTypeSet {
 
   public void add(Type c) {
     if (c == null) throw new IllegalArgumentException("c cannot be null.");
-    if (typesWithsequences.contains(c)) return;
+    if (typesWithsequences.contains(c)) {
+      return;
+    }
     typesWithsequences.add(c);
 
     // Update existing entries.
@@ -89,7 +91,7 @@ public class SubTypeSet {
   }
 
   /**
-   * Returns all the classes in the set that can-be-used-as the given <code>c</code>.
+   * Returns all the classes in the set that can-be-used-as the given {@code c}.
    *
    * @param type the query type
    * @return the set of types that can be used in place of the query type

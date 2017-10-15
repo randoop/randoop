@@ -1,10 +1,12 @@
 package randoop.main;
 
+import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import plume.TimeLimitProcess;
@@ -37,6 +39,22 @@ class ProcessStatus {
     this.outputLines = outputLines;
   }
 
+  String lineSep = System.getProperty("line.separator");
+
+  /** Outputs a verbose representation of this. */
+  public String dump() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("ProcessStatus[").append(lineSep);
+    sb.append("  command = ").append(command).append(lineSep);
+    sb.append("  exitStatus = ").append(exitStatus).append(lineSep);
+    sb.append("  outputlines = ").append(lineSep);
+    for (String line : outputLines) {
+      sb.append("    ").append(line).append(lineSep);
+    }
+    sb.append("]");
+    return sb.toString();
+  }
+
   /**
    * Runs the given command in a new process using the given timeout.
    *
@@ -49,7 +67,7 @@ class ProcessStatus {
     // The Plume class used here expects a time limit, but setting tight timeout limits
     // for individual tests has caused headaches when tests are run on Travis CI.
     // 15 minutes is longer than all tests currently take, even for a slow Travis run.
-    long timeout = 900000; // use 15 minutes for timeout
+    long timeout = 15 * 60 * 1000; // use 15 minutes for timeout
 
     ProcessBuilder randoopBuilder = new ProcessBuilder(command);
     randoopBuilder.redirectErrorStream(true);
@@ -70,12 +88,15 @@ class ProcessStatus {
     }
 
     List<String> outputLines = new ArrayList<>();
-    try (BufferedReader rdr = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+    try (BufferedReader rdr =
+        new BufferedReader(new InputStreamReader(p.getInputStream(), UTF_8))) {
       String line = rdr.readLine();
       while (line != null) {
         outputLines.add(line);
         line = rdr.readLine();
       }
+    } catch (UnsupportedEncodingException e) {
+      fail("unsupported encoding " + e);
     } catch (IOException e) {
       fail("Exception getting output " + e);
     }

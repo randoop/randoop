@@ -186,60 +186,79 @@ public class ComponentManager {
    * @return the sequences that create values of the given type
    */
   SimpleList<Sequence> getSequencesForType(Type cls) {
-    return gralComponents.getSequencesForType(cls, false);
+    return gralComponents.getSequencesForType(cls, false, false);
   }
 
   /**
    * Returns component sequences that create values of the type required by the i-th input value of
-   * the given statement. With probability <code>--p-const</code> (as given by the command-line
-   * option), this only returns the subset of these component sequences that are extracted literals.
-   * Otherwise, it returns all of these component sequences.
+   * the given statement. With probability <code>--prob-extracted-literals</code> (as given by the
+   * command-line option), this only returns the subset of these component sequences that are
+   * extracted literals. Otherwise, it returns all of these component sequences.
+   *
+   * <p>Also includes any applicable class- or package-level literals.
    *
    * @param operation the statement
    * @param i the input value index of statement
+   * @param onlyReceivers if true, only return sequences that are appropriate to use as a method
+   *     call receiver
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
-  SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
+  SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
 
-    SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
-    if (operation instanceof TypedClassOperation) {
+    // May be thrown away depending on coin flip.
+    // For efficiency, could compute after literals are computed.
+    SimpleList<Sequence> result =
+        gralComponents.getSequencesForType(neededType, false, onlyReceivers);
+
+    // Compute relevant literals.
+    SimpleList<Sequence> literals = null;
+    if (operation instanceof TypedClassOperation
+        // Don't add literals for the receiver
+        && !onlyReceivers) {
       // The operation is a method call, where the method is defined in class C.  Augment the
       // returned list with literals that appear in class C or in its package.  At most one of
       // classLiterals and packageLiterals is non-null.
 
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+
       if (classLiterals != null) {
-        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-        assert declaringCls != null;
         SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
         if (!sl.isEmpty()) {
-          ret = new ListOfLists<>(ret, sl);
+          literals = sl;
         }
       }
 
       if (packageLiterals != null) {
-        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-        assert declaringCls != null;
         Package pkg = declaringCls.getPackage();
         if (pkg != null) {
           SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
           if (!sl.isEmpty()) {
-            ret = new ListOfLists<>(ret, sl);
-          }
-        }
-      } else if (Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
-        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-        if (declaringCls != null) {
-          if (classLiterals != null) {
-            SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
-            return sl;
+            literals = (literals == null) ? sl : new ListOfLists<>(literals, sl);
           }
         }
       }
     }
-    return ret;
+
+    if (literals != null
+        && Randomness.weightedCoinFlip(GenInputsAbstract.prob_extracted_literals)) {
+      return literals;
+    }
+
+    // Append literals to result.
+    if (literals != null) {
+      if (result == null) {
+        result = literals;
+      } else if (literals == null) {
+        // nothing to do
+      } else {
+        result = new ListOfLists<>(result, literals);
+      }
+    }
+    return result;
   }
 
   /**
@@ -250,18 +269,19 @@ public class ComponentManager {
    */
   Set<Sequence> getAllPrimitiveSequences() {
 
-    Set<Sequence> ret = new LinkedHashSet<>();
+    Set<Sequence> result = new LinkedHashSet<>();
     if (classLiterals != null) {
-      ret.addAll(classLiterals.getAllSequences());
+      result.addAll(classLiterals.getAllSequences());
     }
     if (packageLiterals != null) {
-      ret.addAll(packageLiterals.getAllSequences());
+      result.addAll(packageLiterals.getAllSequences());
     }
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
-      ret.addAll(gralComponents.getSequencesForType(type, true).toJDKList());
+      result.addAll(gralComponents.getSequencesForType(type, true, false).toJDKList());
     }
-    ret.addAll(gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true).toJDKList());
-    return ret;
+    result.addAll(
+        gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false).toJDKList());
+    return result;
   }
 
   TypeInstantiator getTypeInstantiator() {

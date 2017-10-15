@@ -10,8 +10,8 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * A check recording the value of a primitive value obtained during execution, (e.g. <code>var3 == 1
- * </code> where <code>var3</code> is an integer-valued variable in a Randoop test).
+ * A check recording the value of a primitive value obtained during execution, (e.g. {@code var3 ==
+ * 1} where {@code var3} is an integer-valued variable in a Randoop test).
  *
  * <p>Obviously, this is not a property that must hold of all objects in a test. Randoop creates an
  * instance of this contract when, during execution of a sequence, it determines that the above
@@ -34,8 +34,12 @@ public final class PrimValue implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null) return false;
-    if (o == this) return true;
+    if (o == null) {
+      return false;
+    }
+    if (o == this) {
+      return true;
+    }
     if (!(o instanceof PrimValue)) {
       return false;
     }

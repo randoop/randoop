@@ -354,7 +354,7 @@ class HelperSequenceCreator {
     for (int i = 0; i < length; i++) {
       Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
       sequences.add(sequence);
-      Variable element = sequence.randomVariableForTypeLastStatement(elementType);
+      Variable element = sequence.randomVariableForTypeLastStatement(elementType, false);
       assert element != null;
       variables.add(element.index);
     }
@@ -373,8 +373,7 @@ class HelperSequenceCreator {
     try {
       method = enumsetClass.getMethod("noneOf", JavaTypes.CLASS_TYPE.getRuntimeClass());
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException(
-          "Can't find \"noneOf\" method for EnumSet: " + e.getMessage());
+      throw new BugInRandoopException("Can't find \"noneOf\" method for EnumSet: ", e);
     }
     MethodCall op = new MethodCall(method);
     List<Type> paramTypes = new ArrayList<>();
@@ -383,7 +382,7 @@ class HelperSequenceCreator {
   }
 
   /**
-   * Create a method call operation for the <code>add()</code> method of the given collection type.
+   * Create a method call operation for the {@code add()} method of the given collection type.
    *
    * @param collectionType the collection type
    * @param elementType the element type of the collection
@@ -395,8 +394,7 @@ class HelperSequenceCreator {
     try {
       addMethod = collectionType.getRuntimeClass().getMethod("add", Object.class);
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException(
-          "Can't find add() method for " + collectionType + ": " + e.getMessage());
+      throw new BugInRandoopException("Can't find add() method for " + collectionType, e);
     }
     MethodCall op = new MethodCall(addMethod);
     List<Type> arguments = new ArrayList<>();
@@ -421,13 +419,12 @@ class HelperSequenceCreator {
           collectionsClass.getMethod(
               "addAll", JDKTypes.COLLECTION_TYPE.getRuntimeClass(), (new Object[] {}).getClass());
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("Can't find Collections.addAll method: " + e.getMessage());
+      throw new BugInRandoopException("Can't find Collections.addAll method", e);
     }
     MethodCall op = new MethodCall(method);
     assert method.getTypeParameters().length == 1 : "method should have one type parameter";
     List<Type> paramTypes = new ArrayList<>();
-    ParameterizedType collectionType;
-    collectionType = JDKTypes.COLLECTION_TYPE.instantiate(elementType);
+    ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(elementType);
 
     paramTypes.add(collectionType);
     paramTypes.add(ArrayType.ofComponentType(elementType));

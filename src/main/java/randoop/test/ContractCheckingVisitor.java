@@ -28,8 +28,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * Create a new visitor that checks the given contracts after the last statement in a sequence is
    * executed.
    *
-   * @param contracts expected to be unary contracts, i.e. for each contract <code>c</code>, <code>
-   *     c.getArity() == 1</code>.
+   * @param contracts expected to be unary contracts, i.e. for each contract {@code c}, {@code
+   *     c.getArity() == 1}.
    * @param exceptionPredicate the predicate to test for exceptions that are errors
    */
   public ContractCheckingVisitor(ContractSet contracts, ExceptionPredicate exceptionPredicate) {
@@ -74,7 +74,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
 
         // 1. check unary over values in last statement
         List<ReferenceValue> statementValues = s.getLastStatementValues();
-        List<ObjectContract> unaryContracts = contracts.getArity(1);
+        List<ObjectContract> unaryContracts = contracts.getWithArity(1);
         if (!unaryContracts.isEmpty()) {
           TupleSet<ReferenceValue> statementTuples = new TupleSet<>();
           statementTuples = statementTuples.extend(statementValues);
@@ -89,7 +89,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         List<ReferenceValue> inputValues = s.getInputValues();
         TupleSet<ReferenceValue> inputTuples = new TupleSet<>();
         inputTuples = inputTuples.extend(inputValues).extend(inputValues);
-        List<ObjectContract> binaryContracts = contracts.getArity(2);
+        List<ObjectContract> binaryContracts = contracts.getWithArity(2);
         if (!binaryContracts.isEmpty()) {
           check = inputTuples.findAndTransform(new ContractChecker(s, binaryContracts));
           if (check != null) {
@@ -100,7 +100,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
 
         // 3. check ternary over statement x pair of input values
         TupleSet<ReferenceValue> ternaryTuples = inputTuples.exhaustivelyExtend(statementValues);
-        List<ObjectContract> ternaryContracts = contracts.getArity(3);
+        List<ObjectContract> ternaryContracts = contracts.getWithArity(3);
         if (!ternaryContracts.isEmpty()) {
           check = ternaryTuples.findAndTransform(new ContractChecker(s, ternaryContracts));
           if (check != null) {

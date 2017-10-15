@@ -37,8 +37,8 @@ import randoop.util.ProgressDisplay;
  *       made available to clients or execution visitors to inspect.
  *   <li><b>Checks.</b> A check is an object representing an expected runtime behavior of the
  *       sequence. Clients can add checks to specific indices of the sequence. For example, a client
- *       might add a <code>NotNull</code> check to the ith index of a sequence to signify that the
- *       value returned by the statement at index i should not be null.
+ *       might add a {@code NotNull} check to the ith index of a sequence to signify that the value
+ *       returned by the statement at index i should not be null.
  *   <li><b>Check evaluation results.</b> Corresponding to every check is a boolean value that
  *       represents whether the check passed or failed during the last execution of the sequence.
  * </ul>
@@ -46,16 +46,16 @@ import randoop.util.ProgressDisplay;
  * <p>Of the three pieces of data above, an ExecutableSequence only directly manages the first one,
  * i.e. the execution results. Other pieces of data, including checks and check evaluation results,
  * are added or removed by the client of the ExecutableSequence. One way of doing this is by
- * implementing an {@link ExecutionVisitor} and passing it as an argument to the <code>execute
- * </code> method.
+ * implementing an {@link ExecutionVisitor} and passing it as an argument to the {@code execute}
+ * method.
  *
- * <p>The method <code>execute(ExecutionVisitor v)</code> executes the code that the sequence
- * represents. This method uses reflection to execute each element in the sequence (method call,
- * constructor call, primitive or array declaration, etc). Before executing each statement (e.g. the
- * i-th statement), execute(v) calls v.visitBefore(this, i), and after executing each statement, it
- * calls v.visitAfter(this, i). The purpose of the visitor is to examine the unfolding execution,
- * and take some action depending on its intended purpose. For example, it may decorate the sequence
- * with {@link Check}s about the execution.
+ * <p>The method {@code execute(ExecutionVisitor v)} executes the code that the sequence represents.
+ * This method uses reflection to execute each element in the sequence (method call, constructor
+ * call, primitive or array declaration, etc). Before executing each statement (e.g. the i-th
+ * statement), execute(v) calls v.visitBefore(this, i), and after executing each statement, it calls
+ * v.visitAfter(this, i). The purpose of the visitor is to examine the unfolding execution, and take
+ * some action depending on its intended purpose. For example, it may decorate the sequence with
+ * {@link Check}s about the execution.
  *
  * <p>NOTES.
  *
@@ -85,7 +85,7 @@ public class ExecutableSequence {
    * sequence. Invariant: sequence.size() == executionResults.size(). Transient because it can
    * contain arbitrary objects that may not be serializable.
    */
-  private transient /* final */ Execution executionResults;
+  private transient /*final*/ Execution executionResults;
 
   /**
    * How long it took to generate this sequence in nanoseconds, excluding execution time. Must be
@@ -111,6 +111,7 @@ public class ExecutableSequence {
 
   private static PrintStream ps_output_buffer = new PrintStream(output_buffer);
 
+  /* Maps values to the variables that hold them. */
   private IdentityMultiMap<Object, Variable> variableMap;
 
   /**
@@ -132,7 +133,10 @@ public class ExecutableSequence {
       sequence.appendCode(b, i);
       // It's a bit confusing, but the commented execution results refer
       // to the statement ABOVE, not below as is standard for comments.
-      if (executionResults.size() > i) b.append(executionResults.get(i).toString());
+      if (executionResults.size() > i) {
+        b.append(" // ");
+        b.append(executionResults.get(i).toString());
+      }
       if ((i == sequence.size() - 1) && (checks != null)) {
         Map<Check, Boolean> ckMap = checks.get();
         for (Map.Entry<Check, Boolean> entry : ckMap.entrySet()) {
@@ -234,24 +238,24 @@ public class ExecutableSequence {
 
   /**
    * Execute this sequence, invoking the given visitor as the execution unfolds. After invoking this
-   * method, the client can query the outcome of executing each statement via the method <code>
-   * getResult(i)</code>.
+   * method, the client can query the outcome of executing each statement via the method {@code
+   * getResult(i)}.
    *
    * <ul>
-   *   <li>Before the sequence is executed, clears execution results and calls <code>
-   *       visitor.initialize(this)</code>.
+   *   <li>Before the sequence is executed, clears execution results and calls {@code
+   *       visitor.initialize(this)}.
    *   <li>Executes each statement in the sequence. Before executing each statement calls the given
-   *       visitor's <code>visitBefore</code> method. After executing each statement, calls the
-   *       visitor's <code>visitAfter</code> method.
+   *       visitor's {@code visitBefore} method. After executing each statement, calls the visitor's
+   *       {@code visitAfter} method.
    *   <li>Execution stops if one of the following conditions holds:
    *       <ul>
    *         <li>All statements in the sequences have been executed.
-   *         <li>A statement's execution results in an exception and <code>stop_on_exception==true
-   *             </code>.
-   *         <li>A <code>null</code> input value is implicitly passed to the statement (i.e., not
-   *             via explicit declaration like x = null)
-   *         <li>After executing the i-th statement and calling the visitor's <code>visitAfter
-   *             </code> method, a <code>ContractViolation</code> check is present at index i.
+   *         <li>A statement's execution results in an exception and {@code
+   *             stop_on_exception==true}.
+   *         <li>A {@code null} input value is implicitly passed to the statement (i.e., not via
+   *             explicit declaration like x = null)
+   *         <li>After executing the i-th statement and calling the visitor's {@code visitAfter}
+   *             method, a {@code ContractViolation} check is present at index i.
    *       </ul>
    *
    * </ul>
@@ -411,6 +415,7 @@ public class ExecutableSequence {
     return checks;
   }
 
+  /** The result of executing the i-th element of the sequence. */
   private Object getValue(int index) {
     ExecutionOutcome result = getResult(index);
     if (result instanceof NormalExecution) {
@@ -421,7 +426,7 @@ public class ExecutableSequence {
 
   /**
    * Returns the list of (reference type) values created and used by the last statement of this
-   * sequence.
+   * sequence. Null output values are not included.
    *
    * @return the list of values created and used by the last statement of this sequence
    */
@@ -467,7 +472,7 @@ public class ExecutableSequence {
       skipSet.add(inputVariable.index);
     }
 
-    Set<ReferenceValue> values = new HashSet<>();
+    Set<ReferenceValue> values = new LinkedHashSet<>();
     for (int i = 0; i < sequence.size() - 1; i++) {
       if (!skipSet.contains(i)) {
         Object value = getValue(i);
@@ -513,7 +518,9 @@ public class ExecutableSequence {
 
   public int getNonNormalExecutionIndex() {
     for (int i = 0; i < this.sequence.size(); i++) {
-      if (!isNormalExecution(i)) return i;
+      if (!isNormalExecution(i)) {
+        return i;
+      }
     }
     return -1;
   }
@@ -531,11 +538,14 @@ public class ExecutableSequence {
     if (exceptionClass == null) {
       throw new IllegalArgumentException("exceptionClass<?> cannot be null");
     }
-    for (int i = 0; i < this.sequence.size(); i++)
+    for (int i = 0; i < this.sequence.size(); i++) {
       if ((getResult(i) instanceof ExceptionalExecution)) {
         ExceptionalExecution e = (ExceptionalExecution) getResult(i);
-        if (exceptionClass.isAssignableFrom(e.getException().getClass())) return i;
+        if (exceptionClass.isAssignableFrom(e.getException().getClass())) {
+          return i;
+        }
       }
+    }
     return -1;
   }
 
@@ -567,8 +577,11 @@ public class ExecutableSequence {
   public int getNonExecutedIndex() {
     // Starting from the end of the sequence is always faster to find
     // non-executed statements.
-    for (int i = this.sequence.size() - 1; i >= 0; i--)
-      if (getResult(i) instanceof NotExecuted) return i;
+    for (int i = this.sequence.size() - 1; i >= 0; i--) {
+      if (getResult(i) instanceof NotExecuted) {
+        return i;
+      }
+    }
     return -1;
   }
 
@@ -579,10 +592,16 @@ public class ExecutableSequence {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof ExecutableSequence)) return false;
+    if (!(obj instanceof ExecutableSequence)) {
+      return false;
+    }
     ExecutableSequence that = (ExecutableSequence) obj;
-    if (!this.sequence.equals(that.sequence)) return false;
-    if (this.checks == null) return (that.checks == null);
+    if (!this.sequence.equals(that.sequence)) {
+      return false;
+    }
+    if (this.checks == null) {
+      return (that.checks == null);
+    }
     return this.checks.equals(that.checks);
   }
 

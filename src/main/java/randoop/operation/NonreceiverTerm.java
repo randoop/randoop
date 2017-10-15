@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Objects;
 import plume.UtilMDE;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -104,8 +105,12 @@ public final class NonreceiverTerm extends CallableOperation {
   /** Indicates whether this object is equal to o */
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof NonreceiverTerm)) return false;
-    if (this == o) return true;
+    if (!(o instanceof NonreceiverTerm)) {
+      return false;
+    }
+    if (this == o) {
+      return true;
+    }
     NonreceiverTerm other = (NonreceiverTerm) o;
 
     return this.type.equals(other.type) && Util.equalsWithNull(this.value, other.value);
@@ -123,7 +128,7 @@ public final class NonreceiverTerm extends CallableOperation {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
       return ((Class<?>) value).getName() + ".class";
     }
-    return value.toString();
+    return Objects.toString(value);
   }
 
   @Override
@@ -188,7 +193,9 @@ public final class NonreceiverTerm extends CallableOperation {
     if (type.isBoxedPrimitive()) {
       type = ((NonParameterizedType) type).toPrimitive();
     }
-    if (type.isString()) return new NonreceiverTerm(type, "");
+    if (type.isString()) {
+      return new NonreceiverTerm(type, "");
+    }
     if (type.equals(JavaTypes.CHAR_TYPE)) {
       return new NonreceiverTerm(type, 'a'); // TODO This is not null or zero...
     }
@@ -206,7 +213,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * {@inheritDoc}
    *
    * <p>Returns a string representing this primitive declaration. The string is of the form:<br>
-   * <code>TYPE:VALUE</code><br>
+   * {@code TYPE:VALUE}<br>
    * Where TYPE is the type of the primitive declaration, and VALUE is its value. If VALUE is "null"
    * then the value is null (not the String "null"). If TYPE is "char" then
    * (char)Integer.parseInt(VALUE, 16) yields the character value.

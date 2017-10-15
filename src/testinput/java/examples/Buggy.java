@@ -16,12 +16,14 @@ public class Buggy {
   // This should not lead to reported failures, because
   // a failure is only a test that leads to an NPE.
   public String toString() {
-    throw new RuntimeException("Buggy class is test input class and somehow toString() method has been called outside of contract check");
+    throw new RuntimeException(
+        "Buggy class is test input class and somehow toString() method has been called outside of contract check");
   }
   // This should not lead to reported failures, because
   // a failure is only a test that leads to an NPE.
   public int hashCode() {
-    throw new RuntimeException("Buggy class is test input class and somehow hashCode has been called outside of contract check");
+    throw new RuntimeException(
+        "Buggy class is test input class and somehow hashCode() has been called outside of contract check");
   }
 
   public static void StackOverflowError() {
@@ -111,19 +113,21 @@ public class Buggy {
     public static BuggyEqualsTransitive getOne() {
       return one;
     }
+
     public static BuggyEqualsTransitive getTwo() {
       return two;
     }
+
     public static BuggyEqualsTransitive getThree() {
       return three;
     }
 
-    private  BuggyEqualsTransitive() {}
+    private BuggyEqualsTransitive() {}
 
     @Override
     public boolean equals(Object o) {
       // Prevent violations to lower arity contracts
-      if (! (o instanceof BuggyEqualsTransitive)) {
+      if (!(o instanceof BuggyEqualsTransitive)) {
         return false;
       }
       if (o == null) {
@@ -132,7 +136,7 @@ public class Buggy {
       if (this == one && o == two) {
         return true;
       }
-      if (this == two && o == three){
+      if (this == two && o == three) {
         return true;
       }
       if (this == one && o == three) {
@@ -148,13 +152,15 @@ public class Buggy {
     }
   }
 
-  public static class BuggyCompareToAntiSymmetric implements Comparable<BuggyCompareToAntiSymmetric> {
+  public static class BuggyCompareToAntiSymmetric
+      implements Comparable<BuggyCompareToAntiSymmetric> {
     private static BuggyCompareToAntiSymmetric one = new BuggyCompareToAntiSymmetric();
     private static BuggyCompareToAntiSymmetric two = new BuggyCompareToAntiSymmetric();
 
     public static BuggyCompareToAntiSymmetric getOne() {
       return one;
     }
+
     public static BuggyCompareToAntiSymmetric getTwo() {
       return two;
     }
@@ -174,7 +180,7 @@ public class Buggy {
     @Override
     public boolean equals(Object o) {
       // Prevent violations to lower arity contracts
-      if (! (o instanceof BuggyCompareToAntiSymmetric)) {
+      if (!(o instanceof BuggyCompareToAntiSymmetric)) {
         return false;
       }
       if (o == null) {
@@ -190,9 +196,7 @@ public class Buggy {
     }
   }
 
-  /**
-   * Test for violations to {@code o.compareTo(o) == 0}
-   */
+  /** Test for violations to {@code o.compareTo(o) == 0} */
   public static class BuggyCompareToReflexive implements Comparable<BuggyCompareToReflexive> {
     private static BuggyCompareToReflexive one = new BuggyCompareToReflexive();
 
@@ -200,7 +204,7 @@ public class Buggy {
       return one;
     }
 
-    private  BuggyCompareToReflexive() {}
+    private BuggyCompareToReflexive() {}
 
     @Override
     public int compareTo(BuggyCompareToReflexive o) {
@@ -213,7 +217,7 @@ public class Buggy {
     @Override
     public boolean equals(Object o) {
       // Prevent violations to lower arity contracts
-      if (! (o instanceof BuggyCompareToReflexive)) {
+      if (!(o instanceof BuggyCompareToReflexive)) {
         return false;
       }
       if (o == null) {
@@ -229,21 +233,20 @@ public class Buggy {
     }
   }
 
-  /**
-   * Test for consistency with equals: {@code x.compareTo(y) == 0} whenever {@code x.equals(y)}.
-   */
-  public static class BuggyCompareToEquals implements Comparable<BuggyCompareToEquals>{
+  /** Test for consistency with equals: {@code x.compareTo(y) == 0} whenever {@code x.equals(y)}. */
+  public static class BuggyCompareToEquals implements Comparable<BuggyCompareToEquals> {
     private static BuggyCompareToEquals one = new BuggyCompareToEquals();
     private static BuggyCompareToEquals two = new BuggyCompareToEquals();
 
     public static BuggyCompareToEquals getOne() {
       return one;
     }
+
     public static BuggyCompareToEquals getTwo() {
       return two;
     }
 
-    private  BuggyCompareToEquals() {}
+    private BuggyCompareToEquals() {}
 
     @Override
     public int compareTo(BuggyCompareToEquals o) {
@@ -274,7 +277,7 @@ public class Buggy {
     }
   }
 
-  public static class BuggyCompareToTransitive implements Comparable<BuggyCompareToTransitive>{
+  public static class BuggyCompareToTransitive implements Comparable<BuggyCompareToTransitive> {
     private static BuggyCompareToTransitive one = new BuggyCompareToTransitive();
     private static BuggyCompareToTransitive two = new BuggyCompareToTransitive();
     private static BuggyCompareToTransitive three = new BuggyCompareToTransitive();
@@ -282,9 +285,11 @@ public class Buggy {
     public static BuggyCompareToTransitive getOne() {
       return one;
     }
+
     public static BuggyCompareToTransitive getTwo() {
       return two;
     }
+
     public static BuggyCompareToTransitive getThree() {
       return three;
     }
@@ -322,7 +327,7 @@ public class Buggy {
     }
   }
 
-  public static class BuggyCompareToSubs implements Comparable<BuggyCompareToSubs>{
+  public static class BuggyCompareToSubs implements Comparable<BuggyCompareToSubs> {
     private static BuggyCompareToSubs one = new BuggyCompareToSubs();
     private static BuggyCompareToSubs two = new BuggyCompareToSubs();
     private static BuggyCompareToSubs three = new BuggyCompareToSubs();
@@ -330,9 +335,11 @@ public class Buggy {
     public static BuggyCompareToSubs getOne() {
       return one;
     }
+
     public static BuggyCompareToSubs getTwo() {
       return two;
     }
+
     public static BuggyCompareToSubs getThree() {
       return three;
     }
@@ -377,12 +384,12 @@ public class Buggy {
       return one;
     }
 
-    private  BuggyCompareToNormal() {}
+    private BuggyCompareToNormal() {}
 
     @Override
     public int compareTo(BuggyCompareToNormal o) {
       if (this == one) {
-        throw new RuntimeException("CompareTo purposely fails here");
+        throw new RuntimeException("compareTo purposely fails here");
       }
       return 0;
     }
@@ -405,6 +412,4 @@ public class Buggy {
       return 311;
     }
   }
-
-
 }

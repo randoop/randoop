@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Captures the status of a Randoop run, along with status from the compilation of the Randoop
- * generated tests.
+ * Captures the status of a Randoop run, along with status from the compilation of the
+ * Randoop-generated tests.
  */
 class RandoopRunStatus {
 
@@ -51,18 +51,23 @@ class RandoopRunStatus {
   }
 
   /**
-   * Runs Randoop and compiles.
+   * Runs Randoop.
+   *
+   * <p>Should only be called if a test only runs Randoop.
    *
    * @param testEnvironment the {@link TestEnvironment} for this run
    * @param options the command-line arguments to Randoop
-   * @return the status information collected from generation and compilation
+   * @return the status information collected from generation
    */
-  static RandoopRunStatus generateAndCompile(
-      TestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
-
+  static ProcessStatus generate(TestEnvironment testEnvironment, RandoopOptions options) {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
+    command.add("-Xmx3000m");
+    if (testEnvironment.getBootClassPath() != null
+        && !testEnvironment.getBootClassPath().isEmpty()) {
+      command.add("-Xbootclasspath/a:" + testEnvironment.getBootClassPath());
+    }
     command.add("-classpath");
     command.add(testEnvironment.getSystemTestClasspath());
     if (testEnvironment.getJavaAgentPath() != null) {
@@ -76,16 +81,28 @@ class RandoopRunStatus {
     command.add("randoop.main.Main");
     command.add("gentests");
     command.addAll(options.getOptions());
-    ProcessStatus randoopExitStatus = ProcessStatus.runCommand(command);
+    System.out.format("Randoop command:%n%s%n", command);
+    return ProcessStatus.runCommand(command);
+  }
+
+  /**
+   * Runs Randoop and compiles.
+   *
+   * @param testEnvironment the {@link TestEnvironment} for this run
+   * @param options the command-line arguments to Randoop
+   * @return the status information collected from generation and compilation
+   */
+  static RandoopRunStatus generateAndCompile(
+      TestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
+
+    ProcessStatus randoopExitStatus = generate(testEnvironment, options);
 
     if (randoopExitStatus.exitStatus != 0) {
       if (allowRandoopFailure) {
         return getRandoopRunStatus(randoopExitStatus);
       } else {
-        for (String line : randoopExitStatus.outputLines) {
-          System.out.println(line);
-        }
-        fail("Randoop exited badly, exit value = " + randoopExitStatus.exitStatus);
+        System.out.println(randoopExitStatus.dump());
+        fail("Randoop exited badly, see details above.");
       }
     }
 
@@ -95,12 +112,12 @@ class RandoopRunStatus {
 
     // determine whether files are really there and have the right names
     Path srcDir = testEnvironment.sourceDir.resolve(packagePathString);
-    List<File> testClassSourceFiles = getFiles(srcDir, "*.java", regressionBasename, errorBasename);
+    List<File> testSourceFiles = getFiles(srcDir, "*.java", regressionBasename, errorBasename);
 
-    // definitely cannot do anything useful if no generated test files
-    // but not sure that this is the right way to deal with it
-    // what if test is meant not to generate anything ?
-    if (testClassSourceFiles.size() == 0) {
+    // Definitely cannot do anything useful if no generated test files
+    // but not sure that this is the right way to deal with it.
+    // What if test is meant not to generate anything ?
+    if (testSourceFiles.size() == 0) {
       for (String line : randoopExitStatus.outputLines) {
         System.err.println(line);
       }
@@ -109,8 +126,10 @@ class RandoopRunStatus {
 
     Path classDir = testEnvironment.classDir;
     CompilationStatus compileStatus =
-        CompilationStatus.compileTests(testClassSourceFiles, classDir.toString());
+        CompilationStatus.compileTests(
+            testSourceFiles, testEnvironment.getSystemTestClasspath(), classDir.toString());
     if (!compileStatus.succeeded) {
+      System.out.println("Compilation: ");
       if (randoopExitStatus.exitStatus == 0) {
         for (String line : randoopExitStatus.outputLines) {
           System.err.println(line);
@@ -122,12 +141,12 @@ class RandoopRunStatus {
     }
 
     Path classFileDir = classDir.resolve(packagePathString);
-    List<File> testClassClassFiles =
+    List<File> testClassFiles =
         getFiles(classFileDir, "*.class", regressionBasename, errorBasename);
     assertThat(
-        "Number of compiled tests equals source tests",
-        testClassClassFiles.size(),
-        is(equalTo(testClassSourceFiles.size())));
+        "Number of compiled test files must equal source test files",
+        testClassFiles.size(),
+        is(equalTo(testSourceFiles.size())));
 
     return getRandoopRunStatus(randoopExitStatus);
   }

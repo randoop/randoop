@@ -94,10 +94,10 @@ public final class Statement {
   /**
    * Adds code for the statement to the given {@code StringBuilder}.
    *
-   * @see Sequence#appendCode(StringBuilder, int)
    * @param variable the {@link Variable} to be used if an initialization
    * @param inputs the input list for the operation of the statement
    * @param b the {@code StringBuilder} to which code text is appended.
+   * @see Sequence#appendCode(StringBuilder, int)
    */
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
     Type type = operation.getOutputType();
@@ -187,11 +187,11 @@ public final class Statement {
   }
 
   /**
-   * isPrimitiveInitialization determines if operation is a nonreceiver term.
+   * isNonreceivingInitialization determines if operation is a nonreceiver term.
    *
    * @return true if operation is a nonreceiver, and false otherwise
    */
-  public boolean isPrimitiveInitialization() {
+  public boolean isNonreceivingInitialization() {
     return operation.isNonreceivingValue();
   }
 
@@ -201,7 +201,7 @@ public final class Statement {
    * @return true if statement represents null initialization, and false otherwise
    */
   public boolean isNullInitialization() {
-    return isPrimitiveInitialization() && operation.getValue() == null;
+    return isNonreceivingInitialization() && operation.getValue() == null;
   }
 
   /**
@@ -216,7 +216,7 @@ public final class Statement {
   // (It would be even nicer to use the short output format unless
   // disambiguation is truly needed.)
   public String getShortForm() {
-    if (isPrimitiveInitialization() && !isNullInitialization()) {
+    if (isNonreceivingInitialization() && !isNullInitialization()) {
       return Value.toCodeString(operation.getValue());
     }
     return null;

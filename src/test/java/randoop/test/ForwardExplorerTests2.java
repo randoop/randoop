@@ -57,7 +57,7 @@ public class ForwardExplorerTests2 {
 
   /**
    * The input scenario for this test results in the generation of a sequence with repeated calls to
-   * a non-terminating method. If <code>--usethreads</code> is set, the generator is not able to
+   * a non-terminating method. If {@code --usethreads} is set, the generator is not able to
    * interrupt the executor, and will never terminate. Otherwise, a timeout exception will be thrown
    * and the executor will throw an exception, which since it is not the last statement is
    * considered "flaky".
@@ -109,9 +109,10 @@ public class ForwardExplorerTests2 {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(
-          new OperationExtractor(classType, model, new DefaultReflectionPredicate(), visibility),
-          c);
+      final OperationExtractor extractor =
+          new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+      mgr.apply(extractor, c);
+      model.addAll(extractor.getOperations());
     }
     return model;
   }
@@ -119,9 +120,6 @@ public class ForwardExplorerTests2 {
   private static TestCheckGenerator createChecker(ContractSet contracts) {
     return (new GenTests())
         .createTestCheckGenerator(
-            new PublicVisibilityPredicate(),
-            contracts,
-            new MultiMap<Type, TypedOperation>(),
-            new LinkedHashSet<TypedOperation>());
+            new PublicVisibilityPredicate(), contracts, new MultiMap<Type, TypedOperation>());
   }
 }

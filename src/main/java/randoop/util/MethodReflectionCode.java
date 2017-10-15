@@ -5,10 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-/**
- * This is used to wrap a method together with its parameters, ready for execution. Can be run only
- * once.
- */
+/** Wraps a method together with its arguments, ready for execution. Can be run only once. */
 public final class MethodReflectionCode extends ReflectionCode {
 
   private final Method method;
@@ -40,7 +37,7 @@ public final class MethodReflectionCode extends ReflectionCode {
 
     if (!this.method.isAccessible()) {
       this.method.setAccessible(true);
-      Log.logLine("not accessible:" + this.method);
+      Log.logLine("not accessible: " + this.method);
       // TODO something is bizarre - it seems that a public method can be
       // not-accessible sometimes. RatNum(int,int)
       // TODO you cannot just throw the exception below - because no
@@ -105,9 +102,14 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    String ret = "Call to " + method + " receiver:" + receiver + " args:" + Arrays.toString(inputs);
-    if (!hasRunAlready()) return ret + " not run yet";
-    else if (exceptionThrown == null) return ret + " returned:" + retval;
-    else return ret + " threw:" + exceptionThrown;
+    String ret =
+        "Call to " + method + " receiver: " + receiver + " args: " + Arrays.toString(inputs);
+    if (!hasRunAlready()) {
+      return ret + " not run yet";
+    } else if (exceptionThrown == null) {
+      return ret + " returned: " + retval;
+    } else {
+      return ret + " threw: " + exceptionThrown;
+    }
   }
 }

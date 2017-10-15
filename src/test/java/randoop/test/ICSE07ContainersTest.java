@@ -22,6 +22,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
@@ -31,6 +32,7 @@ import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
 import randoop.test.issta2006.TreeMap;
 import randoop.types.ClassOrInterfaceType;
+import randoop.util.ReflectionExecutor;
 
 /**
  * This test ensures that Randoop achieves a certain level of coverage across 4 data structures. The
@@ -86,13 +88,14 @@ public class ICSE07ContainersTest {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(
+      final OperationExtractor extractor =
           new OperationExtractor(
               classType,
-              model,
-              new DefaultReflectionPredicate(omitMethodPatterns, excludeNames),
-              visibility),
-          c);
+              new DefaultReflectionPredicate(excludeNames),
+              new OmitMethodsPredicate(omitMethodPatterns),
+              visibility);
+      mgr.apply(extractor, c);
+      model.addAll(extractor.getOperations());
     }
     assertTrue("model should not be empty", !model.isEmpty());
     System.out.println("Number of operations: " + model.size());
@@ -117,6 +120,9 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testFibHeap() throws IOException {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(FibHeap.class);
@@ -145,6 +151,9 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testBinTree() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.null_ratio = 0.5;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinTree.class);
@@ -170,6 +179,9 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testTreeMap() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(TreeMap.class);
@@ -197,6 +209,9 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testBinomialHeap() {
+    randoop.util.Randomness.setSeed(0);
+    ReflectionExecutor.resetStatistics();
+
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinomialHeap.class);

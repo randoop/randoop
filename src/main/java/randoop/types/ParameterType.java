@@ -1,7 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -62,7 +62,7 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> parameters = new HashSet<>();
+    Set<TypeVariable> parameters = new LinkedHashSet<>();
     parameters.addAll(lowerBound.getTypeParameters());
     parameters.addAll(upperBound.getTypeParameters());
     return new ArrayList<>(parameters);
