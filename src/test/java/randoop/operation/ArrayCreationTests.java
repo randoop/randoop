@@ -85,6 +85,6 @@ public class ArrayCreationTests {
     input.add(var0);
     Statement st_ad = new Statement(acOp);
     st_ad.appendCode(var1, input, b);
-    assertEquals("char[][] charArrayArray1 = new char[][] { charArray0 };", b.toString());
+    assertEquals("char[][] charArray1 = new char[][] { charArray0 };", b.toString());
   }
 }
