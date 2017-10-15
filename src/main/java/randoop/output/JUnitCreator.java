@@ -240,8 +240,8 @@ public class JUnitCreator {
 
     NameGenerator methodNameGen =
         new NameGenerator(testMethodPrefix, 1, numDigits(sequences.size()));
-    for (ExecutableSequence s : sequences) {
-      MethodDeclaration testMethod = createTestMethod(testClassName, methodNameGen.next(), s);
+    for (ExecutableSequence eseq : sequences) {
+      MethodDeclaration testMethod = createTestMethod(testClassName, methodNameGen.next(), eseq);
       if (testMethod != null) {
         bodyDeclarations.add(testMethod);
       }

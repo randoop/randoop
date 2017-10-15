@@ -14,7 +14,7 @@ public class ExcludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
   }
 
   @Override
-  public boolean test(ExecutableSequence s) {
-    return !excludeSet.contains(s.sequence);
+  public boolean test(ExecutableSequence eseq) {
+    return !excludeSet.contains(eseq.sequence);
   }
 }

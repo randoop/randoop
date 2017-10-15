@@ -24,7 +24,7 @@ import randoop.util.TupleVisitor;
 /** Perform checks over a {@link randoop.util.TupleSet}. */
 class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
   /** the executable sequence that is the source of values for checking contracts */
-  private final ExecutableSequence s;
+  private final ExecutableSequence eseq;
 
   /** the list of contracts to check */
   private final List<ObjectContract> contracts;
@@ -32,11 +32,11 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
   /**
    * Creates a contract checker for value tuples. All contracts must have the same arity.
    *
-   * @param s the executable sequence that produced values in tuples
+   * @param eseq the executable sequence that produced values in tuples
    * @param contracts the set of contracts
    */
-  ContractChecker(ExecutableSequence s, List<ObjectContract> contracts) {
-    this.s = s;
+  ContractChecker(ExecutableSequence eseq, List<ObjectContract> contracts) {
+    this.eseq = eseq;
     this.contracts = contracts;
   }
 
@@ -113,7 +113,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
     // the contract failed
     Variable[] varArray = new Variable[values.length];
     for (int i = 0; i < varArray.length; i++) {
-      List<Variable> variables = s.getVariables(values[i]);
+      List<Variable> variables = eseq.getVariables(values[i]);
       varArray[i] = Randomness.randomMember(variables);
       // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
       //   Randomness.selectionLog.log(
