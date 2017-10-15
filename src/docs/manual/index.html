@@ -318,18 +318,29 @@ done.</pre>
 Randoop creates two different main test suites, in classes
 <code>ErrorTest</code> and <code>RegressionTest</code>. Compile and run the tests.
 (The classpath should include the code under test, the generated tests, and
-JUnit files <code>junit.jar</code> and <code>hamcrest-core.jar</code>.)
+JUnit files <code>junit.jar</code> and <code>hamcrest-core.jar</code>.
+Classes in <code>java.util.*</code> are always on the Java classpath, so they
+are not needed in this particular example, but are shown because you will
+usually need to supply them.)
 </p>
 
 <pre class="code">export JUNITPATH=.../junit.jar:.../hamcrest-core.jar
-javac -classpath .:$JUNITPATH ErrorTest*.java RegressionTest*.java
-java -classpath .:$JUNITPATH org.junit.runner.JUnitCore ErrorTest
-java -classpath .:$JUNITPATH org.junit.runner.JUnitCore RegressionTest</pre>
+javac -classpath .:$JUNITPATH ErrorTest*.java RegressionTest*.java -sourcepath .:<em>path/to/files/under/test/</em>
+java -classpath .:$JUNITPATH:<em>myclasspath</em> org.junit.runner.JUnitCore ErrorTest
+java -classpath .:$JUNITPATH:<em>myclasspath</em> org.junit.runner.JUnitCore RegressionTest</pre>
 
 <p>
 All of the tests in ErrorTest will fail, and all of the tests in
 RegressionTest will pass.
 </p>
+
+<p>
+  You also might want to minimize the error-revealing tests before running them:
+</p>
+
+<pre class="code">
+java -ea -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
+</pre>
 
 
 <h2 id="specifying-methods">Specifying methods, constructors, and fields that may appear in a test</h2>
