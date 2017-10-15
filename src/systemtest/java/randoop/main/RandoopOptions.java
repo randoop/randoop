@@ -122,6 +122,9 @@ class RandoopOptions {
    * @param packageName the package name
    */
   void setPackageName(String packageName) {
+    if (packageName.equals("")) {
+      throw new IllegalArgumentException();
+    }
     if (packageName != null) {
       setOption("junit-package-name", packageName);
       this.packageName = packageName;
