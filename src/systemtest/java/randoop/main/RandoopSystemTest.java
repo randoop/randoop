@@ -365,6 +365,7 @@ public class RandoopSystemTest {
             "java2.util2.TreeMap.valueSearchNonNull(java2.util2.TreeMap.Entry, java.lang.Object) ignore",
             "java2.util2.TreeMap.valueSearchNull(java2.util2.TreeMap.Entry) ignore",
             "java2.util2.TreeMap.writeObject(java.io.ObjectOutputStream) exclude",
+            "java2.util2.TreeSet.first() ignore",
             "java2.util2.TreeSet.last() ignore",
             "java2.util2.TreeSet.readObject(java.io.ObjectInputStream) exclude",
             "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore",
