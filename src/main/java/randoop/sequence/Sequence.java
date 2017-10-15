@@ -397,9 +397,13 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * A set of bits, where there is one bit associated with each index. Active flags are used during
-   * generation, to determine what values in an existing sequence are useful to be used as inputs
-   * when creating a new sequence out of the existing one.
+   * A set of bits, where there is one bit associated with each index (that is, each statement in
+   * the sequence). Active flags are used during generation, to determine what values in an existing
+   * sequence are useful to be used as inputs when creating a new sequence out of the existing one.
+   *
+   * <p>Note that each statement's result is treated as active or not. If a statement might
+   * side-effect a variable's value, the variable name is used from the previous statement that
+   * defined it.
    */
   private BitSet activeFlags;
 
@@ -676,8 +680,12 @@ public final class Sequence implements WeightedElement {
     return this.getStatementsWithInputs().get(index);
   }
 
+  // TODO: This seems wrong.  Most of Randoop works in terms of active statements -- the statements
+  // whose variable that may be chosen.  Then, this only considers the last statement, but it
+  // considers all its variables, even ones that are not active.
   /**
-   * The last statement produces multiple values of type {@code type}. Choose one of them at random.
+   * The last statement may produce multiple values of type {@code type}. Choose one of them at
+   * random.
    *
    * @param type return a sequence of this type
    * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
@@ -707,6 +715,36 @@ public final class Sequence implements WeightedElement {
     } else {
       return Randomness.randomMember(possibleIndices);
     }
+  }
+
+  /** Choose one of the statements that produces a values of type {@code type}. */
+  public Variable randomVariableForType(Type type, boolean onlyReceivers) {
+    if (type == null) {
+      throw new IllegalArgumentException("type cannot be null.");
+    }
+    List<Integer> possibleIndices = new ArrayList<>();
+    for (int i = 0; i < size(); i++) {
+      Statement s = statements.get(i);
+      if (isActive(i)) {
+        Type outputType = s.getOutputType();
+        if (type.isAssignableFrom(outputType)
+            && (!(onlyReceivers && outputType.isNonreceiverType()))) {
+          possibleIndices.add(i);
+        }
+      }
+    }
+    if (possibleIndices.isEmpty()) {
+      throw new BugInRandoopException(
+          "Failed to select variable with input type " + type + " from sequence " + this);
+    }
+
+    int index;
+    if (possibleIndices.size() == 1) {
+      index = possibleIndices.get(0);
+    } else {
+      index = Randomness.randomMember(possibleIndices);
+    }
+    return new Variable(this, index);
   }
 
   void checkIndex(int i) {
