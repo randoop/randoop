@@ -90,6 +90,11 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
 
     ExecutionOutcome outcome = ObjectContractUtils.execute(contract, values);
 
+    if (Log.isLoggingOn()) {
+      Log.logLine("Executed contract " + contract.getClass());
+      Log.logLine(" Contract outcome " + outcome);
+    }
+
     if (outcome instanceof NormalExecution) {
       if (((NormalExecution) outcome).getRuntimeValue().equals(true)) {
         return null;
