@@ -91,6 +91,7 @@ import randoop.output.PrimitiveAndWrappedTypeVarNameCollector;
  * version of the current statement and continues.
  */
 public class Minimize extends CommandHandler {
+
   /** The Java file whose failing tests will be minimized. */
   @SuppressWarnings("WeakerAccess")
   @OptionGroup(value = "Test case minimization options")
@@ -158,22 +159,21 @@ public class Minimize extends CommandHandler {
         throw new Options.ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
       }
     } catch (Options.ArgException ae) {
-      usage("while parsing command-line arguments: %s", ae.getMessage());
-      throw new RandoopTextuiException("See usage.");
+      throw new RandoopTextuiException(ae.getMessage());
     }
 
     if (Minimize.suitepath == null) {
-      throw new RandoopTextuiException(
-          "You must specify an input file path to the 'minimize' command. Use the --suitepath option.");
+      throw new RandoopTextuiException("Use --suitepath to specify a file to be minimized.");
     }
 
     // Check that the input file is a Java file.
     if (!FilenameUtils.getExtension(Minimize.suitepath).equals("java")) {
-      throw new RandoopTextuiException("The input file must be a Java file.");
+      throw new RandoopTextuiException("The input file must be a Java file: " + Minimize.suitepath);
     }
 
     if (Minimize.testsuitetimeout <= 0) {
-      throw new RandoopTextuiException("You must specify a positive timeout value.");
+      throw new RandoopTextuiException(
+          "Timout must be positive, was given as " + Minimize.testsuitetimeout + ".");
     }
 
     // File object pointing to the file to be minimized.

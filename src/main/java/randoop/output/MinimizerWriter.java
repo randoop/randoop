@@ -40,10 +40,7 @@ public class MinimizerWriter implements CodeWriter {
       Minimize.mainMinimize(
           testFile, Minimize.suiteclasspath, Minimize.testsuitetimeout, Minimize.verboseminimizer);
     } catch (IOException e) {
-      System.err.println("IOException: " + e.getMessage());
-      e.printStackTrace();
-      throw new RandoopOutputException(
-          "Couldn't output minimized test suite due to an IOException.");
+      throw new RandoopOutputException(e);
     }
 
     return testFile;
