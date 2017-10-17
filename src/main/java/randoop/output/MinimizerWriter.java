@@ -32,7 +32,7 @@ public class MinimizerWriter implements CodeWriter {
   public File writeClassCode(String packageName, String classname, String classCode)
       throws RandoopOutputException {
 
-    // Write the original class
+    // Write the original class.
     File testFile = javaFileWriter.writeClassCode(packageName, classname, classCode);
 
     // Minimize the error-revealing test that has been output.

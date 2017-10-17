@@ -578,7 +578,8 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     } catch (RandoopOutputException e) {
-      System.out.printf("%nError writing " + testKind.toLowerCase() + " tests: " + e.getMessage());
+      System.out.printf("%nError writing %s tests%n", testKind.toLowerCase());
+      e.printStackTrace(System.out);
       System.exit(1);
     }
   }
@@ -880,7 +881,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Print out usage error and stack trace and then exit.
+   * Print message, then print usage information, then exit.
    *
    * @param format the string format
    * @param args the arguments

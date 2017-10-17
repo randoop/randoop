@@ -7,7 +7,7 @@ import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/** The contract: <code>x0.equals(x0)==true</code>. */
+/** The contract: {@code x0.equals(x0)==true}. */
 public final class EqualsReflexive implements ObjectContract {
   private static final EqualsReflexive instance = new EqualsReflexive();
 
