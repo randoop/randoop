@@ -677,6 +677,30 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
+   * Return all values of type {@code type} that are produced by, or might be side-effected by, the
+   * last statement. May return an empty list if {@code onlyReceivers} is true and the only values
+   * of the given type are nulls that are passed to the last statement as arguments.
+   *
+   * @param type return a list of sequences of this type
+   * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
+   *     call receiver
+   * @return a variable used in the last statement of the given type
+   */
+  public List<Variable> allVariablesForTypeLastStatement(Type type, boolean onlyReceivers) {
+    List<Variable> possibleVars = new ArrayList<>(this.lastStatementVariables.size());
+    for (Variable i : this.lastStatementVariables) {
+      Statement s = statements.get(i.index);
+      Type outputType = s.getOutputType();
+      if (type.isAssignableFrom(outputType)
+          && (!(onlyReceivers && outputType.isNonreceiverType()))
+          && (!(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization()))) {
+        possibleVars.add(i);
+      }
+    }
+    return possibleVars;
+  }
+
+  /**
    * The last statement produces multiple values of type {@code type}. Choose one of them at random.
    *
    * @param type return a sequence of this type
@@ -685,34 +709,25 @@ public final class Sequence implements WeightedElement {
    * @return a variable used in the last statement of the given type
    */
   public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
-    if (type == null) {
-      throw new IllegalArgumentException("type cannot be null.");
-    }
-    List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
-    for (Variable i : this.lastStatementVariables) {
-      Statement s = statements.get(i.index);
-      Type outputType = s.getOutputType();
-      if (type.isAssignableFrom(outputType)
-          && (!(onlyReceivers && outputType.isNonreceiverType()))) {
-        possibleIndices.add(i);
-      }
-    }
-    if (possibleIndices.isEmpty()) {
+    List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
+    if (possibleVars.isEmpty()) {
       Statement lastStatement = this.statements.get(this.statements.size() - 1);
-      throw new BugInRandoopException(
-          "Failed to select variable with input type " + type + " from statment " + lastStatement);
+      return null; // deal with the problem elsewhere.  TODO: fix so this cannot happen.
+      // throw new BugInRandoopException(
+      //     String.format(
+      //         "Failed to select %svariable with input type %s from statement %s",
+      //         (onlyReceivers ? "receiver " : ""), type, lastStatement));
     }
-    if (possibleIndices.size() == 1) {
-      return possibleIndices.get(0);
+    if (possibleVars.size() == 1) {
+      return possibleVars.get(0);
     } else {
-      return Randomness.randomMember(possibleIndices);
+      return Randomness.randomMember(possibleVars);
     }
   }
 
   void checkIndex(int i) {
-    if (i < 0 || i > size() - 1) {
-      throw new IllegalArgumentException();
-    }
+    if (i < 0 || i > size() - 1)
+      throw new IllegalArgumentException("index " + i + " out of range [0, " + (size() - 1) + "]");
   }
 
   // Argument checker for extend method.
@@ -1082,6 +1097,7 @@ public final class Sequence implements WeightedElement {
     return new Sequence(statements.getSublist(index));
   }
 
+  /** Write this sequence to the Randoop log. */
   public void log() {
     if (!Log.isLoggingOn()) {
       return;
@@ -1098,6 +1114,13 @@ public final class Sequence implements WeightedElement {
     }
   }
 
+  /**
+   * Indicate whether this sequence can be printed with variable values substituted for the variable
+   * in operation arguments. If true, the initialization of the variable will not be included in the
+   * sequence when dumped to a file.
+   *
+   * @return true if the short form of variables can be used for this sequence, and false otherwise
+   */
   boolean canUseShortForm() {
     return allowShortForm;
   }

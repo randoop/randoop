@@ -84,10 +84,11 @@
 
 <h1 id="starting">Getting started</h1>
 
-<p>Clone the repository:</p>
+<p>Clone the repository, using either of these commands:</p>
 
 <pre>
   git clone git@github.com:randoop/randoop.git
+  git clone https://github.com/randoop/randoop.git
 </pre>
 
 <p>
@@ -397,7 +398,7 @@ docker run -it mdernst/ubuntu-for-randoop-jdk8 /bin/bash
 Then, in the Docker container:
 </p>
 <pre>
-git clone --quiet -b BRANCHNAME --depth 9 https://github.com/USER/randoop randoop-fork-USER-branch-BRANCHNAME
+git clone --quiet -b BRANCHNAME --depth 9 https://github.com/USER/randoop.git randoop-fork-USER-branch-BRANCHNAME
 cd randoop-fork-USER-branch-BRANCHNAME
 ./.travis-build.sh test
 </pre>

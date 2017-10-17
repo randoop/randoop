@@ -52,11 +52,11 @@ public class NameGenerator {
    * @param n the number
    * @return the number of digits in string form of given number
    */
-  public static int numDigits(int n) {
+  static int numDigits(int n) {
     return (int) Math.log10(n) + 1;
   }
 
-  public static String formatString(int numDigits) {
+  private static String formatString(int numDigits) {
     if (numDigits > 0) {
       return "%0" + numDigits + "d";
     }

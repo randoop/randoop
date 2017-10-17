@@ -6,7 +6,7 @@ import randoop.util.predicate.DefaultPredicate;
 public class ErrorTestPredicate extends DefaultPredicate<ExecutableSequence> {
 
   @Override
-  public boolean test(ExecutableSequence s) {
-    return s.hasFailure();
+  public boolean test(ExecutableSequence eseq) {
+    return eseq.hasFailure();
   }
 }
