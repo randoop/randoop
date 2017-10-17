@@ -23,7 +23,7 @@ public class IncludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
    *     false otherwise
    */
   @Override
-  public boolean test(ExecutableSequence s) {
-    return s.sequence.hasUseOfMatchingClass(testClasses);
+  public boolean test(ExecutableSequence eseq) {
+    return eseq.sequence.hasUseOfMatchingClass(testClasses);
   }
 }

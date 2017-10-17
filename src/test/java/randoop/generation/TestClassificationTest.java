@@ -83,6 +83,7 @@ public class TestClassificationTest {
     GenInputsAbstract.unchecked_exception = BehaviorType.INVALID;
     GenInputsAbstract.npe_on_null_input = BehaviorType.INVALID;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.INVALID;
+    GenInputsAbstract.cm_exception = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputLimit = 1000;
@@ -96,8 +97,8 @@ public class TestClassificationTest {
 
     assertTrue("should have some regression tests", rTests.size() > 0);
 
-    for (ExecutableSequence s : rTests) {
-      TestChecks cks = s.getChecks();
+    for (ExecutableSequence eseq : rTests) {
+      TestChecks cks = eseq.getChecks();
       if (!cks.hasChecks()) {
         assertFalse("these are not error checks", cks.hasErrorBehavior());
         assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
@@ -127,6 +128,7 @@ public class TestClassificationTest {
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.cm_exception = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.ERROR;
     GenInputsAbstract.sof_exception = BehaviorType.ERROR;
     GenInputsAbstract.outputLimit = 1000;
@@ -140,8 +142,8 @@ public class TestClassificationTest {
 
     assertTrue("should have some regression tests", rTests.size() > 0);
 
-    for (ExecutableSequence s : rTests) {
-      TestChecks cks = s.getChecks();
+    for (ExecutableSequence eseq : rTests) {
+      TestChecks cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -154,8 +156,8 @@ public class TestClassificationTest {
 
     assertTrue("should have some error tests", eTests.size() > 0);
 
-    for (ExecutableSequence s : eTests) {
-      TestChecks cks = s.getChecks();
+    for (ExecutableSequence eseq : eTests) {
+      TestChecks cks = eseq.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
       assertTrue("these are error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
@@ -185,6 +187,7 @@ public class TestClassificationTest {
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.EXPECTED;
+    GenInputsAbstract.cm_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.oom_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.sof_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.outputLimit = 1000;
@@ -198,8 +201,8 @@ public class TestClassificationTest {
 
     assertTrue("should have some regression tests", rTests.size() > 0);
 
-    for (ExecutableSequence s : rTests) {
-      TestChecks cks = s.getChecks();
+    for (ExecutableSequence eseq : rTests) {
+      TestChecks cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -231,6 +234,7 @@ public class TestClassificationTest {
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.cm_exception = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputLimit = 1000;
@@ -244,8 +248,8 @@ public class TestClassificationTest {
 
     assertTrue("should have some regression tests", rTests.size() > 0);
 
-    for (ExecutableSequence s : rTests) {
-      TestChecks cks = s.getChecks();
+    for (ExecutableSequence eseq : rTests) {
+      TestChecks cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -260,8 +264,8 @@ public class TestClassificationTest {
 
     assertTrue("should have error tests", eTests.size() > 0);
 
-    for (ExecutableSequence s : eTests) {
-      TestChecks cks = s.getChecks();
+    for (ExecutableSequence eseq : eTests) {
+      TestChecks cks = eseq.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
       assertTrue("these are error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
@@ -292,6 +296,7 @@ public class TestClassificationTest {
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.cm_exception = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputLimit = 1000;
@@ -305,8 +310,8 @@ public class TestClassificationTest {
 
     assertTrue("should have some regression tests", rTests.size() > 0);
 
-    for (ExecutableSequence s : rTests) {
-      TestChecks cks = s.getChecks();
+    for (ExecutableSequence eseq : rTests) {
+      TestChecks cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -323,8 +328,8 @@ public class TestClassificationTest {
 
     assertTrue("should have error tests", eTests.size() > 0);
 
-    for (ExecutableSequence s : eTests) {
-      TestChecks cks = s.getChecks();
+    for (ExecutableSequence eseq : eTests) {
+      TestChecks cks = eseq.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
       assertTrue("these are error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());

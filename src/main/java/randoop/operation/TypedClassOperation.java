@@ -171,7 +171,7 @@ public class TypedClassOperation extends TypedOperation {
     }
     if (rawSignature == null) {
       Package classPackage = this.declaringType.getPackage();
-      String packageName = (classPackage != null) ? classPackage.getName() : "";
+      String packageName = (classPackage == null) ? null : classPackage.getName();
       String classname = this.getDeclaringType().getRawtype().getUnqualifiedName();
       String name =
           this.getUnqualifiedName().equals("<init>") ? classname : this.getUnqualifiedName();
