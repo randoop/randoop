@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a non-empty set of tuples. Each tuple's elements are of type {@code E}. Each tuple has
- * the same length.
+ * Represents a non-empty set of tuples. All the tuples have the same length. The tuple elements
+ * have type {@code E}.
  */
 public class TupleSet<E> {
 
+  // TODO: given that the tuples are fixed-size, why not use an array rather than lists for both
+  // levels of the data structure?  That would be more efficient.
   /** The list of element lists (tuples) */
   private List<List<E>> tuples;
 
@@ -32,9 +34,11 @@ public class TupleSet<E> {
   }
 
   /**
-   * Extends all of the elements of the current tuple set with all of the elements of the given
-   * list. In other words, if there are <i>k</i> elements given, then each tuple will be replaced by
-   * <i>k</i> new tuples extended by one of the input elements.
+   * Extends each element of this tuple set with each of the elements of the given list.
+   *
+   * <p>Suppose this contains <i>k</i> tuples each of length <i>len</i>, and {@code elements}
+   * contains <i>e</i> elements. Then the result contains <i>k * e</i> tuples, each of length
+   * <i>len+1</i>.
    *
    * @param elements the list of elements
    * @return a tuple set formed by extending the tuples with the elements of the given list
@@ -43,7 +47,10 @@ public class TupleSet<E> {
     List<List<E>> tupleList = new ArrayList<>();
     for (List<E> tuple : tuples) {
       for (E e : elements) {
-        List<E> extTuple = new ArrayList<>(tuple);
+        // List<E> extTuple = new ArrayList<>(tuple);
+        // Make extTuple have exactly the right size.
+        List<E> extTuple = new ArrayList<>(tupleLength + 1);
+        extTuple.addAll(tuple);
         extTuple.add(e);
         assert extTuple.size() == tupleLength + 1
             : "tuple lengths don't match, expected " + tupleLength + " have " + extTuple.size();

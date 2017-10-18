@@ -10,7 +10,7 @@ import randoop.sequence.ExecutableSequence;
 public class AlwaysFalseExceptionPredicate implements ExceptionPredicate {
 
   @Override
-  public boolean test(ExceptionalExecution exec, ExecutableSequence s) {
+  public boolean test(ExceptionalExecution exec, ExecutableSequence eseq) {
     return false;
   }
 }

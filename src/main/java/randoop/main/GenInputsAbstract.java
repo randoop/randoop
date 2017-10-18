@@ -242,13 +242,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType checked_exception = BehaviorType.EXPECTED;
 
   /**
-   * If a test throws an unchecked exception other than {@code OutOfMemoryError}, {@code
-   * StackOverflowError}, and {@code NullPointerException}, should the test be included in the
-   * error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
-   * it be discarded (value: INVALID)?
+   * If a test throws an unchecked exception other than {@code ConcurrentModificationException},
+   * {@code OutOfMemoryError}, {@code StackOverflowError}, and {@code NullPointerException}, should
+   * the test be included in the error-revealing test suite (value: ERROR), regression test suite
+   * (value: EXPECTED), or should it be discarded (value: INVALID)?
    *
    * <p>The arguments {@code --npe-on-null-input}, {@code --npe-on-non-null-input}, {@code
-   * --oom-exception}, and {@code --sof-exception} handle special cases of unchecked exceptions.
+   * --cm-exception}, {@code --oom-exception}, and {@code --sof-exception} handle special cases of
+   * unchecked exceptions.
    */
   @Option("Whether unchecked exception is an ERROR, EXPECTED or INVALID")
   public static BehaviorType unchecked_exception = BehaviorType.EXPECTED;
@@ -270,11 +271,19 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType npe_on_non_null_input = BehaviorType.ERROR;
 
   /**
+   * If a test throws a {@code ConcurrentModificationError} exception, should it be included in the
+   * error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
+   * it be discarded (value: INVALID)?
+   */
+  @Option("Whether ConcurrentModificationException is an ERROR, EXPECTED or INVALID")
+  public static BehaviorType cm_exception = BehaviorType.INVALID;
+
+  /**
    * If a test throws an {@code OutOfMemoryError} exception, should it be included in the
    * error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
    * it be discarded (value: INVALID)?
    */
-  @Option("Whether OutOfMemoryException is an ERROR, EXPECTED or INVALID")
+  @Option("Whether OutOfMemoryError is an ERROR, EXPECTED or INVALID")
   public static BehaviorType oom_exception = BehaviorType.INVALID;
 
   /**
@@ -285,11 +294,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Whether StackOverflowError is an ERROR, EXPECTED or INVALID")
   public static BehaviorType sof_exception = BehaviorType.INVALID;
 
+  ///////////////////////////////////////////////////////////////////
   /**
    * File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
    */
-  ///////////////////////////////////////////////////////////////////
   @OptionGroup("Observer methods")
   @Option("File containing observer functions")
   // This file is used to populate RegressionCaptureVisitor.observer_map

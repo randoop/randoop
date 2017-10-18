@@ -24,7 +24,7 @@ import randoop.util.TupleVisitor;
 /** Perform checks over a {@link randoop.util.TupleSet}. */
 class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
   /** the executable sequence that is the source of values for checking contracts */
-  private final ExecutableSequence s;
+  private final ExecutableSequence eseq;
 
   /** the list of contracts to check */
   private final List<ObjectContract> contracts;
@@ -32,11 +32,11 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
   /**
    * Creates a contract checker for value tuples. All contracts must have the same arity.
    *
-   * @param s the executable sequence that produced values in tuples
+   * @param eseq the executable sequence that produced values in tuples
    * @param contracts the set of contracts
    */
-  ContractChecker(ExecutableSequence s, List<ObjectContract> contracts) {
-    this.s = s;
+  ContractChecker(ExecutableSequence eseq, List<ObjectContract> contracts) {
+    this.eseq = eseq;
     this.contracts = contracts;
   }
 
@@ -44,20 +44,22 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
    * Applies the contracts of this checker to the given tuple.
    *
    * @param tuple the value tuple to use as input to the contracts
-   * @return a {@link Check} of a contract that failed on the tuple
+   * @return a {@link Check} of the first contract that failed on the tuple, or null if no contracts
+   *     failed
    */
   @Override
   public Check apply(List<ReferenceValue> tuple) {
-    return checkContract(tuple);
+    return checkContracts(tuple);
   }
 
   /**
    * Applies the contracts of this checker to the given tuple.
    *
    * @param tuple the value tuple to use as input to the contracts
-   * @return a {@link Check} of a contract that failed on the tuple
+   * @return a {@link Check} of the first contract that failed on the tuple, or null if no contracts
+   *     failed
    */
-  public Check checkContract(List<ReferenceValue> tuple) {
+  public Check checkContracts(List<ReferenceValue> tuple) {
     for (ObjectContract contract : contracts) {
       assert tuple.size() == contract.getArity()
           : "value tuple size "
@@ -72,7 +74,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
           Log.logLine("Checking contract " + contract.getClass());
         }
         Object[] values = getValues(tuple);
-        Check check = checkContract(contract, s, values);
+        Check check = checkContract(contract, eseq, values);
         if (check != null) {
           return check;
         }
@@ -91,7 +93,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
    * @return a {@link ObjectCheck} if the contract fails, null otherwise
    */
   public static Check checkContract(
-      ObjectContract contract, ExecutableSequence s, Object[] values) {
+      ObjectContract contract, ExecutableSequence eseq, Object[] values) {
     // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
     //   Randomness.selectionLog.log("ContractChecker.checkContract: contract=%s%n", contract);
     //   Randomness.selectionLog.log("  values (%d) =%n", values.length);
@@ -103,6 +105,11 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
 
     ExecutionOutcome outcome = ObjectContractUtils.execute(contract, values);
 
+    if (Log.isLoggingOn()) {
+      Log.logLine("Executed contract " + contract.getClass());
+      Log.logLine(" Contract outcome " + outcome);
+    }
+
     if (outcome instanceof NormalExecution) {
       if (((NormalExecution) outcome).getRuntimeValue().equals(true)) {
         return null;
@@ -112,15 +119,13 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
       if (Log.isLoggingOn()) {
         Log.logLine(
             String.format(
-                "ContractChecker.checkContract(): Contract %s threw exception of type %s with message %s",
+                "ContractChecker.checkContract(): Contract %s threw exception of class %s with message %s",
                 contract, e.getClass(), e.getMessage()));
       }
       if (e instanceof BugInRandoopException) {
         throw (BugInRandoopException) e;
       }
-      if (!contract.evalExceptionMeansFailure()) {
-        return null;
-      }
+      // ***** TODO: determine what the exception is
     } else {
       throw new BugInRandoopException(
           "Contract " + contract + " failed to execute during evaluation");
@@ -129,7 +134,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
     // the contract failed
     Variable[] varArray = new Variable[values.length];
     for (int i = 0; i < varArray.length; i++) {
-      List<Variable> variables = s.getVariables(values[i]);
+      List<Variable> variables = eseq.getVariables(values[i]);
       varArray[i] = Randomness.randomMember(variables);
       // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
       //   Randomness.selectionLog.log(

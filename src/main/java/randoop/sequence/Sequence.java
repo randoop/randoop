@@ -726,9 +726,8 @@ public final class Sequence implements WeightedElement {
   }
 
   void checkIndex(int i) {
-    if (i < 0 || i > size() - 1) {
-      throw new IllegalArgumentException();
-    }
+    if (i < 0 || i > size() - 1)
+      throw new IllegalArgumentException("index " + i + " out of range [0, " + (size() - 1) + "]");
   }
 
   // Argument checker for extend method.
@@ -1098,6 +1097,7 @@ public final class Sequence implements WeightedElement {
     return new Sequence(statements.getSublist(index));
   }
 
+  /** Write this sequence to the Randoop log. */
   public void log() {
     if (!Log.isLoggingOn()) {
       return;
@@ -1114,6 +1114,13 @@ public final class Sequence implements WeightedElement {
     }
   }
 
+  /**
+   * Indicate whether this sequence can be printed with variable values substituted for the variable
+   * in operation arguments. If true, the initialization of the variable will not be included in the
+   * sequence when dumped to a file.
+   *
+   * @return true if the short form of variables can be used for this sequence, and false otherwise
+   */
   boolean canUseShortForm() {
     return allowShortForm;
   }
