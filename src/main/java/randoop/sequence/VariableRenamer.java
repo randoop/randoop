@@ -1,11 +1,11 @@
 package randoop.sequence;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.Queue;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
