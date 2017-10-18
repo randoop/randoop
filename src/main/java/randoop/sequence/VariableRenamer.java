@@ -151,7 +151,7 @@ class VariableRenamer {
 
     // Preserve camel case.
     if (Character.isUpperCase(varName.charAt(0))) {
-      varName = lowercaseFirstCharacterOfString(varName);
+      varName = lowercaseFirstCharacter(varName);
     }
 
     // Make sure that the last character is not a digit.
@@ -179,7 +179,7 @@ class VariableRenamer {
    * @param variableName the name of the variable
    * @return variableName with the first letter lowercased
    */
-  private static String lowercaseFirstCharacterOfString(String variableName) {
+  private static String lowercaseFirstCharacter(String variableName) {
     return variableName.substring(0, 1).toLowerCase() + variableName.substring(1);
   }
 }
