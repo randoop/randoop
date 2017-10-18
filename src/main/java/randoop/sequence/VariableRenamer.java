@@ -67,30 +67,7 @@ class VariableRenamer {
       if (type.isBoxedPrimitive()) {
         type = ((NonParameterizedType) type).toPrimitive();
       }
-      if (type.equals(JavaTypes.CHAR_TYPE)) {
-        return "char";
-      }
-      if (type.equals(JavaTypes.LONG_TYPE)) {
-        return "long";
-      }
-      if (type.equals(JavaTypes.BYTE_TYPE)) {
-        return "byte";
-      }
-      if (type.equals(JavaTypes.INT_TYPE)) {
-        return "int";
-      }
-      if (type.equals(JavaTypes.BOOLEAN_TYPE)) {
-        return "bool";
-      }
-      if (type.equals(JavaTypes.FLOAT_TYPE)) {
-        return "float";
-      }
-      if (type.equals(JavaTypes.DOUBLE_TYPE)) {
-        return "double";
-      }
-      if (type.equals(JavaTypes.SHORT_TYPE)) {
-        return "short";
-      }
+      return type.getName();
     }
 
     // Get the simple name of the type.
