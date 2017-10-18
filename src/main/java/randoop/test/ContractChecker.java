@@ -74,7 +74,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
           Log.logLine("Checking contract " + contract.getClass());
         }
         Object[] values = getValues(tuple);
-        Check check = checkContract(contract, values);
+        Check check = checkContract(contract, eseq, values);
         if (check != null) {
           return check;
         }
@@ -83,14 +83,17 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
     return null;
   }
 
+  // TODO: should this be in ObjectContract instead?
   /**
    * Checks a contract on a particular array of values.
    *
+   * @param eseq the executable sequence that is the source of values for checking contracts
    * @param contract the contract
    * @param values the input values
    * @return a {@link ObjectCheck} if the contract fails, null otherwise
    */
-  private Check checkContract(ObjectContract contract, Object[] values) {
+  public static Check checkContract(
+      ObjectContract contract, ExecutableSequence eseq, Object[] values) {
     // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
     //   Randomness.selectionLog.log("ContractChecker.checkContract: contract=%s%n", contract);
     //   Randomness.selectionLog.log("  values (%d) =%n", values.length);
@@ -115,10 +118,9 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
       Throwable e = ((ExceptionalExecution) outcome).getException();
       if (Log.isLoggingOn()) {
         Log.logLine(
-            "Contract threw exception of class "
-                + e.getClass()
-                + " with message: "
-                + e.getMessage());
+            String.format(
+                "ContractChecker.checkContract(): Contract %s threw exception of class %s with message %s",
+                contract, e.getClass(), e.getMessage()));
       }
       if (e instanceof BugInRandoopException) {
         throw (BugInRandoopException) e;
@@ -165,7 +167,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
    * @param valueTuple the values to match against input types
    * @return true if the types of the values are assignable to the expected types, false otherwise
    */
-  private boolean typesMatch(TypeTuple inputTypes, List<ReferenceValue> valueTuple) {
+  public static boolean typesMatch(TypeTuple inputTypes, List<ReferenceValue> valueTuple) {
     if (inputTypes.size() != valueTuple.size()) {
       return false;
     }
@@ -199,13 +201,14 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
     return true;
   }
 
+  // TODO: Is this called a lot of times redundantly?
   /**
    * Creates an {@code Object} array for the given value list.
    *
    * @param tuple the list of values
    * @return the Object array for the values
    */
-  private Object[] getValues(List<ReferenceValue> tuple) {
+  public static Object[] getValues(List<ReferenceValue> tuple) {
     Object[] values = new Object[tuple.size()];
     for (int i = 0; i < tuple.size(); i++) {
       values[i] = tuple.get(i).getObjectValue();

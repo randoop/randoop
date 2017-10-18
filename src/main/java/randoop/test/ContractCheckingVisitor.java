@@ -8,6 +8,7 @@ import randoop.contract.ObjectContract;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.ReferenceValue;
 import randoop.test.predicate.ExceptionPredicate;
+import randoop.util.Log;
 import randoop.util.TupleSet;
 
 /**
@@ -79,7 +80,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         if (!unaryContracts.isEmpty()) {
           TupleSet<ReferenceValue> statementTuples = new TupleSet<>();
           statementTuples = statementTuples.extend(statementValues);
-          check = statementTuples.findAndTransform(new ContractChecker(eseq, unaryContracts));
+          check = checkContracts(unaryContracts, eseq, statementTuples);
           if (check != null) {
             checks.add(check);
             return checks;
@@ -93,7 +94,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         inputTuples = inputTuples.extend(inputValues).extend(inputValues);
         List<ObjectContract> binaryContracts = contracts.getWithArity(2);
         if (!binaryContracts.isEmpty()) {
-          check = inputTuples.findAndTransform(new ContractChecker(eseq, binaryContracts));
+          check = checkContracts(binaryContracts, eseq, inputTuples);
           if (check != null) {
             checks.add(check);
             return checks;
@@ -104,7 +105,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         TupleSet<ReferenceValue> ternaryTuples = inputTuples.exhaustivelyExtend(statementValues);
         List<ObjectContract> ternaryContracts = contracts.getWithArity(3);
         if (!ternaryContracts.isEmpty()) {
-          check = ternaryTuples.findAndTransform(new ContractChecker(eseq, ternaryContracts));
+          check = checkContracts(ternaryContracts, eseq, ternaryTuples);
           if (check != null) {
             checks.add(check);
             return checks;
@@ -113,5 +114,39 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
       }
     }
     return checks;
+  }
+
+  /**
+   * Finds the first tuple for which a contract fails, and returns the failing check.
+   *
+   * @return a failing Check, or null
+   */
+  Check checkContracts(
+      List<ObjectContract> contracts, ExecutableSequence s, TupleSet<ReferenceValue> tuples) {
+    for (List<ReferenceValue> tuple : tuples.tuples()) {
+
+      for (ObjectContract contract : contracts) {
+        assert tuple.size() == contract.getArity()
+            : "value tuple size "
+                + tuple.size()
+                + " must match contract arity "
+                + contract.getArity();
+        // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
+        //   Randomness.selectionLog.log("ContractChecker.apply: considering contract=%s%n", contract);
+        // }
+        if (ContractChecker.typesMatch(contract.getInputTypes(), tuple)) {
+          if (Log.isLoggingOn()) {
+            Log.logLine("Checking contract " + contract.getClass());
+          }
+          Object[] values = ContractChecker.getValues(tuple);
+          Check check = ContractChecker.checkContract(contract, s, values);
+          if (check != null) {
+            return check;
+          }
+        }
+      }
+    }
+
+    return null;
   }
 }
