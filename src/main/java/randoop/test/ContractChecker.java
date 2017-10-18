@@ -87,7 +87,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
   /**
    * Checks a contract on a particular array of values.
    *
-   * @param s the executable sequence that is the source of values for checking contracts
+   * @param eseq the executable sequence that is the source of values for checking contracts
    * @param contract the contract
    * @param values the input values
    * @return a {@link ObjectCheck} if the contract fails, null otherwise

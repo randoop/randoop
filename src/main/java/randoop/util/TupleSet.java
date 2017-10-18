@@ -86,8 +86,8 @@ public class TupleSet<E> {
   }
 
   /**
-   * Returns a new list that is formed by inserting the element at the given position. Does not side
-   * effect its argument.
+   * Returns a new list that is formed by inserting the element at the given position. Does not
+   * side-effect its argument.
    *
    * @param tuple the original list
    * @param e the element to insert
@@ -96,7 +96,8 @@ public class TupleSet<E> {
    */
   private List<E> insert(List<E> tuple, E e, int i) {
     List<E> extTuple = new ArrayList<>(tupleLength + 1);
-    extTuple.addAll(tuple); // a bit inefficient to insert then shift, which could be avoided
+    // It's a bit inefficient to insert then shift; a better implementation could avoid that.
+    extTuple.addAll(tuple);
     extTuple.add(i, e);
     return extTuple;
   }
