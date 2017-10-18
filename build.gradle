@@ -443,6 +443,7 @@ tasks.withType(Test) {
 
   /*
    * Pass along any system properties that begin with "randoop."
+   * Used by randoop.main.RandoopOptions in systemtest.
    */
   System.properties.each { k,v->
         if (k.startsWith("randoop.")) {

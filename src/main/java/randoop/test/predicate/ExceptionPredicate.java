@@ -15,8 +15,8 @@ public interface ExceptionPredicate {
    * criterion of the predicate.
    *
    * @param exec the exceptional execution wrapping an exception
-   * @param s the sequence where exception was thrown
+   * @param eseq the sequence where exception was thrown
    * @return true if exception satisfies the predicate, and false otherwise
    */
-  boolean test(ExceptionalExecution exec, ExecutableSequence s);
+  boolean test(ExceptionalExecution exec, ExecutableSequence eseq);
 }

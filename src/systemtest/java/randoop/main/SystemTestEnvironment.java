@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /** Manages the TestEnvironment for a system test run. */
 class SystemTestEnvironment {
@@ -102,6 +103,20 @@ class SystemTestEnvironment {
         jacocoAgentPath,
         replacecallAgentPath,
         coveredClassAgentPath);
+  }
+
+  /**
+   * Gets the {@code Path} for the system property representing a path.
+   *
+   * @param pathProperty the name of the system property for a path
+   * @return the path named by the system property
+   */
+  private static Path getPathFromProperty(String pathProperty) {
+    String pathString = System.getProperty(pathProperty);
+    if (pathString != null && !pathString.isEmpty()) {
+      return Paths.get(pathString);
+    }
+    return null;
   }
 
   /**

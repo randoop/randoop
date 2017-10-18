@@ -1,8 +1,12 @@
 package randoop.compile;
 
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+import javax.tools.Diagnostic;
 import javax.tools.JavaFileManager;
+import javax.tools.JavaFileObject;
 
 /** Utilities for compiler classes. */
 class CompileUtil {
@@ -22,6 +26,32 @@ class CompileUtil {
       return new URI(pathString);
     } catch (URISyntaxException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Prints the compiler diagnostics to the writer.
+   *
+   * @param out the print writer
+   * @param diagnostics the compiler diagnostics
+   */
+  public static void printDiagnostics(
+      PrintWriter out, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
+    for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
+      if (diag != null) {
+        if (diag.getSource() != null) {
+          String sourceName = diag.getSource().toUri().toString();
+          if (diag.getLineNumber() >= 0) {
+            out.printf(
+                "Error on line %d, col %d of %s%n%s%n",
+                diag.getLineNumber(), diag.getColumnNumber(), sourceName, diag.getMessage(null));
+          } else {
+            out.printf("%s%n", diag.getMessage(null));
+          }
+        } else {
+          out.printf("%s%n", diag.getMessage(null));
+        }
+      }
     }
   }
 }
