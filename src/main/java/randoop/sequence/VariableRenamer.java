@@ -41,12 +41,12 @@ class VariableRenamer {
   }
 
   /**
-   * Heuristically transforms variables to better names based on its type name.
+   * Heuristically renames each variable to a name that is based on the variable's type.
    *
-   * @param type the type to use as base of variable name
+   * @param type the type to create a variable name for
    * @param depth the number of components (i.e. type arguments) of the type that have been used to
    *     create the name of the variable so far
-   * @return a variable name based on its type, without a trailing number, and is camel cased
+   * @return a camel-cased variable name based on the type, without a trailing number
    */
   private static String getVariableName(Type type, int depth) {
     if (type.isVoid()) {
@@ -59,7 +59,7 @@ class VariableRenamer {
       return getVariableName(type) + "Array";
     }
 
-    // Primitives types.
+    // Primitive types.
     if (type.isPrimitive() || type.isBoxedPrimitive()) {
       if (type.isBoxedPrimitive()) {
         type = ((NonParameterizedType) type).toPrimitive();
