@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import java.util.*;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
@@ -7,8 +8,6 @@ import randoop.types.NonParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
-
-import java.util.*;
 
 class VariableRenamer {
 
@@ -98,8 +97,8 @@ class VariableRenamer {
     String varName = type.getSimpleName();
 
     if (type.isParameterized()) {
-      Class typeClass = type.getRuntimeClass();
-      
+      Class<?> typeClass = type.getRuntimeClass();
+
       // Special cases for parameterized types.
       if (Iterator.class.isAssignableFrom(typeClass)) {
         // Iterator takes precedence, in cases like ListIterator.
