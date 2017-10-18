@@ -38,17 +38,26 @@ import randoop.sequence.Variable;
  */
 public class ObjectCheck implements Check {
 
+  /** The contract that is checked. */
   private final ObjectContract contract;
+
+  /** The variables for the contract */
   private final Variable[] vars;
 
-  public ObjectCheck(ObjectContract cc, Variable... vars) {
-    if (cc == null) {
+  /**
+   * Creates an {@link ObjectCheck} for the given contract using the variables as input.
+   *
+   * @param contract the contract to check
+   * @param vars the input variables for the created check
+   */
+  public ObjectCheck(ObjectContract contract, Variable... vars) {
+    if (contract == null) {
       throw new IllegalArgumentException("first argument cannot be null.");
     }
-    if (vars.length != cc.getArity()) {
+    if (vars.length != contract.getArity()) {
       throw new IllegalArgumentException("vars.size() != template.getArity().");
     }
-    this.contract = cc;
+    this.contract = contract;
     this.vars = new Variable[vars.length];
     int count = 0;
     for (Variable v : vars) {
@@ -120,7 +129,8 @@ public class ObjectCheck implements Check {
     } catch (ThreadDeath t) {
       throw t;
     } catch (Throwable t) {
-      return contract.evalExceptionMeansFailure();
+      // ***** TODO: determine what the exception is
+      return false;
     }
   }
 

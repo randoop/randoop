@@ -34,13 +34,13 @@ public class ExpectedExceptionCheckGen {
    * this generator.
    *
    * @param exec the exception outcome of executing the statement in a sequence
-   * @param s the sequence where exception occurred
+   * @param eseq the sequence where exception occurred
    * @param statementIndex the position of the statement in the sequence
    * @return an {@code ExpectedExceptionCheck} object for exception and statement if exception is
    *     checked, and an {@code EmptyExceptionCheck} otherwise
    */
   ExceptionCheck getExceptionCheck(
-      ExceptionalExecution exec, ExecutableSequence s, int statementIndex) {
+      ExceptionalExecution exec, ExecutableSequence eseq, int statementIndex) {
     Throwable e = exec.getException();
 
     String catchClassName = getCatchClassName(e.getClass());
@@ -51,7 +51,7 @@ public class ExpectedExceptionCheckGen {
       return new InvalidExceptionCheck(e, statementIndex, catchClassName);
     }
 
-    if (isExpected.test(exec, s)) {
+    if (isExpected.test(exec, eseq)) {
       return new ExpectedExceptionCheck(e, statementIndex, catchClassName);
     } else {
       return new EmptyExceptionCheck(e, statementIndex, catchClassName);

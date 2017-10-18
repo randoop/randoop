@@ -45,7 +45,7 @@ public class SequenceJavaFileManager extends ForwardingJavaFileManager<JavaFileM
    * name. (See the documentation for {@code ForwardingJavaFileManager} for details.)
    *
    * @param location the location (path) for the file
-   * @param packageName the package name for the class
+   * @param packageName the package name for the class, null if default package
    * @param relativeName the name relative to the package
    * @return the file object, or null if the file does not exist
    * @throws IOException if an I/O error occurred, or the file manager has been closed and cannot be
@@ -85,7 +85,7 @@ public class SequenceJavaFileManager extends ForwardingJavaFileManager<JavaFileM
    * Adds the source file object to this file manager.
    *
    * @param sourcePath the path for the source
-   * @param packageName the package name for the class
+   * @param packageName the package name for the class, null if default package
    * @param classFileName the name of the class
    * @param source the source file object
    */
@@ -101,11 +101,15 @@ public class SequenceJavaFileManager extends ForwardingJavaFileManager<JavaFileM
    * Creates the path to a file and converts it to a {@code URI}.
    *
    * @param sourcePath the path for the source directory
-   * @param packageName the name of the class package
+   * @param packageName the name of the class package, null if no package
    * @param classFileName the name of the class
    * @return the {@code URI} for the file
    */
   private URI uri(Location sourcePath, String packageName, String classFileName) {
-    return toURI(sourcePath.getName() + '/' + packageName + '/' + classFileName);
+    return toURI(
+        sourcePath.getName()
+            + '/'
+            + (packageName == null ? "" : (packageName + '/'))
+            + classFileName);
   }
 }

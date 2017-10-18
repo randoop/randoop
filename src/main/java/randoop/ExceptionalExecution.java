@@ -24,10 +24,7 @@ public class ExceptionalExecution extends ExecutionOutcome {
    */
   @Override
   public String toString() {
-    StringBuilder b = new StringBuilder();
-    b.append("// <ExceptionalExecution, exception type=" + exception.getClass().getName());
-    b.append(">;");
-    return b.toString();
+    return "// <ExceptionalExecution, exception type=" + exception.getClass().getName() + ">;";
   }
 
   @Override
