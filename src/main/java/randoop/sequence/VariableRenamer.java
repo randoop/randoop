@@ -1,6 +1,11 @@
 package randoop.sequence;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.Queue;
+import java.util.Map;
+import java.util.Iterator;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
@@ -42,7 +47,7 @@ class VariableRenamer {
   }
 
   /**
-   * Heuristically transforms variables to better names based on its type name.
+   * Heuristically renames each variable to a name that is based on the variable's type.
    *
    * @param type the type to use as the base of the variable name
    * @param depth the number of components (i.e. type arguments) of the type that will be used to
@@ -122,7 +127,7 @@ class VariableRenamer {
 
     // Preserve camel case.
     if (Character.isUpperCase(varName.charAt(0))) {
-      varName = lowercaseFirstCharacterOfString(varName);
+      varName = lowercaseFirstCharacter(varName);
     }
 
     // Make sure that the last character is not a digit.
@@ -150,7 +155,7 @@ class VariableRenamer {
    * @param variableName the name of the variable
    * @return variableName with the first letter lowercased
    */
-  private static String lowercaseFirstCharacterOfString(String variableName) {
+  private static String lowercaseFirstCharacter(String variableName) {
     return variableName.substring(0, 1).toLowerCase() + variableName.substring(1);
   }
 }
