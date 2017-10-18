@@ -203,25 +203,6 @@ java randoop.main.Main <em>command</em> <em>args...</em>
 </pre>
 
 <p>
-The classpath needs to contain both Randoop
-(<code>randoop-all-3.1.5.jar</code>) and the
-classes under test.
-For instance, if the current working directory contains a directory named
-<code>bin</code> containing your compiled classes, then you would use:
-</p>
-
-<pre class="code">
-  ... -classpath bin:$(RANDOOP_JAR) ...
-</pre>
-
- <p>
-(On Windows, adjust the classpath, such as using semicolon instead of colon
-as the separator.)
-Note that you don't need the <code>-classpath</code> argument if you add
-<code>$(RANDOOP_JAR)</code> to your classpath.
-</p>
-
-<p>
 Randoop supports three commands:
 </p>
 
@@ -255,6 +236,14 @@ java -cp $(RANDOOP_JAR) randoop.main.Main minimize --suitepath=ErrorTest0.java -
 </li>
 
 </ul>
+
+<p>
+(On Windows, adjust the classpath, such as using semicolon instead of colon
+as the separator.)
+You don't need the <code>-classpath</code> argument if you add
+<code>$(RANDOOP_JAR)</code> to your classpath.
+</p>
+
 
 
 <h1 id="generating_tests">Generating tests</h1>
@@ -318,18 +307,29 @@ done.</pre>
 Randoop creates two different main test suites, in classes
 <code>ErrorTest</code> and <code>RegressionTest</code>. Compile and run the tests.
 (The classpath should include the code under test, the generated tests, and
-JUnit files <code>junit.jar</code> and <code>hamcrest-core.jar</code>.)
+JUnit files <code>junit.jar</code> and <code>hamcrest-core.jar</code>.
+Classes in <code>java.util.*</code> are always on the Java classpath, so they
+are not needed in this particular example, but are shown because you will
+usually need to supply them.)
 </p>
 
 <pre class="code">export JUNITPATH=.../junit.jar:.../hamcrest-core.jar
-javac -classpath .:$JUNITPATH ErrorTest*.java RegressionTest*.java
-java -classpath .:$JUNITPATH org.junit.runner.JUnitCore ErrorTest
-java -classpath .:$JUNITPATH org.junit.runner.JUnitCore RegressionTest</pre>
+javac -classpath .:$JUNITPATH ErrorTest*.java RegressionTest*.java -sourcepath .:<em>path/to/files/under/test/</em>
+java -classpath .:$JUNITPATH:<em>myclasspath</em> org.junit.runner.JUnitCore ErrorTest
+java -classpath .:$JUNITPATH:<em>myclasspath</em> org.junit.runner.JUnitCore RegressionTest</pre>
 
 <p>
 All of the tests in ErrorTest will fail, and all of the tests in
 RegressionTest will pass.
 </p>
+
+<p>
+  You also might want to minimize the error-revealing tests before running them:
+</p>
+
+<pre class="code">
+java -ea -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
+</pre>
 
 
 <h2 id="specifying-methods">Specifying methods, constructors, and fields that may appear in a test</h2>
@@ -694,6 +694,11 @@ Here is how Randoop attempts to generate a test:
     the number of error-revealing and regression tests reaches the output
     limit (<a href="#option:outputLimit"><code>--outputLimit</code></a>).
   </li>
+  <li>
+    one error-revealing test is generated, and
+    <a href="#option:stop-on-error-test"><code>--stop-on-error-test=true</code></a>
+    was supplied.
+  </li>
 </ul>
 
 
@@ -866,11 +871,13 @@ Randoop about your application, and that is how we recommend using Randoop.
 </ul>
 
             <li id="option:unchecked-exception"><b>--unchecked-exception=</b><i>enum</i>.
-             If a test throws an unchecked exception other than <code>OutOfMemoryError</code>, <code>StackOverflowError</code>, and <code>NullPointerException</code>, should the test be included in the
- error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
- it be discarded (value: INVALID)?
+             If a test throws an unchecked exception other than <code>ConcurrentModificationException</code>,
+ <code>OutOfMemoryError</code>, <code>StackOverflowError</code>, and <code>NullPointerException</code>, should
+ the test be included in the error-revealing test suite (value: ERROR), regression test suite
+ (value: EXPECTED), or should it be discarded (value: INVALID)?
 
- <p>The arguments <code>--npe-on-null-input</code>, <code>--npe-on-non-null-input</code>, <code>--oom-exception</code>, and <code>--sof-exception</code> handle special cases of unchecked exceptions. [default EXPECTED]
+ <p>The arguments <code>--npe-on-null-input</code>, <code>--npe-on-non-null-input</code>, <code>--cm-exception</code>, <code>--oom-exception</code>, and <code>--sof-exception</code> handle special cases of
+ unchecked exceptions. [default EXPECTED]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior
@@ -891,6 +898,16 @@ Randoop about your application, and that is how we recommend using Randoop.
              If a test that never passes <code>null</code> as an argument throws a <code>NullPointerException</code>,
  should the test be included in the error-revealing test suite (value: ERROR), regression test
  suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default ERROR]
+<ul>
+  <li><b>ERROR</b> Occurrence of exception reveals an error
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+</ul>
+
+            <li id="option:cm-exception"><b>--cm-exception=</b><i>enum</i>.
+             If a test throws a <code>ConcurrentModificationError</code> exception, should it be included in the
+ error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
+ it be discarded (value: INVALID)? [default INVALID]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior
@@ -1529,7 +1546,7 @@ classes under test
 
 <pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main help</pre>
 
-To print help for test generation (the <code>gentests</code> command), run:
+To print help for a command (such as <code>gentests</code> or <code>minimize</code>), supply it:
 
 <pre class="code">
 java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests

@@ -4,6 +4,7 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
+import randoop.util.ObjectContractReflectionCode;
 import randoop.util.ReflectionCode;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
@@ -23,36 +24,7 @@ public class ObjectContractUtils {
    * @return the outcome from the execution
    */
   public static ExecutionOutcome execute(final ObjectContract c, final Object... objs) {
-    ReflectionCode refl =
-        new ReflectionCode() {
-          // Before runReflectionCodeRaw is executed, both of these fields are
-          // null. After runReflectionCodeRaw is executed, exactly one of
-          // these fields is null (unless runReflectionCodeRaw itself threw an
-          // exception, in which case both fields remain null).
-          private Object result;
-          private Throwable exception;
-
-          @Override
-          public Throwable getExceptionThrown() {
-            return exception;
-          }
-
-          @Override
-          public Object getReturnVariable() {
-            return result;
-          }
-
-          @Override
-          protected void runReflectionCodeRaw() {
-            try {
-              result = c.evaluate(objs);
-            } catch (Throwable e) {
-              exception = e;
-            } finally {
-              setRunAlready();
-            }
-          }
-        };
+    ReflectionCode refl = new ObjectContractReflectionCode(c, objs);
     Timer timer = new Timer();
     timer.startTiming();
     Throwable t = ReflectionExecutor.executeReflectionCode(refl, System.out);
@@ -64,7 +36,7 @@ public class ObjectContractUtils {
     if (t != null) {
       return new ExceptionalExecution(t, timer.getTimeElapsedMillis());
     }
-    return new NormalExecution(refl.getReturnVariable(), timer.getTimeElapsedMillis());
+    return new NormalExecution(refl.getReturnValue(), timer.getTimeElapsedMillis());
   }
 
   /**

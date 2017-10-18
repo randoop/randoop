@@ -113,7 +113,7 @@ public class OperationModel {
   }
 
   /**
-   * Factory method to construct an operation model for a particular set of classes
+   * Factory method to construct an operation model for a particular set of classes.
    *
    * @param visibility the {@link VisibilityPredicate} to test accessibility of classes and class
    *     members

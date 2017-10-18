@@ -1,4 +1,4 @@
-Version 4.0.0, released August ??, 2017
+Version 4.0.0, released October ??, 2017
 
 Randoop contains a test suite minimizer.  Given a test suite containing
 failing tests, it creates a test suite with smaller tests that fail the
@@ -52,6 +52,11 @@ suite when run twice.  Use --randomseed to produce a different test suite.
 The --usethreads command-line option defaults to false.  This makes Randoop
 run faster and generate more tests, but Randoop will hang if it calls a
 method that does not terminate and return.
+
+New command-line option --cm-exception controls how Randoop classifies a
+test that throws a ConcurrentModificationException exception.
+
+Some command-line options have been renamed:
 
 The --timelimit command-line option has been renamed to --timeLimit.
 The --inputlimit command-line option has been renamed to --generatedLimit.
