@@ -1026,8 +1026,8 @@ public class Minimize extends CommandHandler {
             try {
               return IOUtils.toString(timeLimitProcess.getErrorStream(), Charset.defaultCharset());
             } catch (IOException e) {
-              // Error reading from process' error stream.
-              return "Error reading from process' error stream.";
+              // Error reading from process's error stream.
+              return "Error reading from process's error stream.";
             }
           }
         };
