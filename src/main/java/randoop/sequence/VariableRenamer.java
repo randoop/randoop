@@ -8,16 +8,18 @@ import randoop.types.ReferenceArgument;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
 
+import java.util.*;
+
 class VariableRenamer {
 
   /** The sequence in which every variable will be renamed. */
   public final Sequence sequence;
 
   /** Maximum depth to concatenate parameterized type names. */
-  private static final int MAX_VAR_NAME_DEPTH = 2;
+  private static final int VAR_NAME_MAX_DEPTH = 2;
 
   public VariableRenamer(Sequence sequence) {
-    assert sequence != null : "The given sequence to rename can not be null";
+    assert sequence != null : "The given sequence to rename cannot be null";
     this.sequence = sequence;
   }
 
@@ -37,15 +39,15 @@ class VariableRenamer {
    * @return a variable name based on its type, without a trailing number
    */
   static String getVariableName(Type type) {
-    return getVariableName(type, 0);
+    return getVariableName(type, VAR_NAME_MAX_DEPTH);
   }
 
   /**
    * Heuristically transforms variables to better names based on its type name.
    *
-   * @param type the type to use as base of variable name
-   * @param depth the number of components (i.e. type arguments) of the type that have been used to
-   *     create the name of the variable so far
+   * @param type the type to use as the base of the variable name
+   * @param depth the number of components (i.e. type arguments) of the type that will be used to
+   *     create a name for the variable
    * @return a variable name based on its type, without a trailing number, and is camel cased
    */
   private static String getVariableName(Type type, int depth) {
@@ -57,9 +59,11 @@ class VariableRenamer {
         type = ((ArrayType) type).getComponentType();
       }
       return getVariableName(type) + "Array";
+    } else if (type.equals(JavaTypes.CLASS_TYPE)) {
+      return "cls";
     }
 
-    // Primitives types.
+    // Primitive types.
     if (type.isPrimitive() || type.isBoxedPrimitive()) {
       if (type.isBoxedPrimitive()) {
         type = ((NonParameterizedType) type).toPrimitive();
@@ -88,36 +92,29 @@ class VariableRenamer {
       if (type.equals(JavaTypes.SHORT_TYPE)) {
         return "short";
       }
-
-      // Otherwise, use the first character of the type name.
-      return type.getName().substring(0, 1);
     }
 
     // Get the simple name of the type.
     String varName = type.getSimpleName();
 
     if (type.isParameterized()) {
-      if (varName.toLowerCase().equals("class")) {
-        return "cls";
-      }
-
+      Class typeClass = type.getRuntimeClass();
+      
       // Special cases for parameterized types.
-      if (varName.contains("Iterator")) {
+      if (Iterator.class.isAssignableFrom(typeClass)) {
         // Iterator takes precedence, in cases like ListIterator.
         varName = "itor";
-      } else if (varName.contains("List")) {
+      } else if (List.class.isAssignableFrom(typeClass)) {
         // List comes before array, in cases like ArrayList.
         varName = "list";
-      } else if (varName.contains("Set")) {
+      } else if (Set.class.isAssignableFrom(typeClass)) {
         varName = "set";
-      } else if (varName.contains("Map")) {
+      } else if (Map.class.isAssignableFrom(typeClass)) {
         varName = "map";
-      } else if (varName.contains("Queue")) {
+      } else if (Queue.class.isAssignableFrom(typeClass)) {
         varName = "queue";
-      } else if (varName.contains("Collection")) {
+      } else if (Collection.class.isAssignableFrom(typeClass)) {
         varName = "collection";
-      } else if (varName.contains("Array")) {
-        varName = "array";
       }
 
       // Only use the first type argument to construct the name to simplify things.
@@ -126,21 +123,19 @@ class VariableRenamer {
       if (argument.isWildcard()) {
         varName = "wildcard" + capitalizeString(varName);
       } else {
-        if (depth < MAX_VAR_NAME_DEPTH) {
+        if (depth >= 0) {
           String argumentName =
-              getVariableName(((ReferenceArgument) argument).getReferenceType(), depth + 1);
+              getVariableName(((ReferenceArgument) argument).getReferenceType(), depth - 1);
 
           varName = argumentName + capitalizeString(varName);
         }
       }
     } else {
-      // Special cases: Object, String, Class.
+      // Special cases: Object, String.
       if (type.isObject()) {
         varName = "obj";
       } else if (type.isString()) {
         varName = "str";
-      } else if (type.equals(JavaTypes.CLASS_TYPE)) {
-        varName = "cls";
       } else {
         // All other object types.
         if (varName.length() == 0) {
