@@ -14,7 +14,7 @@ class VariableRenamer {
   public final Sequence sequence;
 
   /** Maximum depth to concatenate parameterized type names. */
-  private static final int MAX_VAR_NAME_DEPTH = 2;
+  private static final int VAR_NAME_MAX_DEPTH = 2;
 
   public VariableRenamer(Sequence sequence) {
     assert sequence != null : "The given sequence to rename can not be null";
@@ -126,7 +126,7 @@ class VariableRenamer {
       if (argument.isWildcard()) {
         varName = "wildcard" + capitalizeString(varName);
       } else {
-        if (depth < MAX_VAR_NAME_DEPTH) {
+        if (depth < VAR_NAME_MAX_DEPTH) {
           String argumentName =
               getVariableName(((ReferenceArgument) argument).getReferenceType(), depth + 1);
 
