@@ -198,14 +198,13 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
     return true;
   }
 
-  // TODO: Is this called a lot of times redundantly?
   /**
    * Creates an {@code Object} array for the given value list.
    *
    * @param tuple the list of values
    * @return the Object array for the values
    */
-  public static Object[] getValues(List<ReferenceValue> tuple) {
+  private static Object[] getValues(List<ReferenceValue> tuple) {
     Object[] values = new Object[tuple.size()];
     for (int i = 0; i < tuple.size(); i++) {
       values[i] = tuple.get(i).getObjectValue();
