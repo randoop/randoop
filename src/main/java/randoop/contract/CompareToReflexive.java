@@ -1,7 +1,6 @@
 package randoop.contract;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -10,7 +9,7 @@ import randoop.types.TypeTuple;
 /**
  * The contract: Checks that an object is reflexive over compareTo. {@code x0.compareTo(x0) == 0}.
  */
-public class CompareToReflexive implements ObjectContract {
+public class CompareToReflexive extends ObjectContract {
   private static final CompareToReflexive instance = new CompareToReflexive();
 
   private CompareToReflexive() {}
@@ -39,11 +38,11 @@ public class CompareToReflexive implements ObjectContract {
     return 1;
   }
 
+  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.COMPARABLE_TYPE));
+
   @Override
   public TypeTuple getInputTypes() {
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(JavaTypes.COMPARABLE_TYPE);
-    return new TypeTuple(inputTypes);
+    return inputTypes;
   }
 
   @Override

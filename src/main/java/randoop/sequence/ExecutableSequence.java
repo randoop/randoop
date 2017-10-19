@@ -494,7 +494,7 @@ public class ExecutableSequence {
    * sequence.
    *
    * @param value the value
-   * @return the set of variables that have the given value
+   * @return the set of variables that have the given value, or null if none
    */
   public List<Variable> getVariables(Object value) {
     Set<Variable> variables = variableMap.get(value);
@@ -503,6 +503,17 @@ public class ExecutableSequence {
     } else {
       return new ArrayList<>(variables);
     }
+  }
+
+  /**
+   * Returns some variable that has the given value in the outcome of executing this sequence.
+   *
+   * @param value the value
+   * @return the set of variables that have the given value
+   * @throws Exception if no such element exists
+   */
+  public Variable getVariable(Object value) {
+    return variableMap.get(value).iterator().next();
   }
 
   /**

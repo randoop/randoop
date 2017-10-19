@@ -29,25 +29,26 @@ public class TupleSet<E> {
     this.tupleLength = tupleLength;
   }
 
+  /** Returns the tuples. */
+  public List<List<E>> tuples() {
+    return tuples;
+  }
+
   /**
    * Extends each element of this tuple set with each of the elements of the given list.
    *
    * <p>Suppose this contains <i>k</i> tuples each of length <i>len</i>, and {@code elements}
-   * contains <i>e</i> elements. Then the result contains <i>k * e</i> elements, each of length
+   * contains <i>e</i> elements. Then the result contains <i>k * e</i> tuples, each of length
    * <i>len+1</i>.
    *
    * @param elements the list of elements
    * @return a tuple set formed by extending the tuples with the elements of the given list
    */
   public TupleSet<E> extend(List<E> elements) {
-    List<List<E>> tupleList = new ArrayList<>();
+    List<List<E>> tupleList = new ArrayList<>(tuples.size() * elements.size());
     for (List<E> tuple : tuples) {
       for (E e : elements) {
-        // List<E> extTuple = new ArrayList<>(tuple);
-        // Make extTuple have exactly the right size.
-        List<E> extTuple = new ArrayList<>(tupleLength + 1);
-        extTuple.addAll(tuple);
-        extTuple.add(e);
+        List<E> extTuple = extendTuple(tuple, e);
         assert extTuple.size() == tupleLength + 1
             : "tuple lengths don't match, expected " + tupleLength + " have " + extTuple.size();
         tupleList.add(extTuple);
@@ -57,18 +58,24 @@ public class TupleSet<E> {
   }
 
   /**
-   * Creates a new tuple set from this set by inserting elements of the given list at all positions
-   * in the tuple.
+   * Creates a new tuple set from this set, where each tuple has been augmented by one element.
+   *
+   * <p>Suppose that each tuple of this has length <i>tlen</i>, and only 1 element is given. Then
+   * each tuple will be be replaced by <i>tlen+1</i> tuples, each of length <i>tlen+1</i> and
+   * containing the original tuple plus one element, at an arbitrary location in the tuple.
+   *
+   * <p>If <i>k</i> elements are given, then each tuple will be be replaced by <i>k * (tlen+1)</i>
+   * tuples, each of length <i>tlen+1</i>.
    *
    * @param elements the list of elements
    * @return a tuple set formed by inserting elements of the given list into the tuples of this set
    */
   public TupleSet<E> exhaustivelyExtend(List<E> elements) {
-    List<List<E>> tupleList = new ArrayList<>();
+    List<List<E>> tupleList = new ArrayList<>(tuples.size() * (tupleLength + 1));
     for (List<E> tuple : tuples) {
       for (E e : elements) {
         for (int i = 0; i <= tuple.size(); i++) {
-          tupleList.add(insert(e, tuple, i));
+          tupleList.add(insertInTuple(tuple, e, i));
         }
       }
     }
@@ -76,38 +83,34 @@ public class TupleSet<E> {
   }
 
   /**
-   * Returns a new list that is formed by inserting the element at the given position in the tuple.
+   * Returns a new list that is formed by inserting the element at the end. Does not side-effect its
+   * argument.
    *
-   * @param e the element to insert
    * @param tuple the original list
-   * @param i the position where element is to be inserted
-   * @return a new list with the element inserted at the given position
+   * @param e the element to insert
+   * @return a new list with the element inserted at the end
    */
-  private List<E> insert(E e, List<E> tuple, int i) {
-    List<E> extTuple = new ArrayList<>(tuple);
-    if (i < tuple.size()) {
-      extTuple.add(i, e);
-    } else {
-      extTuple.add(e);
-    }
+  private List<E> extendTuple(List<E> tuple, E e) {
+    List<E> extTuple = new ArrayList<>(tupleLength + 1);
+    extTuple.addAll(tuple);
+    extTuple.add(e);
     return extTuple;
   }
 
   /**
-   * Finds the first tuple that the visitor is able to transform into a non-null value, and returns
-   * the result of the transformation. Returns null otherwise.
+   * Returns a new list that is formed by inserting the element at the given position. Does not
+   * side-effect its argument.
    *
-   * @param visitor the visitor that transforms a tuple
-   * @param <T> the return type of the visitor
-   * @return a transformed tuple, or null
+   * @param tuple the original list
+   * @param e the element to insert
+   * @param i the position where element is to be inserted
+   * @return a new list with the element inserted at the given position
    */
-  public <T> T findAndTransform(TupleVisitor<E, T> visitor) {
-    for (List<E> tuple : tuples) {
-      T transformedTuple = visitor.apply(tuple);
-      if (transformedTuple != null) {
-        return transformedTuple;
-      }
-    }
-    return null;
+  private List<E> insertInTuple(List<E> tuple, E e, int i) {
+    List<E> extTuple = new ArrayList<>(tupleLength + 1);
+    // It's a bit inefficient to insert then shift; a better implementation could avoid that.
+    extTuple.addAll(tuple);
+    extTuple.add(i, e);
+    return extTuple;
   }
 }

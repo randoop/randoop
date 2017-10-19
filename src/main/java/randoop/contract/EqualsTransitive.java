@@ -1,7 +1,6 @@
 package randoop.contract;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -11,7 +10,7 @@ import randoop.types.TypeTuple;
  * The contract: Checks the transitivity of equals for an object {@code (x0.equals(x1) &&
  * x1.equals(x2)) ==> x0.equals(x2)}.
  */
-public class EqualsTransitive implements ObjectContract {
+public class EqualsTransitive extends ObjectContract {
   private static final EqualsTransitive instance = new EqualsTransitive();
 
   private EqualsTransitive() {}
@@ -34,13 +33,13 @@ public class EqualsTransitive implements ObjectContract {
     return 3;
   }
 
+  static TypeTuple inputTypes =
+      new TypeTuple(
+          Arrays.<Type>asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
+
   @Override
   public TypeTuple getInputTypes() {
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(JavaTypes.OBJECT_TYPE);
-    inputTypes.add(JavaTypes.OBJECT_TYPE);
-    inputTypes.add(JavaTypes.OBJECT_TYPE);
-    return new TypeTuple(inputTypes);
+    return inputTypes;
   }
 
   @Override
