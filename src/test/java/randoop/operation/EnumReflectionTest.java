@@ -166,11 +166,11 @@ public class EnumReflectionTest {
   @Test
   public void enumAsPredicateTest() {
     Class<?> c = EnumAsPredicate.class;
-    assert c.isEnum() : "something wrong -- should be an enum";
+    assertTrue(c.isEnum());
 
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(c);
     List<ClassOrInterfaceType> interfaces = enumType.getInterfaces();
-    assert interfaces.size() == 1 : "should only be one interface";
+    assertEquals(interfaces.size(), 1);
     InstantiatedType interfaceType = (InstantiatedType) interfaces.get(0);
 
     List<TypedOperation> include = new ArrayList<>();
