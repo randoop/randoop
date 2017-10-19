@@ -106,7 +106,7 @@ public abstract class ObjectContract {
    */
   public final Check checkContract(ExecutableSequence eseq, Object[] values) {
     // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
-    //   Randomness.selectionLog.log("ContractChecker.checkContract: this=%s%n", this);
+    //   Randomness.selectionLog.log("checkContract: this=%s%n", this);
     //   Randomness.selectionLog.log("  values (%d) =%n", values.length);
     //   for (Object value : values) {
     //     Randomness.selectionLog.log(
@@ -130,7 +130,7 @@ public abstract class ObjectContract {
       if (Log.isLoggingOn()) {
         Log.logLine(
             String.format(
-                "ContractChecker.checkContract(): Contract %s threw exception of class %s with message %s",
+                "checkContract(): Contract %s threw exception of class %s with message %s",
                 this, e.getClass(), e.getMessage()));
       }
       if (e instanceof BugInRandoopException) {
@@ -157,5 +157,14 @@ public abstract class ObjectContract {
     }
 
     return new ObjectCheck(this, varArray);
+  }
+
+  // The toString() of class Buggy throws an exception.
+  static String toStringHandleExceptions(Object o) {
+    try {
+      return o.toString();
+    } catch (Throwable t) {
+      return "of " + o.getClass() + " with identityHashCode=@" + System.identityHashCode(o);
+    }
   }
 }
