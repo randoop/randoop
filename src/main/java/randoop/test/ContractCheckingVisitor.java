@@ -8,6 +8,13 @@ import randoop.contract.ObjectContract;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.ReferenceValue;
 import randoop.test.predicate.ExceptionPredicate;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GenericClassType;
+import randoop.types.InstantiatedType;
+import randoop.types.ReferenceType;
+import randoop.types.Substitution;
+import randoop.types.Type;
+import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.TupleSet;
 
@@ -117,13 +124,15 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
   }
 
   /**
-   * Finds the first tuple for which a contract fails, and returns the failing check.
+   * If a contract fails for some tuple, returns some such failing check.
    *
-   * @return a failing Check, or null
+   * @param tuples the value tuples to use as input to the contracts
+   * @return a {@link Check} of the first contract+tuple that failed, or null if no contracts failed
    */
   Check checkContracts(
-      List<ObjectContract> contracts, ExecutableSequence s, TupleSet<ReferenceValue> tuples) {
+      List<ObjectContract> contracts, ExecutableSequence eseq, TupleSet<ReferenceValue> tuples) {
     for (List<ReferenceValue> tuple : tuples.tuples()) {
+      Object[] values = getValues(tuple);
 
       for (ObjectContract contract : contracts) {
         assert tuple.size() == contract.getArity()
@@ -131,15 +140,11 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
                 + tuple.size()
                 + " must match contract arity "
                 + contract.getArity();
-        // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
-        //   Randomness.selectionLog.log("ContractChecker.apply: considering contract=%s%n", contract);
-        // }
-        if (ContractChecker.typesMatch(contract.getInputTypes(), tuple)) {
+        if (typesMatch(contract.getInputTypes(), tuple)) {
           if (Log.isLoggingOn()) {
             Log.logLine("Checking contract " + contract.getClass());
           }
-          Object[] values = ContractChecker.getValues(tuple);
-          Check check = ContractChecker.checkContract(contract, s, values);
+          Check check = contract.checkContract(eseq, values);
           if (check != null) {
             return check;
           }
@@ -148,5 +153,62 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
     }
 
     return null;
+  }
+
+  /**
+   * Indicates whether the given list of values matches the types in the type tuple. Contracts may
+   * have generic input types, so this method checks for consistent substitutions across value
+   * types.
+   *
+   * @param inputTypes the expected types for contract input
+   * @param valueTuple the values to match against input types
+   * @return true if the types of the values are assignable to the expected types, false otherwise
+   */
+  public static boolean typesMatch(TypeTuple inputTypes, List<ReferenceValue> valueTuple) {
+    if (inputTypes.size() != valueTuple.size()) {
+      return false;
+    }
+
+    Substitution<ReferenceType> substitution = new Substitution<>();
+    int i = 0;
+    while (i < inputTypes.size()) {
+      Type inputType = inputTypes.get(i);
+      ReferenceType valueType = valueTuple.get(i).getType();
+      if (inputType.isGeneric()) { // check substitutions
+        if (valueType instanceof ClassOrInterfaceType) {
+          ClassOrInterfaceType classType = (ClassOrInterfaceType) valueType;
+          InstantiatedType superType =
+              classType.getMatchingSupertype((GenericClassType) inputTypes.get(i));
+          if (superType == null) {
+            return false;
+          }
+          Substitution<ReferenceType> subst = superType.getTypeSubstitution();
+          if (!substitution.isConsistentWith(subst)) {
+            return false;
+          }
+          substitution = substitution.extend(subst);
+        } else { // have generic input type, and non-class value
+          return false;
+        }
+      } else if (!inputType.isAssignableFrom(valueType)) {
+        return false;
+      }
+      i++;
+    }
+    return true;
+  }
+
+  /**
+   * Creates an {@code Object} array for the given value list.
+   *
+   * @param tuple the list of values
+   * @return the Object array for the values
+   */
+  private static Object[] getValues(List<ReferenceValue> tuple) {
+    Object[] values = new Object[tuple.size()];
+    for (int i = 0; i < tuple.size(); i++) {
+      values[i] = tuple.get(i).getObjectValue();
+    }
+    return values;
   }
 }

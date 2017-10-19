@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.LinkedHashSet;
@@ -54,11 +55,12 @@ public class ClassReflectionTest {
   @Test
   public void innerClassTest() {
     Class<?> outer = randoop.test.ClassWithInnerClass.class;
-    Class<?> inner = null;
+    Class<?> inner;
     try {
       inner = Class.forName("randoop.test.ClassWithInnerClass$A");
     } catch (ClassNotFoundException e) {
       fail("could not load inner class" + e.getMessage());
+      throw new Error("unreachable");
     }
 
     Set<TypedOperation> innerActual = getConcreteOperations(inner);
@@ -73,7 +75,7 @@ public class ClassReflectionTest {
         constructorOp = op;
       }
     }
-    assert constructorOp != null : "should find outer class constructor";
+    assertNotNull("should find outer class constructor", constructorOp);
 
     Sequence sequence = new Sequence();
     randoop.test.ClassWithInnerClass classWithInnerClass1 = new randoop.test.ClassWithInnerClass(1);
@@ -94,7 +96,7 @@ public class ClassReflectionTest {
         innerConstructorOp = op;
       }
     }
-    assert innerConstructorOp != null : "should find inner class constructor";
+    assertNotNull(innerConstructorOp);
     sequence =
         sequence.extend(
             innerConstructorOp,

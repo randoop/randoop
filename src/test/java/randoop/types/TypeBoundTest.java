@@ -1,5 +1,6 @@
 package randoop.types;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -24,9 +25,9 @@ public class TypeBoundTest {
   @Test
   public void testEnumBound() {
     Type enumType = Type.forClass(Enum.class);
-    assert enumType.isReferenceType() : "enum should be reference type";
+    assertTrue(enumType.isReferenceType());
     List<TypeVariable> typeParameters = ((ReferenceType) enumType).getTypeParameters();
-    assert typeParameters.size() == 1 : "Enum only has one type parameter";
+    assertEquals(typeParameters.size(), 1);
     ReferenceType candidateType = ClassOrInterfaceType.forClass(Word.class);
     checkBound(typeParameters.get(0), candidateType);
   }

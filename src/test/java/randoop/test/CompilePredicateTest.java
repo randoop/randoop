@@ -2,6 +2,7 @@ package randoop.test;
 
 import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -107,7 +108,7 @@ public class CompilePredicateTest {
     } catch (UnsupportedEncodingException e) {
       fail("unsupported encoding");
     }
-    assert source != null;
+    assertNotNull(source);
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator("", null, null, null, null);
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
 
@@ -148,7 +149,7 @@ public class CompilePredicateTest {
     } catch (UnsupportedEncodingException e) {
       fail("unsupported encoding");
     }
-    assert source != null;
+    assertNotNull(source);
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator("foo.bar", null, null, null, null);
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
 
