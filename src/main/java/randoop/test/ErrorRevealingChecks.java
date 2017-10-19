@@ -17,15 +17,10 @@ public class ErrorRevealingChecks implements TestChecks {
   private Set<Check> checks;
 
   /** Create an empty set of error checks. */
-  ErrorRevealingChecks() {
+  public ErrorRevealingChecks() {
     this.checks = new LinkedHashSet<>();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return count of error revealing checks
-   */
   @Override
   public int count() {
     return checks.size();
@@ -34,7 +29,7 @@ public class ErrorRevealingChecks implements TestChecks {
   /**
    * {@inheritDoc}
    *
-   * @return all checks with false, indicating all are failing
+   * @return all checks, with each mapped to false, indicating it is failing
    */
   @Override
   public Map<Check, Boolean> get() {
