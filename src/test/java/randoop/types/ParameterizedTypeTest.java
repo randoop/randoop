@@ -325,7 +325,7 @@ public class ParameterizedTypeTest {
   @Test
   public void testTypeParameters() {
     Class<?> c = ParameterInput.class;
-    Method m = null;
+    Method m;
     try {
       m =
           c.getMethod(
@@ -338,8 +338,8 @@ public class ParameterizedTypeTest {
               Iterable.class);
     } catch (NoSuchMethodException e) {
       fail("failed to load method ParameterInput.m()");
+      throw new Error("Unreachable");
     }
-    assert m != null;
     for (java.lang.reflect.Type type : m.getGenericParameterTypes()) {
       ParameterizedType itType = InstantiatedType.forType(type);
       if (!itType.isGeneric()) {

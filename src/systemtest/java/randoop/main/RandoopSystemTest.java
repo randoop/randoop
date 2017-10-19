@@ -89,7 +89,7 @@ public class RandoopSystemTest {
   /*
    * WRITING TEST METHODS:
    *
-   * Methods with the Test annotation will be run normally as JUnit tests.
+   * Methods with the @Test annotation will be run normally as JUnit tests.
    * Each method should consist of one system test, and is responsible for setting up the
    * directories for the test, setting the options for Randoop, running Randoop, compiling the
    * generated tests, and then doing whatever checks are required for the test.  The steps each
@@ -632,7 +632,7 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
-  /** Simply runs Randoop on a class in the default package to ensure nothing breaks. */
+  /** Runs Randoop on a class in the default package to ensure nothing breaks. */
   @Test
   public void runDefaultPackageTest() {
     TestEnvironment testEnvironment =
@@ -657,10 +657,34 @@ public class RandoopSystemTest {
         systemTestEnvironment.createTestEnvironment("exception-tests");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("misc");
-    options.setRegressionBasename("RegressionTest");
-    options.setErrorBasename("ErrorTest");
+    options.setRegressionBasename("ExceptionTest");
+    options.setErrorBasename("ExceptionErr");
     options.addTestClass("misc.ThrowsAnonymousException");
     options.setOption("outputLimit", "5");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+  }
+
+  /** Tests that Randoop deals properly with ConcurrentModificationException in contract checks. */
+  @Test
+  public void runCMExceptionTest() {
+
+    // TEMPORARILY DISABLE THE TEST
+    if (true) {
+      return;
+    }
+
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("cm-exception-tests");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("misc");
+    options.setRegressionBasename("CMExceptionTest");
+    options.setErrorBasename("CMExceptionErr");
+    options.addTestClass("misc.MyCmeList");
+    options.setOption("outputLimit", "10");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;

@@ -152,7 +152,7 @@ public class CaptureConversionTest {
 
   private InstantiatedType getArgumentType(TypedOperation op) {
     TypeTuple inputTypes = op.getInputTypes();
-    assert inputTypes.size() == 2;
+    assertEquals(inputTypes.size(), 2);
     return (InstantiatedType) inputTypes.get(1);
   }
 }

@@ -7,6 +7,7 @@ import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -56,7 +57,7 @@ public class OperationModelTest {
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
     }
-    assert model != null : "model was not initialized";
+    assertNotNull(model);
 
     assertThat(
         "only expect the LinkedList and Object classes",
@@ -110,7 +111,7 @@ public class OperationModelTest {
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
     }
-    assert model != null : "model was not initialized";
+    assertNotNull(model);
     assertThat(
         "should have both outer and inner classes, plus Object",
         model.getClassTypes().size(),
@@ -122,7 +123,7 @@ public class OperationModelTest {
   @Test
   public void instantiationTest() {
     OperationModel model = getOperationModel("randoop.reflection.GenericClass");
-    assert model != null : "model was not initialized";
+    assertNotNull(model);
 
     assertEquals("should be two classes ", 2, model.getClassTypes().size());
 
@@ -187,7 +188,7 @@ public class OperationModelTest {
     } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     }
-    assert model != null : "model was not initialized";
+    assertNotNull(model);
 
     List<TypedOperation> alphaOps = new ArrayList<>();
     for (TypedOperation operation : model.getOperations()) {
@@ -242,7 +243,7 @@ public class OperationModelTest {
   public void memberTypeTest() {
     String classname = "randoop.reflection.ClassWithMemberTypes";
     OperationModel model = getOperationModel(classname);
-    assert model != null : "model was not initialized";
+    assertNotNull(model);
 
     List<ClassOrInterfaceType> expected = new ArrayList<>();
     expected.add(ClassOrInterfaceType.forClass(ClassWithMemberTypes.class));
@@ -274,7 +275,7 @@ public class OperationModelTest {
   public void memberOfGenericTypeTest() {
     String classname = "randoop.reflection.GenericTreeWithInnerNode";
     OperationModel model = getOperationModel(classname);
-    assert model != null : " model was not initialized";
+    assertNotNull(model);
 
     List<TypedOperation> operations = model.getOperations();
     for (TypedOperation operation : operations) {

@@ -241,7 +241,11 @@ public class FailingTestFilter implements CodeWriter {
     try {
       fileCompiler.compile(sourceFiles, destinationDir);
     } catch (FileCompiler.FileCompilerException e) {
-      throw new BugInRandoopException("Compilation error during flaky-test filtering", e);
+      throw new BugInRandoopException(
+          String.format(
+              "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s): code = %n%s",
+              sourceFiles, destinationDir, classSource),
+          e);
     }
   }
 

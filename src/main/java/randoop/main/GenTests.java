@@ -913,7 +913,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Print out usage error and stack trace and then exit.
+   * Print message, then print usage information, then exit.
    *
    * @param format the string format
    * @param args the arguments

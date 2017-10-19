@@ -110,7 +110,7 @@ class SystemTestEnvironment {
    * class and JaCoCo files using the directory names {@link #SOURCE_DIR_NAME}, {@link
    * #CLASS_DIR_NAME}, and {@link #JACOCO_DIR_NAME}.
    *
-   * <p>Will fail calling test if an {@code IOException} is thrown
+   * <p>Will fail the calling test if an {@code IOException} is thrown
    *
    * @param dirname the name of the directory to create
    * @return the {@link TestEnvironment} with the directory as the working directory
