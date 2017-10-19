@@ -313,7 +313,7 @@ public class ExecutableSequence {
 
     visitor.visitAfterSequence(this);
 
-    checks = gen.visit(this);
+    checks = gen.generateTestChecks(this);
   }
 
   public Object[] getRuntimeInputs(List<Variable> inputs) {

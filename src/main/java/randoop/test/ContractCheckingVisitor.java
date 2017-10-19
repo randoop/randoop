@@ -52,7 +52,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * contracts in {@code contracts}.
    */
   @Override
-  public TestChecks visit(ExecutableSequence eseq) {
+  public TestChecks generateTestChecks(ExecutableSequence eseq) {
     ErrorRevealingChecks checks = new ErrorRevealingChecks();
 
     int finalIndex = eseq.sequence.size() - 1;

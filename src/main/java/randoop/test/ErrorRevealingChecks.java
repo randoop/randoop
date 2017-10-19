@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * ErrorRevealingChecks represent failing checks for a particular test sequence. Each check may
  * refer to different variables defined in the sequence, so can only be assumed to be valid at the
- * end of the sequence. Note that there are no expected exceptions in error revealing tests, and so
+ * end of the sequence. Note that there are no expected exceptions in error-revealing tests, and so
  * there should be no {@link ExceptionCheck} objects.
  */
 public class ErrorRevealingChecks implements TestChecks {

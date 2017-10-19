@@ -30,7 +30,7 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
    * <p>Adds checks for an expected exception at the final statement of the sequence.
    */
   @Override
-  public TestChecks visit(ExecutableSequence eseq) {
+  public TestChecks generateTestChecks(ExecutableSequence eseq) {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome result = eseq.getResult(finalIndex);
 

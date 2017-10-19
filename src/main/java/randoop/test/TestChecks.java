@@ -3,8 +3,10 @@ package randoop.test;
 import java.util.Map;
 
 /**
- * TestChecks represents the checks for a particular test sequence. Can either be all passing tests
- * for a regression test, or all failing tests for an error-revealing test.
+ * A TestCheck is an object representing an expected runtime behavior of a sequence. Clients can add
+ * checks to specific indices of the sequence. For example, a client might add a {@code NotNull}
+ * check to the ith index of a sequence to signify that the value returned by the statement at index
+ * i should not be null.
  *
  * @see RegressionChecks
  * @see ErrorRevealingChecks
