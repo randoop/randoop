@@ -11,8 +11,10 @@ public class TestInputWithCommentsMinimized {
     public void test1() throws Throwable {
         int j = 2;
 
+        // Orphan comment that belongs nowhere.
         // Set j to 3.
-        j = 3; // Additional comment.
+        // Additional comment.
+        j = 3;
 
         // Orphan comment that should remain if statement is not removed.
         // Assertion fails.
