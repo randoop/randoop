@@ -205,7 +205,7 @@ public class InstantiationTest {
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.intersectiontypes.ExtendedBase");
     Package pkg = randoop.reflection.intersectiontypes.ExtendedBase.class.getPackage();
-    assert pkg != null;
+    assertNotNull(pkg);
     OperationModel model = createModel(classnames, pkg.getName());
 
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
@@ -308,7 +308,7 @@ public class InstantiationTest {
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
     }
-    assert model != null : "model was not initialized";
+    assertNotNull(model);
     return model;
   }
 

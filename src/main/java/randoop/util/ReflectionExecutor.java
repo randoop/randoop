@@ -6,7 +6,7 @@ import plume.OptionGroup;
 import plume.UtilMDE;
 
 /**
- * Executes the code of a ReflectionCode object.
+ * Static methods that executes the code of a ReflectionCode object.
  *
  * <p>This class maintains an "executor" thread. Code is executed on that thread. If the code takes
  * longer than the specified timeout, the thread is killed and a TimeoutExceededException exception
@@ -34,7 +34,7 @@ public final class ReflectionExecutor {
 
   /**
    * After this many milliseconds, a non-returning method call, and its associated test, are stopped
-   * forcefully. Only meaningful if --usethreads is also specified.
+   * forcefully. Only meaningful if {@code --usethreads} is also specified.
    */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
   public static int timeout = 5000;
@@ -69,8 +69,8 @@ public final class ReflectionExecutor {
   }
 
   /**
-   * Executes code.runReflectionCode(). If no exception is thrown, returns null. Otherwise, returns
-   * the exception thrown.
+   * Executes {@code code.runReflectionCode()}. If no exception is thrown, returns null. Otherwise,
+   * returns the exception thrown.
    *
    * @param code the {@link ReflectionCode} to be executed
    * @param out stream to print exception details to or null

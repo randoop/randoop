@@ -1,8 +1,8 @@
 package randoop.runtime;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 public class ErrorRevealed implements IMessage {
@@ -18,7 +18,7 @@ public class ErrorRevealed implements IMessage {
       String testCode, String description, List<String> failingClassNames, File junitFile) {
     this.testCode = testCode;
     this.description = description;
-    this.failingClassNames = Collections.unmodifiableList(new LinkedList<>(failingClassNames));
+    this.failingClassNames = Collections.unmodifiableList(new ArrayList<>(failingClassNames));
     this.junitFile = junitFile;
   }
 

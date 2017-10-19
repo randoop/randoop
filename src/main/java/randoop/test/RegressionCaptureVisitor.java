@@ -74,7 +74,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
    * @throws Error if any statement is not executed, or exception occurs before last statement
    */
   @Override
-  public TestChecks visit(ExecutableSequence sequence) {
+  public TestChecks generateTestChecks(ExecutableSequence sequence) {
 
     RegressionChecks checks = new RegressionChecks();
 

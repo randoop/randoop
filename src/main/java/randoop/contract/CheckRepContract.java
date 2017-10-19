@@ -20,7 +20,7 @@ import randoop.types.TypeTuple;
  * means it failed. In the second case, normal return means the check passed, and an exception means
  * it failed.
  */
-public final class CheckRepContract implements ObjectContract {
+public final class CheckRepContract extends ObjectContract {
 
   public final Method checkRepMethod;
   private final TypedClassOperation operation;

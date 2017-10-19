@@ -15,13 +15,13 @@ public class PublicFieldParserTest {
     String fieldPair = "randoop.field.ClassWithFields.oneField";
     String classname = "randoop.field.ClassWithFields";
     String fieldname = "oneField";
-    Type classType = null;
+    Type classType;
     try {
       classType = Type.forName(classname);
     } catch (ClassNotFoundException e) {
       fail("couldn't load class: " + e.getMessage());
+      throw new Error("unreachable");
     }
-    assert classType != null;
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
       assertEquals(
@@ -38,13 +38,13 @@ public class PublicFieldParserTest {
     String fieldPair = "randoop.field.ClassWithFields.fourField";
     String classname = "randoop.field.ClassWithFields";
     String fieldname = "fourField";
-    Type classType = null;
+    Type classType;
     try {
       classType = Type.forName(classname);
     } catch (ClassNotFoundException e) {
       fail("couldn't load class: " + e);
+      throw new Error("unreachable");
     }
-    assert classType != null;
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
       assertEquals(
@@ -63,13 +63,13 @@ public class PublicFieldParserTest {
     String fieldPair = "randoop.field.ClassWithFields.FIVEFIELD";
     String classname = "randoop.field.ClassWithFields";
     String fieldname = "FIVEFIELD";
-    Type classType = null;
+    Type classType;
     try {
       classType = Type.forName(classname);
     } catch (ClassNotFoundException e) {
       fail("couldn't load class: " + e);
+      throw new Error("unreachable");
     }
-    assert classType != null;
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
       assertEquals(
