@@ -601,7 +601,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // If we got here, it means we will not attempt to use null or a value already defined in S,
       // so we will have to augment S with new statements that yield a value of type inputTypes[i].
       // We will do this by assembling a list of candidate sequences (stored in the list declared
-      // immediately below) whose last statement creates one or more values of the appropriate type,
+      // immediately below) that create one or more values of the appropriate type,
       // randomly selecting a single sequence from this list, and appending it to S.
       SimpleList<Sequence> candidates;
 
@@ -715,14 +715,14 @@ public class ForwardGenerator extends AbstractGenerator {
       // such a type.  An example is a void method that is called with only null arguments.
       // More generally, paying attention to only the last statement here seems like a reasonable
       // design choice, but it is inconsistent with how Randoop behaves in general, and all parts
-      // of Randoop should be made consistent.
-      Variable randomVariable = chosenSeq.randomVariableForType(inputType, isReceiver);
+      // of Randoop should be made consistent.  Alternative to the below (but this is a hack, and it
+      // would be better to make the design cleaner):
+      // Variable randomVariable = chosenSeq.randomVariableForType(inputType, isReceiver);
 
       // We are not done yet: we have chosen a sequence that yields a value of the required
       // type inputTypes[i], but it may produce more than one such value. Our last random
       // selection step is to select from among all possible values produced by the sequence.
-      // Variable randomVariable
-      //   = chosenSeq.randomVariableForTypeLastStatement(inputType, isReceiver);
+      Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType, isReceiver);
 
       if (randomVariable == null) {
         continue;
