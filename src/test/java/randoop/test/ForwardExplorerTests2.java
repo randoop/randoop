@@ -67,7 +67,8 @@ public class ForwardExplorerTests2 {
     // means that timeout results in a flaky sequence exception
     GenInputsAbstract.repeat_heuristic = true;
 
-    assert ReflectionExecutor.usethreads : "this test does not terminate if threads are not used";
+    assertTrue(
+        ReflectionExecutor.usethreads); // This test does not terminate if threads are not used.
 
     List<Class<?>> classes = new ArrayList<>();
     classes.add(TreeNode.class);

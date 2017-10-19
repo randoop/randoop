@@ -8,9 +8,11 @@ import java.util.Objects;
 import java.util.Set;
 import plume.UtilMDE;
 
+// TODO: why is this class needed?  Why is "Type[]" not adequate?
+// (As an initial step toward that, I could make the internal representation be "Type[]".)
 /**
- * {@code TypeTuple} represents an ordered tuple of type objects. Type tuples primarily used to
- * represent the input types of operations.
+ * {@code TypeTuple} represents an immutable ordered tuple of {@link Type} objects. Type tuples
+ * primarily used to represent the input types of operations.
  */
 public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
@@ -52,7 +54,8 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   /**
    * Applies a substitution to a type tuple, replacing any occurrences of type variables. Resulting
-   * tuple may only be partially instantiated.
+   * tuple may only be partially instantiated. Returns a new TypeTuple; the receiver is not
+   * side-effected.
    *
    * @param substitution the substitution
    * @return a new type tuple resulting from applying the given substitution to this tuple
@@ -71,7 +74,8 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Applies a capture conversion to each component of this type type tuple.
+   * Applies a capture conversion to each component of this type type tuple. Returns a new
+   * TypeTuple; the receiver is not side-effected.
    *
    * @return a new type tuple after performing a capture conversion
    */

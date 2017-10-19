@@ -1,7 +1,6 @@
 package randoop.contract;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -15,7 +14,7 @@ import randoop.types.TypeTuple;
  *  => (x0.compareTo(x2) > 0)
  * }</pre>
  */
-public class CompareToTransitive implements ObjectContract {
+public class CompareToTransitive extends ObjectContract {
   private static final CompareToTransitive instance = new CompareToTransitive();
 
   private CompareToTransitive() {}
@@ -49,13 +48,14 @@ public class CompareToTransitive implements ObjectContract {
     return 3;
   }
 
+  static TypeTuple inputTypes =
+      new TypeTuple(
+          Arrays.<Type>asList(
+              JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
+
   @Override
   public TypeTuple getInputTypes() {
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(JavaTypes.COMPARABLE_TYPE);
-    inputTypes.add(JavaTypes.COMPARABLE_TYPE);
-    inputTypes.add(JavaTypes.COMPARABLE_TYPE);
-    return new TypeTuple(inputTypes);
+    return inputTypes;
   }
 
   @Override
@@ -66,11 +66,6 @@ public class CompareToTransitive implements ObjectContract {
   @Override
   public String get_observer_str() {
     return "CompareToTransitive";
-  }
-
-  @Override
-  public boolean evalExceptionMeansFailure() {
-    return true;
   }
 
   @Override

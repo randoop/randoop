@@ -1,7 +1,6 @@
 package randoop.contract;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Objects;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -10,7 +9,7 @@ import randoop.types.TypeTuple;
  * A check for a particular value of an {@code Enum}. To be used in regression tests when {@code
  * Enum} values are created.
  */
-public final class EnumValue implements ObjectContract {
+public final class EnumValue extends ObjectContract {
 
   public final Enum<?> value;
   private final Type type;
@@ -46,20 +45,13 @@ public final class EnumValue implements ObjectContract {
 
   @Override
   public TypeTuple getInputTypes() {
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(type);
-    return new TypeTuple(inputTypes);
+    return new TypeTuple(Collections.<Type>singletonList(type));
   }
 
   @Override
   public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 1;
     return value.equals(objects[0]);
-  }
-
-  @Override
-  public boolean evalExceptionMeansFailure() {
-    return true;
   }
 
   @Override

@@ -3,7 +3,18 @@ package randoop.contract;
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.
 
+import java.util.List;
+import randoop.BugInRandoopException;
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Variable;
+import randoop.test.Check;
+import randoop.test.ObjectCheck;
 import randoop.types.TypeTuple;
+import randoop.util.Log;
+import randoop.util.Randomness;
 
 /**
  * An object contract represents a property that must hold of any object of a given class. It is
@@ -23,21 +34,21 @@ import randoop.types.TypeTuple;
  * <p>See the various implementing classes for examples (for an example, see {@link
  * EqualsReflexive}).
  */
-public interface ObjectContract {
+public abstract class ObjectContract {
 
   /**
    * The number of values that this contract is over.
    *
    * @return the number of arguments to the contract
    */
-  int getArity();
+  public abstract int getArity();
 
   /**
    * Returns the input types for this contract.
    *
    * @return the input types for this contract
    */
-  TypeTuple getInputTypes();
+  public abstract TypeTuple getInputTypes();
 
   /**
    * Evaluates the contract on the given values.
@@ -52,23 +63,7 @@ public interface ObjectContract {
    * @return true if this contract evaluates to true for the given values, and false otherwise
    * @throws Throwable if an exception is thrown in evaluation
    */
-  boolean evaluate(Object... objects) throws Throwable;
-
-  // TODO: What is an example of a contract for which throwing an exception is success?
-  // I don't see one in the code.  Can this be removed?
-  /**
-   * Communicates to Randoop how to interpret exceptional behavior from the {@code evaluate} method.
-   *
-   * <p>If this method returns {@code true}, Randoop will interpret an exception that escapes during
-   * evaluation as a failure of the contract.
-   *
-   * <p>If the method returns {@code false}, Randoop will interpret an exception as passing
-   * behavior.
-   *
-   * @return true if an exception in evaluating this contract should be interpreted as a failure,
-   *     false otherwise
-   */
-  boolean evalExceptionMeansFailure();
+  public abstract boolean evaluate(Object... objects) throws Throwable;
 
   /**
    * A string that will be inserted as a comment in the test before the code corresponding to this
@@ -77,7 +72,7 @@ public interface ObjectContract {
    *
    * @return the comment string representation of this contract
    */
-  String toCommentString();
+  public abstract String toCommentString();
 
   /**
    * A string that can be used as Java source code and will result in the expression being
@@ -90,7 +85,7 @@ public interface ObjectContract {
    *
    * @return the code string representation of this contract; must be non-null
    */
-  String toCodeString();
+  public abstract String toCodeString();
 
   // TODO: how is this different than toString, in terms of contract and in
   // terms of intended use?
@@ -99,5 +94,70 @@ public interface ObjectContract {
    *
    * @return a string description of the contract
    */
-  String get_observer_str();
+  public abstract String get_observer_str();
+
+  /**
+   * Checks a contract on a particular array of values.
+   *
+   * @param eseq the executable sequence that is the source of values for checking contracts
+   * @param values the input values
+   * @return a {@link ObjectCheck} if the contract fails, null otherwise
+   */
+  public final Check checkContract(ExecutableSequence eseq, Object[] values) {
+
+    ExecutionOutcome outcome = ObjectContractUtils.execute(this, values);
+
+    if (Log.isLoggingOn()) {
+      Log.logLine("Executed contract " + this.getClass());
+      //   Log.logLine("  values (length %d) =%n", values.length);
+      //   for (Object value : values) {
+      //     Log.logLine(
+      //         "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
+      Log.logLine(" Contract outcome " + outcome);
+    }
+
+    if (outcome instanceof NormalExecution) {
+      if (((NormalExecution) outcome).getRuntimeValue().equals(true)) {
+        return null;
+      }
+    } else if (outcome instanceof ExceptionalExecution) {
+      Throwable e = ((ExceptionalExecution) outcome).getException();
+      if (Log.isLoggingOn()) {
+        Log.logLine(
+            String.format(
+                "checkContract(): Contract %s threw exception of class %s with message %s",
+                this, e.getClass(), e.getMessage()));
+      }
+      if (e instanceof BugInRandoopException) {
+        throw (BugInRandoopException) e;
+      }
+      // ***** TODO: determine what the exception is
+    } else {
+      throw new BugInRandoopException("Contract " + this + " failed to execute during evaluation");
+    }
+
+    // the contract failed
+    Variable[] varArray = new Variable[values.length];
+    for (int i = 0; i < varArray.length; i++) {
+      List<Variable> variables = eseq.getVariables(values[i]);
+      varArray[i] = Randomness.randomMember(variables);
+      //   Log.logLine(
+      //       "values[%d] = %s @%s%n",
+      //       i, toStringHandleExceptions(values[i]), System.identityHashCode(values[i]));
+      //   Log.logLine("  candidate variables = %s%n", variables);
+      //   Log.logLine(
+      //       "  varArray[%d] = %s @%s%n", i, varArray[i], System.identityHashCode(varArray[i]));
+    }
+
+    return new ObjectCheck(this, varArray);
+  }
+
+  // The toString() of class Buggy throws an exception.
+  static String toStringHandleExceptions(Object o) {
+    try {
+      return o.toString();
+    } catch (Throwable t) {
+      return "of " + o.getClass() + " with identityHashCode=@" + System.identityHashCode(o);
+    }
+  }
 }

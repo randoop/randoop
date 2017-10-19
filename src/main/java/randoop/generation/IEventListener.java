@@ -28,12 +28,12 @@ public interface IEventListener {
    * Called by the AbstractGenerator during each generation iteration, immediately after a
    * generation {@code step()} has completed.
    *
-   * @param s sequence that was generated and executed in the last generation step. Can b null,
+   * @param eseq sequence that was generated and executed in the last generation step. Can b null,
    *     which means the last step was unable to generate a sequence (e.g. due to a bad random
    *     choice).
    * @see randoop.generation.AbstractGenerator
    */
-  void generationStepPost(ExecutableSequence s);
+  void generationStepPost(ExecutableSequence eseq);
 
   /**
    * Called by ProgressDisplay at regular intervals to monitor progress. Implementing classes can

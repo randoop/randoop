@@ -89,7 +89,7 @@ public class RandoopSystemTest {
   /*
    * WRITING TEST METHODS:
    *
-   * Methods with the Test annotation will be run normally as JUnit tests.
+   * Methods with the @Test annotation will be run normally as JUnit tests.
    * Each method should consist of one system test, and is responsible for setting up the
    * directories for the test, setting the options for Randoop, running Randoop, compiling the
    * generated tests, and then doing whatever checks are required for the test.  The steps each
@@ -281,7 +281,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    options.setOption("generatedLimit", "6000"); // runs out of memory if 10000
+    options.setOption("generatedLimit", "5000"); // runs out of memory on Travis if 6000
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setFlag("small-tests");
@@ -309,7 +309,9 @@ public class RandoopSystemTest {
             "java2.util2.Arrays.med3(int[], int, int, int) exclude",
             "java2.util2.Arrays.med3(long[], int, int, int) exclude",
             "java2.util2.Arrays.med3(short[], int, int, int) exclude",
+            "java2.util2.Arrays.sort(char[], int, int) ignore",
             "java2.util2.Arrays.swap(char[], int, int) ignore",
+            "java2.util2.Arrays.swap(int[], int, int) ignore",
             "java2.util2.Arrays.swap(java.lang.Object[], int, int) exclude",
             "java2.util2.Arrays.vecswap(byte[], int, int, int) exclude",
             "java2.util2.Arrays.vecswap(char[], int, int, int) exclude",
@@ -351,13 +353,14 @@ public class RandoopSystemTest {
             "java2.util2.TreeMap.rotateLeft(java2.util2.TreeMap.Entry) exclude",
             "java2.util2.TreeMap.rotateRight(java2.util2.TreeMap.Entry) exclude",
             "java2.util2.TreeMap.setColor(java2.util2.TreeMap.Entry, boolean) exclude",
-            "java2.util2.TreeMap.subMap(java.lang.Object, java.lang.Object) exclude",
+            "java2.util2.TreeMap.subMap(java.lang.Object, java.lang.Object) ignore",
             "java2.util2.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude",
             "java2.util2.TreeMap.valueSearchNonNull(java2.util2.TreeMap.Entry, java.lang.Object) ignore",
             "java2.util2.TreeMap.valueSearchNull(java2.util2.TreeMap.Entry) ignore",
             "java2.util2.TreeMap.writeObject(java.io.ObjectOutputStream) exclude",
+            "java2.util2.TreeSet.last() ignore",
             "java2.util2.TreeSet.readObject(java.io.ObjectInputStream) exclude",
-            "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) exclude",
+            "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore",
             "java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.Vector.removeRange(int, int) exclude",
             "java2.util2.Vector.writeObject(java.io.ObjectOutputStream) exclude",
@@ -400,6 +403,7 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
+            "examples.Buggy.BuggyCompareToTransitive.getTwo() ignore",
             "examples.Buggy.StackOverflowError() ignore",
             "examples.Buggy.hashCode() ignore",
             "examples.Buggy.toString() ignore",
@@ -407,9 +411,9 @@ public class RandoopSystemTest {
             /* don't care about hashCode for compareTo input classes */
             "examples.Buggy.BuggyCompareToAntiSymmetric.hashCode() ignore",
             "examples.Buggy.BuggyCompareToEquals.hashCode() ignore",
-            "examples.Buggy.BuggyCompareToTransitive.hashCode() ignore",
             "examples.Buggy.BuggyCompareToReflexive.hashCode() ignore",
             "examples.Buggy.BuggyCompareToSubs.hashCode() ignore",
+            "examples.Buggy.BuggyCompareToTransitive.hashCode() ignore",
             "examples.Buggy.BuggyEqualsTransitive.hashCode() ignore",
 
             /* These should be covered, but are in failing assertions and won't show up in JaCoCo results. */
@@ -455,7 +459,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("literals-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("LiteralsReg");
     options.setErrorBasename("LiteralsErr");
 
@@ -481,7 +485,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("longstring-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("LongString");
     options.setErrorBasename("");
 
@@ -507,7 +511,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("visibility-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("VisibilityTest");
     options.setErrorBasename("");
 
@@ -537,7 +541,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("no-output-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("NoOutputTest");
     options.setErrorBasename("");
 
@@ -561,7 +565,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("inner-class-test");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("InnerClassRegression");
     options.setErrorBasename("InnerClassError");
     options.addTestClass("randoop.test.ClassWithInnerClass");
@@ -583,7 +587,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("parameterized-type");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("ParamTypeReg");
     options.setErrorBasename("ParamTypeErr");
     options.addTestClass("muse.SortContainer");
@@ -618,13 +622,13 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
-  /** Simply runs Randoop on a class in the default package to ensure nothing breaks. */
+  /** Runs Randoop on a class in the default package to ensure nothing breaks. */
   @Test
   public void runDefaultPackageTest() {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("default-package");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
+    options.setPackageName(null);
     options.setRegressionBasename("DefaultPackageReg");
     options.setErrorBasename("DefaultPackageErr");
     options.addTestClass("ClassInDefaultPackage");
@@ -643,8 +647,8 @@ public class RandoopSystemTest {
         systemTestEnvironment.createTestEnvironment("exception-tests");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("misc");
-    options.setRegressionBasename("RegressionTest");
-    options.setErrorBasename("ErrorTest");
+    options.setRegressionBasename("ExceptionTest");
+    options.setErrorBasename("ExceptionErr");
     options.addTestClass("misc.ThrowsAnonymousException");
     options.setOption("outputLimit", "5");
 
@@ -1354,7 +1358,8 @@ public class RandoopSystemTest {
                   "Test suite should have no error tests, but has %d:%n%n",
                   runStatus.errorTestCount));
 
-          String packagePathString = options.getPackageName().replace('.', '/');
+          String packageString = options.getPackageName();
+          String packagePathString = packageString == null ? "" : packageString.replace('.', '/');
           Path srcDir = environment.sourceDir.resolve(packagePathString);
           try (DirectoryStream<Path> testFiles =
               Files.newDirectoryStream(srcDir, errorBasename + "*.java")) {

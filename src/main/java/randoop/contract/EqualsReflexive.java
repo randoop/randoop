@@ -1,14 +1,13 @@
 package randoop.contract;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** The contract: {@code x0.equals(x0)==true}. */
-public final class EqualsReflexive implements ObjectContract {
+public final class EqualsReflexive extends ObjectContract {
   private static final EqualsReflexive instance = new EqualsReflexive();
 
   private EqualsReflexive() {}
@@ -32,11 +31,11 @@ public final class EqualsReflexive implements ObjectContract {
     return 1;
   }
 
+  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE));
+
   @Override
   public TypeTuple getInputTypes() {
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(JavaTypes.OBJECT_TYPE);
-    return new TypeTuple(inputTypes);
+    return inputTypes;
   }
 
   @Override
@@ -47,11 +46,6 @@ public final class EqualsReflexive implements ObjectContract {
   @Override
   public String get_observer_str() {
     return "EqualsReflexive";
-  }
-
-  @Override
-  public boolean evalExceptionMeansFailure() {
-    return true;
   }
 
   @Override

@@ -11,29 +11,14 @@ public final class MethodReflectionCode extends ReflectionCode {
   private final Method method;
   private final Object receiver;
   private final Object[] inputs;
-  private Object retval;
-  private Throwable exceptionThrown;
 
   /*
    * receiver is ok to be null - will cause NPE on invocation
    */
   public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
-    if (method == null) throw new IllegalArgumentException("method is null");
-    if (inputs == null) throw new IllegalArgumentException("inputs is null");
     this.receiver = receiver;
     this.method = method;
     this.inputs = inputs;
-  }
-
-  @SuppressWarnings("Finally")
-  @Override
-  public void runReflectionCodeRaw() throws IllegalAccessException, InvocationTargetException {
-
-    if (hasRunAlready()) {
-      throw new NotCaughtIllegalStateException("cannot run this twice " + this);
-    }
-
-    this.setRunAlready();
 
     if (!this.method.isAccessible()) {
       this.method.setAccessible(true);
@@ -44,6 +29,15 @@ public final class MethodReflectionCode extends ReflectionCode {
       // sequences will be created in the randoop.experiments.
       // throw new IllegalStateException("Not accessible: " + this.meth);
     }
+  }
+
+  private boolean isInstanceMethod() {
+    return !Modifier.isStatic(method.getModifiers());
+  }
+
+  @SuppressWarnings("Finally")
+  @Override
+  public void runReflectionCodeRaw() throws IllegalAccessException, InvocationTargetException {
 
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
@@ -58,46 +52,7 @@ public final class MethodReflectionCode extends ReflectionCode {
     } catch (InvocationTargetException e) {
       this.exceptionThrown = e.getCause();
       throw e;
-    } finally {
-      if (retval != null && exceptionThrown != null) {
-        throw new NotCaughtIllegalStateException("cannot have both retval and exception not null");
-      }
     }
-  }
-
-  private boolean isInstanceMethod() {
-    return !Modifier.isStatic(method.getModifiers());
-  }
-
-  @Override
-  public Object getReturnVariable() {
-    if (!hasRunAlready()) throw new IllegalStateException("run first, then ask");
-    if (receiver == null && retval != null && isInstanceMethod()) {
-      throw new IllegalStateException("receiver was null - expected NPE from call to: " + method);
-    }
-    return retval;
-  }
-
-  @Override
-  public Throwable getExceptionThrown() {
-    if (!hasRunAlready()) throw new IllegalStateException("run first, then ask");
-    if (receiver == null
-        && !(exceptionThrown instanceof NullPointerException)
-        && isInstanceMethod())
-      throw new IllegalStateException("receiver was null - expected NPE from call to: " + method);
-    return exceptionThrown;
-  }
-
-  public Method getMethod() {
-    return this.method;
-  }
-
-  public Object getReceiver() {
-    return this.receiver;
-  }
-
-  public Object[] getInputs() {
-    return this.inputs.clone(); // be defensive
   }
 
   @Override
