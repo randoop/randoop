@@ -1,7 +1,6 @@
 package randoop.contract;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Objects;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -46,9 +45,7 @@ public final class EnumValue extends ObjectContract {
 
   @Override
   public TypeTuple getInputTypes() {
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(type);
-    return new TypeTuple(inputTypes);
+    return new TypeTuple(Collections.<Type>singletonList(type));
   }
 
   @Override

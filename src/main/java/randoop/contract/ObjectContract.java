@@ -96,7 +96,6 @@ public abstract class ObjectContract {
    */
   public abstract String get_observer_str();
 
-  // TODO: should this be in ObjectContract instead?
   /**
    * Checks a contract on a particular array of values.
    *
@@ -105,19 +104,15 @@ public abstract class ObjectContract {
    * @return a {@link ObjectCheck} if the contract fails, null otherwise
    */
   public final Check checkContract(ExecutableSequence eseq, Object[] values) {
-    // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
-    //   Randomness.selectionLog.log("checkContract: this=%s%n", this);
-    //   Randomness.selectionLog.log("  values (%d) =%n", values.length);
-    //   for (Object value : values) {
-    //     Randomness.selectionLog.log(
-    //         "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
-    //   }
-    // }
 
     ExecutionOutcome outcome = ObjectContractUtils.execute(this, values);
 
     if (Log.isLoggingOn()) {
       Log.logLine("Executed contract " + this.getClass());
+      //   Log.logLine("  values (length %d) =%n", values.length);
+      //   for (Object value : values) {
+      //     Log.logLine(
+      //         "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
       Log.logLine(" Contract outcome " + outcome);
     }
 
@@ -146,14 +141,12 @@ public abstract class ObjectContract {
     for (int i = 0; i < varArray.length; i++) {
       List<Variable> variables = eseq.getVariables(values[i]);
       varArray[i] = Randomness.randomMember(variables);
-      // if (Randomness.selectionLog.enabled() && Randomness.verbosity > 0) {
-      //   Randomness.selectionLog.log(
+      //   Log.logLine(
       //       "values[%d] = %s @%s%n",
       //       i, toStringHandleExceptions(values[i]), System.identityHashCode(values[i]));
-      //   Randomness.selectionLog.log("  candidate variables = %s%n", variables);
-      //   Randomness.selectionLog.log(
+      //   Log.logLine("  candidate variables = %s%n", variables);
+      //   Log.logLine(
       //       "  varArray[%d] = %s @%s%n", i, varArray[i], System.identityHashCode(varArray[i]));
-      // }
     }
 
     return new ObjectCheck(this, varArray);

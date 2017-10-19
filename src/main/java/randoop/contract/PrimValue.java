@@ -1,7 +1,6 @@
 package randoop.contract;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Objects;
 import randoop.Globals;
 import randoop.sequence.Value;
@@ -80,11 +79,11 @@ public final class PrimValue extends ObjectContract {
     return 1;
   }
 
+  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE));
+
   @Override
   public TypeTuple getInputTypes() {
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(JavaTypes.OBJECT_TYPE);
-    return new TypeTuple(inputTypes);
+    return inputTypes;
   }
 
   @Override

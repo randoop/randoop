@@ -124,15 +124,15 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
   }
 
   /**
-   * Finds the first tuple for which a contract fails, and returns the failing check.
+   * If a contract fails for some tuple, returns some such failing check.
    *
    * @param tuples the value tuples to use as input to the contracts
-   * @return a {@link Check} of the first contract that failed (for any tuple), or null if no
-   *     contracts failed
+   * @return a {@link Check} of the first contract+tuple that failed, or null if no contracts failed
    */
   Check checkContracts(
       List<ObjectContract> contracts, ExecutableSequence eseq, TupleSet<ReferenceValue> tuples) {
     for (List<ReferenceValue> tuple : tuples.tuples()) {
+      Object[] values = getValues(tuple);
 
       for (ObjectContract contract : contracts) {
         assert tuple.size() == contract.getArity()
@@ -144,7 +144,6 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
           if (Log.isLoggingOn()) {
             Log.logLine("Checking contract " + contract.getClass());
           }
-          Object[] values = getValues(tuple);
           Check check = contract.checkContract(eseq, values);
           if (check != null) {
             return check;

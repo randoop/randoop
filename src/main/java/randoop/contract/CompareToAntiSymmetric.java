@@ -1,7 +1,6 @@
 package randoop.contract;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -44,12 +43,12 @@ public class CompareToAntiSymmetric extends ObjectContract {
     return 2;
   }
 
+  static TypeTuple inputTypes =
+      new TypeTuple(Arrays.<Type>asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
+
   @Override
   public TypeTuple getInputTypes() {
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(JavaTypes.COMPARABLE_TYPE);
-    inputTypes.add(JavaTypes.COMPARABLE_TYPE);
-    return new TypeTuple(inputTypes);
+    return inputTypes;
   }
 
   @Override

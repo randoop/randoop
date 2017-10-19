@@ -1,6 +1,6 @@
 package randoop.generation;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import randoop.sequence.ExecutableSequence;
 
@@ -9,7 +9,7 @@ public class RandoopListenerManager {
   private List<IEventListener> listeners;
 
   public RandoopListenerManager() {
-    listeners = new LinkedList<>();
+    listeners = new ArrayList<>();
   }
 
   public void addListener(IEventListener listener) {
