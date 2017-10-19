@@ -9,7 +9,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.Globals;
 import randoop.main.OptionsCache;
-import randoop.util.Timer;
 
 public abstract class AbstractPerformanceTest {
 
@@ -37,14 +36,13 @@ public abstract class AbstractPerformanceTest {
   private double computeFactor() {
     String foo = "make sure that the loop doesn't get optimized away";
     List<String> list = new ArrayList<>();
-    Timer t = new Timer();
-    t.startTiming();
+    long startTime = System.currentTimeMillis();
     for (int i = 0; i < 50000000; i++) {
       list.add(foo);
       list.remove(0);
     }
-    t.stopTiming();
-    return t.getTimeElapsedMillis() / DIVIDE_FACTOR;
+    long time = System.currentTimeMillis() - startTime;
+    return time / DIVIDE_FACTOR;
   }
 
   @Test
@@ -56,16 +54,15 @@ public abstract class AbstractPerformanceTest {
     System.out.println("@@@ EXPECTED_MIN: " + EXPECTED_MIN);
     long expected = (long) (factor * expectedTimeMillis());
 
-    Timer timer = new Timer();
-    timer.startTiming();
+    long startTime = System.currentTimeMillis();
     execute();
-    timer.stopTiming();
+    long time = System.currentTimeMillis() - startTime;
 
     System.out.println();
     System.out.println("Expected time: " + expected);
-    System.out.println("Actual time:   " + timer.getTimeElapsedMillis());
+    System.out.println("Actual time:   " + time);
 
-    if (timer.getTimeElapsedMillis() > expected) {
+    if (time > expected) {
       StringBuilder b = new StringBuilder();
       b.append(
           "Failure: performance test actual time was greater than expected time."

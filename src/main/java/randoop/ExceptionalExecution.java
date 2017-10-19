@@ -4,14 +4,13 @@ package randoop;
 public class ExceptionalExecution extends ExecutionOutcome {
 
   private final Throwable exception;
-  private final long executionTime;
 
   public ExceptionalExecution(Throwable exception, long executionTime) {
+    super(executionTime);
     if (exception == null) {
       throw new IllegalArgumentException("exception must be non-null");
     }
     this.exception = exception;
-    this.executionTime = executionTime;
   }
 
   public Throwable getException() {
@@ -25,10 +24,5 @@ public class ExceptionalExecution extends ExecutionOutcome {
   @Override
   public String toString() {
     return "// <ExceptionalExecution, exception type=" + exception.getClass().getName() + ">;";
-  }
-
-  @Override
-  public long getExecutionTime() {
-    return executionTime;
   }
 }

@@ -4,8 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import randoop.util.RandoopSecurityManager.Status;
 
 /**
- * Wraps a method or constructor together with its arguments, ready for execution. Can be run only
- * once.
+ * Wraps a method or constructor together with its arguments. Can be run only once. {@link
+ * #hasRunAlready()} indicates whether it has been run.
  *
  * <p>Implemented by parts of Randoop that want to execute reflection code via ReflectionExecutor.
  */
@@ -21,9 +21,11 @@ public abstract class ReflectionCode {
   protected Throwable exceptionThrown;
 
   /**
-   * Runs the reflection code that this object represents, but first, if System.getSecurityManager()
-   * returns a RandoopSecurityManager, this method sets the security manager's status to ON. Before
-   * exiting, this method sets the security manager's status to its status before this call.
+   * Runs the reflection code that this object represents.
+   *
+   * <p>First, if System.getSecurityManager() returns a RandoopSecurityManager, this method sets the
+   * security manager's status to ON. Before exiting, this method sets the security manager's status
+   * to its status before this call.
    *
    * @throws InvocationTargetException if executed code throws an exception
    * @throws IllegalAccessException if the executed code involves inaccessible method or constructor

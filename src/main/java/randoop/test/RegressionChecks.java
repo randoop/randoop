@@ -11,6 +11,7 @@ public class RegressionChecks implements TestChecks {
   private Set<Check> checks;
   private ExceptionCheck exceptionCheck;
 
+  /** Create an empty set of regression checks. */
   public RegressionChecks() {
     this.checks = new LinkedHashSet<>();
     this.exceptionCheck = null;
@@ -51,7 +52,8 @@ public class RegressionChecks implements TestChecks {
   /**
    * {@inheritDoc}
    *
-   * @return map of non-exception checks in this object, all of which are passing
+   * @return map of non-exception checks in this object. each mapped to true, indicating it is
+   *     passing
    */
   @Override
   public Map<Check, Boolean> get() {

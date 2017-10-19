@@ -34,12 +34,12 @@ public class ExtendGenerator implements TestCheckGenerator {
    *     checks
    */
   @Override
-  public TestChecks visit(ExecutableSequence eseq) {
-    TestChecks checks = firstGenerator.visit(eseq);
+  public TestChecks generateTestChecks(ExecutableSequence eseq) {
+    TestChecks checks = firstGenerator.generateTestChecks(eseq);
     if (checks.hasInvalidBehavior() || checks.hasErrorBehavior()) {
       return checks;
     } else {
-      return secondGenerator.visit(eseq);
+      return secondGenerator.generateTestChecks(eseq);
     }
   }
 }
