@@ -506,8 +506,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns an arbitrary variable that has the given value in the outcome of executing this
-   * sequence.
+   * Returns some variable that has the given value in the outcome of executing this sequence.
    *
    * @param value the value
    * @return the set of variables that have the given value
