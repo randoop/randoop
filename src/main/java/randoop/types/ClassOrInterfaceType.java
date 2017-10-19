@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public abstract class ClassOrInterfaceType extends ReferenceType {
 
-  /** The enclosing type: non-null if this is a member class. */
+  /** The enclosing type: non-null only if this is a member class. */
   private ClassOrInterfaceType enclosingType = null;
 
   /**
