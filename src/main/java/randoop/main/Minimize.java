@@ -57,12 +57,7 @@ import plume.OptionGroup;
 import plume.Options;
 import plume.TimeLimitProcess;
 import randoop.Globals;
-import randoop.output.ClassRenamingVisitor;
-import randoop.output.ClassTypeNameSimplifyVisitor;
-import randoop.output.ClassTypeVisitor;
-import randoop.output.FieldAccessTypeNameSimplifyVisitor;
-import randoop.output.MethodTypeNameSimplifyVisitor;
-import randoop.output.PrimitiveAndWrappedTypeVarNameCollector;
+import randoop.output.*;
 
 /**
  * This program minimizes a failing JUnit test suite. Its three command-line arguments are:
@@ -817,12 +812,15 @@ public class Minimize extends CommandHandler {
                 return o1.toString().compareTo(o2.toString());
               }
             });
+
     new ClassTypeVisitor().visit(compUnit, fullyQualifiedNames);
 
     CompilationUnit result = compUnit;
+
     for (ClassOrInterfaceType type : fullyQualifiedNames) {
       // Copy and modify the compilation unit.
-      CompilationUnit compUnitWithSimpleTypeNames = (CompilationUnit) result.clone();
+      CompilationUnit compUnitWithSimpleTypeNames =
+          (CompilationUnit) result.accept(new CloneVisitor(), null);
 
       // String representation of the fully-qualified type name.
       String typeName = type.getScope() + "." + type.getName();
@@ -1190,10 +1188,10 @@ public class Minimize extends CommandHandler {
   /**
    * Sort a compilation unit's imports by name.
    *
-   * @param compilationUnit the compilation unit whose imports will be sorted by name
+   * @param compUnit the compilation unit whose imports will be sorted by name
    */
-  private static void sortImports(CompilationUnit compilationUnit) {
-    List<ImportDeclaration> imports = compilationUnit.getImports();
+  private static void sortImports(CompilationUnit compUnit) {
+    List<ImportDeclaration> imports = compUnit.getImports();
 
     Collections.sort(
         imports,
@@ -1204,7 +1202,7 @@ public class Minimize extends CommandHandler {
           }
         });
 
-    compilationUnit.setImports(imports);
+    compUnit.setImports(imports);
   }
 
   /** Contains the standard output, standard error, and exit status from running a process. */
