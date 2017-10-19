@@ -658,6 +658,30 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
+  /** Tests that Randoop deals properly with ConcurrentModificationException in contract checks. */
+  @Test
+  public void runCMExceptionTest() {
+
+    // TEMPORARILY DISABLE THE TEST
+    if (true) {
+      return;
+    }
+
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("cm-exception-tests");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("misc");
+    options.setRegressionBasename("CMExceptionTest");
+    options.setErrorBasename("CMExceptionErr");
+    options.addTestClass("misc.MyCmeList");
+    options.setOption("outputLimit", "10");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+  }
+
   /**
    * Test collection generation.
    *
