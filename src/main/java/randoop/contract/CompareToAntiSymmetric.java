@@ -12,7 +12,7 @@ import randoop.types.TypeTuple;
  *
  * <pre>Math.signum(x0.compareTo(x1)) == -Math.signum(x1.compareTo(x0))</pre>
  */
-public class CompareToAntiSymmetric implements ObjectContract {
+public class CompareToAntiSymmetric extends ObjectContract {
   private static final CompareToAntiSymmetric instance = new CompareToAntiSymmetric();
 
   private CompareToAntiSymmetric() {}

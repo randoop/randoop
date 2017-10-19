@@ -18,7 +18,7 @@ import randoop.types.TypeTuple;
  * property holds. The property thus represents a <i>regression</i> as it captures the behavior of
  * the code when it is executed.
  */
-public final class PrimValue implements ObjectContract {
+public final class PrimValue extends ObjectContract {
 
   /** Specifies how the contract is to be printed. */
   public enum PrintMode {

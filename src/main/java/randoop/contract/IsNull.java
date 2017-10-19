@@ -15,7 +15,7 @@ import randoop.types.TypeTuple;
  * property holds. The property thus represents a <i>regression</i> as it captures the behavior of
  * the code when it is executed.
  */
-public final class IsNull implements ObjectContract {
+public final class IsNull extends ObjectContract {
 
   @Override
   public boolean equals(Object o) {

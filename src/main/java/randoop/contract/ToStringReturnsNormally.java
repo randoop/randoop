@@ -8,7 +8,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** Checks that calling toString() on an object does not throw an exception. */
-public final class ToStringReturnsNormally implements ObjectContract {
+public final class ToStringReturnsNormally extends ObjectContract {
 
   @Override
   public boolean equals(Object o) {

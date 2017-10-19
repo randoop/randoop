@@ -12,7 +12,7 @@ import randoop.types.TypeTuple;
  *
  * <pre>(x0.compareTo(x1) == 0) == x0.equals(x1)</pre>
  */
-public class CompareToEquals implements ObjectContract {
+public class CompareToEquals extends ObjectContract {
   private static final CompareToEquals instance = new CompareToEquals();
 
   private CompareToEquals() {}

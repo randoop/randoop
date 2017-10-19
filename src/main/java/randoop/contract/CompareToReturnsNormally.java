@@ -8,7 +8,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** Checks that calling compareTo() on an object does not throw an exception. */
-public class CompareToReturnsNormally implements ObjectContract {
+public class CompareToReturnsNormally extends ObjectContract {
   private static final CompareToReturnsNormally instance = new CompareToReturnsNormally();
 
   private CompareToReturnsNormally() {}

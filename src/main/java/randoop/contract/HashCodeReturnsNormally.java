@@ -8,7 +8,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** Checks that calling hashCode() on an object does not throw an exception. */
-public final class HashCodeReturnsNormally implements ObjectContract {
+public final class HashCodeReturnsNormally extends ObjectContract {
   private static final HashCodeReturnsNormally instance = new HashCodeReturnsNormally();
 
   private HashCodeReturnsNormally() {}

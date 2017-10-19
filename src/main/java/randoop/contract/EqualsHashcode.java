@@ -8,7 +8,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** The contract: {@code o1.equals(o2) ==> o1.hashCode() == o2.hashCode()}. */
-public final class EqualsHashcode implements ObjectContract {
+public final class EqualsHashcode extends ObjectContract {
   private static final EqualsHashcode instance = new EqualsHashcode();
 
   private EqualsHashcode() {}

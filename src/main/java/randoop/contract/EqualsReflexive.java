@@ -8,7 +8,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** The contract: {@code x0.equals(x0)==true}. */
-public final class EqualsReflexive implements ObjectContract {
+public final class EqualsReflexive extends ObjectContract {
   private static final EqualsReflexive instance = new EqualsReflexive();
 
   private EqualsReflexive() {}

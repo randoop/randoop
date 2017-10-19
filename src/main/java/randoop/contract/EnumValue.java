@@ -10,7 +10,7 @@ import randoop.types.TypeTuple;
  * A check for a particular value of an {@code Enum}. To be used in regression tests when {@code
  * Enum} values are created.
  */
-public final class EnumValue implements ObjectContract {
+public final class EnumValue extends ObjectContract {
 
   public final Enum<?> value;
   private final Type type;

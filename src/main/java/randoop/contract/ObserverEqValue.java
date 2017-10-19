@@ -22,7 +22,7 @@ import randoop.util.Util;
  * determines that the above property holds. The property thus represents a <i>regression</i> as it
  * captures the behavior of the code when it is executed.
  */
-public final class ObserverEqValue implements ObjectContract {
+public final class ObserverEqValue extends ObjectContract {
 
   /** The observer method. */
   public TypedOperation observer;

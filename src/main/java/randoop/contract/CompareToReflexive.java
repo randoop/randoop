@@ -10,7 +10,7 @@ import randoop.types.TypeTuple;
 /**
  * The contract: Checks that an object is reflexive over compareTo. {@code x0.compareTo(x0) == 0}.
  */
-public class CompareToReflexive implements ObjectContract {
+public class CompareToReflexive extends ObjectContract {
   private static final CompareToReflexive instance = new CompareToReflexive();
 
   private CompareToReflexive() {}

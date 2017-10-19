@@ -8,7 +8,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** Checks that calling equals() on an object does not throw an exception. */
-public final class EqualsReturnsNormally implements ObjectContract {
+public final class EqualsReturnsNormally extends ObjectContract {
   private static final EqualsReturnsNormally instance = new EqualsReturnsNormally();
 
   private EqualsReturnsNormally() {}
