@@ -10,6 +10,7 @@ import java.util.Map;
  *
  * @see RegressionChecks
  * @see ErrorRevealingChecks
+ * @see InvalidChecks
  */
 public interface TestChecks {
 

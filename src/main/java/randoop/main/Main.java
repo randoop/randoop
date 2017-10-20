@@ -69,7 +69,10 @@ public class Main {
 
     } catch (RandoopTextuiException e) {
 
-      System.out.println(e.getMessage());
+      System.out.println();
+      if (e.getMessage() != null) {
+        System.out.println(e.getMessage());
+      }
       System.out.println("To get help on this command, invoke Randoop with");
       System.out.println("`help " + handler.fcommand + "' as arguments.");
       System.exit(1);

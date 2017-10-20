@@ -45,6 +45,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
     this.exceptionPredicate = exceptionPredicate;
   }
 
+  // TODO: what is a "failure exception"?
+  // TODO: in what sense does this "Adds checks to final statement of sequence"?
   /**
    * {@inheritDoc}
    *

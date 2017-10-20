@@ -8,6 +8,9 @@ package randoop;
  *   <li>the execution time
  *   <li>the textual output
  * </ul>
+ *
+ * The subclasses are {@link NormalExecution}, {@link ExceptionalExecution}, and {@link
+ * NotExecuted}.
  */
 public abstract class ExecutionOutcome {
 

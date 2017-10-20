@@ -16,7 +16,6 @@ import randoop.test.TestCheckGenerator;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor;
-import randoop.util.Timer;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
 
@@ -49,11 +48,13 @@ public abstract class AbstractGenerator {
   @RandoopStat("Number of invalid sequences generated.")
   public int invalidSequenceCount = 0;
 
-  /**
-   * The timer used to determine how much time has elapsed since the start of generator and whether
-   * generation should stop.
-   */
-  public final Timer timer = new Timer();
+  /** When the generator started (millisecond-based system timestamp). */
+  private long startTime = -1;
+
+  /** Elapsed time since the generator started. */
+  private long elapsedTime() {
+    return System.currentTimeMillis() - startTime;
+  }
 
   /** Limits for generation, after which the generator will stop. */
   public final GenInputsAbstract.Limits limits;
@@ -194,7 +195,7 @@ public abstract class AbstractGenerator {
    * @return true iff any stopping criterion is met
    */
   protected boolean shouldStop() {
-    return (limits.timeLimitMillis != 0 && timer.getTimeElapsedMillis() >= limits.timeLimitMillis)
+    return (limits.timeLimitMillis != 0 && elapsedTime() >= limits.timeLimitMillis)
         || (numAttemptedSequences() >= limits.attemptedLimit)
         || (numGeneratedSequences() >= limits.generatedLimit)
         || (numOutputSequences() >= limits.outputLimit)
@@ -255,7 +256,7 @@ public abstract class AbstractGenerator {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
     }
 
-    timer.startTiming();
+    startTime = System.currentTimeMillis();
 
     if (GenInputsAbstract.progressdisplay) {
       progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE);

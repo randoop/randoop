@@ -21,7 +21,6 @@ import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
-import randoop.util.Timer;
 
 // DEPRECATED. Will delete after testing other performance tests
 // in different machines.
@@ -46,13 +45,13 @@ public class ForwardExplorerPerformanceTest {
   private static long performanceMultiplier() {
     String foo = "make sure that the loop doesn't get optimized away";
     List<String> list = new ArrayList<>();
-    Timer t = new Timer();
-    t.startTiming();
+    long startTime = System.currentTimeMillis();
     for (int i = 0; i < 10000000; i++) {
       list.add(foo);
       list.remove(0);
     }
-    return t.getTimeElapsedMillis();
+    long time = System.currentTimeMillis() - startTime;
+    return time;
   }
 
   @Test
