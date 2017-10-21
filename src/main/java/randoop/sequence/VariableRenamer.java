@@ -55,11 +55,15 @@ class VariableRenamer {
    * @return a variable name based on its type, without a trailing number, and is camel cased
    */
   private static String getVariableName(Type type, int depth) {
+    // Special cases.
     if (type.isVoid()) {
       return "void";
-    }
-    if (type.equals(JavaTypes.CLASS_TYPE)) {
+    } else if (type.equals(JavaTypes.CLASS_TYPE)) {
       return "cls";
+    } else if (type.isObject()) {
+      return "obj";
+    } else if (type.isString()) {
+      return "str";
     }
 
     // Primitive types.
@@ -70,8 +74,8 @@ class VariableRenamer {
       return type.getName();
     }
 
+    // Array types.
     if (type.isArray()) {
-      // Array types.
       while (type.isArray()) {
         type = ((ArrayType) type).getComponentType();
       }
@@ -80,6 +84,9 @@ class VariableRenamer {
 
     // Get the simple name of the type.
     String varName = type.getSimpleName();
+    if (varName.length() == 0) {
+      return "anonymous";
+    }
 
     if (type.isParameterized()) {
       Class<?> typeClass = type.getRuntimeClass();
@@ -107,27 +114,9 @@ class VariableRenamer {
         if (depth >= 0) {
           String argumentName =
               getVariableName(((ReferenceArgument) argument).getReferenceType(), depth - 1);
-
-          varName = argumentName + capitalizeString(varName);
+          varName = lowercaseFirstCharacter(argumentName) + capitalizeString(varName);
         }
       }
-    } else {
-      // Special cases: Object, String.
-      if (type.isObject()) {
-        varName = "obj";
-      } else if (type.isString()) {
-        varName = "str";
-      } else {
-        // All other object types.
-        if (varName.length() == 0) {
-          varName = "anonymous";
-        }
-      }
-    }
-
-    // Preserve camel case.
-    if (Character.isUpperCase(varName.charAt(0))) {
-      varName = lowercaseFirstCharacter(varName);
     }
 
     // Make sure that the last character is not a digit.
