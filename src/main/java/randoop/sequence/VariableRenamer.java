@@ -40,10 +40,23 @@ class VariableRenamer {
    * </pre>
    *
    * @param type the type to use as base of variable name
-   * @return a variable name based on its type, without a trailing number
+   * @return a variable name based on its type, with the first character lowercase and the final
+   *     character not a digit
    */
   static String getVariableName(Type type) {
-    return getVariableName(type, VAR_NAME_MAX_DEPTH);
+    String varName = getVariableName(type, VAR_NAME_MAX_DEPTH);
+
+    // Preserve camel case.
+    if (Character.isUpperCase(varName.charAt(0))) {
+      varName = lowercaseFirstCharacter(varName);
+    }
+
+    // Make sure that the last character is not a digit.
+    if (Character.isDigit(varName.charAt(varName.length() - 1))) {
+      varName += "_";
+    }
+
+    return varName;
   }
 
   /**
@@ -52,7 +65,8 @@ class VariableRenamer {
    * @param type the type to use as the base of the variable name
    * @param depth the number of components (i.e. type arguments) of the type that will be used to
    *     create a name for the variable
-   * @return a variable name based on its type, without a trailing number, and is camel cased
+   * @return a variable name based on its type and is camel cased. The first character may be
+   *     uppercase.
    */
   private static String getVariableName(Type type, int depth) {
     // Special cases.
@@ -115,14 +129,9 @@ class VariableRenamer {
           String argumentName =
               getVariableName(((ReferenceArgument) argument).getReferenceType(), depth - 1);
 
-          varName = lowercaseFirstCharacter(argumentName) + capitalizeString(varName);
+          varName = argumentName + capitalizeString(varName);
         }
       }
-    }
-
-    // Make sure that the last character is not a digit.
-    if (Character.isDigit(varName.charAt(varName.length() - 1))) {
-      varName += "_";
     }
 
     return varName;
