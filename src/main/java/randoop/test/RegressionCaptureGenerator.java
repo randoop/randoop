@@ -37,7 +37,7 @@ import randoop.util.MultiMap;
  *       Object).
  * </ul>
  */
-public final class RegressionCaptureVisitor implements TestCheckGenerator {
+public final class RegressionCaptureGenerator implements TestCheckGenerator {
 
   /** The generator for expected exceptions. */
   private ExpectedExceptionCheckGen exceptionExpectation;
@@ -51,7 +51,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
   /** The flag whether to include regression assertions */
   private boolean includeAssertions;
 
-  public RegressionCaptureVisitor(
+  public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
       MultiMap<Type, TypedOperation> observerMap,
       VisibilityPredicate isVisible,
@@ -74,7 +74,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
    * @throws Error if any statement is not executed, or exception occurs before last statement
    */
   @Override
-  public TestChecks generateTestChecks(ExecutableSequence sequence) {
+  public RegressionChecks generateTestChecks(ExecutableSequence sequence) {
 
     RegressionChecks checks = new RegressionChecks();
 

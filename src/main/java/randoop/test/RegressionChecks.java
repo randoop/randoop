@@ -1,12 +1,10 @@
 package randoop.test;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class RegressionChecks implements TestChecks {
+public class RegressionChecks implements TestChecks<RegressionChecks> {
 
   private Set<Check> checks;
   private ExceptionCheck exceptionCheck;
@@ -56,12 +54,8 @@ public class RegressionChecks implements TestChecks {
    *     passing
    */
   @Override
-  public Map<Check, Boolean> get() {
-    Map<Check, Boolean> mp = new LinkedHashMap<>();
-    for (Check ck : checks) {
-      mp.put(ck, true);
-    }
-    return mp;
+  public Set<Check> checks() {
+    return checks;
   }
 
   /**
@@ -110,18 +104,14 @@ public class RegressionChecks implements TestChecks {
   }
 
   @Override
-  public TestChecks commonChecks(TestChecks testChecks) {
-    if (!(testChecks instanceof RegressionChecks)) {
-      throw new IllegalArgumentException("Must compare with a RegressionChecks object");
-    }
+  public RegressionChecks commonChecks(RegressionChecks other) {
     RegressionChecks common = new RegressionChecks();
-    RegressionChecks rc = (RegressionChecks) testChecks;
     for (Check ck : checks) {
-      if (rc.checks.contains(ck)) {
+      if (other.checks.contains(ck)) {
         common.add(ck);
       }
     }
-    if (exceptionCheck.equals(rc.exceptionCheck)) {
+    if (exceptionCheck.equals(other.exceptionCheck)) {
       common.add(exceptionCheck);
     }
     return common;

@@ -1,10 +1,14 @@
 package randoop.test;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.Set;
+import randoop.BugInRandoopException;
 
-/** Implements a set of checks capturing invalid behavior in a sequence. */
-public class InvalidChecks implements TestChecks {
+/**
+ * An empty or singleton set. It contains at most one check, which captures invalid behavior in a
+ * sequence.
+ */
+public class InvalidCheck implements TestChecks<InvalidCheck> {
 
   private Check check;
 
@@ -18,12 +22,12 @@ public class InvalidChecks implements TestChecks {
   }
 
   @Override
-  public Map<Check, Boolean> get() {
-    Map<Check, Boolean> mp = new LinkedHashMap<>();
+  public Set<Check> checks() {
     if (check != null) {
-      mp.put(check, false);
+      return Collections.singleton(check);
+    } else {
+      return Collections.emptySet();
     }
-    return mp;
   }
 
   @Override
@@ -46,17 +50,17 @@ public class InvalidChecks implements TestChecks {
 
   @Override
   public void add(Check check) {
+    if (this.check != null) {
+      throw new BugInRandoopException(
+          String.format("add(%s) when InvalidCheck already contains %s", check, this.check));
+    }
     this.check = check;
   }
 
   @Override
-  public TestChecks commonChecks(TestChecks checks) {
-    if (!(checks instanceof InvalidChecks)) {
-      throw new IllegalArgumentException("Must compare with an InvalidChecks object");
-    }
-    InvalidChecks ic = (InvalidChecks) checks;
-    TestChecks common = new InvalidChecks();
-    if (this.check != null && check.equals(ic.check)) {
+  public InvalidCheck commonChecks(InvalidCheck other) {
+    InvalidCheck common = new InvalidCheck();
+    if (this.check != null && check.equals(other.check)) {
       common.add(check);
     }
     return common;

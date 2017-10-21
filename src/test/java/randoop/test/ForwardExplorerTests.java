@@ -80,8 +80,8 @@ public class ForwardExplorerTests {
             mgr,
             null,
             null);
-    explorer.addTestCheckGenerator(createChecker(new ContractSet()));
-    explorer.addTestPredicate(createOutputTest());
+    explorer.setTestCheckGenerator(createChecker(new ContractSet()));
+    explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
     explorer.explore();
     explorer.getOperationHistory().outputTable();
@@ -135,8 +135,8 @@ public class ForwardExplorerTests {
             mgr,
             null,
             null);
-    explorer.addTestCheckGenerator(createChecker(new ContractSet()));
-    explorer.addTestPredicate(createOutputTest());
+    explorer.setTestCheckGenerator(createChecker(new ContractSet()));
+    explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
     try {
       explorer.explore();
@@ -197,8 +197,8 @@ public class ForwardExplorerTests {
             null,
             null);
     GenInputsAbstract.forbid_null = false;
-    explorer.addTestCheckGenerator(createChecker(new ContractSet()));
-    explorer.addTestPredicate(createOutputTest());
+    explorer.setTestCheckGenerator(createChecker(new ContractSet()));
+    explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
     try {
       explorer.explore();
@@ -224,9 +224,8 @@ public class ForwardExplorerTests {
   }
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
-    return (new GenTests())
-        .createTestCheckGenerator(
-            new PublicVisibilityPredicate(), contracts, new MultiMap<Type, TypedOperation>());
+    return GenTests.createTestCheckGenerator(
+        new PublicVisibilityPredicate(), contracts, new MultiMap<Type, TypedOperation>());
   }
 
   private static Predicate<ExecutableSequence> createOutputTest() {
@@ -241,7 +240,7 @@ public class ForwardExplorerTests {
         new TypedClassOperation(
             objectConstructor, JavaTypes.OBJECT_TYPE, new TypeTuple(), JavaTypes.OBJECT_TYPE);
     sequences.add((new Sequence().extend(op, new ArrayList<Variable>())));
-    return (new GenTests())
+    return new GenTests()
         .createTestOutputPredicate(
             sequences, new LinkedHashSet<Class<?>>(), require_classname_in_test);
   }

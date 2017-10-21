@@ -11,7 +11,7 @@ import randoop.test.predicate.ExceptionPredicate;
  * EmptyExceptionCheck} otherwise. Resulting tests only enforce expected matching exceptions.
  *
  * @see
- *     randoop.test.RegressionCaptureVisitor#generateTestChecks(randoop.sequence.ExecutableSequence)
+ *     randoop.test.RegressionCaptureGenerator#generateTestChecks(randoop.sequence.ExecutableSequence)
  */
 public class ExpectedExceptionCheckGen {
 

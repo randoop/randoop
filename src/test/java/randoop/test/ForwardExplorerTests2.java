@@ -88,7 +88,7 @@ public class ForwardExplorerTests2 {
             mgr,
             null,
             null);
-    exp.addTestCheckGenerator(createChecker(new ContractSet()));
+    exp.setTestCheckGenerator(createChecker(new ContractSet()));
 
     // get a SequenceExceptionError when repeat_heuristic=true
     try {
@@ -119,8 +119,7 @@ public class ForwardExplorerTests2 {
   }
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
-    return (new GenTests())
-        .createTestCheckGenerator(
-            new PublicVisibilityPredicate(), contracts, new MultiMap<Type, TypedOperation>());
+    return GenTests.createTestCheckGenerator(
+        new PublicVisibilityPredicate(), contracts, new MultiMap<Type, TypedOperation>());
   }
 }

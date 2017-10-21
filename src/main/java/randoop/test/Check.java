@@ -6,9 +6,13 @@ import randoop.sequence.Execution;
 // A better name for Check would be SequenceDecoration.
 
 /**
- * A Check represents the expected runtime behavior of a Sequence, at a particular offset. When a
- * unit test is run as a regression test, it should have the same behavior as it did previously, and
- * the Check objects represent that previous, expected behavior. Some examples of Checks are:
+ * A Check represents the expected runtime behavior of a Sequence, at a particular offset. For
+ * example, a client might add a {@code NotNull} check to the <em>i</em>th index of a sequence to
+ * signify that the value returned by the statement at index <em>i</em> should not be null.
+ *
+ * <p>When a unit test is run as a regression test, it should have the same behavior as it did
+ * previously, and the Check objects represent that previous, expected behavior. Some examples of
+ * Checks are:
  *
  * <ul>
  *   <li>{@link ExpectedExceptionCheck} -- an exception should be thrown
