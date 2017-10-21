@@ -84,6 +84,7 @@ class VariableRenamer {
 
     // Get the simple name of the type.
     String varName = type.getSimpleName();
+
     if (varName.length() == 0) {
       return "anonymous";
     }
