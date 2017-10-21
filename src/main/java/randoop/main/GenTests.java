@@ -163,18 +163,15 @@ public class GenTests extends GenInputsAbstract {
     try {
       String[] nonargs = options.parse(args);
       if (nonargs.length > 0) {
-        throw new ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
+        throw new ArgException("Unrecognized command-line arguments: " + Arrays.toString(nonargs));
       }
     } catch (ArgException ae) {
-      usage("while parsing command-line arguments: %s", ae.getMessage());
+      usage("While parsing command-line arguments: %s", ae.getMessage());
     }
 
     checkOptionsValid();
 
     Randomness.setSeed(randomseed);
-    if (GenInputsAbstract.selection_log != null) {
-      Randomness.selectionLog = new SimpleLog(GenInputsAbstract.selection_log);
-    }
 
     //java.security.Policy policy = java.security.Policy.getPolicy();
 
@@ -339,11 +336,18 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Create the generator for this session.
      */
-    AbstractGenerator explorer;
-
-    explorer =
+    AbstractGenerator explorer =
         new ForwardGenerator(
             operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
+
+    /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
+    operationModel.log();
+    TestUtils.setOperationLog(GenInputsAbstract.operation_history_log, explorer);
+    TestUtils.setSelectionLog(GenInputsAbstract.selection_log);
+
+    // These two debugging lines make runNoOutputTest() fail:
+    // operationModel.dumpModel(System.out);
+    // System.out.println("isLoggingOn = " + Log.isLoggingOn());
 
     /*
      * Create the test check generator for the contracts and observers
@@ -417,12 +421,10 @@ public class GenTests extends GenInputsAbstract {
 
     explorer.setExecutionVisitor(visitor);
 
+    // Diagnostic output
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("Explorer = %s\n", explorer);
     }
-
-    /* log setup */
-    operationModel.log();
     // These two debugging lines make runNoOutputTest() fail:
     // operationModel.dumpModel(System.out);
     // System.out.println("isLoggingOn = " + Log.isLoggingOn());
@@ -430,7 +432,6 @@ public class GenTests extends GenInputsAbstract {
       Log.logLine("Initial sequences (seeds):");
       componentMgr.log();
     }
-    TestUtils.setOperationLog(GenInputsAbstract.operation_history_log, explorer);
 
     /* Generate tests */
     try {
