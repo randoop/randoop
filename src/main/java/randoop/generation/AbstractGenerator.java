@@ -157,7 +157,7 @@ public abstract class AbstractGenerator {
    *
    * @param outputTest the predicate to be added to object
    */
-  public void addTestPredicate(Predicate<ExecutableSequence> outputTest) {
+  public void setTestPredicate(Predicate<ExecutableSequence> outputTest) {
     if (outputTest == null) {
       throw new IllegalArgumentException("outputTest must be non-null");
     }
@@ -169,7 +169,7 @@ public abstract class AbstractGenerator {
    *
    * @param executionVisitor the visitor
    */
-  public void addExecutionVisitor(ExecutionVisitor executionVisitor) {
+  public void setExecutionVisitor(ExecutionVisitor executionVisitor) {
     if (executionVisitor == null) {
       throw new IllegalArgumentException("executionVisitor must be non-null");
     }
@@ -182,7 +182,7 @@ public abstract class AbstractGenerator {
    *
    * @param checkGenerator the check generating visitor
    */
-  public void addTestCheckGenerator(TestCheckGenerator checkGenerator) {
+  public void setTestCheckGenerator(TestCheckGenerator checkGenerator) {
     if (checkGenerator == null) {
       throw new IllegalArgumentException("checkGenerator must be non-null");
     }

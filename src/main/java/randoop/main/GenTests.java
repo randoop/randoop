@@ -59,7 +59,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.SequenceExecutionException;
 import randoop.test.CompilableTestPredicate;
-import randoop.test.ContractCheckingVisitor;
+import randoop.test.ContractCheckingGenerator;
 import randoop.test.ContractSet;
 import randoop.test.ErrorTestPredicate;
 import randoop.test.ExcludeTestPredicate;
@@ -67,10 +67,10 @@ import randoop.test.ExpectedExceptionCheckGen;
 import randoop.test.ExtendGenerator;
 import randoop.test.IncludeIfCoversPredicate;
 import randoop.test.IncludeTestPredicate;
-import randoop.test.RegressionCaptureVisitor;
+import randoop.test.RegressionCaptureGenerator;
 import randoop.test.RegressionTestPredicate;
 import randoop.test.TestCheckGenerator;
-import randoop.test.ValidityCheckingVisitor;
+import randoop.test.ValidityCheckingGenerator;
 import randoop.test.predicate.AlwaysFalseExceptionPredicate;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
@@ -351,7 +351,7 @@ public class GenTests extends GenInputsAbstract {
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap);
 
-    explorer.addTestCheckGenerator(testGen);
+    explorer.setTestCheckGenerator(testGen);
 
     /*
      * Setup for test predicate
@@ -375,7 +375,7 @@ public class GenTests extends GenInputsAbstract {
             operationModel.getCoveredClassesGoal(),
             GenInputsAbstract.require_classname_in_test);
 
-    explorer.addTestPredicate(isOutputTest);
+    explorer.setTestPredicate(isOutputTest);
 
     /*
      * Setup visitors
@@ -415,7 +415,7 @@ public class GenTests extends GenInputsAbstract {
         break;
     }
 
-    explorer.addExecutionVisitor(visitor);
+    explorer.setExecutionVisitor(visitor);
 
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("Explorer = %s\n", explorer);
@@ -854,11 +854,11 @@ public class GenTests extends GenInputsAbstract {
     // Start with checking for invalid exceptions.
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
     TestCheckGenerator testGen =
-        new ValidityCheckingVisitor(isInvalid, !GenInputsAbstract.ignore_flaky_tests);
+        new ValidityCheckingGenerator(isInvalid, !GenInputsAbstract.ignore_flaky_tests);
 
     // Extend with contract checker.
     ExceptionPredicate isError = new ExceptionBehaviorPredicate(BehaviorType.ERROR);
-    ContractCheckingVisitor contractVisitor = new ContractCheckingVisitor(contracts, isError);
+    ContractCheckingGenerator contractVisitor = new ContractCheckingGenerator(contracts, isError);
     testGen = new ExtendGenerator(testGen, contractVisitor);
 
     // And, generate regression tests, unless user says not to.
@@ -872,8 +872,8 @@ public class GenTests extends GenInputsAbstract {
       }
       ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
 
-      RegressionCaptureVisitor regressionVisitor =
-          new RegressionCaptureVisitor(expectation, observerMap, visibility, includeAssertions);
+      RegressionCaptureGenerator regressionVisitor =
+          new RegressionCaptureGenerator(expectation, observerMap, visibility, includeAssertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }

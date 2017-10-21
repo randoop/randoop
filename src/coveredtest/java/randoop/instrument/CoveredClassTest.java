@@ -285,13 +285,13 @@ public class CoveredClassTest {
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(
             excludeSet, operationModel.getCoveredClassesGoal(), require_classname_in_test);
-    testGenerator.addTestPredicate(isOutputTest);
+    testGenerator.setTestPredicate(isOutputTest);
 
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
         genTests.createTestCheckGenerator(visibility, contracts, observerMap);
-    testGenerator.addTestCheckGenerator(checkGenerator);
-    testGenerator.addExecutionVisitor(
+    testGenerator.setTestCheckGenerator(checkGenerator);
+    testGenerator.setExecutionVisitor(
         new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));
 
     TestUtils.setAllLogs(testGenerator);

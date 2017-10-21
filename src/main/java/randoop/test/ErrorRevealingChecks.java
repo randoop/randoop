@@ -12,7 +12,7 @@ import java.util.Set;
  * end of the sequence. Note that there are no expected exceptions in error-revealing tests, and so
  * there should be no {@link ExceptionCheck} objects.
  */
-public class ErrorRevealingChecks implements TestChecks {
+public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
 
   private Set<Check> checks;
 
@@ -103,14 +103,10 @@ public class ErrorRevealingChecks implements TestChecks {
   }
 
   @Override
-  public TestChecks commonChecks(TestChecks testChecks) {
-    if (!(testChecks instanceof ErrorRevealingChecks)) {
-      throw new IllegalArgumentException("Must compare with ErrorRevealingChecks");
-    }
-    ErrorRevealingChecks erc = (ErrorRevealingChecks) testChecks;
-    TestChecks common = new ErrorRevealingChecks();
+  public ErrorRevealingChecks commonChecks(ErrorRevealingChecks other) {
+    ErrorRevealingChecks common = new ErrorRevealingChecks();
     for (Check ck : checks) {
-      if (erc.checks.contains(ck)) {
+      if (other.checks.contains(ck)) {
         common.add(ck);
       }
     }

@@ -77,8 +77,9 @@ public class ExecutableSequence {
   /** The underlying sequence. */
   public Sequence sequence;
 
+  // TODO: permit this to be null?  Change generateTestChecks to be able to return null.
   /** The checks for this sequence */
-  private TestChecks checks;
+  private TestChecks<?> checks;
 
   /**
    * Contains the runtime objects created and exceptions thrown (if any) during execution of this
@@ -313,6 +314,7 @@ public class ExecutableSequence {
 
     visitor.visitAfterSequence(this);
 
+    // This is the only client call to generateTestChecks().
     checks = gen.generateTestChecks(this);
   }
 
@@ -411,7 +413,7 @@ public class ExecutableSequence {
    *
    * @return the {@code TestChecks} generated from the most recent execution
    */
-  public TestChecks getChecks() {
+  public TestChecks<?> getChecks() {
     return checks;
   }
 

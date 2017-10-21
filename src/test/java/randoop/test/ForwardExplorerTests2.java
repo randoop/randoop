@@ -88,7 +88,7 @@ public class ForwardExplorerTests2 {
             mgr,
             null,
             null);
-    exp.addTestCheckGenerator(createChecker(new ContractSet()));
+    exp.setTestCheckGenerator(createChecker(new ContractSet()));
 
     // get a SequenceExceptionError when repeat_heuristic=true
     try {

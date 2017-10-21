@@ -98,7 +98,7 @@ public class TestClassificationTest {
     assertTrue("should have some regression tests", rTests.size() > 0);
 
     for (ExecutableSequence eseq : rTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       if (!cks.hasChecks()) {
         assertFalse("these are not error checks", cks.hasErrorBehavior());
         assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
@@ -143,7 +143,7 @@ public class TestClassificationTest {
     assertTrue("should have some regression tests", rTests.size() > 0);
 
     for (ExecutableSequence eseq : rTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -157,7 +157,7 @@ public class TestClassificationTest {
     assertTrue("should have some error tests", eTests.size() > 0);
 
     for (ExecutableSequence eseq : eTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
       assertTrue("these are error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
@@ -202,7 +202,7 @@ public class TestClassificationTest {
     assertTrue("should have some regression tests", rTests.size() > 0);
 
     for (ExecutableSequence eseq : rTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -249,7 +249,7 @@ public class TestClassificationTest {
     assertTrue("should have some regression tests", rTests.size() > 0);
 
     for (ExecutableSequence eseq : rTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -265,7 +265,7 @@ public class TestClassificationTest {
     assertTrue("should have error tests", eTests.size() > 0);
 
     for (ExecutableSequence eseq : eTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
       assertTrue("these are error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
@@ -311,7 +311,7 @@ public class TestClassificationTest {
     assertTrue("should have some regression tests", rTests.size() > 0);
 
     for (ExecutableSequence eseq : rTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -329,7 +329,7 @@ public class TestClassificationTest {
     assertTrue("should have error tests", eTests.size() > 0);
 
     for (ExecutableSequence eseq : eTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
       assertTrue("these are error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
@@ -423,10 +423,10 @@ public class TestClassificationTest {
             null,
             listenerMgr);
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
-    gen.addTestPredicate(isOutputTest);
+    gen.setTestPredicate(isOutputTest);
 
-    gen.addTestCheckGenerator(checkGenerator);
-    gen.addExecutionVisitor(new DummyVisitor());
+    gen.setTestCheckGenerator(checkGenerator);
+    gen.setExecutionVisitor(new DummyVisitor());
     return gen;
   }
 

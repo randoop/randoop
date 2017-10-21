@@ -1,9 +1,9 @@
 package randoop.reflection;
 
 import java.lang.reflect.Method;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
@@ -99,7 +99,7 @@ public class OmitMethodsPredicate {
      * Search the type and its supertypes that have the method.
      */
     Set<ClassOrInterfaceType> visited = new HashSet<>();
-    Queue<ClassOrInterfaceType> typeQueue = new LinkedList<>();
+    Queue<ClassOrInterfaceType> typeQueue = new ArrayDeque<>();
     typeQueue.add(operation.getDeclaringType());
     while (!typeQueue.isEmpty()) {
       ClassOrInterfaceType type = typeQueue.remove();

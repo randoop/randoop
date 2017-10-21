@@ -80,8 +80,8 @@ public class ForwardExplorerTests {
             mgr,
             null,
             null);
-    explorer.addTestCheckGenerator(createChecker(new ContractSet()));
-    explorer.addTestPredicate(createOutputTest());
+    explorer.setTestCheckGenerator(createChecker(new ContractSet()));
+    explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
     explorer.explore();
     explorer.getOperationHistory().outputTable();
@@ -135,8 +135,8 @@ public class ForwardExplorerTests {
             mgr,
             null,
             null);
-    explorer.addTestCheckGenerator(createChecker(new ContractSet()));
-    explorer.addTestPredicate(createOutputTest());
+    explorer.setTestCheckGenerator(createChecker(new ContractSet()));
+    explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
     try {
       explorer.explore();
@@ -197,8 +197,8 @@ public class ForwardExplorerTests {
             null,
             null);
     GenInputsAbstract.forbid_null = false;
-    explorer.addTestCheckGenerator(createChecker(new ContractSet()));
-    explorer.addTestPredicate(createOutputTest());
+    explorer.setTestCheckGenerator(createChecker(new ContractSet()));
+    explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
     try {
       explorer.explore();

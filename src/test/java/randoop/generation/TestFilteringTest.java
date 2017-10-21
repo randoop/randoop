@@ -272,13 +272,13 @@ public class TestFilteringTest {
     GenTests genTests = new GenTests();
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(new HashSet<Sequence>(), new HashSet<Class<?>>(), null);
-    gen.addTestPredicate(isOutputTest);
+    gen.setTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
         (new GenTests())
             .createTestCheckGenerator(
                 visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
-    gen.addTestCheckGenerator(checkGenerator);
-    gen.addExecutionVisitor(new DummyVisitor());
+    gen.setTestCheckGenerator(checkGenerator);
+    gen.setExecutionVisitor(new DummyVisitor());
     TestUtils.setAllLogs(gen);
     gen.explore();
     gen.getOperationHistory().outputTable();
