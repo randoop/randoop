@@ -62,20 +62,20 @@ class VariableRenamer {
       return "cls";
     }
 
-    if (type.isArray()) {
-      // Array types.
-      while (type.isArray()) {
-        type = ((ArrayType) type).getComponentType();
-      }
-      return getVariableName(type) + "Array";
-    }
-
     // Primitive types.
     if (type.isBoxedPrimitive()) {
       type = ((NonParameterizedType) type).toPrimitive();
     }
     if (type.isPrimitive()) {
       return type.getName();
+    }
+
+    if (type.isArray()) {
+      // Array types.
+      while (type.isArray()) {
+        type = ((ArrayType) type).getComponentType();
+      }
+      return getVariableName(type) + "Array";
     }
 
     // Get the simple name of the type.
