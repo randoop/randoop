@@ -93,7 +93,7 @@ class VariableRenamer {
       while (type.isArray()) {
         type = ((ArrayType) type).getComponentType();
       }
-      return getVariableName(type) + "Array";
+      return getVariableName(type, depth - 1) + "Array";
     }
 
     // Get the simple name of the type.
