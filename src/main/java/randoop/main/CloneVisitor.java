@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
+ * Copyright (C) 2007-2010 Julio Vilmar Gesser.
  * Copyright (C) 2011, 2013-2015 The JavaParser Team.
  *
  * This file is part of JavaParser.
@@ -63,8 +63,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
     List<ImportDeclaration> imports = visit(_n.getImports(), _arg);
     List<TypeDeclaration> types = visit(_n.getTypes(), _arg);
 
-    CompilationUnit cu =
-        new CompilationUnit(
+    return new CompilationUnit(
             _n.getBeginLine(),
             _n.getBeginColumn(),
             _n.getEndLine(),
@@ -72,7 +71,6 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
             package_,
             imports,
             types);
-    return cu;
   }
 
   @Override
