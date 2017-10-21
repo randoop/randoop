@@ -70,8 +70,8 @@ class VariableRenamer {
       return type.getName();
     }
 
+    // Array types.
     if (type.isArray()) {
-      // Array types.
       while (type.isArray()) {
         type = ((ArrayType) type).getComponentType();
       }
@@ -120,11 +120,6 @@ class VariableRenamer {
         varName = "obj";
       } else if (type.isString()) {
         varName = "str";
-      } else {
-        // All other object types.
-        if (varName.length() == 0) {
-          varName = "anonymous";
-        }
       }
     }
 
