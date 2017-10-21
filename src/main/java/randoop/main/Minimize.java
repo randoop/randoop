@@ -264,9 +264,9 @@ public class Minimize extends CommandHandler {
     }
 
     // Read and parse input Java file.
-    CompilationUnit compUnit;
+    CompilationUnit compilationUnit;
     try (FileInputStream inputStream = new FileInputStream(file)) {
-      compUnit = JavaParser.parse(inputStream);
+      compilationUnit = JavaParser.parse(inputStream);
     } catch (ParseException e) {
       System.err.println("Error parsing Java file: " + file);
       e.printStackTrace();
@@ -284,7 +284,7 @@ public class Minimize extends CommandHandler {
     // Find the package name of the input file if it has one.
     String packageName;
     try {
-      PackageDeclaration classPackage = compUnit.getPackage();
+      PackageDeclaration classPackage = compilationUnit.getPackage();
       packageName = (classPackage == null) ? null : classPackage.getPackageName();
     } catch (NoSuchElementException e) {
       packageName = null;
@@ -300,10 +300,10 @@ public class Minimize extends CommandHandler {
 
     // Rename the overall class to [original class name][suffix].
     String origClassName = FilenameUtils.removeExtension(file.getName());
-    new ClassRenamingVisitor().visit(compUnit, new String[] {origClassName, SUFFIX});
+    new ClassRenamingVisitor().visit(compilationUnit, new String[] {origClassName, SUFFIX});
 
     // Write the compilation unit to the minimized file.
-    writeToFile(compUnit, minimizedFile);
+    writeToFile(compilationUnit, minimizedFile);
 
     // Compile the Java file and check that the exit value is 0.
     if (compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit) != 0) {
@@ -318,7 +318,7 @@ public class Minimize extends CommandHandler {
 
     // Minimize the Java test suite.
     minimizeTestSuite(
-        compUnit,
+        compilationUnit,
         packageName,
         minimizedFile,
         classPath,
@@ -327,9 +327,9 @@ public class Minimize extends CommandHandler {
         verboseOutput);
 
     // Cleanup: simplify type names and sort the import statements.
-    compUnit =
+    compilationUnit =
         simplifyTypeNames(
-            compUnit,
+            compilationUnit,
             packageName,
             minimizedFile,
             classPath,
@@ -337,7 +337,7 @@ public class Minimize extends CommandHandler {
             timeoutLimit,
             verboseOutput);
 
-    writeToFile(compUnit, minimizedFile);
+    writeToFile(compilationUnit, minimizedFile);
 
     // Delete the .class file associated with the minimized Java file.
     cleanUp(minimizedFile, verboseOutput);
@@ -351,7 +351,7 @@ public class Minimize extends CommandHandler {
   /**
    * Visit and minimize every JUnit test method within a compilation unit.
    *
-   * @param compUnit the compilation unit to minimize; is modified by side effect
+   * @param compilationUnit the compilation unit to minimize; is modified by side effect
    * @param packageName the package that the Java file is in
    * @param file the Java file that is being minimized; is modified by side effect
    * @param classpath classpath used to compile and run the Java file
@@ -361,7 +361,7 @@ public class Minimize extends CommandHandler {
    * @throws IOException thrown if minimized method can't be written to file
    */
   private static void minimizeTestSuite(
-      CompilationUnit compUnit,
+      CompilationUnit compilationUnit,
       String packageName,
       File file,
       String classpath,
@@ -371,10 +371,10 @@ public class Minimize extends CommandHandler {
       throws IOException {
     System.out.println("Minimizing test suite.");
 
-    int numberOfTestMethods = getNumberOfTestMethods(compUnit);
+    int numberOfTestMethods = getNumberOfTestMethods(compilationUnit);
     int numberOfMinimizedTests = 0;
 
-    for (TypeDeclaration type : compUnit.getTypes()) {
+    for (TypeDeclaration type : compilationUnit.getTypes()) {
       for (BodyDeclaration member : type.getMembers()) {
         if (member instanceof MethodDeclaration) {
           MethodDeclaration method = (MethodDeclaration) member;
@@ -382,7 +382,13 @@ public class Minimize extends CommandHandler {
           // Minimize the method only if it is a JUnit test method.
           if (isTestMethod(method)) {
             minimizeMethod(
-                method, compUnit, packageName, file, classpath, expectedOutput, timeoutLimit);
+                method,
+                compilationUnit,
+                packageName,
+                file,
+                classpath,
+                expectedOutput,
+                timeoutLimit);
             printProgress(++numberOfMinimizedTests, numberOfTestMethods, method.getName());
           }
         }
@@ -412,8 +418,8 @@ public class Minimize extends CommandHandler {
    * Minimize a method by minimizing each statement in turn.
    *
    * @param method the method to minimize; is modified by side effect
-   * @param compUnit compilation unit for the Java file that we are minimizing; is modified by side
-   *     effect
+   * @param compilationUnit compilation unit for the Java file that we are minimizing; is modified
+   *     by side effect
    * @param packageName the package that the Java file is in
    * @param file the Java file that is being minimized; is modified by side effect
    * @param classpath classpath needed to compile and run the Java file
@@ -423,7 +429,7 @@ public class Minimize extends CommandHandler {
    */
   private static void minimizeMethod(
       MethodDeclaration method,
-      CompilationUnit compUnit,
+      CompilationUnit compilationUnit,
       String packageName,
       File file,
       String classpath,
@@ -438,7 +444,7 @@ public class Minimize extends CommandHandler {
 
     // Find all the names of the primitive and wrapped types.
     Set<String> primitiveAndWrappedTypes = new HashSet<>();
-    new PrimitiveAndWrappedTypeVarNameCollector().visit(compUnit, primitiveAndWrappedTypes);
+    new PrimitiveAndWrappedTypeVarNameCollector().visit(compilationUnit, primitiveAndWrappedTypes);
 
     // Iterate through the list of statements, from last to first.
     for (int i = statements.size() - 1; i >= 0; i--) {
@@ -460,7 +466,7 @@ public class Minimize extends CommandHandler {
         }
 
         // Write, compile, and run the new Java file.
-        writeToFile(compUnit, file);
+        writeToFile(compilationUnit, file);
         if (checkCorrectlyMinimized(file, classpath, packageName, expectedOutput, timeoutLimit)) {
           // No compilation or runtime issues, obtained output is the same as the expected output.
           // Use simplification of this statement and continue with next statement.
@@ -791,8 +797,8 @@ public class Minimize extends CommandHandler {
    *
    * <p>Additionally, sort the import statements of the compilation unit.
    *
-   * @param compUnit compilation unit containing an AST for a Java file, the compilation unit will
-   *     be modified if a correct minimization of the method is found
+   * @param compilationUnit compilation unit containing an AST for a Java file, the compilation unit
+   *     will be modified if a correct minimization of the method is found
    * @param packageName the package that the Java file is in
    * @param file the Java file to simplify; is modified by side effect
    * @param classpath classpath needed to compile and run the Java file
@@ -803,7 +809,7 @@ public class Minimize extends CommandHandler {
    * @throws IOException thrown if write to file fails
    */
   private static CompilationUnit simplifyTypeNames(
-      CompilationUnit compUnit,
+      CompilationUnit compilationUnit,
       String packageName,
       File file,
       String classpath,
@@ -825,9 +831,9 @@ public class Minimize extends CommandHandler {
               }
             });
 
-    new ClassTypeVisitor().visit(compUnit, fullyQualifiedNames);
+    new ClassTypeVisitor().visit(compilationUnit, fullyQualifiedNames);
 
-    CompilationUnit result = compUnit;
+    CompilationUnit result = compilationUnit;
 
     for (ClassOrInterfaceType type : fullyQualifiedNames) {
       // Copy and modify the compilation unit.
@@ -1137,14 +1143,14 @@ public class Minimize extends CommandHandler {
   /**
    * Write a compilation unit to a Java file.
    *
-   * @param compUnit the compilation unit to write to file
+   * @param compilationUnit the compilation unit to write to file
    * @param file file to write to
    * @throws IOException thrown if write to file fails
    */
-  private static void writeToFile(CompilationUnit compUnit, File file) throws IOException {
+  private static void writeToFile(CompilationUnit compilationUnit, File file) throws IOException {
     // Write the compilation unit to the file.
     try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), UTF_8)) {
-      bw.write(compUnit.toString());
+      bw.write(compilationUnit.toString());
     }
   }
 
@@ -1153,10 +1159,10 @@ public class Minimize extends CommandHandler {
    * adds the import statement if it has not been yet included in the list of current imports of the
    * compilation unit.
    *
-   * @param compUnit compilation unit to add import to
+   * @param compilationUnit compilation unit to add import to
    * @param importName the name of the import
    */
-  private static void addImport(CompilationUnit compUnit, String importName) {
+  private static void addImport(CompilationUnit compilationUnit, String importName) {
     String importStr = "import " + importName + ";";
     ImportDeclaration importDeclaration;
 
@@ -1168,7 +1174,7 @@ public class Minimize extends CommandHandler {
       return;
     }
 
-    List<ImportDeclaration> importDeclarations = compUnit.getImports();
+    List<ImportDeclaration> importDeclarations = compilationUnit.getImports();
     for (ImportDeclaration im : importDeclarations) {
       String currImportStr = im.toString().trim();
 
@@ -1194,16 +1200,16 @@ public class Minimize extends CommandHandler {
 
     // Add the import to the compilation unit's list of imports.
     importDeclarations.add(importDeclaration);
-    compUnit.setImports(importDeclarations);
+    compilationUnit.setImports(importDeclarations);
   }
 
   /**
    * Sort a compilation unit's imports by name.
    *
-   * @param compUnit the compilation unit whose imports will be sorted by name
+   * @param compilationUnit the compilation unit whose imports will be sorted by name
    */
-  private static void sortImports(CompilationUnit compUnit) {
-    List<ImportDeclaration> imports = compUnit.getImports();
+  private static void sortImports(CompilationUnit compilationUnit) {
+    List<ImportDeclaration> imports = compilationUnit.getImports();
 
     Collections.sort(
         imports,
@@ -1214,7 +1220,7 @@ public class Minimize extends CommandHandler {
           }
         });
 
-    compUnit.setImports(imports);
+    compilationUnit.setImports(imports);
   }
 
   /** Contains the standard output, standard error, and exit status from running a process. */
@@ -1288,12 +1294,12 @@ public class Minimize extends CommandHandler {
   /**
    * Return the number of JUnit test methods in a compilation unit
    *
-   * @param compUnit the compilation unit to count the number of unit test methods
-   * @return the number of unit test methods in compUnit
+   * @param compilationUnit the compilation unit to count the number of unit test methods
+   * @return the number of unit test methods in compilationUnit
    */
-  private static int getNumberOfTestMethods(CompilationUnit compUnit) {
+  private static int getNumberOfTestMethods(CompilationUnit compilationUnit) {
     int numberOfTestMethods = 0;
-    for (TypeDeclaration type : compUnit.getTypes()) {
+    for (TypeDeclaration type : compilationUnit.getTypes()) {
       for (BodyDeclaration member : type.getMembers()) {
         if (member instanceof MethodDeclaration) {
           MethodDeclaration method = (MethodDeclaration) member;
