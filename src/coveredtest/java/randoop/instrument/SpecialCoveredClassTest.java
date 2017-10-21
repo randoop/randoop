@@ -129,7 +129,7 @@ public class SpecialCoveredClassTest {
     ContractSet contracts = operationModel.getContracts();
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     TestCheckGenerator checkGenerator =
-        genTests.createTestCheckGenerator(visibility, contracts, observerMap);
+        GenTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);

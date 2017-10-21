@@ -359,9 +359,8 @@ public class TestClassificationTest {
     ComponentManager componentManager = getComponentManager();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     TestCheckGenerator checkGenerator =
-        new GenTests()
-            .createTestCheckGenerator(
-                visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
+        GenTests.createTestCheckGenerator(
+            visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
     ForwardGenerator gen = buildGenerator(c, componentManager, visibility, checkGenerator);
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
@@ -434,9 +433,8 @@ public class TestClassificationTest {
     ComponentManager componentMgr = getComponentManager();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     TestCheckGenerator checkGenerator =
-        new GenTests()
-            .createTestCheckGenerator(
-                visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
+        GenTests.createTestCheckGenerator(
+            visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
     return buildGenerator(c, componentMgr, visibility, checkGenerator);
   }
 

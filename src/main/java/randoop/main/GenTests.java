@@ -846,7 +846,7 @@ public class GenTests extends GenInputsAbstract {
    * @param observerMap the map from types to observer methods
    * @return the {@code TestCheckGenerator} that reflects command line arguments.
    */
-  public TestCheckGenerator createTestCheckGenerator(
+  public static TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
       MultiMap<Type, TypedOperation> observerMap) {

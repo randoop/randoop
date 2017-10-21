@@ -79,11 +79,10 @@ public class SequenceWithExceptionalExecutionTest {
 
     ExecutableSequence es = new ExecutableSequence(sequence);
     TestCheckGenerator gen =
-        new GenTests()
-            .createTestCheckGenerator(
-                new PublicVisibilityPredicate(),
-                new ContractSet(),
-                new MultiMap<Type, TypedOperation>());
+        GenTests.createTestCheckGenerator(
+            new PublicVisibilityPredicate(),
+            new ContractSet(),
+            new MultiMap<Type, TypedOperation>());
     es.execute(new DummyVisitor(), gen);
 
     assertFalse("sequence should not have unexecuted statements", es.hasNonExecutedStatements());

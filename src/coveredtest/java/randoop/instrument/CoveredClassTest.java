@@ -289,7 +289,7 @@ public class CoveredClassTest {
 
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
-        genTests.createTestCheckGenerator(visibility, contracts, observerMap);
+        GenTests.createTestCheckGenerator(visibility, contracts, observerMap);
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(
         new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));
