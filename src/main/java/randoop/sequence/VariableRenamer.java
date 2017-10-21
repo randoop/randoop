@@ -55,6 +55,7 @@ class VariableRenamer {
    * @return a variable name based on its type, without a trailing number, and is camel cased
    */
   private static String getVariableName(Type type, int depth) {
+    // Special cases.
     if (type.isVoid()) {
       return "void";
     }
@@ -70,8 +71,8 @@ class VariableRenamer {
       return type.getName();
     }
 
+    // Array types.
     if (type.isArray()) {
-      // Array types.
       while (type.isArray()) {
         type = ((ArrayType) type).getComponentType();
       }
