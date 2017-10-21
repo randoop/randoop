@@ -835,11 +835,10 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Creates the test check generator for this run based on the command-line arguments. The goal of
-   * the generator is to produce all appropriate checks for each sequence it is applied to. Validity
-   * and contract checks are always needed to determine which sequences have invalid or error
-   * behaviors, even if only regression tests are desired. So, this generator will always be built.
-   * If in addition regression tests are to be generated, then the regression checks generator is
-   * added.
+   * the generator is to produce all appropriate checks for each sequence it is applied to.
+   *
+   * <p>The generator always contains validity and contract checks. If regression tests are to be
+   * generated, it also contains the regression checks generator.
    *
    * @param visibility the visibility predicate
    * @param contracts the contract checks

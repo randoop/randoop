@@ -10,15 +10,16 @@ import randoop.test.predicate.ExceptionPredicate;
  * A {@code ValidityCheckingGenerator} checks for occurrences of exceptions that have been tagged as
  * invalid behaviors as represented by a {@code ExceptionPredicate}. Also, either ignores or reports
  * flaky test sequences --- an input sequence that throws an exception in a longer test sequence,
- * despite having run normally by itself. Ignores flaky sequences are classified as invalid. Flaky
- * occurrences of {@code OutOfMemoryError} are always treated as invalid.
+ * despite having run normally by itself. Ignored flaky sequences are classified as invalid. Flaky
+ * occurrences of {@code OutOfMemoryError} or {@code StackOverflowError} are always treated as
+ * invalid.
  */
 public class ValidityCheckingGenerator implements TestCheckGenerator {
 
   /** The predicate to determine whether a test sequence is valid */
   private ExceptionPredicate isInvalid;
 
-  /** The flag to determine whether to report flaky tests by throwing an exception */
+  /** If true, report flaky tests by throwing an exception */
   private boolean throwExceptionOnFlakyTest;
 
   /**
@@ -38,12 +39,24 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
    * {@inheritDoc}
    *
    * <p>Checks validity of a test sequence and creates a {@code InvalidCheck} object containing
-   * checks for any invalid exceptions encountered. An exception is invalid if:
+   * checks for any invalid exceptions encountered. There are three possible outcomes:
    *
    * <ul>
-   *   <li>an {@code OutOfMemoryError} or {@code StackOverflowError} exception is seen before the
-   *       last statement, or
-   *   <li>the exception is classified as invalid by this visitor's {@code ExceptionPredicate}
+   *   <li>An exception is seen before the last statement:
+   *       <ul>
+   *         <li>If throwExceptionOnFlakyTest is true and the exception is not {@code
+   *             OutOfMemoryError} or {@code StackOverflowError}, throw an exception.
+   *         <li>Otherwise, the sequence is invalid.
+   *       </ul>
+   *
+   *   <li>An exception is seen on the last statement:
+   *       <ul>
+   *         <li>if the exception is classified as invaled by this visitor's {@code
+   *             ExceptionPredicate}, the sequence is invalid.
+   *         <li>otherwise, the returned InvalidCheck is empty (the sequence is valid).
+   *       </ul>
+   *
+   *   <li>Otherwise, the returned InvalidCheck is empty (the sequence is valid)..
    * </ul>
    *
    * @return a possibly-empty {@link InvalidCheck} object for sequence

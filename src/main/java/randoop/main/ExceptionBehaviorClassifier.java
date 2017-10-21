@@ -5,8 +5,8 @@ import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
 
 /**
- * Method {@link #classify} classifies exceptions thrown by a test sequence based on the {@link
- * GenInputsAbstract.BehaviorType} command-line arguments.
+ * Static method {@link #classify} classifies exceptions thrown by a test sequence based on the
+ * {@link GenInputsAbstract.BehaviorType} command-line arguments.
  */
 public class ExceptionBehaviorClassifier {
 
