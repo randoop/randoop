@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import randoop.ExceptionalExecution;
@@ -139,12 +138,9 @@ public class ExecutableSequence {
         b.append(executionResults.get(i).toString());
       }
       if ((i == sequence.size() - 1) && (checks != null)) {
-        Map<Check, Boolean> ckMap = checks.get();
-        for (Map.Entry<Check, Boolean> entry : ckMap.entrySet()) {
+        for (Check check : checks.checks()) {
           b.append(Globals.lineSep);
-          b.append(entry.getKey().toString());
-          b.append(" : ");
-          b.append(entry.getValue().toString());
+          b.append(check.toString());
         }
       }
       b.append(Globals.lineSep);
@@ -187,7 +183,7 @@ public class ExecutableSequence {
         }
 
         // Print the rest of the checks.
-        for (Check d : checks.get().keySet()) {
+        for (Check d : checks.checks()) {
           oneStatement.insert(0, d.toCodeStringPreStatement());
           oneStatement.append(Globals.lineSep).append(d.toCodeStringPostStatement());
         }

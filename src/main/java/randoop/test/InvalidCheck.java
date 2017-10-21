@@ -1,7 +1,7 @@
 package randoop.test;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.Set;
 import randoop.BugInRandoopException;
 
 /**
@@ -22,12 +22,12 @@ public class InvalidCheck implements TestChecks<InvalidCheck> {
   }
 
   @Override
-  public Map<Check, Boolean> get() {
-    Map<Check, Boolean> mp = new LinkedHashMap<>();
+  public Set<Check> checks() {
     if (check != null) {
-      mp.put(check, false);
+      return Collections.singleton(check);
+    } else {
+      return Collections.emptySet();
     }
-    return mp;
   }
 
   @Override

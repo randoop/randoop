@@ -1,8 +1,6 @@
 package randoop.test;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -32,14 +30,8 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
    * @return all checks, with each mapped to false, indicating it is failing
    */
   @Override
-  public Map<Check, Boolean> get() {
-    Map<Check, Boolean> result = new LinkedHashMap<>();
-    if (hasChecks()) {
-      for (Check ck : checks) {
-        result.put(ck, false);
-      }
-    }
-    return result;
+  public Set<Check> checks() {
+    return checks;
   }
 
   /**

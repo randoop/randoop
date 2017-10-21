@@ -1,8 +1,6 @@
 package randoop.test;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -56,12 +54,8 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
    *     passing
    */
   @Override
-  public Map<Check, Boolean> get() {
-    Map<Check, Boolean> mp = new LinkedHashMap<>();
-    for (Check ck : checks) {
-      mp.put(ck, true);
-    }
-    return mp;
+  public Set<Check> checks() {
+    return checks;
   }
 
   /**

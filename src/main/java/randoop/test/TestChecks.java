@@ -1,6 +1,6 @@
 package randoop.test;
 
-import java.util.Map;
+import java.util.Set;
 
 /**
  * A TestChecks reprents a set of Checks, and possibly a single ExceptionCheck
@@ -23,7 +23,7 @@ public interface TestChecks<T extends TestChecks<T>> {
    *
    * @return all checks with passing status
    */
-  Map<Check, Boolean> get();
+  Set<Check> checks();
 
   /**
    * Add a check to this set.

@@ -10,7 +10,8 @@ import randoop.test.predicate.ExceptionPredicate;
  * an {@code ExpectedExceptionCheck} object when the predicate is satisfied, and an {@code
  * EmptyExceptionCheck} otherwise. Resulting tests only enforce expected matching exceptions.
  *
- * @see randoop.test.RegressionCaptureGenerator#visit(randoop.sequence.ExecutableSequence)
+ * @see
+ *     randoop.test.RegressionCaptureGenerator#generateTestChecks(randoop.sequence.ExecutableSequence)
  */
 public class ExpectedExceptionCheckGen {
 

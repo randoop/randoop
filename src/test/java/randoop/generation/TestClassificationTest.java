@@ -163,7 +163,7 @@ public class TestClassificationTest {
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
       int exceptionCount = 0;
-      for (Check ck : cks.get().keySet()) {
+      for (Check ck : cks.checks()) {
         if (ck instanceof NoExceptionCheck) {
           exceptionCount++;
         }
@@ -271,7 +271,7 @@ public class TestClassificationTest {
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
       int exceptionCount = 0;
-      for (Check ck : cks.get().keySet()) {
+      for (Check ck : cks.checks()) {
         if (ck instanceof NoExceptionCheck) {
           exceptionCount++;
         }
@@ -335,7 +335,7 @@ public class TestClassificationTest {
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
       int exceptionCount = 0;
-      for (Check ck : cks.get().keySet()) {
+      for (Check ck : cks.checks()) {
         if (ck instanceof NoExceptionCheck) {
           exceptionCount++;
         }
