@@ -125,13 +125,13 @@ public class SpecialCoveredClassTest {
             excludeSet,
             operationModel.getCoveredClassesGoal(),
             GenInputsAbstract.require_classname_in_test);
-    testGenerator.addTestPredicate(isOutputTest);
+    testGenerator.setTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     TestCheckGenerator checkGenerator =
-        genTests.createTestCheckGenerator(visibility, contracts, observerMap);
-    testGenerator.addTestCheckGenerator(checkGenerator);
-    testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
+        GenTests.createTestCheckGenerator(visibility, contracts, observerMap);
+    testGenerator.setTestCheckGenerator(checkGenerator);
+    testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);
     // for debugging:  operationModel.dumpModel();
     testGenerator.explore();

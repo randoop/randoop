@@ -98,7 +98,7 @@ public class TestClassificationTest {
     assertTrue("should have some regression tests", rTests.size() > 0);
 
     for (ExecutableSequence eseq : rTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       if (!cks.hasChecks()) {
         assertFalse("these are not error checks", cks.hasErrorBehavior());
         assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
@@ -143,7 +143,7 @@ public class TestClassificationTest {
     assertTrue("should have some regression tests", rTests.size() > 0);
 
     for (ExecutableSequence eseq : rTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -157,13 +157,13 @@ public class TestClassificationTest {
     assertTrue("should have some error tests", eTests.size() > 0);
 
     for (ExecutableSequence eseq : eTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
       assertTrue("these are error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
       int exceptionCount = 0;
-      for (Check ck : cks.get().keySet()) {
+      for (Check ck : cks.checks()) {
         if (ck instanceof NoExceptionCheck) {
           exceptionCount++;
         }
@@ -202,7 +202,7 @@ public class TestClassificationTest {
     assertTrue("should have some regression tests", rTests.size() > 0);
 
     for (ExecutableSequence eseq : rTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -249,7 +249,7 @@ public class TestClassificationTest {
     assertTrue("should have some regression tests", rTests.size() > 0);
 
     for (ExecutableSequence eseq : rTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -265,13 +265,13 @@ public class TestClassificationTest {
     assertTrue("should have error tests", eTests.size() > 0);
 
     for (ExecutableSequence eseq : eTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
       assertTrue("these are error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
       int exceptionCount = 0;
-      for (Check ck : cks.get().keySet()) {
+      for (Check ck : cks.checks()) {
         if (ck instanceof NoExceptionCheck) {
           exceptionCount++;
         }
@@ -311,7 +311,7 @@ public class TestClassificationTest {
     assertTrue("should have some regression tests", rTests.size() > 0);
 
     for (ExecutableSequence eseq : rTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
@@ -329,13 +329,13 @@ public class TestClassificationTest {
     assertTrue("should have error tests", eTests.size() > 0);
 
     for (ExecutableSequence eseq : eTests) {
-      TestChecks cks = eseq.getChecks();
+      TestChecks<?> cks = eseq.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
       assertTrue("these are error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
 
       int exceptionCount = 0;
-      for (Check ck : cks.get().keySet()) {
+      for (Check ck : cks.checks()) {
         if (ck instanceof NoExceptionCheck) {
           exceptionCount++;
         }
@@ -359,9 +359,8 @@ public class TestClassificationTest {
     ComponentManager componentManager = getComponentManager();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     TestCheckGenerator checkGenerator =
-        (new GenTests())
-            .createTestCheckGenerator(
-                visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
+        GenTests.createTestCheckGenerator(
+            visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
     ForwardGenerator gen = buildGenerator(c, componentManager, visibility, checkGenerator);
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
@@ -423,10 +422,10 @@ public class TestClassificationTest {
             null,
             listenerMgr);
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
-    gen.addTestPredicate(isOutputTest);
+    gen.setTestPredicate(isOutputTest);
 
-    gen.addTestCheckGenerator(checkGenerator);
-    gen.addExecutionVisitor(new DummyVisitor());
+    gen.setTestCheckGenerator(checkGenerator);
+    gen.setExecutionVisitor(new DummyVisitor());
     return gen;
   }
 
@@ -434,9 +433,8 @@ public class TestClassificationTest {
     ComponentManager componentMgr = getComponentManager();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     TestCheckGenerator checkGenerator =
-        (new GenTests())
-            .createTestCheckGenerator(
-                visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
+        GenTests.createTestCheckGenerator(
+            visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
     return buildGenerator(c, componentMgr, visibility, checkGenerator);
   }
 

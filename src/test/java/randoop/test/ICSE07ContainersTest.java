@@ -114,7 +114,7 @@ public class ICSE07ContainersTest {
             componentMgr,
             stopper,
             null);
-    explorer.addTestCheckGenerator(new DummyCheckGenerator());
+    explorer.setTestCheckGenerator(new DummyCheckGenerator());
     explorer.explore();
   }
 
