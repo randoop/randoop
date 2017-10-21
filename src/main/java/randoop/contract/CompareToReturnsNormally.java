@@ -1,14 +1,13 @@
 package randoop.contract;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** Checks that calling compareTo() on an object does not throw an exception. */
-public class CompareToReturnsNormally implements ObjectContract {
+public class CompareToReturnsNormally extends ObjectContract {
   private static final CompareToReturnsNormally instance = new CompareToReturnsNormally();
 
   private CompareToReturnsNormally() {}
@@ -39,11 +38,11 @@ public class CompareToReturnsNormally implements ObjectContract {
     return 1;
   }
 
+  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.COMPARABLE_TYPE));
+
   @Override
   public TypeTuple getInputTypes() {
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(JavaTypes.COMPARABLE_TYPE);
-    return new TypeTuple(inputTypes);
+    return inputTypes;
   }
 
   @Override

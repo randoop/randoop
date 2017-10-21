@@ -17,11 +17,10 @@ package randoop;
 public class NormalExecution extends ExecutionOutcome {
 
   private final Object result;
-  private final long executionTime;
 
   public NormalExecution(Object result, long executionTime) {
+    super(executionTime);
     this.result = result;
-    this.executionTime = executionTime;
   }
 
   public Object getRuntimeValue() {
@@ -36,10 +35,5 @@ public class NormalExecution extends ExecutionOutcome {
   public String toString() {
     return String.format(
         "[NormalExecution %s]", (result == null ? "null" : result.getClass().getName()));
-  }
-
-  @Override
-  public long getExecutionTime() {
-    return executionTime;
   }
 }

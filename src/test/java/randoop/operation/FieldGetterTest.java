@@ -93,13 +93,13 @@ public class FieldGetterTest {
 
       //first need a variable referring to an instance
       // - sequence where one is declared and initialized by constructed object
-      Constructor<?> constructor = null;
+      Constructor<?> constructor;
       try {
         constructor = c.getConstructor();
       } catch (NoSuchMethodException e) {
         fail("didn't load constructor " + e);
+        throw new Error("Unreachable");
       }
-      assert constructor != null;
       ConstructorCall cons = new ConstructorCall(constructor);
       TypedOperation consOp = new TypedClassOperation(cons, classType, new TypeTuple(), classType);
       Sequence seqInit = new Sequence().extend(consOp, new ArrayList<Variable>());

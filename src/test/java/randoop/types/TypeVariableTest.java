@@ -37,7 +37,7 @@ public class TypeVariableTest {
               (ReferenceArgument) ((InstantiatedType) parameterType).getTypeArguments().get(0);
           parameterType = argument.getReferenceType();
         }
-        assert parameterType.isVariable();
+        assertTrue(parameterType.isVariable());
         variable = (TypeVariable) parameterType;
         if (!(m.getName().equals("m05")
             || m.getName().equals("m06")

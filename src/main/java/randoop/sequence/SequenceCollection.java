@@ -138,6 +138,15 @@ public class SequenceCollection {
    * sequences that create a T, the sequence will be in the collection returned by the query). How a
    * value is deemed useful or not is left up to the client.
    *
+   * <p>Note that this takes into consideration only the assigned value for each statement. If a
+   * statement might side-effect some variable, then that variable is considered as an output from
+   * its own statement, not the one that side-effects it.
+   *
+   * <p>(An alternative would be to only use outputs from the last statement, and include its inputs
+   * as well. That alternative is not implemented. It would probably be faster, but it would not
+   * handle the case of a method side-effecting a variable that that was not explicitly passed to
+   * it. Is that case important?
+   *
    * @param sequence the sequence to add to this collection
    */
   public void add(Sequence sequence) {

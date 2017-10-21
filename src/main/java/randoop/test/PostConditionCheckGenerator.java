@@ -35,7 +35,7 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
    *     post-condition fails on the sequence, an {@code null} otherwise
    */
   @Override
-  public TestChecks visit(ExecutableSequence eseq) {
+  public TestChecks generateTestChecks(ExecutableSequence eseq) {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome result = eseq.getResult(finalIndex);
     TestChecks checks;

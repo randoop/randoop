@@ -126,13 +126,13 @@ public class FieldSetterTest {
       //code generation
       String expected = "classWithFields0.oneField = 24;";
       StringBuilder b = new StringBuilder();
-      Constructor<?> constructor = null;
+      Constructor<?> constructor;
       try {
         constructor = c.getConstructor();
       } catch (NoSuchMethodException e) {
         fail("didn't load constructor " + e);
+        throw new Error("Unreachable");
       }
-      assert constructor != null;
       ConstructorCall cons = new ConstructorCall(constructor);
       TypedOperation consOp =
           new TypedClassOperation(cons, declaringType, new TypeTuple(), declaringType);

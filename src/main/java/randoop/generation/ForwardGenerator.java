@@ -717,7 +717,6 @@ public class ForwardGenerator extends AbstractGenerator {
       // design choice, but it is inconsistent with how Randoop behaves in general, and all parts
       // of Randoop should be made consistent.  Alternative to the below (but this is a hack, and it
       // would be better to make the design cleaner):
-
       // Variable randomVariable = chosenSeq.randomVariableForType(inputType, isReceiver);
 
       // We are not done yet: we have chosen a sequence that yields a value of the required

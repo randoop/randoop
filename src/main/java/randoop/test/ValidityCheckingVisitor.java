@@ -46,7 +46,7 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
    * @throws Error if any exception encountered before last statement of sequence
    */
   @Override
-  public TestChecks visit(ExecutableSequence eseq) {
+  public TestChecks generateTestChecks(ExecutableSequence eseq) {
     InvalidChecks checks = new InvalidChecks();
     int finalIndex = eseq.sequence.size() - 1;
     for (int i = 0; i < eseq.sequence.size(); i++) {

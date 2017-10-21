@@ -12,13 +12,13 @@ public class TypedOperationTest {
   @Test
   public void testOperationParameterTypes() {
     Class<?> c = ParameterInput.class;
-    Method m = null;
+    Method m;
     try {
       m = c.getMethod("m", Iterable.class, Iterable.class);
     } catch (NoSuchMethodException e) {
       fail("failed to load method ParameterInput.m()");
+      throw new Error("unreachable");
     }
-    assert m != null;
     TypedClassOperation operation = TypedOperation.forMethod(m);
     assertFalse(
         "operation has type parameters: " + operation, operation.getTypeParameters().isEmpty());

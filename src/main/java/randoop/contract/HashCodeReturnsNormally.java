@@ -1,14 +1,13 @@
 package randoop.contract;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** Checks that calling hashCode() on an object does not throw an exception. */
-public final class HashCodeReturnsNormally implements ObjectContract {
+public final class HashCodeReturnsNormally extends ObjectContract {
   private static final HashCodeReturnsNormally instance = new HashCodeReturnsNormally();
 
   private HashCodeReturnsNormally() {}
@@ -36,11 +35,11 @@ public final class HashCodeReturnsNormally implements ObjectContract {
     return 1;
   }
 
+  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE));
+
   @Override
   public TypeTuple getInputTypes() {
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(JavaTypes.OBJECT_TYPE);
-    return new TypeTuple(inputTypes);
+    return inputTypes;
   }
 
   @Override

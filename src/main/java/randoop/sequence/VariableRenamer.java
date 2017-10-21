@@ -121,11 +121,6 @@ class VariableRenamer {
         varName = "obj";
       } else if (type.isString()) {
         varName = "str";
-      } else {
-        // All other object types.
-        if (varName.length() == 0) {
-          varName = "anonymous";
-        }
       }
     }
 
