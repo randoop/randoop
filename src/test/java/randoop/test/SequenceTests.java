@@ -119,9 +119,9 @@ public class SequenceTests {
     ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
     testGen =
         new ExtendGenerator(
-            new ContractCheckingVisitor(
+            new ContractCheckingGenerator(
                 contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
-            new RegressionCaptureVisitor(
+            new RegressionCaptureGenerator(
                 expectation, new MultiMap<Type, TypedOperation>(), visibility, true));
   }
 

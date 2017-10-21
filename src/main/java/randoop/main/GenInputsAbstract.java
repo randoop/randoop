@@ -301,7 +301,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @OptionGroup("Observer methods")
   @Option("File containing observer functions")
-  // This file is used to populate RegressionCaptureVisitor.observer_map
+  // This file is used to populate RegressionCaptureGenerator.observer_map
   public static File observers = null;
 
   /**
