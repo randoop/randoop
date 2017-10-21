@@ -57,21 +57,24 @@ class VariableRenamer {
   private static String getVariableName(Type type, int depth) {
     if (type.isVoid()) {
       return "void";
-    } else if (type.isArray()) {
+    }
+    if (type.equals(JavaTypes.CLASS_TYPE)) {
+      return "cls";
+    }
+
+    if (type.isArray()) {
       // Array types.
       while (type.isArray()) {
         type = ((ArrayType) type).getComponentType();
       }
       return getVariableName(type) + "Array";
-    } else if (type.equals(JavaTypes.CLASS_TYPE)) {
-      return "cls";
     }
 
     // Primitive types.
-    if (type.isPrimitive() || type.isBoxedPrimitive()) {
-      if (type.isBoxedPrimitive()) {
-        type = ((NonParameterizedType) type).toPrimitive();
-      }
+    if (type.isBoxedPrimitive()) {
+      type = ((NonParameterizedType) type).toPrimitive();
+    }
+    if (type.isPrimitive()) {
       return type.getName();
     }
 
@@ -83,10 +86,8 @@ class VariableRenamer {
 
       // Special cases for parameterized types.
       if (Iterator.class.isAssignableFrom(typeClass)) {
-        // Iterator takes precedence, in cases like ListIterator.
         varName = "itor";
       } else if (List.class.isAssignableFrom(typeClass)) {
-        // List comes before array, in cases like ArrayList.
         varName = "list";
       } else if (Set.class.isAssignableFrom(typeClass)) {
         varName = "set";
@@ -99,8 +100,7 @@ class VariableRenamer {
       }
 
       // Only use the first type argument to construct the name to simplify things.
-      ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
-      TypeArgument argument = classType.getTypeArguments().get(0);
+      TypeArgument argument = ((ClassOrInterfaceType) type).getTypeArguments().get(0);
       if (argument.isWildcard()) {
         varName = "wildcard" + capitalizeString(varName);
       } else {
