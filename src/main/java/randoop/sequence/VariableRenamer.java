@@ -111,7 +111,7 @@ class VariableRenamer {
           String argumentName =
               getVariableName(((ReferenceArgument) argument).getReferenceType(), depth - 1);
 
-          varName = argumentName + capitalizeString(varName);
+          varName = lowercaseFirstCharacter(argumentName) + capitalizeString(varName);
         }
       }
     } else {
@@ -126,11 +126,6 @@ class VariableRenamer {
           varName = "anonymous";
         }
       }
-    }
-
-    // Preserve camel case.
-    if (Character.isUpperCase(varName.charAt(0))) {
-      varName = lowercaseFirstCharacter(varName);
     }
 
     // Make sure that the last character is not a digit.
