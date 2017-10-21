@@ -30,11 +30,11 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
    * <p>Adds checks for an expected exception at the final statement of the sequence.
    */
   @Override
-  public TestChecks generateTestChecks(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome result = eseq.getResult(finalIndex);
 
-    TestChecks checks;
+    TestChecks<?> checks;
     if (result instanceof NotExecuted) {
       throw new Error("Abnormal execution in sequence: " + eseq);
     } else if (result instanceof ExceptionalExecution) { // exception occurred

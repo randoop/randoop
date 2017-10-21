@@ -18,5 +18,5 @@ public interface TestCheckGenerator {
    * @param eseq the sequence for which checks are generated
    * @return the generated check set for the sequence
    */
-  TestChecks generateTestChecks(ExecutableSequence eseq);
+  TestChecks<?> generateTestChecks(ExecutableSequence eseq);
 }

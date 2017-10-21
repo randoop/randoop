@@ -27,7 +27,7 @@ import randoop.util.TupleSet;
  * contract violation, the visitor adds a {@code Check} to the {@code TestChecks} object that is
  * returned.
  */
-public final class ContractCheckingVisitor implements TestCheckGenerator {
+public final class ContractCheckingGenerator implements TestCheckGenerator {
 
   private ContractSet contracts;
   private ExceptionPredicate exceptionPredicate;
@@ -40,7 +40,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    *     c.getArity() == 1}.
    * @param exceptionPredicate the predicate to test for exceptions that are errors
    */
-  public ContractCheckingVisitor(ContractSet contracts, ExceptionPredicate exceptionPredicate) {
+  public ContractCheckingGenerator(ContractSet contracts, ExceptionPredicate exceptionPredicate) {
     this.contracts = contracts;
     this.exceptionPredicate = exceptionPredicate;
   }
@@ -54,7 +54,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * contracts in {@code contracts}.
    */
   @Override
-  public TestChecks generateTestChecks(ExecutableSequence eseq) {
+  public ErrorRevealingChecks generateTestChecks(ExecutableSequence eseq) {
     ErrorRevealingChecks checks = new ErrorRevealingChecks();
 
     int finalIndex = eseq.sequence.size() - 1;
@@ -80,8 +80,6 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
     } else {
       // Otherwise, normal execution, check contracts
       if (!contracts.isEmpty()) {
-        Check check;
-
         // 1. check unary over values in last statement
         // TODO: Why aren't unary contracts checked over all values like binary contracts are?
         List<ReferenceValue> statementValues = eseq.getLastStatementValues();
@@ -89,7 +87,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         if (!unaryContracts.isEmpty()) {
           TupleSet<ReferenceValue> statementTuples = new TupleSet<>();
           statementTuples = statementTuples.extend(statementValues);
-          check = checkContracts(unaryContracts, eseq, statementTuples);
+          Check check = checkContracts(unaryContracts, eseq, statementTuples);
           if (check != null) {
             checks.add(check);
             return checks;
@@ -103,7 +101,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         inputTuples = inputTuples.extend(inputValues).extend(inputValues);
         List<ObjectContract> binaryContracts = contracts.getWithArity(2);
         if (!binaryContracts.isEmpty()) {
-          check = checkContracts(binaryContracts, eseq, inputTuples);
+          Check check = checkContracts(binaryContracts, eseq, inputTuples);
           if (check != null) {
             checks.add(check);
             return checks;
@@ -114,7 +112,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         TupleSet<ReferenceValue> ternaryTuples = inputTuples.exhaustivelyExtend(statementValues);
         List<ObjectContract> ternaryContracts = contracts.getWithArity(3);
         if (!ternaryContracts.isEmpty()) {
-          check = checkContracts(ternaryContracts, eseq, ternaryTuples);
+          Check check = checkContracts(ternaryContracts, eseq, ternaryTuples);
           if (check != null) {
             checks.add(check);
             return checks;

@@ -1,7 +1,5 @@
 package randoop.util;
 
-import java.util.ArrayList;
-import java.util.List;
 import plume.UtilMDE;
 import randoop.Globals;
 
@@ -65,32 +63,6 @@ public final class Util {
     return output.toString();
   }
 
-  public static String toNColsStr(String s, int width) {
-    StringBuilder b = new StringBuilder();
-    for (String line : toNCols(s, width)) {
-      b.append(line);
-      b.append(System.getProperty("line.separator"));
-    }
-    return b.toString();
-  }
-
-  /**
-   * Splits it into words (whitespace separates words). Appends words to each other until it reaches
-   * a word that would cause the current line to exceed the given width, and then starts a new line.
-   *
-   * @param s the String
-   * @param width the column width
-   * @return the list of column strings
-   */
-  public static List<String> toNCols(String s, int width) {
-    List<String> ret = new ArrayList<>();
-    StringLineIterator i = new StringLineIterator(s);
-    while (i.hasMoreWords()) {
-      ret.add(i.nextLine(width));
-    }
-    return ret;
-  }
-
   public static int occurCount(StringBuilder text, String pattern) {
     if (pattern.length() == 0) throw new IllegalArgumentException("empty pattern");
     int i = 0;
@@ -102,42 +74,56 @@ public final class Util {
     return i;
   }
 
+  /**
+   * Format a hanging paragraph: The first line starts at the margin, and every subsequent line
+   * starts indented by {@code indentWidth}. Each line is no more than {@code colWidth} characters
+   * long.
+   */
   public static String hangingParagraph(String string, int colWidth, int indentWidth) {
     if (string == null) throw new IllegalArgumentException("string cannot be null.");
     if (indentWidth > colWidth) {
       throw new IllegalArgumentException("indentWidth cannot be greater than columnWidth");
     }
 
+    String indentString = new String(new char[indentWidth]).replace("\0", " ");
+
     StringBuilder b = new StringBuilder();
 
-    StringLineIterator i = new StringLineIterator(string);
     boolean firstLine = true;
-    while (i.hasMoreWords()) {
-      // Determine line's length.
-      int lineLength;
-      if (firstLine) lineLength = colWidth;
-      else lineLength = colWidth - indentWidth;
+    while (true) {
+      // Determine line's length (exclusive of intent if any)
+      int lineLength = firstLine ? colWidth : colWidth - indentWidth;
 
-      String line = i.nextLine(lineLength);
-      if (line.length() == 0) {
-        // If this happens, it will happen on all subsequence calls to nextLine,
-        // which would lead to an infinite loop.
-        throw new IllegalArgumentException(
-            "column width is too small to create hanging paragraph.");
+      if (lineLength > string.length()) {
+        if (!firstLine) {
+          b.append(indentString);
+        }
+        b.append(string);
+        b.append(Globals.lineSep);
+        return b.toString();
+      }
+
+      // i is index of whitespace
+      int i = lineLength;
+      while (i > 0) {
+        if (Character.isWhitespace(string.charAt(i))) {
+          break;
+        }
+        i--;
+      }
+      if (i == 0) {
+        i = lineLength;
       }
 
       // Add indent.
       if (!firstLine) {
-        for (int spaces = 0; spaces < indentWidth; spaces++) {
-          b.append(" ");
-        }
+        b.append(indentString);
       }
-
-      b.append(line);
+      b.append(string.substring(0, i));
       b.append(Globals.lineSep);
+      string = string.substring(i + 1);
       firstLine = false;
     }
-    return b.toString();
   }
 
   public static String createArgListJVML(Class<?>[] paramClasses) {
