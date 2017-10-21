@@ -46,7 +46,7 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
    *   <li>the exception is classified as invalid by this visitor's {@code ExceptionPredicate}
    * </ul>
    *
-   * @return a possibly empty {@link InvalidCheck} object for sequence
+   * @return a possibly-empty {@link InvalidCheck} object for sequence
    * @throws Error if throwExceptionOnFlakyTest==true and any exception encountered before last
    *     statement of sequence
    */

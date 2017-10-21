@@ -62,11 +62,10 @@ public interface TestChecks<T extends TestChecks<T>> {
   ExceptionCheck getExceptionCheck();
 
   /**
-   * Returns the consensus checks for two sets of checks. Refuses to compare passing with failing
-   * checks.
+   * Returns the intersection of checks in this set and another set.
    *
-   * @param checks the {@code TestChecks} to compare with.
-   * @return the checks common to this set of checks and those in {@code checks}
+   * @param other the {@code TestChecks} to compare with.
+   * @return the checks common to this set of checks and those in {@code other}
    */
-  T commonChecks(T checks);
+  T commonChecks(T other);
 }

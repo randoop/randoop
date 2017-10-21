@@ -79,7 +79,7 @@ public class SequenceWithExceptionalExecutionTest {
 
     ExecutableSequence es = new ExecutableSequence(sequence);
     TestCheckGenerator gen =
-        (new GenTests())
+        new GenTests()
             .createTestCheckGenerator(
                 new PublicVisibilityPredicate(),
                 new ContractSet(),

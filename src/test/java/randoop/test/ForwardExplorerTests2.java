@@ -119,7 +119,7 @@ public class ForwardExplorerTests2 {
   }
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
-    return (new GenTests())
+    return new GenTests()
         .createTestCheckGenerator(
             new PublicVisibilityPredicate(), contracts, new MultiMap<Type, TypedOperation>());
   }
