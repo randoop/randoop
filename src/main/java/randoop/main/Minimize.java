@@ -48,7 +48,13 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +63,12 @@ import plume.OptionGroup;
 import plume.Options;
 import plume.TimeLimitProcess;
 import randoop.Globals;
-import randoop.output.*;
+import randoop.output.ClassRenamingVisitor;
+import randoop.output.ClassTypeNameSimplifyVisitor;
+import randoop.output.ClassTypeVisitor;
+import randoop.output.FieldAccessTypeNameSimplifyVisitor;
+import randoop.output.MethodTypeNameSimplifyVisitor;
+import randoop.output.PrimitiveAndWrappedTypeVarNameCollector;
 
 /**
  * This program minimizes a failing JUnit test suite. Its three command-line arguments are:
@@ -340,7 +351,7 @@ public class Minimize extends CommandHandler {
   /**
    * Visit and minimize every JUnit test method within a compilation unit.
    *
-   * @param cu the compilation unit to minimize; is modified by side effect
+   * @param compUnit the compilation unit to minimize; is modified by side effect
    * @param packageName the package that the Java file is in
    * @param file the Java file that is being minimized; is modified by side effect
    * @param classpath classpath used to compile and run the Java file
@@ -350,7 +361,7 @@ public class Minimize extends CommandHandler {
    * @throws IOException thrown if minimized method can't be written to file
    */
   private static void minimizeTestSuite(
-      CompilationUnit cu,
+      CompilationUnit compUnit,
       String packageName,
       File file,
       String classpath,
@@ -360,17 +371,18 @@ public class Minimize extends CommandHandler {
       throws IOException {
     System.out.println("Minimizing test suite.");
 
-    int numberOfTestMethods = getNumberOfTestMethods(cu);
+    int numberOfTestMethods = getNumberOfTestMethods(compUnit);
     int numberOfMinimizedTests = 0;
 
-    for (TypeDeclaration type : cu.getTypes()) {
+    for (TypeDeclaration type : compUnit.getTypes()) {
       for (BodyDeclaration member : type.getMembers()) {
         if (member instanceof MethodDeclaration) {
           MethodDeclaration method = (MethodDeclaration) member;
 
           // Minimize the method only if it is a JUnit test method.
           if (isTestMethod(method)) {
-            minimizeMethod(method, cu, packageName, file, classpath, expectedOutput, timeoutLimit);
+            minimizeMethod(
+                method, compUnit, packageName, file, classpath, expectedOutput, timeoutLimit);
             printProgress(++numberOfMinimizedTests, numberOfTestMethods, method.getName());
           }
         }
@@ -1141,10 +1153,10 @@ public class Minimize extends CommandHandler {
    * adds the import statement if it has not been yet included in the list of current imports of the
    * compilation unit.
    *
-   * @param compilationUnit compilation unit to add import to
+   * @param compUnit compilation unit to add import to
    * @param importName the name of the import
    */
-  private static void addImport(CompilationUnit compilationUnit, String importName) {
+  private static void addImport(CompilationUnit compUnit, String importName) {
     String importStr = "import " + importName + ";";
     ImportDeclaration importDeclaration;
 
@@ -1156,7 +1168,7 @@ public class Minimize extends CommandHandler {
       return;
     }
 
-    List<ImportDeclaration> importDeclarations = compilationUnit.getImports();
+    List<ImportDeclaration> importDeclarations = compUnit.getImports();
     for (ImportDeclaration im : importDeclarations) {
       String currImportStr = im.toString().trim();
 
@@ -1182,7 +1194,7 @@ public class Minimize extends CommandHandler {
 
     // Add the import to the compilation unit's list of imports.
     importDeclarations.add(importDeclaration);
-    compilationUnit.setImports(importDeclarations);
+    compUnit.setImports(importDeclarations);
   }
 
   /**
