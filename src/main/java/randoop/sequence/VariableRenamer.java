@@ -58,9 +58,12 @@ class VariableRenamer {
     // Special cases.
     if (type.isVoid()) {
       return "void";
-    }
-    if (type.equals(JavaTypes.CLASS_TYPE)) {
+    } else if (type.equals(JavaTypes.CLASS_TYPE)) {
       return "cls";
+    } else if (type.isObject()) {
+      return "obj";
+    } else if (type.isString()) {
+      return "str";
     }
 
     // Primitive types.
@@ -114,13 +117,6 @@ class VariableRenamer {
 
           varName = argumentName + capitalizeString(varName);
         }
-      }
-    } else {
-      // Special cases: Object, String.
-      if (type.isObject()) {
-        varName = "obj";
-      } else if (type.isString()) {
-        varName = "str";
       }
     }
 
