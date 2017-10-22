@@ -125,7 +125,7 @@ public class OperationConditionTest {
     assertFalse("should be valid sequence", es.hasInvalidBehavior());
     assertFalse("should not have failure", es.hasFailure());
 
-    for (Check check : es.getChecks().get().keySet()) {
+    for (Check check : es.getChecks().checks()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
       for (BooleanExpression condition : postConditionCheck.getPostConditions()) {
@@ -141,7 +141,7 @@ public class OperationConditionTest {
     assertFalse("should be valid sequence", es.hasInvalidBehavior());
     assertFalse("should not have failure", es.hasFailure());
 
-    for (Check check : es.getChecks().get().keySet()) {
+    for (Check check : es.getChecks().checks()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
       for (BooleanExpression condition : postConditionCheck.getPostConditions()) {
@@ -157,7 +157,7 @@ public class OperationConditionTest {
     assertFalse("should be valid sequence", es.hasInvalidBehavior());
     assertTrue("should have failure", es.hasFailure());
 
-    for (Check check : es.getChecks().get().keySet()) {
+    for (Check check : es.getChecks().checks()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
       for (BooleanExpression condition : postConditionCheck.getPostConditions()) {
@@ -173,7 +173,7 @@ public class OperationConditionTest {
     assertFalse("should be valid sequence", es.hasInvalidBehavior());
     assertFalse("should not have failure", es.hasFailure());
 
-    for (Check check : es.getChecks().get().keySet()) {
+    for (Check check : es.getChecks().checks()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
       for (BooleanExpression condition : postConditionCheck.getPostConditions()) {

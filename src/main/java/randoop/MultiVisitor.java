@@ -23,6 +23,18 @@ public class MultiVisitor implements ExecutionVisitor {
 
   public MultiVisitor() {}
 
+  /** Returns a MultiVisitor if needed, otherwise a simpler visitor. */
+  public static ExecutionVisitor createMultiVisitor(List<ExecutionVisitor> visitors) {
+    switch (visitors.size()) {
+      case 0:
+        return new DummyVisitor();
+      case 1:
+        return visitors.get(0);
+      default:
+        return new MultiVisitor(visitors);
+    }
+  }
+
   /**
    * Calls the initialize method for each of the visitors, in the order in which the visitors were
    * given during construction of this MultiVisitor.

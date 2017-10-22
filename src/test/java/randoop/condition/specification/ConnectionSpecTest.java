@@ -9,27 +9,26 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 
-/** Created by bjkeller on 3/14/17. */
 public class ConnectionSpecTest {
 
   @Test
   public void testSerialization() {
     Class<?> c = net.Connection.class;
 
-    Constructor<?> constructor = null;
+    Constructor<?> constructor;
     try {
       constructor = c.getConstructor();
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
+      throw new Error(e);
     }
 
-    Method m = null;
+    Method mOpen;
     try {
-      m = c.getMethod("open");
+      mOpen = c.getMethod("open");
     } catch (NoSuchMethodException e) {
       fail("didn't find method: open");
+      throw new Error("dead code");
     }
-    assert m != null;
 
     List<OperationSpecification> opList = new ArrayList<>();
 
@@ -41,18 +40,18 @@ public class ConnectionSpecTest {
             IllegalStateException.class.getCanonicalName());
     List<ThrowsCondition> throwsList = new ArrayList<>();
     throwsList.add(opThrows);
-    OperationSignature op = OperationSignature.of(m);
-    OperationSpecification opSpec = new OperationSpecification(op, new Identifiers());
+    OperationSignature opOpen = OperationSignature.of(mOpen);
+    OperationSpecification opSpec = new OperationSpecification(opOpen, new Identifiers());
     opSpec.ThrowsConditions(throwsList);
     opList.add(opSpec);
 
-    m = null;
+    Method mSend;
     try {
-      m = c.getMethod("send", int.class);
+      mSend = c.getMethod("send", int.class);
     } catch (NoSuchMethodException e) {
       fail("didn't find method: send");
+      throw new Error("dead code");
     }
-    assert m != null;
 
     Guard paramGuard = new Guard("the code must be positive", "code > 0");
     Precondition opParam = new Precondition("the code must be positive", paramGuard);
@@ -67,16 +66,17 @@ public class ConnectionSpecTest {
     paramList.add(opParam);
     List<String> paramNames = new ArrayList<>();
     paramNames.add("code");
-    op = OperationSignature.of(m);
-    opSpec = new OperationSpecification(op, new Identifiers(paramNames));
+    OperationSignature opSend = OperationSignature.of(mSend);
+    opSpec = new OperationSpecification(opSend, new Identifiers(paramNames));
     opSpec.addParamSpecifications(paramList);
     opList.add(opSpec);
 
-    m = null;
+    Method mReceive;
     try {
-      m = c.getMethod("receive");
+      mReceive = c.getMethod("receive");
     } catch (NoSuchMethodException e) {
       fail("didn't find method: receive");
+      throw new Error("dead code");
     }
     Guard returnGuard = new Guard("", "true");
     Property property = new Property("received value is non-negative", "result >= 0");
@@ -84,8 +84,8 @@ public class ConnectionSpecTest {
         new Postcondition("returns non-negative received value", returnGuard, property);
     List<Postcondition> retList = new ArrayList<>();
     retList.add(opReturn);
-    op = OperationSignature.of(m);
-    opSpec = new OperationSpecification(op, new Identifiers());
+    OperationSignature opReceive = OperationSignature.of(mReceive);
+    opSpec = new OperationSpecification(opReceive, new Identifiers());
     opSpec.addReturnSpecifications(retList);
     opList.add(opSpec);
 

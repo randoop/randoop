@@ -1,6 +1,7 @@
 package randoop.output;
 
 import java.io.File;
+import java.io.IOException;
 import randoop.main.Minimize;
 
 /**
@@ -31,12 +32,16 @@ public class MinimizerWriter implements CodeWriter {
   public File writeClassCode(String packageName, String classname, String classCode)
       throws RandoopOutputException {
 
-    // Write the original class
+    // Write the original class.
     File testFile = javaFileWriter.writeClassCode(packageName, classname, classCode);
 
     // Minimize the error-revealing test that has been output.
-    Minimize.mainMinimize(
-        testFile, Minimize.suiteclasspath, Minimize.testsuitetimeout, Minimize.verboseminimizer);
+    try {
+      Minimize.mainMinimize(
+          testFile, Minimize.suiteclasspath, Minimize.testsuitetimeout, Minimize.verboseminimizer);
+    } catch (IOException e) {
+      throw new RandoopOutputException(e);
+    }
 
     return testFile;
   }

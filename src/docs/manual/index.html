@@ -214,25 +214,6 @@ java randoop.main.Main <em>command</em> <em>args...</em>
 </pre>
 
 <p>
-The classpath needs to contain both Randoop
-(<code>randoop-all-3.1.5.jar</code>) and the
-classes under test.
-For instance, if the current working directory contains a directory named
-<code>bin</code> containing your compiled classes, then you would use:
-</p>
-
-<pre class="code">
-  ... -classpath bin:$(RANDOOP_JAR) ...
-</pre>
-
- <p>
-(On Windows, adjust the classpath, such as using semicolon instead of colon
-as the separator.)
-Note that you don't need the <code>-classpath</code> argument if you add
-<code>$(RANDOOP_JAR)</code> to your classpath.
-</p>
-
-<p>
 Randoop supports three commands:
 </p>
 
@@ -266,6 +247,14 @@ java -cp $(RANDOOP_JAR) randoop.main.Main minimize --suitepath=ErrorTest0.java -
 </li>
 
 </ul>
+
+<p>
+(On Windows, adjust the classpath, such as using semicolon instead of colon
+as the separator.)
+You don't need the <code>-classpath</code> argument if you add
+<code>$(RANDOOP_JAR)</code> to your classpath.
+</p>
+
 
 
 <h1 id="generating_tests">Generating tests</h1>
@@ -350,7 +339,8 @@ RegressionTest will pass.
 </p>
 
 <pre class="code">
-java -ea -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
+java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-3.1.5.jar \
+  randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
 </pre>
 
 
@@ -716,6 +706,11 @@ Here is how Randoop attempts to generate a test:
     the number of error-revealing and regression tests reaches the output
     limit (<a href="#option:outputLimit"><code>--outputLimit</code></a>).
   </li>
+  <li>
+    one error-revealing test is generated, and
+    <a href="#option:stop-on-error-test"><code>--stop-on-error-test=true</code></a>
+    was supplied.
+  </li>
 </ul>
 
 
@@ -740,7 +735,8 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -cp randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
+java -cp randoop-all-3.1.5.jar randoop.main.Main minimize \
+  --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
 <p>
@@ -882,9 +878,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  (value: ERROR), regression test suite (value: EXPECTED), or should it be discarded (value:
  INVALID)? [default EXPECTED]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:unchecked-exception"><b>--unchecked-exception=</b><i>enum</i>.
@@ -896,9 +892,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>The arguments <code>--npe-on-null-input</code>, <code>--npe-on-non-null-input</code>, <code>--cm-exception</code>, <code>--oom-exception</code>, and <code>--sof-exception</code> handle special cases of
  unchecked exceptions. [default EXPECTED]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:npe-on-null-input"><b>--npe-on-null-input=</b><i>enum</i>.
@@ -906,9 +902,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  the test be be included in the error-revealing test suite (value: ERROR), regression test suite
  (value: EXPECTED), or should it be discarded (value: INVALID)? [default EXPECTED]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:npe-on-non-null-input"><b>--npe-on-non-null-input=</b><i>enum</i>.
@@ -916,9 +912,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  should the test be included in the error-revealing test suite (value: ERROR), regression test
  suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default ERROR]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:cm-exception"><b>--cm-exception=</b><i>enum</i>.
@@ -926,9 +922,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
  it be discarded (value: INVALID)? [default INVALID]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:oom-exception"><b>--oom-exception=</b><i>enum</i>.
@@ -936,9 +932,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
  it be discarded (value: INVALID)? [default INVALID]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:sof-exception"><b>--sof-exception=</b><i>enum</i>.
@@ -946,9 +942,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
  it be discarded (value: INVALID)? [default INVALID]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:specifications"><b>--specifications=</b><i>filename</i> <code>[+]</code>.
@@ -1181,7 +1177,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  parallel, merely in isolation. [default false]
             <li id="option:timeout"><b>--timeout=</b><i>int</i>.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
- forcefully. Only meaningful if --usethreads is also specified. [default 5000]
+ forcefully. Only meaningful if <code>--usethreads</code> is also specified. [default 5000]
       </ul>
   <li id="optiongroup:Test-case-minimization-options">Test case minimization options
       <ul>
@@ -1919,7 +1915,7 @@ classes under test
 
 <pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main help</pre>
 
-To print help for test generation (the <code>gentests</code> command), run:
+To print help for a command (such as <code>gentests</code> or <code>minimize</code>), supply it:
 
 <pre class="code">
 java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests

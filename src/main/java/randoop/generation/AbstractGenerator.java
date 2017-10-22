@@ -7,7 +7,11 @@ import java.util.Set;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Unpublicized;
-import randoop.*;
+import randoop.DummyVisitor;
+import randoop.ExecutionVisitor;
+import randoop.Globals;
+import randoop.MultiVisitor;
+import randoop.RandoopStat;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
@@ -16,7 +20,6 @@ import randoop.test.TestCheckGenerator;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor;
-import randoop.util.Timer;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
 
@@ -49,11 +52,13 @@ public abstract class AbstractGenerator {
   @RandoopStat("Number of invalid sequences generated.")
   public int invalidSequenceCount = 0;
 
-  /**
-   * The timer used to determine how much time has elapsed since the start of generator and whether
-   * generation should stop.
-   */
-  public final Timer timer = new Timer();
+  /** When the generator started (millisecond-based system timestamp). */
+  private long startTime = -1;
+
+  /** Elapsed time since the generator started. */
+  private long elapsedTime() {
+    return System.currentTimeMillis() - startTime;
+  }
 
   /** Limits for generation, after which the generator will stop. */
   public final GenInputsAbstract.Limits limits;
@@ -156,7 +161,7 @@ public abstract class AbstractGenerator {
    *
    * @param outputTest the predicate to be added to object
    */
-  public void addTestPredicate(Predicate<ExecutableSequence> outputTest) {
+  public void setTestPredicate(Predicate<ExecutableSequence> outputTest) {
     if (outputTest == null) {
       throw new IllegalArgumentException("outputTest must be non-null");
     }
@@ -168,11 +173,21 @@ public abstract class AbstractGenerator {
    *
    * @param executionVisitor the visitor
    */
-  public void addExecutionVisitor(ExecutionVisitor executionVisitor) {
+  public void setExecutionVisitor(ExecutionVisitor executionVisitor) {
     if (executionVisitor == null) {
       throw new IllegalArgumentException("executionVisitor must be non-null");
     }
     this.executionVisitor = executionVisitor;
+  }
+
+  /**
+   * Registers a MultiVisitor of all the given visitors with this object for use while executing
+   * each generated sequence.
+   *
+   * @param visitors the list of visitors
+   */
+  public void setExecutionVisitor(List<ExecutionVisitor> visitors) {
+    this.executionVisitor = MultiVisitor.createMultiVisitor(visitors);
   }
 
   /**
@@ -181,7 +196,7 @@ public abstract class AbstractGenerator {
    *
    * @param checkGenerator the check generating visitor
    */
-  public void addTestCheckGenerator(TestCheckGenerator checkGenerator) {
+  public void setTestCheckGenerator(TestCheckGenerator checkGenerator) {
     if (checkGenerator == null) {
       throw new IllegalArgumentException("checkGenerator must be non-null");
     }
@@ -194,7 +209,7 @@ public abstract class AbstractGenerator {
    * @return true iff any stopping criterion is met
    */
   protected boolean shouldStop() {
-    return (limits.timeLimitMillis != 0 && timer.getTimeElapsedMillis() >= limits.timeLimitMillis)
+    return (limits.timeLimitMillis != 0 && elapsedTime() >= limits.timeLimitMillis)
         || (numAttemptedSequences() >= limits.attemptedLimit)
         || (numGeneratedSequences() >= limits.generatedLimit)
         || (numOutputSequences() >= limits.outputLimit)
@@ -255,7 +270,7 @@ public abstract class AbstractGenerator {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
     }
 
-    timer.startTiming();
+    startTime = System.currentTimeMillis();
 
     if (GenInputsAbstract.progressdisplay) {
       progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE);

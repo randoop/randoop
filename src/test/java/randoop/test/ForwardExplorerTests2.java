@@ -3,6 +3,7 @@ package randoop.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -19,7 +20,6 @@ import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.Sequence;
@@ -67,7 +67,8 @@ public class ForwardExplorerTests2 {
     // means that timeout results in a flaky sequence exception
     GenInputsAbstract.repeat_heuristic = true;
 
-    assert ReflectionExecutor.usethreads : "this test does not terminate if threads are not used";
+    assertTrue(
+        ReflectionExecutor.usethreads); // This test does not terminate if threads are not used.
 
     List<Class<?>> classes = new ArrayList<>();
     classes.add(TreeNode.class);
@@ -87,7 +88,7 @@ public class ForwardExplorerTests2 {
             mgr,
             null,
             null);
-    exp.addTestCheckGenerator(createChecker(new ContractSet()));
+    exp.setTestCheckGenerator(createChecker(new ContractSet()));
 
     // get a SequenceExceptionError when repeat_heuristic=true
     try {
@@ -105,7 +106,7 @@ public class ForwardExplorerTests2 {
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
@@ -118,8 +119,7 @@ public class ForwardExplorerTests2 {
   }
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
-    return (new GenTests())
-        .createTestCheckGenerator(
-            new PublicVisibilityPredicate(), contracts, new MultiMap<Type, TypedOperation>());
+    return GenTests.createTestCheckGenerator(
+        IS_PUBLIC, contracts, new MultiMap<Type, TypedOperation>());
   }
 }

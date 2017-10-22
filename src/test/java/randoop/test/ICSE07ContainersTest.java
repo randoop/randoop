@@ -2,6 +2,7 @@ package randoop.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -24,7 +25,6 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.test.issta2006.BinTree;
@@ -84,7 +84,7 @@ public class ICSE07ContainersTest {
     System.out.println("GenInputsAbstract.small_tests=" + GenInputsAbstract.small_tests);
 
     final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
@@ -114,7 +114,7 @@ public class ICSE07ContainersTest {
             componentMgr,
             stopper,
             null);
-    explorer.addTestCheckGenerator(new DummyCheckGenerator());
+    explorer.setTestCheckGenerator(new DummyCheckGenerator());
     explorer.explore();
   }
 

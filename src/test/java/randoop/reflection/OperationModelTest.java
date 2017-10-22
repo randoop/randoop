@@ -7,8 +7,10 @@ import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,7 +34,6 @@ public class OperationModelTest {
 
   @Test
   public void linkedListTest() {
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("java.util.LinkedList");
@@ -44,7 +45,7 @@ public class OperationModelTest {
     try {
       model =
           OperationModel.createModel(
-              visibility,
+              IS_PUBLIC,
               reflectionPredicate,
               classnames,
               coveredClassnames,
@@ -56,7 +57,7 @@ public class OperationModelTest {
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
     }
-    assert model != null : "model was not initialized";
+    assertNotNull(model);
 
     assertThat(
         "only expect the LinkedList and Object classes",
@@ -85,7 +86,6 @@ public class OperationModelTest {
 
   @Test
   public void classWithInnerClassTest() {
-    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.test.ClassWithInnerClass");
@@ -98,7 +98,7 @@ public class OperationModelTest {
     try {
       model =
           OperationModel.createModel(
-              visibilityPredicate,
+              IS_PUBLIC,
               reflectionPredicate,
               classnames,
               coveredClassnames,
@@ -110,7 +110,7 @@ public class OperationModelTest {
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
     }
-    assert model != null : "model was not initialized";
+    assertNotNull(model);
     assertThat(
         "should have both outer and inner classes, plus Object",
         model.getClassTypes().size(),
@@ -122,7 +122,7 @@ public class OperationModelTest {
   @Test
   public void instantiationTest() {
     OperationModel model = getOperationModel("randoop.reflection.GenericClass");
-    assert model != null : "model was not initialized";
+    assertNotNull(model);
 
     assertEquals("should be two classes ", 2, model.getClassTypes().size());
 
@@ -163,7 +163,6 @@ public class OperationModelTest {
    */
   @Test
   public void testEnumOverloads() {
-    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.supertypetest.InheritedEnum");
@@ -175,7 +174,7 @@ public class OperationModelTest {
     try {
       model =
           OperationModel.createModel(
-              visibilityPredicate,
+              IS_PUBLIC,
               reflectionPredicate,
               classnames,
               coveredClassnames,
@@ -187,7 +186,7 @@ public class OperationModelTest {
     } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     }
-    assert model != null : "model was not initialized";
+    assertNotNull(model);
 
     List<TypedOperation> alphaOps = new ArrayList<>();
     for (TypedOperation operation : model.getOperations()) {
@@ -242,7 +241,7 @@ public class OperationModelTest {
   public void memberTypeTest() {
     String classname = "randoop.reflection.ClassWithMemberTypes";
     OperationModel model = getOperationModel(classname);
-    assert model != null : "model was not initialized";
+    assertNotNull(model);
 
     List<ClassOrInterfaceType> expected = new ArrayList<>();
     expected.add(ClassOrInterfaceType.forClass(ClassWithMemberTypes.class));
@@ -274,7 +273,7 @@ public class OperationModelTest {
   public void memberOfGenericTypeTest() {
     String classname = "randoop.reflection.GenericTreeWithInnerNode";
     OperationModel model = getOperationModel(classname);
-    assert model != null : " model was not initialized";
+    assertNotNull(model);
 
     List<TypedOperation> operations = model.getOperations();
     for (TypedOperation operation : operations) {
@@ -350,7 +349,6 @@ public class OperationModelTest {
   }
 
   private OperationModel getOperationModel(Set<String> classnames) {
-    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> coveredClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
@@ -360,7 +358,7 @@ public class OperationModelTest {
     try {
       model =
           OperationModel.createModel(
-              visibilityPredicate,
+              IS_PUBLIC,
               reflectionPredicate,
               classnames,
               coveredClassnames,

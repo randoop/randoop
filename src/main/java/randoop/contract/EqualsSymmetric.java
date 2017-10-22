@@ -1,14 +1,13 @@
 package randoop.contract;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** The contract: {@code o1.equals(o2) ==> o2.equals(o1)}. */
-public final class EqualsSymmetric implements ObjectContract {
+public final class EqualsSymmetric extends ObjectContract {
   private static final EqualsSymmetric instance = new EqualsSymmetric();
 
   private EqualsSymmetric() {}
@@ -31,12 +30,12 @@ public final class EqualsSymmetric implements ObjectContract {
     return 2;
   }
 
+  static TypeTuple inputTypes =
+      new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
+
   @Override
   public TypeTuple getInputTypes() {
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(JavaTypes.OBJECT_TYPE);
-    inputTypes.add(JavaTypes.OBJECT_TYPE);
-    return new TypeTuple(inputTypes);
+    return inputTypes;
   }
 
   @Override

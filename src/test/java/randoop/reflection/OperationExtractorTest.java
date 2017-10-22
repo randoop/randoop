@@ -4,9 +4,11 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -27,19 +29,18 @@ public class OperationExtractorTest {
   public void concreteClassTest() {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
 
-    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    ReflectionManager mgr = new ReflectionManager(IS_PUBLIC);
 
-    Class<?> c = null;
+    Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.ConcreteClass");
     } catch (ClassNotFoundException e) {
       fail("didn't find class: " + e);
+      throw new Error("Unreachable");
     }
-    assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
     final OperationExtractor extractor =
-        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
     assertThat("name should be", classType.getName(), is(equalTo(c.getName())));
@@ -70,15 +71,15 @@ public class OperationExtractorTest {
   @Test
   public void genericClassTest() {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    ReflectionManager mgr = new ReflectionManager(IS_PUBLIC);
 
-    Class<?> c = null;
+    Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.GenericClass");
     } catch (ClassNotFoundException e) {
       fail("didn't find class: " + e);
+      throw new Error("Unreachable");
     }
-    assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertTrue("should be a generic type", classType.isGeneric());
 
@@ -86,9 +87,8 @@ public class OperationExtractorTest {
     Substitution<ReferenceType> substitution =
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.apply(substitution);
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
     final OperationExtractor extractor =
-        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
     int expectedCount = 21;
@@ -101,16 +101,16 @@ public class OperationExtractorTest {
   @Test
   public void memberOfGenericTest() {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    ReflectionManager mgr = new ReflectionManager(IS_PUBLIC);
 
     String classname = "randoop.reflection.GenericTreeWithInnerNode";
-    Class<?> c = null;
+    Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException e) {
       fail("did not find class: " + e);
+      throw new Error("Unreachable");
     }
-    assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertTrue("should be a generic type", classType.isGeneric());
     assertTrue("should have type parameters", classType.getTypeParameters().size() > 0);
@@ -118,9 +118,8 @@ public class OperationExtractorTest {
     Substitution<ReferenceType> substitution =
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.apply(substitution);
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
     final OperationExtractor extractor =
-        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
     operations.addAll(extractor.getOperations());
     int expectedCount = 4;
@@ -133,7 +132,7 @@ public class OperationExtractorTest {
         memberType = (ClassOrInterfaceType) operation.getOutputType();
       }
     }
-    assert memberType != null : "member type should not be null";
+    assertNotNull(memberType);
     assertThat(
         "member type name",
         memberType.getName(),
@@ -145,23 +144,22 @@ public class OperationExtractorTest {
   @Test
   public void memberExtendingEnclosingTest() {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    ReflectionManager mgr = new ReflectionManager(IS_PUBLIC);
 
     String classname = "randoop.reflection.GenericWithInnerSub$Inner";
-    Class<?> c = null;
+    Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException e) {
       fail("did not find class: " + e);
+      throw new Error("Unreachable");
     }
-    assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertFalse("static member should not be a generic type", classType.isGeneric());
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
     assertFalse("static member is not parameterized", classType.isParameterized());
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
     final OperationExtractor extractor =
-        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, classType.getRuntimeClass());
     operations.addAll(extractor.getOperations());
     int expectedCount = 3;
@@ -179,20 +177,19 @@ public class OperationExtractorTest {
             new PackageVisibilityPredicate(this.getClass().getPackage().getName()));
 
     String classname = "randoop.reflection.PartialBindingInput";
-    Class<?> c = null;
+    Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException e) {
       fail("did not find class: " + e);
+      throw new Error("Unreachable");
     }
-    assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertFalse("class type should not be generic", classType.isGeneric());
     assertFalse("class type is not parameterized", classType.isParameterized());
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
     final OperationExtractor extractor =
-        new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
+        new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, classType.getRuntimeClass());
     operations.addAll(extractor.getOperations());
     int expectedCount = 4;
@@ -205,16 +202,16 @@ public class OperationExtractorTest {
   @Test
   public void inaccessibleArgumentTest() {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     ReflectionManager mgr = new ReflectionManager(visibility);
     String classname = "randoop.reflection.visibilitytest.InaccessibleArgumentInput";
-    Class<?> c = null;
+    Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException e) {
       fail("did not find class: " + e);
+      throw new Error("Unreachable");
     }
-    assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);

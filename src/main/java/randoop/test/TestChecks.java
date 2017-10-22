@@ -1,15 +1,15 @@
 package randoop.test;
 
-import java.util.Map;
+import java.util.Set;
 
 /**
- * TestChecks represents the checks for a particular test sequence. Can either be all passing tests
- * for a regression test, or all failing tests for an error-revealing test.
+ * A TestChecks reprents a set of Checks, and possibly a single ExceptionCheck
  *
  * @see RegressionChecks
  * @see ErrorRevealingChecks
+ * @see InvalidChecks
  */
-public interface TestChecks {
+public interface TestChecks<T extends TestChecks<T>> {
 
   /**
    * Return the number of checks in this test.
@@ -23,14 +23,14 @@ public interface TestChecks {
    *
    * @return all checks with passing status
    */
-  Map<Check, Boolean> get();
+  Set<Check> checks();
 
   /**
-   * Indicates whether this set of checks corresponds to valid behaviors.
+   * Add a check to this set.
    *
-   * @return true when has checks for invalid behavior, false otherwise
+   * @param ck the check object to add to this set of checks
    */
-  boolean hasInvalidBehavior();
+  void add(Check ck);
 
   /**
    * Indicates whether this object has checks.
@@ -38,6 +38,13 @@ public interface TestChecks {
    * @return true if this object has checks, false otherwise
    */
   boolean hasChecks();
+
+  /**
+   * Indicates whether this set of checks corresponds to valid behaviors.
+   *
+   * @return true when has checks for invalid behavior, false otherwise
+   */
+  boolean hasInvalidBehavior();
 
   /**
    * Indicate whether this object has any failing checks. (This is essentially asking whether this
@@ -55,18 +62,10 @@ public interface TestChecks {
   ExceptionCheck getExceptionCheck();
 
   /**
-   * Add a check to this sequence.
+   * Returns the intersection of checks in this set and another set.
    *
-   * @param ck the check object to add to this set of checks
+   * @param other the {@code TestChecks} to compare with.
+   * @return the checks common to this set of checks and those in {@code other}
    */
-  void add(Check ck);
-
-  /**
-   * Returns the consensus checks for two sets of checks. Refuses to compare passing with failing
-   * checks.
-   *
-   * @param checks the {@code TestChecks} to compare with.
-   * @return the checks common to this set of checks and those in {@code checks}
-   */
-  TestChecks commonChecks(TestChecks checks);
+  T commonChecks(T other);
 }

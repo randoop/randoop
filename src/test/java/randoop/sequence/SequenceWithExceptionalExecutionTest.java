@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ import randoop.main.GenTests;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ArrayType;
@@ -54,13 +54,13 @@ public class SequenceWithExceptionalExecutionTest {
     sequence = sequence.extend(TypedOperation.createCast(rawArrayType, arrayType), input);
     int arrayValueIndex = sequence.getLastVariable().index;
 
-    Constructor<?> constructor = null;
+    Constructor<?> constructor;
     try {
       constructor = (LinkedHashSet.class).getConstructor();
     } catch (NoSuchMethodException e) {
       fail("couldn't get default constructor for LinkedHashSet: " + e.getMessage());
+      throw new Error("Unreachable");
     }
-    assert constructor != null;
     TypedClassOperation constructorOp = TypedOperation.forConstructor(constructor);
     Substitution<ReferenceType> substitution =
         ((GenericClassType) constructorOp.getDeclaringType())
@@ -79,11 +79,8 @@ public class SequenceWithExceptionalExecutionTest {
 
     ExecutableSequence es = new ExecutableSequence(sequence);
     TestCheckGenerator gen =
-        (new GenTests())
-            .createTestCheckGenerator(
-                new PublicVisibilityPredicate(),
-                new ContractSet(),
-                new MultiMap<Type, TypedOperation>());
+        GenTests.createTestCheckGenerator(
+            IS_PUBLIC, new ContractSet(), new MultiMap<Type, TypedOperation>());
     es.execute(new DummyVisitor(), gen);
 
     assertFalse("sequence should not have unexecuted statements", es.hasNonExecutedStatements());
