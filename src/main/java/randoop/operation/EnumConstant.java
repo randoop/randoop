@@ -19,8 +19,6 @@ import randoop.types.TypeTuple;
  */
 public class EnumConstant extends CallableOperation {
 
-  public static final String ID = "enum";
-
   private Enum<?> value;
 
   public EnumConstant(Enum<?> value) {

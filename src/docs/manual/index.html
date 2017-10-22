@@ -328,7 +328,8 @@ RegressionTest will pass.
 </p>
 
 <pre class="code">
-java -ea -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
+java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-3.1.5.jar \
+  randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
 </pre>
 
 
@@ -723,7 +724,8 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -cp randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
+java -cp randoop-all-3.1.5.jar randoop.main.Main minimize \
+  --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
 <p>
