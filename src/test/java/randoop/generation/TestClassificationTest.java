@@ -105,8 +105,11 @@ public class TestClassificationTest {
       }
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
-        String msg = "all exceptions are invalid, regression checks should be null;\n have ";
-        fail(msg + eck.getClass().getName() + " with " + eck.getExceptionName());
+        fail(
+            String.format(
+                "all exceptions are invalid, regression checks should be null;%n have %s with %s"
+                    + eck.getClass().getName()
+                    + eck.getExceptionName()));
       }
     }
 
@@ -149,8 +152,10 @@ public class TestClassificationTest {
 
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
-        String msg = "all exceptions error, should have no expected;\n have ";
-        fail(msg + eck.getClass().getName() + " with " + eck.getExceptionName());
+        fail(
+            String.format(
+                "all exceptions error, should have no expected;%n have %s with %s",
+                eck.getClass().getName(), eck.getExceptionName()));
       }
     }
 

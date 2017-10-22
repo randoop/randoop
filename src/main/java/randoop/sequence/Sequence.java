@@ -1056,13 +1056,15 @@ public final class Sequence implements WeightedElement {
       b.append(
               "Error while parsing the following list of strings as a sequence (error was at index ")
           .append(statementCount)
-          .append("):\n\n");
+          .append("):")
+          .append(Globals.lineSep)
+          .append(Globals.lineSep);
       for (String s : statements) {
-        b.append(s).append("\n");
+        b.append(s).append(Globals.lineSep);
       }
-      b.append("\n\n");
-      b.append("Error: ").append(e.toString()).append("\n");
-      b.append("Stack trace:\n");
+      b.append("").append(Globals.lineSep).append(Globals.lineSep);
+      b.append("Error: ").append(e.toString()).append(Globals.lineSep);
+      b.append("Stack trace:").append(Globals.lineSep);
       for (StackTraceElement s : e.getStackTrace()) {
         b.append(s.toString());
       }
