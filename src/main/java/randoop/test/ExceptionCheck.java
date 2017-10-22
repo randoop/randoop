@@ -71,21 +71,6 @@ public abstract class ExceptionCheck implements Check {
   /**
    * {@inheritDoc}
    *
-   * @return the name of the class of the exception thrown
-   */
-  @Override
-  public String getValue() {
-    return exception.getClass().getName();
-  }
-
-  @Override
-  public String getID() {
-    return "Throws exception @" + statementIndex;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
    * <p>The pre-statement prefix of the try-catch wrapper.
    */
   @Override
