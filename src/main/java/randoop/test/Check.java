@@ -52,13 +52,6 @@ public interface Check {
   String toCodeStringPostStatement();
 
   /**
-   * Returns a short string that can be used to uniquely identify this check.
-   *
-   * @return a string "value" for this check
-   */
-  String getValueString();
-
-  /**
    * Evaluates this check on the given execution of a sequence.
    *
    * @param execution the execution of sequence on which to test this check

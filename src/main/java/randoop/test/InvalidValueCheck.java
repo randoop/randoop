@@ -28,11 +28,6 @@ public class InvalidValueCheck implements Check {
   }
 
   @Override
-  public String getValueString() {
-    return "invalid_value";
-  }
-
-  @Override
   public boolean evaluate(Execution execution) {
     return false;
   }

@@ -65,11 +65,6 @@ public class MissingExceptionCheck implements Check {
         "org.junit.Assert.fail(\"exception %s is expected\");", expected.getName());
   }
 
-  @Override
-  public String getValueString() {
-    return "missing_exception";
-  }
-
   /**
    * {@inheritDoc}
    *

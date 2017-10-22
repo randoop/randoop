@@ -49,11 +49,6 @@ public class PostConditionCheck implements Check {
         + ");";
   }
 
-  @Override
-  public String getValueString() {
-    return postcondition.getClass().getName() + "(" + postcondition.getConditionString() + ")";
-  }
-
   /**
    * Doesn't actually evaluate {@link Execution} object. This check exists because the
    * post-condition failed, so returns false.

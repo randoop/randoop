@@ -2,13 +2,8 @@ package randoop.test;
 
 import java.util.Arrays;
 import java.util.Objects;
-import randoop.contract.EnumValue;
-import randoop.contract.IsNotNull;
-import randoop.contract.IsNull;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
-import randoop.contract.ObserverEqValue;
-import randoop.contract.PrimValue;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Execution;
 import randoop.sequence.Sequence;
@@ -98,27 +93,6 @@ public class ObjectCheck implements Check {
   @Override
   public String toCodeStringPostStatement() {
     return ObjectContractUtils.localizeContractCode(contract.toCodeString(), vars);
-  }
-
-  /**
-   * For checks involving a primitive-like value (primitive, String, or null), returns a string
-   * representation of the value. Otherwise, returns the name of the contract class.
-   */
-  @Override
-  public String getValueString() {
-    if (contract instanceof IsNotNull) {
-      return "!null";
-    } else if (contract instanceof IsNull) {
-      return "null";
-    } else if (contract instanceof ObserverEqValue) {
-      return String.format("%s", ((ObserverEqValue) contract).value);
-    } else if (contract instanceof PrimValue) {
-      return ((PrimValue) contract).value.toString();
-    } else if (contract instanceof EnumValue) {
-      return ((EnumValue) contract).getValueName();
-    } else {
-      return contract.getClass().getName();
-    }
   }
 
   @Override
