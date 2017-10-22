@@ -7,7 +7,7 @@ import java.util.Set;
  *
  * @see RegressionChecks
  * @see ErrorRevealingChecks
- * @see InvalidCheck
+ * @see InvalidChecks
  */
 public interface TestChecks<T extends TestChecks<T>> {
 

@@ -35,7 +35,7 @@ public class TestUtils {
   /**
    * Uses the argument to set {@link GenInputsAbstract#log}.
    *
-   * @param file the file to write the log to
+   * @param file the file to write the log to; does nothing if file is null
    */
   @SuppressWarnings(
       "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
@@ -65,7 +65,7 @@ public class TestUtils {
   /**
    * Uses the argument to set {@link Randomness#selectionLog}.
    *
-   * @param file the file to write the log to
+   * @param file the file to write the log to; does nothing if file is null
    */
   public static void setSelectionLog(String file) {
     if (debug) {
@@ -89,7 +89,7 @@ public class TestUtils {
   /**
    * If the file is non-null, sets the operation history logger for the generator using the file.
    *
-   * @param file the file to write the log to
+   * @param file the file to write the log to; does nothing if file is null
    * @param generator the generator for which logger is to be set
    */
   public static void setOperationLog(String file, AbstractGenerator generator) {

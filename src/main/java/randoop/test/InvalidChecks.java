@@ -5,12 +5,12 @@ import java.util.Set;
 import randoop.BugInRandoopException;
 
 /**
- * An empty or singleton set. It contains at most one check, which captures invalid behavior in a
- * sequence.
+ * An empty or singleton set. It contains at most one InvalidExceptionCheck, which captures invalid
+ * behavior in a sequence.
  */
-public class InvalidCheck implements TestChecks<InvalidCheck> {
+public class InvalidChecks implements TestChecks<InvalidChecks> {
 
-  private Check check;
+  private InvalidExceptionCheck check;
 
   @Override
   public int count() {
@@ -24,7 +24,7 @@ public class InvalidCheck implements TestChecks<InvalidCheck> {
   @Override
   public Set<Check> checks() {
     if (check != null) {
-      return Collections.singleton(check);
+      return Collections.<Check>singleton(check);
     } else {
       return Collections.emptySet();
     }
@@ -41,25 +41,25 @@ public class InvalidCheck implements TestChecks<InvalidCheck> {
   }
 
   @Override
-  public ExceptionCheck getExceptionCheck() {
-    if (check instanceof ExceptionCheck) {
-      return (ExceptionCheck) check;
-    }
-    return null;
+  public InvalidExceptionCheck getExceptionCheck() {
+    return check;
   }
 
   @Override
   public void add(Check check) {
     if (this.check != null) {
       throw new BugInRandoopException(
-          String.format("add(%s) when InvalidCheck already contains %s", check, this.check));
+          String.format("add(%s) when InvalidChecks already contains %s", check, this.check));
     }
-    this.check = check;
+    if (!(check instanceof InvalidExceptionCheck)) {
+      throw new Error("Expected InvalidExceptionCheck: " + check);
+    }
+    this.check = (InvalidExceptionCheck) check;
   }
 
   @Override
-  public InvalidCheck commonChecks(InvalidCheck other) {
-    InvalidCheck common = new InvalidCheck();
+  public InvalidChecks commonChecks(InvalidChecks other) {
+    InvalidChecks common = new InvalidChecks();
     if (this.check != null && check.equals(other.check)) {
       common.add(check);
     }

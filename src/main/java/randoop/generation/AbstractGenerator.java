@@ -7,7 +7,11 @@ import java.util.Set;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Unpublicized;
-import randoop.*;
+import randoop.DummyVisitor;
+import randoop.ExecutionVisitor;
+import randoop.Globals;
+import randoop.MultiVisitor;
+import randoop.RandoopStat;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
@@ -174,6 +178,16 @@ public abstract class AbstractGenerator {
       throw new IllegalArgumentException("executionVisitor must be non-null");
     }
     this.executionVisitor = executionVisitor;
+  }
+
+  /**
+   * Registers a MultiVisitor of all the given visitors with this object for use while executing
+   * each generated sequence.
+   *
+   * @param visitors the list of visitors
+   */
+  public void setExecutionVisitor(List<ExecutionVisitor> visitors) {
+    this.executionVisitor = MultiVisitor.createMultiVisitor(visitors);
   }
 
   /**

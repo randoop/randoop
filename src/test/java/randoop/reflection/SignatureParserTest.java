@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
@@ -64,8 +65,7 @@ public class SignatureParserTest {
   private void checkParse(String inputString) throws SignatureParseException {
 
     AccessibleObject accessibleObject =
-        SignatureParser.parse(
-            inputString, new PublicVisibilityPredicate(), new DefaultReflectionPredicate());
+        SignatureParser.parse(inputString, IS_PUBLIC, new DefaultReflectionPredicate());
     assertNotNull(accessibleObject);
 
     TypedClassOperation operation =
