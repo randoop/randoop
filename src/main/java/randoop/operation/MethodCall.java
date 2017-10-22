@@ -34,13 +34,6 @@ import randoop.util.ReflectionExecutor;
  */
 public final class MethodCall extends CallableOperation {
 
-  /**
-   * ID for parsing purposes
-   *
-   * @see OperationParser#getId(TypedOperation)
-   */
-  public static final String ID = "method";
-
   private final Method method;
   private final boolean isStatic;
 

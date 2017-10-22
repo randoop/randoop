@@ -29,13 +29,6 @@ import randoop.util.Util;
  */
 public final class NonreceiverTerm extends CallableOperation {
 
-  /**
-   * ID for parsing purposes.
-   *
-   * @see OperationParser#getId(TypedOperation)
-   */
-  public static final String ID = "prim";
-
   /** The {@link Type} of this non-receiver term. */
   private final Type type;
 
@@ -293,7 +286,7 @@ public final class NonreceiverTerm extends CallableOperation {
               + "<type>:<value>"
               + " but the <type> description \""
               + s
-              + "\" contains invalid whitespace characters.";
+              + "\" contains whitespace characters.";
       throw new OperationParseException(msg);
     }
 

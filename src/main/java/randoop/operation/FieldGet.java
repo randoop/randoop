@@ -24,8 +24,6 @@ import randoop.types.TypeTuple;
  */
 public class FieldGet extends CallableOperation {
 
-  public static String ID = "getter";
-
   private AccessibleField field;
 
   /**

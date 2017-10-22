@@ -63,7 +63,7 @@ public interface Check {
    * match. The value is NOT included. Used to match up checks between the same sequence run at
    * different times. Note that because of changes in the environment (e.g., static variables), two
    * executions of the same sequence may have different checks (because the existence of some checks
-   * depends on the value of variables)
+   * depends on the value of variables).
    *
    * @return a unique string identifier for this check
    */

@@ -26,13 +26,6 @@ import randoop.util.Util;
  */
 public final class ConstructorCall extends CallableOperation {
 
-  /**
-   * ID for parsing purposes.
-   *
-   * @see OperationParser#getId(TypedOperation)
-   */
-  public static final String ID = "cons";
-
   private final Constructor<?> constructor;
 
   // Cached values (for improved performance). Their values
