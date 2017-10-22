@@ -37,21 +37,23 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @SuppressWarnings("Finally")
   @Override
-  public void runReflectionCodeRaw() throws IllegalAccessException, InvocationTargetException {
+  public void runReflectionCodeRaw() {
 
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
 
       if (receiver == null && isInstanceMethod()) {
-        throw new NotCaughtIllegalStateException(
+        throw new ReflectionCodeException(
             "receiver was null - expected NPE from call to: " + method);
       }
     } catch (NullPointerException e) {
       this.exceptionThrown = e;
-      throw e;
     } catch (InvocationTargetException e) {
+      // The underlying method threw an exception
       this.exceptionThrown = e.getCause();
-      throw e;
+    } catch (Throwable e) {
+      // Any other exception indicates Randoop should not have called the method
+      throw new ReflectionCodeException(e);
     }
   }
 
@@ -59,7 +61,7 @@ public final class MethodReflectionCode extends ReflectionCode {
   public String toString() {
     String ret =
         "Call to " + method + " receiver: " + receiver + " args: " + Arrays.toString(inputs);
-    if (!hasRunAlready()) {
+    if (!hasRun()) {
       return ret + " not run yet";
     } else if (exceptionThrown == null) {
       return ret + " returned: " + retval;

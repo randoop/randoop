@@ -14,18 +14,20 @@ package randoop;
  */
 public abstract class ExecutionOutcome {
 
+  /** The execution time, in nanoseconds. */
   private final long executionTime;
 
   String output = null;
 
+  /** @param executionTime the execution time, in nanoseconds */
   public ExecutionOutcome(long executionTime) {
     this.executionTime = executionTime;
   }
 
   /**
-   * How long the associated statement took to execute.
+   * How long the associated statement took to execute, in nanoseconds.
    *
-   * @return the execution time for the statement
+   * @return the execution time for the statement, in nanoseconds
    */
   public long getExecutionTime() {
     return executionTime;

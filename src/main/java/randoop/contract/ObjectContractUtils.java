@@ -1,8 +1,6 @@
 package randoop.contract;
 
-import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.util.ObjectContractReflectionCode;
 import randoop.util.ReflectionCode;
@@ -24,17 +22,7 @@ public class ObjectContractUtils {
    */
   public static ExecutionOutcome execute(final ObjectContract c, final Object... objs) {
     ReflectionCode refl = new ObjectContractReflectionCode(c, objs);
-    long startTime = System.currentTimeMillis();
-    Throwable t = ReflectionExecutor.executeReflectionCode(refl, System.out);
-    long time = System.currentTimeMillis() - startTime;
-
-    if (refl.getExceptionThrown() != null) {
-      return new ExceptionalExecution(refl.getExceptionThrown(), time);
-    }
-    if (t != null) {
-      return new ExceptionalExecution(t, time);
-    }
-    return new NormalExecution(refl.getReturnValue(), time);
+    return ReflectionExecutor.executeReflectionCode(refl, System.out);
   }
 
   /**

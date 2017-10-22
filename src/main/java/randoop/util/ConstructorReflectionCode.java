@@ -32,21 +32,25 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @SuppressWarnings("Finally")
   @Override
-  public void runReflectionCodeRaw()
-      throws InstantiationException, IllegalAccessException, InvocationTargetException {
+  public void runReflectionCodeRaw() {
 
     try {
       this.retval = this.constructor.newInstance(this.inputs);
     } catch (InvocationTargetException e) {
+      // The underlying constructor threw an exception
       this.exceptionThrown = e.getCause();
-      throw e;
+    } catch (Throwable e) {
+      // Any other exception indicates Randoop should not have called the constructor
+      throw new ReflectionCodeException(e);
     }
   }
 
   @Override
   public String toString() {
     String ret = "Call to " + constructor + ", args: " + Arrays.toString(inputs);
-    if (hasRunAlready()) {
+    if (hasStarted()) {
+      return ret + " failed to run";
+    } else if (hasRun()) {
       return ret + " not run yet";
     } else if (exceptionThrown == null) {
       return ret + " returned: " + ret;

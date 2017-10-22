@@ -4,6 +4,9 @@ import java.io.PrintStream;
 import plume.Option;
 import plume.OptionGroup;
 import plume.UtilMDE;
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
 
 /**
  * Static methods that executes the code of a ReflectionCode object.
@@ -69,39 +72,36 @@ public final class ReflectionExecutor {
   }
 
   /**
-   * Executes {@code code.runReflectionCode()}. If no exception is thrown, returns null. Otherwise,
-   * returns the exception thrown.
+   * Executes {@code code.runReflectionCode()}, which sets {@code code}'s {@code .retVal} or {@code
+   * exceptionThrown} field.
    *
    * @param code the {@link ReflectionCode} to be executed
    * @param out stream to print exception details to or null
-   * @return null or the exception thrown
    */
-  public static Throwable executeReflectionCode(ReflectionCode code, PrintStream out) {
-    Throwable ret;
-
+  public static ExecutionOutcome executeReflectionCode(ReflectionCode code, PrintStream out) {
     long start = System.nanoTime();
     if (usethreads) {
-      ret = executeReflectionCodeThreaded(code, out);
+      executeReflectionCodeThreaded(code, out);
     } else {
-      ret = executeReflectionCodeUnThreaded(code, out);
+      executeReflectionCodeUnThreaded(code, out);
     }
     long duration = System.nanoTime() - start;
 
-    if (ret == null) {
-      // Add duration to running average for normal execution.
-      normal_exec_duration += duration;
-      assert normal_exec_duration > 0; // check no overflow.
-      normal_exec_count++;
-      // System.out.println("normal execution: " + code);
-    } else {
+    if (code.getExceptionThrown() != null) {
       // Add duration to running average for exceptional execution.
       excep_exec_duration += duration;
       assert excep_exec_duration > 0; // check no overflow.
       excep_exec_count++;
       // System.out.println("exceptional execution: " + code);
+      return new ExceptionalExecution(code.getExceptionThrown(), duration);
+    } else {
+      // Add duration to running average for normal execution.
+      normal_exec_duration += duration;
+      assert normal_exec_duration > 0; // check no overflow.
+      normal_exec_count++;
+      // System.out.println("normal execution: " + code);
+      return new NormalExecution(code.getReturnValue(), duration);
     }
-
-    return ret;
   }
 
   /**
@@ -110,10 +110,9 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    * @param out ignored
-   * @return null or the exception thrown
    */
   @SuppressWarnings("deprecation")
-  private static Throwable executeReflectionCodeThreaded(ReflectionCode code, PrintStream out) {
+  private static void executeReflectionCodeThreaded(ReflectionCode code, PrintStream out) {
 
     RunnerThread runnerThread = new RunnerThread(null);
     runnerThread.setup(code);
@@ -135,10 +134,8 @@ public final class ReflectionExecutor {
         // stop a thread no matter what it's doing.
         runnerThread.stop();
 
-        return new TimeoutExceededException();
+        throw new TimeoutExceededException();
       }
-
-      return runnerThread.exceptionThrown;
 
     } catch (java.lang.InterruptedException e) {
       throw new IllegalStateException(
@@ -155,34 +152,21 @@ public final class ReflectionExecutor {
    * @param out stream to print exception details to or null
    * @return null or the exception thrown
    */
-  private static Throwable executeReflectionCodeUnThreaded(ReflectionCode code, PrintStream out) {
+  private static void executeReflectionCodeUnThreaded(ReflectionCode code, PrintStream out) {
     try {
       code.runReflectionCode();
-      return null;
+      return;
     } catch (ThreadDeath e) { // can't stop these guys
       throw e;
-    } catch (ReflectionCode.NotCaughtIllegalStateException e) { // exception in
-      // randoop code
+    } catch (ReflectionCode.ReflectionCodeException e) { // bug in Randoop
       throw e;
     } catch (Throwable e) {
-      Throwable orig_e = null;
-      if (e instanceof java.lang.reflect.InvocationTargetException) {
-        orig_e = e;
-        e = e.getCause();
-      }
+      assert !(e instanceof java.lang.reflect.InvocationTargetException);
 
       // Debugging -- prints unconditionally, to System.out.
       // printExceptionDetails(e, System.out);
-      // if (orig_e != null) {
-      // System.out.println("Original exception: " + orig_e);
-      // }
-      if (out != null) {
-        printExceptionDetails(e, out);
-        if (orig_e != null) {
-          out.println("Original exception: " + orig_e);
-        }
-      }
-      return e;
+
+      throw e;
     }
   }
 
