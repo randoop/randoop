@@ -1,5 +1,8 @@
 package randoop.main;
 
+import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_ERROR;
+import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_INVALID;
+
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -182,7 +185,9 @@ public class GenTests extends GenInputsAbstract {
     // If some properties were specified, set them
     for (String prop : GenInputsAbstract.system_props) {
       String[] pa = prop.split("=", 2);
-      if (pa.length != 2) usage("invalid property definition: %s%n", prop);
+      if (pa.length != 2) {
+        usage("invalid property definition: %s%n", prop);
+      }
       System.setProperty(pa[0], pa[1]);
     }
 
@@ -832,28 +837,26 @@ public class GenTests extends GenInputsAbstract {
       MultiMap<Type, TypedOperation> observerMap) {
 
     // Start with checking for invalid exceptions.
-    ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
     TestCheckGenerator testGen =
-        new ValidityCheckingGenerator(isInvalid, !GenInputsAbstract.ignore_flaky_tests);
+        new ValidityCheckingGenerator(IS_INVALID, !GenInputsAbstract.ignore_flaky_tests);
 
     // Extend with contract checker.
-    ExceptionPredicate isError = new ExceptionBehaviorPredicate(BehaviorType.ERROR);
-    ContractCheckingGenerator contractVisitor = new ContractCheckingGenerator(contracts, isError);
+    ContractCheckingGenerator contractVisitor = new ContractCheckingGenerator(contracts, IS_ERROR);
     testGen = new ExtendGenerator(testGen, contractVisitor);
 
     // And, generate regression tests, unless user says not to.
     if (!GenInputsAbstract.no_regression_tests) {
-      ExceptionPredicate isExpected = new AlwaysFalseExceptionPredicate();
-      boolean includeAssertions = true;
+      ExceptionPredicate isExpected;
       if (GenInputsAbstract.no_regression_assertions) {
-        includeAssertions = false;
+        isExpected = new AlwaysFalseExceptionPredicate();
       } else {
-        isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
+        isExpected = ExceptionBehaviorPredicate.IS_EXPECTED;
       }
       ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
 
       RegressionCaptureGenerator regressionVisitor =
-          new RegressionCaptureGenerator(expectation, observerMap, visibility, includeAssertions);
+          new RegressionCaptureGenerator(
+              expectation, observerMap, visibility, !GenInputsAbstract.no_regression_assertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }

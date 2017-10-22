@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/** A set of checks, including at most one ExceptionCheck. */
 public class RegressionChecks implements TestChecks<RegressionChecks> {
 
   private Set<Check> checks;
@@ -25,12 +26,10 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
   }
 
   /**
-   * Adds the given check to the sequence. Only one {@code ExceptionCheck} is allowed, and
-   * attempting to add a second check of this type will result in an {@code
-   * IllegalArgumentException}
+   * Adds the given check to the sequence.
    *
-   * @throws IllegalArgumentException If the given check's class is {@code ExceptionCheck} and there
-   *     is already an check of this class at the give index.
+   * @throws IllegalArgumentException if the argument's class is {@code ExceptionCheck} and this
+   *     already contains such a check
    */
   @Override
   public void add(Check check) {

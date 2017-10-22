@@ -218,16 +218,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // Defaulting to true sometimes causes unacceptable slowdowns.
   public static boolean minimize_error_test = false;
 
-  /**
-   * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
-   * maintained.
-   */
+  /** The possible values for exception behavior types. */
   public enum BehaviorType {
-    /** Occurrence of exception reveals an error */
+    /** Occurrence of exception reveals an error. */
     ERROR,
-    /** Occurrence of exception is expected behavior */
+    /** Occurrence of exception is expected behavior. */
     EXPECTED,
-    /** Occurrence of exception indicates an invalid test */
+    /** Occurrence of exception indicates an invalid test. */
     INVALID
   }
 

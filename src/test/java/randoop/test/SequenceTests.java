@@ -3,6 +3,8 @@ package randoop.test;
 import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_ERROR;
+import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_EXPECTED;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -28,8 +30,6 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceParseException;
-import randoop.test.predicate.ExceptionBehaviorPredicate;
-import randoop.test.predicate.ExceptionPredicate;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
@@ -115,12 +115,10 @@ public class SequenceTests {
 
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
-    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, IS_EXPECTED);
     testGen =
         new ExtendGenerator(
-            new ContractCheckingGenerator(
-                contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
+            new ContractCheckingGenerator(contracts, IS_ERROR),
             new RegressionCaptureGenerator(
                 expectation, new MultiMap<Type, TypedOperation>(), visibility, true));
   }

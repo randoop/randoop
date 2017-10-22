@@ -46,12 +46,11 @@ public class ExpectedExceptionCheckGen {
   ExceptionCheck getExceptionCheck(
       ExceptionalExecution exec, ExecutableSequence eseq, int statementIndex) {
     Throwable e = exec.getException();
-
-    String catchClassName = getCatchClassName(e.getClass());
-
     if (e instanceof NoClassDefFoundError) {
       throw new BugInRandoopException(e);
     }
+
+    String catchClassName = getCatchClassName(e.getClass());
 
     if (isExpected.test(exec, eseq)) {
       return new ExpectedExceptionCheck(e, statementIndex, catchClassName);
