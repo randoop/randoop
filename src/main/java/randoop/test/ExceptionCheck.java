@@ -78,11 +78,6 @@ public abstract class ExceptionCheck implements Check {
     return exception.getClass().getName();
   }
 
-  @Override
-  public String getID() {
-    return "Throws exception @" + statementIndex;
-  }
-
   /**
    * {@inheritDoc}
    *

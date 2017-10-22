@@ -70,11 +70,6 @@ public class MissingExceptionCheck implements Check {
     return "missing_exception";
   }
 
-  @Override
-  public String getID() {
-    return "MissingExceptionCheck @" + index;
-  }
-
   /**
    * {@inheritDoc}
    *
