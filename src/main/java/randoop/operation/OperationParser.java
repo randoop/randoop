@@ -1,9 +1,6 @@
 package randoop.operation;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Parser for text serialization (string representation) of {@link Operation}s. See {@link #parse}
@@ -63,63 +60,23 @@ public class OperationParser {
     String id = str.substring(0, colonIdx).trim();
     String descr = str.substring(colonIdx + 1).trim();
 
-    Set<String> validIds = new LinkedHashSet<>();
-
-    // If you add a statement kind, add its ID to this set.
-    validIds.addAll(
-        Arrays.asList(
-            NonreceiverTerm.ID,
-            MethodCall.ID,
-            ConstructorCall.ID,
-            InitializedArrayCreation.ID,
-            EnumConstant.ID,
-            FieldGet.ID,
-            FieldSet.ID));
-
     // Call appropriate parsing method.
-    if (id.equals(NonreceiverTerm.ID)) {
+    if (id.equals("NonreceiverTerm")) {
       return NonreceiverTerm.parse(descr);
-    } else if (id.equals(MethodCall.ID)) {
+    } else if (id.equals("MethodCall")) {
       return MethodCall.parse(descr);
-    } else if (id.equals(ConstructorCall.ID)) {
+    } else if (id.equals("ConstructorCall")) {
       return ConstructorCall.parse(descr);
-    } else if (id.equals(InitializedArrayCreation.ID)) {
+    } else if (id.equals("InitializedArrayCreation")) {
       return InitializedArrayCreation.parse(descr);
-    } else if (id.equals(EnumConstant.ID)) {
+    } else if (id.equals("EnumConstant")) {
       return EnumConstant.parse(descr);
-    } else if (id.equals(FieldGet.ID)) {
+    } else if (id.equals("FieldGet")) {
       return FieldGet.parse(descr);
-    } else if (id.equals(FieldSet.ID)) {
+    } else if (id.equals("FieldSet")) {
       return FieldSet.parse(descr);
     } else {
-      String msg =
-          "A statement description must be of the form "
-              + "<id> <description>"
-              + " with <id> in "
-              + validIds.toString()
-              + " but the statement \""
-              + str
-              + "\" does not have a valid <id>.";
-      throw new OperationParseException(msg);
+      throw new OperationParseException("Invalid id \"" + id + "\" in statement: " + str);
     }
-  }
-
-  /**
-   * Returns the "id" for the Operation. The ID is really the kind or a tag, such as "prim". It is
-   * not a unique identifier for individual Operations.
-   *
-   * @param op the operation
-   * @return the ID string for the operation
-   */
-  public static String getId(TypedOperation op) {
-    if (op == null) throw new IllegalArgumentException("st cannot be null.");
-    if (op.getOperation() instanceof NonreceiverTerm) return NonreceiverTerm.ID;
-    if (op.getOperation() instanceof MethodCall) return MethodCall.ID;
-    if (op.getOperation() instanceof ConstructorCall) return ConstructorCall.ID;
-    if (op.getOperation() instanceof InitializedArrayCreation) return InitializedArrayCreation.ID;
-    if (op.getOperation() instanceof EnumConstant) return EnumConstant.ID;
-    if (op.getOperation() instanceof FieldGet) return FieldGet.ID;
-    if (op.getOperation() instanceof FieldSet) return FieldSet.ID;
-    throw new Error();
   }
 }
