@@ -8,7 +8,7 @@ import randoop.BugInRandoopException;
  * An empty or singleton set. It contains at most one InvalidExceptionCheck, which captures invalid
  * behavior in a sequence.
  */
-public class InvalidCheck implements TestChecks<InvalidCheck> {
+public class InvalidChecks implements TestChecks<InvalidChecks> {
 
   private InvalidExceptionCheck check;
 
@@ -49,7 +49,7 @@ public class InvalidCheck implements TestChecks<InvalidCheck> {
   public void add(Check check) {
     if (this.check != null) {
       throw new BugInRandoopException(
-          String.format("add(%s) when InvalidCheck already contains %s", check, this.check));
+          String.format("add(%s) when InvalidChecks already contains %s", check, this.check));
     }
     if (!(check instanceof InvalidExceptionCheck)) {
       throw new Error("Expected InvalidExceptionCheck: " + check);
@@ -58,8 +58,8 @@ public class InvalidCheck implements TestChecks<InvalidCheck> {
   }
 
   @Override
-  public InvalidCheck commonChecks(InvalidCheck other) {
-    InvalidCheck common = new InvalidCheck();
+  public InvalidChecks commonChecks(InvalidChecks other) {
+    InvalidChecks common = new InvalidChecks();
     if (this.check != null && check.equals(other.check)) {
       common.add(check);
     }

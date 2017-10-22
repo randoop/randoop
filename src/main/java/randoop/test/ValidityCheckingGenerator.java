@@ -38,7 +38,7 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
   /**
    * {@inheritDoc}
    *
-   * <p>Checks validity of a test sequence and creates a {@code InvalidCheck} object containing a
+   * <p>Checks validity of a test sequence and creates a {@code InvalidChecks} object containing a
    * checks for the first invalid exceptions encountered, if any. There are three possible outcomes:
    *
    * <ul>
@@ -53,19 +53,19 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
    *       <ul>
    *         <li>if the exception is classified as invalid by this visitor's {@code
    *             ExceptionPredicate}, the sequence is invalid.
-   *         <li>otherwise, the returned InvalidCheck is empty (the sequence is valid).
+   *         <li>otherwise, the returned InvalidChecks is empty (the sequence is valid).
    *       </ul>
    *
-   *   <li>Otherwise, the returned InvalidCheck is empty (the sequence is valid)..
+   *   <li>Otherwise, the returned InvalidChecks is empty (the sequence is valid)..
    * </ul>
    *
-   * @return a possibly-empty {@link InvalidCheck} object for sequence
+   * @return a possibly-empty {@link InvalidChecks} object for sequence
    * @throws Error if throwExceptionOnFlakyTest==true and exception encountered before last
    *     statement of sequence
    */
   @Override
-  public InvalidCheck generateTestChecks(ExecutableSequence eseq) {
-    InvalidCheck checks = new InvalidCheck();
+  public InvalidChecks generateTestChecks(ExecutableSequence eseq) {
+    InvalidChecks checks = new InvalidChecks();
     int finalIndex = eseq.sequence.size() - 1;
     for (int i = 0; i < eseq.sequence.size(); i++) {
       ExecutionOutcome result = eseq.getResult(i);
