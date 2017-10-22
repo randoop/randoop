@@ -30,7 +30,7 @@ class InvalidExceptionCheck extends ExceptionCheck {
   }
 
   @Override
-  public String getValue() {
+  public String getValueString() {
     return "invalid exception " + exception.getClass().getName();
   }
 

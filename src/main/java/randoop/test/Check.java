@@ -56,7 +56,7 @@ public interface Check {
    *
    * @return a string "value" for this check
    */
-  String getValue();
+  String getValueString();
 
   /**
    * Returns a unique string identifier for the check. Two checks are the same if these identifiers

@@ -74,7 +74,7 @@ public abstract class ExceptionCheck implements Check {
    * @return the name of the class of the exception thrown
    */
   @Override
-  public String getValue() {
+  public String getValueString() {
     return exception.getClass().getName();
   }
 

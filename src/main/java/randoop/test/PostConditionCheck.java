@@ -51,13 +51,13 @@ public class PostConditionCheck implements Check {
   }
 
   @Override
-  public String getValue() {
+  public String getValueString() {
     return postcondition.getClass().getName() + "(" + postcondition.getConditionString() + ")";
   }
 
   @Override
   public String getID() {
-    return getValue() + " " + Arrays.toString(inputVariables);
+    return getValueString() + " " + Arrays.toString(inputVariables);
   }
 
   /**

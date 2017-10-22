@@ -49,7 +49,7 @@ public class NoExceptionCheck implements Check {
   }
 
   @Override
-  public String getValue() {
+  public String getValueString() {
     return "no_exception";
   }
 

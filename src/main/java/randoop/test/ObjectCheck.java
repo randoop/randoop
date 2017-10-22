@@ -105,7 +105,7 @@ public class ObjectCheck implements Check {
    * representation of the value. Otherwise, returns the name of the contract class.
    */
   @Override
-  public String getValue() {
+  public String getValueString() {
     if (contract instanceof IsNotNull) {
       return "!null";
     } else if (contract instanceof IsNull) {

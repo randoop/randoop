@@ -28,7 +28,7 @@ public class InvalidValueCheck implements Check {
   }
 
   @Override
-  public String getValue() {
+  public String getValueString() {
     return "invalid_value";
   }
 

@@ -66,7 +66,7 @@ public class MissingExceptionCheck implements Check {
   }
 
   @Override
-  public String getValue() {
+  public String getValueString() {
     return "missing_exception";
   }
 
