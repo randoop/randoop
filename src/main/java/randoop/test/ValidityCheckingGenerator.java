@@ -38,8 +38,8 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
   /**
    * {@inheritDoc}
    *
-   * <p>Checks validity of a test sequence and creates a {@code InvalidCheck} object containing
-   * checks for any invalid exceptions encountered. There are three possible outcomes:
+   * <p>Checks validity of a test sequence and creates a {@code InvalidCheck} object containing a
+   * checks for the first invalid exceptions encountered, if any. There are three possible outcomes:
    *
    * <ul>
    *   <li>An exception is seen before the last statement:
@@ -51,7 +51,7 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
    *
    *   <li>An exception is seen on the last statement:
    *       <ul>
-   *         <li>if the exception is classified as invaled by this visitor's {@code
+   *         <li>if the exception is classified as invalid by this visitor's {@code
    *             ExceptionPredicate}, the sequence is invalid.
    *         <li>otherwise, the returned InvalidCheck is empty (the sequence is valid).
    *       </ul>
@@ -60,7 +60,7 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
    * </ul>
    *
    * @return a possibly-empty {@link InvalidCheck} object for sequence
-   * @throws Error if throwExceptionOnFlakyTest==true and any exception encountered before last
+   * @throws Error if throwExceptionOnFlakyTest==true and exception encountered before last
    *     statement of sequence
    */
   @Override
