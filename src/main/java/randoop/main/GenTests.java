@@ -22,11 +22,9 @@ import plume.Options.ArgException;
 import plume.SimpleLog;
 import plume.UtilMDE;
 import randoop.BugInRandoopException;
-import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
-import randoop.MultiVisitor;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
@@ -354,7 +352,6 @@ public class GenTests extends GenInputsAbstract {
      */
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap);
-
     explorer.setTestCheckGenerator(testGen);
 
     /*
@@ -384,14 +381,11 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Setup visitors
      */
-    // list of visitors for collecting information from test sequences
     List<ExecutionVisitor> visitors = new ArrayList<>();
-
     // instrumentation visitor
     if (GenInputsAbstract.require_covered_classes != null) {
       visitors.add(new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));
     }
-
     // Install any user-specified visitors.
     if (!GenInputsAbstract.visitor.isEmpty()) {
       for (String visitorClsName : GenInputsAbstract.visitor) {
@@ -405,21 +399,7 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     }
-
-    ExecutionVisitor visitor;
-    switch (visitors.size()) {
-      case 0:
-        visitor = new DummyVisitor();
-        break;
-      case 1:
-        visitor = visitors.get(0);
-        break;
-      default:
-        visitor = new MultiVisitor(visitors);
-        break;
-    }
-
-    explorer.setExecutionVisitor(visitor);
+    explorer.setExecutionVisitor(visitors);
 
     // Diagnostic output
     if (GenInputsAbstract.progressdisplay) {
