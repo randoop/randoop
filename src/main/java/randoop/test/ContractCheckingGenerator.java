@@ -19,13 +19,15 @@ import randoop.util.Log;
 import randoop.util.TupleSet;
 
 /**
- * An execution visitor that generates checks for error-revealing tests. If execution of the visited
- * sequence is normal, it will generate checks for unary and binary object contracts over the values
- * from the execution. Contracts will be checked on all values except for boxed primitives or
- * Strings. If the execution throws an exception considered to be an error, the visitor generates a
- * {@code NoExceptionCheck} indicating that the statement threw an exception in error. For each
- * contract violation, the visitor adds a {@code Check} to the {@code TestChecks} object that is
- * returned.
+ * An execution visitor that generates checks for error-revealing tests.
+ *
+ * <p>If execution of the visited sequence is normal, it will generate checks for contracts over the
+ * values from the execution. Contracts will be checked on all values except for boxed primitives or
+ * Strings. For each contract violation, the visitor adds a {@code Check} to the {@code TestChecks}
+ * object that is returned.
+ *
+ * <p>If the execution throws an exception considered to be an error, the visitor generates a {@code
+ * NoExceptionCheck} indicating that the statement should not throw the exception.
  */
 public final class ContractCheckingGenerator implements TestCheckGenerator {
 

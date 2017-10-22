@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -20,7 +21,6 @@ import randoop.field.SubclassWithFields;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -84,8 +84,7 @@ public class FieldReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(
-        c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
+    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private Set<TypedOperation> getConcreteOperations(
@@ -165,7 +164,7 @@ public class FieldReflectionTest {
     }
 
     ReflectionPredicate filter = new DefaultReflectionPredicate(excludeNames);
-    Set<TypedOperation> actual = getConcreteOperations(c, filter, new PublicVisibilityPredicate());
+    Set<TypedOperation> actual = getConcreteOperations(c, filter, IS_PUBLIC);
 
     assertEquals("number of operations ", 3, actual.size());
 

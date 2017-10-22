@@ -15,7 +15,7 @@ import java.lang.reflect.Modifier;
  * the given package. So, this class does not implement Java's full accessibility rules; those for
  * subclasses and default-visibility are not relevant to this predicate.
  */
-public class PackageVisibilityPredicate implements VisibilityPredicate {
+public class PackageVisibilityPredicate extends VisibilityPredicate {
 
   /** The package name from which to test visibility of elements. */
   private final String packageName;

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -209,7 +210,7 @@ public class VisibilityTest {
 
     assertFalse("should have nonempty expected set", expectedMethods.isEmpty());
 
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
 
     assertFalse("class should not be visible", visibility.isVisible(c));
 
@@ -410,7 +411,7 @@ public class VisibilityTest {
 
     assertFalse("should have nonempty expected set", expectedMethods.isEmpty());
 
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
 
     assertTrue("class should be visible", visibility.isVisible(c));
 

@@ -3,6 +3,7 @@ package randoop.instrument;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.File;
 import java.lang.ClassNotFoundException;
@@ -27,7 +28,6 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
 import randoop.reflection.TypeNames;
@@ -65,7 +65,7 @@ public class SpecialCoveredClassTest {
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.require_covered_classes, "coverage class names");
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     Set<String> omitFields = new HashSet<>();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     Set<String> methodSignatures =

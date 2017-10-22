@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +29,6 @@ import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -357,7 +357,7 @@ public class TestClassificationTest {
     GenInputsAbstract.generatedLimit = 100;
     Class<?> c = FlakyStore.class;
     ComponentManager componentManager = getComponentManager();
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
             visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
@@ -431,7 +431,7 @@ public class TestClassificationTest {
 
   private ForwardGenerator buildGenerator(Class<?> c) {
     ComponentManager componentMgr = getComponentManager();
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
             visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());

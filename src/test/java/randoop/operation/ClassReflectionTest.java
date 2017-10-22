@@ -3,6 +3,7 @@ package randoop.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -11,7 +12,6 @@ import randoop.Globals;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -34,8 +34,7 @@ public class ClassReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(
-        c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
+    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private Set<TypedOperation> getConcreteOperations(

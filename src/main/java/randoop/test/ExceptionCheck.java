@@ -4,12 +4,12 @@ import java.util.Objects;
 import randoop.Globals;
 
 /**
- * An {@code ExceptionCheck} is used to indicate that an exception is expected at a particular
- * statement in a sequence. Depending on command-line arguments to Randoop, an instance may be
- * either a {@link ExpectedExceptionCheck} or {@link EmptyExceptionCheck}. When test code is
- * generated in {@link randoop.sequence.ExecutableSequence#toCodeString()}, the methods {@link
- * #toCodeStringPreStatement()} and {@link #toCodeStringPostStatement()} wrap the statement in a
- * try-catch block for the exception, while the implementing classes define {@link
+ * An {@code ExceptionCheck} indicates that an exception is expected at a particular statement in a
+ * sequence.
+ *
+ * <p>When test code is generated in {@link randoop.sequence.ExecutableSequence#toCodeString()}, the
+ * methods {@link #toCodeStringPreStatement()} and {@link #toCodeStringPostStatement()} wrap the
+ * statement in a try-catch block for the exception, while the implementing classes define {@link
  * #appendTryBehavior(StringBuilder)} and {@link #appendCatchBehavior(StringBuilder)} which handle
  * differences in whether assertions are generated to enforce the expectation of the exception.
  */
