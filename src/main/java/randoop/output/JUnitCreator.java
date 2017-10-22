@@ -46,6 +46,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import randoop.Globals;
 import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
@@ -502,11 +503,12 @@ public class JUnitCreator {
     if (bodyText == null) {
       return null;
     }
-    StringBuilder blockText = new StringBuilder("{\n");
+    StringBuilder blockText = new StringBuilder();
+    blockText.append("{").append(Globals.lineSep);
     for (String line : bodyText) {
-      blockText.append(line).append("\n");
+      blockText.append(line).append(Globals.lineSep);
     }
-    blockText.append("\n}");
+    blockText.append(Globals.lineSep).append("}");
     return JavaParser.parseBlock(blockText.toString());
   }
 }

@@ -1,6 +1,7 @@
 package randoop.sequence;
 
 import java.util.List;
+import randoop.Globals;
 
 public class SequenceParseException extends Exception {
 
@@ -15,16 +16,16 @@ public class SequenceParseException extends Exception {
             + statementCount
             + "): ");
     b.append(msg);
-    b.append("\n\n");
-    b.append(" While parsing the following sequence:\n");
+    b.append("").append(Globals.lineSep).append(Globals.lineSep);
+    b.append(" While parsing the following sequence:").append(Globals.lineSep);
     for (int i = 0; i < statements.size(); i++) {
       if (i == statementCount) {
-        b.append(">> " + statements.get(i) + "\n");
+        b.append(">> " + statements.get(i) + "").append(Globals.lineSep);
       } else {
-        b.append("   " + statements.get(i) + "\n");
+        b.append("   " + statements.get(i) + "").append(Globals.lineSep);
       }
     }
-    b.append("\n\n");
+    b.append("").append(Globals.lineSep).append(Globals.lineSep);
     this.message = b.toString();
   }
 
