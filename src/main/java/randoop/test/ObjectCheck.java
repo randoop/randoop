@@ -133,9 +133,4 @@ public class ObjectCheck implements Check {
       return false;
     }
   }
-
-  @Override
-  public String getID() {
-    return contract.get_observer_str() + " " + Arrays.toString(vars);
-  }
 }

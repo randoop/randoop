@@ -1,7 +1,6 @@
 package randoop.test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import randoop.Globals;
 import randoop.condition.Condition;
 import randoop.contract.ObjectContractUtils;
@@ -53,11 +52,6 @@ public class PostConditionCheck implements Check {
   @Override
   public String getValueString() {
     return postcondition.getClass().getName() + "(" + postcondition.getConditionString() + ")";
-  }
-
-  @Override
-  public String getID() {
-    return getValueString() + " " + Arrays.toString(inputVariables);
   }
 
   /**

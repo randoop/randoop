@@ -53,11 +53,6 @@ public class NoExceptionCheck implements Check {
     return "no_exception";
   }
 
-  @Override
-  public String getID() {
-    return "NoExceptionCheck @" + statementIdx;
-  }
-
   /**
    * Returns the empty string: there is no code associated with this check (if an exception occurs,
    * it will be reported by JUnit).
