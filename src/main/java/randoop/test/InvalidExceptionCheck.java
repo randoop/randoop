@@ -25,16 +25,6 @@ class InvalidExceptionCheck extends ExceptionCheck {
     // do nothing
   }
 
-  @Override
-  public String getValue() {
-    return "invalid exception " + exception.getClass().getName();
-  }
-
-  @Override
-  public String getID() {
-    return "Invalid(" + exception.getClass().getCanonicalName() + ")";
-  }
-
   /**
    * {@inheritDoc}
    *
