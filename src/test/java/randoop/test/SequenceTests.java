@@ -3,6 +3,7 @@ package randoop.test;
 import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_ERROR;
 import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_EXPECTED;
 
@@ -25,7 +26,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -114,7 +114,7 @@ public class SequenceTests {
     contracts.add(EqualsSymmetric.getInstance());
 
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, IS_EXPECTED);
     testGen =
         new ExtendGenerator(

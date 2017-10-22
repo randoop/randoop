@@ -1,5 +1,6 @@
 package randoop.main;
 
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_ERROR;
 import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_INVALID;
 
@@ -49,7 +50,6 @@ import randoop.output.RandoopOutputException;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.RawSignature;
 import randoop.reflection.ReflectionPredicate;
@@ -214,14 +214,14 @@ public class GenTests extends GenInputsAbstract {
 
     VisibilityPredicate visibility;
     if (GenInputsAbstract.junit_package_name == null) {
-      visibility = new PublicVisibilityPredicate();
+      visibility = IS_PUBLIC;
     } else if (GenInputsAbstract.only_test_public_members) {
-      visibility = new PublicVisibilityPredicate();
+      visibility = IS_PUBLIC;
       if (GenInputsAbstract.junit_package_name != null) {
         System.out.println(
             "Not using package "
                 + GenInputsAbstract.junit_package_name
-                + " since --only-test-public-members set");
+                + " since --only-test-public-members is set");
       }
     } else {
       visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
