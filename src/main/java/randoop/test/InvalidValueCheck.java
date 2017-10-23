@@ -28,16 +28,6 @@ public class InvalidValueCheck implements Check {
   }
 
   @Override
-  public String getValue() {
-    return "invalid_value";
-  }
-
-  @Override
-  public String getID() {
-    return "InvalidValueCheck @" + index;
-  }
-
-  @Override
   public boolean evaluate(Execution execution) {
     return false;
   }

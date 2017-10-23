@@ -436,7 +436,7 @@ public class GenTests extends GenInputsAbstract {
 
     // Diagnostic output
     if (GenInputsAbstract.progressdisplay) {
-      System.out.printf("Explorer = %s\n", explorer);
+      System.out.printf("Explorer = %s%n", explorer);
     }
     // These two debugging lines make runNoOutputTest() fail:
     // operationModel.dumpModel(System.out);

@@ -90,7 +90,7 @@ public final class ObserverEqValue extends ObjectContract {
                 methodname, Value.toCodeString(value)));
       }
     } else { // string
-      // System.out.printf ("value = %s - %s\n", value, value.getClass());
+      // System.out.printf("value = %s - %s%n", value, value.getClass());
       b.append(
           String.format(
               "org.junit.Assert.assertEquals(x0.%s(), %s);",

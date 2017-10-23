@@ -40,9 +40,9 @@ public interface TestChecks<T extends TestChecks<T>> {
   boolean hasChecks();
 
   /**
-   * Indicates whether this set of checks corresponds to valid behaviors.
+   * Indicates whether this set of checks contains any invalid behaviors.
    *
-   * @return true when has checks for invalid behavior, false otherwise
+   * @return true when this contains checks for invalid behavior, false otherwise
    */
   boolean hasInvalidBehavior();
 

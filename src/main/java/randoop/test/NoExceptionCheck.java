@@ -48,16 +48,6 @@ public class NoExceptionCheck implements Check {
     return Integer.valueOf(statementIdx).hashCode();
   }
 
-  @Override
-  public String getValue() {
-    return "no_exception";
-  }
-
-  @Override
-  public String getID() {
-    return "NoExceptionCheck @" + statementIdx;
-  }
-
   /**
    * Returns the empty string: there is no code associated with this check (if an exception occurs,
    * it will be reported by JUnit).

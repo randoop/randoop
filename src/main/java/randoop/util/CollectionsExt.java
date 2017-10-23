@@ -18,13 +18,14 @@ public final class CollectionsExt {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     if (s.isEmpty()) throw new IllegalArgumentException("s cannot be empty.");
     if (index >= s.size()) {
-      throw new IllegalArgumentException("Index " + index + " invalid for set of size " + s.size());
+      throw new IllegalArgumentException(
+          "Index " + index + " out of bounds for set of size " + s.size());
     }
     return getNthIteratedElement(s.iterator(), index);
   }
 
   private static <T> T getNthIteratedElement(Iterator<? extends T> iter, int index) {
-    if (index < 0) throw new IllegalArgumentException("Index " + index + " invalid");
+    if (index < 0) throw new IllegalArgumentException("Index " + index + " out of bounds");
     int counter = 0;
     while (iter.hasNext()) {
       if (counter == index) {
@@ -33,7 +34,7 @@ public final class CollectionsExt {
       iter.next();
       counter++;
     }
-    throw new IllegalArgumentException("invalid index: " + index + ", size: " + counter);
+    throw new IllegalArgumentException("index " + index + " out of bounds, size=" + counter);
   }
 
   /**
