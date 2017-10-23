@@ -2,6 +2,7 @@ package randoop.test;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
+import randoop.TimeoutExecution;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.test.predicate.ExceptionPredicate;
@@ -69,7 +70,13 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
     int finalIndex = eseq.sequence.size() - 1;
     for (int i = 0; i < eseq.sequence.size(); i++) {
       ExecutionOutcome result = eseq.getResult(i);
-      if (result instanceof ExceptionalExecution) {
+      // TODO: the structure of this code suggests that I could use ExceptionalExecution after all.
+      if (result instanceof TimeoutExecution) {
+        TimeoutExecution exec = (TimeoutExecution) result;
+        Throwable e = exec.getException();
+        checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));
+        return checks;
+      } else if (result instanceof ExceptionalExecution) {
         ExceptionalExecution exec = (ExceptionalExecution) result;
         Throwable e = exec.getException();
 

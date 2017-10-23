@@ -1,16 +1,23 @@
 package randoop;
 
+import randoop.util.TimeoutExceededException;
+
 /** Means that the statement that this outcome represents was not executed. */
 public class TimeoutExecution extends ExecutionOutcome {
 
-  public static TimeoutExecution timeoutExecutionSingleton = new TimeoutExecution();
+  private final Throwable exception;
 
-  private TimeoutExecution() {
+  /** @param exception the TimeoutExceededException exception that was thrown */
+  public TimeoutExecution(TimeoutExceededException exception) {
     super(-1);
+    if (exception == null) {
+      throw new IllegalArgumentException("exception must be non-null");
+    }
+    this.exception = exception;
   }
 
-  public static TimeoutExecution create() {
-    return timeoutExecutionSingleton;
+  public Throwable getException() {
+    return this.exception;
   }
 
   @Override

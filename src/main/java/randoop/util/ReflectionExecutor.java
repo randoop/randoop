@@ -85,7 +85,7 @@ public final class ReflectionExecutor {
       try {
         executeReflectionCodeThreaded(code, out);
       } catch (TimeoutExceededException e) {
-        return TimeoutExecution.create();
+        return new TimeoutExecution(e);
       }
     } else {
       executeReflectionCodeUnThreaded(code, out);
