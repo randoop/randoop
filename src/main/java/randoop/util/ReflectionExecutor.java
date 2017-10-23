@@ -7,6 +7,7 @@ import plume.UtilMDE;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.TimeoutExecution;
 
 /**
  * Static methods that executes the code of a ReflectionCode object.
@@ -81,7 +82,11 @@ public final class ReflectionExecutor {
   public static ExecutionOutcome executeReflectionCode(ReflectionCode code, PrintStream out) {
     long start = System.nanoTime();
     if (usethreads) {
-      executeReflectionCodeThreaded(code, out);
+      try {
+        executeReflectionCodeThreaded(code, out);
+      } catch (TimeoutExceededException e) {
+        return TimeoutExecution.create();
+      }
     } else {
       executeReflectionCodeUnThreaded(code, out);
     }
@@ -105,14 +110,14 @@ public final class ReflectionExecutor {
   }
 
   /**
-   * Executes code.runReflectionCode() in its own thread. If no exception is thrown, returns null.
-   * Otherwise, returns the exception thrown.
+   * Executes code.runReflectionCode() in its own thread.
    *
    * @param code the {@link ReflectionCode} to be executed
    * @param out ignored
    */
   @SuppressWarnings("deprecation")
-  private static void executeReflectionCodeThreaded(ReflectionCode code, PrintStream out) {
+  private static void executeReflectionCodeThreaded(ReflectionCode code, PrintStream out)
+      throws TimeoutExceededException {
 
     RunnerThread runnerThread = new RunnerThread(null);
     runnerThread.setup(code);
@@ -145,8 +150,7 @@ public final class ReflectionExecutor {
   }
 
   /**
-   * Executes code.runReflectionCode() in the current thread. If no exception is thrown, returns
-   * null. Otherwise, returns the exception thrown.
+   * Executes code.runReflectionCode() in the current thread.
    *
    * @param code the {@link ReflectionCode} to be executed
    * @param out stream to print exception details to or null
