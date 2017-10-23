@@ -154,7 +154,6 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    * @param out stream to print exception details to or null
-   * @return null or the exception thrown
    */
   private static void executeReflectionCodeUnThreaded(ReflectionCode code, PrintStream out) {
     try {
