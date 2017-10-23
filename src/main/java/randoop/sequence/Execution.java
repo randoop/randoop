@@ -50,9 +50,6 @@ public final class Execution {
    * @return the outcome of the ith statement
    */
   public ExecutionOutcome get(int i) {
-    if (i < 0 || i >= theList.size()) {
-      throw new IllegalArgumentException("index out of bounds: " + i);
-    }
     return theList.get(i);
   }
 
