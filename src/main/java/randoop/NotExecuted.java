@@ -6,7 +6,7 @@ public class NotExecuted extends ExecutionOutcome {
   private static NotExecuted notExecutedSingleton = new NotExecuted();
 
   private NotExecuted() {
-    // Empty body.
+    super(-1);
   }
 
   public static NotExecuted create() {

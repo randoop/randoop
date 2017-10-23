@@ -37,10 +37,10 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
    *     post-condition fails on the sequence, an {@code null} otherwise
    */
   @Override
-  public TestChecks visit(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome result = eseq.getResult(finalIndex);
-    TestChecks checks;
+    TestChecks<?> checks;
     if (result instanceof NotExecuted) {
       throw new Error("Abnormal execution in sequence: " + eseq);
     } else if (result instanceof NormalExecution) {

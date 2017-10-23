@@ -16,13 +16,13 @@ public class OperationTest {
   @Test
   public void testConstructorPredicate() {
     Class<?> c = randoop.condition.ClassWithConditions.class;
-    Constructor<?> constructor = null;
+    Constructor<?> constructor;
     try {
       constructor = c.getConstructor(int.class);
     } catch (NoSuchMethodException e) {
       fail("Could not load constructor");
+      throw new Error("dead code");
     }
-    assert constructor != null;
     OperationSignature operation = OperationSignature.of(constructor);
     assertTrue("operation is a constructor", operation.isConstructor());
 

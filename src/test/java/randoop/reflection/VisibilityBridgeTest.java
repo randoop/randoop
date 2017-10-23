@@ -3,6 +3,7 @@ package randoop.reflection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -118,8 +119,7 @@ public class VisibilityBridgeTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(
-        c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
+    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private Set<TypedOperation> getConcreteOperations(

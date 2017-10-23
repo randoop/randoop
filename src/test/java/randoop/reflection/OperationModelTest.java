@@ -10,6 +10,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,7 +34,6 @@ public class OperationModelTest {
 
   @Test
   public void linkedListTest() {
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("java.util.LinkedList");
@@ -45,7 +45,7 @@ public class OperationModelTest {
     try {
       model =
           OperationModel.createModel(
-              visibility,
+              IS_PUBLIC,
               reflectionPredicate,
               classnames,
               coveredClassnames,
@@ -86,7 +86,6 @@ public class OperationModelTest {
 
   @Test
   public void classWithInnerClassTest() {
-    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.test.ClassWithInnerClass");
@@ -99,7 +98,7 @@ public class OperationModelTest {
     try {
       model =
           OperationModel.createModel(
-              visibilityPredicate,
+              IS_PUBLIC,
               reflectionPredicate,
               classnames,
               coveredClassnames,
@@ -164,7 +163,6 @@ public class OperationModelTest {
    */
   @Test
   public void testEnumOverloads() {
-    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.supertypetest.InheritedEnum");
@@ -176,7 +174,7 @@ public class OperationModelTest {
     try {
       model =
           OperationModel.createModel(
-              visibilityPredicate,
+              IS_PUBLIC,
               reflectionPredicate,
               classnames,
               coveredClassnames,
@@ -351,7 +349,6 @@ public class OperationModelTest {
   }
 
   private OperationModel getOperationModel(Set<String> classnames) {
-    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> coveredClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
@@ -361,7 +358,7 @@ public class OperationModelTest {
     try {
       model =
           OperationModel.createModel(
-              visibilityPredicate,
+              IS_PUBLIC,
               reflectionPredicate,
               classnames,
               coveredClassnames,

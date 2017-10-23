@@ -3,12 +3,14 @@ package randoop.test.predicate;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_ERROR;
+import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_EXPECTED;
+import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_INVALID;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.DummyVisitor;
@@ -60,18 +62,7 @@ public class ExceptionPredicateTest {
   /*
    * Predicates for behavior types
    */
-  private ExceptionPredicate isInvalid;
-  private ExceptionPredicate isError;
-  private ExceptionPredicate isExpected;
-  private ExceptionPredicate alwaysFalse;
-
-  @Before
-  public void setupBefore() {
-    this.isError = new ExceptionBehaviorPredicate(BehaviorType.ERROR);
-    this.isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
-    this.isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
-    this.alwaysFalse = new AlwaysFalseExceptionPredicate();
-  }
+  private ExceptionPredicate alwaysFalse = new AlwaysFalseExceptionPredicate();
 
   /*
    * Faked occurrence of NullPointerException should not satisfy the
@@ -82,9 +73,9 @@ public class ExceptionPredicateTest {
     ExceptionalExecution exec = new ExceptionalExecution(new NullPointerException(), 0);
     ExecutableSequence s = new ExecutableSequence(new Sequence());
 
-    assertTrue("non-null input NPE is error", isError.test(exec, s));
-    assertFalse("non-null input NPE is not invalid", isInvalid.test(exec, s));
-    assertFalse("non-null input NPE is expected", isExpected.test(exec, s));
+    assertTrue("non-null input NPE is error", IS_ERROR.test(exec, s));
+    assertFalse("non-null input NPE is not invalid", IS_INVALID.test(exec, s));
+    assertFalse("non-null input NPE is expected", IS_EXPECTED.test(exec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(exec, s));
   }
 
@@ -114,9 +105,9 @@ public class ExceptionPredicateTest {
     ExecutableSequence s = new ExecutableSequence(seq);
     s.execute(new DummyVisitor(), new DummyCheckGenerator());
 
-    assertFalse("null input NPE is not error", isError.test(exec, s));
-    assertFalse("null input NPE is not invalid", isInvalid.test(exec, s));
-    assertTrue("null input NPE is expected", isExpected.test(exec, s));
+    assertFalse("null input NPE is not error", IS_ERROR.test(exec, s));
+    assertFalse("null input NPE is not invalid", IS_INVALID.test(exec, s));
+    assertTrue("null input NPE is expected", IS_EXPECTED.test(exec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(exec, s));
   }
 
@@ -125,9 +116,9 @@ public class ExceptionPredicateTest {
     ExceptionalExecution exec = new ExceptionalExecution(new OutOfMemoryError(), 0);
     ExecutableSequence s = new ExecutableSequence(new Sequence());
 
-    assertFalse("OOM is not error", isError.test(exec, s));
-    assertTrue("OOM is invalid", isInvalid.test(exec, s));
-    assertFalse("OOM is not expected", isExpected.test(exec, s));
+    assertFalse("OOM is not error", IS_ERROR.test(exec, s));
+    assertTrue("OOM is invalid", IS_INVALID.test(exec, s));
+    assertFalse("OOM is not expected", IS_EXPECTED.test(exec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(exec, s));
   }
 
@@ -137,14 +128,14 @@ public class ExceptionPredicateTest {
     ExceptionalExecution overflowExec = new ExceptionalExecution(new StackOverflowError(), 0);
     ExecutableSequence s = new ExecutableSequence(new Sequence());
 
-    assertTrue("AE is error", isError.test(assertionExec, s));
-    assertFalse("AE is not invalid", isInvalid.test(assertionExec, s));
-    assertFalse("AE is not expected", isExpected.test(assertionExec, s));
+    assertTrue("AE is error", IS_ERROR.test(assertionExec, s));
+    assertFalse("AE is not invalid", IS_INVALID.test(assertionExec, s));
+    assertFalse("AE is not expected", IS_EXPECTED.test(assertionExec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(assertionExec, s));
 
-    assertFalse("SOE is not error", isError.test(overflowExec, s));
-    assertTrue("SOE is invalid", isInvalid.test(overflowExec, s));
-    assertFalse("SOE is not expected", isExpected.test(overflowExec, s));
+    assertFalse("SOE is not error", IS_ERROR.test(overflowExec, s));
+    assertTrue("SOE is invalid", IS_INVALID.test(overflowExec, s));
+    assertFalse("SOE is not expected", IS_EXPECTED.test(overflowExec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(overflowExec, s));
   }
 }

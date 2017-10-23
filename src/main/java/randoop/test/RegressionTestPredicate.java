@@ -24,7 +24,7 @@ public class RegressionTestPredicate extends DefaultPredicate<ExecutableSequence
       return false;
     }
 
-    TestChecks testChecks = eseq.getChecks();
+    TestChecks<?> testChecks = eseq.getChecks();
 
     // if have exception
     ExceptionCheck ec = testChecks.getExceptionCheck();

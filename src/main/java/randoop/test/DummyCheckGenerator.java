@@ -6,7 +6,7 @@ import randoop.sequence.ExecutableSequence;
 public class DummyCheckGenerator implements TestCheckGenerator {
 
   @Override
-  public TestChecks visit(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
     return new RegressionChecks();
   }
 

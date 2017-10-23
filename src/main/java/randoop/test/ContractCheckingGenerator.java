@@ -19,15 +19,17 @@ import randoop.util.Log;
 import randoop.util.TupleSet;
 
 /**
- * An execution visitor that generates checks for error-revealing tests. If execution of the visited
- * sequence is normal, it will generate checks for unary and binary object contracts over the values
- * from the execution. Contracts will be checked on all values except for boxed primitives or
- * Strings. If the execution throws an exception considered to be an error, the visitor generates a
- * {@code NoExceptionCheck} indicating that the statement threw an exception in error. For each
- * contract violation, the visitor adds a {@code Check} to the {@code TestChecks} object that is
- * returned.
+ * An execution visitor that generates checks for error-revealing tests.
+ *
+ * <p>If execution of the visited sequence is normal, it will generate checks for contracts over the
+ * values from the execution. Contracts will be checked on all values except for boxed primitives or
+ * Strings. For each contract violation, the visitor adds a {@code Check} to the {@code TestChecks}
+ * object that is returned.
+ *
+ * <p>If the execution throws an exception considered to be an error, the visitor generates a {@code
+ * NoExceptionCheck} indicating that the statement should not throw the exception.
  */
-public final class ContractCheckingVisitor implements TestCheckGenerator {
+public final class ContractCheckingGenerator implements TestCheckGenerator {
 
   private ContractSet contracts;
   private ExceptionPredicate exceptionPredicate;
@@ -40,11 +42,13 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    *     c.getArity() == 1}.
    * @param exceptionPredicate the predicate to test for exceptions that are errors
    */
-  public ContractCheckingVisitor(ContractSet contracts, ExceptionPredicate exceptionPredicate) {
+  public ContractCheckingGenerator(ContractSet contracts, ExceptionPredicate exceptionPredicate) {
     this.contracts = contracts;
     this.exceptionPredicate = exceptionPredicate;
   }
 
+  // TODO: what is a "failure exception"?
+  // TODO: in what sense does this "Adds checks to final statement of sequence"?
   /**
    * {@inheritDoc}
    *
@@ -52,7 +56,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * contracts in {@code contracts}.
    */
   @Override
-  public TestChecks visit(ExecutableSequence eseq) {
+  public ErrorRevealingChecks generateTestChecks(ExecutableSequence eseq) {
     ErrorRevealingChecks checks = new ErrorRevealingChecks();
 
     int finalIndex = eseq.sequence.size() - 1;
@@ -78,8 +82,6 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
     } else {
       // Otherwise, normal execution, check contracts
       if (!contracts.isEmpty()) {
-        Check check;
-
         // 1. check unary over values in last statement
         // TODO: Why aren't unary contracts checked over all values like binary contracts are?
         List<ReferenceValue> statementValues = eseq.getLastStatementValues();
@@ -87,7 +89,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         if (!unaryContracts.isEmpty()) {
           TupleSet<ReferenceValue> statementTuples = new TupleSet<>();
           statementTuples = statementTuples.extend(statementValues);
-          check = checkContracts(unaryContracts, eseq, statementTuples);
+          Check check = checkContracts(unaryContracts, eseq, statementTuples);
           if (check != null) {
             checks.add(check);
             return checks;
@@ -101,7 +103,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         inputTuples = inputTuples.extend(inputValues).extend(inputValues);
         List<ObjectContract> binaryContracts = contracts.getWithArity(2);
         if (!binaryContracts.isEmpty()) {
-          check = checkContracts(binaryContracts, eseq, inputTuples);
+          Check check = checkContracts(binaryContracts, eseq, inputTuples);
           if (check != null) {
             checks.add(check);
             return checks;
@@ -112,7 +114,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         TupleSet<ReferenceValue> ternaryTuples = inputTuples.exhaustivelyExtend(statementValues);
         List<ObjectContract> ternaryContracts = contracts.getWithArity(3);
         if (!ternaryContracts.isEmpty()) {
-          check = checkContracts(ternaryContracts, eseq, ternaryTuples);
+          Check check = checkContracts(ternaryContracts, eseq, ternaryTuples);
           if (check != null) {
             checks.add(check);
             return checks;

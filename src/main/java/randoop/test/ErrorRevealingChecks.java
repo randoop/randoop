@@ -1,31 +1,24 @@
 package randoop.test;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 /**
  * ErrorRevealingChecks represent failing checks for a particular test sequence. Each check may
  * refer to different variables defined in the sequence, so can only be assumed to be valid at the
- * end of the sequence. Note that there are no expected exceptions in error revealing tests, and so
+ * end of the sequence. Note that there are no expected exceptions in error-revealing tests, and so
  * there should be no {@link ExceptionCheck} objects.
  */
-public class ErrorRevealingChecks implements TestChecks {
+public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
 
   private Set<Check> checks;
 
   /** Create an empty set of error checks. */
-  ErrorRevealingChecks() {
+  public ErrorRevealingChecks() {
     this.checks = new LinkedHashSet<>();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return count of error revealing checks
-   */
   @Override
   public int count() {
     return checks.size();
@@ -34,17 +27,11 @@ public class ErrorRevealingChecks implements TestChecks {
   /**
    * {@inheritDoc}
    *
-   * @return all checks with false, indicating all are failing
+   * @return all checks, with each mapped to false, indicating it is failing
    */
   @Override
-  public Map<Check, Boolean> get() {
-    Map<Check, Boolean> result = new LinkedHashMap<>();
-    if (hasChecks()) {
-      for (Check ck : checks) {
-        result.put(ck, false);
-      }
-    }
-    return result;
+  public Set<Check> checks() {
+    return checks;
   }
 
   /**
@@ -108,14 +95,10 @@ public class ErrorRevealingChecks implements TestChecks {
   }
 
   @Override
-  public TestChecks commonChecks(TestChecks testChecks) {
-    if (!(testChecks instanceof ErrorRevealingChecks)) {
-      throw new IllegalArgumentException("Must compare with ErrorRevealingChecks");
-    }
-    ErrorRevealingChecks erc = (ErrorRevealingChecks) testChecks;
-    TestChecks common = new ErrorRevealingChecks();
+  public ErrorRevealingChecks commonChecks(ErrorRevealingChecks other) {
+    ErrorRevealingChecks common = new ErrorRevealingChecks();
     for (Check ck : checks) {
-      if (erc.checks.contains(ck)) {
+      if (other.checks.contains(ck)) {
         common.add(ck);
       }
     }

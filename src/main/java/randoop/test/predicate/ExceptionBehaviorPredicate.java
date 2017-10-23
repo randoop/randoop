@@ -14,6 +14,16 @@ import randoop.test.TestCheckGenerator;
  */
 public class ExceptionBehaviorPredicate implements ExceptionPredicate {
 
+  /** A predicate that checks for invalid behavior. */
+  public static ExceptionBehaviorPredicate IS_INVALID =
+      new ExceptionBehaviorPredicate(BehaviorType.INVALID);
+  /** A predicate that checks for error behavior. */
+  public static ExceptionBehaviorPredicate IS_ERROR =
+      new ExceptionBehaviorPredicate(BehaviorType.ERROR);
+  /** A predicate that checks for expected behavior. */
+  public static ExceptionBehaviorPredicate IS_EXPECTED =
+      new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
+
   private BehaviorType behavior;
 
   /**
@@ -21,7 +31,7 @@ public class ExceptionBehaviorPredicate implements ExceptionPredicate {
    *
    * @param behavior the behavior to check for
    */
-  public ExceptionBehaviorPredicate(BehaviorType behavior) {
+  private ExceptionBehaviorPredicate(BehaviorType behavior) {
     this.behavior = behavior;
   }
 

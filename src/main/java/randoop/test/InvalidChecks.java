@@ -1,12 +1,16 @@
 package randoop.test;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.Set;
+import randoop.BugInRandoopException;
 
-/** Implements a set of checks capturing invalid behavior in a sequence. */
-public class InvalidChecks implements TestChecks {
+/**
+ * An empty or singleton set. It contains at most one InvalidExceptionCheck, which captures invalid
+ * behavior in a sequence.
+ */
+public class InvalidChecks implements TestChecks<InvalidChecks> {
 
-  private Check check;
+  private InvalidExceptionCheck check;
 
   @Override
   public int count() {
@@ -18,12 +22,12 @@ public class InvalidChecks implements TestChecks {
   }
 
   @Override
-  public Map<Check, Boolean> get() {
-    Map<Check, Boolean> mp = new LinkedHashMap<>();
+  public Set<Check> checks() {
     if (check != null) {
-      mp.put(check, false);
+      return Collections.<Check>singleton(check);
+    } else {
+      return Collections.emptySet();
     }
-    return mp;
   }
 
   @Override
@@ -37,26 +41,26 @@ public class InvalidChecks implements TestChecks {
   }
 
   @Override
-  public ExceptionCheck getExceptionCheck() {
-    if (check instanceof ExceptionCheck) {
-      return (ExceptionCheck) check;
-    }
-    return null;
+  public InvalidExceptionCheck getExceptionCheck() {
+    return check;
   }
 
   @Override
   public void add(Check check) {
-    this.check = check;
+    if (this.check != null) {
+      throw new BugInRandoopException(
+          String.format("add(%s) when InvalidChecks already contains %s", check, this.check));
+    }
+    if (!(check instanceof InvalidExceptionCheck)) {
+      throw new Error("Expected InvalidExceptionCheck: " + check);
+    }
+    this.check = (InvalidExceptionCheck) check;
   }
 
   @Override
-  public TestChecks commonChecks(TestChecks checks) {
-    if (!(checks instanceof InvalidChecks)) {
-      throw new IllegalArgumentException("Must compare with an InvalidChecks object");
-    }
-    InvalidChecks ic = (InvalidChecks) checks;
-    TestChecks common = new InvalidChecks();
-    if (this.check != null && check.equals(ic.check)) {
+  public InvalidChecks commonChecks(InvalidChecks other) {
+    InvalidChecks common = new InvalidChecks();
+    if (this.check != null && check.equals(other.check)) {
       common.add(check);
     }
     return common;

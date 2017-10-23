@@ -7,7 +7,6 @@ import randoop.sequence.Variable;
 import randoop.util.ObjectContractReflectionCode;
 import randoop.util.ReflectionCode;
 import randoop.util.ReflectionExecutor;
-import randoop.util.Timer;
 
 /** Utility methods for safely executing and printing {@link ObjectContract} code. */
 public class ObjectContractUtils {
@@ -25,18 +24,17 @@ public class ObjectContractUtils {
    */
   public static ExecutionOutcome execute(final ObjectContract c, final Object... objs) {
     ReflectionCode refl = new ObjectContractReflectionCode(c, objs);
-    Timer timer = new Timer();
-    timer.startTiming();
+    long startTime = System.currentTimeMillis();
     Throwable t = ReflectionExecutor.executeReflectionCode(refl, System.out);
-    timer.stopTiming();
+    long time = System.currentTimeMillis() - startTime;
 
     if (refl.getExceptionThrown() != null) {
-      return new ExceptionalExecution(refl.getExceptionThrown(), timer.getTimeElapsedMillis());
+      return new ExceptionalExecution(refl.getExceptionThrown(), time);
     }
     if (t != null) {
-      return new ExceptionalExecution(t, timer.getTimeElapsedMillis());
+      return new ExceptionalExecution(t, time);
     }
-    return new NormalExecution(refl.getReturnValue(), timer.getTimeElapsedMillis());
+    return new NormalExecution(refl.getReturnValue(), time);
   }
 
   /**

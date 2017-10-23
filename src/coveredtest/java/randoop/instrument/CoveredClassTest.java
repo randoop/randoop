@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static randoop.main.GenInputsAbstract.methodlist;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.File;
 import java.util.LinkedHashSet;
@@ -29,7 +30,6 @@ import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
 import randoop.reflection.TypeNames;
@@ -210,7 +210,7 @@ public class CoveredClassTest {
             GenInputsAbstract.require_covered_classes, "coverage class names");
     Set<String> omitFields =
         GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "field list");
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     Set<String> methodSignatures =
@@ -286,13 +286,13 @@ public class CoveredClassTest {
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(
             excludeSet, operationModel.getCoveredClassesGoal(), require_classname_in_test);
-    testGenerator.addTestPredicate(isOutputTest);
+    testGenerator.setTestPredicate(isOutputTest);
 
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
-        genTests.createTestCheckGenerator(visibility, contracts, observerMap);
-    testGenerator.addTestCheckGenerator(checkGenerator);
-    testGenerator.addExecutionVisitor(
+        GenTests.createTestCheckGenerator(visibility, contracts, observerMap);
+    testGenerator.setTestCheckGenerator(checkGenerator);
+    testGenerator.setExecutionVisitor(
         new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));
 
     TestUtils.setAllLogs(testGenerator);

@@ -1,5 +1,6 @@
 package randoop.test;
 
+import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -10,11 +11,14 @@ import randoop.test.predicate.ExceptionPredicate;
  * an {@code ExpectedExceptionCheck} object when the predicate is satisfied, and an {@code
  * EmptyExceptionCheck} otherwise. Resulting tests only enforce expected matching exceptions.
  *
- * @see randoop.test.RegressionCaptureVisitor#visit(randoop.sequence.ExecutableSequence)
+ * @see
+ *     randoop.test.RegressionCaptureGenerator#generateTestChecks(randoop.sequence.ExecutableSequence)
  */
 public class ExpectedExceptionCheckGen {
 
+  /** the predicate to indicate whether an exception is expected */
   private ExceptionPredicate isExpected;
+  /** a predicate to determine visibility of exception classes */
   private VisibilityPredicate visibility;
 
   /**
@@ -42,14 +46,11 @@ public class ExpectedExceptionCheckGen {
   ExceptionCheck getExceptionCheck(
       ExceptionalExecution exec, ExecutableSequence eseq, int statementIndex) {
     Throwable e = exec.getException();
+    if (e instanceof NoClassDefFoundError) {
+      throw new BugInRandoopException(e);
+    }
 
     String catchClassName = getCatchClassName(e.getClass());
-
-    if (e instanceof NoClassDefFoundError) {
-      System.err.println("Ignoring NoClassDefFoundError thrown: " + e + " Please report.");
-      e.printStackTrace();
-      return new InvalidExceptionCheck(e, statementIndex, catchClassName);
-    }
 
     if (isExpected.test(exec, eseq)) {
       return new ExpectedExceptionCheck(e, statementIndex, catchClassName);
