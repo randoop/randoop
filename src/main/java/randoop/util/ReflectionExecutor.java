@@ -77,6 +77,7 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    * @param out stream to print exception details to or null
+   * @return the execution result
    */
   public static ExecutionOutcome executeReflectionCode(ReflectionCode code, PrintStream out) {
     long start = System.nanoTime();
@@ -114,6 +115,7 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    * @param out ignored
+   * @throws TimeoutExceededException if execution times out
    */
   @SuppressWarnings("deprecation")
   private static void executeReflectionCodeThreaded(ReflectionCode code, PrintStream out)

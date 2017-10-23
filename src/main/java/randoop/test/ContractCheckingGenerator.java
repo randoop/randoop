@@ -129,6 +129,8 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
   /**
    * If a contract fails for some tuple, returns some such failing check.
    *
+   * @param contracts the contracts to check
+   * @param eseq the executable sequence that is the source of values for checking contracts
    * @param tuples the value tuples to use as input to the contracts
    * @return a {@link Check} of the first contract+tuple that failed, or null if no contracts failed
    */

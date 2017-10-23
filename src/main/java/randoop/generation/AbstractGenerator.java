@@ -55,7 +55,11 @@ public abstract class AbstractGenerator {
   /** When the generator started (millisecond-based system timestamp). */
   private long startTime = -1;
 
-  /** Elapsed time since the generator started. */
+  /**
+   * Elapsed time since the generator started.
+   *
+   * @return elapsed time since the generator started
+   */
   private long elapsedTime() {
     return System.currentTimeMillis() - startTime;
   }

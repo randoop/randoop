@@ -56,8 +56,6 @@ public abstract class ReflectionCode {
    *   <li>This method sets the security manager's status to its status before this call.
    * </ol>
    *
-   * @throws InstantiationException if unable to create a new instance
-   * @throws IllegalAccessException if the executed code involves inaccessible method or constructor
    * @throws ReflectionCodeException if execution results in conflicting error and success states;
    *     this results from a bug in Randoop
    */
@@ -95,8 +93,6 @@ public abstract class ReflectionCode {
    * Execute the reflection code. All Randoop implementation errors must be thrown as
    * ReflectionCodeException because everything else is caught.
    *
-   * @throws InstantiationException if unable to create a new instance
-   * @throws IllegalAccessException if executed code involves inaccessible method
    * @throws ReflectionCodeException if execution results in conflicting error and success states;
    *     this results from a bug in Randoop
    */
