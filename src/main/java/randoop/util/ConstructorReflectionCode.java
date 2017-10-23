@@ -47,15 +47,6 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    String ret = "Call to " + constructor + ", args: " + Arrays.toString(inputs);
-    if (hasStarted()) {
-      return ret + " failed to run";
-    } else if (hasRun()) {
-      return ret + " not run yet";
-    } else if (exceptionThrown == null) {
-      return ret + " returned: " + ret;
-    } else {
-      return ret + " threw: " + exceptionThrown;
-    }
+    return "Call to " + constructor + ", args: " + Arrays.toString(inputs) + status();
   }
 }

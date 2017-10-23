@@ -59,14 +59,12 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    String ret =
-        "Call to " + method + " receiver: " + receiver + " args: " + Arrays.toString(inputs);
-    if (!hasRun()) {
-      return ret + " not run yet";
-    } else if (exceptionThrown == null) {
-      return ret + " returned: " + retval;
-    } else {
-      return ret + " threw: " + exceptionThrown;
-    }
+    return "Call to "
+        + method
+        + " receiver: "
+        + receiver
+        + " args: "
+        + Arrays.toString(inputs)
+        + status();
   }
 }

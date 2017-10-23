@@ -20,4 +20,9 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
       exceptionThrown = e;
     }
   }
+
+  @Override
+  public String toString() {
+    return "Check of ObjectContract " + c + " args: " + Arrays.toString(obs) + status();
+  }
 }
