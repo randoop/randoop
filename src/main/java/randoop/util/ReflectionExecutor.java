@@ -7,7 +7,6 @@ import plume.UtilMDE;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.TimeoutExecution;
 
 /**
  * Static methods that executes the code of a ReflectionCode object.
@@ -85,7 +84,8 @@ public final class ReflectionExecutor {
       try {
         executeReflectionCodeThreaded(code, out);
       } catch (TimeoutExceededException e) {
-        return new TimeoutExecution(e);
+        // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
+        return new ExceptionalExecution(e, timeout * 1000);
       }
     } else {
       executeReflectionCodeUnThreaded(code, out);

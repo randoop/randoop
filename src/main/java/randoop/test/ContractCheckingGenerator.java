@@ -5,7 +5,6 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.TimeoutExecution;
 import randoop.contract.ObjectContract;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.ReferenceValue;
@@ -67,9 +66,6 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
     if (finalResult instanceof NotExecuted) {
       // If statement not executed, then something flaky
       throw new Error("Un-executed final statement in sequence: " + eseq);
-    } else if (finalResult instanceof TimeoutExecution) {
-      // This should have been handled by an earlier TestCheckGenerator
-      throw new Error("Timeout in sequence: " + eseq);
     } else if (finalResult instanceof ExceptionalExecution) {
       // If there is an exception, check whether it is considered a failure
       ExceptionalExecution exec = (ExceptionalExecution) finalResult;

@@ -2,10 +2,10 @@ package randoop.test;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.TimeoutExecution;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.test.predicate.ExceptionPredicate;
+import randoop.util.TimeoutExceededException;
 
 /**
  * A {@code ValidityCheckingGenerator} checks for occurrences of exceptions that have been tagged as
@@ -70,19 +70,15 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
     int finalIndex = eseq.sequence.size() - 1;
     for (int i = 0; i < eseq.sequence.size(); i++) {
       ExecutionOutcome result = eseq.getResult(i);
-      // TODO: the structure of this code suggests that I could use ExceptionalExecution after all.
-      if (result instanceof TimeoutExecution) {
-        TimeoutExecution exec = (TimeoutExecution) result;
-        Throwable e = exec.getException();
-        checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));
-        return checks;
-      } else if (result instanceof ExceptionalExecution) {
+      if (result instanceof ExceptionalExecution) {
         ExceptionalExecution exec = (ExceptionalExecution) result;
         Throwable e = exec.getException();
 
         if (i != finalIndex) {
           if (throwExceptionOnFlakyTest
-              && !((e instanceof OutOfMemoryError) || (e instanceof StackOverflowError))) {
+              && !((e instanceof OutOfMemoryError)
+                  || (e instanceof StackOverflowError)
+                  || (e instanceof TimeoutExceededException))) {
             throw new SequenceExceptionError(eseq, i, e);
           }
           checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));

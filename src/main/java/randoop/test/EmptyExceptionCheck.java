@@ -3,7 +3,6 @@ package randoop.test;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.NotExecuted;
-import randoop.TimeoutExecution;
 import randoop.sequence.Execution;
 
 /**
@@ -65,8 +64,6 @@ public class EmptyExceptionCheck extends ExceptionCheck {
     ExecutionOutcome outcomeAtIndex = execution.get(statementIndex);
     if (outcomeAtIndex instanceof NotExecuted) {
       throw new IllegalArgumentException("Statement not executed");
-    } else if (outcomeAtIndex instanceof TimeoutExecution) {
-      throw new IllegalArgumentException("Statement timed out");
     }
     return true;
   }

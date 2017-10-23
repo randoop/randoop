@@ -3,7 +3,6 @@ package randoop.test;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
-import randoop.TimeoutExecution;
 import randoop.sequence.ExecutableSequence;
 import randoop.types.ClassOrInterfaceType;
 
@@ -38,8 +37,6 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
     TestChecks<?> checks;
     if (result instanceof NotExecuted) {
       throw new Error("Abnormal execution in sequence: " + eseq);
-    } else if (result instanceof TimeoutExecution) {
-      throw new Error("Timeout in sequence: " + eseq);
     } else if (result instanceof ExceptionalExecution) { // exception occurred
       checks = new RegressionChecks();
       ExceptionalExecution exec = (ExceptionalExecution) result;
