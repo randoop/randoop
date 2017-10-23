@@ -452,7 +452,7 @@ public final class Sequence implements WeightedElement {
   private Variable getVariableForInput(int statementPosition, RelativeNegativeIndex input) {
     int absoluteIndex = statementPosition + input.index;
     if (absoluteIndex < 0) {
-      throw new IllegalArgumentException("index out of bounds: " + absoluteIndex);
+      throw new IllegalArgumentException("index should be non-negative: " + absoluteIndex);
     }
     return new Variable(this, absoluteIndex);
   }
@@ -1257,7 +1257,7 @@ public final class Sequence implements WeightedElement {
 
     RelativeNegativeIndex(int index) {
       if (index >= 0) {
-        throw new IllegalArgumentException("index out of bounds: " + index);
+        throw new IllegalArgumentException("index should be non-positive: " + index);
       }
       this.index = index;
     }
