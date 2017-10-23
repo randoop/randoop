@@ -64,7 +64,7 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
     ExecutionOutcome finalResult = eseq.getResult(finalIndex);
 
     if (finalResult instanceof NotExecuted) {
-      // If statement not executed, then something flaky
+      // If statement not executed, then something is flaky
       throw new Error("Un-executed final statement in sequence: " + eseq);
     } else if (finalResult instanceof ExceptionalExecution) {
       // If there is an exception, check whether it is considered a failure
@@ -79,9 +79,8 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
       // If exception not considered a failure, don't include checks
 
     } else {
-      assert finalResult instanceof NormalExecution;
-
       // Otherwise, normal execution, check contracts
+      assert finalResult instanceof NormalExecution;
       if (!contracts.isEmpty()) {
         // 1. check unary over values in last statement
         // TODO: Why aren't unary contracts checked over all values like binary contracts are?

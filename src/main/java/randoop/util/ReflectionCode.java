@@ -10,10 +10,10 @@ import randoop.util.RandoopSecurityManager.Status;
  */
 public abstract class ReflectionCode {
 
-  /** Has this started execution. */
+  /** Has this started execution? */
   private boolean hasStarted;
 
-  /** Has this been executed already. */
+  /** Has this been executed already? */
   private boolean hasRun;
 
   // Before runReflectionCodeRaw is executed, both of these fields are null. After
@@ -116,6 +116,7 @@ public abstract class ReflectionCode {
     return exceptionThrown;
   }
 
+  /** A suffix to be called by toString(). */
   protected String status() {
     if (!hasStarted() && !hasRun()) {
       return " not run yet";
