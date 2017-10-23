@@ -51,7 +51,7 @@ public class ExceptionBehaviorClassifier {
       }
 
       // default failure exceptions
-      if (t instanceof AssertionError || t instanceof StackOverflowError) {
+      if (t instanceof AssertionError) {
         return BehaviorType.ERROR;
       }
 
