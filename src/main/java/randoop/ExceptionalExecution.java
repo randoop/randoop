@@ -5,6 +5,10 @@ public class ExceptionalExecution extends ExecutionOutcome {
 
   private final Throwable exception;
 
+  /**
+   * @param exception the exception that was thrown
+   * @param executionTime the execution time, in nanoseconds
+   */
   public ExceptionalExecution(Throwable exception, long executionTime) {
     super(executionTime);
     if (exception == null) {

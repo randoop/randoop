@@ -18,6 +18,10 @@ public class NormalExecution extends ExecutionOutcome {
 
   private final Object result;
 
+  /**
+   * @param result the return value
+   * @param executionTime the execution time, in nanoseconds
+   */
   public NormalExecution(Object result, long executionTime) {
     super(executionTime);
     this.result = result;
