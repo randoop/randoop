@@ -105,6 +105,13 @@ public class RunCommand {
       this.standardOutputLines = standardOutputLines;
       this.errorOutputLines = errorOutputLines;
     }
+
+    @Override
+    public String toString() {
+      return String.format(
+          "Status %d (timedOut=%s), stdout lines=%d, stderr lines = %d for command %s",
+          exitStatus, timedOut, standardOutputLines.size(), errorOutputLines.size(), command);
+    }
   }
 
   /**
