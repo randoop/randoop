@@ -4,7 +4,7 @@ package randoop.main;
  * Thrown to indicate a user error in invoking Randoop from the command line. Randoop prints the
  * message and also prints how to get help.
  */
-public class RandoopTextuiException extends Exception {
+public class RandoopTextuiException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 

@@ -20,6 +20,7 @@ import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.execution.TestEnvironment;
 import randoop.main.GenTests;
+import randoop.main.RandoopTextuiException;
 
 /**
  * A {@link CodeWriter} that outputs JUnit tests with assertions that fail commented out. Intended
@@ -90,8 +91,10 @@ public class FailingTestFilter implements CodeWriter {
         throw new BugInRandoopException("Error filtering regression tests", e);
       }
 
-      if (status.exitStatus == 0 && !status.timedOut) {
+      if (status.exitStatus == 0) {
         passing = true;
+      } else if (status.timedOut) {
+        throw new Error("Timed out: " + qualifiedClassname);
       } else {
         classSource = commentFailingAssertions(packageName, classname, classSource, status);
       }
@@ -127,7 +130,25 @@ public class FailingTestFilter implements CodeWriter {
     /*
      * First, find the message that indicates the number of failures in the run.
      */
-    Match failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
+    Match failureCountMatch;
+    try {
+      failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
+    } catch (NotMatchedException e) {
+      if (status.errorOutputLines.size() == 1) {
+        String stderr = status.errorOutputLines.get(0);
+        if (stderr.equals("Error: Could not find or load main class org.junit.runner.JUnitCore")) {
+          throw new RandoopTextuiException(
+              "Classpath does not contain JUnit.  "
+                  + "Please correct the classpath and re-run Randoop.");
+        }
+      }
+      throw new BugInRandoopException(
+          // Including javaCode is a bit too verbose.
+          // String.format("%s %s status=%s%n%s", packageName, classname, status, javaCode)
+          String.format(
+              "Did not find \"%s\" in %s.%s status=%s",
+              FAILURE_MESSAGE_PATTERN.pattern(), packageName, classname, status));
+    }
     int totalFailures = Integer.parseInt(failureCountMatch.group);
     if (totalFailures < 0) {
       throw new BugInRandoopException("JUnit has non-zero exit status, but no failure found");
@@ -214,7 +235,11 @@ public class FailingTestFilter implements CodeWriter {
         return new Match(line, matcher.group(1));
       }
     }
-    throw new BugInRandoopException("Error: JUnit output doesn't contain: " + pattern.pattern());
+    throw new NotMatchedException();
+  }
+
+  private static class NotMatchedException extends RuntimeException {
+    private static final long serialVersionUID = 20171024;
   }
 
   /**

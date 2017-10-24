@@ -150,10 +150,9 @@ public class Minimize extends CommandHandler {
    * @param args parameters, specified in command-line style, for the input file, the classpath, the
    *     timeout value, and the verbose flag
    * @return true if the command was handled successfully
-   * @throws RandoopTextuiException thrown if incorrect arguments are passed
    */
   @Override
-  public boolean handle(String[] args) throws RandoopTextuiException {
+  public boolean handle(String[] args) {
     try {
       String[] nonargs = foptions.parse(args);
       if (nonargs.length > 0) {

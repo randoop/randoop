@@ -3,7 +3,7 @@ package randoop.main;
 import java.io.IOException;
 
 /** Exception to signal an error in input to Randoop that is likely user-originated. */
-public class RandoopInputException extends Throwable {
+public class RandoopInputException extends RuntimeException {
 
   private static final long serialVersionUID = 3470114649273676197L;
 

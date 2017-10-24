@@ -203,7 +203,7 @@ public class CoveredClassTest {
     }
   }
 
-  private ForwardGenerator getGenerator() throws RandoopInputException {
+  private ForwardGenerator getGenerator() {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(

@@ -28,7 +28,7 @@ public class Help extends CommandHandler {
   }
 
   @Override
-  public boolean handle(String[] args_raw) throws RandoopTextuiException {
+  public boolean handle(String[] args_raw) {
 
     String[] args = null;
     try {

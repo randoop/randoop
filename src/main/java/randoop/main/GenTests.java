@@ -159,7 +159,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   @Override
-  public boolean handle(String[] args) throws RandoopTextuiException, RandoopInputException {
+  public boolean handle(String[] args) {
 
     try {
       String[] nonargs = options.parse(args);

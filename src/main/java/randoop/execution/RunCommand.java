@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import plume.TimeLimitProcess;
 import plume.UtilMDE;
+import randoop.Globals;
 
 /**
  * Class providing the {@link #run(List, File, long)} method to run a command in a separate process
@@ -108,9 +109,37 @@ public class RunCommand {
 
     @Override
     public String toString() {
-      return String.format(
-          "Status %d (timedOut=%s), stdout lines=%d, stderr lines = %d for command %s",
-          exitStatus, timedOut, standardOutputLines.size(), errorOutputLines.size(), command);
+      StringBuilder sb = new StringBuilder();
+      sb.append(
+          String.format(
+              "Status for command \"%s\" = %d (timedOut=%s)",
+              UtilMDE.join(command, " "), exitStatus, timedOut));
+      describeLines("stdout", standardOutputLines, sb);
+      describeLines("stderr", errorOutputLines, sb);
+      return sb.toString();
+    }
+
+    /**
+     * Print to sb the lines, or say how many lines there were.
+     *
+     * @param source the source of the lines, such as "stdout" or "stderr"
+     * @param lines the lines
+     * @param sb where to print the represenation
+     */
+    private void describeLines(String source, List<String> lines, StringBuilder sb) {
+      if (lines.size() <= 2) {
+        sb.append(", ");
+        sb.append(source);
+        sb.append("=\"");
+        sb.append(UtilMDE.join(lines, Globals.lineSep));
+        sb.append("\"");
+        sb.append(Globals.lineSep);
+      } else {
+        sb.append(", ");
+        sb.append(source);
+        sb.append(" lines=");
+        sb.append(lines.size());
+      }
     }
   }
 

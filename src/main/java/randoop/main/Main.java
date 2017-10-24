@@ -73,8 +73,8 @@ public class Main {
       if (e.getMessage() != null) {
         System.out.println(e.getMessage());
       }
-      System.out.println("To get help on this command, invoke Randoop with");
-      System.out.println("`help " + handler.fcommand + "' as arguments.");
+      System.out.println(
+          "To get help on this command, invoke Randoop with arguments:  help " + handler.fcommand);
       System.exit(1);
 
     } catch (RandoopInputException e) {
