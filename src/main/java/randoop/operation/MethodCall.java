@@ -166,13 +166,7 @@ public final class MethodCall extends CallableOperation {
 
     MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
 
-    Throwable thrown = ReflectionExecutor.executeReflectionCode(code, out);
-
-    if (thrown == null) {
-      return new NormalExecution(code.getReturnValue(), 0);
-    } else {
-      return new ExceptionalExecution(thrown, 0);
-    }
+    return ReflectionExecutor.executeReflectionCode(code, out);
   }
 
   /**

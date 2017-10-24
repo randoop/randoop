@@ -433,7 +433,13 @@ public class ExecutableSequence {
     return checks;
   }
 
-  /** The result of executing the i-th element of the sequence. */
+  /**
+   * The result of executing the i-th element of the sequence.
+   *
+   * @param index which element to obtain
+   * @return the result of executing the i-th element of the sequence, if that element's execution
+   *     completed normally.
+   */
   private Object getValue(int index) {
     ExecutionOutcome result = getResult(index);
     if (result instanceof NormalExecution) {
@@ -528,7 +534,6 @@ public class ExecutableSequence {
    *
    * @param value the value
    * @return the set of variables that have the given value
-   * @throws Exception if no such element exists
    */
   public Variable getVariable(Object value) {
     return variableMap.get(value).iterator().next();

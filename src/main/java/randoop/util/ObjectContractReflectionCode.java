@@ -1,5 +1,6 @@
 package randoop.util;
 
+import java.util.Arrays;
 import randoop.contract.ObjectContract;
 
 public final class ObjectContractReflectionCode extends ReflectionCode {
@@ -19,5 +20,10 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
     } catch (Throwable e) {
       exceptionThrown = e;
     }
+  }
+
+  @Override
+  public String toString() {
+    return "Check of ObjectContract " + c + " args: " + Arrays.toString(objs) + status();
   }
 }

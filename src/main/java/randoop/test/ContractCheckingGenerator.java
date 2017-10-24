@@ -3,6 +3,7 @@ package randoop.test;
 import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.contract.ObjectContract;
 import randoop.sequence.ExecutableSequence;
@@ -62,12 +63,10 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome finalResult = eseq.getResult(finalIndex);
 
-    // If statement not executed, then something flaky
     if (finalResult instanceof NotExecuted) {
+      // If statement not executed, then something is flaky
       throw new Error("Un-executed final statement in sequence: " + eseq);
-    }
-
-    if (finalResult instanceof ExceptionalExecution) {
+    } else if (finalResult instanceof ExceptionalExecution) {
       // If there is an exception, check whether it is considered a failure
       ExceptionalExecution exec = (ExceptionalExecution) finalResult;
 
@@ -81,6 +80,7 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
 
     } else {
       // Otherwise, normal execution, check contracts
+      assert finalResult instanceof NormalExecution;
       if (!contracts.isEmpty()) {
         // 1. check unary over values in last statement
         // TODO: Why aren't unary contracts checked over all values like binary contracts are?
@@ -133,6 +133,8 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
   /**
    * If a contract fails for some tuple, returns some such failing check.
    *
+   * @param contracts the contracts to check
+   * @param eseq the executable sequence that is the source of values for checking contracts
    * @param tuples the value tuples to use as input to the contracts
    * @return a {@link Check} of the first contract+tuple that failed, or null if no contracts failed
    */
