@@ -52,24 +52,6 @@ public interface Check {
   String toCodeStringPostStatement();
 
   /**
-   * Returns a short string that can be used to uniquely identify this check.
-   *
-   * @return a string "value" for this check
-   */
-  String getValue();
-
-  /**
-   * Returns a unique string identifier for the check. Two checks are the same if these identifiers
-   * match. The value is NOT included. Used to match up checks between the same sequence run at
-   * different times. Note that because of changes in the environment (e.g., static variables), two
-   * executions of the same sequence may have different checks (because the existence of some checks
-   * depends on the value of variables)
-   *
-   * @return a unique string identifier for this check
-   */
-  String getID();
-
-  /**
    * Evaluates this check on the given execution of a sequence.
    *
    * @param execution the execution of sequence on which to test this check

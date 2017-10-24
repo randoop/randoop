@@ -93,16 +93,6 @@ public class PostConditionCheck implements Check {
     return builder.toString();
   }
 
-  @Override
-  public String getValue() {
-    return postConditions.getClass().getName() + "(" + UtilMDE.join(postConditions, ",") + ")";
-  }
-
-  @Override
-  public String getID() {
-    return getValue() + " " + Arrays.toString(inputVariables);
-  }
-
   /**
    * Doesn't actually evaluate {@link Execution} object. This check exists because the
    * post-condition failed, so returns false.

@@ -27,13 +27,6 @@ import randoop.types.TypeTuple;
  */
 public final class InitializedArrayCreation extends CallableOperation {
 
-  /**
-   * ID for parsing purposes.
-   *
-   * @see OperationParser#parse
-   */
-  public static final String ID = "array";
-
   // State variables.
   private final int length;
   private final Type elementType;

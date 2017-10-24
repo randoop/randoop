@@ -7,7 +7,6 @@ import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.operation.CallableOperation;
 import randoop.operation.Operation;
-import randoop.operation.OperationParser;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence.RelativeNegativeIndex;
@@ -117,7 +116,7 @@ public final class Statement {
     StringBuilder b = new StringBuilder();
     b.append(variableName);
     b.append(" =  ");
-    b.append(OperationParser.getId(operation));
+    b.append(operation.getClass().getSimpleName());
     b.append(" : ");
     b.append(operation.toParsableString());
     b.append(" : ");

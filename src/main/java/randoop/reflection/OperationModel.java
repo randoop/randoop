@@ -562,7 +562,7 @@ public class OperationModel {
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the predicate for omitting operations
-   * @throws SignatureParseException if any signature is invalid
+   * @throws SignatureParseException if any signature is syntactically invalid
    */
   private void addOperationsUsingSignatures(
       Set<String> methodSignatures,
