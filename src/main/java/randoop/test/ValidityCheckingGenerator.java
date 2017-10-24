@@ -5,6 +5,7 @@ import randoop.ExecutionOutcome;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.test.predicate.ExceptionPredicate;
+import randoop.util.TimeoutExceededException;
 
 /**
  * A {@code ValidityCheckingGenerator} checks for occurrences of exceptions that have been tagged as
@@ -75,7 +76,9 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
 
         if (i != finalIndex) {
           if (throwExceptionOnFlakyTest
-              && !((e instanceof OutOfMemoryError) || (e instanceof StackOverflowError))) {
+              && !((e instanceof OutOfMemoryError)
+                  || (e instanceof StackOverflowError)
+                  || (e instanceof TimeoutExceededException))) {
             throw new SequenceExceptionError(eseq, i, e);
           }
           checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));

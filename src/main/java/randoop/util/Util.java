@@ -78,6 +78,11 @@ public final class Util {
    * Format a hanging paragraph: The first line starts at the margin, and every subsequent line
    * starts indented by {@code indentWidth}. Each line is no more than {@code colWidth} characters
    * long.
+   *
+   * @param string the paragraph to format
+   * @param colWidth the full column width
+   * @param indentWidth the number of spaces before each line other than the first line
+   * @return a string representation of the formatted paragraph, include line separators
    */
   public static String hangingParagraph(String string, int colWidth, int indentWidth) {
     if (string == null) throw new IllegalArgumentException("string cannot be null.");
