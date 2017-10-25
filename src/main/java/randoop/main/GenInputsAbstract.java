@@ -708,21 +708,19 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
   }
 
-  public static Set<String> getClassnamesFromArgs() throws RandoopInputException {
+  public static Set<String> getClassnamesFromArgs() {
     Set<String> classnames = getStringSetFromFile(classlist, "tested classes");
     classnames.addAll(testclass);
     return classnames;
   }
 
-  public static Set<String> getStringSetFromFile(File listFile, String fileDescription)
-      throws RandoopInputException {
+  public static Set<String> getStringSetFromFile(File listFile, String fileDescription) {
     return getStringSetFromFile(listFile, fileDescription, "^#.*", null);
   }
 
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
-      File listFile, String fileDescription, String commentRegex, String includeRegex)
-      throws RandoopInputException {
+      File listFile, String fileDescription, String commentRegex, String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile, commentRegex, includeRegex)) {
@@ -736,7 +734,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
         String message =
             String.format(
                 "Error while reading %s file %s: %s%n", listFile, fileDescription, e.getMessage());
-        throw new RandoopInputException(message, e);
+        throw new RandoopUsageError(message, e);
       }
     }
     return elementSet;

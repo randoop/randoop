@@ -150,35 +150,34 @@ public class Minimize extends CommandHandler {
    * @param args parameters, specified in command-line style, for the input file, the classpath, the
    *     timeout value, and the verbose flag
    * @return true if the command was handled successfully
-   * @throws RandoopTextuiException thrown if incorrect arguments are passed
    */
   @Override
-  public boolean handle(String[] args) throws RandoopTextuiException {
+  public boolean handle(String[] args) {
     try {
       String[] nonargs = foptions.parse(args);
       if (nonargs.length > 0) {
         throw new Options.ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
       }
     } catch (Options.ArgException ae) {
-      throw new RandoopTextuiException(ae.getMessage());
+      throw new RandoopUsageError(ae.getMessage());
     }
 
     if (Minimize.suitepath == null) {
-      throw new RandoopTextuiException("Use --suitepath to specify a file to be minimized.");
+      throw new RandoopUsageError("Use --suitepath to specify a file to be minimized.");
     }
 
     // Check that the input file is a Java file.
     if (!FilenameUtils.getExtension(Minimize.suitepath).equals("java")) {
-      throw new RandoopTextuiException("The input file must be a Java file: " + Minimize.suitepath);
+      throw new RandoopUsageError("The input file must be a Java file: " + Minimize.suitepath);
     }
 
     if (Minimize.testsuitetimeout <= 0) {
-      throw new RandoopTextuiException(
+      throw new RandoopUsageError(
           "Timout must be positive, was given as " + Minimize.testsuitetimeout + ".");
     }
 
     if (Minimize.minimizetimeout <= 0) {
-      throw new RandoopTextuiException(
+      throw new RandoopUsageError(
           "Minimizer timout must be positive, was given as " + Minimize.minimizetimeout + ".");
     }
 

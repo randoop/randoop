@@ -159,7 +159,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   @Override
-  public boolean handle(String[] args) throws RandoopTextuiException, RandoopInputException {
+  public boolean handle(String[] args) {
 
     try {
       String[] nonargs = options.parse(args);
@@ -465,7 +465,8 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (!GenInputsAbstract.no_regression_tests) {
-      final TestEnvironment testEnvironment = new TestEnvironment(classpath);
+      final TestEnvironment testEnvironment =
+          new TestEnvironment(convertClasspathToAbsolute(classpath));
       String agentPathString = MethodReplacements.getAgentPath();
       String agentArgs = MethodReplacements.getAgentArgs();
       if (agentPathString != null && !agentPathString.isEmpty()) {
@@ -497,6 +498,24 @@ public class GenTests extends GenInputsAbstract {
     explorer.getOperationHistory().outputTable();
 
     return true;
+  }
+
+  /** Convert each element of the given classpath from a relative to an absolute path. */
+  private String convertClasspathToAbsolute(String classpath) {
+    String[] relpaths = classpath.split(":");
+    int length = relpaths.length;
+    String[] abspaths = new String[length];
+    for (int i = 0; i < length; i++) {
+      String rel = relpaths[i];
+      String abs;
+      if (rel.equals("")) {
+        abs = rel;
+      } else {
+        abs = new File(rel).getAbsolutePath();
+      }
+      abspaths[i] = abs;
+    }
+    return UtilMDE.join(abspaths, ":");
   }
 
   /**

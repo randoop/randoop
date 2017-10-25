@@ -67,20 +67,16 @@ public class Main {
         System.err.println("The command you issued returned a failing status flag.");
       }
 
-    } catch (RandoopTextuiException e) {
+    } catch (RandoopUsageError e) {
 
       System.out.println();
       if (e.getMessage() != null) {
         System.out.println(e.getMessage());
       }
-      System.out.println("To get help on this command, invoke Randoop with");
-      System.out.println("`help " + handler.fcommand + "' as arguments.");
+      System.out.println(
+          "To get help on this command, invoke Randoop with arguments: help " + handler.fcommand);
       System.exit(1);
 
-    } catch (RandoopInputException e) {
-      System.out.println();
-      System.out.println("Input error: " + e);
-      System.exit(1);
     } catch (BugInRandoopException e) {
       System.out.println();
       System.out.println("Randoop failed in an unexpected way. Please report: " + e);
