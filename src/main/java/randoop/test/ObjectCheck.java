@@ -8,6 +8,7 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Execution;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
+import randoop.util.TimeoutExceededException;
 
 /**
  * A check that checks for expected properties of one or more objects generated during the execution
@@ -96,14 +97,13 @@ public class ObjectCheck implements Check {
   }
 
   @Override
-  public boolean evaluate(Execution execution) {
+  public boolean evaluate(Execution execution) throws TimeoutExceededException {
     Object[] obs = ExecutableSequence.getRuntimeValuesForVars(Arrays.asList(vars), execution);
     try {
       return contract.evaluate(obs);
-    } catch (ThreadDeath t) {
+    } catch (StackOverflowError | OutOfMemoryError | ThreadDeath | TimeoutExceededException t) {
       throw t;
     } catch (Throwable t) {
-      // ***** TODO: determine what the exception is
       return false;
     }
   }

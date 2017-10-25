@@ -6,9 +6,9 @@ import randoop.sequence.Execution;
  * An {@code InvalidExceptionCheck} represents the occurrence of an exception tagged as an invalid
  * behavior during {@code Check} generation.
  */
-class InvalidExceptionCheck extends ExceptionCheck {
+public class InvalidExceptionCheck extends ExceptionCheck {
 
-  InvalidExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+  public InvalidExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     super(exception, statementIndex, catchClassName);
   }
 

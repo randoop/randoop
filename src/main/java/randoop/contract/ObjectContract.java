@@ -8,13 +8,16 @@ import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.NotExecuted;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 import randoop.test.Check;
+import randoop.test.InvalidExceptionCheck;
 import randoop.test.ObjectCheck;
 import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.Randomness;
+import randoop.util.TimeoutExceededException;
 
 /**
  * An object contract represents a property that must hold of any object of a given class. It is
@@ -131,8 +134,12 @@ public abstract class ObjectContract {
       if (e instanceof BugInRandoopException) {
         throw (BugInRandoopException) e;
       }
-      // ***** TODO: determine what the exception is
+      if (e instanceof TimeoutExceededException) {
+        // The index and name won't get used, but set them anyway.
+        return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
+      }
     } else {
+      assert outcome instanceof NotExecuted;
       throw new BugInRandoopException("Contract " + this + " failed to execute during evaluation");
     }
 

@@ -2,6 +2,7 @@ package randoop.test;
 
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Execution;
+import randoop.util.TimeoutExceededException;
 
 // A better name for Check would be SequenceDecoration.
 
@@ -57,5 +58,5 @@ public interface Check {
    * @param execution the execution of sequence on which to test this check
    * @return true if check succeeded, and false otherwise
    */
-  boolean evaluate(Execution execution);
+  boolean evaluate(Execution execution) throws TimeoutExceededException;
 }
