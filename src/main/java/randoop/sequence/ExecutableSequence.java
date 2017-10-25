@@ -674,4 +674,13 @@ public class ExecutableSequence {
   public TypedOperation getOperation() {
     return this.sequence.getOperation();
   }
+
+  /**
+   * Return the number of statements in this sequence.
+   *
+   * @return the number of statements in this sequence
+   */
+  public int size() {
+    return sequence.size();
+  }
 }
