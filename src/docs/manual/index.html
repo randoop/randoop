@@ -1682,9 +1682,13 @@ Here are three ways to deal with the problem.
 </p>
 <ul>
   <li>
-    Determine which calls are executing by examining the stack trace.  On
-    Unix this can be done by typing <code>Ctrl-\</code> (hold down the
-    Control key, then press the Backslash key).  If the same methods appear
+    Determine which calls are executing by examining the stack trace.
+    Use the <a
+    href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/jcmd.html"><code>jcmd</code></a>
+    command, which you can run as <code>jstack <em>pid</em></code>.
+    Get the process id by running <code>jcmd</code>.
+    (On Unix you can also type <code>Ctrl-\</code>; that is, hold down the
+    Control key, then press the Backslash key.)  If the same methods appear
     in multiple such stack traces, then you
     can <a href="#specifying-methods">exclude them from consideration by
     Randoop</a> or <a href="#replacecall">prevent the JVM from calling the
