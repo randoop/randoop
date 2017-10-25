@@ -70,8 +70,7 @@ public abstract class CommandHandler {
     return command != null && command.toUpperCase().equals(fcommand.toUpperCase());
   }
 
-  public abstract boolean handle(String[] args)
-      throws RandoopTextuiException, RandoopInputException;
+  public abstract boolean handle(String[] args);
 
   /**
    * Prints out formatted text in (google code) Wiki format.

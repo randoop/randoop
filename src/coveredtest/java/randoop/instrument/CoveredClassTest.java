@@ -24,7 +24,6 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
-import randoop.main.RandoopInputException;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
@@ -73,12 +72,7 @@ public class CoveredClassTest {
     // setup classes
 
     ForwardGenerator testGenerator;
-    try {
-      testGenerator = getGenerator();
-    } catch (RandoopInputException e) {
-      fail("Input error " + e);
-      throw new Error("dead code");
-    }
+    testGenerator = getGenerator();
 
     testGenerator.explore();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
@@ -120,12 +114,7 @@ public class CoveredClassTest {
     // setup classes
 
     ForwardGenerator testGenerator;
-    try {
-      testGenerator = getGenerator();
-    } catch (RandoopInputException e) {
-      fail("Input error: " + e);
-      throw new Error("dead code");
-    }
+    testGenerator = getGenerator();
 
     testGenerator.explore();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
@@ -166,12 +155,7 @@ public class CoveredClassTest {
     // setup classes
 
     ForwardGenerator testGenerator;
-    try {
-      testGenerator = getGenerator();
-    } catch (RandoopInputException e) {
-      fail("Input error: " + e);
-      throw new Error("dead code");
-    }
+    testGenerator = getGenerator();
 
     testGenerator.explore();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
@@ -203,7 +187,7 @@ public class CoveredClassTest {
     }
   }
 
-  private ForwardGenerator getGenerator() throws RandoopInputException {
+  private ForwardGenerator getGenerator() {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
