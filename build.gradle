@@ -12,11 +12,9 @@ plugins {
   id 'idea'
   id 'jacoco'
 
-  /*
-   * Setup gradle-git so can clone plume-lib
-   * https://github.com/ajoberstar/gradle-git
-   */
-  id 'org.ajoberstar.grgit' version '1.4.2'
+  // grgit has too many limitations; don't use it.
+  // /* https://github.com/ajoberstar/gradle-git */
+  // id 'org.ajoberstar.grgit' version '1.4.2'
 
   /*
    * Plugin that applies Google-Java-format to the Java files in the project.
@@ -568,21 +566,32 @@ task clonePlumeLib {
   doLast {
     def plumeFolder = file("$buildDir/utils/plume-lib")
     if ( ! plumeFolder.exists() ) {
-      org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
-      // This chmod command causes errors when pulling, because the clone
-      // of plume-lib has uncommitted changes (changes to execute bits).
-      // Find another way, or use a more restricted command that only
-      // sets execute bits on executable files, not all files in the
-      // bin/ directory.
+      // Grgit has too many limitations.  Use the command line instead.
+      // // TODO: This should be a shallow clone, to make it complete faster.
+      // // That's not yet supported: https://github.com/ajoberstar/grgit/issues/155 .
+      // org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
+      // // Unfortunately, grgit's clone of plume-lib has uncommitted changes
+      // // (changes to execute bits).  Fix the two that matter.  (Don't set
+      // // every file in plume-lib bin to executable, because that would also
+      // // make changes, which would cause errors when pulling.)
       // exec {
-      //   commandLine 'chmod', '-R', '+x', "$buildDir/utils/plume-lib/bin"
+      //   commandLine 'chmod', '+x', "$buildDir/utils/plume-lib/bin/preplace", "$buildDir/utils/plume-lib/bin/html-update-toc"
       // }
+
       exec {
-        commandLine 'chmod', '+x', "$buildDir/utils/plume-lib/bin/preplace", "$buildDir/utils/plume-lib/bin/html-update-toc"
+        commandLine 'git', 'clone', '--depth', '1', "https://github.com/mernst/plume-lib.git", "$buildDir/utils/plume-lib"
       }
     } else {
-      def grgit = org.ajoberstar.grgit.Grgit.open(dir: plumeFolder)
-      grgit.pull()
+      // Given that grgit is not used above, there's no point using it here.
+      // def grgit = org.ajoberstar.grgit.Grgit.open(dir: plumeFolder)
+      // grgit.pull()
+
+      exec {
+        workingDir "$buildDir/utils/plume-lib"
+        // Ignore exit value so this works when not connected to the Internet.
+        ignoreExitValue true
+        commandLine 'git', 'pull'
+      }
     }
   }
 }
