@@ -26,7 +26,7 @@ public class MultiVisitor implements ExecutionVisitor {
   /**
    * Returns a MultiVisitor if needed, otherwise a simpler visitor.
    *
-   * @param the visitors to compose
+   * @param visitors the visitors to compose
    * @return a visitor that has the effect of all the visitors in the argument
    */
   public static ExecutionVisitor createMultiVisitor(List<ExecutionVisitor> visitors) {

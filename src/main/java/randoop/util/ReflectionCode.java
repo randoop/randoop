@@ -112,7 +112,11 @@ public abstract class ReflectionCode {
     return exceptionThrown;
   }
 
-  /** A suffix to be called by toString(). */
+  /**
+   * A suffix to be called by toString().
+   *
+   * @return the status of the command
+   */
   protected String status() {
     if (!hasStarted() && !hasRun()) {
       return " not run yet";
