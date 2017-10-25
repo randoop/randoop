@@ -40,7 +40,8 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
    * {@inheritDoc}
    *
    * <p>Checks validity of a test sequence and creates a {@code InvalidChecks} object containing a
-   * checks for the first invalid exceptions encountered, if any. There are three possible outcomes:
+   * {@link InvalidChecks} for the first invalid exception encountered, if any. There are three
+   * possible outcomes:
    *
    * <ul>
    *   <li>An exception is seen before the last statement:

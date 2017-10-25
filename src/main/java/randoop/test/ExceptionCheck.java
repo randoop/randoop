@@ -15,11 +15,16 @@ import randoop.Globals;
  */
 public abstract class ExceptionCheck implements Check {
 
+  /** The thrown exception. */
   protected final Throwable exception;
 
-  // Indicates which statement results in the given exception.
+  /** Indicates which statement results in the given exception. */
   final int statementIndex;
 
+  /**
+   * The name of exception to be caught. This might be a supertype of {@code exception}'s class C,
+   * for instance because C is private or because the method is declared to throw a superclass of C.
+   */
   private String catchClassName;
 
   /**
