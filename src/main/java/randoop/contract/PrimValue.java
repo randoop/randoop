@@ -69,7 +69,7 @@ public final class PrimValue extends ObjectContract {
   }
 
   @Override
-  public boolean evaluateContract(Object... objects) throws Throwable {
+  public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 1;
     return value.equals(objects[0]);
   }

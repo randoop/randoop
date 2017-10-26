@@ -10,7 +10,7 @@ public class EqualsToNullTests extends TestCase {
 
   //public void test1() throws Exception {
   //EqualsToNull ens= new EqualsToNull();
-  //Decoration checker = ens.evaluateContract(new Object[]{"x"});
+  //Decoration checker = ens.evaluate(new Object[]{"x"});
   //assertNull(checker);
   //}
 
@@ -22,7 +22,7 @@ public class EqualsToNullTests extends TestCase {
   //}
   //}
   //EqualsToNull ens= new EqualsToNull();
-  //Decoration checker = ens.evaluateContract(new Object[]{new EqualToEverything()});
+  //Decoration checker = ens.evaluate(new Object[]{new EqualToEverything()});
   //assertNotNull(checker);
   //}
 

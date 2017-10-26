@@ -18,7 +18,7 @@ public class CompareToReturnsNormally extends ObjectContract {
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
-  public boolean evaluateContract(Object... objects) {
+  public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;

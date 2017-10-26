@@ -17,7 +17,7 @@ public final class EqualsSymmetric extends ObjectContract {
   }
 
   @Override
-  public boolean evaluateContract(Object... objects) {
+  public boolean evaluate(Object... objects) {
 
     Object o1 = objects[0];
     Object o2 = objects[1];
