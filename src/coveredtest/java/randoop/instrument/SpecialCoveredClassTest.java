@@ -132,7 +132,7 @@ public class SpecialCoveredClassTest {
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);
     // for debugging:  operationModel.dumpModel();
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     //    testGenerator.getOperationHistory().outputTable();
 
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();

@@ -223,6 +223,21 @@ compileReplacecallTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
+task compileAll() {
+  dependsOn compileJava
+  dependsOn compileTestJava
+  dependsOn ':covered-class:compileJava'
+  dependsOn ':covered-class:compileTestJava'
+  dependsOn ':replacecall:compileJava'
+  dependsOn ':covered-class:compileTestJava'
+  dependsOn compileCoveredTestJava
+  dependsOn compileReplacecallTestJava
+  dependsOn compileSystemTestJava
+}
+
+// Get early notification of any compilation failures, before running any tests
+build.dependsOn compileAll
+
 /*
  * Configuration for using Error Prone linter.
  *

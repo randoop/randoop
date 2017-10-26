@@ -91,7 +91,7 @@ public class TestClassificationTest {
 
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
-    gen.explore();
+    gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
@@ -139,7 +139,7 @@ public class TestClassificationTest {
 
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
-    gen.explore();
+    gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
@@ -200,7 +200,7 @@ public class TestClassificationTest {
 
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
-    gen.explore();
+    gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
@@ -247,7 +247,7 @@ public class TestClassificationTest {
 
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
-    gen.explore();
+    gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
@@ -309,7 +309,7 @@ public class TestClassificationTest {
 
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
-    gen.explore();
+    gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
@@ -367,7 +367,7 @@ public class TestClassificationTest {
         GenTests.createTestCheckGenerator(
             visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
     ForwardGenerator gen = buildGenerator(c, componentManager, visibility, checkGenerator);
-    gen.explore();
+    gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
     assertThat("should be no error tests", eTests.size(), is(equalTo(0)));

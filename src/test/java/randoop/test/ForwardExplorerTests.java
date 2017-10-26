@@ -83,7 +83,7 @@ public class ForwardExplorerTests {
     explorer.setTestCheckGenerator(createChecker(new ContractSet()));
     explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
-    explorer.explore();
+    explorer.createAndClassifySequences();
     explorer.getOperationHistory().outputTable();
     GenInputsAbstract.dontexecute = false;
     assertTrue(explorer.numGeneratedSequences() != 0);
@@ -139,7 +139,7 @@ public class ForwardExplorerTests {
     explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
     try {
-      explorer.explore();
+      explorer.createAndClassifySequences();
     } catch (Throwable t) {
       fail("Exception during generation: " + t);
     }
@@ -201,7 +201,7 @@ public class ForwardExplorerTests {
     explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
     try {
-      explorer.explore();
+      explorer.createAndClassifySequences();
     } catch (Throwable t) {
       fail("Exception during generation: " + t);
     }

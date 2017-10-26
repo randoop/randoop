@@ -420,10 +420,10 @@ public class GenTests extends GenInputsAbstract {
 
     /* Generate tests */
     try {
-      explorer.explore();
+      explorer.createAndClassifySequences();
     } catch (SequenceExceptionError e) {
 
-      handleFlakySequenceException(explorer, e);
+      printSequenceExceptionError(explorer, e);
 
       System.exit(1);
     } catch (RandoopInstantiationError e) {
@@ -693,7 +693,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Handles the occurrence of a {@code SequenceExceptionError} that indicates a flaky test has been
+   * Prints information about a {@code SequenceExceptionError} that indicates a flaky test has been
    * found. Prints information to help user identify source of flakiness, including exception,
    * statement that threw the exception, the full sequence where exception was thrown, and the input
    * subsequence.
@@ -701,7 +701,7 @@ public class GenTests extends GenInputsAbstract {
    * @param explorer the test generator
    * @param e the sequence exception
    */
-  private void handleFlakySequenceException(AbstractGenerator explorer, SequenceExceptionError e) {
+  private void printSequenceExceptionError(AbstractGenerator explorer, SequenceExceptionError e) {
 
     String msg =
         String.format(

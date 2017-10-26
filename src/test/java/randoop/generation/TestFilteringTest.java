@@ -279,7 +279,7 @@ public class TestFilteringTest {
     gen.setTestCheckGenerator(checkGenerator);
     gen.setExecutionVisitor(new DummyVisitor());
     TestUtils.setAllLogs(gen);
-    gen.explore();
+    gen.createAndClassifySequences();
     gen.getOperationHistory().outputTable();
     return gen;
   }

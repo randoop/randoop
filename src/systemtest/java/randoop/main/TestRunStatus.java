@@ -56,7 +56,8 @@ class TestRunStatus {
    * @return the {@link TestRunStatus} for the execution of the JUnit tests
    */
   static TestRunStatus runTests(
-      TestEnvironment testEnvironment, String packageName, String basename) throws IOException {
+      SystemTestEnvironment testEnvironment, String packageName, String basename)
+      throws IOException {
     String testClasspath = testEnvironment.testClassPath;
     Path jacocoDir = testEnvironment.jacocoDir;
     // execFile is an .exec file into which Jacoco information will be written.

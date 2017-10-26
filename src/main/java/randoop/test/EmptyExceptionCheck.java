@@ -1,9 +1,6 @@
 package randoop.test;
 
-import randoop.ExecutionOutcome;
 import randoop.Globals;
-import randoop.NotExecuted;
-import randoop.sequence.Execution;
 
 /**
  * An {@code ExceptionCheck} that doesn't enforce the expectation of an exception by the statement
@@ -49,22 +46,5 @@ public class EmptyExceptionCheck extends ExceptionCheck {
       message = "expected anonymous exception";
     }
     b.append("  // ").append(message).append(" not thrown").append(Globals.lineSep);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>This check passes if execution is either normal or an exception is thrown.
-   *
-   * @return true if execution outcome is normal or an exception, false otherwise
-   * @throws IllegalArgumentException if execution indicates statement not executed
-   */
-  @Override
-  public boolean evaluate(Execution execution) {
-    ExecutionOutcome outcomeAtIndex = execution.get(statementIndex);
-    if (outcomeAtIndex instanceof NotExecuted) {
-      throw new IllegalArgumentException("Statement not executed");
-    }
-    return true;
   }
 }
