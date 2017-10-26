@@ -235,6 +235,7 @@ task compileAll() {
   dependsOn compileSystemTestJava
 }
 
+// This isn't working; maybe I need to make it run first.
 // Get early notification of any compilation failures, before running any tests
 build.dependsOn compileAll
 
@@ -383,8 +384,8 @@ jacocoTestReport {
 //   coveredTest.exec
 //   systemTest.exec
 //   test.exec
-// What is creating the commented files, and how do I create them?
-// Is it order in the file, or capitalization, or what?
+// What is creating the agentTest.exec files, and how do I create it?
+// test.exec is the default, though it it also greated by "gradle test".
 // jacocoTestReport.dependsOn agentTest
 jacocoTestReport.dependsOn coveredTest
 jacocoTestReport.dependsOn test
