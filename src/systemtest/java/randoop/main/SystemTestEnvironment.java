@@ -149,10 +149,10 @@ class SystemTestEnvironment {
    *     given classpath
    */
   TestEnvironment createTestEnvironment(String dirname, String classpath, String bootclasspath) {
-    Path testDir = null;
-    Path sourceDir = null;
-    Path classDir = null;
-    Path jacocoDir = null;
+    Path testDir;
+    Path sourceDir;
+    Path classDir;
+    Path jacocoDir;
     try {
       testDir = createSubDirectory(systemTestWorkingDir, dirname);
       sourceDir = createSubDirectory(testDir, SOURCE_DIR_NAME);
@@ -160,12 +160,13 @@ class SystemTestEnvironment {
       jacocoDir = createSubDirectory(testDir, JACOCO_DIR_NAME);
     } catch (IOException e) {
       fail("failed to create working directory for test: " + e);
+      throw new Error("unreachable");
     }
     return new TestEnvironment(
         bootclasspath,
         classpath,
-        this.jacocoAgentPath,
-        this.testInputClassDir,
+        jacocoAgentPath,
+        testInputClassDir,
         testDir,
         sourceDir,
         classDir,
