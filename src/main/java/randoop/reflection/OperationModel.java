@@ -256,7 +256,7 @@ public class OperationModel {
    * @see TypeExtractor
    */
   public Set<Type> getInputTypes() {
-    //TODO this is not used, should it be? or should it even be here?
+    // TODO this is not used, should it be? or should it even be here?
     return inputTypes;
   }
 

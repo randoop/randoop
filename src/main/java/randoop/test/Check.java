@@ -29,7 +29,7 @@ import randoop.sequence.ExecutableSequence;
  *
  * <p>A check may require some code to be emitted before and/or after the statement is printed. For
  * example, a check for checking that {@code x} is not null after the statement "{@code Foo x =
- * m()}" is executed might emit the assertion code "{@code assertNotNull(x);}", and would do so
+ * m()}" is executed might emit the assertion code "{@code assertNotNull(x); }", and would do so
  * after the statement is printed. As a second example, a check for checking that an expected
  * exception is thrown by a statement would need to emit something like "<code>try {</code>" before
  * the statement, and the catch clause after the statement.

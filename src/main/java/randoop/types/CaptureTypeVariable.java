@@ -152,7 +152,7 @@ class CaptureTypeVariable extends TypeVariable {
     ParameterBound upperBound = getUpperTypeBound().apply(substitution);
 
     if (type == null) {
-      //if bounds are affected, return a new copy of this variable with new bounds
+      // if bounds are affected, return a new copy of this variable with new bounds
       if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
         WildcardArgument updatedWildcard = wildcard.apply(substitution);
         return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);

@@ -234,7 +234,7 @@ public class RandoopSystemTest {
     options.addTestClass("java2.util2.LinkedList");
     options.addTestClass("java2.util2.Collections");
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
-    options.setOption("operation-history-log", "-"); //log to stdout
+    options.setOption("operation-history-log", "-"); // log to stdout
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
@@ -503,7 +503,7 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            //XXX after adding compile check this method did not appear in JDK7 runs
+            // XXX after adding compile check this method did not appear in JDK7 runs
             "randoop.test.LongString.tooLongString() ignore");
     generateAndTestWithCoverage(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
@@ -956,7 +956,7 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            //TODO figure out why this method not covered
+            // TODO figure out why this method not covered
             "instrument.testcase.A.toString() ignore",
             "instrument.testcase.C.getValue() exclude",
             "instrument.testcase.C.isZero() exclude",
@@ -999,7 +999,7 @@ public class RandoopSystemTest {
         systemTestEnvironmentManager.createTestEnvironment("abstract-recursive-bound");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("randoop.types.AbstractMultiary"); // abstract shouldn't load
-    options.addTestClass("randoop.types.CompoundFunction"); //uses AbstractMultiary
+    options.addTestClass("randoop.types.CompoundFunction"); // uses AbstractMultiary
     options.setOption("generatedLimit", "1");
     generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.SOME);
   }

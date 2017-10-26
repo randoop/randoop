@@ -118,8 +118,8 @@ public class ForwardExplorerTests {
     List<Class<?>> classes = new ArrayList<>();
     classes.add(randoop.test.BiSortVal.class);
     classes.add(BiSort.class);
-    //GenFailures.progressdisplay = false;
-    //Log.log = new FileWriter("templog.txt");
+    // GenFailures.progressdisplay = false;
+    // Log.log = new FileWriter("templog.txt");
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 500;
     long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;

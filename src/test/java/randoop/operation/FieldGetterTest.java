@@ -39,12 +39,12 @@ public class FieldGetterTest {
       Type fieldType = new PrimitiveType(field.getType());
       TypedOperation rhs = createGetter(field, fieldType, classType);
 
-      //types
+      // types
       assertTrue(
           "Should be no input types : " + rhs.getInputTypes(), rhs.getInputTypes().isEmpty());
       assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
 
-      //code generation
+      // code generation
       String expected = "int int0 = randoop.field.ClassWithFields.fourField;";
       Statement st = new Statement(rhs);
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
@@ -53,7 +53,7 @@ public class FieldGetterTest {
       st.appendCode(var, new ArrayList<Variable>(), b);
       assertEquals("Expect initialization of variable from static field", expected, b.toString());
 
-      //execution - should be 4 (haven't changed value yet)
+      // execution - should be 4 (haven't changed value yet)
       NormalExecution expectedExec = new NormalExecution(4, 0);
       NormalExecution actualExec = (NormalExecution) rhs.execute(new Object[0], null);
       assertTrue(
@@ -79,7 +79,7 @@ public class FieldGetterTest {
       Type fieldType = new PrimitiveType(field.getType());
       TypedOperation rhs = createGetter(field, fieldType, classType);
 
-      //types
+      // types
       List<Type> inputTypes = new ArrayList<>();
       inputTypes.add(classType);
       assertEquals(
@@ -88,10 +88,10 @@ public class FieldGetterTest {
           rhs.getInputTypes());
       assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
 
-      //code generation
+      // code generation
       String expected = "int int1 = classWithFields0.oneField;";
 
-      //first need a variable referring to an instance
+      // first need a variable referring to an instance
       // - sequence where one is declared and initialized by constructed object
       Constructor<?> constructor;
       try {
@@ -119,8 +119,8 @@ public class FieldGetterTest {
       st_rhs.appendCode(var2, vars, b);
       assertEquals("Expect initialization of variable from static field", expected, b.toString());
 
-      //execution
-      //null object
+      // execution
+      // null object
       Object[] inputs = {null};
       ExecutionOutcome nullOutcome = rhs.execute(inputs, null);
       assertTrue(
@@ -129,7 +129,7 @@ public class FieldGetterTest {
               && ((ExceptionalExecution) nullOutcome).getException()
                   instanceof NullPointerException);
 
-      //actual object
+      // actual object
       NormalExecution expectedExec = new NormalExecution(1, 0);
       inputs = new Object[1];
       inputs[0] = c.newInstance();
@@ -161,11 +161,11 @@ public class FieldGetterTest {
       Type fieldType = new PrimitiveType(field.getType());
       TypedOperation rhs = createGetter(field, fieldType, classType);
 
-      //types
+      // types
       assertTrue("Should be no input types", rhs.getInputTypes().isEmpty());
       assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
 
-      //code generation
+      // code generation
       String expected = "int int0 = randoop.field.ClassWithFields.FIVEFIELD;";
       Statement st_rhs = new Statement(rhs);
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
@@ -175,7 +175,7 @@ public class FieldGetterTest {
       assertEquals(
           "Expect initialization of variable from static final field", expected, b.toString());
 
-      //execution --- has value 5
+      // execution --- has value 5
       NormalExecution expectedExec = new NormalExecution(5, 0);
       NormalExecution actualExec = (NormalExecution) rhs.execute(new Object[0], null);
       assertTrue(

@@ -595,7 +595,7 @@ public class Minimize extends CommandHandler {
   /**
    * Return a list of variable declaration statements that could replace the right hand side by 0,
    * false, or null, whichever is type correct. Returns an empty list if there are multiple variable
-   * declarations in a single statement, such as {@code int i, j, k;}.
+   * declarations in a single statement, such as {@code int i, j, k; }.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @return a list of {@code Statement} objects representing the simplified variable declaration
@@ -634,7 +634,7 @@ public class Minimize extends CommandHandler {
   /**
    * Return a variable declaration statement that simplifies the right hand side by a calculated
    * value for primitive types. Returns null if there are multiple variable declarations in a single
-   * statement, such as {@code int i, j, k;}.
+   * statement, such as {@code int i, j, k; }.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @param primitiveValues a map of primitive variable names to expressions representing their
@@ -753,7 +753,7 @@ public class Minimize extends CommandHandler {
 
   /**
    * Return a statement that contains only the right hand side of a given statement. Returns null if
-   * there are multiple variable declarations in a single statement, such as {@code int i, j, k;}.
+   * there are multiple variable declarations in a single statement, such as {@code int i, j, k; }.
    *
    * @param vdExpr variable declaration expression that represents the statement to simplify
    * @return a {@code Statement} object that is equal to the right-hand-side of {@code vdExpr}.

@@ -22,7 +22,7 @@ public final class HashCodeReturnsNormally extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
-      //noinspection ResultOfMethodCallIgnored
+      // noinspection ResultOfMethodCallIgnored
       o.hashCode();
     } catch (Exception e) {
       return false;

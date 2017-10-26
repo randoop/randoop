@@ -5,5 +5,5 @@ package randoop.reflection.visibilitytest;
  * in randoop.reflection.PackageVisibilityTest
  */
 public class PackageSubclass extends PackagePrivateBase {
-  //inherits public int theMethod(Object)
+  // inherits public int theMethod(Object)
 }
