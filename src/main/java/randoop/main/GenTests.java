@@ -500,9 +500,13 @@ public class GenTests extends GenInputsAbstract {
     return true;
   }
 
-  /** Convert each element of the given classpath from a relative to an absolute path. */
+  /**
+   * Convert each element of the given classpath from a relative to an absolute path.
+   *
+   * @param colon-delemited classpath
+   */
   private String convertClasspathToAbsolute(String classpath) {
-    String[] relpaths = classpath.split(":");
+    String[] relpaths = classpath.split(File.pathSeparator);
     int length = relpaths.length;
     String[] abspaths = new String[length];
     for (int i = 0; i < length; i++) {
@@ -515,7 +519,7 @@ public class GenTests extends GenInputsAbstract {
       }
       abspaths[i] = abs;
     }
-    return UtilMDE.join(abspaths, ":");
+    return UtilMDE.join(abspaths, File.pathSeparator);
   }
 
   /**

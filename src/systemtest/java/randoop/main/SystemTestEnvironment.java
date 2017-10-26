@@ -1,5 +1,6 @@
 package randoop.main;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /** Manages the environment for an individual system test method. */
@@ -70,7 +71,7 @@ class SystemTestEnvironment {
     this.sourceDir = sourceDir;
     this.classDir = classDir;
     this.jacocoDir = jacocoDir;
-    this.testClassPath = classpath + ":" + classDir.toString();
+    this.testClassPath = classpath + File.pathSeparator + classDir.toString();
     this.javaAgentPath = null;
     this.javaAgentArgumentString = null;
     this.javaAgentTestArgumentString = null;
