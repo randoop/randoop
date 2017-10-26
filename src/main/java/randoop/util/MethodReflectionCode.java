@@ -38,7 +38,6 @@ public final class MethodReflectionCode extends ReflectionCode {
   @SuppressWarnings("Finally")
   @Override
   public void runReflectionCodeRaw() {
-
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
 

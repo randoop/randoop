@@ -55,11 +55,11 @@ class RandoopRunStatus {
    *
    * <p>Should only be called if a test only runs Randoop.
    *
-   * @param testEnvironment the {@link TestEnvironment} for this run
+   * @param testEnvironment the {@link SystemTestEnvironment} for this run
    * @param options the command-line arguments to Randoop
    * @return the status information collected from generation
    */
-  static ProcessStatus generate(TestEnvironment testEnvironment, RandoopOptions options) {
+  static ProcessStatus generate(SystemTestEnvironment testEnvironment, RandoopOptions options) {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
@@ -88,12 +88,12 @@ class RandoopRunStatus {
   /**
    * Runs Randoop and compiles.
    *
-   * @param testEnvironment the {@link TestEnvironment} for this run
+   * @param testEnvironment the {@link SystemTestEnvironment} for this run
    * @param options the command-line arguments to Randoop
    * @return the status information collected from generation and compilation
    */
   static RandoopRunStatus generateAndCompile(
-      TestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
+      SystemTestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
 
     ProcessStatus randoopExitStatus = generate(testEnvironment, options);
 

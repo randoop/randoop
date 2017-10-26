@@ -115,7 +115,7 @@ public class ICSE07ContainersTest {
             stopper,
             null);
     explorer.setTestCheckGenerator(new DummyCheckGenerator());
-    explorer.explore();
+    explorer.createAndClassifySequences();
   }
 
   @Test
