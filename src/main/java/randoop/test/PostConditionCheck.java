@@ -28,7 +28,7 @@ public class PostConditionCheck implements Check {
 
   @Override
   public String toCodeStringPreStatement() {
-    return ""; //TODO should be comment with precondition
+    return ""; // TODO should be comment with precondition
   }
 
   @Override

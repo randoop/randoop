@@ -174,7 +174,7 @@ public class GenTests extends GenInputsAbstract {
 
     Randomness.setSeed(randomseed);
 
-    //java.security.Policy policy = java.security.Policy.getPolicy();
+    // java.security.Policy policy = java.security.Policy.getPolicy();
 
     // This is distracting to the user as the first thing shown, and is not very informative.
     // Reinstate it with a --verbose option.

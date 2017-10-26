@@ -21,7 +21,7 @@ public class AccessibleFieldTest {
       AccessibleField pf2 = new AccessibleField(c.getField("fourField"), declaringType);
       AccessibleField pf10 = new AccessibleField(c.getField("tenField"), declaringType);
 
-      //identity
+      // identity
       assertEquals("Object built from same field should be equal", pf1, pf1_2);
       assertFalse("Objects of different fields should not be equal", pf1.equals(pf2));
       assertEquals(

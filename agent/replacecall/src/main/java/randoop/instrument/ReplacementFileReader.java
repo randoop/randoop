@@ -241,7 +241,7 @@ class ReplacementFileReader {
       replacementClass = Class.forName(replacement);
     } catch (ClassNotFoundException e) {
       replacementClass = null;
-      //if not found, then replacement is not a class than can be loaded or not a class
+      // if not found, then replacement is not a class than can be loaded or not a class
     }
 
     // If the class was loaded, then the replacement is a class.

@@ -213,9 +213,9 @@ public class EnumReflectionTest {
 
     for (TypedOperation op : actual) {
       if (op.getName().equals("test")) {
-        //noinspection UnnecessaryBoxing
+        // noinspection UnnecessaryBoxing
         checkOutcome(op, new Object[] {EnumAsPredicate.ONE, Integer.valueOf(0)}, false);
-        //noinspection UnnecessaryBoxing
+        // noinspection UnnecessaryBoxing
         checkOutcome(op, new Object[] {EnumAsPredicate.TWO, Integer.valueOf(0)}, true);
       }
     }
