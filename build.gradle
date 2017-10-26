@@ -363,6 +363,16 @@ jacocoTestReport {
     html.enabled = true
   }
 }
+// Expects these files to exist in build/javcoco/:
+//   agentTest.exec
+//   coveredTest.exec
+//   systemTest.exec
+//   test.exec
+// What is creating the commented files, and how do I create them?
+// Is it order in the file, or capitalization, or what?
+// jacocoTestReport.dependsOn agentTest
+jacocoTestReport.dependsOn coveredTest
+jacocoTestReport.dependsOn test
 
 check.dependsOn jacocoTestReport
 
@@ -428,6 +438,7 @@ systemTest.dependsOn shadowJar
  * Includes system tests into the project build task.
  */
 check.dependsOn systemTest
+jacocoTestReport.dependsOn systemTest
 
 tasks.withType(Test) {
  /*
