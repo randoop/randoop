@@ -1,7 +1,5 @@
 package randoop.test;
 
-import randoop.sequence.Execution;
-
 /**
  * An {@code InvalidExceptionCheck} represents the occurrence of an exception tagged as an invalid
  * behavior during {@code Check} generation.
@@ -23,17 +21,5 @@ public class InvalidExceptionCheck extends ExceptionCheck {
   @Override
   protected void appendTryBehavior(StringBuilder b) {
     // do nothing
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>An invalid check cannot be evaluated, so this throws an exception.
-   *
-   * @throws IllegalArgumentException whenever called
-   */
-  @Override
-  public boolean evaluate(Execution execution) {
-    throw new IllegalArgumentException("Cannot evaluate an invalid check");
   }
 }

@@ -34,7 +34,7 @@ import randoop.util.ReflectionExecutor;
 /*
  * This test is disabled in build.gradle.
  * It has a sporadic Java heap space exception caught by the Throwable clause of the try block for
- * the call to exp.explore() in test5().
+ * the call to exp.createAndClassifySequences() in test5().
  * Mostly occurs when testing on Travis in Oracle JDK 7 or Open JDK 7 configurations, but I have
  * also gotten it during runs on Oracle JDK 8 on my mac.
  * Tried setting maxHeapSize in the test task configuration in the build script, but only took it
@@ -92,7 +92,7 @@ public class ForwardExplorerTests2 {
 
     // get a SequenceExceptionError when repeat_heuristic=true
     try {
-      exp.explore();
+      exp.createAndClassifySequences();
       // fail("expected timeout exception");
     } catch (SequenceExceptionError e) {
       assertEquals("should be timeout", e.getMessage(), "Exception thrown before end of sequence");

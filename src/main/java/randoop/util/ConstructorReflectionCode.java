@@ -33,7 +33,6 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   @SuppressWarnings("Finally")
   @Override
   public void runReflectionCodeRaw() {
-
     try {
       this.retval = this.constructor.newInstance(this.inputs);
     } catch (InvocationTargetException e) {

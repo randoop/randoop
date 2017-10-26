@@ -49,7 +49,7 @@ class RandoopOptions {
    * @param testEnvironment the test environment
    * @return a base set of Randoop options
    */
-  static RandoopOptions createOptions(TestEnvironment testEnvironment) {
+  static RandoopOptions createOptions(SystemTestEnvironment testEnvironment) {
     RandoopOptions options = new RandoopOptions();
     if (testEnvironment != null) {
       options.setOption("junit-output-dir", testEnvironment.sourceDir.toString());

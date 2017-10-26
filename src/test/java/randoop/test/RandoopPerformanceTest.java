@@ -49,7 +49,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
             null,
             null,
             null);
-    explorer.explore();
+    explorer.createAndClassifySequences();
   }
 
   @Override
