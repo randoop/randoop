@@ -503,7 +503,8 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Convert each element of the given classpath from a relative to an absolute path.
    *
-   * @param colon-delemited classpath
+   * @param classpath the classpath to replace
+   * @return a version of classpath with relative paths replaced by absolute paths
    */
   private String convertClasspathToAbsolute(String classpath) {
     String[] relpaths = classpath.split(File.pathSeparator);
