@@ -11,8 +11,6 @@ public class Globals {
 
   public static final String lineSep = System.getProperty("line.separator");
 
-  public static final String pathSep = System.getProperty("path.separator");
-
   public static PrintStream blackHole;
 
   private static final ByteArrayOutputStream bos;
