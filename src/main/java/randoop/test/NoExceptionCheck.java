@@ -1,10 +1,6 @@
 package randoop.test;
 
-import randoop.ExecutionOutcome;
 import randoop.Globals;
-import randoop.NormalExecution;
-import randoop.NotExecuted;
-import randoop.sequence.Execution;
 
 /**
  * This check represents the fact that a statement should not throw any exception.
@@ -63,19 +59,5 @@ public class NoExceptionCheck implements Check {
         + exceptionName
         + " in error"
         + Globals.lineSep;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return true when no exception is observed, false when one is
-   */
-  @Override
-  public boolean evaluate(Execution execution) {
-    ExecutionOutcome outcomeAtIdx = execution.get(statementIdx);
-    if (outcomeAtIdx instanceof NotExecuted) {
-      throw new IllegalArgumentException("Statement not executed");
-    }
-    return outcomeAtIdx instanceof NormalExecution;
   }
 }
