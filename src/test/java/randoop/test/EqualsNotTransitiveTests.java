@@ -20,13 +20,13 @@ public class EqualsNotTransitiveTests extends TestCase {
 
   //public void test1() throws Exception {
   //EqualsNotTransitive ens= new EqualsNotTransitive();
-  //Decoration checker = ens.evaluate(new Object[]{"x", "y", "z"});
+  //Decoration checker = ens.evaluateContract(new Object[]{"x", "y", "z"});
   //assertNull(checker);
   //}
 
   //public void test2() throws Exception {
   //EqualsNotTransitive ens= new EqualsNotTransitive();
-  //Decoration checker = ens.evaluate(new Object[]{"x", "x", "x"});
+  //Decoration checker = ens.evaluateContract(new Object[]{"x", "x", "x"});
   //assertNull(checker);
   //}
 
@@ -46,7 +46,7 @@ public class EqualsNotTransitiveTests extends TestCase {
   //}
 
   //EqualsNotTransitive ens= new EqualsNotTransitive();
-  //Decoration checker = ens.evaluate(new Object[]{new EqualToAnyNonString(), new EqualToEveryone(), "y"});
+  //Decoration checker = ens.evaluateContract(new Object[]{new EqualToAnyNonString(), new EqualToEveryone(), "y"});
   //assertNotNull(checker);
   //}
 }

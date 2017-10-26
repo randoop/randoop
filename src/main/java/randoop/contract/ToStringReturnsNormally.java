@@ -26,7 +26,7 @@ public final class ToStringReturnsNormally extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(Object... objects) {
+  public boolean evaluateContract(Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;

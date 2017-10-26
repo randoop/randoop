@@ -74,7 +74,7 @@ public class CoveredClassTest {
     ForwardGenerator testGenerator;
     testGenerator = getGenerator();
 
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
@@ -116,7 +116,7 @@ public class CoveredClassTest {
     ForwardGenerator testGenerator;
     testGenerator = getGenerator();
 
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
@@ -157,7 +157,7 @@ public class CoveredClassTest {
     ForwardGenerator testGenerator;
     testGenerator = getGenerator();
 
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 

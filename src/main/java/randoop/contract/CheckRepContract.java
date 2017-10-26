@@ -68,7 +68,7 @@ public final class CheckRepContract extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(Object... objects) throws Throwable {
+  public boolean evaluateContract(Object... objects) throws Throwable {
     assert objects.length == 1;
     assert objects[0] != null;
     if (declaringClass.equals(objects[0].getClass())) {

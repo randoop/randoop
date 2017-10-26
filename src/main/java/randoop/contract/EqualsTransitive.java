@@ -20,7 +20,7 @@ public class EqualsTransitive extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(Object... objects) {
+  public boolean evaluateContract(Object... objects) {
     Object o1 = objects[0];
     Object o2 = objects[1];
     Object o3 = objects[2];

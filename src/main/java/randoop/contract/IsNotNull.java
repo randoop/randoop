@@ -33,7 +33,7 @@ public final class IsNotNull extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(Object... objects) throws Throwable {
+  public boolean evaluateContract(Object... objects) throws Throwable {
     assert objects.length == 1;
     return objects[0] != null;
   }

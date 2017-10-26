@@ -64,7 +64,7 @@ public abstract class ObjectContract {
    * @return true if this contract evaluates to true for the given values, and false otherwise
    * @throws Throwable if an exception is thrown in evaluation
    */
-  public abstract boolean evaluate(Object... objects) throws Throwable;
+  public abstract boolean evaluateContract(Object... objects) throws Throwable;
 
   /**
    * A string that will be inserted as a comment in the test before the code corresponding to this

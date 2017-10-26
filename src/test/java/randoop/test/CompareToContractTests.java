@@ -15,7 +15,7 @@ public class CompareToContractTests extends TestCase {
 
   //public void testReverse1() throws Exception {
   //CompareToNotReverseSign contract= new CompareToNotReverseSign();
-  //Decoration result = contract.evaluate("foo", "bar");
+  //Decoration result = contract.evaluateContract("foo", "bar");
   //assertNull(result);
   //}
 
@@ -27,7 +27,7 @@ public class CompareToContractTests extends TestCase {
   //}
   //}
   //CompareToNotReverseSign contract= new CompareToNotReverseSign();
-  //Decoration result = contract.evaluate(new BrokenCompareto(), new BrokenCompareto());
+  //Decoration result = contract.evaluateContract(new BrokenCompareto(), new BrokenCompareto());
   //assertNotNull(result);
   //}
 
@@ -47,7 +47,7 @@ public class CompareToContractTests extends TestCase {
   //}
 
   //CompareToNotReverseSign contract= new CompareToNotReverseSign();
-  //Decoration result = contract.evaluate(new ComparetoException(), new ComparetoNoException());
+  //Decoration result = contract.evaluateContract(new ComparetoException(), new ComparetoNoException());
   //assertNotNull(result);
   //}
 
@@ -58,7 +58,7 @@ public class CompareToContractTests extends TestCase {
 
   //public void testTransitive1() throws Exception {
   //CompareToNotTransitive contract= new CompareToNotTransitive();
-  //Decoration result = contract.evaluate("foo", "bar", "baz");
+  //Decoration result = contract.evaluateContract("foo", "bar", "baz");
   //assertNull(result);
   //}
 
@@ -79,7 +79,7 @@ public class CompareToContractTests extends TestCase {
   //}
 
   //CompareToNotTransitive contract= new CompareToNotTransitive();
-  //Decoration result = contract.evaluate(new LargerThanAnyNonString(), new LargerThanEveryone(), "y");
+  //Decoration result = contract.evaluateContract(new LargerThanAnyNonString(), new LargerThanEveryone(), "y");
   //assertNotNull(result);
   //}
 
@@ -90,13 +90,13 @@ public class CompareToContractTests extends TestCase {
 
   //public void testTernary1() throws Exception {
   //CompareToTernaryContractViolated contract= new CompareToTernaryContractViolated();
-  //Decoration result = contract.evaluate("foo", "bar", "baz");
+  //Decoration result = contract.evaluateContract("foo", "bar", "baz");
   //assertNull(result);
   //}
 
   //public void testTernary2() throws Exception {
   //CompareToTernaryContractViolated contract= new CompareToTernaryContractViolated();
-  //Decoration result = contract.evaluate("foo", "foo", "baz");
+  //Decoration result = contract.evaluateContract("foo", "foo", "baz");
   //assertNull(result);
   //}
 

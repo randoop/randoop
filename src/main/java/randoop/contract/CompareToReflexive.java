@@ -20,7 +20,7 @@ public class CompareToReflexive extends ObjectContract {
 
   @SuppressWarnings({"unchecked", "rawtypes", "SelfComparison"})
   @Override
-  public boolean evaluate(Object... objects) {
+  public boolean evaluateContract(Object... objects) {
     assert objects != null && objects.length == 1;
     // Get first and only object
     Object o1 = objects[0];

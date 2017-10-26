@@ -99,7 +99,8 @@ public class ObjectCheck implements Check {
   public boolean evaluate(Execution execution) {
     Object[] obs = ExecutableSequence.getRuntimeValuesForVars(Arrays.asList(vars), execution);
     try {
-      return contract.evaluate(obs);
+      return contract.evaluateContract(obs);
+      // } catch (OutOfMemoryError | StackOverflowError | ThreadDeath t) {
     } catch (ThreadDeath t) {
       throw t;
     } catch (Throwable t) {

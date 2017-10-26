@@ -17,7 +17,7 @@ public final class EqualsHashcode extends ObjectContract {
   }
 
   @Override
-  public boolean evaluate(Object... objects) {
+  public boolean evaluateContract(Object... objects) {
 
     Object o1 = objects[0];
     Object o2 = objects[1];

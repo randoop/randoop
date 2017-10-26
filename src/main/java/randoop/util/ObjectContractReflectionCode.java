@@ -16,7 +16,7 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
   @Override
   protected void runReflectionCodeRaw() {
     try {
-      retval = c.evaluate(objs);
+      retval = c.evaluateContract(objs);
     } catch (Throwable e) {
       exceptionThrown = e;
     }

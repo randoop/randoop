@@ -15,13 +15,13 @@ public class EqualsNotSymmetricTests extends TestCase {
 
   //public void test1() throws Exception {
   //EqualsNotSymmetric ens= new EqualsNotSymmetric();
-  //String checker = ens.evaluate(new Object[]{"x", "y"});
+  //String checker = ens.evaluateContract(new Object[]{"x", "y"});
   //assertNull(checker);
   //}
 
   //public void test2() throws Exception {
   //EqualsNotSymmetric ens= new EqualsNotSymmetric();
-  //String checker = ens.evaluate(new Object[]{"x", "x"});
+  //String checker = ens.evaluateContract(new Object[]{"x", "x"});
   //assertNull(checker);
   //}
 
@@ -34,7 +34,7 @@ public class EqualsNotSymmetricTests extends TestCase {
   //}
 
   //EqualsNotSymmetric ens= new EqualsNotSymmetric();
-  //String checker = ens.evaluate(new Object[]{new EqualToEveryone(), "y"});
+  //String checker = ens.evaluateContract(new Object[]{new EqualToEveryone(), "y"});
   //assertNotNull(checker);
   //}
 }
