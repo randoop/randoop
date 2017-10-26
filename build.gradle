@@ -204,7 +204,7 @@ tasks.googleJavaFormat {
 
 tasks.verifyGoogleJavaFormat {
   group 'Formatting'
-  description = "Check Java source code is in Google-Java-format"
+  description = "Check Java source code formatting with Google-Java-format"
   exclude 'src/testinput'
 }
 
