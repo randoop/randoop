@@ -1,10 +1,6 @@
 package randoop.test;
 
-import randoop.ExceptionalExecution;
-import randoop.ExecutionOutcome;
 import randoop.Globals;
-import randoop.NotExecuted;
-import randoop.sequence.Execution;
 
 /**
  * An {@code ExceptionCheck} that enforces the expectation of an exception being thrown. In
@@ -68,28 +64,6 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
       b.append("    ").append(assertion).append(";").append(Globals.lineSep);
       b.append("  }").append(Globals.lineSep);
     }
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Checks that an exception of the expected type is thrown by the statement in this object in
-   * the given {@link Execution}.
-   *
-   * @return true if statement throws the expected exception, and false otherwise
-   */
-  @Override
-  public boolean evaluate(Execution execution) {
-    ExecutionOutcome outcomeAtIndex = execution.get(statementIndex);
-    if (outcomeAtIndex instanceof NotExecuted) {
-      throw new IllegalArgumentException("Statement not executed");
-    }
-    if (!(outcomeAtIndex instanceof ExceptionalExecution)) {
-      return false;
-    }
-    ExceptionalExecution e = (ExceptionalExecution) outcomeAtIndex;
-    // TODO verify that this substitution still works!!!
-    return exception.getClass().isAssignableFrom(e.getException().getClass());
   }
 
   /**
