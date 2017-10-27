@@ -48,12 +48,12 @@ public class FieldReflectionTest {
 
     final Set<TypedOperation> operations = getConcreteOperations(c);
 
-    //number of operations is twice number of fields plus constructor and getter minus one for each constant
-    //in this case, 11
+    // number of operations is twice number of fields plus constructor and getter minus one for each constant
+    // in this case, 11
     assertEquals(
         "number of operations twice number of fields", 2 * fields.size() + 1, operations.size());
 
-    //exclude private or protected fields
+    // exclude private or protected fields
     List<Field> exclude = new ArrayList<>();
     for (Field f : c.getDeclaredFields()) {
       int mods = f.getModifiers();
@@ -120,7 +120,7 @@ public class FieldReflectionTest {
       if (declared.contains(f.getName())) {
         if (c.equals(f.getDeclaringClass())) {
           expected.add(f);
-        } else { //hidden
+        } else { // hidden
           exclude.add(f);
         }
       } else {
@@ -155,7 +155,7 @@ public class FieldReflectionTest {
   public void filteredFields() {
     Class<?> c = ClassWithFields.class;
 
-    //let's exclude every field
+    // let's exclude every field
     List<Field> exclude = new ArrayList<>();
     Set<String> excludeNames = new TreeSet<>();
     for (Field f : c.getFields()) {

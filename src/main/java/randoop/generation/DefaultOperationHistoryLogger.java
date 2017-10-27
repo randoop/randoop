@@ -8,11 +8,11 @@ import randoop.operation.TypedOperation;
 public class DefaultOperationHistoryLogger implements OperationHistoryLogInterface {
   @Override
   public void add(TypedOperation operation, OperationOutcome outcome) {
-    //these methods don't do anything
+    // these methods don't do anything
   }
 
   @Override
   public void outputTable() {
-    //these methods don't do anything
+    // these methods don't do anything
   }
 }

@@ -418,7 +418,7 @@ public class ExecutableSequence {
    *
    * @param index which element to obtain
    * @return the result of executing the i-th element of the sequence, if that element's execution
-   *     completed normally.
+   *     completed normally
    */
   private Object getValue(int index) {
     ExecutionOutcome result = getResult(index);

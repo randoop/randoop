@@ -7,9 +7,7 @@
 set -e
 
 # Be certain that all code compiles, the code is formatted correctly
-# (compile tasks run verifyGoogleJavaFormat)
+# (compile tasks run verifyGoogleJavaFormat).
+./gradlew compileAll
+
 # The manual is rarely changed, and Travis validates the manual anyway.
-./gradlew compileJava compileTestJava \
-  :covered-class:compileJava :covered-class:compileTestJava \
-  :replacecall:compileJava :covered-class:compileTestJava \
-  compileCoveredTestJava compileReplacecallTestJava compileSystemTestJava

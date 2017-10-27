@@ -23,7 +23,7 @@ public final class EqualsReturnsNormally extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
-      //noinspection EqualsWithItself,ResultOfMethodCallIgnored
+      // noinspection EqualsWithItself,ResultOfMethodCallIgnored
       o.equals(o);
     } catch (Exception e) {
       return false;

@@ -41,7 +41,7 @@ public class RunCommand {
     try {
       exitValue = p.waitFor();
     } catch (InterruptedException e) {
-      // Ignore exception, but record fact that process timed out in Status
+      // Ignore exception, but p.timed_out() records that the process timed out.
     }
 
     List<String> standardOutputLines;

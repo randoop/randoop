@@ -60,19 +60,19 @@ public class ListOfListsIteratorTests extends TestCase {
 
       // Test iterator.
       for (SimpleList<Integer> l : lists) {
-        //System.out.print("[ ");
-        //for (int j = 0 ; j < l.size() ; j++)
-        //System.out.print(l.get(j) + " ");
-        //System.out.println("]");
-        //System.out.print("[ ");
+        // System.out.print("[ ");
+        // for (int j = 0 ; j < l.size() ; j++)
+        // System.out.print(l.get(j) + " ");
+        // System.out.println("]");
+        // System.out.print("[ ");
         Iterator<Integer> it = l.toJDKList().iterator();
         for (int j = 0; j < l.size(); j++) {
-          //System.out.print(l.get(j) + " ");
+          // System.out.print(l.get(j) + " ");
           assertTrue(it.hasNext());
           Integer iteratorElt = it.next();
           assertEquals(l.get(j), iteratorElt);
         }
-        //System.out.println("]");
+        // System.out.println("]");
         assertTrue(!it.hasNext());
       }
     }

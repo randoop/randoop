@@ -174,7 +174,7 @@ public class GenTests extends GenInputsAbstract {
 
     Randomness.setSeed(randomseed);
 
-    //java.security.Policy policy = java.security.Policy.getPolicy();
+    // java.security.Policy policy = java.security.Policy.getPolicy();
 
     // This is distracting to the user as the first thing shown, and is not very informative.
     // Reinstate it with a --verbose option.
@@ -500,9 +500,14 @@ public class GenTests extends GenInputsAbstract {
     return true;
   }
 
-  /** Convert each element of the given classpath from a relative to an absolute path. */
+  /**
+   * Convert each element of the given classpath from a relative to an absolute path.
+   *
+   * @param classpath the classpath to replace
+   * @return a version of classpath with relative paths replaced by absolute paths
+   */
   private String convertClasspathToAbsolute(String classpath) {
-    String[] relpaths = classpath.split(":");
+    String[] relpaths = classpath.split(File.pathSeparator);
     int length = relpaths.length;
     String[] abspaths = new String[length];
     for (int i = 0; i < length; i++) {
@@ -515,7 +520,7 @@ public class GenTests extends GenInputsAbstract {
       }
       abspaths[i] = abs;
     }
-    return UtilMDE.join(abspaths, ":");
+    return UtilMDE.join(abspaths, File.pathSeparator);
   }
 
   /**

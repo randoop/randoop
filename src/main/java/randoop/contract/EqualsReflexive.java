@@ -22,7 +22,7 @@ public final class EqualsReflexive extends ObjectContract {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;
-    //noinspection EqualsWithItself
+    // noinspection EqualsWithItself
     return o.equals(o);
   }
 

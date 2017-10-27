@@ -204,7 +204,7 @@ tasks.googleJavaFormat {
 
 tasks.verifyGoogleJavaFormat {
   group 'Formatting'
-  description = "Check Java source code is in Google-Java-format"
+  description = "Check Java source code formatting with Google-Java-format"
   exclude 'src/testinput'
 }
 
@@ -222,6 +222,22 @@ compileCoveredTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileReplacecallTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
+
+task compileAll() {
+  dependsOn compileJava
+  dependsOn compileTestJava
+  dependsOn ':covered-class:compileJava'
+  dependsOn ':covered-class:compileTestJava'
+  dependsOn ':replacecall:compileJava'
+  dependsOn ':covered-class:compileTestJava'
+  dependsOn compileCoveredTestJava
+  dependsOn compileReplacecallTestJava
+  dependsOn compileSystemTestJava
+}
+
+// This isn't working; maybe I need to make it run first.
+// Get early notification of any compilation failures, before running any tests
+build.dependsOn compileAll
 
 /*
  * Configuration for using Error Prone linter.
@@ -363,6 +379,16 @@ jacocoTestReport {
     html.enabled = true
   }
 }
+// Expects these files to exist in build/javcoco/:
+//   agentTest.exec
+//   coveredTest.exec
+//   systemTest.exec
+//   test.exec
+// What is creating the agentTest.exec files, and how do I create it?
+// test.exec is the default, though it it also greated by "gradle test".
+// jacocoTestReport.dependsOn agentTest
+jacocoTestReport.dependsOn coveredTest
+jacocoTestReport.dependsOn test
 
 check.dependsOn jacocoTestReport
 
@@ -428,6 +454,7 @@ systemTest.dependsOn shadowJar
  * Includes system tests into the project build task.
  */
 check.dependsOn systemTest
+jacocoTestReport.dependsOn systemTest
 
 tasks.withType(Test) {
  /*
