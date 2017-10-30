@@ -3,7 +3,7 @@ package randoop.main;
 import java.nio.file.Path;
 
 /** Manages the environment for an individual system test method. */
-class TestEnvironment {
+class SystemTestEnvironment {
 
   /** The current working directory. */
   final Path workingDir;
@@ -53,7 +53,7 @@ class TestEnvironment {
    * @param classDir the directory for compiled Randoop generated tests
    * @param jacocoDir the directory for output of JaCoCo when running Randoop generated tests
    */
-  TestEnvironment(
+  SystemTestEnvironment(
       String bootclasspath,
       String classpath,
       Path jacocoAgentPath,
