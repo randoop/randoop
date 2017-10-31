@@ -2,7 +2,11 @@
  * Copyright (C) 2007-2010 Julio Vilmar Gesser.
  * Copyright (C) 2011, 2013-2015 The JavaParser Team.
  *
- * This file is part of JavaParser.
+ * This file is part of JavaParser 2.4.0.
+ * It is copied from: https://github.com/javaparser/javaparser/blob/javaparser-parent-2.4.0/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/CloneVisitor.java
+ * The file has since been modified to allow the CloneVisitor to copy orphan
+ * comments when visiting each node. This class is used by the minimizer to
+ * create copies of CompilationUnits.
  *
  * JavaParser can be used either under the terms of
  * a) the GNU Lesser General Public License as published by
