@@ -3,6 +3,7 @@ package randoop.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -19,7 +20,6 @@ import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.Sequence;
@@ -34,7 +34,7 @@ import randoop.util.ReflectionExecutor;
 /*
  * This test is disabled in build.gradle.
  * It has a sporadic Java heap space exception caught by the Throwable clause of the try block for
- * the call to exp.explore() in test5().
+ * the call to exp.createAndClassifySequences() in test5().
  * Mostly occurs when testing on Travis in Oracle JDK 7 or Open JDK 7 configurations, but I have
  * also gotten it during runs on Oracle JDK 8 on my mac.
  * Tried setting maxHeapSize in the test task configuration in the build script, but only took it
@@ -76,7 +76,7 @@ public class ForwardExplorerTests2 {
 
     System.out.println(classes);
 
-    //SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
+    // SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
     List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
@@ -92,7 +92,7 @@ public class ForwardExplorerTests2 {
 
     // get a SequenceExceptionError when repeat_heuristic=true
     try {
-      exp.explore();
+      exp.createAndClassifySequences();
       // fail("expected timeout exception");
     } catch (SequenceExceptionError e) {
       assertEquals("should be timeout", e.getMessage(), "Exception thrown before end of sequence");
@@ -106,7 +106,7 @@ public class ForwardExplorerTests2 {
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
@@ -120,6 +120,6 @@ public class ForwardExplorerTests2 {
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
     return GenTests.createTestCheckGenerator(
-        new PublicVisibilityPredicate(), contracts, new MultiMap<Type, TypedOperation>());
+        IS_PUBLIC, contracts, new MultiMap<Type, TypedOperation>());
   }
 }

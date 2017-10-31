@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
+import randoop.Globals;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
@@ -73,24 +74,24 @@ public class LiteralFileReader {
           public void processRecord(List<String> lines) {
 
             if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals(CLASSNAME))) {
-              throwInvalidRecordError("record does not begin with \"" + CLASSNAME + "\"", lines, 0);
+              throwRecordSyntaxError("record does not begin with \"" + CLASSNAME + "\"", lines, 0);
             }
 
             if (!(lines.size() >= 2)) {
-              throwInvalidRecordError("class name missing", lines, 1);
+              throwRecordSyntaxError("class name missing", lines, 1);
             }
 
             Class<?> cls = null;
             try {
               cls = TypeNames.getTypeForName(lines.get(1));
             } catch (ClassNotFoundException e) {
-              throwInvalidRecordError(e, lines, 1);
+              throwRecordSyntaxError(e, lines, 1);
             }
             assert cls != null;
             ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(cls);
 
             if (!(lines.size() >= 3 && lines.get(2).trim().toUpperCase().equals(LITERALS))) {
-              throwInvalidRecordError("Missing field \"" + LITERALS + "\"", lines, 2);
+              throwRecordSyntaxError("Missing field \"" + LITERALS + "\"", lines, 2);
             }
 
             for (int i = 3; i < lines.size(); i++) {
@@ -98,7 +99,7 @@ public class LiteralFileReader {
                 TypedOperation operation = NonreceiverTerm.parse(lines.get(i));
                 map.add(classType, new Sequence().extend(operation, new ArrayList<Variable>()));
               } catch (OperationParseException e) {
-                throwInvalidRecordError(e, lines, i);
+                throwRecordSyntaxError(e, lines, i);
               }
             }
           }
@@ -110,13 +111,13 @@ public class LiteralFileReader {
     return map;
   }
 
-  private static void throwInvalidRecordError(Exception e, List<String> lines, int i) {
+  private static void throwRecordSyntaxError(Exception e, List<String> lines, int i) {
     throw new Error(e);
   }
 
-  private static void throwInvalidRecordError(String string, List<String> lines, int i) {
+  private static void throwRecordSyntaxError(String string, List<String> lines, int i) {
     StringBuilder b = new StringBuilder();
-    b.append("RECORD PROCESSING ERROR: ").append(string).append("\n");
+    b.append("RECORD PROCESSING ERROR: ").append(string).append(Globals.lineSep);
     appendRecord(b, lines, i);
     throw new Error(b.toString());
   }
@@ -125,11 +126,11 @@ public class LiteralFileReader {
     // This printout is less than ideal (it does not include the START/END
     // delimiters) and has no line number data, a limitation inherited from
     // RecordProcessor/RecordListReader.
-    b.append("INVALID RECORD (error is at index ").append(i).append("):\n");
-    b.append("------------------------------\n");
+    b.append("INVALID RECORD (error is at index ").append(i).append("):").append(Globals.lineSep);
+    b.append("------------------------------").append(Globals.lineSep);
     for (String l : lines) {
-      b.append("   ").append(l).append("\n");
+      b.append("   ").append(l).append(Globals.lineSep);
     }
-    b.append("------------------------------\n");
+    b.append("------------------------------").append(Globals.lineSep);
   }
 }

@@ -3,10 +3,11 @@ package randoop.main;
 import java.util.ConcurrentModificationException;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
+import randoop.util.TimeoutExceededException;
 
 /**
- * Method {@link #classify} classifies exceptions thrown by a test sequence based on the {@link
- * GenInputsAbstract.BehaviorType} command-line arguments.
+ * Static method {@link #classify} classifies exceptions thrown by a test sequence based on the
+ * {@link GenInputsAbstract.BehaviorType} command-line arguments.
  */
 public class ExceptionBehaviorClassifier {
 
@@ -50,8 +51,13 @@ public class ExceptionBehaviorClassifier {
         return GenInputsAbstract.sof_exception;
       }
 
+      if (t instanceof TimeoutExceededException) {
+        // TODO: should there be a command-line option for this?
+        return BehaviorType.INVALID;
+      }
+
       // default failure exceptions
-      if (t instanceof AssertionError || t instanceof StackOverflowError) {
+      if (t instanceof AssertionError) {
         return BehaviorType.ERROR;
       }
 

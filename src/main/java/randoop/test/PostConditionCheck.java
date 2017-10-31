@@ -1,11 +1,9 @@
 package randoop.test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import randoop.Globals;
 import randoop.condition.Condition;
 import randoop.contract.ObjectContractUtils;
-import randoop.sequence.Execution;
 import randoop.sequence.Variable;
 
 /** Represents the observed failure of a post-condition. */
@@ -30,7 +28,7 @@ public class PostConditionCheck implements Check {
 
   @Override
   public String toCodeStringPreStatement() {
-    return ""; //TODO should be comment with precondition
+    return ""; // TODO should be comment with precondition
   }
 
   @Override
@@ -48,27 +46,5 @@ public class PostConditionCheck implements Check {
         + "\", "
         + conditionString
         + ");";
-  }
-
-  @Override
-  public String getValue() {
-    return postcondition.getClass().getName() + "(" + postcondition.getConditionString() + ")";
-  }
-
-  @Override
-  public String getID() {
-    return getValue() + " " + Arrays.toString(inputVariables);
-  }
-
-  /**
-   * Doesn't actually evaluate {@link Execution} object. This check exists because the
-   * post-condition failed, so returns false.
-   *
-   * @param execution the execution of sequence on which to test this check
-   * @return false
-   */
-  @Override
-  public boolean evaluate(Execution execution) {
-    return false;
   }
 }

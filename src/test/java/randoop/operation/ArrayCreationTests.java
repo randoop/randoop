@@ -35,7 +35,7 @@ public class ArrayCreationTests {
     Statement st_ad = new Statement(acOp);
     st_ad.appendCode(var1, input, b);
     assertEquals(
-        "java.lang.String[] str_array1 = new java.lang.String[] { \"mystring\" };", b.toString());
+        "java.lang.String[] strArray1 = new java.lang.String[] { \"mystring\" };", b.toString());
   }
 
   @Test
@@ -59,7 +59,7 @@ public class ArrayCreationTests {
     input.add(var0);
     Statement st_ad = new Statement(acOp);
     st_ad.appendCode(var1, input, b);
-    assertEquals("char[] char_array1 = new char[] { 'c' };", b.toString());
+    assertEquals("char[] charArray1 = new char[] { 'c' };", b.toString());
   }
 
   @Test
@@ -85,6 +85,6 @@ public class ArrayCreationTests {
     input.add(var0);
     Statement st_ad = new Statement(acOp);
     st_ad.appendCode(var1, input, b);
-    assertEquals("char[][] char_array_array1 = new char[][] { char_array0 };", b.toString());
+    assertEquals("char[][] charArray1 = new char[][] { charArray0 };", b.toString());
   }
 }

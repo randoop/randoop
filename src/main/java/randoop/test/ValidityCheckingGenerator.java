@@ -5,20 +5,22 @@ import randoop.ExecutionOutcome;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.test.predicate.ExceptionPredicate;
+import randoop.util.TimeoutExceededException;
 
 /**
  * A {@code ValidityCheckingGenerator} checks for occurrences of exceptions that have been tagged as
  * invalid behaviors as represented by a {@code ExceptionPredicate}. Also, either ignores or reports
  * flaky test sequences --- an input sequence that throws an exception in a longer test sequence,
- * despite having run normally by itself. Ignores flaky sequences are classified as invalid. Flaky
- * occurrences of {@code OutOfMemoryError} are always treated as invalid.
+ * despite having run normally by itself. Ignored flaky sequences are classified as invalid. Flaky
+ * occurrences of {@code OutOfMemoryError} or {@code StackOverflowError} are always treated as
+ * invalid.
  */
 public class ValidityCheckingGenerator implements TestCheckGenerator {
 
   /** The predicate to determine whether a test sequence is valid */
   private ExceptionPredicate isInvalid;
 
-  /** The flag to determine whether to report flaky tests by throwing an exception */
+  /** If true, report flaky tests by throwing an exception */
   private boolean throwExceptionOnFlakyTest;
 
   /**
@@ -37,22 +39,35 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
   /**
    * {@inheritDoc}
    *
-   * <p>Checks validity of a test sequence and creates a {@code InvalidCheck} object containing
-   * checks for any invalid exceptions encountered. An exception is invalid if:
+   * <p>Checks validity of a test sequence and creates a {@code InvalidChecks} object containing a
+   * {@link InvalidChecks} for the first invalid exception encountered, if any. There are three
+   * possible outcomes:
    *
    * <ul>
-   *   <li>an {@code OutOfMemoryError} or {@code StackOverflowError} exception is seen before the
-   *       last statement, or
-   *   <li>the exception is classified as invalid by this visitor's {@code ExceptionPredicate}
+   *   <li>An exception is seen before the last statement:
+   *       <ul>
+   *         <li>If throwExceptionOnFlakyTest is true and the exception is not {@code
+   *             OutOfMemoryError} or {@code StackOverflowError}, throw an exception.
+   *         <li>Otherwise, the sequence is invalid.
+   *       </ul>
+   *
+   *   <li>An exception is seen on the last statement:
+   *       <ul>
+   *         <li>if the exception is classified as invalid by this visitor's {@code
+   *             ExceptionPredicate}, the sequence is invalid.
+   *         <li>otherwise, the returned InvalidChecks is empty (the sequence is valid).
+   *       </ul>
+   *
+   *   <li>Otherwise, the returned InvalidChecks is empty (the sequence is valid)..
    * </ul>
    *
-   * @return a possibly-empty {@link InvalidCheck} object for sequence
-   * @throws Error if throwExceptionOnFlakyTest==true and any exception encountered before last
+   * @return a possibly-empty {@link InvalidChecks} object for sequence
+   * @throws Error if throwExceptionOnFlakyTest==true and exception encountered before last
    *     statement of sequence
    */
   @Override
-  public InvalidCheck generateTestChecks(ExecutableSequence eseq) {
-    InvalidCheck checks = new InvalidCheck();
+  public InvalidChecks generateTestChecks(ExecutableSequence eseq) {
+    InvalidChecks checks = new InvalidChecks();
     int finalIndex = eseq.sequence.size() - 1;
     for (int i = 0; i < eseq.sequence.size(); i++) {
       ExecutionOutcome result = eseq.getResult(i);
@@ -62,7 +77,9 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
 
         if (i != finalIndex) {
           if (throwExceptionOnFlakyTest
-              && !((e instanceof OutOfMemoryError) || (e instanceof StackOverflowError))) {
+              && !((e instanceof OutOfMemoryError)
+                  || (e instanceof StackOverflowError)
+                  || (e instanceof TimeoutExceededException))) {
             throw new SequenceExceptionError(eseq, i, e);
           }
           checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));

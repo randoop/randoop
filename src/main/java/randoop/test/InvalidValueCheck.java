@@ -1,7 +1,6 @@
 package randoop.test;
 
 import randoop.sequence.ExecutableSequence;
-import randoop.sequence.Execution;
 
 /**
  * Represents the occurrence of an invalid value for a {@link randoop.condition.Condition} of the
@@ -25,20 +24,5 @@ public class InvalidValueCheck implements Check {
   @Override
   public String toCodeStringPostStatement() {
     return "";
-  }
-
-  @Override
-  public String getValue() {
-    return "invalid_value";
-  }
-
-  @Override
-  public String getID() {
-    return "InvalidValueCheck @" + index;
-  }
-
-  @Override
-  public boolean evaluate(Execution execution) {
-    return false;
   }
 }

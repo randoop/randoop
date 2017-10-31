@@ -115,13 +115,13 @@ public final class RegressionCaptureGenerator implements TestCheckGenerator {
               || (runtimeValue.getClass().equals(String.class))) {
 
             if (runtimeValue instanceof String) {
-              // System.out.printf ("considering String check for seq %08X\n",
+              // System.out.printf("considering String check for seq %08X%n",
               // s.seq_id());
               String str = (String) runtimeValue;
               // Don't create assertions over strings that look like raw object
               // references.
               if (Value.looksLikeObjectToString(str)) {
-                // System.out.printf ("ignoring Object.toString obs %s%n", str);
+                // System.out.printf("ignoring Object.toString obs %s%n", str);
                 continue;
               }
               // Don't create assertions over strings that are really
@@ -144,8 +144,9 @@ public final class RegressionCaptureGenerator implements TestCheckGenerator {
               Variable var0 = sequence.sequence.getInputs(i).get(0);
               if (var0.getType().hasRuntimeClass(java.util.Date.class)) {
                 Statement sk = sequence.sequence.getCreatingStatement(var0);
-                if ((sk.isConstructorCall()) && (sequence.sequence.getInputs(i).size() == 1))
+                if ((sk.isConstructorCall()) && (sequence.sequence.getInputs(i).size() == 1)) {
                   continue;
+                }
                 // System.out.printf ("var type %s comes from date %s / %s%n",
                 // s.sequence.getVariable(i).getType(),
                 // s.sequence.getOperation(i), sk);
@@ -161,7 +162,7 @@ public final class RegressionCaptureGenerator implements TestCheckGenerator {
             }
             ObjectCheck oc = new ObjectCheck(new PrimValue(runtimeValue, printMode), var);
             checks.add(oc);
-            // System.out.printf ("Adding objectcheck %s to seq %08X\n",
+            // System.out.printf("Adding objectcheck %s to seq %08X%n",
             // oc, s.seq_id());
 
           } else if (runtimeValue.getClass().isEnum()

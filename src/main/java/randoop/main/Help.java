@@ -28,7 +28,7 @@ public class Help extends CommandHandler {
   }
 
   @Override
-  public boolean handle(String[] args_raw) throws RandoopTextuiException {
+  public boolean handle(String[] args_raw) {
 
     String[] args = null;
     try {
@@ -66,7 +66,7 @@ public class Help extends CommandHandler {
     } else {
 
       if (args.length != 1) {
-        throw new RandoopTextuiException(
+        throw new RandoopUsageError(
             "The `help' command must be followed by"
                 + " exactly one argument: the command that you"
                 + " want help on.");
@@ -85,7 +85,7 @@ public class Help extends CommandHandler {
           return true;
         }
       }
-      throw new RandoopTextuiException(
+      throw new RandoopUsageError(
           "The command you asked help for " + "was not recognized: " + command);
     }
 

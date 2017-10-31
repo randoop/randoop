@@ -1,7 +1,6 @@
 package randoop.test;
 
 import randoop.sequence.ExecutableSequence;
-import randoop.sequence.Execution;
 
 // A better name for Check would be SequenceDecoration.
 
@@ -30,7 +29,7 @@ import randoop.sequence.Execution;
  *
  * <p>A check may require some code to be emitted before and/or after the statement is printed. For
  * example, a check for checking that {@code x} is not null after the statement "{@code Foo x =
- * m()}" is executed might emit the assertion code "{@code assertNotNull(x);}", and would do so
+ * m()}" is executed might emit the assertion code "{@code assertNotNull(x); }", and would do so
  * after the statement is printed. As a second example, a check for checking that an expected
  * exception is thrown by a statement would need to emit something like "<code>try {</code>" before
  * the statement, and the catch clause after the statement.
@@ -50,30 +49,4 @@ public interface Check {
    * @return the string to be included following the statement
    */
   String toCodeStringPostStatement();
-
-  /**
-   * Returns a short string that can be used to uniquely identify this check.
-   *
-   * @return a string "value" for this check
-   */
-  String getValue();
-
-  /**
-   * Returns a unique string identifier for the check. Two checks are the same if these identifiers
-   * match. The value is NOT included. Used to match up checks between the same sequence run at
-   * different times. Note that because of changes in the environment (e.g., static variables), two
-   * executions of the same sequence may have different checks (because the existence of some checks
-   * depends on the value of variables)
-   *
-   * @return a unique string identifier for this check
-   */
-  String getID();
-
-  /**
-   * Evaluates this check on the given execution of a sequence.
-   *
-   * @param execution the execution of sequence on which to test this check
-   * @return true if check succeeded, and false otherwise
-   */
-  boolean evaluate(Execution execution);
 }

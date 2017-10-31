@@ -6,7 +6,6 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.NormalExecution;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
@@ -25,13 +24,6 @@ import randoop.util.Util;
  * of the class.
  */
 public final class ConstructorCall extends CallableOperation {
-
-  /**
-   * ID for parsing purposes.
-   *
-   * @see OperationParser#getId(TypedOperation)
-   */
-  public static final String ID = "cons";
 
   private final Constructor<?> constructor;
 
@@ -191,13 +183,7 @@ public final class ConstructorCall extends CallableOperation {
     ConstructorReflectionCode code =
         new ConstructorReflectionCode(this.constructor, statementInput);
 
-    Throwable thrown = ReflectionExecutor.executeReflectionCode(code, out);
-
-    if (thrown == null) {
-      return new NormalExecution(code.getReturnValue(), 0);
-    } else {
-      return new ExceptionalExecution(thrown, 0);
-    }
+    return ReflectionExecutor.executeReflectionCode(code, out);
   }
 
   /**

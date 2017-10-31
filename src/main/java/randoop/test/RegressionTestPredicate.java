@@ -1,7 +1,6 @@
 package randoop.test;
 
 import randoop.sequence.ExecutableSequence;
-import randoop.util.TimeoutExceededException;
 import randoop.util.predicate.DefaultPredicate;
 
 /**
@@ -19,24 +18,8 @@ public class RegressionTestPredicate extends DefaultPredicate<ExecutableSequence
    */
   @Override
   public boolean test(ExecutableSequence eseq) {
-    // don't want error revealing test
-    if (eseq.hasFailure()) {
+    if (eseq.hasInvalidBehavior() || eseq.hasFailure()) {
       return false;
-    }
-
-    TestChecks<?> testChecks = eseq.getChecks();
-
-    // if have exception
-    ExceptionCheck ec = testChecks.getExceptionCheck();
-    if (ec != null) {
-      // Remove any sequences that throw randoop.util.TimeoutExceededException.
-      // It would be nicer for Randoop to output a test suite that detects
-      // long-running tests and generates a TimeoutExceededException, as
-      // documented in Issue 11:
-      // https://github.com/randoop/randoop/issues/11 .
-      if (ec.getException() instanceof TimeoutExceededException) {
-        return false;
-      }
     }
 
     return true;

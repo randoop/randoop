@@ -328,7 +328,8 @@ RegressionTest will pass.
 </p>
 
 <pre class="code">
-java -ea -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
+java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-3.1.5.jar \
+  randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
 </pre>
 
 
@@ -386,7 +387,7 @@ All of those methods are also being implicitly tested by the
 </p>
 
 <p><b><i>WARNING: If you ask Randoop to test code that modifies your file
-system (such as <a  href="http://docs.oracle.com/javase/8/docs/api/java/io/File.html#delete--">File.delete()</a>),
+system (such as <a  href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html#delete--">File.delete()</a>),
 then Randoop will generate tests that modify your file system!
 Be careful when choosing
 classes and methods to test.</i></b>
@@ -723,7 +724,8 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -cp randoop-all-3.1.5.jar randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
+java -cp randoop-all-3.1.5.jar randoop.main.Main minimize \
+  --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
 <p>
@@ -865,9 +867,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  (value: ERROR), regression test suite (value: EXPECTED), or should it be discarded (value:
  INVALID)? [default EXPECTED]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:unchecked-exception"><b>--unchecked-exception=</b><i>enum</i>.
@@ -879,9 +881,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>The arguments <code>--npe-on-null-input</code>, <code>--npe-on-non-null-input</code>, <code>--cm-exception</code>, <code>--oom-exception</code>, and <code>--sof-exception</code> handle special cases of
  unchecked exceptions. [default EXPECTED]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:npe-on-null-input"><b>--npe-on-null-input=</b><i>enum</i>.
@@ -889,9 +891,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  the test be be included in the error-revealing test suite (value: ERROR), regression test suite
  (value: EXPECTED), or should it be discarded (value: INVALID)? [default EXPECTED]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:npe-on-non-null-input"><b>--npe-on-non-null-input=</b><i>enum</i>.
@@ -899,9 +901,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  should the test be included in the error-revealing test suite (value: ERROR), regression test
  suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default ERROR]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:cm-exception"><b>--cm-exception=</b><i>enum</i>.
@@ -909,9 +911,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
  it be discarded (value: INVALID)? [default INVALID]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:oom-exception"><b>--oom-exception=</b><i>enum</i>.
@@ -919,9 +921,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
  it be discarded (value: INVALID)? [default INVALID]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
             <li id="option:sof-exception"><b>--sof-exception=</b><i>enum</i>.
@@ -929,9 +931,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
  it be discarded (value: INVALID)? [default INVALID]
 <ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
 </ul>
 
       </ul>
@@ -1680,9 +1682,13 @@ Here are three ways to deal with the problem.
 </p>
 <ul>
   <li>
-    Determine which calls are executing by examining the stack trace.  On
-    Unix this can be done by typing <code>Ctrl-\</code> (hold down the
-    Control key, then press the Backslash key).  If the same methods appear
+    Determine which calls are executing by examining the stack trace.
+    Use the <a
+    href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/jstack.html"><code>jstack</code></a>
+    command, which you can run as <code>jstack <em>pid</em></code>.
+    Get the process id by running <code>jcmd</code>.
+    (On Unix you can also type <code>Ctrl-\</code>; that is, hold down the
+    Control key, then press the Backslash key.)  If the same methods appear
     in multiple such stack traces, then you
     can <a href="#specifying-methods">exclude them from consideration by
     Randoop</a> or <a href="#replacecall">prevent the JVM from calling the

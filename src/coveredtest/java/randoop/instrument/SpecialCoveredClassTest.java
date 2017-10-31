@@ -3,6 +3,7 @@ package randoop.instrument;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.File;
 import java.lang.ClassNotFoundException;
@@ -21,13 +22,11 @@ import randoop.generation.TestUtils;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
-import randoop.main.RandoopInputException;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
 import randoop.reflection.TypeNames;
@@ -50,8 +49,7 @@ public class SpecialCoveredClassTest {
 
   @Test
   public void abstractClassTest()
-      throws ClassNotFoundException, NoSuchMethodException, RandoopInputException,
-          SignatureParseException {
+      throws ClassNotFoundException, NoSuchMethodException, SignatureParseException {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("instrument/testcase/special-allclasses.txt");
     GenInputsAbstract.require_covered_classes =
@@ -65,7 +63,7 @@ public class SpecialCoveredClassTest {
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.require_covered_classes, "coverage class names");
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     Set<String> omitFields = new HashSet<>();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     Set<String> methodSignatures =
@@ -134,7 +132,7 @@ public class SpecialCoveredClassTest {
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);
     // for debugging:  operationModel.dumpModel();
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     //    testGenerator.getOperationHistory().outputTable();
 
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();

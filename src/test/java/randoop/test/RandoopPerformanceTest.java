@@ -2,6 +2,7 @@ package randoop.test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
@@ -49,7 +49,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
             null,
             null,
             null);
-    explorer.explore();
+    explorer.createAndClassifySequences();
   }
 
   @Override
@@ -59,7 +59,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);

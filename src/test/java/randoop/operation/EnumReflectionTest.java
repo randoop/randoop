@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -23,7 +24,6 @@ import randoop.NormalExecution;
 import randoop.reflection.DeclarationExtractor;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -213,9 +213,9 @@ public class EnumReflectionTest {
 
     for (TypedOperation op : actual) {
       if (op.getName().equals("test")) {
-        //noinspection UnnecessaryBoxing
+        // noinspection UnnecessaryBoxing
         checkOutcome(op, new Object[] {EnumAsPredicate.ONE, Integer.valueOf(0)}, false);
-        //noinspection UnnecessaryBoxing
+        // noinspection UnnecessaryBoxing
         checkOutcome(op, new Object[] {EnumAsPredicate.TWO, Integer.valueOf(0)}, true);
       }
     }
@@ -318,8 +318,7 @@ public class EnumReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(
-        c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
+    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private Set<TypedOperation> getConcreteOperations(

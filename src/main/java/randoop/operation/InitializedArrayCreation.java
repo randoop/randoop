@@ -16,7 +16,7 @@ import randoop.types.TypeTuple;
  * one-dimensional array with a given element type and length. The InitializedArrayCreation
  * operation requires a list of elements in an initializer. For instance, {@code new int[2]} is the
  * {@code InitializedArrayCreation} in the initialization<br>
- * {@code int[] x = new int[2] { 3, 7 };}<br>
+ * {@code int[] x = new int[2] { 3, 7 }; }<br>
  * with the initializer list as inputs.
  *
  * <p>In terms of the notation used for the {@link Operation} class, a creation of an array of
@@ -26,13 +26,6 @@ import randoop.types.TypeTuple;
  * <p>InitializedArrayCreation objects are immutable.
  */
 public final class InitializedArrayCreation extends CallableOperation {
-
-  /**
-   * ID for parsing purposes.
-   *
-   * @see OperationParser#parse
-   */
-  public static final String ID = "array";
 
   // State variables.
   private final int length;

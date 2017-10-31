@@ -218,16 +218,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // Defaulting to true sometimes causes unacceptable slowdowns.
   public static boolean minimize_error_test = false;
 
-  /**
-   * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
-   * maintained.
-   */
+  /** The possible values for exception behavior types. */
   public enum BehaviorType {
-    /** Occurrence of exception reveals an error */
+    /** Occurrence of exception reveals an error. */
     ERROR,
-    /** Occurrence of exception is expected behavior */
+    /** Occurrence of exception is expected behavior. */
     EXPECTED,
-    /** Occurrence of exception indicates an invalid test */
+    /** Occurrence of exception indicates an invalid test. */
     INVALID
   }
 
@@ -711,21 +708,19 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
   }
 
-  public static Set<String> getClassnamesFromArgs() throws RandoopInputException {
+  public static Set<String> getClassnamesFromArgs() {
     Set<String> classnames = getStringSetFromFile(classlist, "tested classes");
     classnames.addAll(testclass);
     return classnames;
   }
 
-  public static Set<String> getStringSetFromFile(File listFile, String fileDescription)
-      throws RandoopInputException {
+  public static Set<String> getStringSetFromFile(File listFile, String fileDescription) {
     return getStringSetFromFile(listFile, fileDescription, "^#.*", null);
   }
 
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
-      File listFile, String fileDescription, String commentRegex, String includeRegex)
-      throws RandoopInputException {
+      File listFile, String fileDescription, String commentRegex, String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile, commentRegex, includeRegex)) {
@@ -739,7 +734,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
         String message =
             String.format(
                 "Error while reading %s file %s: %s%n", listFile, fileDescription, e.getMessage());
-        throw new RandoopInputException(message, e);
+        throw new RandoopUsageError(message, e);
       }
     }
     return elementSet;

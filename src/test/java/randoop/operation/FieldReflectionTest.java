@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -20,7 +21,6 @@ import randoop.field.SubclassWithFields;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -48,12 +48,12 @@ public class FieldReflectionTest {
 
     final Set<TypedOperation> operations = getConcreteOperations(c);
 
-    //number of operations is twice number of fields plus constructor and getter minus one for each constant
-    //in this case, 11
+    // number of operations is twice number of fields plus constructor and getter minus one for each constant
+    // in this case, 11
     assertEquals(
         "number of operations twice number of fields", 2 * fields.size() + 1, operations.size());
 
-    //exclude private or protected fields
+    // exclude private or protected fields
     List<Field> exclude = new ArrayList<>();
     for (Field f : c.getDeclaredFields()) {
       int mods = f.getModifiers();
@@ -84,8 +84,7 @@ public class FieldReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(
-        c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
+    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private Set<TypedOperation> getConcreteOperations(
@@ -121,7 +120,7 @@ public class FieldReflectionTest {
       if (declared.contains(f.getName())) {
         if (c.equals(f.getDeclaringClass())) {
           expected.add(f);
-        } else { //hidden
+        } else { // hidden
           exclude.add(f);
         }
       } else {
@@ -156,7 +155,7 @@ public class FieldReflectionTest {
   public void filteredFields() {
     Class<?> c = ClassWithFields.class;
 
-    //let's exclude every field
+    // let's exclude every field
     List<Field> exclude = new ArrayList<>();
     Set<String> excludeNames = new TreeSet<>();
     for (Field f : c.getFields()) {
@@ -165,7 +164,7 @@ public class FieldReflectionTest {
     }
 
     ReflectionPredicate filter = new DefaultReflectionPredicate(excludeNames);
-    Set<TypedOperation> actual = getConcreteOperations(c, filter, new PublicVisibilityPredicate());
+    Set<TypedOperation> actual = getConcreteOperations(c, filter, IS_PUBLIC);
 
     assertEquals("number of operations ", 3, actual.size());
 

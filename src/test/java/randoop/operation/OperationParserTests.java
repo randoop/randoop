@@ -20,7 +20,7 @@ public class OperationParserTests {
   @Test
   public void testNonreceiver() {
 
-    //Class
+    // Class
     checkParse(
         new NonreceiverTerm(JavaTypes.CLASS_TYPE, Comparable.class),
         new TypeTuple(),
@@ -167,7 +167,7 @@ public class OperationParserTests {
   private void checkOp(CallableOperation st, String stStr, TypedOperation stOp) {
     TypedOperation collectedOperation;
     try {
-      collectedOperation = OperationParser.parse(OperationParser.getId(stOp) + ":" + stStr);
+      collectedOperation = OperationParser.parse(stOp.getClass().getSimpleName() + ":" + stStr);
     } catch (OperationParseException e) {
       throw new Error(e);
     }

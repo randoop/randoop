@@ -62,7 +62,7 @@ public class DefaultReflectionPredicateTests extends TestCase {
     assertTrue(!filter.test(wait));
   }
 
-  //equals is used in contracts, but not as operation in a sequence
+  // equals is used in contracts, but not as operation in a sequence
   public void testObjectMethods8() throws Exception {
     Method equals = Object.class.getMethod("equals", new Class<?>[] {Object.class});
     assertTrue(!filter.test(equals));
@@ -83,20 +83,20 @@ public class DefaultReflectionPredicateTests extends TestCase {
     assertTrue(!filter.test(wait));
   }
 
-  //this method appears more than once in the JDK
+  // this method appears more than once in the JDK
   public void testGetAvailableLocales2() throws Exception {
     Method wait = BreakIterator.class.getMethod("getAvailableLocales", new Class[0]);
     assertTrue(!filter.test(wait));
   }
 
-  //-------------- these are OK to use -------------------
+  // -------------- these are OK to use -------------------
 
   public void testLong() throws Exception {
     Method wait = Long.class.getMethod("compareTo", new Class<?>[] {Long.class});
     assertTrue(filter.test(wait));
   }
 
-  //it's OK to exercise this one
+  // it's OK to exercise this one
   public void testStringHashCode() throws Exception {
     Method wait = String.class.getMethod("hashCode", new Class[0]);
     assertTrue(filter.test(wait));

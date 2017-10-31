@@ -1,10 +1,6 @@
 package randoop.test;
 
 import java.util.Objects;
-import randoop.ExceptionalExecution;
-import randoop.ExecutionOutcome;
-import randoop.NotExecuted;
-import randoop.sequence.Execution;
 import randoop.types.ClassOrInterfaceType;
 
 /**
@@ -63,38 +59,5 @@ public class MissingExceptionCheck implements Check {
   public String toCodeStringPostStatement() {
     return String.format(
         "org.junit.Assert.fail(\"exception %s is expected\");", expected.getName());
-  }
-
-  @Override
-  public String getValue() {
-    return "missing_exception";
-  }
-
-  @Override
-  public String getID() {
-    return "MissingExceptionCheck @" + index;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Checks that an exception of the expected type is thrown by the statement in this object in
-   * the given {@link Execution}.
-   *
-   * @return true if the statement throws the expected exception, false otherwise
-   */
-  @Override
-  public boolean evaluate(Execution execution) {
-    ExecutionOutcome outcomeAtIndex = execution.get(index);
-    if (outcomeAtIndex instanceof NotExecuted) {
-      throw new IllegalArgumentException("Statement not executed");
-    }
-    if (!(outcomeAtIndex instanceof ExceptionalExecution)) {
-      return false;
-    }
-    ExceptionalExecution exec = (ExceptionalExecution) outcomeAtIndex;
-    Throwable t = exec.getException();
-    ClassOrInterfaceType thrownType = ClassOrInterfaceType.forClass(t.getClass());
-    return thrownType.isSubtypeOf(expected);
   }
 }

@@ -43,8 +43,8 @@ public class TypeInstantiator {
     assert operation.isGeneric() || operation.hasWildcardTypes()
         : "operation must be generic or have wildcards";
 
-    //Need to allow for backtracking, because choice of instantiation for declaring type may fail
-    //for generic operation --- OR maybe not
+    // Need to allow for backtracking, because choice of instantiation for declaring type may fail
+    // for generic operation --- OR maybe not.
 
     // if declaring type of operation is generic, select instantiation
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
@@ -59,7 +59,7 @@ public class TypeInstantiator {
         } else {
           substitution = instantiateDeclaringClass(declaringType);
         }
-      } else { //otherwise, select from existing one
+      } else { // otherwise, select from existing one
         substitution = selectMatch(declaringType);
       }
       if (substitution == null) { // return null if fail to find instantiation

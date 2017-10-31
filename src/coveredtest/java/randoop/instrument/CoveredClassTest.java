@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static randoop.main.GenInputsAbstract.methodlist;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.File;
 import java.util.LinkedHashSet;
@@ -23,13 +24,11 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
-import randoop.main.RandoopInputException;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.SignatureParseException;
 import randoop.reflection.TypeNames;
@@ -73,14 +72,9 @@ public class CoveredClassTest {
     // setup classes
 
     ForwardGenerator testGenerator;
-    try {
-      testGenerator = getGenerator();
-    } catch (RandoopInputException e) {
-      fail("Input error " + e);
-      throw new Error("dead code");
-    }
+    testGenerator = getGenerator();
 
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
@@ -114,20 +108,15 @@ public class CoveredClassTest {
   public void testNameFilter() {
     System.out.println("name filter");
     GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
-    require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); //null;
+    require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); // null;
     GenInputsAbstract.require_covered_classes =
-        null; //"tests/instrument/testcase/coveredclasses.txt";
+        null; // "tests/instrument/testcase/coveredclasses.txt";
     // setup classes
 
     ForwardGenerator testGenerator;
-    try {
-      testGenerator = getGenerator();
-    } catch (RandoopInputException e) {
-      fail("Input error: " + e);
-      throw new Error("dead code");
-    }
+    testGenerator = getGenerator();
 
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
@@ -166,14 +155,9 @@ public class CoveredClassTest {
     // setup classes
 
     ForwardGenerator testGenerator;
-    try {
-      testGenerator = getGenerator();
-    } catch (RandoopInputException e) {
-      fail("Input error: " + e);
-      throw new Error("dead code");
-    }
+    testGenerator = getGenerator();
 
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
@@ -203,14 +187,14 @@ public class CoveredClassTest {
     }
   }
 
-  private ForwardGenerator getGenerator() throws RandoopInputException {
+  private ForwardGenerator getGenerator() {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.require_covered_classes, "coverage class names");
     Set<String> omitFields =
         GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "field list");
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    VisibilityPredicate visibility = IS_PUBLIC;
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     Set<String> methodSignatures =

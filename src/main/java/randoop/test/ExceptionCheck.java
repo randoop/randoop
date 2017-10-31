@@ -4,22 +4,27 @@ import java.util.Objects;
 import randoop.Globals;
 
 /**
- * An {@code ExceptionCheck} is used to indicate that an exception is expected at a particular
- * statement in a sequence. Depending on command-line arguments to Randoop, an instance may be
- * either a {@link ExpectedExceptionCheck} or {@link EmptyExceptionCheck}. When test code is
- * generated in {@link randoop.sequence.ExecutableSequence#toCodeString()}, the methods {@link
- * #toCodeStringPreStatement()} and {@link #toCodeStringPostStatement()} wrap the statement in a
- * try-catch block for the exception, while the implementing classes define {@link
+ * An {@code ExceptionCheck} indicates that an exception is expected at a particular statement in a
+ * sequence.
+ *
+ * <p>When test code is generated in {@link randoop.sequence.ExecutableSequence#toCodeString()}, the
+ * methods {@link #toCodeStringPreStatement()} and {@link #toCodeStringPostStatement()} wrap the
+ * statement in a try-catch block for the exception, while the implementing classes define {@link
  * #appendTryBehavior(StringBuilder)} and {@link #appendCatchBehavior(StringBuilder)} which handle
  * differences in whether assertions are generated to enforce the expectation of the exception.
  */
 public abstract class ExceptionCheck implements Check {
 
+  /** The thrown exception. */
   protected final Throwable exception;
 
-  // Indicates which statement results in the given exception.
+  /** Indicates which statement results in the given exception. */
   final int statementIndex;
 
+  /**
+   * The name of exception to be caught. This might be a supertype of {@code exception}'s class C,
+   * for instance because C is private or because the method is declared to throw a superclass of C.
+   */
   private String catchClassName;
 
   /**
@@ -66,21 +71,6 @@ public abstract class ExceptionCheck implements Check {
     return "// throws exception of type "
         + exception.getClass().getCanonicalName()
         + Globals.lineSep;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return the name of the class of the exception thrown
-   */
-  @Override
-  public String getValue() {
-    return exception.getClass().getName();
-  }
-
-  @Override
-  public String getID() {
-    return "Throws exception @" + statementIndex;
   }
 
   /**

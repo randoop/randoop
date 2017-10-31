@@ -7,7 +7,11 @@ import java.util.Set;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Unpublicized;
-import randoop.*;
+import randoop.DummyVisitor;
+import randoop.ExecutionVisitor;
+import randoop.Globals;
+import randoop.MultiVisitor;
+import randoop.RandoopStat;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
@@ -22,9 +26,10 @@ import randoop.util.predicate.Predicate;
 /**
  * Algorithm template for implementing a test generator.
  *
- * <p>The main generation loop is defined in method {@code explore()}, which repeatedly generates a
- * new sequence, determines if it a failing sequence, and stops the process when the time or
- * sequence limit expires. The process of generating a new sequences is left abstract.
+ * <p>The main generation loop is defined in method {@code createAndClassifySequences()}, which
+ * repeatedly generates a new sequence, determines if it a failing sequence, and stops the process
+ * when the time or sequence limit expires. The process of generating a new sequences is left
+ * abstract.
  *
  * @see ForwardGenerator
  */
@@ -51,7 +56,11 @@ public abstract class AbstractGenerator {
   /** When the generator started (millisecond-based system timestamp). */
   private long startTime = -1;
 
-  /** Elapsed time since the generator started. */
+  /**
+   * Elapsed time since the generator started.
+   *
+   * @return elapsed time since the generator started
+   */
   private long elapsedTime() {
     return System.currentTimeMillis() - startTime;
   }
@@ -177,6 +186,16 @@ public abstract class AbstractGenerator {
   }
 
   /**
+   * Registers a MultiVisitor of all the given visitors with this object for use while executing
+   * each generated sequence.
+   *
+   * @param visitors the list of visitors
+   */
+  public void setExecutionVisitor(List<ExecutionVisitor> visitors) {
+    this.executionVisitor = MultiVisitor.createMultiVisitor(visitors);
+  }
+
+  /**
    * Registers a visitor with this object to generate checks following execution of each generated
    * test sequence.
    *
@@ -251,7 +270,7 @@ public abstract class AbstractGenerator {
    * @see AbstractGenerator#shouldStop()
    * @see AbstractGenerator#step()
    */
-  public void explore() {
+  public void createAndClassifySequences() {
     if (checkGenerator == null) {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
     }

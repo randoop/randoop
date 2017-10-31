@@ -1,5 +1,9 @@
 package randoop.main;
 
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_ERROR;
+import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_INVALID;
+
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -22,11 +26,9 @@ import plume.Options.ArgException;
 import plume.SimpleLog;
 import plume.UtilMDE;
 import randoop.BugInRandoopException;
-import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
-import randoop.MultiVisitor;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
@@ -48,7 +50,6 @@ import randoop.output.RandoopOutputException;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
-import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.RawSignature;
 import randoop.reflection.ReflectionPredicate;
@@ -158,25 +159,22 @@ public class GenTests extends GenInputsAbstract {
   }
 
   @Override
-  public boolean handle(String[] args) throws RandoopTextuiException, RandoopInputException {
+  public boolean handle(String[] args) {
 
     try {
       String[] nonargs = options.parse(args);
       if (nonargs.length > 0) {
-        throw new ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
+        throw new ArgException("Unrecognized command-line arguments: " + Arrays.toString(nonargs));
       }
     } catch (ArgException ae) {
-      usage("while parsing command-line arguments: %s", ae.getMessage());
+      usage("While parsing command-line arguments: %s", ae.getMessage());
     }
 
     checkOptionsValid();
 
     Randomness.setSeed(randomseed);
-    if (GenInputsAbstract.selection_log != null) {
-      Randomness.selectionLog = new SimpleLog(GenInputsAbstract.selection_log);
-    }
 
-    //java.security.Policy policy = java.security.Policy.getPolicy();
+    // java.security.Policy policy = java.security.Policy.getPolicy();
 
     // This is distracting to the user as the first thing shown, and is not very informative.
     // Reinstate it with a --verbose option.
@@ -187,7 +185,9 @@ public class GenTests extends GenInputsAbstract {
     // If some properties were specified, set them
     for (String prop : GenInputsAbstract.system_props) {
       String[] pa = prop.split("=", 2);
-      if (pa.length != 2) usage("invalid property definition: %s%n", prop);
+      if (pa.length != 2) {
+        usage("invalid property definition: %s%n", prop);
+      }
       System.setProperty(pa[0], pa[1]);
     }
 
@@ -214,14 +214,14 @@ public class GenTests extends GenInputsAbstract {
 
     VisibilityPredicate visibility;
     if (GenInputsAbstract.junit_package_name == null) {
-      visibility = new PublicVisibilityPredicate();
+      visibility = IS_PUBLIC;
     } else if (GenInputsAbstract.only_test_public_members) {
-      visibility = new PublicVisibilityPredicate();
+      visibility = IS_PUBLIC;
       if (GenInputsAbstract.junit_package_name != null) {
         System.out.println(
             "Not using package "
                 + GenInputsAbstract.junit_package_name
-                + " since --only-test-public-members set");
+                + " since --only-test-public-members is set");
       }
     } else {
       visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
@@ -339,18 +339,24 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Create the generator for this session.
      */
-    AbstractGenerator explorer;
-
-    explorer =
+    AbstractGenerator explorer =
         new ForwardGenerator(
             operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
+
+    /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
+    operationModel.log();
+    TestUtils.setOperationLog(GenInputsAbstract.operation_history_log, explorer);
+    TestUtils.setSelectionLog(GenInputsAbstract.selection_log);
+
+    // These two debugging lines make runNoOutputTest() fail:
+    // operationModel.dumpModel(System.out);
+    // System.out.println("isLoggingOn = " + Log.isLoggingOn());
 
     /*
      * Create the test check generator for the contracts and observers
      */
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap);
-
     explorer.setTestCheckGenerator(testGen);
 
     /*
@@ -380,14 +386,11 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Setup visitors
      */
-    // list of visitors for collecting information from test sequences
     List<ExecutionVisitor> visitors = new ArrayList<>();
-
     // instrumentation visitor
     if (GenInputsAbstract.require_covered_classes != null) {
       visitors.add(new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));
     }
-
     // Install any user-specified visitors.
     if (!GenInputsAbstract.visitor.isEmpty()) {
       for (String visitorClsName : GenInputsAbstract.visitor) {
@@ -401,28 +404,12 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     }
+    explorer.setExecutionVisitor(visitors);
 
-    ExecutionVisitor visitor;
-    switch (visitors.size()) {
-      case 0:
-        visitor = new DummyVisitor();
-        break;
-      case 1:
-        visitor = visitors.get(0);
-        break;
-      default:
-        visitor = new MultiVisitor(visitors);
-        break;
-    }
-
-    explorer.setExecutionVisitor(visitor);
-
+    // Diagnostic output
     if (GenInputsAbstract.progressdisplay) {
-      System.out.printf("Explorer = %s\n", explorer);
+      System.out.printf("Explorer = %s%n", explorer);
     }
-
-    /* log setup */
-    operationModel.log();
     // These two debugging lines make runNoOutputTest() fail:
     // operationModel.dumpModel(System.out);
     // System.out.println("isLoggingOn = " + Log.isLoggingOn());
@@ -430,14 +417,13 @@ public class GenTests extends GenInputsAbstract {
       Log.logLine("Initial sequences (seeds):");
       componentMgr.log();
     }
-    TestUtils.setOperationLog(GenInputsAbstract.operation_history_log, explorer);
 
     /* Generate tests */
     try {
-      explorer.explore();
+      explorer.createAndClassifySequences();
     } catch (SequenceExceptionError e) {
 
-      handleFlakySequenceException(explorer, e);
+      printSequenceExceptionError(explorer, e);
 
       System.exit(1);
     } catch (RandoopInstantiationError e) {
@@ -479,7 +465,8 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (!GenInputsAbstract.no_regression_tests) {
-      final TestEnvironment testEnvironment = new TestEnvironment(classpath);
+      final TestEnvironment testEnvironment =
+          new TestEnvironment(convertClasspathToAbsolute(classpath));
       String agentPathString = MethodReplacements.getAgentPath();
       String agentArgs = MethodReplacements.getAgentArgs();
       if (agentPathString != null && !agentPathString.isEmpty()) {
@@ -511,6 +498,29 @@ public class GenTests extends GenInputsAbstract {
     explorer.getOperationHistory().outputTable();
 
     return true;
+  }
+
+  /**
+   * Convert each element of the given classpath from a relative to an absolute path.
+   *
+   * @param classpath the classpath to replace
+   * @return a version of classpath with relative paths replaced by absolute paths
+   */
+  private String convertClasspathToAbsolute(String classpath) {
+    String[] relpaths = classpath.split(File.pathSeparator);
+    int length = relpaths.length;
+    String[] abspaths = new String[length];
+    for (int i = 0; i < length; i++) {
+      String rel = relpaths[i];
+      String abs;
+      if (rel.equals("")) {
+        abs = rel;
+      } else {
+        abs = new File(rel).getAbsolutePath();
+      }
+      abspaths[i] = abs;
+    }
+    return UtilMDE.join(abspaths, File.pathSeparator);
   }
 
   /**
@@ -688,7 +698,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Handles the occurrence of a {@code SequenceExceptionError} that indicates a flaky test has been
+   * Prints information about a {@code SequenceExceptionError} that indicates a flaky test has been
    * found. Prints information to help user identify source of flakiness, including exception,
    * statement that threw the exception, the full sequence where exception was thrown, and the input
    * subsequence.
@@ -696,7 +706,7 @@ public class GenTests extends GenInputsAbstract {
    * @param explorer the test generator
    * @param e the sequence exception
    */
-  private void handleFlakySequenceException(AbstractGenerator explorer, SequenceExceptionError e) {
+  private void printSequenceExceptionError(AbstractGenerator explorer, SequenceExceptionError e) {
 
     String msg =
         String.format(
@@ -835,11 +845,10 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Creates the test check generator for this run based on the command-line arguments. The goal of
-   * the generator is to produce all appropriate checks for each sequence it is applied to. Validity
-   * and contract checks are always needed to determine which sequences have invalid or error
-   * behaviors, even if only regression tests are desired. So, this generator will always be built.
-   * If in addition regression tests are to be generated, then the regression checks generator is
-   * added.
+   * the generator is to produce all appropriate checks for each sequence it is applied to.
+   *
+   * <p>The generator always contains validity and contract checks. If regression tests are to be
+   * generated, it also contains the regression checks generator.
    *
    * @param visibility the visibility predicate
    * @param contracts the contract checks
@@ -852,28 +861,26 @@ public class GenTests extends GenInputsAbstract {
       MultiMap<Type, TypedOperation> observerMap) {
 
     // Start with checking for invalid exceptions.
-    ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
     TestCheckGenerator testGen =
-        new ValidityCheckingGenerator(isInvalid, !GenInputsAbstract.ignore_flaky_tests);
+        new ValidityCheckingGenerator(IS_INVALID, !GenInputsAbstract.ignore_flaky_tests);
 
     // Extend with contract checker.
-    ExceptionPredicate isError = new ExceptionBehaviorPredicate(BehaviorType.ERROR);
-    ContractCheckingGenerator contractVisitor = new ContractCheckingGenerator(contracts, isError);
+    ContractCheckingGenerator contractVisitor = new ContractCheckingGenerator(contracts, IS_ERROR);
     testGen = new ExtendGenerator(testGen, contractVisitor);
 
     // And, generate regression tests, unless user says not to.
     if (!GenInputsAbstract.no_regression_tests) {
-      ExceptionPredicate isExpected = new AlwaysFalseExceptionPredicate();
-      boolean includeAssertions = true;
+      ExceptionPredicate isExpected;
       if (GenInputsAbstract.no_regression_assertions) {
-        includeAssertions = false;
+        isExpected = new AlwaysFalseExceptionPredicate();
       } else {
-        isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
+        isExpected = ExceptionBehaviorPredicate.IS_EXPECTED;
       }
       ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
 
       RegressionCaptureGenerator regressionVisitor =
-          new RegressionCaptureGenerator(expectation, observerMap, visibility, includeAssertions);
+          new RegressionCaptureGenerator(
+              expectation, observerMap, visibility, !GenInputsAbstract.no_regression_assertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }

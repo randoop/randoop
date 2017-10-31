@@ -3,6 +3,7 @@ package randoop.test;
 import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.contract.ObjectContract;
 import randoop.sequence.ExecutableSequence;
@@ -19,13 +20,15 @@ import randoop.util.Log;
 import randoop.util.TupleSet;
 
 /**
- * An execution visitor that generates checks for error-revealing tests. If execution of the visited
- * sequence is normal, it will generate checks for unary and binary object contracts over the values
- * from the execution. Contracts will be checked on all values except for boxed primitives or
- * Strings. If the execution throws an exception considered to be an error, the visitor generates a
- * {@code NoExceptionCheck} indicating that the statement threw an exception in error. For each
- * contract violation, the visitor adds a {@code Check} to the {@code TestChecks} object that is
- * returned.
+ * An execution visitor that generates checks for error-revealing tests.
+ *
+ * <p>If execution of the visited sequence is normal, it will generate checks for contracts over the
+ * values from the execution. Contracts will be checked on all values except for boxed primitives or
+ * Strings. For each contract violation, the visitor adds a {@code Check} to the {@code TestChecks}
+ * object that is returned.
+ *
+ * <p>If the execution throws an exception considered to be an error, the visitor generates a {@code
+ * NoExceptionCheck} indicating that the statement should not throw the exception.
  */
 public final class ContractCheckingGenerator implements TestCheckGenerator {
 
@@ -60,12 +63,10 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome finalResult = eseq.getResult(finalIndex);
 
-    // If statement not executed, then something flaky
     if (finalResult instanceof NotExecuted) {
+      // If statement not executed, then something is flaky
       throw new Error("Un-executed final statement in sequence: " + eseq);
-    }
-
-    if (finalResult instanceof ExceptionalExecution) {
+    } else if (finalResult instanceof ExceptionalExecution) {
       // If there is an exception, check whether it is considered a failure
       ExceptionalExecution exec = (ExceptionalExecution) finalResult;
 
@@ -79,6 +80,7 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
 
     } else {
       // Otherwise, normal execution, check contracts
+      assert finalResult instanceof NormalExecution;
       if (!contracts.isEmpty()) {
         // 1. check unary over values in last statement
         // TODO: Why aren't unary contracts checked over all values like binary contracts are?
@@ -126,6 +128,8 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
   /**
    * If a contract fails for some tuple, returns some such failing check.
    *
+   * @param contracts the contracts to check
+   * @param eseq the executable sequence that is the source of values for checking contracts
    * @param tuples the value tuples to use as input to the contracts
    * @return a {@link Check} of the first contract+tuple that failed, or null if no contracts failed
    */

@@ -452,8 +452,7 @@ public final class Sequence implements WeightedElement {
   private Variable getVariableForInput(int statementPosition, RelativeNegativeIndex input) {
     int absoluteIndex = statementPosition + input.index;
     if (absoluteIndex < 0) {
-      throw new IllegalArgumentException(
-          "invalid index (expecting non-negative): " + absoluteIndex);
+      throw new IllegalArgumentException("index should be non-negative: " + absoluteIndex);
     }
     return new Variable(this, absoluteIndex);
   }
@@ -732,7 +731,14 @@ public final class Sequence implements WeightedElement {
     }
   }
 
-  /** Choose one of the statements that produces a values of type {@code type}. */
+  /**
+   * Choose one of the statements that produces a values of type {@code type}.
+   *
+   * @param type return a sequence of this type
+   * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
+   *     call receiver
+   * @return a variable of the given type
+   */
   public Variable randomVariableForType(Type type, boolean onlyReceivers) {
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
@@ -763,8 +769,9 @@ public final class Sequence implements WeightedElement {
   }
 
   void checkIndex(int i) {
-    if (i < 0 || i > size() - 1)
+    if (i < 0 || i > size() - 1) {
       throw new IllegalArgumentException("index " + i + " out of range [0, " + (size() - 1) + "]");
+    }
   }
 
   // Argument checker for extend method.
@@ -1056,13 +1063,15 @@ public final class Sequence implements WeightedElement {
       b.append(
               "Error while parsing the following list of strings as a sequence (error was at index ")
           .append(statementCount)
-          .append("):\n\n");
+          .append("):")
+          .append(Globals.lineSep)
+          .append(Globals.lineSep);
       for (String s : statements) {
-        b.append(s).append("\n");
+        b.append(s).append(Globals.lineSep);
       }
-      b.append("\n\n");
-      b.append("Error: ").append(e.toString()).append("\n");
-      b.append("Stack trace:\n");
+      b.append("").append(Globals.lineSep).append(Globals.lineSep);
+      b.append("Error: ").append(e.toString()).append(Globals.lineSep);
+      b.append("Stack trace:").append(Globals.lineSep);
       for (StackTraceElement s : e.getStackTrace()) {
         b.append(s.toString());
       }
@@ -1256,7 +1265,7 @@ public final class Sequence implements WeightedElement {
 
     RelativeNegativeIndex(int index) {
       if (index >= 0) {
-        throw new IllegalArgumentException("invalid index (expecting non-positive): " + index);
+        throw new IllegalArgumentException("index should be non-positive: " + index);
       }
       this.index = index;
     }

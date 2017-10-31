@@ -3,6 +3,7 @@ package randoop.reflection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -25,8 +26,8 @@ import randoop.types.TypeTuple;
  */
 public class VisibilityBridgeTest {
 
-  //can't compare method of superclass directly to method of subclass
-  //so need to convert to abstraction to allow list search
+  // can't compare method of superclass directly to method of subclass
+  // so need to convert to abstraction to allow list search
   private static class FormalMethod {
     private Type returnType;
     private String name;
@@ -86,7 +87,7 @@ public class VisibilityBridgeTest {
     Class<?> sub = PackageSubclass.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(sub);
 
-    //should only inherit public non-synthetic methods of package private superclass
+    // should only inherit public non-synthetic methods of package private superclass
     List<FormalMethod> include = new ArrayList<>();
     try {
       Class<?> sup = Class.forName("randoop.reflection.visibilitytest.PackagePrivateBase");
@@ -118,8 +119,7 @@ public class VisibilityBridgeTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(
-        c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
+    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private Set<TypedOperation> getConcreteOperations(
