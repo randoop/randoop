@@ -438,7 +438,7 @@ public class ExecutableSequence {
    *
    * @param index which element to obtain
    * @return the result of executing the i-th element of the sequence, if that element's execution
-   *     completed normally.
+   *     completed normally
    */
   private Object getValue(int index) {
     ExecutionOutcome result = getResult(index);
@@ -693,5 +693,14 @@ public class ExecutableSequence {
    */
   public TypedOperation getOperation() {
     return this.sequence.getOperation();
+  }
+
+  /**
+   * Return the number of statements in this sequence.
+   *
+   * @return the number of statements in this sequence
+   */
+  public int size() {
+    return sequence.size();
   }
 }

@@ -83,7 +83,7 @@ public class ForwardExplorerTests {
     explorer.setTestCheckGenerator(createChecker(new ContractSet()));
     explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
-    explorer.explore();
+    explorer.createAndClassifySequences();
     explorer.getOperationHistory().outputTable();
     GenInputsAbstract.dontexecute = false;
     assertTrue(explorer.numGeneratedSequences() != 0);
@@ -118,8 +118,8 @@ public class ForwardExplorerTests {
     List<Class<?>> classes = new ArrayList<>();
     classes.add(randoop.test.BiSortVal.class);
     classes.add(BiSort.class);
-    //GenFailures.progressdisplay = false;
-    //Log.log = new FileWriter("templog.txt");
+    // GenFailures.progressdisplay = false;
+    // Log.log = new FileWriter("templog.txt");
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 500;
     long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
@@ -139,7 +139,7 @@ public class ForwardExplorerTests {
     explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
     try {
-      explorer.explore();
+      explorer.createAndClassifySequences();
     } catch (Throwable t) {
       fail("Exception during generation: " + t);
     }
@@ -201,7 +201,7 @@ public class ForwardExplorerTests {
     explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
     try {
-      explorer.explore();
+      explorer.createAndClassifySequences();
     } catch (Throwable t) {
       fail("Exception during generation: " + t);
     }

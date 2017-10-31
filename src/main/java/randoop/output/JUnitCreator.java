@@ -285,7 +285,7 @@ public class JUnitCreator {
     call.setArgs(arguments);
     statements.add(new IfStmt(new NameExpr("debug"), new ExpressionStmt(call), null));
 
-    //TODO make sequence generate list of JavaParser statements
+    // TODO make sequence generate list of JavaParser statements
     String sequenceBlockString = "{ " + testSequence.toCodeString() + " }";
     try {
       BlockStmt sequenceBlock = JavaParser.parseBlock(sequenceBlockString);

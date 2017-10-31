@@ -135,7 +135,7 @@ public class ParameterizedTypeTest {
   public void testInnerClass() {
     ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
 
-    //GenericWithInnerClass.StaticInnerClass stc;
+    // GenericWithInnerClass.StaticInnerClass stc;
     ClassOrInterfaceType staticInnerType =
         (ClassOrInterfaceType) Type.forClass(GenericWithInnerClass.StaticInnerClass.class);
     assertTrue("is reference type", staticInnerType.isReferenceType());
@@ -156,7 +156,7 @@ public class ParameterizedTypeTest {
         staticInnerType.getTypeArguments(),
         is(equalTo((List<TypeArgument>) new ArrayList<TypeArgument>())));
 
-    //ClassWithGenericInnerClass.GenericNestedClass<Integer> gnc2;
+    // ClassWithGenericInnerClass.GenericNestedClass<Integer> gnc2;
     ClassOrInterfaceType genericNestedTypeOfClass =
         (ClassOrInterfaceType) Type.forClass(ClassWithGenericInnerClass.GenericNestedClass.class);
     assertTrue("is generic", genericNestedTypeOfClass.isGeneric());
@@ -200,7 +200,7 @@ public class ParameterizedTypeTest {
         "instantiation should not instantiate instantiation",
         instantiatedGenericNestedClass.isInstantiationOf(instantiatedGenericNestedClass2));
 
-    //GenericWithInnerClass<Integer>.InnerClass ic;
+    // GenericWithInnerClass<Integer>.InnerClass ic;
     ClassOrInterfaceType innerType =
         (ClassOrInterfaceType) Type.forClass(GenericWithInnerClass.InnerClass.class);
     assertFalse("is parameterized", innerType.isParameterized());
@@ -235,7 +235,7 @@ public class ParameterizedTypeTest {
         "instantiation should not instantiate instantiation",
         instantiatedInnerType.isInstantiationOf(instantiatedInnerType2));
 
-    //GenericWithInnerClass<String>.GenericNestedClass<Integer> gnc;
+    // GenericWithInnerClass<String>.GenericNestedClass<Integer> gnc;
     ClassOrInterfaceType genericNestedType =
         (ClassOrInterfaceType) Type.forClass(GenericWithInnerClass.GenericNestedClass.class);
     assertFalse("is not parameterized", genericNestedType.isParameterized());

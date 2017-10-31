@@ -62,11 +62,11 @@ public class FieldSetterTest {
           new TypedClassOperation(
               setOp, declaringType, new TypeTuple(setInputTypeList), JavaTypes.VOID_TYPE);
 
-      //types
+      // types
       assertEquals("Should be one input type", 1, op.getInputTypes().size());
       assertEquals("Output type should be void", JavaTypes.VOID_TYPE, op.getOutputType());
 
-      //code generation
+      // code generation
       String expected = "randoop.field.ClassWithFields.fourField = 24;";
       StringBuilder b = new StringBuilder();
       TypedOperation initOp =
@@ -79,7 +79,7 @@ public class FieldSetterTest {
       st_op.appendCode(null, vars, b);
       assertEquals("Expect assignment to static field", expected, b.toString());
 
-      //execution -- gives back null
+      // execution -- gives back null
       assertFalse("Initial value of static is not 24", (int) f.getValue(null) == 24);
       NormalExecution expectedExec = new NormalExecution(null, 0);
       Object[] inputs = new Object[1];
@@ -119,11 +119,11 @@ public class FieldSetterTest {
           new TypedClassOperation(
               setOp, declaringType, new TypeTuple(setInputTypeList), JavaTypes.VOID_TYPE);
 
-      //types
+      // types
       assertEquals("Should be two input types", 2, op.getInputTypes().size());
       assertEquals("Output type should be void", JavaTypes.VOID_TYPE, op.getOutputType());
 
-      //code generation
+      // code generation
       String expected = "classWithFields0.oneField = 24;";
       StringBuilder b = new StringBuilder();
       Constructor<?> constructor;
@@ -149,11 +149,11 @@ public class FieldSetterTest {
       st_op.appendCode(null, vars, b);
       assertEquals("Expect assignment to instance field", expected, b.toString());
 
-      //execution
+      // execution
       Object[] inputs = new Object[2];
       inputs[0] = null;
       inputs[1] = 9;
-      //null object
+      // null object
       ExecutionOutcome nullOutcome = op.execute(inputs, null);
       assertTrue(
           "Expect null pointer exception",
@@ -161,7 +161,7 @@ public class FieldSetterTest {
               && ((ExceptionalExecution) nullOutcome).getException()
                   instanceof NullPointerException);
 
-      //real live object
+      // real live object
       Object[] inputs2 = new Object[2];
       inputs2[0] = c.newInstance();
       inputs2[1] = 9;

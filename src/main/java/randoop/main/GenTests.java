@@ -169,7 +169,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   @Override
-  public boolean handle(String[] args) throws RandoopTextuiException, RandoopInputException {
+  public boolean handle(String[] args) {
 
     try {
       String[] nonargs = options.parse(args);
@@ -184,7 +184,7 @@ public class GenTests extends GenInputsAbstract {
 
     Randomness.setSeed(randomseed);
 
-    //java.security.Policy policy = java.security.Policy.getPolicy();
+    // java.security.Policy policy = java.security.Policy.getPolicy();
 
     // This is distracting to the user as the first thing shown, and is not very informative.
     // Reinstate it with a --verbose option.
@@ -448,10 +448,10 @@ public class GenTests extends GenInputsAbstract {
 
     /* Generate tests */
     try {
-      explorer.explore();
+      explorer.createAndClassifySequences();
     } catch (SequenceExceptionError e) {
 
-      handleFlakySequenceException(explorer, e);
+      printSequenceExceptionError(explorer, e);
 
       System.exit(1);
     } catch (RandoopInstantiationError e) {
@@ -495,7 +495,8 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (!GenInputsAbstract.no_regression_tests) {
-      final TestEnvironment testEnvironment = new TestEnvironment(classpath);
+      final TestEnvironment testEnvironment =
+          new TestEnvironment(convertClasspathToAbsolute(classpath));
       String agentPathString = MethodReplacements.getAgentPath();
       String agentArgs = MethodReplacements.getAgentArgs();
       if (agentPathString != null && !agentPathString.isEmpty()) {
@@ -527,6 +528,29 @@ public class GenTests extends GenInputsAbstract {
     explorer.getOperationHistory().outputTable();
 
     return true;
+  }
+
+  /**
+   * Convert each element of the given classpath from a relative to an absolute path.
+   *
+   * @param classpath the classpath to replace
+   * @return a version of classpath with relative paths replaced by absolute paths
+   */
+  private String convertClasspathToAbsolute(String classpath) {
+    String[] relpaths = classpath.split(File.pathSeparator);
+    int length = relpaths.length;
+    String[] abspaths = new String[length];
+    for (int i = 0; i < length; i++) {
+      String rel = relpaths[i];
+      String abs;
+      if (rel.equals("")) {
+        abs = rel;
+      } else {
+        abs = new File(rel).getAbsolutePath();
+      }
+      abspaths[i] = abs;
+    }
+    return UtilMDE.join(abspaths, File.pathSeparator);
   }
 
   /**
@@ -704,7 +728,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Handles the occurrence of a {@code SequenceExceptionError} that indicates a flaky test has been
+   * Prints information about a {@code SequenceExceptionError} that indicates a flaky test has been
    * found. Prints information to help user identify source of flakiness, including exception,
    * statement that threw the exception, the full sequence where exception was thrown, and the input
    * subsequence.
@@ -712,7 +736,7 @@ public class GenTests extends GenInputsAbstract {
    * @param explorer the test generator
    * @param e the sequence exception
    */
-  private void handleFlakySequenceException(AbstractGenerator explorer, SequenceExceptionError e) {
+  private void printSequenceExceptionError(AbstractGenerator explorer, SequenceExceptionError e) {
 
     String msg =
         String.format(

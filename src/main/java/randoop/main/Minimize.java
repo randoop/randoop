@@ -150,35 +150,34 @@ public class Minimize extends CommandHandler {
    * @param args parameters, specified in command-line style, for the input file, the classpath, the
    *     timeout value, and the verbose flag
    * @return true if the command was handled successfully
-   * @throws RandoopTextuiException thrown if incorrect arguments are passed
    */
   @Override
-  public boolean handle(String[] args) throws RandoopTextuiException {
+  public boolean handle(String[] args) {
     try {
       String[] nonargs = foptions.parse(args);
       if (nonargs.length > 0) {
         throw new Options.ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
       }
     } catch (Options.ArgException ae) {
-      throw new RandoopTextuiException(ae.getMessage());
+      throw new RandoopUsageError(ae.getMessage());
     }
 
     if (Minimize.suitepath == null) {
-      throw new RandoopTextuiException("Use --suitepath to specify a file to be minimized.");
+      throw new RandoopUsageError("Use --suitepath to specify a file to be minimized.");
     }
 
     // Check that the input file is a Java file.
     if (!FilenameUtils.getExtension(Minimize.suitepath).equals("java")) {
-      throw new RandoopTextuiException("The input file must be a Java file: " + Minimize.suitepath);
+      throw new RandoopUsageError("The input file must be a Java file: " + Minimize.suitepath);
     }
 
     if (Minimize.testsuitetimeout <= 0) {
-      throw new RandoopTextuiException(
+      throw new RandoopUsageError(
           "Timout must be positive, was given as " + Minimize.testsuitetimeout + ".");
     }
 
     if (Minimize.minimizetimeout <= 0) {
-      throw new RandoopTextuiException(
+      throw new RandoopUsageError(
           "Minimizer timout must be positive, was given as " + Minimize.minimizetimeout + ".");
     }
 
@@ -596,7 +595,7 @@ public class Minimize extends CommandHandler {
   /**
    * Return a list of variable declaration statements that could replace the right hand side by 0,
    * false, or null, whichever is type correct. Returns an empty list if there are multiple variable
-   * declarations in a single statement, such as {@code int i, j, k;}.
+   * declarations in a single statement, such as {@code int i, j, k; }.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @return a list of {@code Statement} objects representing the simplified variable declaration
@@ -635,7 +634,7 @@ public class Minimize extends CommandHandler {
   /**
    * Return a variable declaration statement that simplifies the right hand side by a calculated
    * value for primitive types. Returns null if there are multiple variable declarations in a single
-   * statement, such as {@code int i, j, k;}.
+   * statement, such as {@code int i, j, k; }.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @param primitiveValues a map of primitive variable names to expressions representing their
@@ -754,7 +753,7 @@ public class Minimize extends CommandHandler {
 
   /**
    * Return a statement that contains only the right hand side of a given statement. Returns null if
-   * there are multiple variable declarations in a single statement, such as {@code int i, j, k;}.
+   * there are multiple variable declarations in a single statement, such as {@code int i, j, k; }.
    *
    * @param vdExpr variable declaration expression that represents the statement to simplify
    * @return a {@code Statement} object that is equal to the right-hand-side of {@code vdExpr}.

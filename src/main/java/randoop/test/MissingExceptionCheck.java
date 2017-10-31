@@ -5,13 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import plume.UtilMDE;
-import randoop.ExceptionalExecution;
-import randoop.ExecutionOutcome;
 import randoop.Globals;
-import randoop.NotExecuted;
 import randoop.condition.ThrowsClause;
-import randoop.sequence.Execution;
-import randoop.types.ClassOrInterfaceType;
 
 /**
  * Represents the fact that a statement should throw an exception, but did not. It is used in an
@@ -88,35 +83,5 @@ public class MissingExceptionCheck implements Check {
     return "org.junit.Assert.fail(\"exception is expected: \" + "
         + UtilMDE.join(exceptionNameList, " + ")
         + ");";
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Checks that an exception of the expected type is thrown by the statement in this object in
-   * the given {@link Execution}.
-   *
-   * @return true if the statement throws the expected exception, false otherwise
-   */
-  @Override
-  public boolean evaluate(Execution execution) {
-    ExecutionOutcome outcomeAtIndex = execution.get(index);
-    if (outcomeAtIndex instanceof NotExecuted) {
-      throw new IllegalArgumentException("Statement not executed");
-    }
-    if (!(outcomeAtIndex instanceof ExceptionalExecution)) {
-      return false;
-    }
-    ExceptionalExecution exec = (ExceptionalExecution) outcomeAtIndex;
-    Throwable t = exec.getException();
-    ClassOrInterfaceType thrownType = ClassOrInterfaceType.forClass(t.getClass());
-    for (Set<ThrowsClause> exceptionSet : expected) {
-      for (ThrowsClause exception : exceptionSet) {
-        if (!thrownType.isSubtypeOf(exception.getExceptionType())) {
-          return false;
-        }
-      }
-    }
-    return true;
   }
 }

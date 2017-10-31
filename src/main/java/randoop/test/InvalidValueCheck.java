@@ -1,7 +1,6 @@
 package randoop.test;
 
 import randoop.sequence.ExecutableSequence;
-import randoop.sequence.Execution;
 
 /**
  * Represents the occurrence of an invalid value for a {@link randoop.condition.BooleanExpression}
@@ -25,10 +24,5 @@ public class InvalidValueCheck implements Check {
   @Override
   public String toCodeStringPostStatement() {
     return "";
-  }
-
-  @Override
-  public boolean evaluate(Execution execution) {
-    return false;
   }
 }

@@ -8,6 +8,7 @@ import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.NotExecuted;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 import randoop.test.Check;
@@ -133,6 +134,7 @@ public abstract class ObjectContract {
       }
       // ***** TODO: determine what the exception is
     } else {
+      assert outcome instanceof NotExecuted;
       throw new BugInRandoopException("Contract " + this + " failed to execute during evaluation");
     }
 

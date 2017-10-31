@@ -52,7 +52,7 @@ public abstract class Type implements Comparable<Type> {
 
   /**
    * Returns a {@code Type} object for the given type name in <a
-   * href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--">{@code
+   * href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--">{@code
    * Class.getName}</a> format. Uses reflection to find the corresponding type.
    *
    * <p>Note that {@link Type#getName()} does not return the type name in this format. To get the

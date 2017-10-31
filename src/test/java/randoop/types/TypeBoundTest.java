@@ -156,7 +156,7 @@ public class TypeBoundTest {
         "String satisfies " + variable.getName() + " bound",
         checkBound(variable, JavaTypes.STRING_TYPE));
 
-    //m7 has two parameters, so not sure what we get
+    // m7 has two parameters, so not sure what we get
     /*
     variable = argTypes.get("m7");
     assertFalse("SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));

@@ -50,9 +50,9 @@ public abstract class ReflectionCode {
    * <ol>
    *   <li>If System.getSecurityManager() returns a RandoopSecurityManager, this method sets the
    *       security manager's status to ON.
-   *   <li>This method calls {@link #runReflectionCodeRaw()} to perform the actual work. It sets the
-   *       {@code .retVal} or {@code exceptionThrown} field, or throws an exception if there is a
-   *       bug in Randoop.
+   *   <li>This method calls {@link #runReflectionCodeRaw()} to perform the actual work. {@link
+   *       #runReflectionCodeRaw()} sets the {@code .retVal} or {@code exceptionThrown} field, or
+   *       throws an exception if there is a bug in Randoop.
    *   <li>This method sets the security manager's status to its status before this call.
    * </ol>
    *
@@ -112,7 +112,11 @@ public abstract class ReflectionCode {
     return exceptionThrown;
   }
 
-  /** A suffix to be called by toString(). */
+  /**
+   * A suffix to be called by toString().
+   *
+   * @return the status of the command
+   */
   protected String status() {
     if (!hasStarted() && !hasRun()) {
       return " not run yet";

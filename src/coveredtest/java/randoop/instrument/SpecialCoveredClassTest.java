@@ -22,7 +22,6 @@ import randoop.generation.TestUtils;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
-import randoop.main.RandoopInputException;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -50,8 +49,7 @@ public class SpecialCoveredClassTest {
 
   @Test
   public void abstractClassTest()
-      throws ClassNotFoundException, NoSuchMethodException, RandoopInputException,
-          SignatureParseException {
+      throws ClassNotFoundException, NoSuchMethodException, SignatureParseException {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("instrument/testcase/special-allclasses.txt");
     GenInputsAbstract.require_covered_classes =
@@ -134,7 +132,7 @@ public class SpecialCoveredClassTest {
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);
     // for debugging:  operationModel.dumpModel();
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     //    testGenerator.getOperationHistory().outputTable();
 
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();

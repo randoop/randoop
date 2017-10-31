@@ -144,8 +144,9 @@ public final class RegressionCaptureGenerator implements TestCheckGenerator {
               Variable var0 = sequence.sequence.getInputs(i).get(0);
               if (var0.getType().hasRuntimeClass(java.util.Date.class)) {
                 Statement sk = sequence.sequence.getCreatingStatement(var0);
-                if ((sk.isConstructorCall()) && (sequence.sequence.getInputs(i).size() == 1))
+                if ((sk.isConstructorCall()) && (sequence.sequence.getInputs(i).size() == 1)) {
                   continue;
+                }
                 // System.out.printf ("var type %s comes from date %s / %s%n",
                 // s.sequence.getVariable(i).getType(),
                 // s.sequence.getOperation(i), sk);
