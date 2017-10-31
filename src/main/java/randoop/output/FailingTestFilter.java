@@ -21,6 +21,7 @@ import randoop.compile.FileCompiler;
 import randoop.execution.TestEnvironment;
 import randoop.main.GenTests;
 import randoop.main.RandoopUsageError;
+import randoop.util.FileUtilities;
 
 /**
  * A {@link CodeWriter} that outputs JUnit tests with assertions that fail commented out. Intended
@@ -99,6 +100,7 @@ public class FailingTestFilter implements CodeWriter {
         classSource = commentFailingAssertions(packageName, classname, classSource, status);
       }
       pass++;
+      FileUtilities.deleteDirectory(workingDirectory.toFile());
     }
     return javaFileWriter.writeClassCode(packageName, classname, classSource);
   }
@@ -285,7 +287,6 @@ public class FailingTestFilter implements CodeWriter {
   private Path createWorkingDirectory(String classname, int pass) {
     try {
       Path workingDirectory = Files.createTempDirectory("check" + classname + pass);
-      workingDirectory.toFile().deleteOnExit();
       return workingDirectory;
     } catch (IOException e) {
       // not BugInRandoopException
