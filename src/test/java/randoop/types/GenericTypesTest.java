@@ -190,15 +190,22 @@ public class GenericTypesTest {
     ParameterizedType iterableType =
         GenericClassType.forClass(Iterable.class).instantiate(JavaTypes.STRING_TYPE);
     ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(JavaTypes.STRING_TYPE);
-    assertTrue("collection is subtype of iterable", collectionType.isSubtypeOf(iterableType));
-    assertFalse(
-        "iterable is supertype of collection, not subtype",
-        iterableType.isSubtypeOf(collectionType));
     ParameterizedType vectorType = JDKTypes.VECTOR_TYPE.instantiate(JavaTypes.STRING_TYPE);
-    assertTrue("vector is subtype of iterable", vectorType.isSubtypeOf(iterableType));
-    assertTrue("vector is subtype of collection", vectorType.isSubtypeOf(collectionType));
-    assertFalse("supertype is not a subtype", iterableType.isSubtypeOf(vectorType));
-    assertFalse("supertype is not a subtype", collectionType.isSubtypeOf(vectorType));
+
+    assertStrictSubtype(collectionType, iterableType);
+    assertStrictSubtype(vectorType, iterableType);
+    assertStrictSubtype(vectorType, collectionType);
+    assertStrictSubtype(JavaTypes.STRING_TYPE, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(JavaTypes.STRING_TYPE, JavaTypes.SERIALIZABLE_TYPE);
+    assertStrictSubtype(JavaTypes.SERIALIZABLE_TYPE, JavaTypes.OBJECT_TYPE);
+
+    assertTrue(JavaTypes.OBJECT_TYPE.isSubtypeOf(JavaTypes.OBJECT_TYPE));
+  }
+
+  /** Assert that {@code subtype} is a strict subtype of {@code supertype}. */
+  private static void assertStrictSubtype(Type subtype, Type supertype) {
+    assertTrue(subtype.isSubtypeOf(supertype));
+    assertFalse(supertype.isSubtypeOf(subtype));
   }
 
   @Test
