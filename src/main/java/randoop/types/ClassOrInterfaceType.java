@@ -418,29 +418,37 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return false;
     }
 
-    // if otherType is an interface, first check interfaces
+    // Check all the supertypes of this.
+
+    // First, check interfaces (only if otherType is an interface)
     if (otherType.isInterface()) {
-      for (ClassOrInterfaceType type : this.getInterfaces()) { // directly implemented interfaces
-        if (type.equals(otherType)) {
+      for (ClassOrInterfaceType iface : this.getInterfaces()) { // directly implemented interfaces
+        if (iface.equals(otherType)) {
           return true;
         }
-        if (type.isSubtypeOf(otherType)) {
+        if (iface.isSubtypeOf(otherType)) {
           return true;
         }
       }
+      // a superclass might implement otherType
     }
-    // otherwise, if otherType is an interface, may be interface of a superclass
 
-    // Stop if this type is an interface, because does not have superclass
+    // Second, check superclasses
+
+    // If this type is an interface, it has no superclasses, so there is nothing to do
     if (this.isInterface()) {
       return false;
     }
 
     ClassOrInterfaceType superClassType = this.getSuperclass();
+    if (superClassType.isObject()) {
+      // Search has failed; stop.
+      return false;
+    }
 
     // If superclass is Object, then search has failed. So, stop.
     // Otherwise, check whether superclass is a subtype.
-    return !superClassType.isObject() && superClassType.isSubtypeOf(otherType);
+    return superClassType.isSubtypeOf(otherType);
   }
 
   /**
