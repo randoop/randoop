@@ -70,6 +70,9 @@ The option --include-if-class-exercised has been renamed to
 
 The option --noprogressdisplay has been renamed to --progressdisplay=false.
 
+Many improvements to the manual, including improved instructions about
+debugging when Randoop does not produce good test suites.
+
 
 Version 3.1.5, released April 28, 2017
 
