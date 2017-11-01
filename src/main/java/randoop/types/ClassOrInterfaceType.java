@@ -299,10 +299,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return superclass of this type, or the {@code Object} type if this type has no superclass
    */
-  public ClassOrInterfaceType getSuperclass() {
-    // Default implementation, overridden in subclasses
-    return JavaTypes.OBJECT_TYPE;
-  }
+  public abstract ClassOrInterfaceType getSuperclass();
 
   /**
    * Return the set of all of the supertypes of this type.
@@ -414,7 +411,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
     // otherType.
 
-    // This also handles two cases: this==otherType, or otherType==Object
+    if (otherType.isObject()) {
+      return true;
+    }
+
+    // This handles two cases: this==otherType, or otherType==Object
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
@@ -423,11 +424,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return false;
     }
 
-    // Check all the supertypes of this.
+    // Check all the supertypes of this:  that is, interfaces and superclasses.
 
     // First, check interfaces (only if otherType is an interface)
     if (otherType.isInterface()) {
-      for (ClassOrInterfaceType iface : this.getInterfaces()) { // directly implemented interfaces
+      for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
         if (iface.equals(otherType)) {
           return true;
         }
@@ -446,13 +447,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     ClassOrInterfaceType superClassType = this.getSuperclass();
-    if (superClassType.isObject()) {
+
+    if (superClassType == null || superClassType.isObject()) {
       // Search has failed; stop.
       return false;
     }
 
-    // If superclass is Object, then search has failed. So, stop.
-    // Otherwise, check whether superclass is a subtype.
+    // Check whether superclass is a subtype of otherType.
     return superClassType.isSubtypeOf(otherType);
   }
 

@@ -195,37 +195,6 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return Modifier.isStatic(runtimeType.getModifiers() & Modifier.classModifiers());
   }
 
-  @Override
-  public boolean isSubtypeOf(Type otherType) {
-    if (super.isSubtypeOf(otherType)) {
-      return true;
-    }
-
-    // This is incorrect.  For example, this type could be declared as
-    //  "class MyClass extends List<String>".
-    if (otherType.isRawtype()) {
-      if (otherType.isInterface()) {
-        for (Class<?> c : runtimeType.getInterfaces()) {
-          if (otherType.runtimeClassIs(c)) {
-            return true;
-          }
-          NonParameterizedType superType = new NonParameterizedType(c);
-          if (superType.isSubtypeOf(otherType)) {
-            return true;
-          }
-        }
-        return false;
-      }
-
-      ClassOrInterfaceType superType = this.getSuperclass();
-      if (superType != null && !superType.equals(JavaTypes.OBJECT_TYPE)) {
-        return otherType.equals(superType) || superType.isSubtypeOf(otherType);
-      }
-    }
-
-    return false;
-  }
-
   /**
    * If this type is a boxed primitive, unboxes this type and returns the primitive type.
    *

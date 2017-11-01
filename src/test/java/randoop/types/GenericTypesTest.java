@@ -8,7 +8,6 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.StringJoiner;
 import org.junit.Test;
 import randoop.types.test.ComplexSubclass;
 import randoop.types.test.Superclass;
@@ -186,9 +185,30 @@ public class GenericTypesTest {
     }
   }
 
+  // Type hierarchy:
+  // IB2  IA   Object
+  //   \    \ /
+  //   IB    A
+  //     \ /
+  //      B
+  //      |
+  //      C
+
+  static interface IA {}
+
+  static interface IB2 {}
+
+  static interface IB extends IB2 {}
+
+  static class A implements IA {}
+
+  static class B extends A implements IB {}
+
+  static class C extends B {}
+
   @Test
   public void subtypeTransitivityTest() {
-    NonParameterizedType stringJoinerType = new NonParameterizedType(StringJoiner.class);
+    NonParameterizedType timerType = new NonParameterizedType(java.util.Timer.class);
     ParameterizedType iterableType =
         GenericClassType.forClass(Iterable.class).instantiate(JavaTypes.STRING_TYPE);
     ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(JavaTypes.STRING_TYPE);
@@ -200,7 +220,29 @@ public class GenericTypesTest {
     assertStrictSubtype(JavaTypes.STRING_TYPE, JavaTypes.OBJECT_TYPE);
     assertStrictSubtype(JavaTypes.STRING_TYPE, JavaTypes.SERIALIZABLE_TYPE);
     assertStrictSubtype(JavaTypes.SERIALIZABLE_TYPE, JavaTypes.OBJECT_TYPE);
-    assertStrictSubtype(stringJoinerType, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(timerType, JavaTypes.OBJECT_TYPE);
+
+    NonParameterizedType typeIA = new NonParameterizedType(IA.class);
+    NonParameterizedType typeIB = new NonParameterizedType(IB.class);
+    NonParameterizedType typeIB2 = new NonParameterizedType(IB2.class);
+    NonParameterizedType typeA = new NonParameterizedType(A.class);
+    NonParameterizedType typeB = new NonParameterizedType(B.class);
+    NonParameterizedType typeC = new NonParameterizedType(C.class);
+    assertStrictSubtype(typeA, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(typeA, typeIA);
+    assertStrictSubtype(typeIB, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(typeIB, typeIB2);
+    assertStrictSubtype(typeB, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(typeB, typeIA);
+    assertStrictSubtype(typeB, typeA);
+    assertStrictSubtype(typeB, typeIB2);
+    assertStrictSubtype(typeB, typeIB);
+    assertStrictSubtype(typeC, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(typeC, typeIA);
+    assertStrictSubtype(typeC, typeA);
+    assertStrictSubtype(typeC, typeIB2);
+    assertStrictSubtype(typeC, typeIB);
+    assertStrictSubtype(typeC, typeB);
 
     assertTrue(JavaTypes.OBJECT_TYPE.isSubtypeOf(JavaTypes.OBJECT_TYPE));
   }
