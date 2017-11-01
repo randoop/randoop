@@ -189,7 +189,7 @@ public class ArrayType extends ReferenceType {
     if (otherType.isArray() && this.componentType.isParameterized()) {
       Type otherElementType = ((ArrayType) otherType).componentType;
       return otherElementType.isRawtype()
-          && otherElementType.hasRuntimeClass(this.componentType.getRuntimeClass());
+          && otherElementType.runtimeClassIs(this.componentType.getRuntimeClass());
     }
 
     return false;

@@ -175,7 +175,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   public boolean isInstantiationOf(ReferenceType otherType) {
     boolean instantiationOf = super.isInstantiationOf(otherType);
     if ((otherType instanceof NonParameterizedType)) {
-      return instantiationOf && this.hasRuntimeClass(otherType.getRuntimeClass());
+      return instantiationOf && this.runtimeClassIs(otherType.getRuntimeClass());
     }
     return instantiationOf;
   }
@@ -193,35 +193,6 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   @Override
   public boolean isStatic() {
     return Modifier.isStatic(runtimeType.getModifiers() & Modifier.classModifiers());
-  }
-
-  @Override
-  public boolean isSubtypeOf(Type otherType) {
-    if (super.isSubtypeOf(otherType)) {
-      return true;
-    }
-
-    if (otherType.isRawtype()) {
-      if (otherType.isInterface()) {
-        for (Class<?> c : runtimeType.getInterfaces()) {
-          if (otherType.hasRuntimeClass(c)) {
-            return true;
-          }
-          NonParameterizedType superType = new NonParameterizedType(c);
-          if (superType.isSubtypeOf(otherType)) {
-            return true;
-          }
-        }
-        return false;
-      }
-
-      ClassOrInterfaceType superType = this.getSuperclass();
-      if (superType != null && !superType.equals(JavaTypes.OBJECT_TYPE)) {
-        return otherType.equals(superType) || superType.isSubtypeOf(otherType);
-      }
-    }
-
-    return false;
   }
 
   /**

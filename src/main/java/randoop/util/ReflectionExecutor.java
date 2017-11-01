@@ -147,7 +147,7 @@ public final class ReflectionExecutor {
     } catch (java.lang.InterruptedException e) {
       throw new IllegalStateException(
           "A RunnerThread thread shouldn't be interrupted by anyone! "
-              + "(this may be a bug in Randoop; please report it.)");
+              + "(This may be a bug in Randoop; please report it at https://github.com/randoop/randoop/issues .)");
     }
   }
 

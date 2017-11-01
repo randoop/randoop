@@ -617,7 +617,7 @@ task clonePlumeLib {
         workingDir "$buildDir/utils/plume-lib"
         // Ignore exit value so this works when not connected to the Internet.
         ignoreExitValue true
-        commandLine 'git', 'pull'
+        commandLine 'git', 'pull', '-q'
       }
     }
   }
