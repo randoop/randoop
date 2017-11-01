@@ -203,7 +203,7 @@ public class OperationModel {
               break;
             default:
               throw new Error(
-                  "Unexpected error in GenTests -- please report at https://github.com/randoop/randoop/issues");
+                  "Unexpected error in GenTests.  Please report at https://github.com/randoop/randoop/issues .");
           }
         }
       }
@@ -508,8 +508,7 @@ public class OperationModel {
     try {
       objectConstructor = Object.class.getConstructor();
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException(
-          "Something is wrong. Please report: unable to load Object()", e);
+      throw new BugInRandoopException("unable to load java.lang.Object() constructor", e);
     }
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());
