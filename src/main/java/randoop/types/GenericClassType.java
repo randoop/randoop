@@ -283,7 +283,7 @@ public class GenericClassType extends ParameterizedType {
     }
 
     return super.isSubtypeOf(otherType)
-        || (otherType.isRawtype() && otherType.hasRuntimeClass(this.getRuntimeClass()));
+        || (otherType.isRawtype() && otherType.runtimeClassIs(this.getRuntimeClass()));
   }
 
   /**

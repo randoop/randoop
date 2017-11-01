@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 import org.junit.Test;
 import randoop.types.test.ComplexSubclass;
 import randoop.types.test.Superclass;
@@ -187,6 +188,7 @@ public class GenericTypesTest {
 
   @Test
   public void subtypeTransitivityTest() {
+    NonParameterizedType stringJoinerType = new NonParameterizedType(StringJoiner.class);
     ParameterizedType iterableType =
         GenericClassType.forClass(Iterable.class).instantiate(JavaTypes.STRING_TYPE);
     ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(JavaTypes.STRING_TYPE);
@@ -198,6 +200,7 @@ public class GenericTypesTest {
     assertStrictSubtype(JavaTypes.STRING_TYPE, JavaTypes.OBJECT_TYPE);
     assertStrictSubtype(JavaTypes.STRING_TYPE, JavaTypes.SERIALIZABLE_TYPE);
     assertStrictSubtype(JavaTypes.SERIALIZABLE_TYPE, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(stringJoinerType, JavaTypes.OBJECT_TYPE);
 
     assertTrue(JavaTypes.OBJECT_TYPE.isSubtypeOf(JavaTypes.OBJECT_TYPE));
   }

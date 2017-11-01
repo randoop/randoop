@@ -410,6 +410,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {
+
+    // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
+    // otherType.
+
+    // This also handles two cases: this==otherType, or otherType==Object
     if (super.isSubtypeOf(otherType)) {
       return true;
     }

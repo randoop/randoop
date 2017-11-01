@@ -272,7 +272,7 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     // unchecked conversion
-    return otherType.isRawtype() && otherType.hasRuntimeClass(this.getRuntimeClass());
+    return otherType.isRawtype() && otherType.runtimeClassIs(this.getRuntimeClass());
   }
 
   @Override
@@ -401,7 +401,7 @@ public class InstantiatedType extends ParameterizedType {
     if (otherType.isParameterized()) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
-      if (otherType.hasRuntimeClass(this.getRuntimeClass())) {
+      if (otherType.runtimeClassIs(this.getRuntimeClass())) {
         ParameterizedType otherParameterizedType = (ParameterizedType) otherType;
         List<TypeArgument> otherTypeArguments = otherParameterizedType.getTypeArguments();
         List<TypeArgument> thisTypeArguments = this.getTypeArguments();
