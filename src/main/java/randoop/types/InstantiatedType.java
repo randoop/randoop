@@ -126,11 +126,11 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   /**
-   * Constructs the list of interface supertypes for this parameterized type.
+   * Constructs the list of interfaces for this parameterized type.
    *
    * <p>See the implementation note for {@link #getSuperclass()}.
    *
-   * @return list of interface supertypes for this parameterized type
+   * @return list of directly-implemented interfaces for this parameterized type
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {

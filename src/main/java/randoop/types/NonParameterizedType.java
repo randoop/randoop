@@ -201,6 +201,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return true;
     }
 
+    // This is incorrect.  For example, this type could be declared as
+    //  "class MyClass extends List<String>".
     if (otherType.isRawtype()) {
       if (otherType.isInterface()) {
         for (Class<?> c : runtimeType.getInterfaces()) {

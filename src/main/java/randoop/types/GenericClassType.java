@@ -88,8 +88,8 @@ public class GenericClassType extends ParameterizedType {
   /**
    * {@inheritDoc}
    *
-   * <p>Note that this method uses the {@code Class.getInterfaces()} and does not preserve the
-   * relationship between the type parameters of a class and it's interfaces, and should not be used
+   * <p>Note that this method uses {@code Class.getInterfaces()} and does not preserve the
+   * relationship between the type parameters of a class and its interfaces, and should not be used
    * when finding supertypes of types represented as {@link InstantiatedType} objects.
    */
   @Override
@@ -102,8 +102,8 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Return the interface types for this generic class type instantiated by the given type {@link
-   * Substitution}.
+   * Return the directly-implemented interface types for this generic class type, instantiated by
+   * the given type {@link Substitution}.
    *
    * <p><i>This method is not public.</i> It is used when finding the interfaces of an {@link
    * InstantiatedType} using {@link InstantiatedType#getInterfaces()}, where it is important that
@@ -112,7 +112,7 @@ public class GenericClassType extends ParameterizedType {
    * its interfaces, which allows the use of the same substitution for both types.
    *
    * @param substitution the type substitution
-   * @return the list of instantiated interface types of this type
+   * @return the list of instantiated directly-implemented interface types of this type
    */
   List<ClassOrInterfaceType> getInterfaces(Substitution<ReferenceType> substitution) {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();

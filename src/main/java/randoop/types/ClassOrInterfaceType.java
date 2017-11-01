@@ -18,7 +18,8 @@ import java.util.Set;
  *     InterfaceType
  * </pre>
  *
- * Since InterfaceType is syntactically the same as ClassType, the subclasses of this type
+ * InterfaceType is syntactically the same as ClassType. Therefore, {@code ClassType} and {@code
+ * InterfaceType} do not exist as subclasses of this class, Rather, the subclasses of this type
  * distinguish between types with parameters ({@link ParameterizedType}), and types without ({@link
  * NonParameterizedType}).
  */
@@ -182,11 +183,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns the interface types directly implemented or extended by this class or interface type.
-   * Preserves the order in the reflection method {@link Class#getGenericInterfaces()}. If no
-   * interfaces are implemented/extended, then returns the empty list.
+   * Returns the interface types directly implemented by this class or interface type. Preserves the
+   * order in the reflection method {@link Class#getGenericInterfaces()}. If no interfaces are
+   * implemented, then returns the empty list.
    *
-   * @return the list of interfaces implemented or extended by this type
+   * @return the list of interfaces directly implemented by this type
    */
   public abstract List<ClassOrInterfaceType> getInterfaces();
 
@@ -226,8 +227,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
     if (goalType.isInterface()) {
-      List<ClassOrInterfaceType> interfaces = this.getInterfaces();
-      for (ClassOrInterfaceType interfaceType : interfaces) {
+      for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
           if (interfaceType.isParameterized()) {
             InstantiatedType type = (InstantiatedType) interfaceType;
@@ -319,12 +319,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       supertypes.add(superclass);
       supertypes.addAll(superclass.getSuperTypes());
     }
-    List<ClassOrInterfaceType> interfaces = this.getInterfaces();
-    for (ClassOrInterfaceType interfaceType : interfaces) {
-      if (interfaceType != null) {
-        supertypes.add(interfaceType);
-        supertypes.addAll(interfaceType.getSuperTypes());
-      }
+    for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
+      supertypes.add(interfaceType);
+      supertypes.addAll(interfaceType.getSuperTypes());
     }
     return supertypes;
   }
@@ -423,9 +420,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     // if otherType is an interface, first check interfaces
     if (otherType.isInterface()) {
-      List<ClassOrInterfaceType> interfaces = this.getInterfaces();
-      for (ClassOrInterfaceType type : interfaces) {
-
+      for (ClassOrInterfaceType type : this.getInterfaces()) { // directly implemented interfaces
         if (type.equals(otherType)) {
           return true;
         }
@@ -444,7 +439,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     ClassOrInterfaceType superClassType = this.getSuperclass();
 
     // If superclass is Object, then search has failed. So, stop.
-    // Otherwise, check whether superclass is a subtype
+    // Otherwise, check whether superclass is a subtype.
     return !superClassType.isObject() && superClassType.isSubtypeOf(otherType);
   }
 
