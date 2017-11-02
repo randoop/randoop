@@ -42,7 +42,7 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
     // only need to know an error exists:
     options.add("-Xmaxerrs");
     options.add("1");
-    //no class generation:
+    // no class generation:
     options.add("-implicit:none");
     // no annotation processing: (note that -proc:only does not produce correct results)
     options.add("-proc:none");

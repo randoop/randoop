@@ -731,7 +731,14 @@ public final class Sequence implements WeightedElement {
     }
   }
 
-  /** Choose one of the statements that produces a values of type {@code type}. */
+  /**
+   * Choose one of the statements that produces a values of type {@code type}.
+   *
+   * @param type return a sequence of this type
+   * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
+   *     call receiver
+   * @return a variable of the given type
+   */
   public Variable randomVariableForType(Type type, boolean onlyReceivers) {
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null.");
@@ -762,8 +769,9 @@ public final class Sequence implements WeightedElement {
   }
 
   void checkIndex(int i) {
-    if (i < 0 || i > size() - 1)
+    if (i < 0 || i > size() - 1) {
       throw new IllegalArgumentException("index " + i + " out of range [0, " + (size() - 1) + "]");
+    }
   }
 
   // Argument checker for extend method.

@@ -1,78 +1,89 @@
 package randoop.util;
 
-import java.lang.reflect.InvocationTargetException;
 import randoop.util.RandoopSecurityManager.Status;
 
 /**
  * Wraps a method or constructor together with its arguments. Can be run only once. {@link
- * #hasRunAlready()} indicates whether it has been run.
+ * #hasRun()} indicates whether it has been run.
  *
  * <p>Implemented by parts of Randoop that want to execute reflection code via ReflectionExecutor.
  */
 public abstract class ReflectionCode {
 
-  /** has this been executed already */
-  protected boolean runAlready;
+  /** Has this started execution? */
+  private boolean hasStarted;
+
+  /** Has this been executed already? */
+  private boolean hasRun;
 
   // Before runReflectionCodeRaw is executed, both of these fields are null. After
-  // runReflectionCodeRaw is executed, exactly one of these fields is null (unless
-  // runReflectionCodeRaw itself threw an exception, in which case both fields remain null).
+  // runReflectionCodeRaw is executed, if exceptionThrown is null, then retval is the returned value
+  // (which might be null).
   protected Object retval;
   protected Throwable exceptionThrown;
+
+  public final boolean hasStarted() {
+    return hasStarted;
+  }
+
+  public final boolean hasRun() {
+    return hasRun;
+  }
+
+  protected final void setHasStarted() {
+    if (hasRun) {
+      throw new ReflectionCodeException("cannot run this twice");
+    }
+    hasStarted = true;
+  }
+
+  protected final void setHasRun() {
+    if (hasRun) {
+      throw new ReflectionCodeException("cannot run this twice");
+    }
+    hasRun = true;
+  }
 
   /**
    * Runs the reflection code that this object represents.
    *
-   * <p>First, if System.getSecurityManager() returns a RandoopSecurityManager, this method sets the
-   * security manager's status to ON. Before exiting, this method sets the security manager's status
-   * to its status before this call.
+   * <ol>
+   *   <li>If System.getSecurityManager() returns a RandoopSecurityManager, this method sets the
+   *       security manager's status to ON.
+   *   <li>This method calls {@link #runReflectionCodeRaw()} to perform the actual work. {@link
+   *       #runReflectionCodeRaw()} sets the {@code .retVal} or {@code exceptionThrown} field, or
+   *       throws an exception if there is a bug in Randoop.
+   *   <li>This method sets the security manager's status to its status before this call.
+   * </ol>
    *
-   * @throws InvocationTargetException if executed code throws an exception
-   * @throws IllegalAccessException if the executed code involves inaccessible method or constructor
-   * @throws InstantiationException if unable to create a new instance
+   * @throws ReflectionCodeException if execution results in conflicting error and success states;
+   *     this results from a bug in Randoop
    */
-  public final void runReflectionCode()
-      throws InstantiationException, IllegalAccessException, InvocationTargetException,
-          NotCaughtIllegalStateException {
+  public final void runReflectionCode() throws ReflectionCodeException {
 
-    if (hasRunAlready()) {
-      throw new NotCaughtIllegalStateException("cannot run this twice " + this);
+    this.setHasStarted();
+
+    // if there is a RandoopSecurityManager installed, record its status.
+    RandoopSecurityManager randoopsecurity;
+    RandoopSecurityManager.Status oldStatus;
+    {
+      SecurityManager security = System.getSecurityManager();
+      if (security != null && security instanceof RandoopSecurityManager) {
+        randoopsecurity = (RandoopSecurityManager) security;
+        oldStatus = randoopsecurity.status;
+        randoopsecurity.status = Status.ON;
+      } else {
+        randoopsecurity = null;
+        oldStatus = null;
+      }
     }
-    this.setRunAlready();
-
-    // The following few lines attempt to find out if there is a
-    // RandoopSecurityManager installed, and if so, record its status.
-    RandoopSecurityManager randoopsecurity = null;
-    RandoopSecurityManager.Status oldStatus = null;
-
-    SecurityManager security = System.getSecurityManager();
-    if (security != null && security instanceof RandoopSecurityManager) {
-      randoopsecurity = (RandoopSecurityManager) security;
-      oldStatus = randoopsecurity.status;
-      randoopsecurity.status = Status.ON;
-    }
-
-    // At this point, this is the state of the method.
-    assert Util.iff(
-        security != null && security instanceof RandoopSecurityManager,
-        randoopsecurity != null && oldStatus != null);
 
     try {
-
       runReflectionCodeRaw();
-
-      // Not checked if runReflectionCodeRaw throws an exception, but this can't go in a finally
-      // block because exceptions thrown in a finally block have no effect.
-      if (retval != null && exceptionThrown != null) {
-        throw new NotCaughtIllegalStateException("cannot have both retval and exception not null");
-      }
-
+      this.setHasRun();
     } finally {
-
-      // Before exiting, restore the RandoopSecurityManager's status to its
-      // original status, if such a manager was installed.
+      // If a RandoopSecurityManager was installed, restore its status to its original status.
       if (randoopsecurity != null) {
-        assert oldStatus != null;
         randoopsecurity.status = oldStatus;
       }
     }
@@ -80,53 +91,57 @@ public abstract class ReflectionCode {
 
   // TODO: What is an "internal exception"?
   /**
-   * Execute the reflection code. All internal exceptions must be thrown as
-   * NotCaughtIllegalStateException because everything else is caught.
+   * Execute the reflection code. All Randoop implementation errors must be thrown as
+   * ReflectionCodeException because everything else is caught.
    *
-   * @throws InstantiationException if unable to create a new instance
-   * @throws IllegalAccessException if executed code involves inaccessible method
-   * @throws InvocationTargetException if executed code throws an exception
-   * @throws NotCaughtIllegalStateException if execution results in conflicting error and success
-   *     states
+   * @throws ReflectionCodeException if execution results in conflicting error and success states;
+   *     this results from a bug in Randoop
    */
-  protected abstract void runReflectionCodeRaw()
-      throws InstantiationException, IllegalAccessException, InvocationTargetException,
-          NotCaughtIllegalStateException;
-
-  protected final void setRunAlready() {
-    // Called from inside runReflectionCode, so use NotCaughtIllegalStateException.
-    if (runAlready) {
-      throw new NotCaughtIllegalStateException("cannot call this twice");
-    }
-    runAlready = true;
-  }
+  protected abstract void runReflectionCodeRaw() throws ReflectionCodeException;
 
   public Object getReturnValue() {
-    if (!hasRunAlready()) {
+    if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
     }
     return retval;
   }
 
   public Throwable getExceptionThrown() {
-    if (!hasRunAlready()) {
+    if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
     }
     return exceptionThrown;
   }
 
-  public final boolean hasRunAlready() {
-    return runAlready;
+  /**
+   * A suffix to be called by toString().
+   *
+   * @return the status of the command
+   */
+  protected String status() {
+    if (!hasStarted() && !hasRun()) {
+      return " not run yet";
+    } else if (hasStarted() && !hasRun()) {
+      return " failed to run";
+    } else if (!hasStarted() && hasRun()) {
+      return " ILLEGAL STATE";
+    } else if (exceptionThrown == null) {
+      return " returned: " + retval;
+    } else {
+      return " threw: " + exceptionThrown;
+    }
   }
 
-  /*
-   * See comment in runReflectionCode
-   */
-  static final class NotCaughtIllegalStateException extends IllegalStateException {
+  /** Indicates a bug in the ReflectionCode class. */
+  static final class ReflectionCodeException extends IllegalStateException {
     private static final long serialVersionUID = -7508201027241079866L;
 
-    NotCaughtIllegalStateException(String msg) {
+    ReflectionCodeException(String msg) {
       super(msg);
+    }
+
+    ReflectionCodeException(Throwable cause) {
+      super(cause);
     }
   }
 }

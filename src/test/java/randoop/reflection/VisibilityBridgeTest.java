@@ -26,8 +26,8 @@ import randoop.types.TypeTuple;
  */
 public class VisibilityBridgeTest {
 
-  //can't compare method of superclass directly to method of subclass
-  //so need to convert to abstraction to allow list search
+  // can't compare method of superclass directly to method of subclass
+  // so need to convert to abstraction to allow list search
   private static class FormalMethod {
     private Type returnType;
     private String name;
@@ -87,7 +87,7 @@ public class VisibilityBridgeTest {
     Class<?> sub = PackageSubclass.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(sub);
 
-    //should only inherit public non-synthetic methods of package private superclass
+    // should only inherit public non-synthetic methods of package private superclass
     List<FormalMethod> include = new ArrayList<>();
     try {
       Class<?> sup = Class.forName("randoop.reflection.visibilitytest.PackagePrivateBase");

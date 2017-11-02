@@ -38,12 +38,12 @@ public class CallReplacementTest {
 
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-    //Create and set up the content pane.
+    // Create and set up the content pane.
     DialogDemo newContentPane = new DialogDemo(frame);
-    newContentPane.setOpaque(true); //content panes must be opaque
+    newContentPane.setOpaque(true); // content panes must be opaque
     frame.setContentPane(newContentPane);
 
-    //Display the window.
+    // Display the window.
     frame.pack();
 
     frame.setVisible(true);

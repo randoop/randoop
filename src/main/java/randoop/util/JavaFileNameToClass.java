@@ -1,5 +1,7 @@
 package randoop.util;
 
+import java.io.File;
+
 /**
  * Takes as arguments a list of files "a/b/C.java ... d/e/f/G.java" and prints, on standard out,
  * "a.b.C ... d.e.f.G"
@@ -16,7 +18,7 @@ public class JavaFileNameToClass {
       String arg = args[i];
       assert arg.endsWith(".java");
       arg = arg.substring(0, arg.length() - 5);
-      String[] splits = arg.split("/");
+      String[] splits = arg.split(File.separator);
       for (int j = 0; j < splits.length; j++) {
         if (j > 0) {
           System.out.print(".");

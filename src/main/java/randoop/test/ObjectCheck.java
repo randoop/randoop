@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
-import randoop.sequence.ExecutableSequence;
-import randoop.sequence.Execution;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 
@@ -93,18 +91,5 @@ public class ObjectCheck implements Check {
   @Override
   public String toCodeStringPostStatement() {
     return ObjectContractUtils.localizeContractCode(contract.toCodeString(), vars);
-  }
-
-  @Override
-  public boolean evaluate(Execution execution) {
-    Object[] obs = ExecutableSequence.getRuntimeValuesForVars(Arrays.asList(vars), execution);
-    try {
-      return contract.evaluate(obs);
-    } catch (ThreadDeath t) {
-      throw t;
-    } catch (Throwable t) {
-      // ***** TODO: determine what the exception is
-      return false;
-    }
   }
 }

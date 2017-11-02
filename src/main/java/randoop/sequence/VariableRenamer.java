@@ -31,13 +31,13 @@ class VariableRenamer {
    * Heuristically transforms variables to better names based on its type name. Here are some
    * examples:
    *
-   * <pre>
-   *   int var0 = 1 becomes  int int0 = 1
-   *   ClassName var0 = new ClassName() becomes ClassName className = new ClassName()
-   *   Class var0 = null becomes Class cls = null
-   *   Queue<Set<List<Comparable<String>>>> var0 = null becomes Queue<Set<List<Comparable<String>>>> listSetQueue = null
-   *   ArrayList<String> var0 = null becomes ArrayList<String> strList = null
-   * </pre>
+   * <pre>{@code
+   * int var0 = 1 becomes  int int0 = 1
+   * ClassName var0 = new ClassName() becomes ClassName className = new ClassName()
+   * Class var0 = null becomes Class cls = null
+   * Queue<Set<List<Comparable<String>>>> var0 = null becomes Queue<Set<List<Comparable<String>>>> listSetQueue = null
+   * ArrayList<String> var0 = null becomes ArrayList<String> strList = null
+   * }</pre>
    *
    * @param type the type to use as base of variable name
    * @return a variable name based on its type, with the first character lowercase and the final

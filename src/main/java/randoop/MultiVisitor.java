@@ -23,7 +23,12 @@ public class MultiVisitor implements ExecutionVisitor {
 
   public MultiVisitor() {}
 
-  /** Returns a MultiVisitor if needed, otherwise a simpler visitor. */
+  /**
+   * Returns a MultiVisitor if needed, otherwise a simpler visitor.
+   *
+   * @param visitors the visitors to compose
+   * @return a visitor that has the effect of all the visitors in the argument
+   */
   public static ExecutionVisitor createMultiVisitor(List<ExecutionVisitor> visitors) {
     switch (visitors.size()) {
       case 0:

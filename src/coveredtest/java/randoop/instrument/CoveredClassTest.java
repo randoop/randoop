@@ -24,7 +24,6 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
-import randoop.main.RandoopInputException;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
@@ -73,14 +72,9 @@ public class CoveredClassTest {
     // setup classes
 
     ForwardGenerator testGenerator;
-    try {
-      testGenerator = getGenerator();
-    } catch (RandoopInputException e) {
-      fail("Input error " + e);
-      throw new Error("dead code");
-    }
+    testGenerator = getGenerator();
 
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
@@ -114,20 +108,15 @@ public class CoveredClassTest {
   public void testNameFilter() {
     System.out.println("name filter");
     GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
-    require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); //null;
+    require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); // null;
     GenInputsAbstract.require_covered_classes =
-        null; //"tests/instrument/testcase/coveredclasses.txt";
+        null; // "tests/instrument/testcase/coveredclasses.txt";
     // setup classes
 
     ForwardGenerator testGenerator;
-    try {
-      testGenerator = getGenerator();
-    } catch (RandoopInputException e) {
-      fail("Input error: " + e);
-      throw new Error("dead code");
-    }
+    testGenerator = getGenerator();
 
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
@@ -166,14 +155,9 @@ public class CoveredClassTest {
     // setup classes
 
     ForwardGenerator testGenerator;
-    try {
-      testGenerator = getGenerator();
-    } catch (RandoopInputException e) {
-      fail("Input error: " + e);
-      throw new Error("dead code");
-    }
+    testGenerator = getGenerator();
 
-    testGenerator.explore();
+    testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
 
@@ -203,7 +187,7 @@ public class CoveredClassTest {
     }
   }
 
-  private ForwardGenerator getGenerator() throws RandoopInputException {
+  private ForwardGenerator getGenerator() {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(

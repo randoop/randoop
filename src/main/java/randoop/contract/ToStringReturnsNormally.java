@@ -30,7 +30,7 @@ public final class ToStringReturnsNormally extends ObjectContract {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;
-    //noinspection ResultOfMethodCallIgnored
+    // noinspection ResultOfMethodCallIgnored
     o.toString();
     return true;
   }

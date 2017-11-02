@@ -135,7 +135,7 @@ public class EnumConstantTest {
 
   @Test
   public void testInheritedMethods() {
-    //skipping reflection
+    // skipping reflection
     ClassOrInterfaceType enumType = new NonParameterizedType(SimpleEnumForTests.class);
     TypedOperation ec1 =
         new TypedClassOperation(
@@ -147,7 +147,7 @@ public class EnumConstantTest {
         new TypedClassOperation(
             new EnumConstant(SimpleEnumForTests.TWO), enumType, new TypeTuple(), enumType);
 
-    //equals and hashcode
+    // equals and hashcode
     assertEquals("Object built from same constant should be equal", ec1, ec1_2);
     assertFalse("Objects of different constants should not be equal", ec1.equals(ec2));
     assertEquals(
@@ -155,14 +155,14 @@ public class EnumConstantTest {
         ec1.hashCode(),
         ec1_2.hashCode());
 
-    //types
+    // types
     assertTrue("Should be no input types", ec1.getInputTypes().isEmpty());
     assertEquals(
         "Output type should match enum type of constant",
         new NonParameterizedType(SimpleEnumForTests.ONE.getDeclaringClass()),
         ec1.getOutputType());
 
-    //Execution
+    // Execution
     NormalExecution exec = new NormalExecution(SimpleEnumForTests.ONE, 0);
     NormalExecution actual = (NormalExecution) ec1.execute(new Object[0], null);
     assertTrue(
@@ -170,8 +170,8 @@ public class EnumConstantTest {
         exec.getRuntimeValue().equals(actual.getRuntimeValue())
             && exec.getExecutionTime() == actual.getExecutionTime());
 
-    //code generation
-    //need a sequence where variable lives
+    // code generation
+    // need a sequence where variable lives
     String expected =
         "randoop.operation.SimpleEnumForTests simpleEnumForTests0 = randoop.operation.SimpleEnumForTests.TWO;";
     Statement st = new Statement(ec2);

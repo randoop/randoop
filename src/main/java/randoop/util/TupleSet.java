@@ -29,7 +29,11 @@ public class TupleSet<E> {
     this.tupleLength = tupleLength;
   }
 
-  /** Returns the tuples. */
+  /**
+   * Returns the tuples.
+   *
+   * @return the tuples
+   */
   public List<List<E>> tuples() {
     return tuples;
   }

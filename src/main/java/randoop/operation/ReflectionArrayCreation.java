@@ -12,7 +12,7 @@ import randoop.types.TypeTuple;
 
 /**
  * Represents an array creation using reflection, and corresponds to the code {@code
- * (List<String>[])(Array.newInstance(componentType, length));}
+ * (List<String>[])(Array.newInstance(componentType, length)); }
  */
 public class ReflectionArrayCreation extends CallableOperation {
   private final Type elementType;
