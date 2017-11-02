@@ -48,7 +48,6 @@ import java.util.Map;
 import java.util.Set;
 import randoop.BugInRandoopException;
 import randoop.Globals;
-import randoop.main.GenInputsAbstract;
 import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
@@ -296,9 +295,7 @@ public class JUnitCreator {
       System.out.println(
           "Parse error while creating test method " + className + "." + methodName + " for block ");
       System.out.println(sequenceBlockString);
-      if (GenInputsAbstract.debug_checks) {
-        throw new BugInRandoopException("Parse error while creating test method", e);
-      }
+      throw new BugInRandoopException("Parse error while creating test method", e);
     } catch (TokenMgrError e) {
       System.out.println(
           "Lexical error while creating test method " + className + "." + methodName);
