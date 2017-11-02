@@ -25,6 +25,8 @@ import java.util.Set;
  */
 public abstract class ClassOrInterfaceType extends ReferenceType {
 
+  private static boolean debug = false;
+
   /** The enclosing type: non-null only if this is a member class. */
   private ClassOrInterfaceType enclosingType = null;
 
@@ -407,6 +409,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {
+    if (debug) {
+      System.out.printf("isSubtypeOf(%s, %s)%n", this, otherType);
+    }
 
     // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
     // otherType.
@@ -429,6 +434,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     // First, check interfaces (only if otherType is an interface)
     if (otherType.isInterface()) {
       for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
+        if (debug) {
+          System.out.printf("  iface: %s%n", iface);
+        }
+
         if (iface.equals(otherType)) {
           return true;
         }
@@ -447,6 +456,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     ClassOrInterfaceType superClassType = this.getSuperclass();
+    if (debug) {
+      System.out.printf("  superClassType: %s%n", superClassType);
+    }
 
     if (superClassType == null || superClassType.isObject()) {
       // Search has failed; stop.

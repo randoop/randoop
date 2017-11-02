@@ -27,7 +27,7 @@ plugins {
    * https://github.com/tbroyer/gradle-errorprone-plugin
    * Elsewhere this file excludes src/testinput from directories examined by Error Prone.
    */
-  id "net.ltgt.errorprone-base" version "0.0.11"
+  id "net.ltgt.errorprone-base" version "0.0.13"
 }
 
 /* Common build configuration for Randoop and agents */
