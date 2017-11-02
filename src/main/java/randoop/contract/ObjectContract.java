@@ -101,7 +101,8 @@ public abstract class ObjectContract {
    *
    * @param eseq the executable sequence that is the source of values for checking contracts
    * @param values the input values
-   * @return a {@link ObjectCheck} if the contract fails, null otherwise
+   * @return a {@link ObjectCheck} if the contract fails, an {@link InvalidExceptionCheck} if the
+   *     contract throws an exception indicating that the sequence is invalid, null otherwise
    */
   public final Check checkContract(ExecutableSequence eseq, Object[] values) {
 
@@ -131,7 +132,9 @@ public abstract class ObjectContract {
       if (e instanceof BugInRandoopException) {
         throw (BugInRandoopException) e;
       }
+
       // ***** TODO: determine what the exception is
+
     } else {
       throw new BugInRandoopException("Contract " + this + " failed to execute during evaluation");
     }

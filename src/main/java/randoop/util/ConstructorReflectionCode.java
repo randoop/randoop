@@ -34,7 +34,6 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   @Override
   public void runReflectionCodeRaw()
       throws InstantiationException, IllegalAccessException, InvocationTargetException {
-
     try {
       this.retval = this.constructor.newInstance(this.inputs);
     } catch (InvocationTargetException e) {

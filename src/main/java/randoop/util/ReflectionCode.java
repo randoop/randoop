@@ -78,6 +78,7 @@ public abstract class ReflectionCode {
     }
   }
 
+  // TODO: What is an "internal exception"?
   /**
    * Execute the reflection code. All internal exceptions must be thrown as
    * NotCaughtIllegalStateException because everything else is caught.
