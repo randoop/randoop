@@ -4,12 +4,15 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import java.util.ArrayList;
 import java.util.List;
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
 import randoop.output.NameGenerator;
 import randoop.sequence.ExecutableSequence;
+import randoop.util.TimeoutExceededException;
 import randoop.util.predicate.DefaultPredicate;
 
 /** {@code TestPredicate} that checks whether the given {@link ExecutableSequence} is compilable. */
@@ -75,6 +78,15 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
     String packageName = pkg == null ? null : pkg.getPackageName();
     boolean result = testSource(testClassName, source, packageName);
     if (!result && genTests != null) {
+      // get result from last line of sequence
+      ExecutionOutcome sequenceResult = sequence.getResult(sequence.size() - 1);
+      if (sequenceResult instanceof ExceptionalExecution) {
+        if (((ExceptionalExecution) sequenceResult).getException()
+            instanceof randoop.util.TimeoutExceededException) {
+          // Do not count TimeoutExceeded as a CompileFailure.
+          return result;
+        }
+      }
       genTests.countSequenceCompileFailure();
     }
     return result;
