@@ -53,8 +53,9 @@ The --usethreads command-line option defaults to false.  This makes Randoop
 run faster and generate more tests, but Randoop will hang if it calls a
 method that does not terminate and return.
 
-New command-line option --cm-exception controls how Randoop classifies a
-test that throws a ConcurrentModificationException exception.
+New command-line options --cm-exception and --ncdf-exception control how
+Randoop classifies a test that throws a ConcurrentModificationException or
+NoClassDefFoundError exception.
 
 Some command-line options have been renamed:
 
