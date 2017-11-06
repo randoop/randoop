@@ -873,12 +873,34 @@ Randoop about your application, and that is how we recommend using Randoop.
 
             <li id="option:unchecked-exception"><b>--unchecked-exception=</b><i>enum</i>.
              If a test throws an unchecked exception other than <code>ConcurrentModificationException</code>,
- <code>OutOfMemoryError</code>, <code>StackOverflowError</code>, and <code>NullPointerException</code>, should
- the test be included in the error-revealing test suite (value: ERROR), regression test suite
- (value: EXPECTED), or should it be discarded (value: INVALID)?
+ <code>NoClassDefFoundError</code>, <code>NullPointerException</code>, <code>OutOfMemoryError</code>, and
+ <code>StackOverflowError</code>, should the test be included in the error-revealing test suite
+ (value: ERROR), regression test suite (value: EXPECTED), or should it be discarded (value:
+ INVALID)?
 
- <p>The arguments <code>--npe-on-null-input</code>, <code>--npe-on-non-null-input</code>, <code>--cm-exception</code>, <code>--oom-exception</code>, and <code>--sof-exception</code> handle special cases of
- unchecked exceptions. [default EXPECTED]
+ <p>The arguments <code>--cm-exception</code>, <code>--ncdf-exception</code>, <code>--npe-on-null-input</code>,
+ <code>--npe-on-non-null-input</code>, <code>--oom-exception</code>, and <code>--sof-exception</code> handle
+ special cases of unchecked exceptions. [default EXPECTED]
+<ul>
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
+</ul>
+
+            <li id="option:cm-exception"><b>--cm-exception=</b><i>enum</i>.
+             If a test throws a <code>ConcurrentModificationException</code> exception, should it be included in
+ the error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or
+ should it be discarded (value: INVALID)? [default INVALID]
+<ul>
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
+</ul>
+
+            <li id="option:ncdf-exception"><b>--ncdf-exception=</b><i>enum</i>.
+             If a test throws a <code>NoClassDefFoundError</code> exception, should it be included in the
+ error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
+ it be discarded (value: INVALID)? [default INVALID]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
@@ -899,16 +921,6 @@ Randoop about your application, and that is how we recommend using Randoop.
              If a test that never passes <code>null</code> as an argument throws a <code>NullPointerException</code>,
  should the test be included in the error-revealing test suite (value: ERROR), regression test
  suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default ERROR]
-<ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error.
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
-</ul>
-
-            <li id="option:cm-exception"><b>--cm-exception=</b><i>enum</i>.
-             If a test throws a <code>ConcurrentModificationError</code> exception, should it be included in the
- error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
- it be discarded (value: INVALID)? [default INVALID]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
