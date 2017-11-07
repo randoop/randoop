@@ -8,6 +8,7 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
+import randoop.main.ExceptionBehaviorClassifier;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 import randoop.test.Check;
@@ -141,21 +142,18 @@ public abstract class ObjectContract {
         return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
       }
 
-      return failedContract(eseq, values);
-
-      // **** TODO *****
-      // switch (ExceptionBehaviorClassifier.classify(e, eseq)) {
-      //   case ERROR:
-      //     return failedContract(eseq, values);
-      //   case EXPECTED:
-      //     // The index and name won't get used, but set them anyway.
-      //     return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
-      //   case INVALID:
-      //     // The index and name won't get used, but set them anyway.
-      //     return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
-      //   default:
-      //     throw new Error("unreachable");
-      // }
+      switch (ExceptionBehaviorClassifier.classify(e, eseq)) {
+        case ERROR:
+          return failedContract(eseq, values);
+        case EXPECTED:
+          // The index and name won't get used, but set them anyway.
+          return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
+        case INVALID:
+          // The index and name won't get used, but set them anyway.
+          return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
+        default:
+          throw new Error("unreachable");
+      }
 
     } else {
       assert outcome instanceof NotExecuted;
