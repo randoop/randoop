@@ -131,7 +131,10 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
    * @param contracts the contracts to check
    * @param eseq the executable sequence that is the source of values for checking contracts
    * @param tuples the value tuples to use as input to the contracts
-   * @return a {@link Check} of the first contract+tuple that failed, or null if no contracts failed
+   * @return a {@link Check} of the first contract+tuple that did not succeed, or null if all
+   *     contracts succeeded. More specifically, returns a {@link ObjectCheck} if a contract fails,
+   *     an {@link InvalidExceptionCheck} if a contract throws an exception indicating that the
+   *     sequence is invalid, null otherwise.
    */
   Check checkContracts(
       List<ObjectContract> contracts, ExecutableSequence eseq, TupleSet<ReferenceValue> tuples) {
