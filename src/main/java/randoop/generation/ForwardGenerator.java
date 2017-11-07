@@ -144,7 +144,7 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.exectime = endTime - startTime;
     startTime = endTime; // reset start time.
 
-    processSequence(eSeq);
+    determineActiveIndices(eSeq);
 
     if (eSeq.sequence.hasActiveFlags()) {
       componentManager.addGeneratedSequence(eSeq.sequence);
@@ -175,7 +175,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @param seq the sequence
    */
-  private void processSequence(ExecutableSequence seq) {
+  private void determineActiveIndices(ExecutableSequence seq) {
 
     if (seq.hasNonExecutedStatements()) {
       Log.logLine("Sequence has non-executed statements: excluding from extension pool.");
