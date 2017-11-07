@@ -116,6 +116,7 @@ public abstract class ObjectContract {
       //   for (Object value : values) {
       //     Log.logLine(
       //         "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
+      //   }
       Log.logLine(" Contract outcome " + outcome);
     }
 
