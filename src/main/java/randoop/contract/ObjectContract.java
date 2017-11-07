@@ -117,7 +117,7 @@ public abstract class ObjectContract {
       //     Log.logLine(
       //         "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
       //   }
-      Log.logLine(" Contract outcome " + outcome);
+      Log.logLine("  Contract outcome = " + outcome);
     }
 
     if (outcome instanceof NormalExecution) {
@@ -141,6 +141,12 @@ public abstract class ObjectContract {
       if (e instanceof TimeoutExceededException) {
         // The index and name won't get used, but set them anyway.
         return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
+      }
+
+      if (Log.isLoggingOn()) {
+        Log.logLine(
+            "  ExceptionBehaviorClassifier.classify(e, eseq) => "
+                + ExceptionBehaviorClassifier.classify(e, eseq));
       }
 
       switch (ExceptionBehaviorClassifier.classify(e, eseq)) {
