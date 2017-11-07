@@ -169,8 +169,7 @@ public abstract class ObjectContract {
     for (int i = 0; i < varArray.length; i++) {
       varArray[i] = eseq.getVariable(values[i]);
       // Note: the following alternative to the above line slightly improves coverage
-      // List<Variable> variables = eseq.getVariables(values[i]);
-      // varArray[i] = Randomness.randomMember(variables);
+      // varArray[i] = Randomness.randomMember(eseq.getVariables(values[i]));
 
       //   Log.logLine(
       //       "values[%d] = %s @%s%n",
