@@ -131,37 +131,38 @@ class CoverageChecker {
       Set<String> methods = new HashSet<>();
 
       String canonicalClassname = classname.replace('$', '.');
-      getCoveredMethodsForClass(regressionStatus, canonicalClassname, methods);
-      getCoveredMethodsForClass(errorStatus, canonicalClassname, methods);
+      addCoveredMethodsForClass(regressionStatus, canonicalClassname, methods);
+      addCoveredMethodsForClass(errorStatus, canonicalClassname, methods);
 
       Class<?> c;
       try {
         c = Class.forName(classname);
-
-        boolean firstLine = true;
-        // Deterministic order is needed because of println within the loop.
-        for (Method m : getDeclaredMethods(c)) {
-          String methodname = methodName(m);
-          if (!isIgnoredMethod(methodname) && !dontCareMethods.contains(methodname)) {
-            if (excludedMethods.contains(methodname)) {
-              if (methods.contains(methodname)) {
-                shouldBeMissingMethods.add(methodname);
-              }
-            } else {
-              if (!methods.contains(methodname)) {
-                missingMethods.add(methodname);
-              }
-            }
-          } else {
-            if (firstLine) {
-              System.out.println();
-              firstLine = false;
-            }
-            System.out.println("Ignoring " + methodname + " in coverage checks");
-          }
-        }
       } catch (ClassNotFoundException e) {
         fail("Could not load input class" + classname + ": " + e.getMessage());
+        throw new Error("unreachable");
+      }
+
+      boolean firstLine = true;
+      // Deterministic order is needed because of println within the loop.
+      for (Method m : getDeclaredMethods(c)) {
+        String methodname = methodName(m);
+        if (!isIgnoredMethod(methodname) && !dontCareMethods.contains(methodname)) {
+          if (excludedMethods.contains(methodname)) {
+            if (methods.contains(methodname)) {
+              shouldBeMissingMethods.add(methodname);
+            }
+          } else {
+            if (!methods.contains(methodname)) {
+              missingMethods.add(methodname);
+            }
+          }
+        } else {
+          if (firstLine) {
+            System.out.println();
+            firstLine = false;
+          }
+          System.out.println("Ignoring " + methodname + " in coverage checks");
+        }
       }
     }
 
@@ -185,14 +186,14 @@ class CoverageChecker {
   }
 
   /**
-   * Adds methods from the given class to the set if they are covered in the {@link
+   * Adds methods from the given class to the set {@code methods} if they are covered in the {@link
    * MethodCoverageMap} of the given {@link TestRunStatus}.
    *
    * @param testRunStatus the {@link TestRunStatus}
    * @param classname the name of the class
    * @param methods the set to which method names are added
    */
-  private void getCoveredMethodsForClass(
+  private void addCoveredMethodsForClass(
       TestRunStatus testRunStatus, String classname, Set<String> methods) {
     if (testRunStatus != null) {
       Set<String> coveredMethods = testRunStatus.coverageMap.getMethods(classname);
