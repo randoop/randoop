@@ -12,7 +12,7 @@ import randoop.sequence.ExecutableSequence;
 public interface TestCheckGenerator {
 
   /**
-   * Generate a {@code TestChecks} object for the executed sequence {@code eseq} based on the
+   * Generate a {@link TestChecks} object for the executed sequence {@code eseq} based on the
    * criteria of this generator.
    *
    * @param eseq the sequence for which checks are generated
