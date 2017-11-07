@@ -74,7 +74,6 @@ public class ExecutableSequence {
   /** The underlying sequence. */
   public Sequence sequence;
 
-  // TODO: permit this to be null?  Change generateTestChecks to be able to return null.
   /** The checks for this sequence */
   private TestChecks<?> checks;
 
