@@ -99,6 +99,7 @@ public final class Randomness {
     return value;
   }
 
+  /** Returns a randomly-chosen member of the list. */
   public static <T> T randomMember(List<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
@@ -108,6 +109,7 @@ public final class Randomness {
     return list.get(position);
   }
 
+  /** Returns a randomly-chosen member of the list. */
   public static <T> T randomMember(SimpleList<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
