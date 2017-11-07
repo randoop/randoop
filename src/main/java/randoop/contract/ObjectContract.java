@@ -168,6 +168,10 @@ public abstract class ObjectContract {
     Variable[] varArray = new Variable[values.length];
     for (int i = 0; i < varArray.length; i++) {
       varArray[i] = eseq.getVariable(values[i]);
+      // Note: the following alternative to the above line slightly improves coverage
+      // List<Variable> variables = eseq.getVariables(values[i]);
+      // varArray[i] = Randomness.randomMember(variables);
+
       //   Log.logLine(
       //       "values[%d] = %s @%s%n",
       //       i, toStringHandleExceptions(values[i]), System.identityHashCode(values[i]));
