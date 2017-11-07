@@ -29,6 +29,8 @@ import randoop.types.TypeTuple;
  */
 public class OperationExtractor extends DefaultClassVisitor {
 
+  private static boolean debug = false;
+
   /** The type of the declaring class for the collected operations. */
   private ClassOrInterfaceType classType;
 
@@ -123,13 +125,11 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @throws BugInRandoopException if {@code classType} is not a subtype of {@code
    *     operation.getDeclaringType()}
    */
+  // TODO: poor name
   private void checkSubTypes(TypedClassOperation operation) {
     if (!classType.isSubtypeOf(operation.getDeclaringType())) {
       throw new BugInRandoopException(
-          "Type for operation "
-              + classType
-              + " is not a subtype of an instantiation of declaring class of method "
-              + operation.getDeclaringType());
+          String.format("Incompatible receiver type %s for operation %s", classType, operation));
     }
   }
 
@@ -140,7 +140,9 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visit(Constructor<?> constructor) {
-    // System.out.println("OperationExtractor.visit: constructor=" + constructor);
+    if (debug) {
+      System.out.println("OperationExtractor.visit: constructor=" + constructor);
+    }
     assert constructor.getDeclaringClass().equals(classType.getRuntimeClass())
         : "classType "
             + classType
@@ -151,10 +153,14 @@ public class OperationExtractor extends DefaultClassVisitor {
       return;
     }
     TypedClassOperation operation = instantiateTypes(TypedOperation.forConstructor(constructor));
-    // System.out.println("OperationExtractor.visit: operation=" + operation);
+    if (debug) {
+      System.out.println("OperationExtractor.visit: operation=" + operation);
+    }
     checkSubTypes(operation);
     if (!omitPredicate.shouldOmit(operation)) {
-      // System.out.println("OperationExtractor.visit: add operation " + operation);
+      if (debug) {
+        System.out.println("OperationExtractor.visit: add operation " + operation);
+      }
       operations.add(operation);
     }
   }
@@ -170,12 +176,16 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visit(Method method) {
-    // System.out.println("OperationExtractor.visit: method=" + method);
+    if (debug) {
+      System.out.println("OperationExtractor.visit: method=" + method);
+    }
     if (!reflectionPredicate.test(method)) {
       return;
     }
     TypedClassOperation operation = instantiateTypes(TypedOperation.forMethod(method));
-    // System.out.println("OperationExtractor.visit: operation=" + operation);
+    if (debug) {
+      System.out.println("OperationExtractor.visit: operation=" + operation);
+    }
     checkSubTypes(operation);
 
     if (operation.isStatic()) {
@@ -185,7 +195,9 @@ public class OperationExtractor extends DefaultClassVisitor {
           method.getDeclaringClass().getModifiers() & Modifier.classModifiers();
       if (!Modifier.isPublic(declaringClassMods)) {
         operation = operation.getOperationForType(classType);
-        // System.out.println("OperationExtractor.visit: operation changed to " + operation);
+        if (debug) {
+          System.out.println("OperationExtractor.visit: operation changed to " + operation);
+        }
       }
     }
 
@@ -193,7 +205,9 @@ public class OperationExtractor extends DefaultClassVisitor {
     // method in classType. So, create operation with the classType as declaring type for omit
     // search.
     if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
-      // System.out.println("OperationExtractor.visit: add operation " + operation);
+      if (debug) {
+        System.out.println("OperationExtractor.visit: add operation " + operation);
+      }
       operations.add(operation);
     }
   }

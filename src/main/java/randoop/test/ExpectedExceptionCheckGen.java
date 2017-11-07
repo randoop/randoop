@@ -1,6 +1,5 @@
 package randoop.test;
 
-import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -46,9 +45,6 @@ public class ExpectedExceptionCheckGen {
   ExceptionCheck getExceptionCheck(
       ExceptionalExecution exec, ExecutableSequence eseq, int statementIndex) {
     Throwable e = exec.getException();
-    if (e instanceof NoClassDefFoundError) {
-      throw new BugInRandoopException(e);
-    }
 
     String catchClassName = getCatchClassName(e.getClass());
 

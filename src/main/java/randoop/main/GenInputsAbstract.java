@@ -240,16 +240,33 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * If a test throws an unchecked exception other than {@code ConcurrentModificationException},
-   * {@code OutOfMemoryError}, {@code StackOverflowError}, and {@code NullPointerException}, should
-   * the test be included in the error-revealing test suite (value: ERROR), regression test suite
-   * (value: EXPECTED), or should it be discarded (value: INVALID)?
+   * {@code NoClassDefFoundError}, {@code NullPointerException}, {@code OutOfMemoryError}, and
+   * {@code StackOverflowError}, should the test be included in the error-revealing test suite
+   * (value: ERROR), regression test suite (value: EXPECTED), or should it be discarded (value:
+   * INVALID)?
    *
-   * <p>The arguments {@code --npe-on-null-input}, {@code --npe-on-non-null-input}, {@code
-   * --cm-exception}, {@code --oom-exception}, and {@code --sof-exception} handle special cases of
-   * unchecked exceptions.
+   * <p>The arguments {@code --cm-exception}, {@code --ncdf-exception}, {@code --npe-on-null-input},
+   * {@code --npe-on-non-null-input}, {@code --oom-exception}, and {@code --sof-exception} handle
+   * special cases of unchecked exceptions.
    */
   @Option("Whether unchecked exception is an ERROR, EXPECTED or INVALID")
   public static BehaviorType unchecked_exception = BehaviorType.EXPECTED;
+
+  /**
+   * If a test throws a {@code ConcurrentModificationException} exception, should it be included in
+   * the error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or
+   * should it be discarded (value: INVALID)?
+   */
+  @Option("Whether ConcurrentModificationException is an ERROR, EXPECTED or INVALID")
+  public static BehaviorType cm_exception = BehaviorType.INVALID;
+
+  /**
+   * If a test throws a {@code NoClassDefFoundError} exception, should it be included in the
+   * error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
+   * it be discarded (value: INVALID)?
+   */
+  @Option("Whether NoClassDefFoundError is an ERROR, EXPECTED or INVALID")
+  public static BehaviorType ncdf_exception = BehaviorType.INVALID;
 
   /**
    * If a test that passes {@code null} as an argument throws a {@code NullPointerException}, should
@@ -266,14 +283,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether NullPointerException on non-null inputs is an ERROR, EXPECTED or INVALID")
   public static BehaviorType npe_on_non_null_input = BehaviorType.ERROR;
-
-  /**
-   * If a test throws a {@code ConcurrentModificationError} exception, should it be included in the
-   * error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
-   * it be discarded (value: INVALID)?
-   */
-  @Option("Whether ConcurrentModificationException is an ERROR, EXPECTED or INVALID")
-  public static BehaviorType cm_exception = BehaviorType.INVALID;
 
   /**
    * If a test throws an {@code OutOfMemoryError} exception, should it be included in the

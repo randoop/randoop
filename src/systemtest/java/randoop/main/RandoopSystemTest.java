@@ -1007,7 +1007,7 @@ public class RandoopSystemTest {
 
   /**
    * This test uses classes from (or based on) the <a
-   * href="http://docs.oracle.com/javase/tutorial/uiswing/examples/components/index.html">Swing
+   * href="https://docs.oracle.com/javase/tutorial/uiswing/examples/components/index.html">Swing
    * Tutorial Examples</a>.
    *
    * <p>Notes:
@@ -1216,7 +1216,7 @@ public class RandoopSystemTest {
 
   /**
    * This test uses classes from (or based on) the <a
-   * href="http://docs.oracle.com/javase/tutorial/uiswing/examples/components/index.html">Swing
+   * href="https://docs.oracle.com/javase/tutorial/uiswing/examples/components/index.html">Swing
    * Tutorial Examples</a>.
    */
   @Test

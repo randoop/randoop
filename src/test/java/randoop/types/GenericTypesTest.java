@@ -185,20 +185,72 @@ public class GenericTypesTest {
     }
   }
 
+  // Type hierarchy:
+  // IB2  IA   Object
+  //   \    \ /
+  //   IB    A
+  //     \ /
+  //      B
+  //      |
+  //      C
+
+  static interface IA {}
+
+  static interface IB2 {}
+
+  static interface IB extends IB2 {}
+
+  static class A implements IA {}
+
+  static class B extends A implements IB {}
+
+  static class C extends B {}
+
   @Test
   public void subtypeTransitivityTest() {
+    NonParameterizedType timerType = new NonParameterizedType(java.util.Timer.class);
     ParameterizedType iterableType =
         GenericClassType.forClass(Iterable.class).instantiate(JavaTypes.STRING_TYPE);
     ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(JavaTypes.STRING_TYPE);
-    assertTrue("collection is subtype of iterable", collectionType.isSubtypeOf(iterableType));
-    assertFalse(
-        "iterable is supertype of collection, not subtype",
-        iterableType.isSubtypeOf(collectionType));
     ParameterizedType vectorType = JDKTypes.VECTOR_TYPE.instantiate(JavaTypes.STRING_TYPE);
-    assertTrue("vector is subtype of iterable", vectorType.isSubtypeOf(iterableType));
-    assertTrue("vector is subtype of collection", vectorType.isSubtypeOf(collectionType));
-    assertFalse("supertype is not a subtype", iterableType.isSubtypeOf(vectorType));
-    assertFalse("supertype is not a subtype", collectionType.isSubtypeOf(vectorType));
+
+    assertStrictSubtype(collectionType, iterableType);
+    assertStrictSubtype(vectorType, iterableType);
+    assertStrictSubtype(vectorType, collectionType);
+    assertStrictSubtype(JavaTypes.STRING_TYPE, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(JavaTypes.STRING_TYPE, JavaTypes.SERIALIZABLE_TYPE);
+    assertStrictSubtype(JavaTypes.SERIALIZABLE_TYPE, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(timerType, JavaTypes.OBJECT_TYPE);
+
+    NonParameterizedType typeIA = new NonParameterizedType(IA.class);
+    NonParameterizedType typeIB = new NonParameterizedType(IB.class);
+    NonParameterizedType typeIB2 = new NonParameterizedType(IB2.class);
+    NonParameterizedType typeA = new NonParameterizedType(A.class);
+    NonParameterizedType typeB = new NonParameterizedType(B.class);
+    NonParameterizedType typeC = new NonParameterizedType(C.class);
+    assertStrictSubtype(typeA, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(typeA, typeIA);
+    assertStrictSubtype(typeIB, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(typeIB, typeIB2);
+    assertStrictSubtype(typeB, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(typeB, typeIA);
+    assertStrictSubtype(typeB, typeA);
+    assertStrictSubtype(typeB, typeIB2);
+    assertStrictSubtype(typeB, typeIB);
+    assertStrictSubtype(typeC, JavaTypes.OBJECT_TYPE);
+    assertStrictSubtype(typeC, typeIA);
+    assertStrictSubtype(typeC, typeA);
+    assertStrictSubtype(typeC, typeIB2);
+    assertStrictSubtype(typeC, typeIB);
+    assertStrictSubtype(typeC, typeB);
+
+    assertTrue(JavaTypes.OBJECT_TYPE.isSubtypeOf(JavaTypes.OBJECT_TYPE));
+  }
+
+  /** Assert that {@code subtype} is a strict subtype of {@code supertype}. */
+  private static void assertStrictSubtype(Type subtype, Type supertype) {
+    assertTrue(subtype.isSubtypeOf(supertype));
+    assertFalse(supertype.isSubtypeOf(subtype));
   }
 
   @Test
