@@ -124,8 +124,6 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
 
   /** Return a TestChecks that contains only the given check. */
   private TestChecks<?> singletonTestCheck(Check check) {
-    System.out.printf("singletonTestCheck(%s of class %s)%n", check, check.getClass());
-    new Error().printStackTrace();
     if (check instanceof InvalidExceptionCheck) {
       return new InvalidChecks((InvalidExceptionCheck) check);
     } else {
