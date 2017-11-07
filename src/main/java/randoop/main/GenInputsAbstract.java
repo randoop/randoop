@@ -606,6 +606,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("The random seed to use in the generation process")
   public static int randomseed = (int) Randomness.SEED;
 
+  // Currently, Randoop is deterministic, and there isn't a way to make Randoop not pay the costs of
+  // (for example) LinkedHashMaps instead of HashMaps.  The only effect of this command-line
+  // argument is to forbid certain other command-line arguments that would themselves introduce
+  // nondeterminism.
   /**
    * If true, Randoop is deterministic: running Randoop twice with the same arguments (including
    * {@code --randomseed}) will produce the same test suite, so long as the program under test is
