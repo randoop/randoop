@@ -3,7 +3,6 @@ package randoop.contract;
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.
 
-import java.util.List;
 import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -16,7 +15,6 @@ import randoop.test.InvalidExceptionCheck;
 import randoop.test.ObjectCheck;
 import randoop.types.TypeTuple;
 import randoop.util.Log;
-import randoop.util.Randomness;
 import randoop.util.TimeoutExceededException;
 
 /**
@@ -121,8 +119,11 @@ public abstract class ObjectContract {
     }
 
     if (outcome instanceof NormalExecution) {
-      if (((NormalExecution) outcome).getRuntimeValue().equals(true)) {
+      boolean result = ((Boolean) (((NormalExecution) outcome).getRuntimeValue())).booleanValue();
+      if (result) {
         return null;
+      } else {
+        return failedContract(eseq, values);
       }
     } else if (outcome instanceof ExceptionalExecution) {
       Throwable e = ((ExceptionalExecution) outcome).getException();
@@ -139,16 +140,34 @@ public abstract class ObjectContract {
         // The index and name won't get used, but set them anyway.
         return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
       }
+
+      return failedContract(eseq, values);
+
+      // **** TODO *****
+      // switch (ExceptionBehaviorClassifier.classify(e, eseq)) {
+      //   case ERROR:
+      //     return failedContract(eseq, values);
+      //   case EXPECTED:
+      //     // The index and name won't get used, but set them anyway.
+      //     return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
+      //   case INVALID:
+      //     // The index and name won't get used, but set them anyway.
+      //     return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
+      //   default:
+      //     throw new Error("unreachable");
+      // }
+
     } else {
       assert outcome instanceof NotExecuted;
       throw new BugInRandoopException("Contract " + this + " failed to execute during evaluation");
     }
+  }
 
-    // the contract failed
+  /** Return an ObjectCheck indicating that a contract failed. */
+  ObjectCheck failedContract(ExecutableSequence eseq, Object[] values) {
     Variable[] varArray = new Variable[values.length];
     for (int i = 0; i < varArray.length; i++) {
-      List<Variable> variables = eseq.getVariables(values[i]);
-      varArray[i] = Randomness.randomMember(variables);
+      varArray[i] = eseq.getVariable(values[i]);
       //   Log.logLine(
       //       "values[%d] = %s @%s%n",
       //       i, toStringHandleExceptions(values[i]), System.identityHashCode(values[i]));
