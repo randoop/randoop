@@ -193,7 +193,10 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (seq.hasInvalidBehavior()) {
-      Log.logLine("Sequence has invalid behavior: discarding and excluding from extension pool.");
+      Log.logLine(
+          "Sequence has invalid behavior ("
+              + seq.getChecks()
+              + "): discarding and excluding from extension pool.");
       Log.logLine("Invalid sequence: " + seq.toCodeString());
       seq.sequence.clearAllActiveFlags();
       return;

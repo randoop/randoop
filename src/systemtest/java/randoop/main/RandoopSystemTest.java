@@ -451,7 +451,6 @@ public class RandoopSystemTest {
     options.setFlag("no-regression-tests");
     options.setOption("attemptedLimit", "1000");
     options.setOption("generatedLimit", "200");
-    options.setOption("unchecked-exception", "EXPECTED");
     options.addTestClass("examples.CheckRep1");
     options.addTestClass("examples.CheckRep2");
 

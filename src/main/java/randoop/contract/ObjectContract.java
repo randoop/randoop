@@ -12,6 +12,8 @@ import randoop.main.ExceptionBehaviorClassifier;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 import randoop.test.Check;
+import randoop.test.ExpectedExceptionCheck;
+import randoop.test.ExpectedExceptionCheckGen;
 import randoop.test.InvalidExceptionCheck;
 import randoop.test.ObjectCheck;
 import randoop.types.TypeTuple;
@@ -153,8 +155,9 @@ public abstract class ObjectContract {
         case ERROR:
           return failedContract(eseq, values);
         case EXPECTED:
-          // The index and name won't get used, but set them anyway.
-          return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
+          // ***** I'm not really sure what this should return. *****
+          return new ExpectedExceptionCheck(
+              e, eseq.size(), ExpectedExceptionCheckGen.getCatchClassName(e.getClass()));
         case INVALID:
           // The index and name won't get used, but set them anyway.
           return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());

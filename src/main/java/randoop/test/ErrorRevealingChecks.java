@@ -30,11 +30,19 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
 
   /** Create a singleton set of error checks. */
   public ErrorRevealingChecks(Check check) {
-    if (check instanceof ExceptionCheck) {
-      String msg = "No expected exceptions in error-revealing tests";
-      throw new Error(msg);
-    }
+    validateCheck(check);
     this.checks = Collections.<Check>singleton(check);
+  }
+
+  /** Throw an exception if {@code check} is not acceptable for this class. */
+  private static void validateCheck(Check check) {
+    if ((check instanceof ExceptionCheck) && !(check instanceof ExpectedExceptionCheck)) {
+      throw new Error(
+          "No expected exceptions in error-revealing tests (class "
+              + check.getClass()
+              + "): "
+              + check);
+    }
   }
 
   @Override
@@ -89,12 +97,7 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
    */
   @Override
   public void add(Check check) {
-
-    if (check instanceof ExceptionCheck) {
-      String msg = "No expected exceptions in error-revealing tests";
-      throw new Error(msg);
-    }
-
+    validateCheck(check);
     checks.add(check);
   }
 
