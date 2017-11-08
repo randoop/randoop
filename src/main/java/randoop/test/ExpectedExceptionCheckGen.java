@@ -1,6 +1,5 @@
 package randoop.test;
 
-import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -46,11 +45,8 @@ public class ExpectedExceptionCheckGen {
   ExceptionCheck getExceptionCheck(
       ExceptionalExecution exec, ExecutableSequence eseq, int statementIndex) {
     Throwable e = exec.getException();
-    if (e instanceof NoClassDefFoundError) {
-      throw new BugInRandoopException(e);
-    }
 
-    String catchClassName = getCatchClassName(e.getClass());
+    String catchClassName = getCatchClassName(e.getClass(), visibility);
 
     if (isExpected.test(exec, eseq)) {
       return new ExpectedExceptionCheck(e, statementIndex, catchClassName);
@@ -65,7 +61,7 @@ public class ExpectedExceptionCheckGen {
    * @param c the class for which superclass is needed
    * @return the nearest public class that is the argument or a superclass
    */
-  private Class<?> nearestVisibleSuperclass(Class<?> c) {
+  private static Class<?> nearestVisibleSuperclass(Class<?> c, VisibilityPredicate visibility) {
     while (!visibility.isVisible(c)) {
       c = c.getSuperclass();
     }
@@ -79,8 +75,21 @@ public class ExpectedExceptionCheckGen {
    * @param c the exception class
    * @return the nearest public visible, c or a superclass of c
    */
-  private String getCatchClassName(Class<? extends Throwable> c) {
-    Class<?> catchClass = nearestVisibleSuperclass(c);
+  public static String getCatchClassName(
+      Class<? extends Throwable> c, VisibilityPredicate visibility) {
+    Class<?> catchClass = nearestVisibleSuperclass(c, visibility);
+    return catchClass.getCanonicalName();
+  }
+
+  /**
+   * Returns the canonical name for the nearest public class that will catch an exception with the
+   * given class.
+   *
+   * @param c the exception class
+   * @return the nearest public visible, c or a superclass of c
+   */
+  public static String getCatchClassName(Class<? extends Throwable> c) {
+    Class<?> catchClass = nearestVisibleSuperclass(c, VisibilityPredicate.IS_PUBLIC);
     return catchClass.getCanonicalName();
   }
 }

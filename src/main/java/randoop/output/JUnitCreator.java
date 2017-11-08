@@ -46,6 +46,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.sequence.ExecutableSequence;
 
@@ -294,7 +295,7 @@ public class JUnitCreator {
       System.out.println(
           "Parse error while creating test method " + className + "." + methodName + " for block ");
       System.out.println(sequenceBlockString);
-      return null;
+      throw new BugInRandoopException("Parse error while creating test method", e);
     } catch (TokenMgrError e) {
       System.out.println(
           "Lexical error while creating test method " + className + "." + methodName);

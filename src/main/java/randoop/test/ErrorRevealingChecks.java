@@ -1,5 +1,6 @@
 package randoop.test;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -12,11 +13,36 @@ import java.util.Set;
  */
 public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
 
+  /** An empty, immutable set of error-revealing checks. */
+  public static final ErrorRevealingChecks EMPTY;
+
+  static {
+    EMPTY = new ErrorRevealingChecks();
+    EMPTY.checks = Collections.emptySet(); // make immutable
+  }
+
   private Set<Check> checks;
 
   /** Create an empty set of error checks. */
   public ErrorRevealingChecks() {
     this.checks = new LinkedHashSet<>();
+  }
+
+  /** Create a singleton set of error checks. */
+  public ErrorRevealingChecks(Check check) {
+    validateCheck(check);
+    this.checks = Collections.<Check>singleton(check);
+  }
+
+  /** Throw an exception if {@code check} is not acceptable for this class. */
+  private static void validateCheck(Check check) {
+    if ((check instanceof ExceptionCheck) && !(check instanceof ExpectedExceptionCheck)) {
+      throw new Error(
+          "No expected exceptions in error-revealing tests (class "
+              + check.getClass()
+              + "): "
+              + check);
+    }
   }
 
   @Override
@@ -71,12 +97,7 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
    */
   @Override
   public void add(Check check) {
-
-    if (check instanceof ExceptionCheck) {
-      String msg = "No expected exceptions in error-revealing tests";
-      throw new Error(msg);
-    }
-
+    validateCheck(check);
     checks.add(check);
   }
 
@@ -115,5 +136,10 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
   @Override
   public boolean hasInvalidBehavior() {
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return this.getClass() + " of size " + checks.size() + ": " + checks.toString();
   }
 }

@@ -179,7 +179,7 @@ public abstract class Type implements Comparable<Type> {
    * @param c the {@code Class<?>} to check
    * @return true if {@code c} is the runtime {@code Class<?>} of this type, false otherwise
    */
-  public boolean hasRuntimeClass(Class<?> c) {
+  public boolean runtimeClassIs(Class<?> c) {
     return this.getRuntimeClass().equals(c);
   }
 

@@ -67,8 +67,7 @@ The Randoop homepage is
         <ul>
           <li><a href="#cannot-find-main">Randoop does not run</a></li>
           <li><a href="#no-class-found">Randoop cannot find class-under-test</a></li>
-          <li><a href="#no-tests-created">Randoop creates no tests</a></li>
-          <li><a href="#not-enough-tests-created">Randoop does not create enough tests</a></li>
+          <li><a href="#not-enough-tests-created">Randoop does not create enough tests, or creates no tests</a></li>
           <li><a href="#nontermination">Randoop does not terminate</a></li>
           <li><a href="#nondeterminism">Randoop produces different output on different runs</a></li>
           <li><a href="#flaky-tests">Randoop stopped because of a flaky test</a></li>
@@ -885,12 +884,34 @@ Randoop about your application, and that is how we recommend using Randoop.
 
             <li id="option:unchecked-exception"><b>--unchecked-exception=</b><i>enum</i>.
              If a test throws an unchecked exception other than <code>ConcurrentModificationException</code>,
- <code>OutOfMemoryError</code>, <code>StackOverflowError</code>, and <code>NullPointerException</code>, should
- the test be included in the error-revealing test suite (value: ERROR), regression test suite
- (value: EXPECTED), or should it be discarded (value: INVALID)?
+ <code>NoClassDefFoundError</code>, <code>NullPointerException</code>, <code>OutOfMemoryError</code>, and
+ <code>StackOverflowError</code>, should the test be included in the error-revealing test suite
+ (value: ERROR), regression test suite (value: EXPECTED), or should it be discarded (value:
+ INVALID)?
 
- <p>The arguments <code>--npe-on-null-input</code>, <code>--npe-on-non-null-input</code>, <code>--cm-exception</code>, <code>--oom-exception</code>, and <code>--sof-exception</code> handle special cases of
- unchecked exceptions. [default EXPECTED]
+ <p>The arguments <code>--cm-exception</code>, <code>--ncdf-exception</code>, <code>--npe-on-null-input</code>,
+ <code>--npe-on-non-null-input</code>, <code>--oom-exception</code>, and <code>--sof-exception</code> handle
+ special cases of unchecked exceptions. [default EXPECTED]
+<ul>
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
+</ul>
+
+            <li id="option:cm-exception"><b>--cm-exception=</b><i>enum</i>.
+             If a test throws a <code>ConcurrentModificationException</code> exception, should it be included in
+ the error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or
+ should it be discarded (value: INVALID)? [default INVALID]
+<ul>
+  <li><b>ERROR</b> Occurrence of exception reveals an error.
+  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
+  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
+</ul>
+
+            <li id="option:ncdf-exception"><b>--ncdf-exception=</b><i>enum</i>.
+             If a test throws a <code>NoClassDefFoundError</code> exception, should it be included in the
+ error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
+ it be discarded (value: INVALID)? [default INVALID]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
@@ -911,16 +932,6 @@ Randoop about your application, and that is how we recommend using Randoop.
              If a test that never passes <code>null</code> as an argument throws a <code>NullPointerException</code>,
  should the test be included in the error-revealing test suite (value: ERROR), regression test
  suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default ERROR]
-<ul>
-  <li><b>ERROR</b> Occurrence of exception reveals an error.
-  <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
-  <li><b>INVALID</b> Occurrence of exception indicates an invalid test.
-</ul>
-
-            <li id="option:cm-exception"><b>--cm-exception=</b><i>enum</i>.
-             If a test throws a <code>ConcurrentModificationError</code> exception, should it be included in the
- error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
- it be discarded (value: INVALID)? [default INVALID]
 <ul>
   <li><b>ERROR</b> Occurrence of exception reveals an error.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior.
@@ -1824,10 +1835,11 @@ method call.</p>
 <p>There are two ways of specifying additional seed values to Randoop.</p>
 
 <ul>
-<li><b>Command line.</b> An easy way to specify additional seed
-values in to use the <code>--literals-file</code> command-line option to
-either use literals from a file you specify or to read literals out of
-the source code that Randoop is analyzing.</li>
+<li><b>Command line.</b> An easy way to specify additional seed values in
+to use the <a href="#option:literals-file"><code>--literals-file</code></a>
+or <a href="#option:literals-level"><code>--literals-level</code></a>
+command-line option to either use literals from a file you specify or to
+read literals out of the source code that Randoop is analyzing.</li>
 
 <li><b>Programmatically.</b> You can declare a class that stores
 primitive values, using the <code>@TestValue</code> annotation:
@@ -2010,34 +2022,41 @@ No class found for type name "example.ExampleClass"
 </p>
 
 
-<h3 id="no-tests-created">Randoop creates no tests</h3>
+<h3 id="not-enough-tests-created">Randoop does not create enough tests, or creates no tests</h3>
 
 <p>
-If Randoop outputs
-</p>
-<pre>No tests were created. No JUnit class created.</pre>
-<p>
-then you need to change Randoop's parameters and re-run it.  You might give
-Randoop more classes to analyze, a larger timeout, additional primitive
-values, specific methods to avoid calling, or some other configuration
-change.  See elsewhere in this manual for suggestions.
-</p>
-
-
-<h3 id="not-enough-tests-created">Randoop does not create enough tests</h3>
-
-<p>
-Randoop works <em>much</em> better if you provide information to it via
-command-line arguments.  Spending just a little bit of effort may have a
-big impact on Randoop's performance.  Find a test that you think Randoop
-should be able to generate, and then provide Randoop with the needed
-information, or consult with the Randoop developers.
+if Randoop's generated tests do not cover some part of your code (or if
+Randoop outputs "No tests were created. No JUnit class created."), then you
+need to change Randoop's parameters and re-run it.  Spending just a little
+bit of effort may have a big impact on the quality of Randoop's output.
 </p>
 
 <p>
-For example, <a href="#nontermination">avoid using
-<code>--usethreads</code></a>, which can make Randoop run very slowly.
+Consider some specific method that Randoop does not call, and determine why
+Randoop does not call that method.  Run Randoop
+with <a href="#optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">logging
+enabled</a>.  Here is an incomplete list of possible problems and
+solutions:
 </p>
+<ul>
+  <li>
+    Randoop never tries to call the method.  You should run Randoop with a
+    larger timeout, or run Randoop with fewer classes, or exclude some
+    classes or methods from consideration.  You might also
+    <a href="#nontermination">avoid using
+    <code>--usethreads</code></a>, which can make Randoop run very slowly.
+  </li>
+  <li>
+    Randoop tries to call the method, but is unable to create inputs.
+    You should give Randoop more classes to analyze.
+  </li>
+  <li>
+    Randoop calls the method, but is unable to create valid/useful inputs.
+    You should investigate why Randoop is unable to create the needed
+    inputs.  Maybe you need to give Randoop more classes to analyze, or
+    provide <a href="#primitives">additional primitive values</a>.
+  </li>
+</ul>
 
 
 <h3 id="nontermination">Randoop does not terminate</h3>
@@ -2274,6 +2293,7 @@ Peter Kalauskas,
 Ben Keller,
 Carlos Pacheco,
 Jeff Perkins,
+Mark Roberts,
 Sai Zhang.
 </p>
 

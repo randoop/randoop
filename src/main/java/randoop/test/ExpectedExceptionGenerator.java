@@ -41,11 +41,9 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome result = eseq.getResult(finalIndex);
 
-    TestChecks<?> checks;
     if (result instanceof NotExecuted) {
       throw new Error("Abnormal execution in sequence: " + eseq);
     } else if (result instanceof ExceptionalExecution) { // exception occurred
-      checks = new RegressionChecks();
       ExceptionalExecution exec = (ExceptionalExecution) result;
       Throwable throwable = exec.getException();
       ClassOrInterfaceType throwableType = ClassOrInterfaceType.forClass(throwable.getClass());
@@ -56,13 +54,11 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
           return getMissingExceptionTestChecks(finalIndex);
         }
       }
-      Check check = new ExpectedExceptionCheck(throwable, finalIndex, throwableType.getName());
-      checks.add(check);
+      return new RegressionChecks(
+          new ExpectedExceptionCheck(throwable, finalIndex, throwableType.getName()));
     } else { // if execution was normal, then expected exception is missing
-      checks = getMissingExceptionTestChecks(finalIndex);
+      return getMissingExceptionTestChecks(finalIndex);
     }
-
-    return checks;
   }
 
   @Override

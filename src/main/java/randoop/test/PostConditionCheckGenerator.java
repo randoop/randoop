@@ -40,7 +40,6 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
   public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome result = eseq.getResult(finalIndex);
-    TestChecks<?> checks;
     if (result instanceof NotExecuted) {
       throw new Error("Abnormal execution in sequence: " + eseq);
     } else if (result instanceof NormalExecution) {
@@ -56,18 +55,15 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
           failed.add(postCondition);
         }
       }
-      if (failed.isEmpty()) {
-        checks = new RegressionChecks();
-        checks.add(new PostConditionCheck(postConditions, inputs));
-      } else {
-        checks = new ErrorRevealingChecks();
-        checks.add(new PostConditionCheck(failed, inputs));
-      }
       eseq.sequence.disableShortForm();
+      if (failed.isEmpty()) {
+        return new RegressionChecks(new PostConditionCheck(postConditions, inputs));
+      } else {
+        return new ErrorRevealingChecks(new PostConditionCheck(failed, inputs));
+      }
     } else { // if execution was exceptional, return empty checks
-      checks = new ErrorRevealingChecks();
+      return ErrorRevealingChecks.EMPTY;
     }
-    return checks;
   }
 
   @Override

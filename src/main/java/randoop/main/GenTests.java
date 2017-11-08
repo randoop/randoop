@@ -519,7 +519,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (this.sequenceCompileFailureCount > 0) {
       System.out.printf(
-          "%nUncompilable sequences generated (count: %d). Please report.%n",
+          "%nUncompilable sequences generated (count: %d).%nPlease report at https://github.com/randoop/randoop/issues .%n",
           this.sequenceCompileFailureCount);
     }
 

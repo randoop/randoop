@@ -99,6 +99,7 @@ public class FailingTestFilter implements CodeWriter {
         classSource = commentFailingAssertions(packageName, classname, classSource, status);
       }
       pass++;
+      UtilMDE.deleteDir(workingDirectory.toFile());
     }
     return javaFileWriter.writeClassCode(packageName, classname, classSource);
   }
@@ -285,7 +286,6 @@ public class FailingTestFilter implements CodeWriter {
   private Path createWorkingDirectory(String classname, int pass) {
     try {
       Path workingDirectory = Files.createTempDirectory("check" + classname + pass);
-      workingDirectory.toFile().deleteOnExit();
       return workingDirectory;
     } catch (IOException e) {
       // not BugInRandoopException

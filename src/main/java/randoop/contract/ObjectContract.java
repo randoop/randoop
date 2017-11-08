@@ -3,19 +3,21 @@ package randoop.contract;
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.
 
-import java.util.List;
 import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
+import randoop.main.ExceptionBehaviorClassifier;
+import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 import randoop.test.Check;
+import randoop.test.InvalidExceptionCheck;
 import randoop.test.ObjectCheck;
 import randoop.types.TypeTuple;
 import randoop.util.Log;
-import randoop.util.Randomness;
+import randoop.util.TimeoutExceededException;
 
 /**
  * An object contract represents a property that must hold of any object of a given class. It is
@@ -102,7 +104,8 @@ public abstract class ObjectContract {
    *
    * @param eseq the executable sequence that is the source of values for checking contracts
    * @param values the input values
-   * @return a {@link ObjectCheck} if the contract fails, null otherwise
+   * @return a {@link ObjectCheck} if the contract fails, an {@link InvalidExceptionCheck} if the
+   *     contract throws an exception indicating that the sequence is invalid, null otherwise
    */
   public final Check checkContract(ExecutableSequence eseq, Object[] values) {
 
@@ -114,12 +117,16 @@ public abstract class ObjectContract {
       //   for (Object value : values) {
       //     Log.logLine(
       //         "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
-      Log.logLine(" Contract outcome " + outcome);
+      //   }
+      Log.logLine("  Contract outcome = " + outcome);
     }
 
     if (outcome instanceof NormalExecution) {
-      if (((NormalExecution) outcome).getRuntimeValue().equals(true)) {
+      boolean result = ((Boolean) (((NormalExecution) outcome).getRuntimeValue())).booleanValue();
+      if (result) {
         return null;
+      } else {
+        return failedContract(eseq, values);
       }
     } else if (outcome instanceof ExceptionalExecution) {
       Throwable e = ((ExceptionalExecution) outcome).getException();
@@ -132,17 +139,66 @@ public abstract class ObjectContract {
       if (e instanceof BugInRandoopException) {
         throw (BugInRandoopException) e;
       }
-      // ***** TODO: determine what the exception is
+      if (e instanceof TimeoutExceededException) {
+        // The index and name won't get used, but set them anyway.
+        return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
+      }
+
+      BehaviorType eseqBehavior = ExceptionBehaviorClassifier.classify(e, eseq);
+
+      if (Log.isLoggingOn()) {
+        Log.logLine("  ExceptionBehaviorClassifier.classify(e, eseq) => " + eseqBehavior);
+      }
+
+      if (eseqBehavior == BehaviorType.EXPECTED) {
+        eseqBehavior = BehaviorType.INVALID;
+      }
+
+      switch (eseqBehavior) {
+        case ERROR:
+          return failedContract(eseq, values);
+        case EXPECTED:
+          // ***** I'm not really sure what this should return. *****
+
+          // The goal is to make the expected behavior of the contract check be a thrown exception.
+          // (That's somewhat weird behavior!  Do I want to even support it?)
+          // In general a contract should not throw an exception, but the contract might call a
+          // method that throws an exception; for example, the method might throw
+          // NullPointerException or ConcurrentModificationException.
+
+          // This is wrong:  it attaches an expected exeption to the method call that
+          // created the object, not to the contract check that comes afterward.
+          // return new ExpectedExceptionCheck(
+          //     e, eseq.size(), ExpectedExceptionCheckGen.getCatchClassName(e.getClass()));
+
+          // Possible solutions:
+          //  * Create a new type of ObjectCheck with an expected exception.
+          //  * Don't support the weird use case, and treat this like INVALID instead.
+          //    For now, do this.
+
+          throw new Error("unreachable (for now)");
+
+        case INVALID:
+          // The index and name won't get used, but set them anyway.
+          return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
+        default:
+          throw new Error("unreachable");
+      }
+
     } else {
       assert outcome instanceof NotExecuted;
       throw new BugInRandoopException("Contract " + this + " failed to execute during evaluation");
     }
+  }
 
-    // the contract failed
+  /** Return an ObjectCheck indicating that a contract failed. */
+  ObjectCheck failedContract(ExecutableSequence eseq, Object[] values) {
     Variable[] varArray = new Variable[values.length];
     for (int i = 0; i < varArray.length; i++) {
-      List<Variable> variables = eseq.getVariables(values[i]);
-      varArray[i] = Randomness.randomMember(variables);
+      varArray[i] = eseq.getVariable(values[i]);
+      // Note: the following alternative to the above line slightly improves coverage
+      // varArray[i] = Randomness.randomMember(eseq.getVariables(values[i]));
+
       //   Log.logLine(
       //       "values[%d] = %s @%s%n",
       //       i, toStringHandleExceptions(values[i]), System.identityHashCode(values[i]));

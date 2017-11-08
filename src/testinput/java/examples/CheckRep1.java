@@ -7,7 +7,7 @@ public class CheckRep1 {
   public CheckRep1() {}
 
   @CheckRep
-  public void foo() {
+  public void throwsException() {
     throw new RuntimeException();
   }
 }

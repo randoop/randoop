@@ -3,7 +3,7 @@ package randoop.test;
 import java.util.Set;
 
 /**
- * A TestChecks reprents a set of Checks, and possibly a single ExceptionCheck
+ * A TestChecks reprents a set of Checks, and possibly a single ExceptionCheck.
  *
  * @see RegressionChecks
  * @see ErrorRevealingChecks

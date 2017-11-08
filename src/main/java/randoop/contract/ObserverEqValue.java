@@ -76,7 +76,7 @@ public final class ObserverEqValue extends ObjectContract {
     } else if (observer.getOutputType().isPrimitive()
         && (!value.equals(Double.NaN))
         && (!value.equals(Float.NaN))) {
-      if (observer.getOutputType().hasRuntimeClass(boolean.class)) {
+      if (observer.getOutputType().runtimeClassIs(boolean.class)) {
         assert value.equals(true) || value.equals(false);
         if (value.equals(true)) {
           b.append(String.format("org.junit.Assert.assertTrue(x0.%s());", methodname));

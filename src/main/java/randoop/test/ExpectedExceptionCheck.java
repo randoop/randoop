@@ -21,7 +21,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    * @param statementIndex the index of the statement in the sequence where exception is thrown
    * @param catchClassName the name of exception to be caught
    */
-  ExpectedExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+  public ExpectedExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     super(exception, statementIndex, catchClassName);
   }
 
@@ -68,12 +68,14 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
 
   /**
    * Ensures that the fail message built from an exception message is formatted propertly for use in
-   * an assertion by removing newlines.
+   * an assertion by removing newlines. Also, escapes embedded quotes; i.e. {@code "} &rArr; {@code
+   * \"}.
    *
    * @param message the message to convert
    * @return the message with newlines removed
    */
   private static String fixMessage(String message) {
+    message = message.replaceAll("\"", "\\\\\"");
     return message.replaceAll("[\\r\\n]+", ".");
   }
 }

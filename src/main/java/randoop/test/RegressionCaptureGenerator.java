@@ -142,7 +142,7 @@ public final class RegressionCaptureGenerator implements TestCheckGenerator {
             // don't use it as it's just going to have today's date in it.
             if (!sequence.sequence.getInputs(i).isEmpty()) {
               Variable var0 = sequence.sequence.getInputs(i).get(0);
-              if (var0.getType().hasRuntimeClass(java.util.Date.class)) {
+              if (var0.getType().runtimeClassIs(java.util.Date.class)) {
                 Statement sk = sequence.sequence.getCreatingStatement(var0);
                 if ((sk.isConstructorCall()) && (sequence.sequence.getInputs(i).size() == 1)) {
                   continue;

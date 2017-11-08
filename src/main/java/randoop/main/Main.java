@@ -79,7 +79,8 @@ public class Main {
 
     } catch (BugInRandoopException e) {
       System.out.println();
-      System.out.println("Randoop failed in an unexpected way. Please report: " + e);
+      System.out.println("Randoop failed in an unexpected way.");
+      System.out.println("Please report at https://github.com/randoop/randoop/issues .");
       e.printStackTrace();
       System.err.flush();
       success = false;
