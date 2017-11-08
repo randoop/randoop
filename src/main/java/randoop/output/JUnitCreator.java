@@ -336,14 +336,14 @@ public class JUnitCreator {
    * @return the {@code String} with the declaration for the suite class
    */
   public String createTestSuite(String suiteClassName, Set<String> testClassNames) {
-    CompilationUnit cu = new CompilationUnit();
+    CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null && !packageName.isEmpty()) {
-      cu.setPackage(new PackageDeclaration(new NameExpr(packageName)));
+      compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
     }
     List<ImportDeclaration> imports = new ArrayList<>();
     imports.add(new ImportDeclaration(new NameExpr("org.junit.runner.RunWith"), false, false));
     imports.add(new ImportDeclaration(new NameExpr("org.junit.runners.Suite"), false, false));
-    cu.setImports(imports);
+    compilationUnit.setImports(imports);
 
     ClassOrInterfaceDeclaration suiteClass =
         new ClassOrInterfaceDeclaration(Modifier.PUBLIC, false, suiteClassName);
@@ -366,8 +366,8 @@ public class JUnitCreator {
     suiteClass.setAnnotations(annotations);
     List<TypeDeclaration> types = new ArrayList<>();
     types.add(suiteClass);
-    cu.setTypes(types);
-    return cu.toString();
+    compilationUnit.setTypes(types);
+    return compilationUnit.toString();
   }
 
   /**
@@ -378,9 +378,9 @@ public class JUnitCreator {
    * @return the test driver class as a {@code String}
    */
   public String createTestDriver(String driverName, Set<String> testClassNames) {
-    CompilationUnit cu = new CompilationUnit();
+    CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null && !packageName.isEmpty()) {
-      cu.setPackage(new PackageDeclaration(new NameExpr(packageName)));
+      compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
     }
 
     MethodDeclaration mainMethod =
@@ -496,8 +496,8 @@ public class JUnitCreator {
 
     List<TypeDeclaration> types = new ArrayList<>();
     types.add(driverClass);
-    cu.setTypes(types);
-    return cu.toString();
+    compilationUnit.setTypes(types);
+    return compilationUnit.toString();
   }
 
   public static BlockStmt parseFixture(List<String> bodyText) throws ParseException {
