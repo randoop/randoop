@@ -1336,6 +1336,10 @@ public class RandoopSystemTest {
       ExpectedTests expectedError,
       CoverageChecker coverageChecker) {
 
+    if (expectedError == ExpectedTests.NONE) {
+      options.setFlag("stop-on-error-test");
+    }
+
     RandoopRunStatus runStatus = generateAndCompile(environment, options, false);
 
     String packageName = options.getPackageName();
