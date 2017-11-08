@@ -291,8 +291,7 @@ public class ExecutableSequence {
         if (operation.isConstructorCall() || operation.isMethodCall()) {
           ExpectedOutcomeTable outcomeTable = operation.checkConditions(inputValues);
           if (outcomeTable.isInvalidPrestate()) {
-            checks = new InvalidChecks();
-            checks.add(new InvalidValueCheck(this, i));
+            checks = new InvalidChecks(new InvalidValueCheck(this, i));
             return;
           }
           gen = outcomeTable.addPostCheckGenerator(gen);
