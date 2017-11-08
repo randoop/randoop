@@ -191,10 +191,11 @@ dependencies {
 /*
  * Configuration for formatting
  */
-// TODO:
-// googleJavaFormat {
-//   toolVersion '1.3'
-// }
+googleJavaFormat {
+  // TODO:
+  //   toolVersion '1.3'
+  exclude '**/CloneVisitor.java'
+}
 
 tasks.googleJavaFormat {
   group 'Formatting'
