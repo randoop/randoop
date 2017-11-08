@@ -686,12 +686,19 @@ public class RandoopSystemTest {
     options.setRegressionBasename("CMExceptionTest");
     options.setErrorBasename("CMExceptionErr");
     options.addTestClass("misc.MyCmeList");
-    options.setOption("outputLimit", "10");
+    options.setOption("outputLimit", "100");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            // Randoop does not test hashCode(), because it may be nondeterministic
+            "misc.MyCmeList.hashCode() ignore");
+
     generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /**

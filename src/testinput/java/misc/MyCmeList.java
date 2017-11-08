@@ -13,6 +13,9 @@ public class MyCmeList {
   }
 
   public MyCmeList(List<String> delegate) {
+    if (delegate == null) {
+      throw new IllegalArgumentException("null not allowed");
+    }
     this.delegate = delegate;
   }
 
@@ -34,5 +37,9 @@ public class MyCmeList {
     }
     MyCmeList that = (MyCmeList) o;
     return this.delegate.equals(that.delegate);
+  }
+
+  public int hashCode() {
+    return delegate.hashCode();
   }
 }
