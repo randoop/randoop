@@ -239,7 +239,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     // hashCode is nondeterministic in general, but String.hashCode is deterministic.
     if (mName == "hashCode" // interned
         && !mClass.equals(String.class)) {
-      return "hashCode is nondeterministic";
+      return "hashCode may be nondeterministic";
     }
     if (mName == "deepHashCode" // interned
         && mClass.equals(Arrays.class)) {

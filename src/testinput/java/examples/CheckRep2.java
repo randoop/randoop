@@ -7,7 +7,7 @@ public class CheckRep2 {
   public CheckRep2() {}
 
   @CheckRep
-  public boolean foo() {
+  public boolean returnsFalse() {
     return false;
   }
 }

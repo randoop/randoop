@@ -83,13 +83,14 @@ class SystemTestEnvironmentManager {
     Path randoopJarPath = null;
     try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(libsPath)) {
       for (Path entry : dirStream) {
-        if (entry.getFileName().toString().startsWith("covered-class")) {
+        String entryName = entry.getFileName().toString();
+        if (entryName.startsWith("covered-class")) {
           coveredClassAgentPath = entry;
         }
-        if (entry.getFileName().toString().startsWith("replacecall")) {
+        if (entryName.startsWith("replacecall")) {
           replacecallAgentPath = entry;
         }
-        if (entry.getFileName().toString().startsWith("randoop-all")) {
+        if (entryName.startsWith("randoop-all")) {
           randoopJarPath = entry;
         }
       }

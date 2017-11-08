@@ -105,7 +105,7 @@ public class RandoopSystemTest {
    *
    *    where testName is the name of your test (be sure that it doesn't conflict with the name
    *    of any test already in this class).
-   *    The variable systemTestEnvironment refers to the global environment for a run of the
+   *    The variable systemTestEnvironmentManager refers to the global environment for a run of the
    *    system tests, and contains information about the classpath, and directories needed while
    *    running all of the system tests.
    *
@@ -240,8 +240,9 @@ public class RandoopSystemTest {
         new CoverageChecker(
             options,
             "java2.util2.ArrayList.readObject(java.io.ObjectInputStream) exclude",
-            "java2.util2.ArrayList.remove(int) exclude",
+            "java2.util2.ArrayList.remove(int) ignore",
             "java2.util2.ArrayList.removeRange(int, int) exclude",
+            "java2.util2.ArrayList.set(int, java.lang.Object) ignore",
             "java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.Collections.eq(java.lang.Object, java.lang.Object) ignore",
             "java2.util2.Collections.get(java2.util2.ListIterator, int) exclude",
@@ -256,6 +257,7 @@ public class RandoopSystemTest {
             "java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap) exclude",
             "java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap) exclude",
             "java2.util2.LinkedList.readObject(java.io.ObjectInputStream) exclude",
+            "java2.util2.LinkedList.remove(int) ignore",
             "java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.TreeSet.last() ignore",
             "java2.util2.TreeSet.readObject(java.io.ObjectInputStream) exclude",
@@ -332,10 +334,12 @@ public class RandoopSystemTest {
             "java2.util2.Collections.rotate2(java2.util2.List, int) exclude",
             "java2.util2.Collections.shuffle(java2.util2.List) exclude",
             "java2.util2.Collections.swap(java.lang.Object[], int, int) exclude",
+            "java2.util2.Collections.swap(java2.util2.List, int, int) ignore",
             "java2.util2.Hashtable.readObject(java.io.ObjectInputStream) exclude",
             "java2.util2.Hashtable.rehash() ignore", // Travis
             "java2.util2.Hashtable.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.LinkedList.readObject(java.io.ObjectInputStream) exclude",
+            "java2.util2.LinkedList.set(int, java.lang.Object) ignore",
             "java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.Observable.clearChanged() exclude",
             "java2.util2.Observable.setChanged() exclude",
@@ -370,6 +374,8 @@ public class RandoopSystemTest {
             "java2.util2.Vector.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.WeakHashMap.eq(java.lang.Object, java.lang.Object) ignore", // Travis
             "java2.util2.WeakHashMap.removeMapping(java.lang.Object) exclude",
+            "java2.util2.WeakHashMap.resize(int) ignore",
+            "java2.util2.WeakHashMap.transfer(java2.util2.WeakHashMap.Entry[], java2.util2.WeakHashMap.Entry[]) ignore",
             "java2.util2.WeakHashMap.unmaskNull(java.lang.Object) ignore"
             // end of list (line break to permit easier sorting)
             );
@@ -450,8 +456,15 @@ public class RandoopSystemTest {
 
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
     ExpectedTests expectedErrorTests = ExpectedTests.SOME;
+
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            // I don't see how to cover a checkRep method that always throws an exception.
+            "examples.CheckRep1.throwsException() ignore");
+
     generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /**
@@ -666,11 +679,6 @@ public class RandoopSystemTest {
   @Test
   public void runCMExceptionTest() {
 
-    // TEMPORARILY DISABLE THE TEST
-    if (true) {
-      return;
-    }
-
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("cm-exception-tests");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
@@ -678,12 +686,19 @@ public class RandoopSystemTest {
     options.setRegressionBasename("CMExceptionTest");
     options.setErrorBasename("CMExceptionErr");
     options.addTestClass("misc.MyCmeList");
-    options.setOption("outputLimit", "10");
+    options.setOption("outputLimit", "100");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            // Randoop does not test hashCode(), because it may be nondeterministic
+            "misc.MyCmeList.hashCode() ignore");
+
     generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /**
@@ -1327,6 +1342,10 @@ public class RandoopSystemTest {
       ExpectedTests expectedRegression,
       ExpectedTests expectedError,
       CoverageChecker coverageChecker) {
+
+    if (expectedError == ExpectedTests.NONE) {
+      options.setFlag("stop-on-error-test");
+    }
 
     RandoopRunStatus runStatus = generateAndCompile(environment, options, false);
 

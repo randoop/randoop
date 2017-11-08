@@ -57,8 +57,7 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
    * contracts in {@code contracts}.
    */
   @Override
-  public ErrorRevealingChecks generateTestChecks(ExecutableSequence eseq) {
-    ErrorRevealingChecks checks = new ErrorRevealingChecks();
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
 
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome finalResult = eseq.getResult(finalIndex);
@@ -73,10 +72,11 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
       if (exceptionPredicate.test(exec, eseq)) {
         String exceptionName = exec.getException().getClass().getName();
         NoExceptionCheck obs = new NoExceptionCheck(finalIndex, exceptionName);
-        checks.add(obs);
+        return new ErrorRevealingChecks(obs);
       }
 
       // If exception not considered a failure, don't include checks
+      return ErrorRevealingChecks.EMPTY;
 
     } else {
       // Otherwise, normal execution, check contracts
@@ -91,8 +91,7 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
           statementTuples = statementTuples.extend(statementValues);
           Check check = checkContracts(unaryContracts, eseq, statementTuples);
           if (check != null) {
-            checks.add(check);
-            return checks;
+            return singletonTestCheck(check);
           }
         }
 
@@ -105,8 +104,7 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
         if (!binaryContracts.isEmpty()) {
           Check check = checkContracts(binaryContracts, eseq, inputTuples);
           if (check != null) {
-            checks.add(check);
-            return checks;
+            return singletonTestCheck(check);
           }
         }
 
@@ -116,13 +114,23 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
         if (!ternaryContracts.isEmpty()) {
           Check check = checkContracts(ternaryContracts, eseq, ternaryTuples);
           if (check != null) {
-            checks.add(check);
-            return checks;
+            return singletonTestCheck(check);
           }
         }
       }
     }
-    return checks;
+    return ErrorRevealingChecks.EMPTY;
+  }
+
+  /** Return a TestChecks that contains only the given check. */
+  private TestChecks<?> singletonTestCheck(Check check) {
+    // System.out.printf("singletonTestCheck([class %s] %s)%n", check.getClass(), check);
+    // new Error().printStackTrace();
+    if (check instanceof InvalidExceptionCheck) {
+      return new InvalidChecks((InvalidExceptionCheck) check);
+    } else {
+      return new ErrorRevealingChecks(check);
+    }
   }
 
   /**
@@ -131,7 +139,10 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
    * @param contracts the contracts to check
    * @param eseq the executable sequence that is the source of values for checking contracts
    * @param tuples the value tuples to use as input to the contracts
-   * @return a {@link Check} of the first contract+tuple that failed, or null if no contracts failed
+   * @return a {@link Check} of the first contract+tuple that did not succeed, or null if all
+   *     contracts succeeded. More specifically, returns a {@link ObjectCheck} if a contract fails,
+   *     an {@link InvalidExceptionCheck} if a contract throws an exception indicating that the
+   *     sequence is invalid, null otherwise.
    */
   Check checkContracts(
       List<ObjectContract> contracts, ExecutableSequence eseq, TupleSet<ReferenceValue> tuples) {

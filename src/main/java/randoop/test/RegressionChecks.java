@@ -1,11 +1,16 @@
 package randoop.test;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import randoop.BugInRandoopException;
 
 /** A set of checks, including at most one ExceptionCheck. */
 public class RegressionChecks implements TestChecks<RegressionChecks> {
+
+  /** An empty, immutable set of regression checks. */
+  public static RegressionChecks EMPTY = new RegressionChecks();
 
   private Set<Check> checks;
   private ExceptionCheck exceptionCheck;
@@ -14,6 +19,17 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
   public RegressionChecks() {
     this.checks = new LinkedHashSet<>();
     this.exceptionCheck = null;
+  }
+
+  /** Create a singleton set of regression checks. */
+  public RegressionChecks(Check check) {
+    if (check instanceof ExceptionCheck) {
+      this.checks = Collections.emptySet();
+      this.exceptionCheck = (ExceptionCheck) check;
+    } else {
+      this.checks = Collections.singleton(check);
+      this.exceptionCheck = null;
+    }
   }
 
   @Override
@@ -31,8 +47,12 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
    * @throws IllegalArgumentException if the argument's class is {@code ExceptionCheck} and this
    *     already contains such a check
    */
+  @SuppressWarnings("ReferenceEquality")
   @Override
   public void add(Check check) {
+    if (this == EMPTY) {
+      throw new BugInRandoopException("Don't add to EMPTY");
+    }
     if (check instanceof ExceptionCheck) {
       if (exceptionCheck != null) {
         throw new IllegalArgumentException(

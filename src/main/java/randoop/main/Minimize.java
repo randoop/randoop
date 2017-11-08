@@ -829,11 +829,8 @@ public class Minimize extends CommandHandler {
                 return o1.toString().compareTo(o2.toString());
               }
             });
-
     new ClassTypeVisitor().visit(compilationUnit, fullyQualifiedNames);
-
     CompilationUnit result = compilationUnit;
-
     for (ClassOrInterfaceType type : fullyQualifiedNames) {
       // Copy and modify the compilation unit.
       CompilationUnit compUnitWithSimpleTypeNames =

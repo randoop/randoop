@@ -21,7 +21,7 @@ public class SimpleTypeTest {
     Type intType = new PrimitiveType(int.class);
     assertEquals("name of int is int", "int", intType.getName());
     assertEquals("runtime class of int type is int.class", int.class, intType.getRuntimeClass());
-    assertTrue("int type has runtime class of int.class", intType.hasRuntimeClass(int.class));
+    assertTrue("int type has runtime class of int.class", intType.runtimeClassIs(int.class));
     assertTrue("int type is primitive", intType.isPrimitive());
     assertFalse("int type is not array", intType.isArray());
     assertFalse("int type is not void", intType.isVoid());

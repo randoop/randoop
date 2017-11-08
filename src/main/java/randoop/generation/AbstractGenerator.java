@@ -319,10 +319,9 @@ public abstract class AbstractGenerator {
       num_sequences_generated++;
 
       if (outputTest.test(eSeq)) {
-        TypedOperation operation = eSeq.getOperation();
         if (!eSeq.hasInvalidBehavior()) {
           if (eSeq.hasFailure()) {
-            operationHistory.add(operation, OperationOutcome.ERROR_SEQUENCE);
+            operationHistory.add(eSeq.getOperation(), OperationOutcome.ERROR_SEQUENCE);
             num_failing_sequences++;
             outErrorSeqs.add(eSeq);
           } else {

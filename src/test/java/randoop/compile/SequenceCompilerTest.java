@@ -75,7 +75,7 @@ public class SequenceCompilerTest {
   }
 
   private String createCompilableClass() {
-    CompilationUnit cu = new CompilationUnit();
+    CompilationUnit compilationUnit = new CompilationUnit();
     ClassOrInterfaceDeclaration classDeclaration =
         new ClassOrInterfaceDeclaration(PUBLIC, false, "Simple");
     MethodDeclaration method =
@@ -92,8 +92,8 @@ public class SequenceCompilerTest {
     classDeclaration.setMembers(bodyDeclarations);
     List<TypeDeclaration> types = new ArrayList<>();
     types.add(classDeclaration);
-    cu.setTypes(types);
-    return cu.toString();
+    compilationUnit.setTypes(types);
+    return compilationUnit.toString();
   }
 
   @Test
@@ -126,7 +126,7 @@ public class SequenceCompilerTest {
 
   private String createUncompilableClass() {
 
-    CompilationUnit cu = new CompilationUnit();
+    CompilationUnit compilationUnit = new CompilationUnit();
     ClassOrInterfaceDeclaration classDeclaration =
         new ClassOrInterfaceDeclaration(PUBLIC, false, "SimplyBad");
 
@@ -172,8 +172,8 @@ public class SequenceCompilerTest {
     classDeclaration.setMembers(bodyDeclarations);
     List<TypeDeclaration> types = new ArrayList<>();
     types.add(classDeclaration);
-    cu.setTypes(types);
-    return cu.toString();
+    compilationUnit.setTypes(types);
+    return compilationUnit.toString();
   }
 
   private SequenceCompiler getSequenceCompiler(SequenceClassLoader classLoader) {

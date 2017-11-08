@@ -53,8 +53,9 @@ The --usethreads command-line option defaults to false.  This makes Randoop
 run faster and generate more tests, but Randoop will hang if it calls a
 method that does not terminate and return.
 
-New command-line option --cm-exception controls how Randoop classifies a
-test that throws a ConcurrentModificationException exception.
+New command-line options --cm-exception and --ncdf-exception control how
+Randoop classifies a test that throws a ConcurrentModificationException or
+NoClassDefFoundError exception.
 
 Some command-line options have been renamed:
 
@@ -69,6 +70,9 @@ The option --include-if-class-exercised has been renamed to
 --require-covered-classes.  The "exercised-class.jar" is now "covered-class.jar".
 
 The option --noprogressdisplay has been renamed to --progressdisplay=false.
+
+Many improvements to the manual, including improved instructions about
+debugging when Randoop does not produce good test suites.
 
 
 Version 3.1.5, released April 28, 2017
