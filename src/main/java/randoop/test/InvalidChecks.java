@@ -10,12 +10,12 @@ import randoop.BugInRandoopException;
  */
 public class InvalidChecks implements TestChecks<InvalidChecks> {
 
-  /** An empty set of erorr-revealing checks. */
+  /** An empty, immutable set of erorr-revealing checks. */
   public static final InvalidChecks EMPTY = new InvalidChecks();
 
   private InvalidExceptionCheck check;
 
-  /** Create an empty set of invalid checks. */
+  /** Create an empty, mutable set of invalid checks. */
   public InvalidChecks() {}
 
   /** Create a singleton set of invalid checks. */

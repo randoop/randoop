@@ -9,6 +9,7 @@ import randoop.BugInRandoopException;
 /** A set of checks, including at most one ExceptionCheck. */
 public class RegressionChecks implements TestChecks<RegressionChecks> {
 
+  /** An empty, immutable set of regression checks. */
   public static RegressionChecks EMPTY = new RegressionChecks();
 
   private Set<Check> checks;

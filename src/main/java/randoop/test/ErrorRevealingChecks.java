@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
 
-  /** An empty set of erorr-revealing checks. */
+  /** An empty, immutable set of error-revealing checks. */
   public static final ErrorRevealingChecks EMPTY;
 
   static {
