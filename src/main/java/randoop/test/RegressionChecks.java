@@ -21,7 +21,11 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
     this.exceptionCheck = null;
   }
 
-  /** Create a singleton set of regression checks. */
+  /**
+   * Create a singleton set of regression checks.
+   *
+   * @param check the check to put in the newly-created singleton set
+   */
   public RegressionChecks(Check check) {
     if (check instanceof ExceptionCheck) {
       this.checks = Collections.emptySet();

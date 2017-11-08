@@ -122,7 +122,12 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
     return ErrorRevealingChecks.EMPTY;
   }
 
-  /** Return a TestChecks that contains only the given check. */
+  /**
+   * Return a TestChecks that contains only the given check.
+   *
+   * @param check the check to put in a singleton TestChecks
+   * @return a TestChecks that contains only the given check
+   */
   private TestChecks<?> singletonTestCheck(Check check) {
     // System.out.printf("singletonTestCheck([class %s] %s)%n", check.getClass(), check);
     // new Error().printStackTrace();

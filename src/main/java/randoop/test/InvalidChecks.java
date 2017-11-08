@@ -19,7 +19,11 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   /** Create an empty, mutable set of invalid checks. */
   public InvalidChecks() {}
 
-  /** Create a singleton set of invalid checks. */
+  /**
+   * Create a singleton set of invalid checks.
+   *
+   * @param check the check to put in the newly-created singleton set
+   */
   public InvalidChecks(Check check) {
     add(check);
   }
