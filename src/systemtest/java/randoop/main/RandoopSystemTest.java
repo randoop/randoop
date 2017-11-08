@@ -456,8 +456,15 @@ public class RandoopSystemTest {
 
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
     ExpectedTests expectedErrorTests = ExpectedTests.SOME;
+
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            // I don't see how to cover a checkRep method that always throws an exception.
+            "examples.CheckRep1.throwsException() ignore");
+
     generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /**

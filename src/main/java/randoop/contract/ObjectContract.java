@@ -9,11 +9,10 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.main.ExceptionBehaviorClassifier;
+import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 import randoop.test.Check;
-import randoop.test.ExpectedExceptionCheck;
-import randoop.test.ExpectedExceptionCheckGen;
 import randoop.test.InvalidExceptionCheck;
 import randoop.test.ObjectCheck;
 import randoop.types.TypeTuple;
@@ -145,19 +144,40 @@ public abstract class ObjectContract {
         return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
       }
 
+      BehaviorType bt = ExceptionBehaviorClassifier.classify(e, eseq);
+
       if (Log.isLoggingOn()) {
-        Log.logLine(
-            "  ExceptionBehaviorClassifier.classify(e, eseq) => "
-                + ExceptionBehaviorClassifier.classify(e, eseq));
+        Log.logLine("  ExceptionBehaviorClassifier.classify(e, eseq) => " + bt);
       }
 
-      switch (ExceptionBehaviorClassifier.classify(e, eseq)) {
+      if (bt == BehaviorType.EXPECTED) {
+        bt = BehaviorType.INVALID;
+      }
+
+      switch (bt) {
         case ERROR:
           return failedContract(eseq, values);
         case EXPECTED:
           // ***** I'm not really sure what this should return. *****
-          return new ExpectedExceptionCheck(
-              e, eseq.size(), ExpectedExceptionCheckGen.getCatchClassName(e.getClass()));
+
+          // The goal is to make the expected behavior of the contract check be a thrown exception.
+          // (That's somewhat weird behavior!  Do I want to even support it?)
+          // In general a contract should not throw an exception, but the contract might call a
+          // method that throws an exception; for example, the method might throw
+          // NullPointerException or ConcurrentModificationException.
+
+          // This is wrong:  it attaches an expected exeption to the method call that
+          // created the object, not to the contract check that comes afterward.
+          // return new ExpectedExceptionCheck(
+          //     e, eseq.size(), ExpectedExceptionCheckGen.getCatchClassName(e.getClass()));
+
+          // Possible solutions:
+          //  * Create a new type of ObjectCheck with an expected exception.
+          //  * Don't support the weird use case, and treat this like INVALID instead.
+          //    For now, do this.
+
+          throw new Error("unreachable (for now)");
+
         case INVALID:
           // The index and name won't get used, but set them anyway.
           return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
