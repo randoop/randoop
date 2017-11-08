@@ -105,7 +105,7 @@ public class RandoopSystemTest {
    *
    *    where testName is the name of your test (be sure that it doesn't conflict with the name
    *    of any test already in this class).
-   *    The variable systemTestEnvironment refers to the global environment for a run of the
+   *    The variable systemTestEnvironmentManager refers to the global environment for a run of the
    *    system tests, and contains information about the classpath, and directories needed while
    *    running all of the system tests.
    *
