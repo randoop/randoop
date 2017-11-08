@@ -80,7 +80,7 @@ public class SpecificationCollection {
   }
 
   /**
-   * Creates a {@link SpecificationCollection} from the list of files of serialized specifications.
+   * Creates a {@link SpecificationCollection} from the list of JSON specification files.
    *
    * @param specificationFiles the files of serialized specifications
    * @return the {@link SpecificationCollection} built from the serialized {@link
@@ -260,7 +260,18 @@ public class SpecificationCollection {
 
   /**
    * Creates an {@link OperationConditions} object for the given
-   * {java.lang.reflect.AccessibleObject}.
+   * {java.lang.reflect.AccessibleObject}, from its specifications.
+   *
+   * <p>The translation makes the following conversions:
+   *
+   * <ul>
+   *   <li>{@link randoop.condition.specification.Precondition} to {@link
+   *       randoop.condition.BooleanExpression}
+   *   <li>{@link randoop.condition.specification.Postcondition} to {@link
+   *       randoop.condition.GuardPropertyPair}
+   *   <li>{@link randoop.condition.specification.ThrowsCondition} to {@link
+   *       randoop.condition.GuardThrowsPair}
+   * </ul>
    *
    * @param accessibleObject the reflection object for a constructor or method
    * @return the {@link OperationConditions} for the specifications of the given method or

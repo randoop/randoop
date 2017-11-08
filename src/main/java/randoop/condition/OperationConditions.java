@@ -7,8 +7,11 @@ import java.util.Set;
 
 /**
  * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
- * is represented as the collection of all {@link BooleanExpression}, {@link GuardPropertyPair}, and
- * {@link GuardThrowsPair} for the {@link randoop.condition.specification.Precondition}, {@link
+ * allows the underlying Boolean expressions to be evaluated.
+ *
+ * <p>It is represented as the collection of all {@link BooleanExpression}, {@link
+ * GuardPropertyPair}, and {@link GuardThrowsPair} for the {@link
+ * randoop.condition.specification.Precondition}, {@link
  * randoop.condition.specification.Postcondition}, and {@link
  * randoop.condition.specification.ThrowsCondition} objects defined on a single operation. Includes
  * specifications inherited from supertypes.

@@ -5,7 +5,7 @@ package randoop.condition;
  *
  * <p>Corresponds to a {@link randoop.condition.specification.Postcondition}.
  */
-class GuardPropertyPair {
+public class GuardPropertyPair {
 
   /** The expression that must hold before the operation is called. */
   final BooleanExpression guardExpression;

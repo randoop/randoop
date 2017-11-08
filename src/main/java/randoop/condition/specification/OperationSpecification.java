@@ -7,12 +7,13 @@ import java.util.Objects;
 
 /**
  * A specification of a constructor or method, aka, an <i>operation</i>. Consists of the {@code
- * java.lang.reflect.AccessibleObject} for the operation, and lists of {@link ThrowsCondition},
- * {@link Postcondition}, and {@link Precondition} objects that describe contracts on the operation.
+ * java.lang.reflect.AccessibleObject} for the operation, and lists of {@link Precondition}, {@link
+ * Postcondition}, and {@link ThrowsCondition} objects that describe contracts on the operation.
  *
- * <p>The JSON serialization of this class is used to read the specifications for an operation given
- * using the {@code --specifications} command-line option. The JSON should include a JSON object
- * labeled by the name of each field of this class, as in
+ * <p>Method {@link randoop.condition.SpecificationCollection#create(java.util.List)} reads
+ * specifications from JSON files. A user specifies JSON files using the {@code --specifications}
+ * command-line option. The JSON should include a JSON object labeled by the name of each field of
+ * this class, as in
  *
  * <pre>
  *   {
@@ -44,8 +45,10 @@ import java.util.Objects;
  *   }
  * </pre>
  *
- * See the classes {@link OperationSignature}, {@link Identifiers}, {@link Precondition}, {@link
- * Postcondition}, and {@link ThrowsCondition} for details on specifying those objects.
+ * Method {@link
+ * randoop.condition.SpecificationCollection#getOperationConditions(java.lang.reflect.AccessibleObject)}
+ * translates specifications to an {@link randoop.condition.OperationConditions} object that allows
+ * the underlying Boolean expressions to be evaluated.
  */
 public class OperationSpecification {
 
