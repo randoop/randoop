@@ -62,11 +62,9 @@ import randoop.util.ProgressDisplay;
  *   <li>It only makes sense to call the following methods <b>after</b> executing the i-th statement
  *       in a sequence:
  *       <ul>
- *         <li>isNormalExecution(i)
- *         <li>isExceptionalExecution(i)
- *         <li>getExecutionResult(i)
- *         <li>getResult(i)
- *         <li>getException(i)
+ *         <li>{@link #isNormalExecution}
+ *         <li>{@link #getResult}
+ *         <li>{@link #getValue}
  *       </ul>
  *
  * </ul>
@@ -76,7 +74,6 @@ public class ExecutableSequence {
   /** The underlying sequence. */
   public Sequence sequence;
 
-  // TODO: permit this to be null?  Change generateTestChecks to be able to return null.
   /** The checks for this sequence */
   private TestChecks<?> checks;
 
@@ -235,8 +232,8 @@ public class ExecutableSequence {
 
   /**
    * Execute this sequence, invoking the given visitor as the execution unfolds. After invoking this
-   * method, the client can query the outcome of executing each statement via the method {@code
-   * getResult(i)}.
+   * method, the client can query the outcome of executing each statement via the method {@link
+   * #getResult}.
    *
    * <ul>
    *   <li>Before the sequence is executed, clears execution results and calls {@code
@@ -247,8 +244,7 @@ public class ExecutableSequence {
    *   <li>Execution stops if one of the following conditions holds:
    *       <ul>
    *         <li>All statements in the sequences have been executed.
-   *         <li>A statement's execution results in an exception and {@code
-   *             stop_on_exception==true}.
+   *         <li>A statement's execution results in an exception and {@code ignoreException==false}.
    *         <li>A {@code null} input value is implicitly passed to the statement (i.e., not via
    *             explicit declaration like x = null)
    *         <li>After executing the i-th statement and calling the visitor's {@code visitAfter}
@@ -260,6 +256,8 @@ public class ExecutableSequence {
    * @param visitor the {@code ExecutionVisitor}
    * @param gen the check generator
    * @param ignoreException the flag to indicate exceptions should be ignored
+   * @throws Error if execution of the sequence throws an exception and {@code
+   *     ignoreException==false}
    */
   @SuppressWarnings("SameParameterValue")
   private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {

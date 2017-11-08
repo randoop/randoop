@@ -67,7 +67,6 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
    */
   @Override
   public InvalidChecks generateTestChecks(ExecutableSequence eseq) {
-    InvalidChecks checks = new InvalidChecks();
     int finalIndex = eseq.sequence.size() - 1;
     for (int i = 0; i < eseq.sequence.size(); i++) {
       ExecutionOutcome result = eseq.getResult(i);
@@ -82,15 +81,13 @@ public class ValidityCheckingGenerator implements TestCheckGenerator {
                   || (e instanceof TimeoutExceededException))) {
             throw new SequenceExceptionError(eseq, i, e);
           }
-          checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));
-          return checks;
+          return new InvalidChecks(new InvalidExceptionCheck(e, i, e.getClass().getName()));
         } else if (isInvalid.test(exec, eseq)) {
-          checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));
-          return checks;
+          return new InvalidChecks(new InvalidExceptionCheck(e, i, e.getClass().getName()));
         }
       }
     }
 
-    return checks;
+    return InvalidChecks.EMPTY;
   }
 }

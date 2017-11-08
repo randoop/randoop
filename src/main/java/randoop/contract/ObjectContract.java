@@ -8,6 +8,8 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
+import randoop.main.ExceptionBehaviorClassifier;
+import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 import randoop.test.Check;
@@ -115,7 +117,8 @@ public abstract class ObjectContract {
       //   for (Object value : values) {
       //     Log.logLine(
       //         "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
-      Log.logLine(" Contract outcome " + outcome);
+      //   }
+      Log.logLine("  Contract outcome = " + outcome);
     }
 
     if (outcome instanceof NormalExecution) {
@@ -141,21 +144,46 @@ public abstract class ObjectContract {
         return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
       }
 
-      return failedContract(eseq, values);
+      BehaviorType eseqBehavior = ExceptionBehaviorClassifier.classify(e, eseq);
 
-      // **** TODO *****
-      // switch (ExceptionBehaviorClassifier.classify(e, eseq)) {
-      //   case ERROR:
-      //     return failedContract(eseq, values);
-      //   case EXPECTED:
-      //     // The index and name won't get used, but set them anyway.
-      //     return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
-      //   case INVALID:
-      //     // The index and name won't get used, but set them anyway.
-      //     return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
-      //   default:
-      //     throw new Error("unreachable");
-      // }
+      if (Log.isLoggingOn()) {
+        Log.logLine("  ExceptionBehaviorClassifier.classify(e, eseq) => " + eseqBehavior);
+      }
+
+      if (eseqBehavior == BehaviorType.EXPECTED) {
+        eseqBehavior = BehaviorType.INVALID;
+      }
+
+      switch (eseqBehavior) {
+        case ERROR:
+          return failedContract(eseq, values);
+        case EXPECTED:
+          // ***** I'm not really sure what this should return. *****
+
+          // The goal is to make the expected behavior of the contract check be a thrown exception.
+          // (That's somewhat weird behavior!  Do I want to even support it?)
+          // In general a contract should not throw an exception, but the contract might call a
+          // method that throws an exception; for example, the method might throw
+          // NullPointerException or ConcurrentModificationException.
+
+          // This is wrong:  it attaches an expected exeption to the method call that
+          // created the object, not to the contract check that comes afterward.
+          // return new ExpectedExceptionCheck(
+          //     e, eseq.size(), ExpectedExceptionCheckGen.getCatchClassName(e.getClass()));
+
+          // Possible solutions:
+          //  * Create a new type of ObjectCheck with an expected exception.
+          //  * Don't support the weird use case, and treat this like INVALID instead.
+          //    For now, do this.
+
+          throw new Error("unreachable (for now)");
+
+        case INVALID:
+          // The index and name won't get used, but set them anyway.
+          return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
+        default:
+          throw new Error("unreachable");
+      }
 
     } else {
       assert outcome instanceof NotExecuted;

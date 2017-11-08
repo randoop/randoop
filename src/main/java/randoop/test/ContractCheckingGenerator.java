@@ -57,8 +57,7 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
    * contracts in {@code contracts}.
    */
   @Override
-  public ErrorRevealingChecks generateTestChecks(ExecutableSequence eseq) {
-    ErrorRevealingChecks checks = new ErrorRevealingChecks();
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
 
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome finalResult = eseq.getResult(finalIndex);
@@ -73,10 +72,11 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
       if (exceptionPredicate.test(exec, eseq)) {
         String exceptionName = exec.getException().getClass().getName();
         NoExceptionCheck obs = new NoExceptionCheck(finalIndex, exceptionName);
-        checks.add(obs);
+        return new ErrorRevealingChecks(obs);
       }
 
       // If exception not considered a failure, don't include checks
+      return ErrorRevealingChecks.EMPTY;
 
     } else {
       // Otherwise, normal execution, check contracts
@@ -91,8 +91,7 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
           statementTuples = statementTuples.extend(statementValues);
           Check check = checkContracts(unaryContracts, eseq, statementTuples);
           if (check != null) {
-            checks.add(check);
-            return checks;
+            return singletonTestCheck(check);
           }
         }
 
@@ -105,8 +104,7 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
         if (!binaryContracts.isEmpty()) {
           Check check = checkContracts(binaryContracts, eseq, inputTuples);
           if (check != null) {
-            checks.add(check);
-            return checks;
+            return singletonTestCheck(check);
           }
         }
 
@@ -116,13 +114,23 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
         if (!ternaryContracts.isEmpty()) {
           Check check = checkContracts(ternaryContracts, eseq, ternaryTuples);
           if (check != null) {
-            checks.add(check);
-            return checks;
+            return singletonTestCheck(check);
           }
         }
       }
     }
-    return checks;
+    return ErrorRevealingChecks.EMPTY;
+  }
+
+  /** Return a TestChecks that contains only the given check. */
+  private TestChecks<?> singletonTestCheck(Check check) {
+    // System.out.printf("singletonTestCheck([class %s] %s)%n", check.getClass(), check);
+    // new Error().printStackTrace();
+    if (check instanceof InvalidExceptionCheck) {
+      return new InvalidChecks((InvalidExceptionCheck) check);
+    } else {
+      return new ErrorRevealingChecks(check);
+    }
   }
 
   /**

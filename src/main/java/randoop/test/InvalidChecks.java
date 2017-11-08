@@ -10,7 +10,18 @@ import randoop.BugInRandoopException;
  */
 public class InvalidChecks implements TestChecks<InvalidChecks> {
 
+  /** An empty, immutable set of erorr-revealing checks. */
+  public static final InvalidChecks EMPTY = new InvalidChecks();
+
   private InvalidExceptionCheck check;
+
+  /** Create an empty, mutable set of invalid checks. */
+  public InvalidChecks() {}
+
+  /** Create a singleton set of invalid checks. */
+  public InvalidChecks(InvalidExceptionCheck check) {
+    add(check);
+  }
 
   @Override
   public int count() {
@@ -47,6 +58,9 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
 
   @Override
   public void add(Check check) {
+    if (this == EMPTY) {
+      throw new BugInRandoopException("Don't add to InvalidChecks.EMPTY");
+    }
     if (this.check != null) {
       throw new BugInRandoopException(
           String.format("add(%s) when InvalidChecks already contains %s", check, this.check));

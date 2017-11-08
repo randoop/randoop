@@ -456,8 +456,15 @@ public class RandoopSystemTest {
 
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
     ExpectedTests expectedErrorTests = ExpectedTests.SOME;
+
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            // I don't see how to cover a checkRep method that always throws an exception.
+            "examples.CheckRep1.throwsException() ignore");
+
     generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /**
@@ -672,11 +679,6 @@ public class RandoopSystemTest {
   @Test
   public void runCMExceptionTest() {
 
-    // TEMPORARILY DISABLE THE TEST
-    if (true) {
-      return;
-    }
-
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("cm-exception-tests");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
@@ -684,12 +686,19 @@ public class RandoopSystemTest {
     options.setRegressionBasename("CMExceptionTest");
     options.setErrorBasename("CMExceptionErr");
     options.addTestClass("misc.MyCmeList");
-    options.setOption("outputLimit", "10");
+    options.setOption("outputLimit", "100");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            // Randoop does not test hashCode(), because it may be nondeterministic
+            "misc.MyCmeList.hashCode() ignore");
+
     generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /**
@@ -1333,6 +1342,10 @@ public class RandoopSystemTest {
       ExpectedTests expectedRegression,
       ExpectedTests expectedError,
       CoverageChecker coverageChecker) {
+
+    if (expectedError == ExpectedTests.NONE) {
+      options.setFlag("stop-on-error-test");
+    }
 
     RandoopRunStatus runStatus = generateAndCompile(environment, options, false);
 

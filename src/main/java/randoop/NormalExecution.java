@@ -1,5 +1,7 @@
 package randoop;
 
+import java.util.Objects;
+
 /**
  * Means that the statement that this result represents completed normally.
  *
@@ -37,7 +39,14 @@ public class NormalExecution extends ExecutionOutcome {
    */
   @Override
   public String toString() {
+    String value;
+    try {
+      value = Objects.toString(result);
+    } catch (Throwable t) {
+      value = "???";
+    }
     return String.format(
-        "[NormalExecution %s]", (result == null ? "null" : result.getClass().getName()));
+        "[NormalExecution %s%s]",
+        value, (result == null ? "" : (" [of class " + result.getClass().getName() + "]")));
   }
 }

@@ -7,6 +7,6 @@ public class DummyCheckGenerator implements TestCheckGenerator {
 
   @Override
   public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
-    return new RegressionChecks();
+    return RegressionChecks.EMPTY;
   }
 }
