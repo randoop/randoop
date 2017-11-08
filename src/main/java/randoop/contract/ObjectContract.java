@@ -144,17 +144,17 @@ public abstract class ObjectContract {
         return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
       }
 
-      BehaviorType bt = ExceptionBehaviorClassifier.classify(e, eseq);
+      BehaviorType eseqBehavior = ExceptionBehaviorClassifier.classify(e, eseq);
 
       if (Log.isLoggingOn()) {
-        Log.logLine("  ExceptionBehaviorClassifier.classify(e, eseq) => " + bt);
+        Log.logLine("  ExceptionBehaviorClassifier.classify(e, eseq) => " + eseqBehavior);
       }
 
-      if (bt == BehaviorType.EXPECTED) {
-        bt = BehaviorType.INVALID;
+      if (eseqBehavior == BehaviorType.EXPECTED) {
+        eseqBehavior = BehaviorType.INVALID;
       }
 
-      switch (bt) {
+      switch (eseqBehavior) {
         case ERROR:
           return failedContract(eseq, values);
         case EXPECTED:
