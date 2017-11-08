@@ -919,7 +919,7 @@ public class RandoopSystemTest {
         is(equalTo(runStatus.regressionTestCount)));
   }
 
-  //TODO figure out why Randoop wont generate the error test for this input class/spec
+  // TODO figure out why Randoop won't generate the error test for this input class/spec.
   @Test
   public void runConditionInputTest() {
     SystemTestEnvironment testEnvironment =

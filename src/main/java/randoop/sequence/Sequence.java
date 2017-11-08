@@ -1173,7 +1173,7 @@ public final class Sequence implements WeightedElement {
    * Disables the use of variable values as arguments in this sequence. This is a hack to deal with
    * inability to determine when a variable definition is necessary because it is used more than
    * once, which is an issue because post-conditions can use variables but don't have the abilility
-   * to use the sort-form.
+   * to use the short-form.
    */
   public void disableShortForm() {
     allowShortForm = false;
