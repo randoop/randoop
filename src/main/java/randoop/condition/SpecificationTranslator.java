@@ -248,9 +248,9 @@ public class SpecificationTranslator {
     ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>();
     for (Postcondition postcondition : postconditions) {
       try {
-        ExecutableBooleanExpression guardExpression = create(postcondition.getGuard());
-        ExecutableBooleanExpression booleanExpression = create(postcondition.getProperty());
-        returnConditions.add(new GuardPropertyPair(guardExpression, booleanExpression));
+        ExecutableBooleanExpression guard = create(postcondition.getGuard());
+        ExecutableBooleanExpression property = create(postcondition.getProperty());
+        returnConditions.add(new GuardPropertyPair(guard, property));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;
@@ -291,10 +291,10 @@ public class SpecificationTranslator {
         continue;
       }
       try {
-        ExecutableBooleanExpression guardExpression = create(throwsCondition.getGuard());
+        ExecutableBooleanExpression guard = create(throwsCondition.getGuard());
         ThrowsClause throwsClause =
             new ThrowsClause(exceptionType, throwsCondition.getDescription());
-        throwsPairs.add(new GuardThrowsPair(guardExpression, throwsClause));
+        throwsPairs.add(new GuardThrowsPair(guard, throwsClause));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;

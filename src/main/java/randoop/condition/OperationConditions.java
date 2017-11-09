@@ -148,8 +148,8 @@ public class OperationConditions {
   private Set<ThrowsClause> checkGuardThrowsPairs(Object[] args) {
     Set<ThrowsClause> throwsClauses = new LinkedHashSet<>();
     for (GuardThrowsPair pair : guardThrowsPairs) {
-      ExecutableBooleanExpression guardExpression = pair.guardExpression;
-      if (guardExpression.check(args)) {
+      ExecutableBooleanExpression guard = pair.guard;
+      if (guard.check(args)) {
         throwsClauses.add(pair.throwsClause);
       }
     }
@@ -166,10 +166,10 @@ public class OperationConditions {
    *     which the guard expression evaluates to true; null if there is none
    */
   private ExecutableBooleanExpression checkGuardPropertyPairs(Object[] args) {
-    for (GuardPropertyPair pair : guardPropertyPairs) {
-      ExecutableBooleanExpression guardExpression = pair.guardExpression;
-      if (guardExpression.check(args)) {
-        return pair.booleanExpression.addPrestate(args);
+    for (GuardPropertyPair gpPair : guardPropertyPairs) {
+      ExecutableBooleanExpression guard = gpPair.guard;
+      if (guard.check(args)) {
+        return gpPair.property.addPrestate(args);
       }
     }
     return null;

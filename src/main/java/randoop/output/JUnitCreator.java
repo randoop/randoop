@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import randoop.BugInRandoopException;
 import randoop.Globals;
@@ -104,6 +105,7 @@ public class JUnitCreator {
       BlockStmt afterAllBody,
       BlockStmt beforeEachBody,
       BlockStmt afterEachBody) {
+    assert !Objects.equals(junit_package_name, "");
     JUnitCreator junitCreator = new JUnitCreator(junit_package_name);
     if (beforeAllBody != null) {
       junitCreator.addBeforeAll(beforeAllBody);
@@ -121,7 +123,7 @@ public class JUnitCreator {
   }
 
   private JUnitCreator(String packageName) {
-    assert packageName == null || !packageName.isEmpty();
+    assert !Objects.equals(packageName, "");
     this.packageName = packageName;
     this.classMethodCounts = new LinkedHashMap<>();
   }
