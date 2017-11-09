@@ -76,15 +76,15 @@ public class ExecutableBooleanExpression {
    * @return the {@link ExecutableBooleanExpression} that evaluates the given expression source on
    *     parameters described by the declaration string
    */
-  static ExecutableBooleanExpression createBooleanExpression(
+  ExecutableBooleanExpression(
       RawSignature signature,
       String declarations,
       String expressionSource,
       String contractSource,
       String comment,
       SequenceCompiler compiler) {
-    Method expressionMethod = createMethod(signature, declarations, expressionSource, compiler);
-    return new ExecutableBooleanExpression(expressionMethod, comment, contractSource);
+    this(
+        createMethod(signature, declarations, expressionSource, compiler), comment, contractSource);
   }
 
   /**
@@ -186,6 +186,7 @@ public class ExecutableBooleanExpression {
    * @param compiler the compiler to use to compile the expression class
    * @return the {@code Method} object for {@code contractSource}
    */
+  // package-private to enable test code to call it
   static Method createMethod(
       RawSignature signature,
       String parameterDeclaration,
@@ -235,7 +236,7 @@ public class ExecutableBooleanExpression {
       String packageName,
       String expressionClassName) {
     String packageDeclaration = "";
-    if (packageName != null && !packageName.isEmpty()) {
+    if (packageName != null) {
       packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
     return UtilMDE.join(

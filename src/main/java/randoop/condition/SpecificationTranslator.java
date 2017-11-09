@@ -316,7 +316,7 @@ public class SpecificationTranslator {
    */
   private ExecutableBooleanExpression create(Guard expression) {
     String contractText = replacementMap.replaceNames(expression.getConditionSource());
-    return ExecutableBooleanExpression.createBooleanExpression(
+    return new ExecutableBooleanExpression(
         guardExpressionSignature,
         guardExpressionDeclaration,
         expression.getConditionSource(),
@@ -336,7 +336,7 @@ public class SpecificationTranslator {
    */
   public ExecutableBooleanExpression create(Property expression) {
     String contractText = replacementMap.replaceNames(expression.getConditionSource());
-    return ExecutableBooleanExpression.createBooleanExpression(
+    return new ExecutableBooleanExpression(
         propertyExpressionSignature,
         propertyExpressionDeclarations,
         expression.getConditionSource(),

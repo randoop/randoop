@@ -121,6 +121,7 @@ public class JUnitCreator {
   }
 
   private JUnitCreator(String packageName) {
+    assert packageName == null || !packageName.isEmpty();
     this.packageName = packageName;
     this.classMethodCounts = new LinkedHashMap<>();
   }
@@ -166,7 +167,7 @@ public class JUnitCreator {
     this.classMethodCounts.put(testClassName, sequences.size());
 
     CompilationUnit compilationUnit = new CompilationUnit();
-    if (packageName != null && !packageName.isEmpty()) {
+    if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
     }
 
@@ -337,7 +338,7 @@ public class JUnitCreator {
    */
   public String createTestSuite(String suiteClassName, Set<String> testClassNames) {
     CompilationUnit compilationUnit = new CompilationUnit();
-    if (packageName != null && !packageName.isEmpty()) {
+    if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
     }
     List<ImportDeclaration> imports = new ArrayList<>();
@@ -379,7 +380,7 @@ public class JUnitCreator {
    */
   public String createTestDriver(String driverName, Set<String> testClassNames) {
     CompilationUnit compilationUnit = new CompilationUnit();
-    if (packageName != null && !packageName.isEmpty()) {
+    if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
     }
 
