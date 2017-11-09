@@ -14,6 +14,7 @@ import randoop.compile.SequenceCompilerException;
 import randoop.contract.ObjectContract;
 import randoop.output.NameGenerator;
 import randoop.reflection.RawSignature;
+import randoop.util.Log;
 
 /**
  * A {@code ExecutableBooleanExpression} represents a boolean Java expression, and allows evaluation
@@ -138,6 +139,11 @@ public class ExecutableBooleanExpression {
               + " (invoke threw "
               + e.getCause()
               + "). This indicates a bug in the expression method creation.";
+      System.out.println(message);
+      new Error().printStackTrace();
+      if (Log.isLoggingOn()) {
+        Log.logLine(message);
+      }
       throw new RandoopConditionError(message);
     }
   }
