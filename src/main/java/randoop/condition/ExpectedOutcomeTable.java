@@ -19,12 +19,13 @@ import randoop.test.TestCheckGenerator;
  * written on method declarations that it overrides or implements.
  *
  * <p>One possible implementation would be to record a collection of single-method outcomes, where
- * each single-method outcome represents checks of the prestate {@link BooleanExpression}s: for the
- * {@link randoop.condition.specification.Precondition}, the {@link GuardPropertyPair}, and {@link
- * GuardThrowsPair} for an operation call. ExpectedOutcomeTable is not implemented that way: it does
- * some pre-processing and throws away certain of the information as it is added. (It's unclear
- * whether this is the best choice, or whether the more straightforward implementation would enable
- * easier debugging at the cost of a bit of extra processing to be done later.)
+ * each single-method outcome represents checks of the prestate {@link
+ * ExecutableBooleanExpression}s: for the {@link randoop.condition.specification.Precondition}, the
+ * {@link GuardPropertyPair}, and {@link GuardThrowsPair} for an operation call.
+ * ExpectedOutcomeTable is not implemented that way: it does some pre-processing and throws away
+ * certain of the information as it is added. (It's unclear whether this is the best choice, or
+ * whether the more straightforward implementation would enable easier debugging at the cost of a
+ * bit of extra processing to be done later.)
  *
  * <p>This implementation records:
  *
@@ -34,7 +35,7 @@ import randoop.test.TestCheckGenerator;
  *   <li>The set of {@link randoop.condition.specification.ThrowsCondition} objects for expected
  *       exceptions. An exception is expected if the guard of a {@link GuardThrowsPair} is
  *       satisfied.
- *   <li>The expected {@link BooleanExpression}, if any.
+ *   <li>The expected {@link ExecutableBooleanExpression}, if any.
  * </ol>
  *
  * <p>To create an ExpectedOutcomeTable, call {@link OperationConditions#checkPrestate(Object[])}.
@@ -69,7 +70,7 @@ public class ExpectedOutcomeTable {
   private boolean hasSatisfiedPrecondition = false;
 
   /** The list of post-conditions whose guard expression was satisfied. */
-  private final List<BooleanExpression> postConditions;
+  private final List<ExecutableBooleanExpression> postConditions;
 
   /** The list of sets of throws clauses for which the guard expression was satisfied. */
   private final List<Set<ThrowsClause>> exceptionSets;
@@ -90,7 +91,7 @@ public class ExpectedOutcomeTable {
    */
   void add(
       boolean guardIsSatisfied,
-      BooleanExpression booleanExpression,
+      ExecutableBooleanExpression booleanExpression,
       Set<ThrowsClause> throwsClauses) {
     // An empty table cannot represent a pre-state for which the call is invalid, so setting isEmpty
     // to false is necessary even if the entry has !guardIsSatisfied and no booleanExpression or
@@ -126,7 +127,7 @@ public class ExpectedOutcomeTable {
 
   /**
    * Constructs the {@link TestCheckGenerator} that will test for expected {@link ThrowsClause}s or
-   * {@link BooleanExpression} as follows:
+   * {@link ExecutableBooleanExpression} as follows:
    *
    * <ul>
    *   <li>if this table is empty, returns the given generator.

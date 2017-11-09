@@ -87,9 +87,9 @@ import randoop.util.ProgressDisplay;
  * randoop.condition.OperationConditions}.
  *
  * <p><i>Definitions</i>: Let {@code expression} be either a {@link
- * randoop.condition.BooleanExpression} representing a {@link
+ * randoop.condition.ExecutableBooleanExpression} representing a {@link
  * randoop.condition.specification.Precondition} or {@link randoop.condition.specification.Guard};
- * or the {@link randoop.condition.BooleanExpression} for a {@link
+ * or the {@link randoop.condition.ExecutableBooleanExpression} for a {@link
  * randoop.condition.specification.Property}. Then {@code expression} evaluated on the method
  * arguments is <i>satisfied</i> if {@code expression.check(values)} evaluates to true, and
  * <i>fails</i> otherwise.
@@ -109,15 +109,15 @@ import randoop.util.ProgressDisplay;
  *       randoop.condition.OperationConditions#checkPrestate(java.lang.Object[])}, which creates a
  *       table entry corresponding to each specification of the operation, recording:
  *       <ol>
- *         <li>Whether the {@link randoop.condition.BooleanExpression}s of the {@link
+ *         <li>Whether the {@link randoop.condition.ExecutableBooleanExpression}s of the {@link
  *             randoop.condition.specification.Precondition}s fail or are satisfied. The expressions
  *             fail if any expression is false on the arguments. Otherwise, the preconditions are
  *             satisfied.
  *         <li>A set of {@link randoop.condition.ThrowsClause} objects for expected exceptions.
- *         <li>The expected {@link randoop.condition.BooleanExpression}, if any. This is the {@link
- *             randoop.condition.BooleanExpression}, of the first {@link
+ *         <li>The expected {@link randoop.condition.ExecutableBooleanExpression}, if any. This is
+ *             the {@link randoop.condition.ExecutableBooleanExpression}, of the first {@link
  *             randoop.condition.GuardPropertyPair} for which the guard {@link
- *             randoop.condition.BooleanExpression} is satisfied.
+ *             randoop.condition.ExecutableBooleanExpression} is satisfied.
  *       </ol>
  *
  *   <li>If {@link randoop.condition.ExpectedOutcomeTable#isInvalidPrestate()} then classify as
@@ -131,11 +131,12 @@ import randoop.util.ProgressDisplay;
  *         <li>If any table entry contains an expected exception set, a {@link
  *             randoop.test.ExpectedExceptionGenerator} is returned.
  *         <li>If there are no expected exceptions, and no satisfied {@link
- *             randoop.condition.BooleanExpression}s for any {@link
+ *             randoop.condition.ExecutableBooleanExpression}s for any {@link
  *             randoop.condition.specification.Precondition}, return an {@link
  *             randoop.test.InvalidCheckGenerator}.
- *         <li>Otherwise, if there are {@link randoop.condition.BooleanExpression} to evaluate, then
- *             extend the current generator with a {@link randoop.test.PostConditionCheckGenerator}.
+ *         <li>Otherwise, if there are {@link randoop.condition.ExecutableBooleanExpression} to
+ *             evaluate, then extend the current generator with a {@link
+ *             randoop.test.PostConditionCheckGenerator}.
  *       </ol>
  *
  * </ol>
@@ -160,9 +161,9 @@ import randoop.util.ProgressDisplay;
  *   <li>The {@link randoop.test.InvalidCheckGenerator} will classify the call as {@link
  *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}.
  *   <li>The {@link randoop.test.PostConditionCheckGenerator} will, for each table entry where all
- *       guards were satisfied, check the corresponding {@link randoop.condition.BooleanExpression},
- *       if one exists. If any such expression fails, then classify as {@link
- *       randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
+ *       guards were satisfied, check the corresponding {@link
+ *       randoop.condition.ExecutableBooleanExpression}, if one exists. If any such expression
+ *       fails, then classify as {@link randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
  * </ol>
  */
 public class ExecutableSequence {

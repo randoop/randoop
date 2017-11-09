@@ -2,7 +2,7 @@ package randoop.condition;
 
 /**
  * Exception to represent user errors that occur during creation or evaluation of a {@link
- * BooleanExpression}.
+ * ExecutableBooleanExpression}.
  */
 public class RandoopConditionError extends Error {
 

@@ -17,11 +17,11 @@ import randoop.reflection.RawSignature;
 import randoop.util.Log;
 
 /**
- * A {@code BooleanExpression} is an expression constructed from the Java source for a Boolean
- * expression, and allows evaluation on argument values.
+ * A {@code ExecutableBooleanExpression} represents a boolean Java expression, and allows evaluation
+ * on argument values.
  *
- * <p>Corresponds to {@link randoop.condition.specification.Guard} in {@link
- * randoop.condition.specification.Precondition}, {@link
+ * <p>This is the executable form of Corresponds to {@link randoop.condition.specification.Guard} in
+ * {@link randoop.condition.specification.Precondition}, {@link
  * randoop.condition.specification.Postcondition} or {@link
  * randoop.condition.specification.ThrowsCondition}; and to {@link
  * randoop.condition.specification.Property} in {@link
@@ -29,7 +29,7 @@ import randoop.util.Log;
  *
  * @see SpecificationTranslator
  */
-public class BooleanExpression {
+public class ExecutableBooleanExpression {
 
   /** The basename for the expression class name. It is used for compiling the method. */
   private static final String EXPRESSION_CLASS_NAME = "RandoopExpressionClass";
@@ -50,21 +50,21 @@ public class BooleanExpression {
   private final String contractSource;
 
   /**
-   * Creates a {@link BooleanExpression} that calls the method to evaluate the expression.
+   * Creates a {@link ExecutableBooleanExpression} that calls the method to evaluate the expression.
    *
    * @param expressionMethod the reflection {@code Method} for the expression
    * @param comment a comment describing this expression
    * @param contractSource the source code for this expression (see {@link #getContractSource()} for
    *     format details)
    */
-  BooleanExpression(Method expressionMethod, String comment, String contractSource) {
+  ExecutableBooleanExpression(Method expressionMethod, String comment, String contractSource) {
     this.expressionMethod = expressionMethod;
     this.comment = comment;
     this.contractSource = contractSource;
   }
 
   /**
-   * Creates a {@link BooleanExpression} for evaluating an expression (see {@link
+   * Creates a {@link ExecutableBooleanExpression} for evaluating an expression (see {@link
    * randoop.condition.specification.Guard}) of a specification.
    *
    * @param signature the signature for the expression method to be created. The class name of the
@@ -75,13 +75,13 @@ public class BooleanExpression {
    * @param expressionSource the source code for a Java expression to be used as the body of the
    *     expression method
    * @param contractSource a Java expression that is the source code for the expression, in the
-   *     format of {@link BooleanExpression#getContractSource()}
+   *     format of {@link ExecutableBooleanExpression#getContractSource()}
    * @param comment the comment describing the expression
    * @param compiler the compiler to used to compile the expression method
-   * @return the {@link BooleanExpression} that evaluates the given expression source on parameters
-   *     described by the declaration string
+   * @return the {@link ExecutableBooleanExpression} that evaluates the given expression source on
+   *     parameters described by the declaration string
    */
-  static BooleanExpression createBooleanExpression(
+  static ExecutableBooleanExpression createBooleanExpression(
       RawSignature signature,
       String declarations,
       String expressionSource,
@@ -89,28 +89,28 @@ public class BooleanExpression {
       String comment,
       SequenceCompiler compiler) {
     Method expressionMethod = createMethod(signature, declarations, expressionSource, compiler);
-    return new BooleanExpression(expressionMethod, comment, contractSource);
+    return new ExecutableBooleanExpression(expressionMethod, comment, contractSource);
   }
 
   /**
-   * Returns the {@link BooleanExpression} that checks the expression with the given argument values
-   * as the pre-state.
+   * Returns the {@link ExecutableBooleanExpression} that checks the expression with the given
+   * argument values as the pre-state.
    *
    * <p>Since pre-state is not yet implemented, this method just returns this object.
    *
    * @param args the pre-state values to the arguments
-   * @return the {@link BooleanExpression} with the pre-state set
+   * @return the {@link ExecutableBooleanExpression} with the pre-state set
    */
-  BooleanExpression addPrestate(Object[] args) {
+  ExecutableBooleanExpression addPrestate(Object[] args) {
     return this;
   }
 
   @Override
   public boolean equals(Object object) {
-    if (!(object instanceof BooleanExpression)) {
+    if (!(object instanceof ExecutableBooleanExpression)) {
       return false;
     }
-    BooleanExpression other = (BooleanExpression) object;
+    ExecutableBooleanExpression other = (ExecutableBooleanExpression) object;
     return this.expressionMethod.equals(other.expressionMethod)
         && this.comment.equals(other.comment)
         && this.contractSource.equals(other.contractSource);
@@ -187,7 +187,7 @@ public class BooleanExpression {
    * @param parameterDeclaration the parameter declaration string, including parameter names and
    *     wrapped in parentheses
    * @param expressionSource a Java expression that is the source code for the expression, in the
-   *     format of {@link BooleanExpression#getContractSource()}.
+   *     format of {@link ExecutableBooleanExpression#getContractSource()}.
    * @param compiler the compiler to use to compile the expression class
    * @return the {@code Method} object for {@code contractSource}
    */
@@ -283,7 +283,8 @@ public class BooleanExpression {
   }
 
   /**
-   * Creates a {@link RawSignature} for the expression method of the {@link BooleanExpression}.
+   * Creates a {@link RawSignature} for the expression method of the {@link
+   * ExecutableBooleanExpression}.
    *
    * <p>Note that these signatures may be used more than once for different expression methods, and
    * so {@link #createMethod(RawSignature, String, String, SequenceCompiler)} replaces the classname

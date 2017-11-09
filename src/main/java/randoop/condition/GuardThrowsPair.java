@@ -8,7 +8,7 @@ package randoop.condition;
 class GuardThrowsPair {
 
   /** The expression that should be true before the operation is called. */
-  final BooleanExpression guardExpression;
+  final ExecutableBooleanExpression guardExpression;
 
   /**
    * The {@link ThrowsClause} representing an exception that is expected to be thrown by the
@@ -19,11 +19,11 @@ class GuardThrowsPair {
   /**
    * Creates a {@link GuardThrowsPair} object for the guard expression and throws-clause.
    *
-   * @param guardExpression the {@link BooleanExpression} to be evaluated before the operation is
-   *     called
+   * @param guardExpression the {@link ExecutableBooleanExpression} to be evaluated before the
+   *     operation is called
    * @param throwsClause the {@link ThrowsClause} to be evaluated after the operation is called
    */
-  GuardThrowsPair(BooleanExpression guardExpression, ThrowsClause throwsClause) {
+  GuardThrowsPair(ExecutableBooleanExpression guardExpression, ThrowsClause throwsClause) {
     this.guardExpression = guardExpression;
     this.throwsClause = throwsClause;
   }

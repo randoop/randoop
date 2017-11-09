@@ -128,7 +128,7 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().checks()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (BooleanExpression condition : postConditionCheck.getPostConditions()) {
+      for (ExecutableBooleanExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for ONE",
             "x2.equals(ClassWithConditions.Range.ONE)",
@@ -144,7 +144,7 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().checks()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (BooleanExpression condition : postConditionCheck.getPostConditions()) {
+      for (ExecutableBooleanExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for TWO",
             "x2.equals(ClassWithConditions.Range.TWO)",
@@ -160,7 +160,7 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().checks()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (BooleanExpression condition : postConditionCheck.getPostConditions()) {
+      for (ExecutableBooleanExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for THREE",
             "x2.equals(ClassWithConditions.Range.THREE)",
@@ -176,7 +176,7 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().checks()) {
       assertTrue("should be post-condition check", check instanceof PostConditionCheck);
       PostConditionCheck postConditionCheck = (PostConditionCheck) check;
-      for (BooleanExpression condition : postConditionCheck.getPostConditions()) {
+      for (ExecutableBooleanExpression condition : postConditionCheck.getPostConditions()) {
         assertEquals(
             "should check for FOUR",
             "x2.equals(ClassWithConditions.Range.FOUR)",

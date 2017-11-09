@@ -266,7 +266,7 @@ public class SpecificationCollection {
    *
    * <ul>
    *   <li>{@link randoop.condition.specification.Precondition} to {@link
-   *       randoop.condition.BooleanExpression}
+   *       randoop.condition.ExecutableBooleanExpression}
    *   <li>{@link randoop.condition.specification.Postcondition} to {@link
    *       randoop.condition.GuardPropertyPair}
    *   <li>{@link randoop.condition.specification.ThrowsCondition} to {@link
