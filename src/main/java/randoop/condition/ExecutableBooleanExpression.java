@@ -20,27 +20,22 @@ import randoop.util.Log;
  * A {@code ExecutableBooleanExpression} represents a boolean Java expression, and allows evaluation
  * on argument values.
  *
- * <p>This is the executable form of Corresponds to {@link randoop.condition.specification.Guard} in
- * {@link randoop.condition.specification.Precondition}, {@link
- * randoop.condition.specification.Postcondition} or {@link
- * randoop.condition.specification.ThrowsCondition}; and to {@link
- * randoop.condition.specification.Property} in {@link
- * randoop.condition.specification.Postcondition}.
+ * <p>This is the executable form of {@link AbstractBooleanExpression}.
  *
  * @see SpecificationTranslator
  */
 public class ExecutableBooleanExpression {
 
-  /** The basename for the expression class name. It is used for compiling the method. */
-  private static final String EXPRESSION_CLASS_NAME = "RandoopExpressionClass";
-
   /** The name generator to use to generate class names. */
-  private static final NameGenerator nameGenerator = new NameGenerator(EXPRESSION_CLASS_NAME);
+  private static final NameGenerator nameGenerator = new NameGenerator("RandoopExpressionClass");
 
-  /** The {@code java.lang.reflect.Method} to test this expression */
+  /**
+   * The {@code java.lang.reflect.Method} to test this expression. The method is static (it does not
+   * take a receiver argument).
+   */
   private final Method expressionMethod;
 
-  /** The comment describing this expression */
+  /** The comment describing this expression. */
   private final String comment;
 
   /**
