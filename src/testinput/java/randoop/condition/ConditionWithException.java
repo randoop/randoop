@@ -8,7 +8,7 @@ public class ConditionWithException {
   }
 
   public boolean throwablePredicate() throws Throwable {
-    throw new Throwable("this happened");
+    throw new Throwable("ConditionWithException.throwablePredicate threw a Throwable");
   }
 
   public ConditionWithException() {}
