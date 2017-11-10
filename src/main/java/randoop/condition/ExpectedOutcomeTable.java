@@ -2,7 +2,6 @@ package randoop.condition;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.ExtendGenerator;
 import randoop.test.InvalidCheckGenerator;
@@ -71,8 +70,8 @@ public class ExpectedOutcomeTable {
   /** The list of post-conditions whose guard expression was satisfied. */
   private final List<BooleanExpression> postConditions;
 
-  /** The list of sets of throws clauses for which the guard expression was satisfied. */
-  private final List<Set<ThrowsClause>> exceptionSets;
+  /** The list of lists of throws clauses for which the guard expression was satisfied. */
+  private final List<List<ThrowsClause>> exceptionSets;
 
   /** Creates an empty {@link ExpectedOutcomeTable}. */
   public ExpectedOutcomeTable() {
@@ -91,7 +90,7 @@ public class ExpectedOutcomeTable {
   void add(
       boolean guardIsSatisfied,
       BooleanExpression booleanExpression,
-      Set<ThrowsClause> throwsClauses) {
+      List<ThrowsClause> throwsClauses) {
     // An empty table cannot represent a pre-state for which the call is invalid, so setting isEmpty
     // to false is necessary even if the entry has !guardIsSatisfied and no booleanExpression or
     // throwsClauses.

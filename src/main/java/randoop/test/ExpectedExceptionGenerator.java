@@ -1,7 +1,6 @@
 package randoop.test;
 
 import java.util.List;
-import java.util.Set;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
@@ -19,7 +18,7 @@ import randoop.types.ClassOrInterfaceType;
  * checks or error-revealing checks.
  */
 public class ExpectedExceptionGenerator implements TestCheckGenerator {
-  private final List<Set<ThrowsClause>> exceptionSets;
+  private final List<List<ThrowsClause>> exceptionSets;
 
   /**
    * Creates an {@link ExpectedExceptionGenerator} for the list of sets of expected exceptions.
@@ -27,7 +26,7 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
    * @param exceptionSets a list of expected exceptions to be searched when testing an exception
    *     thrown by the operation in the final statement of the sequence
    */
-  public ExpectedExceptionGenerator(List<Set<ThrowsClause>> exceptionSets) {
+  public ExpectedExceptionGenerator(List<List<ThrowsClause>> exceptionSets) {
     this.exceptionSets = exceptionSets;
   }
 
@@ -47,7 +46,7 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
       ExceptionalExecution exec = (ExceptionalExecution) result;
       Throwable throwable = exec.getException();
       ClassOrInterfaceType throwableType = ClassOrInterfaceType.forClass(throwable.getClass());
-      for (Set<ThrowsClause> exceptionSet : exceptionSets) {
+      for (List<ThrowsClause> exceptionSet : exceptionSets) {
         ClassOrInterfaceType matchingType = findMatchingExpectedType(throwableType, exceptionSet);
         if (matchingType == null) {
           //XXX this doesn't carry information about exception that occurred
@@ -67,7 +66,7 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
   }
 
   private ClassOrInterfaceType findMatchingExpectedType(
-      ClassOrInterfaceType throwableType, Set<ThrowsClause> throwsClauses) {
+      ClassOrInterfaceType throwableType, List<ThrowsClause> throwsClauses) {
     for (ThrowsClause exception : throwsClauses) {
       ClassOrInterfaceType expected = exception.getExceptionType();
       if (throwableType.isSubtypeOf(expected)) { // if exception is in set
@@ -88,7 +87,7 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
    *
    * @return the type of the expected exception
    */
-  public List<Set<ThrowsClause>> getExpected() {
+  public List<List<ThrowsClause>> getExpected() {
     return exceptionSets;
   }
 }

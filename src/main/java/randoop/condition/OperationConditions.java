@@ -1,9 +1,7 @@
 package randoop.condition;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
@@ -106,7 +104,7 @@ public class OperationConditions {
    */
   private void checkPrestate(Object[] args, ExpectedOutcomeTable table) {
     boolean preconditionCheck = checkPreExpressions(args);
-    Set<ThrowsClause> throwsClauses = checkGuardThrowsPairs(args);
+    List<ThrowsClause> throwsClauses = checkGuardThrowsPairs(args);
     BooleanExpression postCondition = checkGuardPropertyPairs(args);
     table.add(preconditionCheck, postCondition, throwsClauses);
   }
@@ -134,8 +132,8 @@ public class OperationConditions {
    * @param args the argument values
    * @return the set of exceptions for which the guard expression evaluated to true
    */
-  private Set<ThrowsClause> checkGuardThrowsPairs(Object[] args) {
-    Set<ThrowsClause> throwsClauses = new LinkedHashSet<>();
+  private List<ThrowsClause> checkGuardThrowsPairs(Object[] args) {
+    List<ThrowsClause> throwsClauses = new ArrayList<>();
     for (GuardThrowsPair pair : guardThrowsPairs) {
       BooleanExpression guardExpression = pair.guardExpression;
       if (guardExpression.check(args)) {
