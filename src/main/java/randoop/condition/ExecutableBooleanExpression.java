@@ -20,7 +20,8 @@ import randoop.util.Log;
  * A {@code ExecutableBooleanExpression} represents a boolean Java expression, and allows evaluation
  * on argument values.
  *
- * <p>This is the executable form of {@link AbstractBooleanExpression}.
+ * <p>This is the executable form of {@link
+ * randoop.condition.specification.AbstractBooleanExpression}.
  *
  * @see SpecificationTranslator
  */
@@ -73,8 +74,6 @@ public class ExecutableBooleanExpression {
    *     format of {@link ExecutableBooleanExpression#getContractSource()}
    * @param comment the comment describing the expression
    * @param compiler the compiler to used to compile the expression method
-   * @return the {@link ExecutableBooleanExpression} that evaluates the given expression source on
-   *     parameters described by the declaration string
    */
   ExecutableBooleanExpression(
       RawSignature signature,
