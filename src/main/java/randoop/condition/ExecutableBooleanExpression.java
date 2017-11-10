@@ -142,7 +142,9 @@ public class ExecutableBooleanExpression {
       if (GenInputsAbstract.fail_on_condition_error) {
         throw error;
       } else {
+        System.out.println("Proceeding despite the below problem ...");
         error.printStackTrace();
+        System.out.println("... proceeding despite the above problem.");
         return false;
       }
     }
