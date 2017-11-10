@@ -1042,10 +1042,8 @@ public class RandoopSystemTest {
     options.setOption("outputLimit", "200");
     options.setOption("attemptedLimit", "16");
 
-    CoverageChecker coverageChecker = new CoverageChecker(options);
-
     // These methods should not be called because the pre-conditions throw exceptions
-    CoverageChecker checker =
+    CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
             "randoop.condition.ConditionWithException.getOne() exclude",
@@ -1308,7 +1306,7 @@ public class RandoopSystemTest {
     options.setFlag("usethreads");
     options.unsetFlag("deterministic");
 
-    CoverageChecker checker =
+    CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
             "components.ArrowIcon.getIconHeight() ignore",
@@ -1438,7 +1436,7 @@ public class RandoopSystemTest {
             "components.Utils.getExtension(java.io.File) ignore");
 
     generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   /**
@@ -1475,13 +1473,13 @@ public class RandoopSystemTest {
     options.setOption("generatedLimit", "10");
     options.setFlag("ignore-flaky-tests");
 
-    CoverageChecker checker =
+    CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
             // This is actually run but since there is a ThreadDeath, JaCoCo doesn't see it.
             "components.DialogRunner.runDialogDemo() ignore");
     generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   @Test
@@ -1502,10 +1500,10 @@ public class RandoopSystemTest {
     options.addTestClass("input.SystemExitClass");
     options.setOption("outputLimit", "20");
     options.setOption("generatedLimit", "80");
-    CoverageChecker checker =
+    CoverageChecker coverageChecker =
         new CoverageChecker(options, "input.SystemExitClass.hashCode() ignore");
     generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   @Test
@@ -1526,9 +1524,10 @@ public class RandoopSystemTest {
     options.addTestClass("input.NoExitClass");
     options.setOption("outputLimit", "20");
     options.setOption("generatedLimit", "40");
-    CoverageChecker checker = new CoverageChecker(options, "input.NoExitClass.hashCode() exclude");
+    CoverageChecker coverageChecker =
+        new CoverageChecker(options, "input.NoExitClass.hashCode() exclude");
     generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   @Test
@@ -1543,7 +1542,7 @@ public class RandoopSystemTest {
     options.setOption("outputLimit", "400");
     options.setOption("generatedLimit", "800");
 
-    CoverageChecker checker =
+    CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
             "java.util.ArrayList.add(int, java.lang.Object) exclude",
@@ -1596,7 +1595,7 @@ public class RandoopSystemTest {
             );
 
     generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
