@@ -1036,7 +1036,7 @@ public class RandoopSystemTest {
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/condition_with_exception.json");
     options.unsetFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
+    options.unsetFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -1591,9 +1591,8 @@ public class RandoopSystemTest {
             "java.util.ArrayList.trimToSize() exclude",
             "java.util.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
             "java.util.LinkedHashSet.spliterator() exclude"
-            //
+            // end of list (line break to permit easier sorting)
             );
-
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }

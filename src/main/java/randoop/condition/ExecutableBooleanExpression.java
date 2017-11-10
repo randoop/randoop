@@ -12,9 +12,9 @@ import randoop.Globals;
 import randoop.compile.SequenceCompiler;
 import randoop.compile.SequenceCompilerException;
 import randoop.contract.ObjectContract;
+import randoop.main.GenInputsAbstract;
 import randoop.output.NameGenerator;
 import randoop.reflection.RawSignature;
-import randoop.util.Log;
 
 /**
  * A {@code ExecutableBooleanExpression} represents a boolean Java expression, and allows evaluation
@@ -132,20 +132,21 @@ public class ExecutableBooleanExpression {
     } catch (IllegalAccessException e) {
       throw new RandoopConditionError("Failure executing expression method", e);
     } catch (InvocationTargetException e) {
+      // Evaluation of the expression threw an exception.
+      // To allow users to write "x.f == 22" instead of the wordier "x != null && x.f == 22",
+      // treat this as false unless --fail-on-condition-error=true was supplied.
       String message =
-          "Failure executing expression method: "
-              + expressionMethod
-              + " (invoke threw "
-              + e.getCause()
-              + "). This indicates a bug in the expression method creation.";
-      // TODO: throwing seems like better behavior than logging, but it breaks the tests.  Need to
-      // investigate.
-      // throw new RandoopConditionError(message);
-      if (Log.isLoggingOn()) {
-        Log.logLine(message);
+          "Failure executing expression method: " + expressionMethod + ": " + e.getCause();
+      RandoopConditionError error = new RandoopConditionError(message, e);
+      if (GenInputsAbstract.fail_on_condition_error) {
+        throw error;
+      } else {
+        System.out.println("Proceeding despite the below problem ...");
+        error.printStackTrace();
+        System.out.println("... proceeding despite the above problem.");
+        return false;
       }
     }
-    return false;
   }
 
   /**
