@@ -50,6 +50,15 @@ public class ThrowsCondition extends SpecificationClause {
     this.exceptionType = exceptionType;
   }
 
+  /**
+   * Returns the exception type name for this {@link ThrowsCondition}.
+   *
+   * @return the exception type name for this throws specification
+   */
+  public String getExceptionTypeName() {
+    return exceptionType;
+  }
+
   @Override
   public boolean equals(Object object) {
     if (!(object instanceof ThrowsCondition)) {
@@ -73,14 +82,5 @@ public class ThrowsCondition extends SpecificationClause {
         + ", \"exceptionType\": "
         + exceptionType
         + "\" }";
-  }
-
-  /**
-   * Returns the exception type name for this {@link ThrowsCondition}.
-   *
-   * @return the exception type name for this throws specification
-   */
-  public String getExceptionTypeName() {
-    return exceptionType;
   }
 }

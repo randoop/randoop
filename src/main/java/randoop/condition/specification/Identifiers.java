@@ -18,32 +18,25 @@ import plume.UtilMDE;
  *
  * <pre>
  *   {
+ *     "receiverName": "receiver",
  *     "parameters": [
  *       "signalValue"
  *      ],
- *     "receiverName": "receiver",
  *     "returnName": "result"
  *   }
  * </pre>
  *
- * <p>When using the class, if names are not given for the receiver and return value, then the
- * defaults {@link #DEFAULT_RECEIVER_NAME} and {@link #DEFAULT_RETURN_NAME} will be used.
+ * <p>Names for the receiver and return value are optional; they default to "receiver" and "result".
  */
 public class Identifiers {
 
   // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
 
-  /** The default identifier name for receiver (value: "receiver") */
-  private static final String DEFAULT_RECEIVER_NAME = "receiver";
-
-  /** The default identifier name for the return value (value: "result") */
-  private static final String DEFAULT_RETURN_NAME = "result";
-
-  /** The formal parameter names (not including the receiver name) */
-  private final List<String> parameters;
-
   /** The receiver name. */
   private final String receiverName;
+
+  /** The formal parameter names (not including the receiver). */
+  private final List<String> parameters;
 
   /** The return value identifier. */
   private final String returnName;
@@ -51,13 +44,13 @@ public class Identifiers {
   /**
    * Create an {@link Identifiers} object with the given names.
    *
-   * @param parameters the list of identifiers for the operation formal parameters
    * @param receiverName the receiver name
+   * @param parameters the list of identifiers for the operation formal parameters
    * @param returnName the return name
    */
-  public Identifiers(List<String> parameters, String receiverName, String returnName) {
-    this.parameters = parameters;
+  public Identifiers(String receiverName, List<String> parameters, String returnName) {
     this.receiverName = receiverName;
+    this.parameters = parameters;
     this.returnName = returnName;
   }
 
@@ -68,7 +61,7 @@ public class Identifiers {
    * @param parameters the list of identifiers for the operation parameters
    */
   public Identifiers(List<String> parameters) {
-    this(parameters, DEFAULT_RECEIVER_NAME, DEFAULT_RETURN_NAME);
+    this("receiver", parameters, "result");
   }
 
   /**
@@ -79,37 +72,13 @@ public class Identifiers {
     this(new ArrayList<String>());
   }
 
-  @Override
-  public boolean equals(Object object) {
-    if (!(object instanceof Identifiers)) {
-      return false;
-    }
-    Identifiers other = (Identifiers) object;
-    return this.parameters.equals(other.parameters)
-        && this.receiverName.equals(other.receiverName)
-        && this.returnName.equals(other.returnName);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(this.parameters, this.receiverName, this.returnName);
-  }
-
-  @Override
-  public String toString() {
-    return "{ \"parameters\": "
-        + "[ \""
-        + UtilMDE.join(parameters, "\", \"")
-        + "\"]"
-        + ", \"receiverName\": "
-        + "\""
-        + receiverName
-        + "\""
-        + ", \"returnName\": "
-        + "\""
-        + returnName
-        + "\""
-        + " }";
+  /**
+   * Returns the identifier for the receiver object in this {@link Identifiers} object.
+   *
+   * @return the receiver name
+   */
+  public String getReceiverName() {
+    return receiverName;
   }
 
   /**
@@ -119,15 +88,6 @@ public class Identifiers {
    */
   public List<String> getParameterNames() {
     return parameters;
-  }
-
-  /**
-   * Returns the identifier for the receiver object in this {@link Identifiers} object.
-   *
-   * @return the receiver name
-   */
-  public String getReceiverName() {
-    return receiverName;
   }
 
   /**
@@ -146,9 +106,41 @@ public class Identifiers {
    */
   public boolean hasDuplicatedName() {
     Set<String> names = new HashSet<>(parameters);
-    return names.size() != parameters.size()
-        || parameters.contains(receiverName)
-        || parameters.contains(returnName)
-        || receiverName.equals(returnName);
+    names.add(receiverName);
+    names.add(returnName);
+    return names.size() != parameters.size() + 2;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof Identifiers)) {
+      return false;
+    }
+    Identifiers other = (Identifiers) object;
+    return this.receiverName.equals(other.receiverName)
+        && this.parameters.equals(other.parameters)
+        && this.returnName.equals(other.returnName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.receiverName, this.parameters, this.returnName);
+  }
+
+  @Override
+  public String toString() {
+    return "{ \"receiverName\": "
+        + "\""
+        + receiverName
+        + "\""
+        + ", \"parameters\": "
+        + "[ \""
+        + UtilMDE.join(parameters, "\", \"")
+        + "\"]"
+        + ", \"returnName\": "
+        + "\""
+        + returnName
+        + "\""
+        + " }";
   }
 }

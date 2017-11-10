@@ -5,6 +5,9 @@ import java.util.Objects;
 /**
  * Abstract class for representations of conditions that can be attached to methods and
  * constructors.
+ *
+ * <p>Every specification clause has at least a guard (which this class provides). Some clauses have
+ * more parts, so subclasses of this class can add fields.
  */
 public abstract class SpecificationClause {
 
@@ -33,22 +36,6 @@ public abstract class SpecificationClause {
     this.guard = guard;
   }
 
-  @Override
-  public boolean equals(Object object) {
-    if (!(object instanceof SpecificationClause)) {
-      return false;
-    }
-    SpecificationClause other = (SpecificationClause) object;
-    return this.description.equals(other.description)
-        && ((this.guard != null && this.guard.equals(other.guard))
-            || (this.guard == null && other.guard == null));
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(description);
-  }
-
   /**
    * Returns the description of this {@link SpecificationClause}.
    *
@@ -65,5 +52,21 @@ public abstract class SpecificationClause {
    */
   public Guard getGuard() {
     return guard;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof SpecificationClause)) {
+      return false;
+    }
+    SpecificationClause other = (SpecificationClause) object;
+    return this.description.equals(other.description)
+        && ((this.guard != null && this.guard.equals(other.guard))
+            || (this.guard == null && other.guard == null));
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(description);
   }
 }

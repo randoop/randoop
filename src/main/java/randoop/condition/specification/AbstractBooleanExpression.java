@@ -40,6 +40,24 @@ public abstract class AbstractBooleanExpression {
     this.conditionSource = conditionSource;
   }
 
+  /**
+   * Return the description of this {@link AbstractBooleanExpression}.
+   *
+   * @return the description of this condition
+   */
+  public String getDescription() {
+    return description;
+  }
+
+  /**
+   * Return the condition text for this {@link AbstractBooleanExpression}.
+   *
+   * @return the Java source code for this condition
+   */
+  public String getConditionSource() {
+    return conditionSource;
+  }
+
   @Override
   public boolean equals(Object object) {
     if (!(object instanceof AbstractBooleanExpression)) {
@@ -62,23 +80,5 @@ public abstract class AbstractBooleanExpression {
         + "\", \"conditionSource\": \""
         + conditionSource
         + "\" }";
-  }
-
-  /**
-   * Return the description of this {@link AbstractBooleanExpression}.
-   *
-   * @return the description of this condition
-   */
-  public String getDescription() {
-    return description;
-  }
-
-  /**
-   * Return the condition text for this {@link AbstractBooleanExpression}.
-   *
-   * @return the Java source code for this condition
-   */
-  public String getConditionSource() {
-    return conditionSource;
   }
 }
