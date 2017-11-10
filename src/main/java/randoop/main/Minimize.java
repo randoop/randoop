@@ -48,7 +48,13 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -344,7 +350,7 @@ public class Minimize extends CommandHandler {
   /**
    * Visit and minimize every JUnit test method within a compilation unit.
    *
-   * @param compilationUnit to the compilation unit to minimize; is modified by side effect
+   * @param compilationUnit the compilation unit to minimize; is modified by side effect
    * @param packageName the package that the Java file is in
    * @param file the Java file that is being minimized; is modified by side effect
    * @param classpath classpath used to compile and run the Java file
@@ -824,11 +830,11 @@ public class Minimize extends CommandHandler {
               }
             });
     new ClassTypeVisitor().visit(compilationUnit, fullyQualifiedNames);
-
     CompilationUnit result = compilationUnit;
     for (ClassOrInterfaceType type : fullyQualifiedNames) {
       // Copy and modify the compilation unit.
-      CompilationUnit compUnitWithSimpleTypeNames = (CompilationUnit) result.clone();
+      CompilationUnit compUnitWithSimpleTypeNames =
+          (CompilationUnit) result.accept(new CloneVisitor(), null);
 
       // String representation of the fully-qualified type name.
       String typeName = type.getScope() + "." + type.getName();

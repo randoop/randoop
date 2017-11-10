@@ -74,6 +74,11 @@ public class MinimizerTests {
   }
 
   @Test
+  public void testWithComments() throws IOException {
+    testWithInput("TestInputWithComments.java");
+  }
+
+  @Test
   public void testWithMulitpleTestCases() throws IOException {
     testWithInput("TestInputWithMulitpleTestCases.java");
   }
