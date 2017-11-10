@@ -336,8 +336,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Use specifications for JDK classes to classify behaviors for methods/constructors")
   public static boolean use_jdk_specifications = false;
 
-  /** Allow Randoop to fail if the Java condition text of a specification cannot be compiled. */
-  @Option("Terminate Randoop if specification condition is uncompilable")
+  /**
+   * Make Randoop fail, instead of proceeding silently, if the Java condition text of a
+   * specification cannot be compiled, or its execution throws an exception.
+   */
+  @Option("Terminate Randoop if specification condition is uncompilable or throws an exception")
   public static boolean fail_on_condition_error = false;
 
   ///////////////////////////////////////////////////////////////////

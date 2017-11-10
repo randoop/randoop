@@ -264,7 +264,7 @@ public class GenTests extends GenInputsAbstract {
     try {
       operationConditions = SpecificationCollection.create(GenInputsAbstract.specifications);
     } catch (RandoopConditionError e) {
-      System.out.println("Error when reading conditions: " + e.getMessage());
+      System.out.println("Error in conditions: " + e.getMessage());
       System.exit(1);
     }
 
