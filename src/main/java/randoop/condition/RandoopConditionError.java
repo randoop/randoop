@@ -1,8 +1,8 @@
 package randoop.condition;
 
 /**
- * Exception to represent user errors that occur during creation or evaluation of a {@link
- * ExecutableBooleanExpression}.
+ * Indicates a problem creating {@link ExecutableBooleanExpression} (usually a syntax error in the
+ * condition text) or an exception thrown when evaluating it.
  */
 public class RandoopConditionError extends Error {
 

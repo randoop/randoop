@@ -54,6 +54,15 @@ public class Postcondition extends SpecificationClause {
     this.property = property;
   }
 
+  /**
+   * Gets the {@link Property} (post-condition) for this specification.
+   *
+   * @return the property for this specification
+   */
+  public Property getProperty() {
+    return property;
+  }
+
   @Override
   public boolean equals(Object object) {
     if (!(object instanceof Postcondition)) {
@@ -81,14 +90,5 @@ public class Postcondition extends SpecificationClause {
         + ", \"property\": "
         + property
         + "\" }";
-  }
-
-  /**
-   * Gets the {@link Property} (post-condition) for this specification.
-   *
-   * @return the property for this specification
-   */
-  public Property getProperty() {
-    return property;
   }
 }

@@ -23,6 +23,24 @@ public class ThrowsClause {
     this.comment = comment;
   }
 
+  /**
+   * Returns the type of the exception.
+   *
+   * @return the type of the exception
+   */
+  public ClassOrInterfaceType getExceptionType() {
+    return exceptionType;
+  }
+
+  /**
+   * Returns the descriptive comment for this {@link ThrowsClause}.
+   *
+   * @return the comment for this {@link ThrowsClause}
+   */
+  public String getComment() {
+    return comment;
+  }
+
   @Override
   public boolean equals(Object object) {
     if (!(object instanceof ThrowsClause)) {
@@ -40,23 +58,5 @@ public class ThrowsClause {
   @Override
   public String toString() {
     return exceptionType + " // " + comment;
-  }
-
-  /**
-   * Returns the type of the exception.
-   *
-   * @return the type of the exception
-   */
-  public ClassOrInterfaceType getExceptionType() {
-    return exceptionType;
-  }
-
-  /**
-   * Returns the descriptive comment for this {@link ThrowsClause}.
-   *
-   * @return the comment for this {@link ThrowsClause}
-   */
-  public String getComment() {
-    return comment;
   }
 }
