@@ -1542,6 +1542,7 @@ public class RandoopSystemTest {
     checker.exclude("java.util.ArrayList.addAll(int, java.util.Collection)");
     checker.exclude("java.util.ArrayList.addAll(java.util.Collection)");
     checker.exclude("java.util.ArrayList.batchRemove(java.util.Collection, boolean)");
+    checker.exclude("java.util.ArrayList.calculateCapacity(java.lang.Object[], int)");
     checker.exclude("java.util.ArrayList.clear()");
     checker.exclude("java.util.ArrayList.clone()");
     checker.exclude("java.util.ArrayList.contains(java.lang.Object)");
