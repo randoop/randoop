@@ -559,8 +559,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * the class or class members in a test. Tests can be restricted to public members only by using
    * the option {@code --only-test-public-members}.
    */
-  @Option("Name of the package for the generated JUnit files")
-  public static String junit_package_name = "";
+  @Option("Name of the package for the generated JUnit files (optional)")
+  public static String junit_package_name;
 
   /**
    * Name of file containing code text to be added to the <a

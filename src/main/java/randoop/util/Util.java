@@ -1,5 +1,8 @@
 package randoop.util;
 
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import plume.UtilMDE;
 import randoop.Globals;
 
@@ -165,6 +168,29 @@ public final class Util {
       b.append(UtilMDE.binaryNameToFieldDescriptor(paramClasses[i].getName()));
     }
     b.append(")");
+    return b.toString();
+  }
+
+  /**
+   * Replace occurrences of words from this map with corresponding replacements. Only performs
+   * replacements of full words (using regular expression word delimiters).
+   *
+   * @param text the text to search for occurrences of names in this map
+   * @param replacements the map of replacements to perform
+   * @return the text modified by replacing original names with replacement names
+   */
+  public static String replaceWords(String text, Map<String, String> replacements) {
+    Pattern namesPattern =
+        Pattern.compile("\\b(" + UtilMDE.join(replacements.keySet().toArray(), "|") + ")\\b");
+    Matcher namesMatcher = namesPattern.matcher(text);
+    StringBuilder b = new StringBuilder();
+    int position = 0;
+    while (namesMatcher.find(position)) {
+      b.append(text.substring(position, namesMatcher.start(1)));
+      b.append(replacements.get(namesMatcher.group(1)));
+      position = namesMatcher.end(1);
+    }
+    b.append(text.substring(position));
     return b.toString();
   }
 }

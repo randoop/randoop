@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.compile.SequenceClassLoader;
@@ -33,6 +34,7 @@ import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
 import randoop.test.PostConditionCheck;
 import randoop.types.JavaTypes;
+import randoop.util.Util;
 
 public class SpecificationTranslatorTest {
 
@@ -56,17 +58,15 @@ public class SpecificationTranslatorTest {
         sig.getPropertyExpressionDeclarations(),
         is(equalTo("(java.io.PrintWriter receiver, char c, java.io.PrintWriter result)")));
 
+    Map<String, String> replacements = sig.getReplacementMap();
     assertThat(
-        "receiver should be x0",
-        sig.getReplacementMap().replaceNames("receiver"),
-        is(equalTo("x0")));
-    assertThat("param should be x1", sig.getReplacementMap().replaceNames("c"), is(equalTo("x1")));
-    assertThat(
-        "result should be x2", sig.getReplacementMap().replaceNames("result"), is(equalTo("x2")));
+        "receiver should be x0", Util.replaceWords("receiver", replacements), is(equalTo("x0")));
+    assertThat("param should be x1", Util.replaceWords("c", replacements), is(equalTo("x1")));
+    assertThat("result should be x2", Util.replaceWords("result", replacements), is(equalTo("x2")));
 
     assertThat(
         "receiver and results should be replaced",
-        sig.getReplacementMap().replaceNames("result.equals(receiver)"),
+        Util.replaceWords("result.equals(receiver)", replacements),
         is(equalTo("x2.equals(x0)")));
 
     String conditionText = "result.equals(receiver)";
@@ -142,7 +142,7 @@ public class SpecificationTranslatorTest {
             conditionText,
             compiler);
     String comment = "returns this writer";
-    String postConditionText = sig.getReplacementMap().replaceNames(conditionText);
+    String postConditionText = Util.replaceWords(conditionText, sig.getReplacementMap());
     return new ExecutableBooleanExpression(conditionMethod, comment, postConditionText);
   }
 
@@ -177,15 +177,15 @@ public class SpecificationTranslatorTest {
         sig.getPropertyExpressionDeclarations(),
         is(equalTo("(java.io.PrintWriter target, char c, java.io.PrintWriter result)")));
 
+    Map<String, String> replacements = sig.getReplacementMap();
     assertThat(
-        "receiver should be x0", sig.getReplacementMap().replaceNames("target"), is(equalTo("x0")));
-    assertThat("param should be x1", sig.getReplacementMap().replaceNames("c"), is(equalTo("x1")));
-    assertThat(
-        "result should be x2", sig.getReplacementMap().replaceNames("result"), is(equalTo("x2")));
+        "receiver should be x0", Util.replaceWords("target", replacements), is(equalTo("x0")));
+    assertThat("param should be x1", Util.replaceWords("c", replacements), is(equalTo("x1")));
+    assertThat("result should be x2", Util.replaceWords("result", replacements), is(equalTo("x2")));
 
     assertThat(
         "receiver and results should be replaced",
-        sig.getReplacementMap().replaceNames("result.equals(target)"),
+        Util.replaceWords("result.equals(target)", replacements),
         is(equalTo("x2.equals(x0)")));
 
     SpecificationCollection collection = SpecificationCollection.create(specList);

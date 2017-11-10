@@ -210,7 +210,9 @@ public class RandoopSystemTest {
             "java2.util2.TreeSet.readObject(java.io.ObjectInputStream) exclude",
             "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) exclude",
             "java2.util2.TreeSet.tailSet(java.lang.Object) ignore",
-            "java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream) exclude");
+            "java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream) exclude"
+            // end of list (line break to permit easier sorting)
+            );
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
@@ -265,7 +267,7 @@ public class RandoopSystemTest {
             "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) exclude",
             "java2.util2.TreeSet.tailSet(java.lang.Object) ignore",
             "java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream) exclude"
-            // line break to permit easier sorting
+            // end of list (line break to permit easier sorting)
             );
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -1040,11 +1042,14 @@ public class RandoopSystemTest {
     options.setOption("outputLimit", "200");
     options.setOption("attemptedLimit", "16");
 
-    CoverageChecker coverageChecker = new CoverageChecker(options);
-
     // These methods should not be called because the pre-conditions throw exceptions
-    coverageChecker.exclude("randoop.condition.ConditionWithException.getOne()");
-    coverageChecker.exclude("randoop.condition.ConditionWithException.getZero()");
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            "randoop.condition.ConditionWithException.getOne() exclude",
+            "randoop.condition.ConditionWithException.getZero() exclude"
+            //
+            );
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
@@ -1301,7 +1306,7 @@ public class RandoopSystemTest {
     options.setFlag("usethreads");
     options.unsetFlag("deterministic");
 
-    CoverageChecker checker =
+    CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
             "components.ArrowIcon.getIconHeight() ignore",
@@ -1431,7 +1436,7 @@ public class RandoopSystemTest {
             "components.Utils.getExtension(java.io.File) ignore");
 
     generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   /**
@@ -1468,13 +1473,13 @@ public class RandoopSystemTest {
     options.setOption("generatedLimit", "10");
     options.setFlag("ignore-flaky-tests");
 
-    CoverageChecker checker =
+    CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
             // This is actually run but since there is a ThreadDeath, JaCoCo doesn't see it.
             "components.DialogRunner.runDialogDemo() ignore");
     generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   @Test
@@ -1495,10 +1500,10 @@ public class RandoopSystemTest {
     options.addTestClass("input.SystemExitClass");
     options.setOption("outputLimit", "20");
     options.setOption("generatedLimit", "80");
-    CoverageChecker checker =
+    CoverageChecker coverageChecker =
         new CoverageChecker(options, "input.SystemExitClass.hashCode() ignore");
     generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   @Test
@@ -1519,9 +1524,10 @@ public class RandoopSystemTest {
     options.addTestClass("input.NoExitClass");
     options.setOption("outputLimit", "20");
     options.setOption("generatedLimit", "40");
-    CoverageChecker checker = new CoverageChecker(options, "input.NoExitClass.hashCode() exclude");
+    CoverageChecker coverageChecker =
+        new CoverageChecker(options, "input.NoExitClass.hashCode() exclude");
     generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   @Test
@@ -1536,55 +1542,59 @@ public class RandoopSystemTest {
     options.setOption("outputLimit", "400");
     options.setOption("generatedLimit", "800");
 
-    CoverageChecker checker = new CoverageChecker(options);
-    checker.exclude("java.util.ArrayList.add(int, java.lang.Object)");
-    checker.exclude("java.util.ArrayList.add(java.lang.Object)");
-    checker.exclude("java.util.ArrayList.addAll(int, java.util.Collection)");
-    checker.exclude("java.util.ArrayList.addAll(java.util.Collection)");
-    checker.exclude("java.util.ArrayList.batchRemove(java.util.Collection, boolean)");
-    checker.exclude("java.util.ArrayList.calculateCapacity(java.lang.Object[], int)");
-    checker.exclude("java.util.ArrayList.clear()");
-    checker.exclude("java.util.ArrayList.clone()");
-    checker.exclude("java.util.ArrayList.contains(java.lang.Object)");
-    checker.exclude("java.util.ArrayList.elementData(int)");
-    checker.exclude("java.util.ArrayList.ensureCapacity(int)");
-    checker.exclude("java.util.ArrayList.ensureCapacityInternal(int)");
-    checker.exclude("java.util.ArrayList.ensureExplicitCapacity(int)");
-    checker.exclude("java.util.ArrayList.fastRemove(int)");
-    checker.exclude("java.util.ArrayList.forEach(java.util.function.Consumer)");
-    checker.exclude("java.util.ArrayList.get(int)");
-    checker.exclude("java.util.ArrayList.grow(int)");
-    checker.exclude("java.util.ArrayList.hugeCapacity(int)");
-    checker.exclude("java.util.ArrayList.indexOf(java.lang.Object)");
-    checker.exclude("java.util.ArrayList.isEmpty()");
-    checker.exclude("java.util.ArrayList.iterator()");
-    checker.exclude("java.util.ArrayList.lastIndexOf(java.lang.Object)");
-    checker.exclude("java.util.ArrayList.listIterator()");
-    checker.exclude("java.util.ArrayList.listIterator(int)");
-    checker.exclude("java.util.ArrayList.outOfBoundsMsg(int)");
-    checker.exclude("java.util.ArrayList.rangeCheck(int)");
-    checker.exclude("java.util.ArrayList.rangeCheckForAdd(int)");
-    checker.exclude("java.util.ArrayList.readObject(java.io.ObjectInputStream)");
-    checker.exclude("java.util.ArrayList.remove(int)");
-    checker.exclude("java.util.ArrayList.remove(java.lang.Object)");
-    checker.exclude("java.util.ArrayList.removeAll(java.util.Collection)");
-    checker.exclude("java.util.ArrayList.removeIf(java.util.function.Predicate)");
-    checker.exclude("java.util.ArrayList.removeRange(int, int)");
-    checker.exclude("java.util.ArrayList.replaceAll(java.util.function.UnaryOperator)");
-    checker.exclude("java.util.ArrayList.retainAll(java.util.Collection)");
-    checker.exclude("java.util.ArrayList.set(int, java.lang.Object)");
-    checker.exclude("java.util.ArrayList.size()");
-    checker.exclude("java.util.ArrayList.sort(java.util.Comparator)");
-    checker.exclude("java.util.ArrayList.spliterator()");
-    checker.exclude("java.util.ArrayList.subList(int, int)");
-    checker.exclude("java.util.ArrayList.subListRangeCheck(int, int, int)");
-    checker.exclude("java.util.ArrayList.toArray()");
-    checker.exclude("java.util.ArrayList.toArray(java.lang.Object[])");
-    checker.exclude("java.util.ArrayList.trimToSize()");
-    checker.exclude("java.util.ArrayList.writeObject(java.io.ObjectOutputStream)");
-    checker.exclude("java.util.LinkedHashSet.spliterator()");
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            "java.util.ArrayList.add(int, java.lang.Object) exclude",
+            "java.util.ArrayList.add(java.lang.Object) exclude",
+            "java.util.ArrayList.addAll(int, java.util.Collection) exclude",
+            "java.util.ArrayList.addAll(java.util.Collection) exclude",
+            "java.util.ArrayList.batchRemove(java.util.Collection, boolean) exclude",
+            "java.util.ArrayList.calculateCapacity(java.lang.Object[], int) exclude",
+            "java.util.ArrayList.clear() exclude",
+            "java.util.ArrayList.clone() exclude",
+            "java.util.ArrayList.contains(java.lang.Object) exclude",
+            "java.util.ArrayList.elementData(int) exclude",
+            "java.util.ArrayList.ensureCapacity(int) exclude",
+            "java.util.ArrayList.ensureCapacityInternal(int) exclude",
+            "java.util.ArrayList.ensureExplicitCapacity(int) exclude",
+            "java.util.ArrayList.fastRemove(int) exclude",
+            "java.util.ArrayList.forEach(java.util.function.Consumer) exclude",
+            "java.util.ArrayList.get(int) exclude",
+            "java.util.ArrayList.grow(int) exclude",
+            "java.util.ArrayList.hugeCapacity(int) exclude",
+            "java.util.ArrayList.indexOf(java.lang.Object) exclude",
+            "java.util.ArrayList.isEmpty() exclude",
+            "java.util.ArrayList.iterator() exclude",
+            "java.util.ArrayList.lastIndexOf(java.lang.Object) exclude",
+            "java.util.ArrayList.listIterator() exclude",
+            "java.util.ArrayList.listIterator(int) exclude",
+            "java.util.ArrayList.outOfBoundsMsg(int) exclude",
+            "java.util.ArrayList.rangeCheck(int) exclude",
+            "java.util.ArrayList.rangeCheckForAdd(int) exclude",
+            "java.util.ArrayList.readObject(java.io.ObjectInputStream) exclude",
+            "java.util.ArrayList.remove(int) exclude",
+            "java.util.ArrayList.remove(java.lang.Object) exclude",
+            "java.util.ArrayList.removeAll(java.util.Collection) exclude",
+            "java.util.ArrayList.removeIf(java.util.function.Predicate) exclude",
+            "java.util.ArrayList.removeRange(int, int) exclude",
+            "java.util.ArrayList.replaceAll(java.util.function.UnaryOperator) exclude",
+            "java.util.ArrayList.retainAll(java.util.Collection) exclude",
+            "java.util.ArrayList.set(int, java.lang.Object) exclude",
+            "java.util.ArrayList.size() exclude",
+            "java.util.ArrayList.sort(java.util.Comparator) exclude",
+            "java.util.ArrayList.spliterator() exclude",
+            "java.util.ArrayList.subList(int, int) exclude",
+            "java.util.ArrayList.subListRangeCheck(int, int, int) exclude",
+            "java.util.ArrayList.toArray() exclude",
+            "java.util.ArrayList.toArray(java.lang.Object[]) exclude",
+            "java.util.ArrayList.trimToSize() exclude",
+            "java.util.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
+            "java.util.LinkedHashSet.spliterator() exclude"
+            // end of list (line break to permit easier sorting)
+            );
     generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
