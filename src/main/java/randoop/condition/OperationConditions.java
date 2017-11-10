@@ -40,15 +40,11 @@ public class OperationConditions {
    * Mirrors the overrides/implements relation among methods. If this OperationConditions is the
    * local specification for method declaration m, the {@code parentList} contains one element for
    * each method that m overrides or implements (and has specifications).
-   *
-   * <p>For an operation that is a method, the {@link OperationConditions} form an arbitrary
-   * directed acyclic graph consisting of {@link OperationConditions} objects for methods of
-   * supertypes, each of which has associated specifications in {@link SpecificationCollection}.
    */
   private List<OperationConditions> parentList = new ArrayList<>();
 
   /** Creates an empty {@link OperationConditions} object. */
-  OperationConditions() {
+  public OperationConditions() {
     this(
         new ArrayList<BooleanExpression>(),
         new ArrayList<GuardPropertyPair>(),
@@ -60,14 +56,11 @@ public class OperationConditions {
    * pre-specifications, {@link GuardPropertyPair} objects for post-specifications, and {@link
    * GuardThrowsPair} objects for throws-specifications.
    *
-   * @param preExpressions the guard {@link BooleanExpression} objects for the operation
-   *     pre-specifications
-   * @param guardPropertyPairs the {@link GuardPropertyPair} objects for the operation
-   *     post-specifications
-   * @param guardThrowsPairs the {@link GuardThrowsPair} objects for the operation
-   *     throws-specifications
+   * @param preExpressions the operation pre-specifications
+   * @param guardPropertyPairs the operation post-specifications
+   * @param guardThrowsPairs the operation throws-specifications
    */
-  OperationConditions(
+  public OperationConditions(
       List<BooleanExpression> preExpressions,
       List<GuardPropertyPair> guardPropertyPairs,
       List<GuardThrowsPair> guardThrowsPairs) {
@@ -78,10 +71,7 @@ public class OperationConditions {
 
   /**
    * Check all guard expressions of the method's full specification, which includes this {@link
-   * OperationConditions} and those for of any overridden/implemented method.
-   *
-   * <p>This method makes multiple calls to {@link #checkPrestate(Object[], ExpectedOutcomeTable)},
-   * using a new {@link ExpectedOutcomeTable} which is returned.
+   * OperationConditions} and those of any overridden/implemented method.
    *
    * @param args the argument values to test the guard expressions
    * @return the table with entries for this operation
@@ -122,7 +112,7 @@ public class OperationConditions {
   }
 
   /**
-   * Tests the given argument values against the local preconditions &mdash; that is, the {@link
+   * Tests the given argument values against the local preconditions, which are the {@link
    * BooleanExpression} objects in {@link #preExpressions} in this {@link OperationConditions}.
    *
    * @param args the argument values
@@ -156,13 +146,13 @@ public class OperationConditions {
   }
 
   /**
-   * Tests the given argument values against the guards of local postconditions &mdash; that is, the
+   * Tests the given argument values against the guards of local postconditions, which are the
    * {@link GuardPropertyPair} objects in this {@link OperationConditions}. Returns the {@link
    * BooleanExpression} from the first pair whose guard expression evaluated to true.
    *
    * @param args the argument values
-   * @return the {@link BooleanExpression} for the first {@link GuardPropertyPair} for which the
-   *     guard expression evaluates to true; null if there is none
+   * @return the property for the first {@link GuardPropertyPair} for which the guard expression
+   *     evaluates to true; null if there is none
    */
   private BooleanExpression checkGuardPropertyPairs(Object[] args) {
     for (GuardPropertyPair pair : guardPropertyPairs) {
