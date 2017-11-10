@@ -1537,6 +1537,7 @@ public class RandoopSystemTest {
     options.setOption("generatedLimit", "800");
 
     CoverageChecker checker = new CoverageChecker(options);
+    checker.exclude("java.util.ArrayList.calculateCapacity(java.lang.Object[], int)");
     checker.exclude("java.util.ArrayList.add(int, java.lang.Object)");
     checker.exclude("java.util.ArrayList.add(java.lang.Object)");
     checker.exclude("java.util.ArrayList.addAll(int, java.util.Collection)");
