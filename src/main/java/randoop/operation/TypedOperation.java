@@ -592,7 +592,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *
    * @param values the argument array for this operation
    * @return the corresponding operation array for checking a {@link
-   *     randoop.condition.BooleanExpression}
+   *     randoop.condition.ExecutableBooleanExpression}
    */
   private Object[] addNullReceiver(Object[] values) {
     Object[] args = values;

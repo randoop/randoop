@@ -7,7 +7,7 @@ import java.util.List;
  * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
  * allows the underlying Boolean expressions to be evaluated.
  *
- * <p>It is represented as the collection of all {@link BooleanExpression}, {@link
+ * <p>It is represented as the collection of all {@link ExecutableBooleanExpression}, {@link
  * GuardPropertyPair}, and {@link GuardThrowsPair} for the {@link
  * randoop.condition.specification.Precondition}, {@link
  * randoop.condition.specification.Postcondition}, and {@link
@@ -17,10 +17,10 @@ import java.util.List;
 public class OperationConditions {
 
   /**
-   * The {@link BooleanExpression} objects for the {@link
+   * The {@link ExecutableBooleanExpression} objects for the {@link
    * randoop.condition.specification.Precondition}s of the operation.
    */
-  private final List<BooleanExpression> preExpressions;
+  private final List<ExecutableBooleanExpression> preExpressions;
 
   /**
    * The {@link GuardThrowsPair} objects for the {@link
@@ -44,7 +44,7 @@ public class OperationConditions {
   /** Creates an empty {@link OperationConditions} object. */
   public OperationConditions() {
     this(
-        new ArrayList<BooleanExpression>(),
+        new ArrayList<ExecutableBooleanExpression>(),
         new ArrayList<GuardPropertyPair>(),
         new ArrayList<GuardThrowsPair>());
   }
@@ -59,7 +59,7 @@ public class OperationConditions {
    * @param guardThrowsPairs the operation throws-specifications
    */
   public OperationConditions(
-      List<BooleanExpression> preExpressions,
+      List<ExecutableBooleanExpression> preExpressions,
       List<GuardPropertyPair> guardPropertyPairs,
       List<GuardThrowsPair> guardThrowsPairs) {
     this.preExpressions = preExpressions;
@@ -93,7 +93,7 @@ public class OperationConditions {
    *       randoop.condition.OperationConditions#checkPreExpressions(java.lang.Object[])}.
    *   <li>A set of {@link ThrowsClause} objects for expected exceptions. See {@link
    *       randoop.condition.OperationConditions#checkGuardThrowsPairs(java.lang.Object[])}.
-   *   <li>The expected {@link BooleanExpression}, if any. See {@link
+   *   <li>The expected {@link ExecutableBooleanExpression}, if any. See {@link
    *       randoop.condition.OperationConditions#checkGuardPropertyPairs(java.lang.Object[])}.
    * </ol>
    *
@@ -105,19 +105,20 @@ public class OperationConditions {
   private void checkPrestate(Object[] args, ExpectedOutcomeTable table) {
     boolean preconditionCheck = checkPreExpressions(args);
     List<ThrowsClause> throwsClauses = checkGuardThrowsPairs(args);
-    BooleanExpression postCondition = checkGuardPropertyPairs(args);
+    ExecutableBooleanExpression postCondition = checkGuardPropertyPairs(args);
     table.add(preconditionCheck, postCondition, throwsClauses);
   }
 
   /**
    * Tests the given argument values against the local preconditions, which are the {@link
-   * BooleanExpression} objects in {@link #preExpressions} in this {@link OperationConditions}.
+   * ExecutableBooleanExpression} objects in {@link #preExpressions} in this {@link
+   * OperationConditions}.
    *
    * @param args the argument values
    * @return false if any local precondition fails on the argument values, true if all succeed
    */
   private boolean checkPreExpressions(Object[] args) {
-    for (BooleanExpression preCondition : preExpressions) {
+    for (ExecutableBooleanExpression preCondition : preExpressions) {
       if (!preCondition.check(args)) {
         return false;
       }
@@ -135,8 +136,8 @@ public class OperationConditions {
   private List<ThrowsClause> checkGuardThrowsPairs(Object[] args) {
     List<ThrowsClause> throwsClauses = new ArrayList<>();
     for (GuardThrowsPair pair : guardThrowsPairs) {
-      BooleanExpression guardExpression = pair.guardExpression;
-      if (guardExpression.check(args)) {
+      ExecutableBooleanExpression guard = pair.guard;
+      if (guard.check(args)) {
         throwsClauses.add(pair.throwsClause);
       }
     }
@@ -146,17 +147,17 @@ public class OperationConditions {
   /**
    * Tests the given argument values against the guards of local postconditions, which are the
    * {@link GuardPropertyPair} objects in this {@link OperationConditions}. Returns the {@link
-   * BooleanExpression} from the first pair whose guard expression evaluated to true.
+   * ExecutableBooleanExpression} from the first pair whose guard expression evaluated to true.
    *
    * @param args the argument values
    * @return the property for the first {@link GuardPropertyPair} for which the guard expression
    *     evaluates to true; null if there is none
    */
-  private BooleanExpression checkGuardPropertyPairs(Object[] args) {
-    for (GuardPropertyPair pair : guardPropertyPairs) {
-      BooleanExpression guardExpression = pair.guardExpression;
-      if (guardExpression.check(args)) {
-        return pair.booleanExpression.addPrestate(args);
+  private ExecutableBooleanExpression checkGuardPropertyPairs(Object[] args) {
+    for (GuardPropertyPair gpPair : guardPropertyPairs) {
+      ExecutableBooleanExpression guard = gpPair.guard;
+      if (guard.check(args)) {
+        return gpPair.property.addPrestate(args);
       }
     }
     return null;

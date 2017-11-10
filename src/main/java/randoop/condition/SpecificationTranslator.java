@@ -4,7 +4,9 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
@@ -17,6 +19,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.RawSignature;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
+import randoop.util.Util;
 
 /** Translates an {@link OperationSpecification} object to an {@link OperationConditions} object. */
 public class SpecificationTranslator {
@@ -37,7 +40,7 @@ public class SpecificationTranslator {
   private final String propertyExpressionDeclarations;
 
   /** The map of expression identifiers to dummy variables. */
-  private final NameReplacementMap replacementMap;
+  private final Map<String, String> replacementMap;
 
   /** The {@link SequenceCompiler} for compiling expression methods. */
   private final SequenceCompiler compiler;
@@ -60,7 +63,7 @@ public class SpecificationTranslator {
       String guardExpressionDeclaration,
       RawSignature propertyExpressionSignature,
       String propertyExpressionDeclaration,
-      NameReplacementMap replacementMap,
+      Map<String, String> replacementMap,
       SequenceCompiler compiler) {
     this.guardExpressionSignature = guardExpressionSignature;
     this.guardExpressionDeclaration = guardExpressionDeclaration;
@@ -101,7 +104,7 @@ public class SpecificationTranslator {
     String propertyExpressionDeclarations =
         propertyExpressionSignature.getDeclarationArguments(parameterNames);
 
-    NameReplacementMap replacementMap = createReplacementMap(parameterNames);
+    Map<String, String> replacementMap = createReplacementMap(parameterNames);
     return new SpecificationTranslator(
         guardExpressionSignature,
         guardExpressionDeclarations,
@@ -120,7 +123,7 @@ public class SpecificationTranslator {
    * postState} is true and {@code executable} is not a void method.
    *
    * <p>Note: The declaring class of the expression method is actually determined by {@link
-   * BooleanExpression#createMethod(RawSignature, String, String, SequenceCompiler)}
+   * ExecutableBooleanExpression#createMethod(RawSignature, String, String, SequenceCompiler)}
    *
    * @param executable the method or constructor to which the expression belongs
    * @param postState if true, include a variable for the return value in the signature
@@ -137,7 +140,8 @@ public class SpecificationTranslator {
     Class<?> returnType =
         (!postState ? null : (isMethod ? ((Method) executable).getReturnType() : declaringClass));
     String packageName = getPackageName(declaringClass.getPackage());
-    return BooleanExpression.getRawSignature(packageName, receiverType, parameterTypes, returnType);
+    return ExecutableBooleanExpression.getRawSignature(
+        packageName, receiverType, parameterTypes, returnType);
   }
 
   // In JDK 8, replace invocations of this by: executable.getDeclaringClass()
@@ -186,9 +190,9 @@ public class SpecificationTranslator {
    * @param parameterNames the parameter names of the expression methods
    * @return the map from the parameter names to dummy variables
    */
-  private static NameReplacementMap createReplacementMap(List<String> parameterNames) {
+  private static Map<String, String> createReplacementMap(List<String> parameterNames) {
     int count = 0;
-    NameReplacementMap replacementMap = new NameReplacementMap();
+    Map<String, String> replacementMap = new HashMap<String, String>();
     for (String parameterName : parameterNames) {
       replacementMap.put(parameterName, DUMMY_VARIABLE_NAME + count++);
     }
@@ -211,15 +215,16 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Construct the list of {@link BooleanExpression} objects, one for each {@link Precondition}.
+   * Construct the list of {@link ExecutableBooleanExpression} objects, one for each {@link
+   * Precondition}.
    *
    * @param preconditions the list of {@link Precondition} objects that will be converted to {@link
-   *     BooleanExpression}
-   * @return the list of {@link BooleanExpression} objects obtained by converting each {@link
-   *     Precondition}
+   *     ExecutableBooleanExpression}
+   * @return the list of {@link ExecutableBooleanExpression} objects obtained by converting each
+   *     {@link Precondition}
    */
-  private List<BooleanExpression> getGuardExpressions(List<Precondition> preconditions) {
-    List<BooleanExpression> guardExpressions = new ArrayList<>();
+  private List<ExecutableBooleanExpression> getGuardExpressions(List<Precondition> preconditions) {
+    List<ExecutableBooleanExpression> guardExpressions = new ArrayList<>();
     for (Precondition precondition : preconditions) {
       try {
         guardExpressions.add(create(precondition.getGuard()));
@@ -246,9 +251,9 @@ public class SpecificationTranslator {
     ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>();
     for (Postcondition postcondition : postconditions) {
       try {
-        BooleanExpression guardExpression = create(postcondition.getGuard());
-        BooleanExpression booleanExpression = create(postcondition.getProperty());
-        returnConditions.add(new GuardPropertyPair(guardExpression, booleanExpression));
+        ExecutableBooleanExpression guard = create(postcondition.getGuard());
+        ExecutableBooleanExpression property = create(postcondition.getProperty());
+        returnConditions.add(new GuardPropertyPair(guard, property));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;
@@ -289,10 +294,10 @@ public class SpecificationTranslator {
         continue;
       }
       try {
-        BooleanExpression guardExpression = create(throwsCondition.getGuard());
+        ExecutableBooleanExpression guard = create(throwsCondition.getGuard());
         ThrowsClause throwsClause =
             new ThrowsClause(exceptionType, throwsCondition.getDescription());
-        throwsPairs.add(new GuardThrowsPair(guardExpression, throwsClause));
+        throwsPairs.add(new GuardThrowsPair(guard, throwsClause));
       } catch (RandoopConditionError e) {
         if (GenInputsAbstract.fail_on_condition_error) {
           throw e;
@@ -304,17 +309,17 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Creates a {@link BooleanExpression} object for the given {@link
+   * Creates a {@link ExecutableBooleanExpression} object for the given {@link
    * randoop.condition.specification.AbstractBooleanExpression} using the guard expression signature
    * of this {@link SpecificationTranslator}.
    *
    * @param expression the {@link randoop.condition.specification.AbstractBooleanExpression} to be
    *     converted
-   * @return the {@link BooleanExpression} object for {@code expression}
+   * @return the {@link ExecutableBooleanExpression} object for {@code expression}
    */
-  private BooleanExpression create(Guard expression) {
-    String contractText = replacementMap.replaceNames(expression.getConditionSource());
-    return BooleanExpression.createBooleanExpression(
+  private ExecutableBooleanExpression create(Guard expression) {
+    String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
+    return new ExecutableBooleanExpression(
         guardExpressionSignature,
         guardExpressionDeclaration,
         expression.getConditionSource(),
@@ -324,17 +329,17 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Creates a {@link BooleanExpression} object for the given {@link
+   * Creates a {@link ExecutableBooleanExpression} object for the given {@link
    * randoop.condition.specification.AbstractBooleanExpression} using the property expression
    * signature of this {@link SpecificationTranslator}.
    *
    * @param expression the {@link randoop.condition.specification.AbstractBooleanExpression} to be
    *     converted
-   * @return the {@link BooleanExpression} object for {@code expression}
+   * @return the {@link ExecutableBooleanExpression} object for {@code expression}
    */
-  public BooleanExpression create(Property expression) {
-    String contractText = replacementMap.replaceNames(expression.getConditionSource());
-    return BooleanExpression.createBooleanExpression(
+  public ExecutableBooleanExpression create(Property expression) {
+    String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
+    return new ExecutableBooleanExpression(
         propertyExpressionSignature,
         propertyExpressionDeclarations,
         expression.getConditionSource(),
@@ -383,7 +388,7 @@ public class SpecificationTranslator {
    *
    * @return the replacement map for the identifiers in the expression
    */
-  NameReplacementMap getReplacementMap() {
+  Map<String, String> getReplacementMap() {
     return replacementMap;
   }
 }
