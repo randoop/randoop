@@ -1036,7 +1036,7 @@ public class RandoopSystemTest {
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/condition_with_exception.json");
     options.unsetFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
+    options.unsetFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
