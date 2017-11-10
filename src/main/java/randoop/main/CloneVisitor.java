@@ -68,6 +68,17 @@ import java.util.List;
  */
 public class CloneVisitor implements GenericVisitor<Node, Object> {
 
+	/**
+	 * Copies the orphan comments that belong to the source node to the dest node.
+	 * @param source node whose orphaned comments will get copied from
+	 * @param dest node which the orphaned comments will get copied to
+	 */
+	private void addOrphanCommentsToNode(Node source, Node dest) {
+		for (Comment oc : source.getOrphanComments()) {
+			dest.addOrphanComment(oc);
+		}
+	}
+	
 	@Override
 	public Node visit(CompilationUnit _n, Object _arg) {
 		PackageDeclaration package_ = cloneNodes(_n.getPackage(), _arg);
@@ -91,9 +102,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				annotations, name
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+		addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -107,9 +116,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				name, _n.isStatic(), _n.isAsterisk()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -124,9 +131,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 
         Comment comment = cloneNodes(_n.getComment(), _arg);
         r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -155,9 +160,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getModifiers(), annotations, _n.isInterface(), _n.getName(), typeParameters, extendsList, implementsList, members
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -175,9 +178,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				 _n.getModifiers(), annotations, _n.getName(), implementsList, entries, members
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -190,9 +191,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getBeginLine(), _n.getBeginColumn(), _n.getEndLine(), _n.getEndColumn()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -209,9 +208,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				 annotations, _n.getName(), args, classBody
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -227,9 +224,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				 _n.getModifiers(), annotations, _n.getName(), members
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -246,9 +241,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				 _n.getModifiers(), annotations, type_, _n.getName(), defaultValue
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -265,9 +258,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				 _n.getModifiers(), annotations, type_, variables
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -282,9 +273,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				id, init
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -297,9 +286,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getName(), _n.getArrayCount()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -318,9 +305,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				 _n.getModifiers(), annotations, typeParameters, _n.getName(), parameters, throws_, block
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -340,9 +325,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				 _n.getModifiers(), annotations, typeParameters, type_, _n.getName(), parameters, _n.getArrayCount(), throws_, block
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -358,9 +341,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getModifiers(), annotations, type_, _n.isVarArgs(), id
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -376,9 +357,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getModifiers(), annotations, type, id
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -391,9 +370,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getBeginLine(), _n.getBeginColumn(), _n.getEndLine(), _n.getEndColumn()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -408,9 +385,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				 _n.isStatic(), block
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -422,9 +397,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getContent()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -439,9 +412,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				scope, _n.getName(), _n.getTypeArguments()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -454,9 +425,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getType()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -478,9 +447,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
                 _n.getArrayCount(), ann, _arraysAnnotations);
         Comment comment = cloneNodes(_n.getComment(), _arg);
         r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -493,9 +460,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
                 elements);
         Comment comment = cloneNodes(_n.getComment(), _arg);
         r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
         return r;
     }
 
@@ -508,9 +473,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
                 elements);
         Comment comment = cloneNodes(_n.getComment(), _arg);
         r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
         return r;
     }
 
@@ -520,9 +483,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 
 		VoidType r = new VoidType(_n.getBeginLine(), _n.getBeginColumn(), _n.getEndLine(), _n.getEndColumn());
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -537,9 +498,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				ext, sup
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -549,9 +508,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 
 		UnknownType r = new UnknownType();
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -566,9 +523,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				name, index
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -594,9 +549,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 		r.setArraysAnnotations(_arraysAnnotations);
         Comment comment = cloneNodes(_n.getComment(), _arg);
         r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -610,9 +563,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				values
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -626,9 +577,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getBeginLine(), _n.getBeginColumn(), _n.getEndLine(), _n.getEndColumn(),
 				target, value, _n.getOperator());
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -643,9 +592,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				left, right, _n.getOperator()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -660,9 +607,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				type_, expr
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -676,9 +621,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				type_
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -694,9 +637,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				condition, thenExpr, elseExpr
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -710,9 +651,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				inner
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -727,9 +666,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				scope, typeArgs, _n.getField()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -744,9 +681,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				expr, type_
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -758,9 +693,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getValue()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -773,9 +706,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getValue()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -788,9 +719,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getValue()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -800,9 +729,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 
 		IntegerLiteralMinValueExpr r = new IntegerLiteralMinValueExpr(_n.getBeginLine(), _n.getBeginColumn(), _n.getEndLine(), _n.getEndColumn());
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -812,9 +739,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 
 		LongLiteralMinValueExpr r = new LongLiteralMinValueExpr(_n.getBeginLine(), _n.getBeginColumn(), _n.getEndLine(), _n.getEndColumn());
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -827,9 +752,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getValue()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -842,9 +765,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getValue()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -857,9 +778,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getValue()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -869,9 +788,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 
 		NullLiteralExpr r = new NullLiteralExpr(_n.getBeginLine(), _n.getBeginColumn(), _n.getEndLine(), _n.getEndColumn());
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -887,9 +804,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				scope, typeArgs, _n.getName(), args
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -902,9 +817,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getName()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -922,9 +835,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				scope, type_, typeArgs, args, anonymousBody
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -938,9 +849,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				scope, _n.getName()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -954,9 +863,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				classExpr
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -970,9 +877,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				classExpr
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -986,9 +891,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				expr, _n.getOperator()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1004,9 +907,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getModifiers(), annotations, type_, vars
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1020,9 +921,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				name
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1037,9 +936,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				name, memberValue
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1054,9 +951,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				name, pairs
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1070,9 +965,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getName(), value
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1088,9 +981,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				typeArgs, _n.isThis(), expr, args
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1104,9 +995,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				typeDecl
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1121,9 +1010,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				check, message
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1137,9 +1024,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				stmts
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1153,9 +1038,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getLabel(), stmt
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1165,9 +1048,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 
 		EmptyStmt r = new EmptyStmt(_n.getBeginLine(), _n.getBeginColumn(), _n.getEndLine(), _n.getEndColumn());
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1181,9 +1062,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				expr
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1198,9 +1077,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				selector, entries
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1215,9 +1092,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				label, stmts
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1230,9 +1105,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getId()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1246,9 +1119,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				expr
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1264,9 +1135,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				condition, thenStmt, elseStmt
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1281,9 +1150,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				condition, body
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1296,9 +1163,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				_n.getId()
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1313,9 +1178,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				body, condition
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1331,9 +1194,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				var, iterable, body
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1350,9 +1211,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				init, compare, update, body
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1366,9 +1225,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				expr
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1383,9 +1240,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				expr, block
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1402,9 +1257,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				resources, tryBlock, catchs, finallyBlock
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
@@ -1419,9 +1272,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 				param.getModifiers(), param.getAnnotations(), param.getType(), param.getId(), catchBlock
 		);
 		r.setComment(comment);
-    for (Comment oc : _n.getOrphanComments()) {
-      r.addOrphanComment(oc);
-    }
+    	addOrphanCommentsToNode(_n, r);
 		return r;
 	}
 
