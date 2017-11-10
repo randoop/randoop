@@ -140,11 +140,11 @@ public class ExecutableBooleanExpression {
               + e.getCause()
               + "). This indicates a bug in the expression method creation.";
       System.out.println(message);
-      new Error().printStackTrace();
+      new Error(e).printStackTrace();
       if (Log.isLoggingOn()) {
         Log.logLine(message);
       }
-      throw new RandoopConditionError(message);
+      throw new RandoopConditionError(message, e);
     }
   }
 
