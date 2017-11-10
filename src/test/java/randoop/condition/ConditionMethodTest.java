@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
+import randoop.main.GenInputsAbstract;
 import randoop.reflection.RawSignature;
 
 public class ConditionMethodTest {
@@ -58,21 +59,28 @@ public class ConditionMethodTest {
 
   @Test
   public void testErrorThrown() {
-    RawSignature signature =
-        new RawSignature(
-            "randoop.condition",
-            "ErrorThrownCondition",
-            "test",
-            new Class<?>[] {ConditionWithException.class});
-    ExecutableBooleanExpression error =
-        createCondition(
-            signature,
-            "(randoop.condition.ConditionWithException r)",
-            "r.errorPredicate()",
-            "throws an Error");
-    assertFalse(
-        "should be false when error thrown",
-        error.check(new Object[] {new ConditionWithException()}));
+    boolean old_fail_on_condition_error = GenInputsAbstract.fail_on_condition_error;
+    GenInputsAbstract.fail_on_condition_error = false;
+
+    try {
+      RawSignature signature =
+          new RawSignature(
+              "randoop.condition",
+              "ErrorThrownCondition",
+              "test",
+              new Class<?>[] {ConditionWithException.class});
+      ExecutableBooleanExpression error =
+          createCondition(
+              signature,
+              "(randoop.condition.ConditionWithException r)",
+              "r.errorPredicate()",
+              "throws an Error");
+      assertFalse(
+          "should be false when error thrown",
+          error.check(new Object[] {new ConditionWithException()}));
+    } finally {
+      GenInputsAbstract.fail_on_condition_error = old_fail_on_condition_error;
+    }
   }
 
   @Test
