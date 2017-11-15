@@ -78,7 +78,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 			dest.addOrphanComment(oc);
 		}
 	}
-	
+
 	@Override
 	public Node visit(CompilationUnit _n, Object _arg) {
 		PackageDeclaration package_ = cloneNodes(_n.getPackage(), _arg);
@@ -430,6 +430,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 	}
 
 	@Override
+	@SuppressWarnings("JdkObsolete")
 	public Node visit(ReferenceType _n, Object _arg) {
 		List<AnnotationExpr> ann = visit(_n.getAnnotations(), _arg);
 		Type type_ = cloneNodes(_n.getType(), _arg);
@@ -528,6 +529,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
 	}
 
 	@Override
+	@SuppressWarnings("JdkObsolete")
 	public Node visit(ArrayCreationExpr _n, Object _arg) {
 		Type type_ = cloneNodes(_n.getType(), _arg);
 		List<Expression> dimensions = visit(_n.getDimensions(), _arg);
