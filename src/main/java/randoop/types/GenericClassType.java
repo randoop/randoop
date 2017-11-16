@@ -143,7 +143,7 @@ public class GenericClassType extends ParameterizedType {
   public ClassOrInterfaceType getSuperclass() {
     Class<?> superclass = rawType.getSuperclass();
     if (superclass != null) {
-      return ClassOrInterfaceType.forClass(rawType.getSuperclass());
+      return ClassOrInterfaceType.forClass(superclass);
     } else {
       return JavaTypes.OBJECT_TYPE;
     }
@@ -165,7 +165,7 @@ public class GenericClassType extends ParameterizedType {
   ClassOrInterfaceType getSuperclass(Substitution<ReferenceType> substitution) {
     java.lang.reflect.Type superclass = this.rawType.getGenericSuperclass();
     if (superclass == null) {
-      return null;
+      return JavaTypes.OBJECT_TYPE;
     }
     return ClassOrInterfaceType.forType(superclass).apply(substitution);
   }
