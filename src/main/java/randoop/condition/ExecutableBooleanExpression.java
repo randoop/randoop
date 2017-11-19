@@ -71,7 +71,8 @@ public class ExecutableBooleanExpression {
    * @param expressionSource the source code for a Java expression to be used as the body of the
    *     expression method
    * @param contractSource a Java expression that is the source code for the expression, in the
-   *     format of {@link ExecutableBooleanExpression#getContractSource()}
+   *     format of {@link #getContractSource()}. The same as {@code expressionSource}, except that
+   *     it uses dummy variable names x0, x1, instead of formal parameter names.
    * @param comment the comment describing the expression
    * @param compiler the compiler to used to compile the expression method
    */

@@ -21,16 +21,22 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 import randoop.util.Util;
 
-/** Translates an {@link OperationSpecification} object to an {@link OperationConditions} object. */
+/**
+ * Translates an {@link OperationSpecification} object (which has preconditions, postconditions, and
+ * throws conditions) to its executable version, {@link OperationConditions}.
+ */
 public class SpecificationTranslator {
 
-  /** The name of dummy variables used by {@link randoop.contract.ObjectContract}. */
-  private static final String DUMMY_VARIABLE_NAME = "x";
+  /** The base name of dummy variables used by {@link randoop.contract.ObjectContract}. */
+  private static final String DUMMY_VARIABLE_BASE_NAME = "x";
 
   /** The {@link RawSignature} for a guard expression method. */
   private RawSignature guardExpressionSignature;
 
-  /** The parameter declaration string, with parentheses, for a guard expression method. */
+  /**
+   * The parameter part of a method declaration string, with parentheses, for a guard expression
+   * method.
+   */
   private final String guardExpressionDeclaration;
 
   /** The {@link RawSignature} for a property expression method. */
@@ -90,6 +96,7 @@ public class SpecificationTranslator {
     RawSignature guardExpressionSignature = getExpressionSignature(executable, false);
     RawSignature propertyExpressionSignature = getExpressionSignature(executable, true);
 
+    // parameterNames is side-effected, then used, then side-effected and used again.
     List<String> parameterNames = new ArrayList<>();
 
     // Get expression method parameter declaration strings.
@@ -129,7 +136,7 @@ public class SpecificationTranslator {
    * @param postState if true, include a variable for the return value in the signature
    * @return the {@link RawSignature} for a expression method of {@code executable}
    */
-  // The type AccessibleObject should be Executable, but that class was introduced in Java 8
+  // The type AccessibleObject should be Executable, but that class was introduced in Java 8.
   private static RawSignature getExpressionSignature(
       AccessibleObject executable, boolean postState) {
     boolean isMethod = executable instanceof Method;
@@ -164,12 +171,12 @@ public class SpecificationTranslator {
 
   /**
    * Gets the name of the package to use for the package of the expression method. If the package
-   * name begins with {@code "java"} modifies it to begin with {@code "randoop"} instead, since user
-   * classes cannot be added to the {@code java} package.
+   * name begins with {@code "java."}, prefixes it by {@code "randoop."}, since user classes cannot
+   * be added to the {@code java} package.
    *
    * @param aPackage the package to get the name of, may be null
    * @return the name of the package, updated to start with "randoop" if the original begins with
-   *     "java"; the empty string if {@code aPackage} is null
+   *     "java"; null if {@code aPackage} is null
    */
   private static String getPackageName(Package aPackage) {
     if (aPackage == null) {
@@ -191,10 +198,9 @@ public class SpecificationTranslator {
    * @return the map from the parameter names to dummy variables
    */
   private static Map<String, String> createReplacementMap(List<String> parameterNames) {
-    int count = 0;
     Map<String, String> replacementMap = new HashMap<String, String>();
-    for (String parameterName : parameterNames) {
-      replacementMap.put(parameterName, DUMMY_VARIABLE_NAME + count++);
+    for (int i = 0; i < parameterNames.size(); i++) {
+      replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
     }
     return replacementMap;
   }

@@ -89,7 +89,7 @@ public class ConnectionSpecTest {
     opSpec.addReturnSpecifications(retList);
     opList.add(opSpec);
 
-    System.out.println(
-        new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(opList));
+    String json =
+        new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(opList);
   }
 }

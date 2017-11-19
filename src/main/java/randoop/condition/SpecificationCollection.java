@@ -27,9 +27,8 @@ import randoop.util.Log;
 import randoop.util.MultiMap;
 
 /**
- * A collection of {@link OperationSpecification} objects. Also a map from an {@link
- * AccessibleObject} reflection object to the {@link OperationConditions} for the corresponding
- * {@link randoop.operation.TypedClassOperation}.
+ * A collection of {@link OperationSpecification} objects, index by {@link AccessibleObject}
+ * reflection objects.
  *
  * <p>The {@link SpecificationCollection} should be constructed from the specification input before
  * the {@link randoop.reflection.OperationModel} is created.

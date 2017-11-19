@@ -120,10 +120,10 @@ import randoop.util.ProgressDisplay;
  *             randoop.condition.ExecutableBooleanExpression} is satisfied.
  *       </ol>
  *
- *   <li>If {@link randoop.condition.ExpectedOutcomeTable#isInvalidPrestate()} then classify as
- *       {@link randoop.main.GenInputsAbstract.BehaviorType#INVALID}, and don't make the call. This
- *       avoids making a call on invalid arguments unless the specification indicates that
- *       exceptions should be thrown.
+ *   <li>If {@link randoop.condition.ExpectedOutcomeTable#isInvalidCall()} then classify as {@link
+ *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}, and don't make the call. This avoids
+ *       making a call on invalid arguments unless the specification indicates that exceptions
+ *       should be thrown.
  *   <li>Otherwise, create a {@link randoop.test.TestCheckGenerator} by calling {@link
  *       randoop.condition.ExpectedOutcomeTable#addPostCheckGenerator(randoop.test.TestCheckGenerator)}.
  *       This method selects the check generator as follows:
@@ -384,7 +384,7 @@ public class ExecutableSequence {
         TypedOperation operation = this.sequence.getStatement(i).getOperation();
         if (operation.isConstructorCall() || operation.isMethodCall()) {
           ExpectedOutcomeTable outcomeTable = operation.checkConditions(inputValues);
-          if (outcomeTable.isInvalidPrestate()) {
+          if (outcomeTable.isInvalidCall()) {
             checks = new InvalidChecks(new InvalidValueCheck(this, i));
             return;
           }
