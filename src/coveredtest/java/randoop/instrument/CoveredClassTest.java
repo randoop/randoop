@@ -239,7 +239,7 @@ public class CoveredClassTest {
     try {
       observerMap = operationModel.getObservers(observerSignatures);
     } catch (OperationParseException e) {
-      System.out.printf("Error: parse exception thrown while reading observers: %s%n", e);
+      System.out.printf("Parse error while reading observers: %s%n", e);
       System.exit(1);
       throw new Error("dead code");
     }

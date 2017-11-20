@@ -163,7 +163,7 @@ public class SpecificationTranslatorTest {
     File specFile = new File(specFileName);
     List<File> specList = new ArrayList<>();
     specList.add(specFile);
-    OperationSpecification specification = readSpecifications(specFile);
+    OperationSpecification specification = readSpecificationsForTest(specFile);
     Method method = getPrintWriterAppendMethod();
     SpecificationTranslator sig =
         SpecificationTranslator.createTranslator(method, specification.getIdentifiers(), null);
@@ -206,7 +206,7 @@ public class SpecificationTranslatorTest {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSpecification readSpecifications(File specFile) {
+  private OperationSpecification readSpecificationsForTest(File specFile) {
     List<OperationSpecification> specificationList = new ArrayList<>();
     Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
     TypeToken<List<OperationSpecification>> typeToken =

@@ -10,7 +10,9 @@ import java.util.Objects;
 
 /**
  * Represents the signature of a method or constructor for an {@link OperationSpecification} so that
- * the {@code java.lang.reflect.AccessibleObject} can be loaded.
+ * the {@code java.lang.reflect.AccessibleObject} can be loaded, which is done by
+ * <!-- private, so can't use @link: -->
+ * {@code SpecificationCollection.getAccessibleObject}.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
@@ -64,6 +66,10 @@ public class OperationSignature {
     this.classname = classname;
     this.name = name;
     this.parameterTypes = parameterTypes;
+
+    if (name.indexOf('.') != -1) {
+      throw new Error("Bad name: " + this);
+    }
   }
 
   /**
