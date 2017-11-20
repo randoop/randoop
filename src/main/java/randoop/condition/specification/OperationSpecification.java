@@ -155,6 +155,7 @@ public class OperationSpecification {
   public List<Postcondition> getPostconditions() {
     return postSpecifications;
   }
+
   /**
    * Return the list of {@link ThrowsCondition} objects for this {@link OperationSpecification}.
    *
