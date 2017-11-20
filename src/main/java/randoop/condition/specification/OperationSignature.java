@@ -121,7 +121,7 @@ public class OperationSignature {
    */
   public static OperationSignature of(Constructor<?> constructor) {
     return new OperationSignature(
-        // Class.getName returns JVML format for arrays, but this isn't an array, so this is OK.
+        // Class.getName returns JVML format for arrays, but this isn't an array, so the call is OK.
         constructor.getDeclaringClass().getName(),
         constructor.getName(),
         getTypeNames(constructor.getParameterTypes()));
