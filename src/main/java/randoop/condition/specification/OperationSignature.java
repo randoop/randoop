@@ -49,7 +49,7 @@ public class OperationSignature {
   /** The list of fully-qualified raw type names for the parameters of this operation */
   private final List<String> parameterTypes;
 
-  /** A default constructor is expected for Gson serialization. */
+  /** Gson serialization requires a default constructor. */
   @SuppressWarnings("unused")
   private OperationSignature() {
     this.classname = "";

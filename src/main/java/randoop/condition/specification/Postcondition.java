@@ -35,7 +35,7 @@ public class Postcondition extends SpecificationClause {
   /** The post-condition */
   private final Property property;
 
-  /** Default constructor for Gson serialization. */
+  /** Gson serialization requires a default constructor. */
   @SuppressWarnings("unused")
   private Postcondition() {
     super();

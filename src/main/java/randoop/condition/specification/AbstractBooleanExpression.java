@@ -21,7 +21,7 @@ public abstract class AbstractBooleanExpression {
   /** The description of the expression. Used as the descriptive text in test assertions. */
   private final String description;
 
-  /** A default constructor is required to exist for Gson serialization. */
+  /** Gson serialization requires a default constructor. */
   @SuppressWarnings("unused")
   private AbstractBooleanExpression() {
     this.conditionSource = "";
