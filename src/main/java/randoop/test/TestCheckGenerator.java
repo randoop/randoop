@@ -9,7 +9,8 @@ import randoop.sequence.ExecutableSequence;
  * produces the {@link TestChecks} objects that, for valid behaviors, represent assertions in error
  * or regression tests.
  */
-public interface TestCheckGenerator {
+// Abstract class instead of an interface to permit default implementation of hasGenerator().
+public abstract class TestCheckGenerator {
 
   /**
    * Generate a {@link TestChecks} object for the executed sequence {@code eseq} based on the
@@ -18,7 +19,10 @@ public interface TestCheckGenerator {
    * @param eseq the sequence for which checks are generated
    * @return the generated check set for the sequence
    */
-  TestChecks<?> generateTestChecks(ExecutableSequence eseq);
+  public abstract TestChecks<?> generateTestChecks(ExecutableSequence eseq);
 
-  TestCheckGenerator getGenerator();
+  /** Returns true if this generator contains a generator of the given class. */
+  public boolean hasGenerator(Class<? extends TestCheckGenerator> genClass) {
+    return this.getClass() == genClass;
+  }
 }

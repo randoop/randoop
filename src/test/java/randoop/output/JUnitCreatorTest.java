@@ -84,11 +84,6 @@ public class JUnitCreatorTest {
         return new RegressionChecks(
             new ObjectCheck(new PrimValue(i, PrimValue.PrintMode.EQUALSEQUALS), variable));
       }
-
-      @Override
-      public TestCheckGenerator getGenerator() {
-        return this;
-      }
     };
   }
 }

@@ -6,7 +6,7 @@ import randoop.sequence.ExecutableSequence;
  * This {@code TestCheckGenerator} combines two generators, using the invalid and failure checks
  * from the first, and, if none of those, then returning the output of the second.
  */
-public class ExtendGenerator implements TestCheckGenerator {
+public class ExtendGenerator extends TestCheckGenerator {
 
   private TestCheckGenerator firstGenerator;
   private TestCheckGenerator secondGenerator;
@@ -48,7 +48,7 @@ public class ExtendGenerator implements TestCheckGenerator {
   }
 
   @Override
-  public TestCheckGenerator getGenerator() {
-    return firstGenerator;
+  public boolean hasGenerator(Class<? extends TestCheckGenerator> genClass) {
+    return firstGenerator.hasGenerator(genClass) || secondGenerator.hasGenerator(genClass);
   }
 }

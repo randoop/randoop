@@ -30,7 +30,7 @@ import randoop.util.TupleSet;
  * <p>If the execution throws an exception considered to be an error, the visitor generates a {@code
  * NoExceptionCheck} indicating that the statement should not throw the exception.
  */
-public final class ContractCheckingGenerator implements TestCheckGenerator {
+public final class ContractCheckingGenerator extends TestCheckGenerator {
 
   private ContractSet contracts;
   private ExceptionPredicate exceptionPredicate;
@@ -136,11 +136,6 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
     } else {
       return new ErrorRevealingChecks(check);
     }
-  }
-
-  @Override
-  public TestCheckGenerator getGenerator() {
-    return this;
   }
 
   /**

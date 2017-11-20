@@ -40,7 +40,10 @@ public class OperationSignature {
   /** The fully-qualified name of the declaring class of this operation */
   private final String classname;
 
-  /** The name of this operation */
+  /**
+   * The name of this operation. For a method, is its simple name. For a constructor, is the
+   * fully-qualified name of the class.
+   */
   private final String name;
 
   /** The list of fully-qualified raw type names for the parameters of this operation */
@@ -66,10 +69,6 @@ public class OperationSignature {
     this.classname = classname;
     this.name = name;
     this.parameterTypes = parameterTypes;
-
-    if (name.indexOf('.') != -1) {
-      throw new Error("Bad name: " + this);
-    }
   }
 
   /**
