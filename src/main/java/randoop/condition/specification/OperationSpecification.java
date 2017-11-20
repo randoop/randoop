@@ -188,7 +188,7 @@ public class OperationSpecification {
    *
    * @param specifications the list of {@link ThrowsCondition} objects
    */
-  public void ThrowsConditions(List<ThrowsCondition> specifications) {
+  public void addThrowsConditions(List<ThrowsCondition> specifications) {
     throwsSpecifications.addAll(specifications);
   }
 

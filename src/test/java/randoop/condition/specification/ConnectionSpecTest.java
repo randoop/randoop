@@ -42,7 +42,7 @@ public class ConnectionSpecTest {
     throwsList.add(opThrows);
     OperationSignature opOpen = OperationSignature.of(mOpen);
     OperationSpecification opSpec = new OperationSpecification(opOpen, new Identifiers());
-    opSpec.ThrowsConditions(throwsList);
+    opSpec.addThrowsConditions(throwsList);
     opList.add(opSpec);
 
     Method mSend;

@@ -59,7 +59,7 @@ public class OperationSignature {
 
   /**
    * Create an {@link OperationSignature} object given the names of the declaring class, method or
-   * constructor, the parameter types.
+   * constructor, and parameter types.
    *
    * @param classname the fully-qualified name of the declaring class
    * @param name the name of the method or constructor
@@ -125,6 +125,7 @@ public class OperationSignature {
    */
   public static OperationSignature of(Constructor<?> constructor) {
     return new OperationSignature(
+        // Class.getName returns JVML format for arrays, but this isn't an array, so the call is OK.
         constructor.getDeclaringClass().getName(),
         constructor.getName(),
         getTypeNames(constructor.getParameterTypes()));
@@ -135,14 +136,12 @@ public class OperationSignature {
    * java.lang.reflect.AccessibleObject}.
    *
    * @param op the method or constructor
-   * @return an {@link OperationSignature} if {@code op} is a constructor or method, null otherwise
+   * @return an {@link OperationSignature} if {@code op} is a constructor or method, null if field
    */
   public static OperationSignature of(AccessibleObject op) {
     if (op instanceof Field) {
       return null;
-    }
-
-    if (op instanceof Method) {
+    } else if (op instanceof Method) {
       return of((Method) op);
     } else if (op instanceof Constructor) {
       return of((Constructor) op);
