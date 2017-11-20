@@ -71,8 +71,7 @@ public class CoveredClassTest {
     GenInputsAbstract.require_covered_classes = null;
     // setup classes
 
-    ForwardGenerator testGenerator;
-    testGenerator = getGenerator();
+    ForwardGenerator testGenerator = getGeneratorForTest();
 
     testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
@@ -113,8 +112,7 @@ public class CoveredClassTest {
         null; // "tests/instrument/testcase/coveredclasses.txt";
     // setup classes
 
-    ForwardGenerator testGenerator;
-    testGenerator = getGenerator();
+    ForwardGenerator testGenerator = getGeneratorForTest();
 
     testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
@@ -154,8 +152,7 @@ public class CoveredClassTest {
     GenInputsAbstract.require_covered_classes = new File("instrument/testcase/coveredclasses.txt");
     // setup classes
 
-    ForwardGenerator testGenerator;
-    testGenerator = getGenerator();
+    ForwardGenerator testGenerator = getGeneratorForTest();
 
     testGenerator.createAndClassifySequences();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
@@ -187,7 +184,7 @@ public class CoveredClassTest {
     }
   }
 
-  private ForwardGenerator getGenerator() {
+  private ForwardGenerator getGeneratorForTest() {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
