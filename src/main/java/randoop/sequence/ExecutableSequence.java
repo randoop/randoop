@@ -338,8 +338,7 @@ public class ExecutableSequence {
    *   <li>Executes each statement in the sequence. Before executing each statement calls the given
    *       visitor's {@code visitBefore} method. After executing each statement, calls the visitor's
    *       {@code visitAfter} method.
-   *   <li>Tests the pre-, post-, and throws-conditions for the last statement. (See {@link
-   *       randoop.condition} for details.)
+   *   <li>Tests the pre-, post-, and throws-conditions for the last statement.
    *   <li>Execution stops if one of the following conditions holds:
    *       <ul>
    *         <li>All statements in the sequences have been executed.
@@ -356,7 +355,6 @@ public class ExecutableSequence {
    * @param visitor the {@code ExecutionVisitor}
    * @param gen the check generator
    * @param ignoreException the flag to indicate exceptions should be ignored
-   * @see randoop.condition
    * @throws Error if execution of the sequence throws an exception and {@code
    *     ignoreException==false}
    */

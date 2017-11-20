@@ -37,7 +37,7 @@ import randoop.util.MultiMap;
  *       Object).
  * </ul>
  */
-public final class RegressionCaptureGenerator implements TestCheckGenerator {
+public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
   /** The generator for expected exceptions. */
   private ExpectedExceptionCheckGen exceptionExpectation;
@@ -240,10 +240,5 @@ public final class RegressionCaptureGenerator implements TestCheckGenerator {
       }
     }
     return checks;
-  }
-
-  @Override
-  public TestCheckGenerator getGenerator() {
-    return this;
   }
 }

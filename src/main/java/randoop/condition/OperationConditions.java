@@ -97,8 +97,6 @@ public class OperationConditions {
    *       randoop.condition.OperationConditions#checkGuardPropertyPairs(java.lang.Object[])}.
    * </ol>
    *
-   * <p>See the evaluation algorithm in {@link randoop.condition} for more details.
-   *
    * @param args the argument values
    * @param table the table to which the created entry is to be added
    */

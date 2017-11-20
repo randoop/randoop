@@ -63,42 +63,43 @@ public class OperationConditionTest {
 
     TestCheckGenerator gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertFalse(
-        "should not be a exception check generator", gen instanceof ExpectedExceptionGenerator);
+        "should not be a exception check generator",
+        gen.hasGenerator(ExpectedExceptionGenerator.class));
     assertTrue(
         "should be a post-condition check generator",
-        gen.getGenerator() instanceof PostConditionCheckGenerator);
+        gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 6};
     table = conditions.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertFalse("should pass param condition", table.isInvalidCall());
-    assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
-    assertTrue(
-        "should be a return generator", gen.getGenerator() instanceof PostConditionCheckGenerator);
+    assertFalse(
+        "should not be a throws generator", gen.hasGenerator(ExpectedExceptionGenerator.class));
+    assertTrue("should be a return generator", gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 11};
     table = conditions.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalidCall());
-    assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
-    assertTrue(
-        "should be a return generator", gen.getGenerator() instanceof PostConditionCheckGenerator);
+    assertFalse(
+        "should not be a throws generator", gen.hasGenerator(ExpectedExceptionGenerator.class));
+    assertTrue("should be a return generator", gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 16};
     table = conditions.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalidCall());
-    assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
-    assertTrue(
-        "should be a return generator", gen.getGenerator() instanceof PostConditionCheckGenerator);
+    assertFalse(
+        "should not be a throws generator", gen.hasGenerator(ExpectedExceptionGenerator.class));
+    assertTrue("should be a return generator", gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 21};
     table = conditions.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalidCall());
     assertFalse(
-        "should be a return generator", gen.getGenerator() instanceof PostConditionCheckGenerator);
-    assertTrue("should be a throws generator", gen instanceof ExpectedExceptionGenerator);
+        "should be a return generator", gen.hasGenerator(PostConditionCheckGenerator.class));
+    assertTrue("should be a throws generator", gen.hasGenerator(ExpectedExceptionGenerator.class));
   }
 
   @Test

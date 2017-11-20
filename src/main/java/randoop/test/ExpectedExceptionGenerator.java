@@ -17,7 +17,7 @@ import randoop.types.ClassOrInterfaceType;
  * <p>Note that this generator is distinct from other check generators that either return regression
  * checks or error-revealing checks.
  */
-public class ExpectedExceptionGenerator implements TestCheckGenerator {
+public class ExpectedExceptionGenerator extends TestCheckGenerator {
   private final List<List<ThrowsClause>> exceptionSets;
 
   /**
@@ -58,11 +58,6 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
     } else { // if execution was normal, then expected exception is missing
       return getMissingExceptionTestChecks(finalIndex);
     }
-  }
-
-  @Override
-  public TestCheckGenerator getGenerator() {
-    return this;
   }
 
   private ClassOrInterfaceType findMatchingExpectedType(

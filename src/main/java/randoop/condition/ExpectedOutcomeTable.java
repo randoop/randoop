@@ -81,7 +81,7 @@ public class ExpectedOutcomeTable {
    * Adds one operation to this table.
    *
    * @param guardIsSatisfied boolean value indicating whether all guard expressions are satisfied
-   * @param booleanExpression property expression that must be true in post-state if no exception is
+   * @param postcondition property expression that must be true in post-state if no exception is
    *     thrown
    * @param throwsClauses set of {@code <exception type, comment>} pairs for exceptions expected in
    *     post-state

@@ -10,7 +10,9 @@ import java.util.Objects;
 
 /**
  * Represents the signature of a method or constructor for an {@link OperationSpecification} so that
- * the {@code java.lang.reflect.AccessibleObject} can be loaded.
+ * the {@code java.lang.reflect.AccessibleObject} can be loaded, which is done by
+ * <!-- private, so can't use @link: -->
+ * {@code SpecificationCollection.getAccessibleObject}.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@code --specifications} command-line option. The JSON should include a JSON object
@@ -38,7 +40,10 @@ public class OperationSignature {
   /** The fully-qualified name of the declaring class of this operation */
   private final String classname;
 
-  /** The name of this operation */
+  /**
+   * The name of this operation. For a method, is its simple name. For a constructor, is the
+   * fully-qualified name of the class.
+   */
   private final String name;
 
   /** The list of fully-qualified raw type names for the parameters of this operation */

@@ -23,36 +23,35 @@ import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
 import randoop.condition.specification.OperationSpecification;
 import randoop.reflection.TypeNames;
-import randoop.util.Log;
 import randoop.util.MultiMap;
 
 /**
  * A collection of {@link OperationSpecification} objects, index by {@link AccessibleObject}
- * reflection objects.
+ * reflection objects. Only represents methods that have a specification.
  *
  * <p>The {@link SpecificationCollection} should be constructed from the specification input before
  * the {@link randoop.reflection.OperationModel} is created.
  *
  * <p>This class stores the {@link OperationSpecification} objects, and only constructs the
- * corresponding {@link OperationConditions} on demand. This lazy-strategy avoids building
- * conditions methods for specifications that are not used.
+ * corresponding {@link OperationConditions} on demand. This lazy strategy avoids building condition
+ * methods for specifications that are not used.
  */
 public class SpecificationCollection {
 
-  /** The map from reflection objects to the corresponding {@link OperationSpecification} */
+  /** Map from method or constructor to the corresponding {@link OperationSpecification}. */
   private final Map<AccessibleObject, OperationSpecification> specificationMap;
 
-  /** The map from method signatures to methods with that signature and specifications */
-  private final MultiMap<OperationSignature, Method> signatureMap;
+  /**
+   * Given a method signature, what methods (that have specifications) have that signature? Does not
+   * contain constructors.
+   */
+  private final MultiMap<OperationSignature, Method> signatureToMethods;
 
-  /** The map from reflection object to overridden method with specification */
-  private final Map<AccessibleObject, Set<Method>> parentMap;
+  /** Map from reflection object to all the methods it overrides (that have a specification). */
+  private final Map<AccessibleObject, Set<Method>> overridden;
 
-  /** The compiler for creating conditionMethods */
+  /** Compiler for creating conditionMethods. */
   private final SequenceCompiler compiler;
-
-  /** Map for memoizing conditions for specifications converted by parent search */
-  private Map<AccessibleObject, OperationConditions> conditionMap;
 
   /**
    * Creates a {@link SpecificationCollection} for the given specification map.
@@ -60,19 +59,19 @@ public class SpecificationCollection {
    * <p>This constructor is used internally. It is only accessible to allow testing. Clients should
    * use {@link #create(List)} instead.
    *
-   * @param specificationMap the map from reflection objects to {@link OperationSpecification}
-   * @param signatureMap the multimap from a signature to methods with with the signature
-   * @param parentMap the map from a method to methods that it it overrides and that have a
+   * @param specificationMap the map from method or constructor to {@link OperationSpecification}
+   * @param signatureToMethods the multimap from a signature to methods with with the signature
+   * @param overridden the map from a method to methods that it it overrides and that have a
    *     specification
    */
   SpecificationCollection(
       Map<AccessibleObject, OperationSpecification> specificationMap,
-      MultiMap<OperationSignature, Method> signatureMap,
-      Map<AccessibleObject, Set<Method>> parentMap) {
+      MultiMap<OperationSignature, Method> signatureToMethods,
+      Map<AccessibleObject, Set<Method>> overridden) {
     this.specificationMap = specificationMap;
-    this.signatureMap = signatureMap;
-    this.parentMap = parentMap;
-    this.conditionMap = new HashMap<>();
+    this.signatureToMethods = signatureToMethods;
+    this.overridden = overridden;
+    this.conditionCache = new HashMap<>();
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> options = new ArrayList<>();
     this.compiler = new SequenceCompiler(sequenceClassLoader, options);
@@ -83,101 +82,88 @@ public class SpecificationCollection {
    *
    * @param specificationFiles the files of serialized specifications
    * @return the {@link SpecificationCollection} built from the serialized {@link
-   *     OperationSpecification} objects.
+   *     OperationSpecification} objects, or null if the argument is null
    */
   public static SpecificationCollection create(List<File> specificationFiles) {
     if (specificationFiles == null) {
       return null;
     }
-    MultiMap<OperationSignature, Method> signatureMap = new MultiMap<>();
+    MultiMap<OperationSignature, Method> signatureToMethods = new MultiMap<>();
     Map<AccessibleObject, OperationSpecification> specificationMap = new LinkedHashMap<>();
     for (File specificationFile : specificationFiles) {
 
       /*
        * Read the specifications from the file
        */
-      List<OperationSpecification> specificationList;
+      List<OperationSpecification> specificationList = readSpecificationFile(specificationFile);
+
       try {
-        specificationList = readSpecifications(specificationFile);
-      } catch (IOException e) {
-        String msg = "Unable to read specifications from file";
-        if (Log.isLoggingOn()) {
-          Log.logLine(msg + ": " + specificationFile);
-        }
-        throw new RandoopConditionError(msg, e);
-      } catch (Throwable e) {
-        throw new RandoopConditionError("Bad input", e);
-      }
+        for (OperationSpecification specification : specificationList) {
+          OperationSignature operation = specification.getOperation();
 
-      for (OperationSpecification specification : specificationList) {
-        OperationSignature operation = specification.getOperation();
-
-        // Check for bad input
-        if (operation == null) { // deserialization could result in null operation
-          continue;
-        }
-        if (specification.getIdentifiers().hasDuplicatedName()) {
-          String msg =
-              String.format(
-                  "Ignoring specification with identifier name conflict: %s",
-                  specification.getOperation().toString());
-          System.out.println(msg);
-          if (Log.isLoggingOn()) {
-            Log.logLine(msg);
+          // Check for bad input
+          if (operation == null) {
+            throw new Error("operation is null for specification " + specification);
           }
-          continue;
-        }
+          if (specification.getIdentifiers().hasDuplicatedName()) {
+            throw new RandoopConditionError(
+                "Duplicate name in specification: " + specification.getOperation());
+          }
 
-        AccessibleObject accessibleObject = getAccessibleObject(operation);
-        specificationMap.put(accessibleObject, specification);
-        if (accessibleObject instanceof Method) {
-          OperationSignature signature = OperationSignature.of(accessibleObject);
-          signatureMap.add(signature, (Method) accessibleObject);
+          AccessibleObject accessibleObject = getAccessibleObject(operation);
+          specificationMap.put(accessibleObject, specification);
+          if (accessibleObject instanceof Method) {
+            OperationSignature signature = OperationSignature.of(accessibleObject);
+            signatureToMethods.add(signature, (Method) accessibleObject);
+          }
         }
+      } catch (RandoopConditionError e) {
+        e.setFile(specificationFile);
+        throw e;
       }
     }
-    Map<AccessibleObject, Set<Method>> parentMap = buildParentMap(signatureMap);
-    return new SpecificationCollection(specificationMap, signatureMap, parentMap);
+    Map<AccessibleObject, Set<Method>> overridden = buildOverridingMap(signatureToMethods);
+    return new SpecificationCollection(specificationMap, signatureToMethods, overridden);
   }
 
   /**
    * Constructs a map between reflection objects representing override relationships among methods.
    *
-   * @param signatureMap the map from a {@link OperationSignature} to methods with that signature
+   * @param signatureToMethods the map from a {@link OperationSignature} to methods with that
+   *     signature
    * @return the map from an {@code AccessibleObject} to methods that it overrides
    */
-  private static Map<AccessibleObject, Set<Method>> buildParentMap(
-      MultiMap<OperationSignature, Method> signatureMap) {
-    Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    for (OperationSignature signature : signatureMap.keySet()) {
-      for (Method method : signatureMap.getValues(signature)) {
+  private static Map<AccessibleObject, Set<Method>> buildOverridingMap(
+      MultiMap<OperationSignature, Method> signatureToMethods) {
+    Map<AccessibleObject, Set<Method>> overridden = new HashMap<>();
+    for (OperationSignature signature : signatureToMethods.keySet()) {
+      // This lookup is required because MultiMap does not have an entrySet() method.
+      Set<Method> methods = signatureToMethods.getValues(signature);
+      for (Method method : methods) {
         Class<?> declaringClass = method.getDeclaringClass();
-        Set<Method> parents = findParents(declaringClass, signatureMap.getValues(signature));
-        if (!parents.isEmpty()) {
-          parentMap.put(method, parents);
-        }
+        Set<Method> parents = findOverridden(declaringClass, methods);
+        overridden.put(method, parents);
       }
     }
-    return parentMap;
+    return overridden;
   }
 
   /**
-   * Finds the methods that are members of the stop set and belong to the supertypes of the given
-   * class type.
+   * Finds the methods in {@code methods} that are declared in a supertype of {@code classType}.
+   *
+   * <p>This should be called only by {@link #buildOverridingMap}.
    *
    * @param classType the class whose supertypes are searched
-   * @param stopSet the set of methods
-   * @return the set of methods with the signature and in the stop set from lowest supertypes of the
-   *     class type
+   * @param methods the set of methods
+   * @return the elements of {@code methods} that are declared in a strict supertype of {@code
+   *     classType}
    */
-  private static Set<Method> findParents(Class<?> classType, Set<Method> stopSet) {
+  private static Set<Method> findOverridden(Class<?> classType, Set<Method> methods) {
     Set<Method> parents = new HashSet<>();
-    if (classType != null) {
-      for (Method method : stopSet) {
-        Class<?> declaringClass = method.getDeclaringClass();
-        if (declaringClass != classType && declaringClass.isAssignableFrom(classType)) {
-          parents.add(method);
-        }
+    for (Method method : methods) {
+      Class<?> declaringClass = method.getDeclaringClass();
+      if (declaringClass != classType && declaringClass.isAssignableFrom(classType)) {
+        parents.add(method);
       }
     }
     return parents;
@@ -203,63 +189,51 @@ public class SpecificationCollection {
         } else {
           return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
         }
-      } catch (ClassNotFoundException | NoClassDefFoundError e) {
-        String msg =
-            String.format(
-                "Could not load specification operation: %n%s%n" + "Class not found: %s",
-                operation.toString(), e.getMessage());
-        if (Log.isLoggingOn()) {
-          Log.logLine(msg);
-        }
-        throw new RandoopConditionError(msg, e);
-      } catch (NoSuchMethodException e) {
-        String msg =
-            String.format(
-                "Could not load specification operation: %n%s%n" + "No such method: %s",
-                operation.toString(), e.getMessage());
-        if (Log.isLoggingOn()) {
-          Log.logLine(msg);
-        }
-        throw new RandoopConditionError(msg, e);
-      } catch (ExceptionInInitializerError e) {
-        String msg =
-            String.format(
-                "Could not load specification operation: %n%s%n"
-                    + "Exception thrown by initializer",
-                operation.toString());
-        if (Log.isLoggingOn()) {
-          Log.logLine(msg);
-        }
-        throw new RandoopConditionError(msg, e);
+      } catch (Throwable e) {
+        throw new RandoopConditionError("Could not load specification operation: " + operation, e);
       }
     }
     return null;
   }
 
+  // Can't store an object of type {@code Type}, because the
+  /** The type of {@code List<OperationSpecification>>}. */
+  private static TypeToken<List<OperationSpecification>> LIST_OF_OS_TYPE_TOKEN =
+      (new TypeToken<List<OperationSpecification>>() {});
+
   /**
    * Reads a list of {@link OperationSpecification} objects from the given file.
    *
-   * @param specificationFile the file of serialized {@link OperationSpecification} objects
+   * @param specificationFile the JSON file ofON {@link OperationSpecification} objects
    * @return the list of {@link OperationSpecification} object from the file
-   * @throws IOException if there is an error reading the specification file
    */
   @SuppressWarnings("unchecked")
-  private static List<OperationSpecification> readSpecifications(File specificationFile)
-      throws IOException {
-    List<OperationSpecification> specificationList = new ArrayList<>();
-    Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-    TypeToken<List<OperationSpecification>> typeToken =
-        (new TypeToken<List<OperationSpecification>>() {});
-    try (BufferedReader reader = Files.newBufferedReader(specificationFile.toPath(), UTF_8)) {
-      specificationList.addAll(
-          (List<OperationSpecification>) gson.fromJson(reader, typeToken.getType()));
+  private static List<OperationSpecification> readSpecificationFile(File specificationFile) {
+
+    try {
+      List<OperationSpecification> specificationList = new ArrayList<>();
+      Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+      try (BufferedReader reader = Files.newBufferedReader(specificationFile.toPath(), UTF_8)) {
+        specificationList.addAll(
+            (List<OperationSpecification>) gson.fromJson(reader, LIST_OF_OS_TYPE_TOKEN.getType()));
+      }
+      return specificationList;
+    } catch (IOException e) {
+      throw new RandoopConditionError("Unable to read specification file " + specificationFile, e);
+    } catch (RandoopConditionError e) {
+      e.setFile(specificationFile);
+      throw e;
+    } catch (Throwable e) {
+      throw new RandoopConditionError("Bad specification file " + specificationFile, e);
     }
-    return specificationList;
   }
 
+  /** Cache for {@link #getOperationConditions}. */
+  private Map<AccessibleObject, OperationConditions> conditionCache;
+
   /**
-   * Creates an {@link OperationConditions} object for the given
-   * {java.lang.reflect.AccessibleObject}, from its specifications.
+   * Creates an {@link OperationConditions} object for the given constructor or method, from its
+   * specifications in this object.
    *
    * <p>The translation makes the following conversions:
    *
@@ -274,37 +248,40 @@ public class SpecificationCollection {
    *
    * @param accessibleObject the reflection object for a constructor or method
    * @return the {@link OperationConditions} for the specifications of the given method or
-   *     constructor, {@code null} if there is none
+   *     constructor
    */
   public OperationConditions getOperationConditions(AccessibleObject accessibleObject) {
 
     // Check if accessibleObject already has an OperationConditions object
-    OperationConditions conditions = conditionMap.get(accessibleObject);
+    OperationConditions conditions = conditionCache.get(accessibleObject);
     if (conditions != null) {
       return conditions;
     }
 
     // Otherwise, build a new one.
     OperationSpecification specification = specificationMap.get(accessibleObject);
-    if (specification != null) {
+    if (specification == null) {
+      conditions = new OperationConditions();
+    } else {
       SpecificationTranslator translator =
           SpecificationTranslator.createTranslator(
               accessibleObject, specification.getIdentifiers(), compiler);
       conditions = translator.createConditions(specification);
     }
 
-    if (conditions == null) {
-      conditions = new OperationConditions();
-    }
-
     if (accessibleObject instanceof Method) {
       Method method = (Method) accessibleObject;
-      Set<Method> parents = parentMap.get(accessibleObject);
+      Set<Method> parents = overridden.get(accessibleObject);
+      // Parents is null in some tests.  Is it ever null other than that?
       if (parents == null) {
-        Set<Method> sigSet = signatureMap.getValues(OperationSignature.of(method));
+        Set<Method> sigSet = signatureToMethods.getValues(OperationSignature.of(method));
         if (sigSet != null) {
-          parents = findParents(method.getDeclaringClass(), sigSet);
+          // Todo: why isn't this added to the `parents` map?
+          parents = findOverridden(method.getDeclaringClass(), sigSet);
         }
+      }
+      if (parents == null) {
+        throw new Error("parents = null (test #2) for " + accessibleObject);
       }
       if (parents != null) {
         for (Method parent : parents) {
@@ -314,9 +291,7 @@ public class SpecificationCollection {
       }
     }
 
-    if (!conditions.isEmpty()) {
-      conditionMap.put(accessibleObject, conditions);
-    }
+    conditionCache.put(accessibleObject, conditions);
     return conditions;
   }
 }

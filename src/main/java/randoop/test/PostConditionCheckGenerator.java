@@ -10,7 +10,7 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 
 /** Checks the given post-conditions after the last statement of a sequence. */
-public class PostConditionCheckGenerator implements TestCheckGenerator {
+public class PostConditionCheckGenerator extends TestCheckGenerator {
 
   /** the post-conditions */
   private final List<ExecutableBooleanExpression> postConditions;
@@ -64,11 +64,6 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
     } else { // if execution was exceptional, return empty checks
       return ErrorRevealingChecks.EMPTY;
     }
-  }
-
-  @Override
-  public TestCheckGenerator getGenerator() {
-    return this;
   }
 
   private Object[] addNullReceiver(Object[] values) {
