@@ -19,7 +19,7 @@ public abstract class SpecificationClause {
   /** The {@link Guard} for this specification */
   private final Guard guard;
 
-  /** Default constructor for Gson serialization. */
+  /** Gson serialization requires a default constructor. */
   protected SpecificationClause() {
     this.description = "";
     this.guard = null;

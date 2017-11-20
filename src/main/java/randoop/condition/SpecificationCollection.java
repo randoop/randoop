@@ -26,7 +26,7 @@ import randoop.reflection.TypeNames;
 import randoop.util.MultiMap;
 
 /**
- * A collection of {@link OperationSpecification} objects, index by {@link AccessibleObject}
+ * A collection of {@link OperationSpecification} objects, indexed by {@link AccessibleObject}
  * reflection objects. Only represents methods that have a specification.
  *
  * <p>The {@link SpecificationCollection} should be constructed from the specification input before
