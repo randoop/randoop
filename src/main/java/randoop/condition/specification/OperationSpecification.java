@@ -31,8 +31,6 @@ import java.util.Objects;
  *       "receiverName": "receiver",
  *       "returnName": "result"
  *     },
- *    "throwsSpecifications": [],
- *    "postSpecifications": [],
  *    "preSpecifications": [
  *      {
  *        "description": "the signalValue must be positive",
@@ -41,6 +39,8 @@ import java.util.Objects;
  *          "description": "the signalValue must be positive"
  *         }
  *      }
+ *    "postSpecifications": [],
+ *    "throwsSpecifications": [],
  *    ]
  *   }
  * </pre>
@@ -77,9 +77,9 @@ public class OperationSpecification {
   private OperationSpecification() {
     this.operation = null;
     this.identifiers = new Identifiers();
-    this.throwsSpecifications = new ArrayList<>();
-    this.postSpecifications = new ArrayList<>();
     this.preSpecifications = new ArrayList<>();
+    this.postSpecifications = new ArrayList<>();
+    this.throwsSpecifications = new ArrayList<>();
   }
 
   /**
@@ -92,9 +92,9 @@ public class OperationSpecification {
     this(
         operation,
         identifiers,
-        new ArrayList<ThrowsCondition>(),
+        new ArrayList<Precondition>(),
         new ArrayList<Postcondition>(),
-        new ArrayList<Precondition>());
+        new ArrayList<ThrowsCondition>());
   }
 
   /**
@@ -103,102 +103,21 @@ public class OperationSpecification {
    *
    * @param operation the reflection object for the operation, must be non-null
    * @param identifiers the identifiers used in the specifications
-   * @param throwsSpecifications the list of specifications for the operation
-   * @param postSpecifications the list of return specifications for the operation
    * @param preSpecifications the list of param specifications for the operation
+   * @param postSpecifications the list of return specifications for the operation
+   * @param throwsSpecifications the list of specifications for the operation
    */
   public OperationSpecification(
       OperationSignature operation,
       Identifiers identifiers,
-      List<ThrowsCondition> throwsSpecifications,
+      List<Precondition> preSpecifications,
       List<Postcondition> postSpecifications,
-      List<Precondition> preSpecifications) {
+      List<ThrowsCondition> throwsSpecifications) {
     this.operation = operation;
     this.identifiers = identifiers;
-    this.throwsSpecifications = throwsSpecifications;
-    this.postSpecifications = postSpecifications;
     this.preSpecifications = preSpecifications;
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    if (!(object instanceof OperationSpecification)) {
-      return false;
-    }
-    OperationSpecification other = (OperationSpecification) object;
-    return this.operation.equals(other.operation)
-        && this.identifiers.equals(other.identifiers)
-        && this.throwsSpecifications.equals(other.throwsSpecifications)
-        && this.postSpecifications.equals(other.postSpecifications)
-        && this.preSpecifications.equals(other.preSpecifications);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(
-        this.operation,
-        this.identifiers,
-        this.throwsSpecifications,
-        this.postSpecifications,
-        this.preSpecifications);
-  }
-
-  @Override
-  public String toString() {
-    return "{ \"operation\": "
-        + this.operation.toString()
-        + ", "
-        + "\"identifiers\": "
-        + this.identifiers
-        + ", "
-        + "\"throwsSpecifications\": "
-        + this.throwsSpecifications
-        + ", "
-        + "\"postSpecifications\": "
-        + this.postSpecifications
-        + ", "
-        + "\"preSpecifications\": "
-        + this.preSpecifications
-        + " }";
-  }
-
-  /**
-   * Adds {@link ThrowsCondition} objects from the list to this {@link OperationSpecification}.
-   *
-   * @param specifications the list of {@link ThrowsCondition} objects
-   */
-  public void ThrowsConditions(List<ThrowsCondition> specifications) {
-    throwsSpecifications.addAll(specifications);
-  }
-
-  /**
-   * Adds {@link Postcondition} objects from the list to this {@link OperationSpecification}.
-   *
-   * @param specifications the list of {@link Postcondition} objects
-   */
-  public void addReturnSpecifications(List<Postcondition> specifications) {
-    postSpecifications.addAll(specifications);
-  }
-
-  /**
-   * Adds {@link Precondition} objects from the list to this {@link OperationSpecification}.
-   *
-   * @param specifications the list of {@link Precondition} objects
-   */
-  public void addParamSpecifications(List<Precondition> specifications) {
-    preSpecifications.addAll(specifications);
-  }
-
-  /**
-   * Indicates whether this {@link OperationSpecification} contains any pre-, post-, or
-   * throws-specifications.
-   *
-   * @return {@code true} if there are no pre-, post-, or throws-specifications, false otherwise
-   */
-  public boolean isEmpty() {
-    return throwsSpecifications.isEmpty()
-        && postSpecifications.isEmpty()
-        && preSpecifications.isEmpty();
+    this.postSpecifications = postSpecifications;
+    this.throwsSpecifications = throwsSpecifications;
   }
 
   /**
@@ -220,12 +139,12 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link ThrowsCondition} objects for this {@link OperationSpecification}.
+   * Return the list of {@link Precondition} objects for this {@link OperationSpecification}.
    *
-   * @return the list of specifications for this operation specification, is non-null
+   * @return the list of {@link Precondition} objects for this specification
    */
-  public List<ThrowsCondition> getThrowsConditions() {
-    return throwsSpecifications;
+  public List<Precondition> getPreconditions() {
+    return preSpecifications;
   }
 
   /**
@@ -236,13 +155,93 @@ public class OperationSpecification {
   public List<Postcondition> getPostconditions() {
     return postSpecifications;
   }
+  /**
+   * Return the list of {@link ThrowsCondition} objects for this {@link OperationSpecification}.
+   *
+   * @return the list of specifications for this operation specification, is non-null
+   */
+  public List<ThrowsCondition> getThrowsConditions() {
+    return throwsSpecifications;
+  }
 
   /**
-   * Return the list of {@link Precondition} objects for this {@link OperationSpecification}.
+   * Adds {@link Precondition} objects from the list to this {@link OperationSpecification}.
    *
-   * @return the list of {@link Precondition} objects for this specification
+   * @param specifications the list of {@link Precondition} objects
    */
-  public List<Precondition> getPreconditions() {
-    return preSpecifications;
+  public void addParamSpecifications(List<Precondition> specifications) {
+    preSpecifications.addAll(specifications);
+  }
+
+  /**
+   * Adds {@link Postcondition} objects from the list to this {@link OperationSpecification}.
+   *
+   * @param specifications the list of {@link Postcondition} objects
+   */
+  public void addReturnSpecifications(List<Postcondition> specifications) {
+    postSpecifications.addAll(specifications);
+  }
+
+  /**
+   * Adds {@link ThrowsCondition} objects from the list to this {@link OperationSpecification}.
+   *
+   * @param specifications the list of {@link ThrowsCondition} objects
+   */
+  public void addThrowsConditions(List<ThrowsCondition> specifications) {
+    throwsSpecifications.addAll(specifications);
+  }
+
+  /**
+   * Indicates whether this {@link OperationSpecification} contains any pre-, post-, or
+   * throws-specifications.
+   *
+   * @return {@code true} if there are no pre-, post-, or throws-specifications, false otherwise
+   */
+  public boolean isEmpty() {
+    return preSpecifications.isEmpty()
+        && postSpecifications.isEmpty()
+        && throwsSpecifications.isEmpty();
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof OperationSpecification)) {
+      return false;
+    }
+    OperationSpecification other = (OperationSpecification) object;
+    return this.operation.equals(other.operation)
+        && this.identifiers.equals(other.identifiers)
+        && this.preSpecifications.equals(other.preSpecifications)
+        && this.postSpecifications.equals(other.postSpecifications)
+        && this.throwsSpecifications.equals(other.throwsSpecifications);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        this.operation,
+        this.identifiers,
+        this.preSpecifications,
+        this.postSpecifications,
+        this.throwsSpecifications);
+  }
+
+  @Override
+  public String toString() {
+    return "{ \"operation\": "
+        + this.operation.toString()
+        + ", "
+        + "\"identifiers\": "
+        + this.identifiers
+        + ", "
+        + "\"preSpecifications\": "
+        + this.preSpecifications
+        + " }"
+        + ", "
+        + "\"postSpecifications\": "
+        + this.postSpecifications
+        + ", "
+        + "\"throwsSpecifications\": "
+        + this.throwsSpecifications;
   }
 }

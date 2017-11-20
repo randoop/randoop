@@ -301,7 +301,7 @@ public class OperationConditionTest {
         new ThrowsCondition(
             "should be less than 4*getValue", throwsGuard, "java.lang.IllegalArgumentException");
     throwsSpecifications.add(throwsSpec);
-    spec.ThrowsConditions(throwsSpecifications);
+    spec.addThrowsConditions(throwsSpecifications);
 
     List<Postcondition> postSpecifications = new ArrayList<>();
     Guard retGuard;
@@ -389,7 +389,7 @@ public class OperationConditionTest {
             "value should be positive integer", throwsGuard, "java.lang.IllegalArgumentException");
     throwsSpecifications.add(throwsSpecification);
 
-    spec.ThrowsConditions(throwsSpecifications);
+    spec.addThrowsConditions(throwsSpecifications);
 
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(method, spec);

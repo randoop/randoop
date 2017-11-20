@@ -54,7 +54,7 @@ public class OperationSignature {
 
   /**
    * Create an {@link OperationSignature} object given the names of the declaring class, method or
-   * constructor, the parameter types.
+   * constructor, and parameter types.
    *
    * @param classname the fully-qualified name of the declaring class
    * @param name the name of the method or constructor
@@ -70,13 +70,14 @@ public class OperationSignature {
    * Create a {@link OperationSignature} for the constructor of the class with the parameter types.
    *
    * @param classname the fully-qualified raw name of the declaring class
+   * @param simpleName the simple name of the class (and of the constructor)
    * @param parameterTypes the list of fully-qualified parameter type names
    * @return the {@link OperationSignature} for a constructor of the declaring class with the
    *     parameter types
    */
   public static OperationSignature forConstructorName(
-      String classname, List<String> parameterTypes) {
-    return new OperationSignature(classname, classname, parameterTypes);
+      String classname, String simpleName, List<String> parameterTypes) {
+    return new OperationSignature(classname, simpleName, parameterTypes);
   }
 
   /**
@@ -120,6 +121,7 @@ public class OperationSignature {
    */
   public static OperationSignature of(Constructor<?> constructor) {
     return new OperationSignature(
+        // Class.getName returns JVML format for arrays, but this isn't an array, so this is OK.
         constructor.getDeclaringClass().getName(),
         constructor.getName(),
         getTypeNames(constructor.getParameterTypes()));
@@ -130,56 +132,18 @@ public class OperationSignature {
    * java.lang.reflect.AccessibleObject}.
    *
    * @param op the method or constructor
-   * @return an {@link OperationSignature} if {@code op} is a constructor or method, null otherwise
+   * @return an {@link OperationSignature} if {@code op} is a constructor or method, null if field
    */
   public static OperationSignature of(AccessibleObject op) {
     if (op instanceof Field) {
       return null;
-    }
-
-    if (op instanceof Method) {
+    } else if (op instanceof Method) {
       return of((Method) op);
     } else if (op instanceof Constructor) {
       return of((Constructor) op);
+    } else {
+      throw new Error("how did this happen?");
     }
-    return null;
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    if (!(object instanceof OperationSignature)) {
-      return false;
-    }
-    OperationSignature other = (OperationSignature) object;
-    return this.classname.equals(other.classname)
-        && this.name.equals(other.name)
-        && this.parameterTypes.equals(other.parameterTypes);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(this.classname, this.name, this.parameterTypes);
-  }
-
-  @Override
-  public String toString() {
-    return String.format(
-        "{%n \"classname\": \"%s\",%n \"name\": \"%s\",%n \"parameterTypes\": \"%s\"%n}",
-        classname, name, parameterTypes);
-  }
-
-  /**
-   * Creates a list of fully-qualified type names from the array of {@code Class<?>} objects.
-   *
-   * @param classes the array of {@code Class<?>} objects
-   * @return the list of fully-qualified type names for the objects in {@code classes}
-   */
-  private static List<String> getTypeNames(Class<?>[] classes) {
-    List<String> parameterTypes = new ArrayList<>();
-    for (Class<?> aClass : classes) {
-      parameterTypes.add(aClass.getName());
-    }
-    return parameterTypes;
   }
 
   /**
@@ -190,7 +154,6 @@ public class OperationSignature {
   public String getClassname() {
     return classname;
   }
-
   /**
    * Return the name of this {@link OperationSignature}.
    *
@@ -232,5 +195,42 @@ public class OperationSignature {
         && name != null
         && !name.isEmpty()
         && parameterTypes != null;
+  }
+
+  /**
+   * Creates a list of fully-qualified type names from the array of {@code Class<?>} objects.
+   *
+   * @param classes the array of {@code Class<?>} objects
+   * @return the list of fully-qualified type names for the objects in {@code classes}
+   */
+  private static List<String> getTypeNames(Class<?>[] classes) {
+    List<String> parameterTypes = new ArrayList<>();
+    for (Class<?> aClass : classes) {
+      parameterTypes.add(aClass.getName());
+    }
+    return parameterTypes;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof OperationSignature)) {
+      return false;
+    }
+    OperationSignature other = (OperationSignature) object;
+    return this.classname.equals(other.classname)
+        && this.name.equals(other.name)
+        && this.parameterTypes.equals(other.parameterTypes);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.classname, this.name, this.parameterTypes);
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "{%n \"classname\": \"%s\",%n \"name\": \"%s\",%n \"parameterTypes\": \"%s\"%n}",
+        classname, name, parameterTypes);
   }
 }
