@@ -31,7 +31,7 @@ public class ThrowsCondition extends SpecificationClause {
   @SerializedName("exception")
   private final String exceptionType;
 
-  /** Gson serialization requires that classes have a default constructor. */
+  /** Gson serialization requires a default constructor. */
   @SuppressWarnings("unused")
   private ThrowsCondition() {
     super();
