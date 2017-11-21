@@ -387,7 +387,7 @@ public class SpecificationTranslator {
    * Returns the property expression method signature from this object. This signature includes the
    * parameters of the guard expression signature, plus the return type.
    *
-   * <p>Used for testing.
+   * <p>Only used for testing.
    *
    * @return the property expression method signature for this object
    */
