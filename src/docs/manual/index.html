@@ -965,24 +965,22 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <ul>
    <li>
-       <p>Param-conditions are pre-conditions on method/constructor calls, with test sequences
-       where the condition fails being classified as <code>BehaviorType.INVALID</code>.
+       <p>Param-conditions are pre-conditions on method/constructor calls. Test sequences where
+       the condition fails are classified as <code>BehaviorType.INVALID</code>.
    <li>
        <p>Return-conditions are post-conditions on method/constructor calls, consisting of a
-       guard and a property. If the inputs to the call satisfy the guard, then the property is
-       checked after the call. If the property fails, the sequence is classified as <code>BehaviorType.ERROR</code>.
-   <li>Throws-conditions are post-conditions on expected exceptions: if the inputs to the call
-       satisfy the condition, when the exception is thrown the sequence is <code>BehaviorType.EXPECTED</code>, but, if it is not, the sequence is classified as <code>BehaviorType.ERROR</code>. If the throws-condition is not satisfied by the input, then ordinary
+       guard and a property. If the inputs to the call satisfy the guard but the property fails,
+       then the sequence is classified as <code>BehaviorType.ERROR</code>.
+   <li>Throws-conditions are post-conditions on expected exceptions. If the inputs to the call
+       satisfy the condition, then: when the exception is thrown the sequence is <code>BehaviorType.EXPECTED</code>, but, if it is not, the sequence is classified as <code>BehaviorType.ERROR</code>. If the throws-condition is not satisfied by the input, then ordinary
        classification is applied.
  </ul>
-
- See the User documentation for more details.
             <li id="option:use-jdk-specifications"><b>--use-jdk-specifications=</b><i>boolean</i>.
              Use the internal specifications for JDK classes to control how tests are generated and
  classified.
 
  <p>These specifications are applied to the methods of classes that inherit from them. See
- <code>.specifications</code> for details on classification using specifications. [default false]
+ <code>.specifications</code> for details on classification using specifications. [default true]
             <li id="option:fail-on-condition-error"><b>--fail-on-condition-error=</b><i>boolean</i>.
              Make Randoop fail, instead of proceeding silently, if the Java condition text of a
  specification cannot be compiled, or its execution throws an exception. [default false]
@@ -990,7 +988,7 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Observer-methods">Observer methods
       <ul>
             <li id="option:observers"><b>--observers=</b><i>filename</i>.
-             File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
+             File containing side-effect-free observer methods. Specifying observers has two benefits: it
  makes regression tests stronger, and it helps Randoop create smaller tests.
       </ul>
   <li id="optiongroup:Limiting-test-generation">Limiting test generation

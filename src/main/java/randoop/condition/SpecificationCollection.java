@@ -33,8 +33,8 @@ import randoop.util.MultiMap;
  * the {@link randoop.reflection.OperationModel} is created.
  *
  * <p>This class stores the {@link OperationSpecification} objects, and only constructs the
- * corresponding {@link OperationConditions} on demand. This lazy strategy avoids building condition
- * methods for specifications that are not used.
+ * corresponding {@link ExecutableSpecification} on demand. This lazy strategy avoids building
+ * condition methods for specifications that are not used.
  */
 public class SpecificationCollection {
 
@@ -71,7 +71,7 @@ public class SpecificationCollection {
     this.specificationMap = specificationMap;
     this.signatureToMethods = signatureToMethods;
     this.overridden = overridden;
-    this.conditionCache = new HashMap<>();
+    this.getExecutableSpecificationCache = new HashMap<>();
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> options = new ArrayList<>();
     this.compiler = new SequenceCompiler(sequenceClassLoader, options);
@@ -228,11 +228,11 @@ public class SpecificationCollection {
     }
   }
 
-  /** Cache for {@link #getOperationConditions}. */
-  private Map<AccessibleObject, OperationConditions> conditionCache;
+  /** Cache for {@link #getExecutableSpecification}. */
+  private Map<AccessibleObject, ExecutableSpecification> getExecutableSpecificationCache;
 
   /**
-   * Creates an {@link OperationConditions} object for the given constructor or method, from its
+   * Creates an {@link ExecutableSpecification} object for the given constructor or method, from its
    * specifications in this object.
    *
    * <p>The translation makes the following conversions:
@@ -247,26 +247,26 @@ public class SpecificationCollection {
    * </ul>
    *
    * @param accessibleObject the reflection object for a constructor or method
-   * @return the {@link OperationConditions} for the specifications of the given method or
+   * @return the {@link ExecutableSpecification} for the specifications of the given method or
    *     constructor
    */
-  public OperationConditions getOperationConditions(AccessibleObject accessibleObject) {
+  public ExecutableSpecification getExecutableSpecification(AccessibleObject accessibleObject) {
 
-    // Check if accessibleObject already has an OperationConditions object
-    OperationConditions conditions = conditionCache.get(accessibleObject);
-    if (conditions != null) {
-      return conditions;
+    // Check if accessibleObject already has an ExecutableSpecification object
+    ExecutableSpecification execSpec = getExecutableSpecificationCache.get(accessibleObject);
+    if (execSpec != null) {
+      return execSpec;
     }
 
     // Otherwise, build a new one.
     OperationSpecification specification = specificationMap.get(accessibleObject);
     if (specification == null) {
-      conditions = new OperationConditions();
+      execSpec = new ExecutableSpecification();
     } else {
       SpecificationTranslator translator =
           SpecificationTranslator.createTranslator(
               accessibleObject, specification.getIdentifiers(), compiler);
-      conditions = translator.createConditions(specification);
+      execSpec = translator.createExecutableSpecification(specification);
     }
 
     if (accessibleObject instanceof Method) {
@@ -285,13 +285,13 @@ public class SpecificationCollection {
       }
       if (parents != null) {
         for (Method parent : parents) {
-          OperationConditions parentConditions = getOperationConditions(parent);
-          conditions.addParent(parentConditions);
+          ExecutableSpecification parentExecSpec = getExecutableSpecification(parent);
+          execSpec.addParent(parentExecSpec);
         }
       }
     }
 
-    conditionCache.put(accessibleObject, conditions);
-    return conditions;
+    getExecutableSpecificationCache.put(accessibleObject, execSpec);
+    return execSpec;
   }
 }

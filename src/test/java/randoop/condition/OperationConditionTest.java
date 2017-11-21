@@ -48,17 +48,17 @@ public class OperationConditionTest {
     } catch (NoSuchMethodException e) {
       fail("couldn't load method");
     }
-    OperationConditions conditions = getMethodConditions(method);
+    ExecutableSpecification execSpec = getMethodSpecification(method);
 
     ClassWithConditions receiver = new ClassWithConditions(5);
 
     Object[] preValues;
     preValues = new Object[] {receiver, -1};
-    ExpectedOutcomeTable table = conditions.checkPrestate(preValues);
+    ExpectedOutcomeTable table = execSpec.checkPrestate(preValues);
     assertTrue("should fail param condition", table.isInvalidCall());
 
     preValues = new Object[] {receiver, 1};
-    table = conditions.checkPrestate(preValues);
+    table = execSpec.checkPrestate(preValues);
     assertFalse("should pass param condition", table.isInvalidCall());
 
     TestCheckGenerator gen = table.addPostCheckGenerator(new DummyCheckGenerator());
@@ -70,7 +70,7 @@ public class OperationConditionTest {
         gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 6};
-    table = conditions.checkPrestate(preValues);
+    table = execSpec.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertFalse("should pass param condition", table.isInvalidCall());
     assertFalse(
@@ -78,7 +78,7 @@ public class OperationConditionTest {
     assertTrue("should be a return generator", gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 11};
-    table = conditions.checkPrestate(preValues);
+    table = execSpec.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalidCall());
     assertFalse(
@@ -86,7 +86,7 @@ public class OperationConditionTest {
     assertTrue("should be a return generator", gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 16};
-    table = conditions.checkPrestate(preValues);
+    table = execSpec.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalidCall());
     assertFalse(
@@ -94,7 +94,7 @@ public class OperationConditionTest {
     assertTrue("should be a return generator", gen.hasGenerator(PostConditionCheckGenerator.class));
 
     preValues = new Object[] {receiver, 21};
-    table = conditions.checkPrestate(preValues);
+    table = execSpec.checkPrestate(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalidCall());
     assertFalse(
@@ -212,7 +212,7 @@ public class OperationConditionTest {
       fail("could not load constructor");
     }
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
-    constructorOp.addConditions(getConstructorConditions(reflectionConstructor));
+    constructorOp.addExecutableSpecification(getConstructorConditions(reflectionConstructor));
     Sequence sequence = new Sequence();
     sequence =
         sequence.extend(
@@ -237,7 +237,7 @@ public class OperationConditionTest {
       fail("couldn't load method");
     }
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
-    methodOp.addConditions(getMethodConditions(method));
+    methodOp.addExecutableSpecification(getMethodSpecification(method));
 
     Sequence sequence = new Sequence();
     sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, 5));
@@ -260,7 +260,7 @@ public class OperationConditionTest {
       fail("could not load method");
     }
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
-    methodOp.addConditions(getBadnessConditions(method));
+    methodOp.addExecutableSpecification(getBadnessConditions(method));
 
     Sequence sequence = new Sequence();
     sequence =
@@ -278,13 +278,14 @@ public class OperationConditionTest {
 
   /**
    * Creates an {@link OperationSpecification}, places it in a {@link SpecificationCollection}, and
-   * gets the {@link OperationConditions}. Effectively, translating the specifications to
-   * conditions.
+   * gets the {@link ExecutableSpecification}. Effectively, translating the specifications to
+   * executable specifications.
    *
-   * @return the {@link OperationConditions} object for {@link ClassWithConditions#category(int)}
+   * @return the {@link ExecutableSpecification} object for {@link
+   *     ClassWithConditions#category(int)}
    * @param method the method for which to get conditions
    */
-  private OperationConditions getMethodConditions(Method method) {
+  private ExecutableSpecification getMethodSpecification(Method method) {
     List<String> paramNames = new ArrayList<>();
     paramNames.add("value");
     OperationSpecification spec =
@@ -337,13 +338,13 @@ public class OperationConditionTest {
     MultiMap<OperationSignature, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
-    return collection.getOperationConditions(method);
+    return collection.getExecutableSpecification(method);
   }
 
   /*
-   * Creates OperationConditions including post-condition for constructor that will fail.
+   * Creates ExecutableSpecification including post-condition for constructor that will fail.
    */
-  private OperationConditions getConstructorConditions(Constructor<?> constructor) {
+  private ExecutableSpecification getConstructorConditions(Constructor<?> constructor) {
 
     List<String> paramNames = new ArrayList<>();
     paramNames.add("value");
@@ -369,10 +370,10 @@ public class OperationConditionTest {
     MultiMap<OperationSignature, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
-    return collection.getOperationConditions(constructor);
+    return collection.getExecutableSpecification(constructor);
   }
 
-  private OperationConditions getBadnessConditions(Method method) {
+  private ExecutableSpecification getBadnessConditions(Method method) {
     List<String> paramNames = new ArrayList<>();
     paramNames.add("range");
     paramNames.add("value");
@@ -398,6 +399,6 @@ public class OperationConditionTest {
     MultiMap<OperationSignature, Method> signatureMap = new MultiMap<>();
     SpecificationCollection collection =
         new SpecificationCollection(specMap, signatureMap, parentMap);
-    return collection.getOperationConditions(method);
+    return collection.getExecutableSpecification(method);
   }
 }

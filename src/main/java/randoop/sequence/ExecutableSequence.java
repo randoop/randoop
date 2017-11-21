@@ -266,14 +266,14 @@ public class ExecutableSequence {
    * This method implements the condition evaluation algorithm described below.
    *
    * <p><i>Input</i>: a {@link randoop.operation.TypedClassOperation}, the {@link
-   * randoop.condition.OperationConditions} for the method, and arguments for a call to the
+   * randoop.condition.ExecutableSpecification} for the method, and arguments for a call to the
    * operation. [TODO: this isn't actually the input!]
    *
    * <p><i>Goal</i>: classify the call to the operation using the arguments as {@link
    * randoop.main.GenInputsAbstract.BehaviorType#EXPECTED}, {@link
    * randoop.main.GenInputsAbstract.BehaviorType#INVALID} or {@link
    * randoop.main.GenInputsAbstract.BehaviorType#ERROR} based on the elements of {@link
-   * randoop.condition.OperationConditions}.
+   * randoop.condition.ExecutableSpecification}.
    *
    * <p><i>Definitions</i>: An {@link randoop.condition.ExecutableBooleanExpression}, {@code
    * expression}, is <i>satisfied</i> on the method arguments if {@code expression.check(values)}
@@ -291,9 +291,9 @@ public class ExecutableSequence {
    *
    * <ol>
    *   <li>Create a {@link randoop.condition.ExpectedOutcomeTable} by calling {@link
-   *       randoop.condition.OperationConditions#checkPrestate(java.lang.Object[])}, which creates a
-   *       table entry corresponding to each specification of the operation. [TODO: does it create a
-   *       table or an entry? I think an entry.]
+   *       randoop.condition.ExecutableSpecification#checkPrestate(java.lang.Object[])}, which
+   *       creates a table entry corresponding to each specification of the operation. [TODO: does
+   *       it create a table or an entry? I think an entry.]
    *   <li>If {@link randoop.condition.ExpectedOutcomeTable#isInvalidCall()} then classify as {@link
    *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}, and don't make the call. This
    *       avoids making a call on invalid arguments unless the specification indicates that

@@ -23,7 +23,7 @@ import randoop.util.Util;
 
 /**
  * Translates an {@link OperationSpecification} object (which has preconditions, postconditions, and
- * throws conditions) to its executable version, {@link OperationConditions}.
+ * throws conditions) to its executable version, {@link ExecutableSpecification}.
  */
 public class SpecificationTranslator {
 
@@ -206,15 +206,15 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Create the {@link OperationConditions} object for the given {@link OperationSpecification}
+   * Create the {@link ExecutableSpecification} object for the given {@link OperationSpecification}
    * using this {@link SpecificationTranslator}.
    *
    * @param specification the specification from which the expressions are to be created
-   * @return the {@link OperationConditions} for the given specification
+   * @return the {@link ExecutableSpecification} for the given specification
    */
-  OperationConditions createConditions(OperationSpecification specification) {
+  ExecutableSpecification createExecutableSpecification(OperationSpecification specification) {
 
-    return new OperationConditions(
+    return new ExecutableSpecification(
         getGuardExpressions(specification.getPreconditions()),
         getReturnConditions(specification.getPostconditions()),
         getThrowsConditions(specification.getThrowsConditions()));

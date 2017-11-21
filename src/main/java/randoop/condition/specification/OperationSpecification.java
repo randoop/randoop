@@ -46,9 +46,9 @@ import java.util.Objects;
  * </pre>
  *
  * Method {@link
- * randoop.condition.SpecificationCollection#getOperationConditions(java.lang.reflect.AccessibleObject)}
- * translates specifications to an {@link randoop.condition.OperationConditions} object that allows
- * the underlying Boolean expressions to be evaluated.
+ * randoop.condition.SpecificationCollection#getExecutableSpecification(java.lang.reflect.AccessibleObject)}
+ * translates specifications to an {@link randoop.condition.ExecutableSpecification} object that
+ * allows the underlying Boolean expressions to be evaluated.
  */
 public class OperationSpecification {
 

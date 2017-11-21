@@ -536,7 +536,7 @@ public class OperationModel {
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the predicate for omitting operations
-   * @param operationConditions the collection of {@link
+   * @param operationSpecifications the collection of {@link
    *     randoop.condition.specification.OperationSpecification}
    */
   private void addOperationsFromClasses(
@@ -544,12 +544,12 @@ public class OperationModel {
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
-      SpecificationCollection operationConditions) {
+      SpecificationCollection operationSpecifications) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : classTypes) {
       OperationExtractor extractor =
           new OperationExtractor(
-              classType, reflectionPredicate, omitPredicate, visibility, operationConditions);
+              classType, reflectionPredicate, omitPredicate, visibility, operationSpecifications);
       mgr.apply(extractor, classType.getRuntimeClass());
       operations.addAll(extractor.getOperations());
     }
