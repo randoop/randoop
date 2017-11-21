@@ -307,23 +307,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <ul>
    *   <li>
-   *       <p>Param-conditions are pre-conditions on method/constructor calls, with test sequences
-   *       where the condition fails being classified as {@link BehaviorType#INVALID}.
+   *       <p>Param-conditions are pre-conditions on method/constructor calls. Test sequences where
+   *       the condition fails are classified as {@link BehaviorType#INVALID}.
    *   <li>
    *       <p>Return-conditions are post-conditions on method/constructor calls, consisting of a
-   *       guard and a property. If the inputs to the call satisfy the guard, then the property is
-   *       checked after the call. If the property fails, the sequence is classified as {@link
-   *       BehaviorType#ERROR}.
-   *   <li>Throws-conditions are post-conditions on expected exceptions: if the inputs to the call
-   *       satisfy the condition, when the exception is thrown the sequence is {@link
+   *       guard and a property. If the inputs to the call satisfy the guard but the property fails,
+   *       then the sequence is classified as {@link BehaviorType#ERROR}.
+   *   <li>Throws-conditions are post-conditions on expected exceptions. If the inputs to the call
+   *       satisfy the condition, then: when the exception is thrown the sequence is {@link
    *       BehaviorType#EXPECTED}, but, if it is not, the sequence is classified as {@link
    *       BehaviorType#ERROR}. If the throws-condition is not satisfied by the input, then ordinary
    *       classification is applied.
    * </ul>
-   *
-   * See the User documentation for more details.
    */
-  @Option("Use specifications from JSON file to classify behaviors for methods/constructors")
+  @Option("JSON specifications for methods/constructors")
   public static List<File> specifications = null;
 
   /**
@@ -334,7 +331,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * {@link #specifications} for details on classification using specifications.
    */
   @Option("Use specifications for JDK classes to classify behaviors for methods/constructors")
-  public static boolean use_jdk_specifications = false;
+  public static boolean use_jdk_specifications = true;
 
   /**
    * Make Randoop fail, instead of proceeding silently, if the Java condition text of a
@@ -345,7 +342,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   /**
-   * File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
+   * File containing side-effect-free observer methods. Specifying observers has two benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
    */
   @OptionGroup("Observer methods")
