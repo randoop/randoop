@@ -931,7 +931,6 @@ public class RandoopSystemTest {
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/classwithconditions.json");
     options.unsetFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -951,7 +950,6 @@ public class RandoopSystemTest {
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
     options.unsetFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -971,7 +969,6 @@ public class RandoopSystemTest {
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
     options.unsetFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -992,7 +989,6 @@ public class RandoopSystemTest {
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
     options.unsetFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -1012,7 +1008,6 @@ public class RandoopSystemTest {
     options.addTestClass("pkg.SubClass");
     options.setOption("specifications", "resources/systemTest/pkg/pkg_subclass_toradocu_spec.json");
     options.unsetFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -1036,7 +1031,7 @@ public class RandoopSystemTest {
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/condition_with_exception.json");
     options.unsetFlag("use-jdk-specifications");
-    options.unsetFlag("fail-on-condition-error");
+    options.setFlag("ignore-condition-exception");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
@@ -1064,7 +1059,6 @@ public class RandoopSystemTest {
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/overridingconditionsclass.json");
     options.unsetFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
     options.setOption("outputLimit", "200");
@@ -1081,7 +1075,6 @@ public class RandoopSystemTest {
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsuperclass.json");
     options.unsetFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
     options.setOption("outputLimit", "200");
@@ -1098,7 +1091,6 @@ public class RandoopSystemTest {
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsinterface.json");
     options.unsetFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
     options.setOption("outputLimit", "200");
@@ -1115,7 +1107,6 @@ public class RandoopSystemTest {
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsupersuperclass.json");
     options.unsetFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
     options.setOption("outputLimit", "200");
@@ -1538,7 +1529,6 @@ public class RandoopSystemTest {
     options.addTestClass("java.util.ArrayList");
     options.addTestClass("java.util.LinkedHashSet");
     options.setFlag("use-jdk-specifications");
-    options.setFlag("fail-on-condition-error");
     options.setOption("outputLimit", "400");
     options.setOption("generatedLimit", "800");
 

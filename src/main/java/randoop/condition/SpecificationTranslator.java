@@ -143,7 +143,7 @@ public class SpecificationTranslator {
    * @param postState if true, include a variable for the return value in the signature
    * @return the {@link RawSignature} for a expression method of {@code executable}
    */
-  // The type AccessibleObject should be Executable, but that class was introduced in Java 8.
+  // In Java 8, change the type AccessibleObject to Executable.
   private static RawSignature getExpressionSignature(
       AccessibleObject executable, boolean postState) {
     boolean isMethod = executable instanceof Method;
@@ -153,7 +153,7 @@ public class SpecificationTranslator {
     Class<?>[] parameterTypes = getParameterTypes(executable);
     Class<?> returnType =
         (!postState ? null : (isMethod ? ((Method) executable).getReturnType() : declaringClass));
-    String packageName = getPackageName(declaringClass.getPackage());
+    String packageName = renamedPackage(declaringClass.getPackage());
     return ExecutableBooleanExpression.getRawSignature(
         packageName, receiverType, parameterTypes, returnType);
   }
@@ -177,15 +177,14 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Gets the name of the package to use for the package of the expression method. If the package
-   * name begins with {@code "java."}, prefixes it by {@code "randoop."}, since user classes cannot
-   * be added to the {@code java} package.
+   * Gets the name of the package. If the package name begins with {@code "java."}, prefixes it by
+   * {@code "randoop."}, since user classes cannot be added to the {@code java} package.
    *
    * @param aPackage the package to get the name of, may be null
-   * @return the name of the package, updated to start with "randoop" if the original begins with
-   *     "java"; null if {@code aPackage} is null
+   * @return the name of the package, updated to start with "randoop." if the original begins with
+   *     "java."; null if {@code aPackage} is null
    */
-  private static String getPackageName(Package aPackage) {
+  private static String renamedPackage(Package aPackage) {
     if (aPackage == null) {
       return null;
     }
@@ -247,10 +246,11 @@ public class SpecificationTranslator {
       try {
         guardExpressions.add(create(precondition.getGuard()));
       } catch (RandoopConditionError e) {
-        if (GenInputsAbstract.fail_on_condition_error) {
+        if (GenInputsAbstract.ignore_condition_compilation_error) {
+          System.out.println("Warning: discarded uncompilable guard expression: " + e.getMessage());
+        } else {
           throw e;
         }
-        System.out.println("Warning: discarded uncompilable guard expression: " + e.getMessage());
       }
     }
     return guardExpressions;
@@ -273,10 +273,12 @@ public class SpecificationTranslator {
         ExecutableBooleanExpression property = create(postcondition.getProperty());
         returnConditions.add(new GuardPropertyPair(guard, property));
       } catch (RandoopConditionError e) {
-        if (GenInputsAbstract.fail_on_condition_error) {
+        if (GenInputsAbstract.ignore_condition_compilation_error) {
+          System.out.println(
+              "Warning: discarding uncompilable poststate expression: " + e.getMessage());
+        } else {
           throw e;
         }
-        System.out.println("Warning: discarding uncompilable return expression: " + e.getMessage());
       }
     }
     return returnConditions;
@@ -308,7 +310,11 @@ public class SpecificationTranslator {
         if (Log.isLoggingOn()) {
           Log.logLine(msg);
         }
-        continue;
+        if (GenInputsAbstract.ignore_condition_compilation_error) {
+          continue;
+        } else {
+          throw new RandoopConditionError(msg);
+        }
       }
       try {
         ExecutableBooleanExpression guard = create(throwsCondition.getGuard());
@@ -316,10 +322,12 @@ public class SpecificationTranslator {
             new ThrowsClause(exceptionType, throwsCondition.getDescription());
         throwsPairs.add(new GuardThrowsPair(guard, throwsClause));
       } catch (RandoopConditionError e) {
-        if (GenInputsAbstract.fail_on_condition_error) {
+        if (GenInputsAbstract.ignore_condition_compilation_error) {
+          System.out.println(
+              "Warning: discarding uncompilable throws-expression: " + e.getMessage());
+        } else {
           throw e;
         }
-        System.out.println("Warning: discarding uncompilable throws-expression: " + e.getMessage());
       }
     }
     return throwsPairs;
@@ -391,6 +399,8 @@ public class SpecificationTranslator {
    * Returns the poststate expression method signature from this object. This signature includes the
    * parameters of the prestate expression signature, plus the return type.
    *
+   * <p><<<<<<< HEAD
+   *
    * <p>Only used for testing.
    *
    * @return the poststate expression method signature for this object
@@ -402,7 +412,11 @@ public class SpecificationTranslator {
   /**
    * Returns the compiler from this object.
    *
-   * <p>Only used for testing.
+   * <p>Only used for testing. ||||||| merged common ancestors
+   *
+   * <p>Used for testing. =======
+   *
+   * <p>Only used for testing. >>>>>>> 5a1520bf8a7db2b955dc2bad831ac21f3fd7d9d1
    *
    * @return the compiler for this object
    */
