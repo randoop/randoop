@@ -28,8 +28,10 @@ import randoop.util.IdentityMultiMap;
 import randoop.util.ProgressDisplay;
 
 /**
- * An ExecutableSequence wraps a {@link Sequence} with functionality for executing the sequence. It
- * also lets the client add {@link Check}s that check expected behaviors of the execution.
+ * An ExecutableSequence wraps a {@link Sequence} with functionality for executing the sequence (the
+ * {@link #execute(ExecutionVisitor, TestCheckGenerator)} and {@link #execute(ExecutionVisitor,
+ * TestCheckGenerator, boolean)} methods). It also lets the client add {@link Check}s that check
+ * expected behaviors of the execution.
  *
  * <p>An ExecutableSequence augments a sequence with three additional pieces of data:
  *
@@ -51,14 +53,6 @@ import randoop.util.ProgressDisplay;
  * implementing an {@link ExecutionVisitor} and passing it as an argument to the {@code execute}
  * method.
  *
- * <p>The method {@code execute(ExecutionVisitor v)} executes the code that the sequence represents.
- * This method uses reflection to execute each element in the sequence (method call, constructor
- * call, primitive or array declaration, etc). Before executing each statement (e.g. the i-th
- * statement), execute(v) calls v.visitBefore(this, i), and after executing each statement, it calls
- * v.visitAfter(this, i). The purpose of the visitor is to examine the unfolding execution, and take
- * some action depending on its intended purpose. For example, it may decorate the sequence with
- * {@link Check}s about the execution.
- *
  * <p>NOTES.
  *
  * <ul>
@@ -71,100 +65,6 @@ import randoop.util.ProgressDisplay;
  *       </ul>
  *
  * </ul>
- *
- * <h3 id="eval-algorithm">Condition Evaluation Algorithm</h3>
- *
- * The {@link #execute(randoop.ExecutionVisitor, randoop.test.TestCheckGenerator, boolean)} method
- * implements the condition evaluation algorithm described below.
- *
- * <p><i>Input</i>: a {@link randoop.operation.TypedClassOperation}, the {@link
- * randoop.condition.OperationConditions} for the method, and arguments for a call to the operation.
- *
- * <p><i>Goal</i>: classify the call to the operation using the arguments as {@link
- * randoop.main.GenInputsAbstract.BehaviorType#EXPECTED}, {@link
- * randoop.main.GenInputsAbstract.BehaviorType#INVALID} or {@link
- * randoop.main.GenInputsAbstract.BehaviorType#ERROR} based on the elements of {@link
- * randoop.condition.OperationConditions}.
- *
- * <p><i>Definitions</i>: Let {@code expression} be either a {@link
- * randoop.condition.ExecutableBooleanExpression} representing a {@link
- * randoop.condition.specification.Precondition} or {@link randoop.condition.specification.Guard};
- * or the {@link randoop.condition.ExecutableBooleanExpression} for a {@link
- * randoop.condition.specification.Property}. Then {@code expression} evaluated on the method
- * arguments is <i>satisfied</i> if {@code expression.check(values)} evaluates to true, and
- * <i>fails</i> otherwise.
- *
- * <p><i>Description</i>: The algorithm consists of two phases: (1) evaluating guards of the
- * specifications before the call, and (2) checking for expected behavior after the call.
- * Specifically, the first phase saves the results of the evaluation in a {@link
- * randoop.condition.ExpectedOutcomeTable} table that is used in the second phase.
- *
- * <p>This algorithm is applied before the standard rules for classification, and so unclassified
- * calls will fall through to contract checking and exception classification.
- *
- * <p><i>Before call</i>:
- *
- * <ol>
- *   <li>Create a {@link randoop.condition.ExpectedOutcomeTable} by calling {@link
- *       randoop.condition.OperationConditions#checkPrestate(java.lang.Object[])}, which creates a
- *       table entry corresponding to each specification of the operation, recording:
- *       <ol>
- *         <li>Whether the {@link randoop.condition.ExecutableBooleanExpression}s of the {@link
- *             randoop.condition.specification.Precondition}s fail or are satisfied. The expressions
- *             fail if any expression is false on the arguments. Otherwise, the preconditions are
- *             satisfied.
- *         <li>A set of {@link randoop.condition.ThrowsClause} objects for expected exceptions.
- *         <li>The expected {@link randoop.condition.ExecutableBooleanExpression}, if any. This is
- *             the {@link randoop.condition.ExecutableBooleanExpression}, of the first {@link
- *             randoop.condition.GuardPropertyPair} for which the guard {@link
- *             randoop.condition.ExecutableBooleanExpression} is satisfied.
- *       </ol>
- *
- *   <li>If {@link randoop.condition.ExpectedOutcomeTable#isInvalidCall()} then classify as {@link
- *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}, and don't make the call. This avoids
- *       making a call on invalid arguments unless the specification indicates that exceptions
- *       should be thrown.
- *   <li>Otherwise, create a {@link randoop.test.TestCheckGenerator} by calling {@link
- *       randoop.condition.ExpectedOutcomeTable#addPostCheckGenerator(randoop.test.TestCheckGenerator)}.
- *       This method selects the check generator as follows:
- *       <ol>
- *         <li>If any table entry contains an expected exception set, a {@link
- *             randoop.test.ExpectedExceptionGenerator} is returned.
- *         <li>If there are no expected exceptions, and no satisfied {@link
- *             randoop.condition.ExecutableBooleanExpression}s for any {@link
- *             randoop.condition.specification.Precondition}, return an {@link
- *             randoop.test.InvalidCheckGenerator}.
- *         <li>Otherwise, if there are {@link randoop.condition.ExecutableBooleanExpression} to
- *             evaluate, then extend the current generator with a {@link
- *             randoop.test.PostConditionCheckGenerator}.
- *       </ol>
- *
- * </ol>
- *
- * <p><i>After call</i>:
- *
- * <p>The check generator created before the call is applied to the results of the call.
- *
- * <ol>
- *   <li>The {@link randoop.test.ExpectedExceptionGenerator} is evaluated over the expected
- *       exception set such that
- *       <ul>
- *         <li>If an exception is thrown by the call and the thrown exception is a member of the
- *             set, then classify as {@link randoop.main.GenInputsAbstract.BehaviorType#EXPECTED}.
- *         <li>If an exception is thrown by the call and the thrown exception is not a member of the
- *             set, classify as {@link randoop.main.GenInputsAbstract.BehaviorType#ERROR} (because
- *             the specification required an exception to be thrown, but it was not thrown).
- *         <li>If no exception is thrown, then classify as {@link
- *             randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
- *       </ul>
- *
- *   <li>The {@link randoop.test.InvalidCheckGenerator} will classify the call as {@link
- *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}.
- *   <li>The {@link randoop.test.PostConditionCheckGenerator} will, for each table entry where all
- *       guards were satisfied, check the corresponding {@link
- *       randoop.condition.ExecutableBooleanExpression}, if one exists. If any such expression
- *       fails, then classify as {@link randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
- * </ol>
  */
 public class ExecutableSequence {
 
@@ -320,6 +220,7 @@ public class ExecutableSequence {
   /**
    * Executes sequence, stopping on exceptions.
    *
+   * @see #execute(ExecutionVisitor, TestCheckGenerator, boolean)
    * @param visitor the {@link ExecutionVisitor} that collects checks from results
    * @param gen the check generator for tests
    */
@@ -331,6 +232,14 @@ public class ExecutableSequence {
    * Execute this sequence, invoking the given visitor as the execution unfolds. After invoking this
    * method, the client can query the outcome of executing each statement via the method {@link
    * #getResult}.
+   *
+   * <p>The method {@code execute(ExecutionVisitor v)} executes the code that the sequence
+   * represents. This method uses reflection to execute each element in the sequence (method call,
+   * constructor call, primitive or array declaration, etc). Before executing each statement (e.g.
+   * the i-th statement), execute(v) calls v.visitBefore(this, i), and after executing each
+   * statement, it calls v.visitAfter(this, i). The purpose of the visitor is to examine the
+   * unfolding execution, and take some action depending on its intended purpose. For example, it
+   * may decorate the sequence with {@link Check}s about the execution.
    *
    * <ul>
    *   <li>Before the sequence is executed, clears execution results and calls {@code
@@ -351,6 +260,86 @@ public class ExecutableSequence {
    *       </ul>
    *
    * </ul>
+   *
+   * <h3 id="eval-algorithm">Condition Evaluation Algorithm</h3>
+   *
+   * This method implements the condition evaluation algorithm described below.
+   *
+   * <p><i>Input</i>: a {@link randoop.operation.TypedClassOperation}, the {@link
+   * randoop.condition.OperationConditions} for the method, and arguments for a call to the
+   * operation. [TODO: this isn't actually the input!]
+   *
+   * <p><i>Goal</i>: classify the call to the operation using the arguments as {@link
+   * randoop.main.GenInputsAbstract.BehaviorType#EXPECTED}, {@link
+   * randoop.main.GenInputsAbstract.BehaviorType#INVALID} or {@link
+   * randoop.main.GenInputsAbstract.BehaviorType#ERROR} based on the elements of {@link
+   * randoop.condition.OperationConditions}.
+   *
+   * <p><i>Definitions</i>: An {@link randoop.condition.ExecutableBooleanExpression}, {@code
+   * expression}, is <i>satisfied</i> on the method arguments if {@code expression.check(values)}
+   * evaluates to true, and it <i>fails</i> otherwise.
+   *
+   * <p><i>Description</i>: The algorithm consists of two phases: (1) evaluating guards of the
+   * specifications before the call, and (2) checking for expected behavior after the call.
+   * Specifically, the first phase saves the results of the evaluation in a {@link
+   * randoop.condition.ExpectedOutcomeTable} table that is used in the second phase.
+   *
+   * <p>This algorithm is applied before the standard rules for classification, and so unclassified
+   * calls will fall through to contract checking and exception classification.
+   *
+   * <p><i>Before call</i>:
+   *
+   * <ol>
+   *   <li>Create a {@link randoop.condition.ExpectedOutcomeTable} by calling {@link
+   *       randoop.condition.OperationConditions#checkPrestate(java.lang.Object[])}, which creates a
+   *       table entry corresponding to each specification of the operation. [TODO: does it create a
+   *       table or an entry? I think an entry.]
+   *   <li>If {@link randoop.condition.ExpectedOutcomeTable#isInvalidCall()} then classify as {@link
+   *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}, and don't make the call. This
+   *       avoids making a call on invalid arguments unless the specification indicates that
+   *       exceptions should be thrown.
+   *   <li>Otherwise, create a {@link randoop.test.TestCheckGenerator} by calling {@link
+   *       randoop.condition.ExpectedOutcomeTable#addPostCheckGenerator(randoop.test.TestCheckGenerator)}.
+   *       This method selects the check generator as follows:
+   *       <ol>
+   *         <li>If any table entry contains an expected exception set, a {@link
+   *             randoop.test.ExpectedExceptionGenerator} is returned.
+   *         <li>If there are no expected exceptions, and no satisfied {@link
+   *             randoop.condition.ExecutableBooleanExpression}s for any {@link
+   *             randoop.condition.specification.Precondition}, return an {@link
+   *             randoop.test.InvalidCheckGenerator}.
+   *         <li>Otherwise, if there are {@link randoop.condition.ExecutableBooleanExpression} to
+   *             evaluate, then extend the current generator with a {@link
+   *             randoop.test.PostConditionCheckGenerator}.
+   *       </ol>
+   *
+   * </ol>
+   *
+   * <p><i>After call</i>:
+   *
+   * <p>The check generator created before the call is applied to the results of the call.
+   *
+   * <ol>
+   *   <li>The {@link randoop.test.ExpectedExceptionGenerator} is evaluated over the expected
+   *       exception set such that
+   *       <ul>
+   *         <li>If an exception is thrown by the call and the thrown exception is a member of the
+   *             set, then classify as {@link randoop.main.GenInputsAbstract.BehaviorType#EXPECTED}.
+   *         <li>If an exception is thrown by the call and the thrown exception is not a member of
+   *             the set, classify as {@link randoop.main.GenInputsAbstract.BehaviorType#ERROR}
+   *             (because the specification required an exception to be thrown, but it was not
+   *             thrown).
+   *         <li>If no exception is thrown, then classify as {@link
+   *             randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
+   *       </ul>
+   *
+   *   <li>The {@link randoop.test.InvalidCheckGenerator} will classify the call as {@link
+   *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}.
+   *   <li>The {@link randoop.test.PostConditionCheckGenerator} will, for each table entry where all
+   *       guards were satisfied, check the corresponding {@link
+   *       randoop.condition.ExecutableBooleanExpression}, if one exists. If any such expression
+   *       fails, then classify as {@link randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
+   * </ol>
    *
    * @param visitor the {@code ExecutionVisitor}
    * @param gen the check generator
