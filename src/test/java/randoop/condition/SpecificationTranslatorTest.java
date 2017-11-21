@@ -75,8 +75,8 @@ public class SpecificationTranslatorTest {
     assertThat("pre-statement should be empty", check.toCodeStringPreStatement(), is(equalTo("")));
     String expectedPost =
         "// Checks the post-condition: returns this writer\n"
-            + "org.junit.Assert.assertTrue( "
-            + "\"Post-condition: returns this writer\","
+            + "org.junit.Assert.assertTrue("
+            + "\"Post-condition: returns this writer\", "
             + "printWriter3.equals(printWriter1));\n";
     assertThat("poststatement", check.toCodeStringPostStatement(), is(equalTo(expectedPost)));
   }
@@ -201,7 +201,7 @@ public class SpecificationTranslatorTest {
             + "char char2 = 'a';\n"
             + "java.io.PrintWriter printWriter3 = printWriter1.append(char2);\n"
             + "// Checks the post-condition: This writer\n"
-            + "org.junit.Assert.assertTrue( \"Post-condition: This writer\",printWriter3.equals(printWriter1));\n\n";
+            + "org.junit.Assert.assertTrue(\"Post-condition: This writer\", printWriter3.equals(printWriter1));\n\n";
     assertThat("sequence code", eseq.toCodeString(), is(equalTo(expectedCode)));
   }
 
