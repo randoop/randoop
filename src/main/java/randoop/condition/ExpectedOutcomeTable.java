@@ -36,9 +36,10 @@ import randoop.test.TestCheckGenerator;
  *   <li>The expected postcondition (an {@link ExecutableBooleanExpression}), if any.
  * </ol>
  *
- * <p>To create an ExpectedOutcomeTable, call {@link OperationConditions#checkPrestate(Object[])}.
- * To use an ExpectedOutcomeTable, call {@link #addPostCheckGenerator(TestCheckGenerator)} to create
- * a {@link TestCheckGenerator} that classifies a method call as follows:
+ * <p>To create an ExpectedOutcomeTable, call {@link
+ * ExecutableSpecification#checkPrestate(Object[])}. To use an ExpectedOutcomeTable, call {@link
+ * #addPostCheckGenerator(TestCheckGenerator)} to create a {@link TestCheckGenerator} that
+ * classifies a method call as follows:
  *
  * <ol>
  *   <li>For each table entry with a non-empty expected exception set

@@ -7,7 +7,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.TreeSet;
 import randoop.BugInRandoopException;
-import randoop.condition.OperationConditions;
+import randoop.condition.ExecutableSpecification;
 import randoop.condition.SpecificationCollection;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
@@ -189,10 +189,10 @@ public class OperationExtractor extends DefaultClassVisitor {
     checkSubTypes(operation);
     if (!omitPredicate.shouldOmit(operation)) {
       if (operationSpecifications != null) {
-        OperationConditions conditions =
-            operationSpecifications.getOperationConditions(constructor);
-        if (!conditions.isEmpty()) {
-          operation.addConditions(conditions);
+        ExecutableSpecification execSpec =
+            operationSpecifications.getExecutableSpecification(constructor);
+        if (!execSpec.isEmpty()) {
+          operation.addExecutableSpecification(execSpec);
         }
       }
       if (debug) {
@@ -243,9 +243,10 @@ public class OperationExtractor extends DefaultClassVisitor {
     // search.
     if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
       if (operationSpecifications != null) {
-        OperationConditions conditions = operationSpecifications.getOperationConditions(method);
-        if (!conditions.isEmpty()) {
-          operation.addConditions(conditions);
+        ExecutableSpecification execSpec =
+            operationSpecifications.getExecutableSpecification(method);
+        if (!execSpec.isEmpty()) {
+          operation.addExecutableSpecification(execSpec);
         }
       }
       if (debug) {

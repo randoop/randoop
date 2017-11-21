@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import randoop.ExecutionOutcome;
+import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
-import randoop.condition.OperationConditions;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -42,8 +42,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /** The output type. */
   private final Type outputType;
 
-  /** The conditions on this operation */
-  private OperationConditions conditions;
+  /** The specification for this operation */
+  private ExecutableSpecification execSpec;
 
   /**
    * Create typed operation for the given {@link Operation}.
@@ -56,7 +56,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
-    this.conditions = null;
+    this.execSpec = null;
   }
 
   @Override
@@ -571,7 +571,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Tests the conditions for this operation against the argument values and returns the {@link
+   * Tests the specification for this operation against the argument values and returns the {@link
    * ExpectedOutcomeTable} indicating the results of checking the pre-conditions of the
    * specifications of the operation.
    *
@@ -580,10 +580,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *     of the specifications of the operation
    */
   public ExpectedOutcomeTable checkConditions(Object[] values) {
-    if (conditions == null) {
+    if (execSpec == null) {
       return new ExpectedOutcomeTable();
     }
-    return conditions.checkPrestate(addNullReceiver(values));
+    return execSpec.checkPrestate(addNullReceiver(values));
   }
 
   /**
@@ -605,10 +605,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Sets the conditions; any previous value is ignored (so the method name {@code addConditions}
-   * may be misleading).
+   * Sets the specification; any previous value is ignored (so the method name {@code
+   * addExecutableSpecification} may be misleading).
    */
-  public void addConditions(OperationConditions conditions) {
-    this.conditions = conditions;
+  public void addExecutableSpecification(ExecutableSpecification execSpec) {
+    this.execSpec = execSpec;
   }
 }

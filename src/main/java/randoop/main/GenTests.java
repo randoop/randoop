@@ -263,9 +263,9 @@ public class GenTests extends GenInputsAbstract {
       }
       GenInputsAbstract.specifications.addAll(getJDKSpecificationFiles());
     }
-    SpecificationCollection operationConditions = null;
+    SpecificationCollection operationSpecifications = null;
     try {
-      operationConditions = SpecificationCollection.create(GenInputsAbstract.specifications);
+      operationSpecifications = SpecificationCollection.create(GenInputsAbstract.specifications);
     } catch (RandoopConditionError e) {
       System.out.println("Error in conditions: " + e.getMessage());
       System.exit(1);
@@ -283,7 +283,7 @@ public class GenTests extends GenInputsAbstract {
               methodSignatures,
               classNameErrorHandler,
               GenInputsAbstract.literals_file,
-              operationConditions);
+              operationSpecifications);
     } catch (SignatureParseException e) {
       System.out.printf("%nError: parse exception thrown %s%n", e);
       System.out.println("Exiting Randoop.");

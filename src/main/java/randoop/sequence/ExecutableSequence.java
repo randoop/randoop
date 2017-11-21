@@ -78,13 +78,14 @@ import randoop.util.ProgressDisplay;
  * implements the condition evaluation algorithm described below.
  *
  * <p><i>Input</i>: a {@link randoop.operation.TypedClassOperation}, the {@link
- * randoop.condition.OperationConditions} for the method, and arguments for a call to the operation.
+ * randoop.condition.ExecutableSpecification} for the method, and arguments for a call to the
+ * operation.
  *
  * <p><i>Goal</i>: classify the call to the operation using the arguments as {@link
  * randoop.main.GenInputsAbstract.BehaviorType#EXPECTED}, {@link
  * randoop.main.GenInputsAbstract.BehaviorType#INVALID} or {@link
  * randoop.main.GenInputsAbstract.BehaviorType#ERROR} based on the elements of {@link
- * randoop.condition.OperationConditions}.
+ * randoop.condition.ExecutableSpecification}.
  *
  * <p><i>Definitions</i>: Let {@code expression} be either a {@link
  * randoop.condition.ExecutableBooleanExpression} representing a {@link
@@ -106,8 +107,8 @@ import randoop.util.ProgressDisplay;
  *
  * <ol>
  *   <li>Create a {@link randoop.condition.ExpectedOutcomeTable} by calling {@link
- *       randoop.condition.OperationConditions#checkPrestate(java.lang.Object[])}, which creates a
- *       table entry corresponding to each specification of the operation, recording:
+ *       randoop.condition.ExecutableSpecification#checkPrestate(java.lang.Object[])}, which creates
+ *       a table entry corresponding to each specification of the operation, recording:
  *       <ol>
  *         <li>Whether the {@link randoop.condition.ExecutableBooleanExpression}s of the {@link
  *             randoop.condition.specification.Precondition}s fail or are satisfied. The expressions

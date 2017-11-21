@@ -189,9 +189,9 @@ public class SpecificationTranslatorTest {
         is(equalTo("x2.equals(x0)")));
 
     SpecificationCollection collection = SpecificationCollection.create(specList);
-    OperationConditions condition = collection.getOperationConditions(method);
+    ExecutableSpecification execSpec = collection.getExecutableSpecification(method);
     TypedClassOperation appendOp = TypedOperation.forMethod(method);
-    appendOp.addConditions(condition);
+    appendOp.addExecutableSpecification(execSpec);
     Sequence sequence = createPrintWriterSequence(appendOp);
     ExecutableSequence eseq = new ExecutableSequence(sequence);
     eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
