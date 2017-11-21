@@ -46,16 +46,21 @@ public class SpecificationTranslatorTest {
     List<String> parameterList = new ArrayList<>();
     parameterList.add("c");
     Identifiers identifiers = new Identifiers(parameterList);
+    OperationSpecification opSpec = new OperationSpecification(null, identifiers);
     SpecificationTranslator sig =
-        SpecificationTranslator.createTranslator(method, identifiers, null);
+        SpecificationTranslator.createTranslator(
+            method,
+            opSpec,
+            new SequenceCompiler(
+                new SequenceClassLoader(getClass().getClassLoader()), new ArrayList<String>()));
 
     assertThat(
         "presignature is just receiver and parameters",
-        sig.getGuardExpressionDeclaration(),
+        sig.getPrestateExpressionDeclaration(),
         is(equalTo("(java.io.PrintWriter receiver, char c)")));
     assertThat(
         "postsignature is receiver, parameters and result",
-        sig.getPropertyExpressionDeclarations(),
+        sig.getPoststateExpressionDeclarations(),
         is(equalTo("(java.io.PrintWriter receiver, char c, java.io.PrintWriter result)")));
 
     Map<String, String> replacements = sig.getReplacementMap();
@@ -71,7 +76,24 @@ public class SpecificationTranslatorTest {
 
     String conditionText = "result.equals(receiver)";
     Sequence sequence = createPrintWriterSequence(TypedOperation.forMethod(method));
-    PostConditionCheck check = createCheck(sequence, sig, conditionText);
+
+    List<ExecutableBooleanExpression> postConditions = new ArrayList<>();
+    Method conditionMethod =
+        ExecutableBooleanExpression.createMethod(
+            sig.getPoststateExpressionSignature(),
+            sig.getPoststateExpressionDeclarations(),
+            conditionText,
+            sig.getCompiler());
+    ExecutableBooleanExpression condition =
+        new ExecutableBooleanExpression(
+            conditionMethod,
+            "returns this writer",
+            Util.replaceWords(conditionText, sig.getReplacementMap()));
+    postConditions.add(condition);
+    List<Variable> inputList = new ArrayList<>(sequence.getInputs(sequence.size() - 1));
+    inputList.add(sequence.getLastVariable());
+    PostConditionCheck check = new PostConditionCheck(postConditions, inputList);
+
     assertThat("pre-statement should be empty", check.toCodeStringPreStatement(), is(equalTo("")));
     String expectedPost =
         "// Checks the post-condition: returns this writer\n"
@@ -79,18 +101,6 @@ public class SpecificationTranslatorTest {
             + "\"Post-condition: returns this writer\", "
             + "printWriter3.equals(printWriter1));\n";
     assertThat("poststatement", check.toCodeStringPostStatement(), is(equalTo(expectedPost)));
-  }
-
-  private PostConditionCheck createCheck(
-      Sequence sequence, SpecificationTranslator sig, String conditionText) {
-    List<ExecutableBooleanExpression> postConditions = new ArrayList<>();
-    ExecutableBooleanExpression condition = createPostCondition(sig, conditionText);
-    postConditions.add(condition);
-
-    List<Variable> inputList = new ArrayList<>(sequence.getInputs(sequence.size() - 1));
-    inputList.add(sequence.getLastVariable());
-
-    return new PostConditionCheck(postConditions, inputList);
   }
 
   private Method getPrintWriterAppendMethod() {
@@ -128,24 +138,6 @@ public class SpecificationTranslatorTest {
     return sequence;
   }
 
-  private ExecutableBooleanExpression createPostCondition(
-      SpecificationTranslator sig, String conditionText) {
-    Method conditionMethod;
-    SequenceCompiler compiler =
-        new SequenceCompiler(
-            new SequenceClassLoader(getClass().getClassLoader()), new ArrayList<String>());
-
-    conditionMethod =
-        ExecutableBooleanExpression.createMethod(
-            sig.getPropertyExpressionSignature(),
-            sig.getPropertyExpressionDeclarations(),
-            conditionText,
-            compiler);
-    String comment = "returns this writer";
-    String postConditionText = Util.replaceWords(conditionText, sig.getReplacementMap());
-    return new ExecutableBooleanExpression(conditionMethod, comment, postConditionText);
-  }
-
   private TypedOperation getPrintWriterConstructorOperation() {
     Class<?> c = PrintWriter.class;
     Constructor<?> constructor = null;
@@ -166,15 +158,15 @@ public class SpecificationTranslatorTest {
     OperationSpecification specification = readSpecificationsForTest(specFile);
     Method method = getPrintWriterAppendMethod();
     SpecificationTranslator sig =
-        SpecificationTranslator.createTranslator(method, specification.getIdentifiers(), null);
+        SpecificationTranslator.createTranslator(method, specification, null);
 
     assertThat(
         "presignature is just receiver and parameters",
-        sig.getGuardExpressionDeclaration(),
+        sig.getPrestateExpressionDeclaration(),
         is(equalTo("(java.io.PrintWriter target, char c)")));
     assertThat(
         "postsignature is receiver, parameters and result",
-        sig.getPropertyExpressionDeclarations(),
+        sig.getPoststateExpressionDeclarations(),
         is(equalTo("(java.io.PrintWriter target, char c, java.io.PrintWriter result)")));
 
     Map<String, String> replacements = sig.getReplacementMap();
