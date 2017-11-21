@@ -298,7 +298,11 @@ public class SpecificationTranslator {
         if (Log.isLoggingOn()) {
           Log.logLine(msg);
         }
-        continue;
+        if (GenInputsAbstract.ignore_condition_compilation_error) {
+          continue;
+        } else {
+          throw new RandoopConditionError(msg);
+        }
       }
       try {
         ExecutableBooleanExpression guard = create(throwsCondition.getGuard());
