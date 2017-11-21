@@ -135,7 +135,7 @@ public class ExecutableBooleanExpression {
     } catch (InvocationTargetException e) {
       // Evaluation of the expression threw an exception.
       // To allow users to write "x.f == 22" instead of the wordier "x != null && x.f == 22",
-      // treat this as false unless --fail-on-condition-error=true was supplied.
+      // treat this as false if --ignore-condition-exception=true was supplied.
       String message =
           "Failure executing expression method: " + expressionMethod + ": " + e.getCause();
       RandoopConditionError error = new RandoopConditionError(message, e);
