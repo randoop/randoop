@@ -278,7 +278,7 @@ public class GenericTypesTest {
         genericBaseStreamType.instantiate(JavaTypes.STRING_TYPE, stringStreamType);
 
     assertTrue("is subtype", stringStreamType.isSubtypeOf(stringBaseStreamType));
-    assertEquals("superclass", null, stringStreamType.getSuperclass());
+    assertEquals("superclass", JavaTypes.OBJECT_TYPE, stringStreamType.getSuperclass());
     assertTrue("interface", stringStreamType.getInterfaces().contains(stringBaseStreamType));
   }
 
