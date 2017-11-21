@@ -139,13 +139,13 @@ public class ExecutableBooleanExpression {
       String message =
           "Failure executing expression method: " + expressionMethod + ": " + e.getCause();
       RandoopConditionError error = new RandoopConditionError(message, e);
-      if (GenInputsAbstract.fail_on_condition_error) {
-        throw error;
-      } else {
+      if (GenInputsAbstract.ignore_condition_exception) {
         System.out.println("Proceeding despite the below problem ...");
         error.printStackTrace();
         System.out.println("... proceeding despite the above problem.");
         return false;
+      } else {
+        throw error;
       }
     }
   }
