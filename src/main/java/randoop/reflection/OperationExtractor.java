@@ -48,7 +48,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The predicate to test visibility. */
   private final VisibilityPredicate visibilityPredicate;
 
-  /** The collection of pre/post/throws-conditions to add to operations */
+  /** The specifications (pre/post/throws-conditions). */
   private final SpecificationCollection operationSpecifications;
 
   /**
@@ -63,7 +63,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param visibilityPredicate the predicate for test visibility
-   * @param operationSpecifications the collection of conditions to add to operations
+   * @param operationSpecifications the specifications (pre/post/throws-conditions)
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,

@@ -258,6 +258,9 @@ public class GenTests extends GenInputsAbstract {
      * Setup pre/post/throws-conditions for operations.
      */
     if (GenInputsAbstract.use_jdk_specifications) {
+      if (GenInputsAbstract.specifications == null) {
+        GenInputsAbstract.specifications = new ArrayList<>();
+      }
       GenInputsAbstract.specifications.addAll(getJDKSpecificationFiles());
     }
     SpecificationCollection operationConditions = null;

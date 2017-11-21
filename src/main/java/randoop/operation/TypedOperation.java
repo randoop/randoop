@@ -573,17 +573,17 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /**
    * Tests the conditions for this operation against the argument values and returns the {@link
    * ExpectedOutcomeTable} indicating the results of checking the pre-conditions of the
-   * specifications of the oepration.
+   * specifications of the operation.
    *
    * @param values the argument values
    * @return the {@link ExpectedOutcomeTable} indicating the results of checking the pre-conditions
    *     of the specifications of the operation
    */
   public ExpectedOutcomeTable checkConditions(Object[] values) {
-    if (conditions != null) {
-      return conditions.checkPrestate(addNullReceiver(values));
+    if (conditions == null) {
+      return new ExpectedOutcomeTable();
     }
-    return new ExpectedOutcomeTable();
+    return conditions.checkPrestate(addNullReceiver(values));
   }
 
   /**
@@ -604,6 +604,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     return args;
   }
 
+  /**
+   * Sets the conditions; any previous value is ignored (so the method name {@code addConditions}
+   * may be misleading).
+   */
   public void addConditions(OperationConditions conditions) {
     this.conditions = conditions;
   }
