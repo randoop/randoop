@@ -81,30 +81,6 @@ class SystemTestEnvironmentManager {
     Path replacecallAgentPath = getPathFromProperty("jar.replacecall.agent");
     Path coveredClassAgentPath = getPathFromProperty("jar.covered.class.agent");
 
-    /* OLD IMPLEMENTATION of the above 3 lines.
-    Path libsPath = buildDir.resolve("libs");
-    Path replacecallAgentPath = null;
-    Path coveredClassAgentPath = null;
-    Path randoopJarPath = null;
-    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(libsPath)) {
-      for (Path entry : dirStream) {
-        String entryName = entry.getFileName().toString();
-        if (entryName.startsWith("covered-class")) {
-          coveredClassAgentPath = entry;
-        }
-        if (entryName.startsWith("replacecall")) {
-          replacecallAgentPath = entry;
-        }
-        if (entryName.startsWith("randoop-all")) {
-          randoopJarPath = entry;
-        }
-      }
-    } catch (IOException e) {
-      fail("unable to get build directory contents");
-    }
-    assert randoopJarPath != null : "libsPath = " + libsPath;
-    */
-
     assert randoopJarPath != null;
 
     return new SystemTestEnvironmentManager(

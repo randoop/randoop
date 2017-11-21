@@ -22,7 +22,7 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   /**
    * Create a singleton set of invalid checks.
    *
-   * @param check the check to put in the newly-created singleton set
+   * @param check the sole member of the newly-created singleton set
    */
   public InvalidChecks(Check check) {
     add(check);
@@ -76,7 +76,7 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
           String.format("add(%s) when InvalidChecks already contains %s", check, this.check));
     }
     if (!((check instanceof InvalidExceptionCheck) || (check instanceof InvalidValueCheck))) {
-      throw new Error("Expected Invalid{Exception,Value}Check : " + check);
+      throw new Error("Expected Invalid{Exception,Value}Check, got " + check);
     }
     this.check = check;
   }

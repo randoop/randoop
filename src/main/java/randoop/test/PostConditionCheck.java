@@ -62,7 +62,7 @@ public class PostConditionCheck implements Check {
     for (ExecutableBooleanExpression condition : postConditions) {
       conditionStrings.add(condition.getContractSource());
     }
-    return UtilMDE.join(conditionStrings, "&&");
+    return UtilMDE.join(conditionStrings, " && ");
   }
 
   @Override
@@ -81,11 +81,11 @@ public class PostConditionCheck implements Check {
           .append("// Checks the post-condition: ")
           .append(postCondition.getComment())
           .append(Globals.lineSep);
-      //TODO output whether postcondition failed or succeeded
+      // TODO output whether postcondition failed or succeeded
       builder
-          .append("org.junit.Assert.assertTrue( \"Post-condition: ")
+          .append("org.junit.Assert.assertTrue(\"Post-condition: ")
           .append(postCondition.getComment())
-          .append("\",")
+          .append("\", ")
           .append(conditionString)
           .append(");")
           .append(Globals.lineSep);

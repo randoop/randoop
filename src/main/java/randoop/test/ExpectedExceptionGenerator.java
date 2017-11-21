@@ -60,6 +60,10 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
     }
   }
 
+  /**
+   * Find the first ThrowsClause whose exception is a supertype of (or equal to) {@code
+   * throwableType}, and return that exception type.
+   */
   private ClassOrInterfaceType findMatchingExpectedType(
       ClassOrInterfaceType throwableType, List<ThrowsClause> throwsClauses) {
     for (ThrowsClause exception : throwsClauses) {
@@ -71,6 +75,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
     return null;
   }
 
+  /** Return an ErrorRevealingChecks that checks for a missing exception at the given index. */
   private ErrorRevealingChecks getMissingExceptionTestChecks(int finalIndex) {
     ErrorRevealingChecks checks = new ErrorRevealingChecks();
     checks.add(new MissingExceptionCheck(exceptionSets, finalIndex));
