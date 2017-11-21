@@ -3,7 +3,6 @@ package randoop.test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
 import plume.UtilMDE;
 import randoop.Globals;
 import randoop.condition.ThrowsClause;
@@ -48,12 +47,11 @@ public class MissingExceptionCheck implements Check {
 
   @Override
   public String toString() {
-    StringJoiner result = new StringJoiner(Globals.lineSep);
-    result.add("MissingExceptionCheck at index " + index);
+    StringBuilder result =
+        new StringBuilder("MissingExceptionCheck at line " + index + Globals.lineSep);
     for (List<ThrowsClause> set : expected) {
-      result.add(set.toString());
+      result.append(set.toString()).append(Globals.lineSep);
     }
-    result.add(""); // get final newline
     return result.toString();
   }
 
