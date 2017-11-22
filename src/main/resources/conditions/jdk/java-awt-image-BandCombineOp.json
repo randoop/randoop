@@ -1,0 +1,31 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.BandCombineOp",
+      "name": "java.awt.image.BandCombineOp",
+      "parameterTypes": [
+        "[[F",
+        "java.awt.RenderingHints"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "matrix",
+        "hints"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The RenderingHints object for this operation. Not currently used so it can be null.",
+        "guard": {
+          "condition": "hints==null",
+          "description": "The RenderingHints object for this operation. Not currently used so it can be null."
+        }
+      }
+    ]
+  }
+]

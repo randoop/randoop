@@ -1,0 +1,141 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.NimbusStyle",
+      "name": "javax.swing.plaf.nimbus.NimbusStyle",
+      "parameterTypes": [
+        "java.lang.String",
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "prefix",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "an optional reference to a component that this NimbusStyle should be associated with. This is only used when the component has Nimbus overrides registered in its client properties and should be null otherwise.",
+        "guard": {
+          "condition": "c==null",
+          "description": "an optional reference to a component that this NimbusStyle should be associated with. This is only used when the component has Nimbus overrides registered in its client properties and should be null otherwise."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.NimbusStyle",
+      "name": "get",
+      "parameterTypes": [
+        "javax.swing.plaf.synth.SynthContext",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ctx",
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "must not be null",
+        "guard": {
+          "condition": "(key==null) == false",
+          "description": "must not be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.NimbusStyle",
+      "name": "getBackgroundPainter",
+      "parameterTypes": [
+        "javax.swing.plaf.synth.SynthContext"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ctx"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The SynthContext. Must not be null.",
+        "guard": {
+          "condition": "(ctx==null) == false",
+          "description": "The SynthContext. Must not be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.NimbusStyle",
+      "name": "getForegroundPainter",
+      "parameterTypes": [
+        "javax.swing.plaf.synth.SynthContext"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ctx"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The SynthContext. Must not be null.",
+        "guard": {
+          "condition": "(ctx==null) == false",
+          "description": "The SynthContext. Must not be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.NimbusStyle",
+      "name": "getBorderPainter",
+      "parameterTypes": [
+        "javax.swing.plaf.synth.SynthContext"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ctx"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The SynthContext. Must not be null.",
+        "guard": {
+          "condition": "(ctx==null) == false",
+          "description": "The SynthContext. Must not be null."
+        }
+      }
+    ]
+  }
+]

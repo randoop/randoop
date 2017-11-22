@@ -47,7 +47,6 @@ public class OperationModelTest {
           OperationModel.createModel(
               IS_PUBLIC,
               reflectionPredicate,
-              null,
               classnames,
               coveredClassnames,
               methodSignatures,
@@ -101,7 +100,6 @@ public class OperationModelTest {
           OperationModel.createModel(
               IS_PUBLIC,
               reflectionPredicate,
-              null,
               classnames,
               coveredClassnames,
               methodSignatures,
@@ -178,7 +176,6 @@ public class OperationModelTest {
           OperationModel.createModel(
               IS_PUBLIC,
               reflectionPredicate,
-              null,
               classnames,
               coveredClassnames,
               methodSignatures,
@@ -363,7 +360,6 @@ public class OperationModelTest {
           OperationModel.createModel(
               IS_PUBLIC,
               reflectionPredicate,
-              null,
               classnames,
               coveredClassnames,
               methodSignatures,

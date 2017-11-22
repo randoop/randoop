@@ -1,0 +1,40 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.GradientPaint",
+      "name": "java.awt.GradientPaint",
+      "parameterTypes": [
+        "float",
+        "float",
+        "java.awt.Color",
+        "float",
+        "float",
+        "java.awt.Color"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x1",
+        "y1",
+        "color1",
+        "x2",
+        "y2",
+        "color2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either one of colors is null",
+        "guard": {
+          "condition": "color1==null || color2==null",
+          "description": "if either one of colors is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

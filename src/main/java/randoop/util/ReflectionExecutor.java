@@ -73,7 +73,7 @@ public final class ReflectionExecutor {
 
   /**
    * Executes {@code code.runReflectionCode()}, which sets {@code code}'s {@code .retVal} or {@code
-   * exceptionThrown} field.
+   * .exceptionThrown} field.
    *
    * @param code the {@link ReflectionCode} to be executed
    * @param out stream to print exception details to or null

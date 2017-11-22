@@ -1,0 +1,356 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "getString",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "getStringArray",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "getObject",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "getBundle",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "baseName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if baseName is null",
+        "guard": {
+          "condition": "baseName==null",
+          "description": "if baseName is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "getBundle",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.util.ResourceBundle$Control"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "baseName",
+        "control"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if baseName or control is null",
+        "guard": {
+          "condition": "baseName==null || control==null",
+          "description": "if baseName or control is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "getBundle",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "baseName",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if baseName or locale is null",
+        "guard": {
+          "condition": "baseName==null || locale==null",
+          "description": "if baseName or locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "getBundle",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.util.Locale",
+        "java.util.ResourceBundle$Control"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "baseName",
+        "targetLocale",
+        "control"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if baseName, locales or control is null",
+        "guard": {
+          "condition": "baseName==null || control==null",
+          "description": "if baseName, locales or control is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "getBundle",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.util.Locale",
+        "java.lang.ClassLoader"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "baseName",
+        "locale",
+        "loader"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if baseName, locale, or loader is null",
+        "guard": {
+          "condition": "baseName==null || loader==null",
+          "description": "if baseName, locale, or loader is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "getBundle",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.util.Locale",
+        "java.lang.ClassLoader",
+        "java.util.ResourceBundle$Control"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "baseName",
+        "targetLocale",
+        "loader",
+        "control"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if baseName, targetLocale, loader, or control is null",
+        "guard": {
+          "condition": "baseName==null || control==null",
+          "description": "if baseName, targetLocale, loader, or control is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "clearCache",
+      "parameterTypes": [
+        "java.lang.ClassLoader"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "loader"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if loader is null",
+        "guard": {
+          "condition": "loader==null",
+          "description": "if loader is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "handleGetObject",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.ResourceBundle",
+      "name": "containsKey",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

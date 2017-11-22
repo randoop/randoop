@@ -1,0 +1,1230 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getParent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the parent container of this component"
+        },
+        "description": "return the parent container of this component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getToolkit",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the toolkit of this component"
+        },
+        "description": "return the toolkit of this component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "setEnabled",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "If true, this component is enabled; otherwise this component is disabled",
+        "guard": {
+          "condition": "target.isEnabled()",
+          "description": "If true, this component is enabled; otherwise this component is disabled"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "isDoubleBuffered",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "false by default"
+        },
+        "description": "return false by default",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "isForegroundSet",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the foreground color has been explicitly set for this Component; false otherwise."
+        },
+        "description": "return true if the foreground color has been explicitly set for this Component; false otherwise.",
+        "guard": {
+          "condition": "target.getForeground()!=null",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the foreground color has been explicitly set for this Component; false otherwise."
+        },
+        "description": "return true if the foreground color has been explicitly set for this Component; false otherwise.",
+        "guard": {
+          "condition": "target.getForeground()!=null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "isBackgroundSet",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the background color has been explicitly set for this Component; false otherwise."
+        },
+        "description": "return true if the background color has been explicitly set for this Component; false otherwise.",
+        "guard": {
+          "condition": "target.getBackground()!=null",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the background color has been explicitly set for this Component; false otherwise."
+        },
+        "description": "return true if the background color has been explicitly set for this Component; false otherwise.",
+        "guard": {
+          "condition": "target.getBackground()!=null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getFont",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "this component's font; if a font has not been set for this component, the font of its parent is returned"
+        },
+        "description": "return this component's font; if a font has not been set for this component, the font of its parent is returned",
+        "guard": {
+          "condition": "(target.getX()!=null)==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "isFontSet",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the font has been explicitly set for this Component; false otherwise."
+        },
+        "description": "return true if the font has been explicitly set for this Component; false otherwise.",
+        "guard": {
+          "condition": "target.getFont()!=null",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the font has been explicitly set for this Component; false otherwise."
+        },
+        "description": "return true if the font has been explicitly set for this Component; false otherwise.",
+        "guard": {
+          "condition": "target.getFont()!=null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "setSize",
+      "parameterTypes": [
+        "java.awt.Dimension"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "d"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if d is null",
+        "guard": {
+          "condition": "d==null",
+          "description": "if d is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "setBounds",
+      "parameterTypes": [
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "r"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if r is null",
+        "guard": {
+          "condition": "r==null",
+          "description": "if r is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getWidth",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the current width of this component"
+        },
+        "description": "return the current width of this component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getHeight",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the current height of this component"
+        },
+        "description": "return the current height of this component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getBounds",
+      "parameterTypes": [
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rv"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(rv)",
+          "description": "rv"
+        },
+        "description": "return rv",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getSize",
+      "parameterTypes": [
+        "java.awt.Dimension"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rv"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(rv)",
+          "description": "rv"
+        },
+        "description": "return rv",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getLocation",
+      "parameterTypes": [
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rv"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(rv)",
+          "description": "rv"
+        },
+        "description": "return rv",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "isMaximumSizeSet",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if maximumSize is non-null, false otherwise"
+        },
+        "description": "return true if maximumSize is non-null, false otherwise",
+        "guard": {
+          "condition": "target.getMaximumSize()!=null",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if maximumSize is non-null, false otherwise"
+        },
+        "description": "return true if maximumSize is non-null, false otherwise",
+        "guard": {
+          "condition": "target.getMaximumSize()!=null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getBaseline",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width or height is < 0",
+        "guard": {
+          "condition": "width<0 || height<0",
+          "description": "if width or height is < 0"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result<0",
+          "description": "the baseline or < 0 indicating there is no reasonable baseline"
+        },
+        "description": "return the baseline or < 0 indicating there is no reasonable baseline",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getFontMetrics",
+      "parameterTypes": [
+        "java.awt.Font"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "font"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the font metrics for font"
+        },
+        "description": "return the font metrics for font",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "setCursor",
+      "parameterTypes": [
+        "java.awt.Cursor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "cursor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "One of the constants defined by the Cursor class; if this parameter is null then this component will inherit the cursor of its parent",
+        "guard": {
+          "condition": "cursor==null",
+          "description": "One of the constants defined by the Cursor class; if this parameter is null then this component will inherit the cursor of its parent"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "isCursorSet",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the cursor has been explicitly set for this Component; false otherwise."
+        },
+        "description": "return true if the cursor has been explicitly set for this Component; false otherwise.",
+        "guard": {
+          "condition": "target.getCursor()!=null",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the cursor has been explicitly set for this Component; false otherwise."
+        },
+        "description": "return true if the cursor has been explicitly set for this Component; false otherwise.",
+        "guard": {
+          "condition": "target.getCursor()!=null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "createImage",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "an off-screen drawable image, which can be used for double buffering. The return value may be null if the component is not displayable. This will always happen if GraphicsEnvironment.isHeadless() returns true."
+        },
+        "description": "return an off-screen drawable image, which can be used for double buffering. The return value may be null if the component is not displayable. This will always happen if GraphicsEnvironment.isHeadless() returns true.",
+        "guard": {
+          "condition": "(target.isDisplayable())==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "createVolatileImage",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "an off-screen drawable image, which can be used for double buffering. The return value may be null if the component is not displayable. This will always happen if GraphicsEnvironment.isHeadless() returns true."
+        },
+        "description": "return an off-screen drawable image, which can be used for double buffering. The return value may be null if the component is not displayable. This will always happen if GraphicsEnvironment.isHeadless() returns true.",
+        "guard": {
+          "condition": "(target.isDisplayable())==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "createBufferStrategy",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "numBuffers"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if numBuffers is less than 1.",
+        "guard": {
+          "condition": "numBuffers<1",
+          "description": "if numBuffers is less than 1."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalStateException",
+        "description": "throws IllegalStateException if the component is not displayable",
+        "guard": {
+          "condition": "(target.isDisplayable()) == false",
+          "description": "if the component is not displayable"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "createBufferStrategy",
+      "parameterTypes": [
+        "int",
+        "java.awt.BufferCapabilities"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "numBuffers",
+        "caps"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if numBuffers is less than 1, or if caps is null",
+        "guard": {
+          "condition": "numBuffers<1 || caps==null",
+          "description": "if numBuffers is less than 1, or if caps is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the required capabilities for creating the buffer strategy; cannot be null",
+        "guard": {
+          "condition": "(caps==null) == false",
+          "description": "the required capabilities for creating the buffer strategy; cannot be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "contains",
+      "parameterTypes": [
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if p is null",
+        "guard": {
+          "condition": "p==null",
+          "description": "if p is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getListeners",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "listenerType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if listenerType is null",
+        "guard": {
+          "condition": "listenerType==null",
+          "description": "if listenerType is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "isFocusTraversable",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this Component is focusable; false otherwise"
+        },
+        "description": "return true if this Component is focusable; false otherwise",
+        "guard": {
+          "condition": "target.isFocusable()",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if this Component is focusable; false otherwise"
+        },
+        "description": "return true if this Component is focusable; false otherwise",
+        "guard": {
+          "condition": "target.isFocusable()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "setFocusable",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "focusable"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "indicates whether this Component is focusable",
+        "guard": {
+          "condition": "target.isFocusable()",
+          "description": "indicates whether this Component is focusable"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "setFocusTraversalKeys",
+      "parameterTypes": [
+        "int",
+        "java.util.Set"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id",
+        "keystrokes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, or KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or if keystrokes contains null, or if any keystroke represents a KEY_TYPED event, or if any keystroke already maps to another focus traversal operation for this Component",
+        "guard": {
+          "condition": "(id==1) == false || keystrokes.contains(null)",
+          "description": "if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, or KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or if keystrokes contains null, or if any keystroke represents a KEY_TYPED event, or if any keystroke already maps to another focus traversal operation for this Component"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getFocusTraversalKeys",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, or KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS",
+        "guard": {
+          "condition": "(id==1) == false",
+          "description": "if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, or KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "areFocusTraversalKeysSet",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, or KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS",
+        "guard": {
+          "condition": "(id==1) == false",
+          "description": "if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, or KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "add",
+      "parameterTypes": [
+        "java.awt.PopupMenu"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "popup"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if popup is null",
+        "guard": {
+          "condition": "popup==null",
+          "description": "if popup is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this component's state"
+        },
+        "description": "return a string representation of this component's state",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "toString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this component"
+        },
+        "description": "return a string representation of this component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "list",
+      "parameterTypes": [
+        "java.io.PrintStream"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if out is null",
+        "guard": {
+          "condition": "out==null",
+          "description": "if out is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "list",
+      "parameterTypes": [
+        "java.io.PrintStream",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "indent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if out is null",
+        "guard": {
+          "condition": "out==null",
+          "description": "if out is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "list",
+      "parameterTypes": [
+        "java.io.PrintWriter"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if out is null",
+        "guard": {
+          "condition": "out==null",
+          "description": "if out is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "list",
+      "parameterTypes": [
+        "java.io.PrintWriter",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "indent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if out is null",
+        "guard": {
+          "condition": "out==null",
+          "description": "if out is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "applyComponentOrientation",
+      "parameterTypes": [
+        "java.awt.ComponentOrientation"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "orientation"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if orientation is null.",
+        "guard": {
+          "condition": "orientation==null",
+          "description": "if orientation is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Component",
+      "name": "getAccessibleContext",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the AccessibleContext of this Component"
+        },
+        "description": "return the AccessibleContext of this Component",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

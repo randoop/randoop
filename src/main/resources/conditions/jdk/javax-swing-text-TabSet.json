@@ -1,0 +1,44 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.TabSet",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if o is the instance of TabSet, has the same number of TabStops and they are all equal, false otherwise."
+        },
+        "description": "return true if o is the instance of TabSet, has the same number of TabStops and they are all equal, false otherwise.",
+        "guard": {
+          "condition": "oinstanceofTabSet",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if o is the instance of TabSet, has the same number of TabStops and they are all equal, false otherwise."
+        },
+        "description": "return true if o is the instance of TabSet, has the same number of TabStops and they are all equal, false otherwise.",
+        "guard": {
+          "condition": "oinstanceofTabSet",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

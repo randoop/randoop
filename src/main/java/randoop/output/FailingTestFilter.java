@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import plume.UtilMDE;
@@ -73,8 +74,9 @@ public class FailingTestFilter implements CodeWriter {
   @Override
   public File writeClassCode(String packageName, String classname, String classSource)
       throws RandoopOutputException {
+    assert !Objects.equals(packageName, "");
 
-    String qualifiedClassname = (packageName.isEmpty() ? "" : packageName + ".") + classname;
+    String qualifiedClassname = ((packageName == null) ? "" : (packageName + ".")) + classname;
 
     int pass = 0; // Used to create unique working directory name.
     boolean passing = false;
@@ -124,6 +126,7 @@ public class FailingTestFilter implements CodeWriter {
    */
   private String commentFailingAssertions(
       String packageName, String classname, String javaCode, Status status) {
+    assert !Objects.equals(packageName, "");
 
     /* Iterator to move through JUnit output. (JUnit only writes to standard output.) */
     Iterator<String> lineIterator = status.standardOutputLines.iterator();
@@ -192,7 +195,7 @@ public class FailingTestFilter implements CodeWriter {
        * Search for the stacktrace entry corresponding to the test method, and capture the line
        * number.
        */
-      String qualifiedClassname = ((packageName.isEmpty()) ? "" : packageName + ".") + classname;
+      String qualifiedClassname = ((packageName == null) ? "" : (packageName + ".")) + classname;
       Pattern linePattern =
           Pattern.compile(
               String.format(

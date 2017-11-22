@@ -1,0 +1,243 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.WrappedPlainView",
+      "name": "drawLine",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.awt.Graphics",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p0",
+        "p1",
+        "g",
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the starting document location to use >= 0",
+        "guard": {
+          "condition": "target.getDocument()>=0",
+          "description": "the starting document location to use >= 0"
+        }
+      },
+      {
+        "description": "the ending document location to use >= p1",
+        "guard": {
+          "condition": "target.getDocument()>=p1",
+          "description": "the ending document location to use >= p1"
+        }
+      },
+      {
+        "description": "the starting X position >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the starting X position >= 0"
+        }
+      },
+      {
+        "description": "the starting Y position >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the starting Y position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.WrappedPlainView",
+      "name": "drawUnselectedText",
+      "parameterTypes": [
+        "java.awt.Graphics",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "g",
+        "x",
+        "y",
+        "p0",
+        "p1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(g)",
+          "description": "the X location of the end of the range >= 0"
+        },
+        "description": "return the X location of the end of the range >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the starting X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the starting X coordinate >= 0"
+        }
+      },
+      {
+        "description": "the starting Y coordinate >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the starting Y coordinate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.WrappedPlainView",
+      "name": "drawSelectedText",
+      "parameterTypes": [
+        "java.awt.Graphics",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "g",
+        "x",
+        "y",
+        "p0",
+        "p1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(g)",
+          "description": "the location of the end of the range."
+        },
+        "description": "return the location of the end of the range.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the starting X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the starting X coordinate >= 0"
+        }
+      },
+      {
+        "description": "the starting Y coordinate >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the starting Y coordinate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.WrappedPlainView",
+      "name": "nextTabStop",
+      "parameterTypes": [
+        "float",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "tabOffset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the tab stop, measured in points >= 0"
+        },
+        "description": "return the tab stop, measured in points >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the position within the text stream that the tab occurred at >= 0.",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the position within the text stream that the tab occurred at >= 0."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.WrappedPlainView",
+      "name": "setSize",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the width >= 0",
+        "guard": {
+          "condition": "width>=0",
+          "description": "the width >= 0"
+        }
+      },
+      {
+        "description": "the height >= 0",
+        "guard": {
+          "condition": "height>=0",
+          "description": "the height >= 0"
+        }
+      }
+    ]
+  }
+]

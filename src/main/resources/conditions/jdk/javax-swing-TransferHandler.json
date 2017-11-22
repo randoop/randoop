@@ -1,0 +1,74 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.TransferHandler",
+      "name": "importData",
+      "parameterTypes": [
+        "javax.swing.TransferHandler$TransferSupport"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "support"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if support is null",
+        "guard": {
+          "condition": "support==null",
+          "description": "if support is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the object containing the details of the transfer, not null.",
+        "guard": {
+          "condition": "(support==null) == false",
+          "description": "the object containing the details of the transfer, not null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.TransferHandler",
+      "name": "canImport",
+      "parameterTypes": [
+        "javax.swing.TransferHandler$TransferSupport"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "support"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if support is null",
+        "guard": {
+          "condition": "support==null",
+          "description": "if support is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the object containing the details of the transfer, not null.",
+        "guard": {
+          "condition": "(support==null) == false",
+          "description": "the object containing the details of the transfer, not null."
+        }
+      }
+    ]
+  }
+]

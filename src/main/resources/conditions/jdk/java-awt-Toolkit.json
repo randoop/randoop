@@ -1,0 +1,142 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Toolkit",
+      "name": "getPrintJob",
+      "parameterTypes": [
+        "java.awt.Frame",
+        "java.lang.String",
+        "java.util.Properties"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "frame",
+        "jobtitle",
+        "props"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if frame is null",
+        "guard": {
+          "condition": "frame==null",
+          "description": "if frame is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the parent of the print dialog. May not be null.",
+        "guard": {
+          "condition": "(frame==null) == false",
+          "description": "the parent of the print dialog. May not be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Toolkit",
+      "name": "getPrintJob",
+      "parameterTypes": [
+        "java.awt.Frame",
+        "java.lang.String",
+        "java.awt.JobAttributes",
+        "java.awt.PageAttributes"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "frame",
+        "jobtitle",
+        "jobAttributes",
+        "pageAttributes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if frame is null",
+        "guard": {
+          "condition": "frame==null",
+          "description": "if frame is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the parent of the print dialog. May not be null.",
+        "guard": {
+          "condition": "(frame==null) == false",
+          "description": "the parent of the print dialog. May not be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Toolkit",
+      "name": "getLockingKeyState",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyCode"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if keyCode is not one of the valid key codes",
+        "guard": {
+          "condition": "(keyCode==1) == false",
+          "description": "if keyCode is not one of the valid key codes"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Toolkit",
+      "name": "setLockingKeyState",
+      "parameterTypes": [
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyCode",
+        "on"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if keyCode is not one of the valid key codes",
+        "guard": {
+          "condition": "(keyCode==1) == false",
+          "description": "if keyCode is not one of the valid key codes"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,197 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.zip.ZipEntry",
+      "name": "java.util.zip.ZipEntry",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the entry name is null",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the entry name is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.ZipEntry",
+      "name": "java.util.zip.ZipEntry",
+      "parameterTypes": [
+        "java.util.zip.ZipEntry"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the entry object is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the entry object is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.ZipEntry",
+      "name": "getName",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getTime())",
+          "description": "the name of the entry"
+        },
+        "description": "return the name of the entry",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.ZipEntry",
+      "name": "setLastModifiedTime",
+      "parameterTypes": [
+        "java.nio.file.attribute.FileTime"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "time"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the time is null",
+        "guard": {
+          "condition": "time==null",
+          "description": "if the time is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.ZipEntry",
+      "name": "setLastAccessTime",
+      "parameterTypes": [
+        "java.nio.file.attribute.FileTime"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "time"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the time is null",
+        "guard": {
+          "condition": "time==null",
+          "description": "if the time is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.ZipEntry",
+      "name": "setCreationTime",
+      "parameterTypes": [
+        "java.nio.file.attribute.FileTime"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "time"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the time is null",
+        "guard": {
+          "condition": "time==null",
+          "description": "if the time is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.ZipEntry",
+      "name": "setCrc",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "crc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the specified CRC-32 value is less than 0 or greater than 0xFFFFFFFF",
+        "guard": {
+          "condition": "crc<0 || crc>0",
+          "description": "if the specified CRC-32 value is less than 0 or greater than 0xFFFFFFFF"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.FileTreeIterator",
+      "name": "java.nio.file.FileTreeIterator",
+      "parameterTypes": [
+        "java.nio.file.Path",
+        "int",
+        "[Ljava.nio.file.FileVisitOption;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "maxDepth",
+        "options"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if maxDepth is negative",
+        "guard": {
+          "condition": "maxDepth<0",
+          "description": "if maxDepth is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

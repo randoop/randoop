@@ -1,0 +1,122 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.InputMethodEvent",
+      "name": "java.awt.event.InputMethodEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "long",
+        "java.text.AttributedCharacterIterator",
+        "int",
+        "java.awt.font.TextHitInfo",
+        "java.awt.font.TextHitInfo"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "when",
+        "text",
+        "committedCharacterCount",
+        "caret",
+        "visiblePosition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.InputMethodEvent",
+      "name": "java.awt.event.InputMethodEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "java.text.AttributedCharacterIterator",
+        "int",
+        "java.awt.font.TextHitInfo",
+        "java.awt.font.TextHitInfo"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "text",
+        "committedCharacterCount",
+        "caret",
+        "visiblePosition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the combined committed and composed text, committed text first; must be null when the event type is CARET_POSITION_CHANGED; may be null for INPUT_METHOD_TEXT_CHANGED if there's no committed or composed text",
+        "guard": {
+          "condition": "text==null",
+          "description": "the combined committed and composed text, committed text first; must be null when the event type is CARET_POSITION_CHANGED; may be null for INPUT_METHOD_TEXT_CHANGED if there's no committed or composed text"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.InputMethodEvent",
+      "name": "java.awt.event.InputMethodEvent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int",
+        "java.awt.font.TextHitInfo",
+        "java.awt.font.TextHitInfo"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "caret",
+        "visiblePosition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

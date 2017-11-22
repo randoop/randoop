@@ -302,7 +302,53 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   /**
-   * File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
+   * Read JSON condition file to use specifications to control how tests are generated and
+   * classified.
+   *
+   * <ul>
+   *   <li>
+   *       <p>Param-conditions are pre-conditions on method/constructor calls. Test sequences where
+   *       the condition fails are classified as {@link BehaviorType#INVALID}.
+   *   <li>
+   *       <p>Return-conditions are post-conditions on method/constructor calls, consisting of a
+   *       guard and a property. If the inputs to the call satisfy the guard but the property fails,
+   *       then the sequence is classified as {@link BehaviorType#ERROR}.
+   *   <li>Throws-conditions are post-conditions on expected exceptions. If the inputs to the call
+   *       satisfy the condition, then: when the exception is thrown the sequence is {@link
+   *       BehaviorType#EXPECTED}, but, if it is not, the sequence is classified as {@link
+   *       BehaviorType#ERROR}. If the throws-condition is not satisfied by the input, then ordinary
+   *       classification is applied.
+   * </ul>
+   */
+  @Option("JSON specifications for methods/constructors")
+  public static List<File> specifications = null;
+
+  /**
+   * Use the internal specifications for JDK classes to control how tests are generated and
+   * classified.
+   *
+   * <p>These specifications are applied to the methods of classes that inherit from them. See
+   * {@link #specifications} for details on classification using specifications.
+   */
+  @Option("Use specifications for JDK classes to classify behaviors for methods/constructors")
+  public static boolean use_jdk_specifications = true;
+
+  /**
+   * Make Randoop proceed, instead of failing, if the Java condition text of a specification cannot
+   * be compiled.
+   */
+  @Option("Terminate Randoop if specification condition is uncompilable or throws an exception")
+  public static boolean ignore_condition_compilation_error = false;
+
+  /**
+   * Make Randoop proceed, instead of failing, if a specification's execution throws an exception.
+   */
+  @Option("Terminate Randoop if specification condition is uncompilable or throws an exception")
+  public static boolean ignore_condition_exception = false;
+
+  ///////////////////////////////////////////////////////////////////
+  /**
+   * File containing side-effect-free observer methods. Specifying observers has two benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
    */
   @OptionGroup("Observer methods")
@@ -516,8 +562,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * the class or class members in a test. Tests can be restricted to public members only by using
    * the option {@code --only-test-public-members}.
    */
-  @Option("Name of the package for the generated JUnit files")
-  public static String junit_package_name = "";
+  @Option("Name of the package for the generated JUnit files (optional)")
+  public static String junit_package_name;
 
   /**
    * Name of file containing code text to be added to the <a

@@ -1,0 +1,3998 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "sort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "sort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "sort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "sort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "sort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "sort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "sort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex or (optional) if the natural ordering of the array elements is found to violate the Comparable contract",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex or (optional) if the natural ordering of the array elements is found to violate the Comparable contract"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSort",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "int",
+        "int",
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "cmp"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex or (optional) if the natural ordering of the array elements is found to violate the Comparable contract",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex or (optional) if the natural ordering of the array elements is found to violate the Comparable contract"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "sort",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex or (optional) if the natural ordering of the array elements is found to violate the Comparable contract",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex or (optional) if the natural ordering of the array elements is found to violate the Comparable contract"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "sort",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "int",
+        "int",
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex or (optional) if the comparator is found to violate the Comparator contract",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex or (optional) if the comparator is found to violate the Comparator contract"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelPrefix",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "java.util.function.BinaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "op"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array or function is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the specified array or function is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelPrefix",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "int",
+        "int",
+        "java.util.function.BinaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "fromIndex",
+        "toIndex",
+        "op"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > array.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>array.length",
+          "description": "if fromIndex < 0 or toIndex > array.length"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array or function is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the specified array or function is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelPrefix",
+      "parameterTypes": [
+        "[J",
+        "java.util.function.LongBinaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "op"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array or function is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the specified array or function is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelPrefix",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int",
+        "java.util.function.LongBinaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "fromIndex",
+        "toIndex",
+        "op"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > array.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>array.length",
+          "description": "if fromIndex < 0 or toIndex > array.length"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array or function is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the specified array or function is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelPrefix",
+      "parameterTypes": [
+        "[D",
+        "java.util.function.DoubleBinaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "op"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array or function is null",
+        "guard": {
+          "condition": "array==null || op==null",
+          "description": "if the specified array or function is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelPrefix",
+      "parameterTypes": [
+        "[D",
+        "int",
+        "int",
+        "java.util.function.DoubleBinaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "fromIndex",
+        "toIndex",
+        "op"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > array.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>array.length",
+          "description": "if fromIndex < 0 or toIndex > array.length"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array or function is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the specified array or function is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelPrefix",
+      "parameterTypes": [
+        "[I",
+        "java.util.function.IntBinaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "op"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array or function is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the specified array or function is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelPrefix",
+      "parameterTypes": [
+        "[I",
+        "int",
+        "int",
+        "java.util.function.IntBinaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "fromIndex",
+        "toIndex",
+        "op"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > array.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>array.length",
+          "description": "if fromIndex < 0 or toIndex > array.length"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array or function is null",
+        "guard": {
+          "condition": "array==null",
+          "description": "if the specified array or function is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "binarySearch",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "binarySearch",
+      "parameterTypes": [
+        "[I",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "binarySearch",
+      "parameterTypes": [
+        "[S",
+        "int",
+        "int",
+        "short"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "binarySearch",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int",
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "binarySearch",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int",
+        "byte"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "binarySearch",
+      "parameterTypes": [
+        "[D",
+        "int",
+        "int",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "binarySearch",
+      "parameterTypes": [
+        "[F",
+        "int",
+        "int",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "binarySearch",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "int",
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "binarySearch",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "int",
+        "int",
+        "java.lang.Object",
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "key",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "equals",
+      "parameterTypes": [
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "a2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the two arrays are equal"
+        },
+        "description": "return true if the two arrays are equal",
+        "guard": {
+          "condition": "target.equals(short[],short[])",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "equals",
+      "parameterTypes": [
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "a2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the two arrays are equal"
+        },
+        "description": "return true if the two arrays are equal",
+        "guard": {
+          "condition": "target.equals(short[],short[])",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "equals",
+      "parameterTypes": [
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "a2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the two arrays are equal"
+        },
+        "description": "return true if the two arrays are equal",
+        "guard": {
+          "condition": "target.equals(short[],short[])",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "equals",
+      "parameterTypes": [
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "a2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the two arrays are equal"
+        },
+        "description": "return true if the two arrays are equal",
+        "guard": {
+          "condition": "target.equals(short[],short[])",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "equals",
+      "parameterTypes": [
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "a2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the two arrays are equal"
+        },
+        "description": "return true if the two arrays are equal",
+        "guard": {
+          "condition": "target.equals(short[],short[])",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "equals",
+      "parameterTypes": [
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "a2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the two arrays are equal"
+        },
+        "description": "return true if the two arrays are equal",
+        "guard": {
+          "condition": "target.equals(short[],short[])",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "equals",
+      "parameterTypes": [
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "a2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the two arrays are equal"
+        },
+        "description": "return true if the two arrays are equal",
+        "guard": {
+          "condition": "target.equals(short[],short[])",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "equals",
+      "parameterTypes": [
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "a2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the two arrays are equal"
+        },
+        "description": "return true if the two arrays are equal",
+        "guard": {
+          "condition": "target.equals(short[],short[])",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "equals",
+      "parameterTypes": [
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "a2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the two arrays are equal"
+        },
+        "description": "return true if the two arrays are equal",
+        "guard": {
+          "condition": "target.equals(short[],short[])",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "fill",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "fill",
+      "parameterTypes": [
+        "[I",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "fill",
+      "parameterTypes": [
+        "[S",
+        "int",
+        "int",
+        "short"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "fill",
+      "parameterTypes": [
+        "[C",
+        "int",
+        "int",
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "fill",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int",
+        "byte"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "fill",
+      "parameterTypes": [
+        "[Z",
+        "int",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "fill",
+      "parameterTypes": [
+        "[D",
+        "int",
+        "int",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "fill",
+      "parameterTypes": [
+        "[F",
+        "int",
+        "int",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "fill",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "int",
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "fromIndex",
+        "toIndex",
+        "val"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if fromIndex > toIndex",
+        "guard": {
+          "condition": "fromIndex>toIndex",
+          "description": "if fromIndex > toIndex"
+        }
+      },
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if fromIndex < 0 or toIndex > a.length",
+        "guard": {
+          "condition": "fromIndex<0 || toIndex>a.length",
+          "description": "if fromIndex < 0 or toIndex > a.length"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOf",
+      "parameterTypes": [
+        "[F",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "newLength"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if newLength is negative",
+        "guard": {
+          "condition": "newLength<0",
+          "description": "if newLength is negative"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOf",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "int",
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "newLength",
+        "newType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if newLength is negative",
+        "guard": {
+          "condition": "newLength<0",
+          "description": "if newLength is negative"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOf",
+      "parameterTypes": [
+        "[F",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "newLength"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if newLength is negative",
+        "guard": {
+          "condition": "newLength<0",
+          "description": "if newLength is negative"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOf",
+      "parameterTypes": [
+        "[F",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "newLength"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if newLength is negative",
+        "guard": {
+          "condition": "newLength<0",
+          "description": "if newLength is negative"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOf",
+      "parameterTypes": [
+        "[F",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "newLength"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if newLength is negative",
+        "guard": {
+          "condition": "newLength<0",
+          "description": "if newLength is negative"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOf",
+      "parameterTypes": [
+        "[F",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "newLength"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if newLength is negative",
+        "guard": {
+          "condition": "newLength<0",
+          "description": "if newLength is negative"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOf",
+      "parameterTypes": [
+        "[F",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "newLength"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if newLength is negative",
+        "guard": {
+          "condition": "newLength<0",
+          "description": "if newLength is negative"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOf",
+      "parameterTypes": [
+        "[F",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "newLength"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if newLength is negative",
+        "guard": {
+          "condition": "newLength<0",
+          "description": "if newLength is negative"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOf",
+      "parameterTypes": [
+        "[F",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "newLength"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if newLength is negative",
+        "guard": {
+          "condition": "newLength<0",
+          "description": "if newLength is negative"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOf",
+      "parameterTypes": [
+        "[F",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "newLength"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if newLength is negative",
+        "guard": {
+          "condition": "newLength<0",
+          "description": "if newLength is negative"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOfRange",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "from",
+        "to"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if from < 0 or from > original.length",
+        "guard": {
+          "condition": "from<0 || from>original.length",
+          "description": "if from < 0 or from > original.length"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if from > to",
+        "guard": {
+          "condition": "from>to",
+          "description": "if from > to"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOfRange",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "int",
+        "int",
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "from",
+        "to",
+        "newType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if from < 0 or from > original.length",
+        "guard": {
+          "condition": "from<0 || from>original.length",
+          "description": "if from < 0 or from > original.length"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if from > to",
+        "guard": {
+          "condition": "from>to",
+          "description": "if from > to"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOfRange",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "from",
+        "to"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if from < 0 or from > original.length",
+        "guard": {
+          "condition": "from<0 || from>original.length",
+          "description": "if from < 0 or from > original.length"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if from > to",
+        "guard": {
+          "condition": "from>to",
+          "description": "if from > to"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOfRange",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "from",
+        "to"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if from < 0 or from > original.length",
+        "guard": {
+          "condition": "from<0 || from>original.length",
+          "description": "if from < 0 or from > original.length"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if from > to",
+        "guard": {
+          "condition": "from>to",
+          "description": "if from > to"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOfRange",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "from",
+        "to"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if from < 0 or from > original.length",
+        "guard": {
+          "condition": "from<0 || from>original.length",
+          "description": "if from < 0 or from > original.length"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if from > to",
+        "guard": {
+          "condition": "from>to",
+          "description": "if from > to"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOfRange",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "from",
+        "to"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if from < 0 or from > original.length",
+        "guard": {
+          "condition": "from<0 || from>original.length",
+          "description": "if from < 0 or from > original.length"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if from > to",
+        "guard": {
+          "condition": "from>to",
+          "description": "if from > to"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOfRange",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "from",
+        "to"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if from < 0 or from > original.length",
+        "guard": {
+          "condition": "from<0 || from>original.length",
+          "description": "if from < 0 or from > original.length"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if from > to",
+        "guard": {
+          "condition": "from>to",
+          "description": "if from > to"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOfRange",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "from",
+        "to"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if from < 0 or from > original.length",
+        "guard": {
+          "condition": "from<0 || from>original.length",
+          "description": "if from < 0 or from > original.length"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if from > to",
+        "guard": {
+          "condition": "from>to",
+          "description": "if from > to"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOfRange",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "from",
+        "to"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if from < 0 or from > original.length",
+        "guard": {
+          "condition": "from<0 || from>original.length",
+          "description": "if from < 0 or from > original.length"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if from > to",
+        "guard": {
+          "condition": "from>to",
+          "description": "if from > to"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "copyOfRange",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "original",
+        "from",
+        "to"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if from < 0 or from > original.length",
+        "guard": {
+          "condition": "from<0 || from>original.length",
+          "description": "if from < 0 or from > original.length"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if from > to",
+        "guard": {
+          "condition": "from>to",
+          "description": "if from > to"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if original is null",
+        "guard": {
+          "condition": "original==null",
+          "description": "if original is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "hashCode",
+      "parameterTypes": [
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a content-based hash code for a"
+        },
+        "description": "return a content-based hash code for a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "hashCode",
+      "parameterTypes": [
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a content-based hash code for a"
+        },
+        "description": "return a content-based hash code for a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "hashCode",
+      "parameterTypes": [
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a content-based hash code for a"
+        },
+        "description": "return a content-based hash code for a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "hashCode",
+      "parameterTypes": [
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a content-based hash code for a"
+        },
+        "description": "return a content-based hash code for a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "hashCode",
+      "parameterTypes": [
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a content-based hash code for a"
+        },
+        "description": "return a content-based hash code for a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "hashCode",
+      "parameterTypes": [
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a content-based hash code for a"
+        },
+        "description": "return a content-based hash code for a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "hashCode",
+      "parameterTypes": [
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a content-based hash code for a"
+        },
+        "description": "return a content-based hash code for a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "hashCode",
+      "parameterTypes": [
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a content-based hash code for a"
+        },
+        "description": "return a content-based hash code for a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "hashCode",
+      "parameterTypes": [
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a content-based hash code for a"
+        },
+        "description": "return a content-based hash code for a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "deepHashCode",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a deep-content-based hash code for a"
+        },
+        "description": "return a deep-content-based hash code for a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "deepEquals",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a1",
+        "a2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the two arrays are equal"
+        },
+        "description": "return true if the two arrays are equal",
+        "guard": {
+          "condition": "target.equals(a1,a2)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "toString",
+      "parameterTypes": [
+        "[Z"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a string representation of a"
+        },
+        "description": "return a string representation of a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "toString",
+      "parameterTypes": [
+        "[Z"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a string representation of a"
+        },
+        "description": "return a string representation of a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "toString",
+      "parameterTypes": [
+        "[Z"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a string representation of a"
+        },
+        "description": "return a string representation of a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "toString",
+      "parameterTypes": [
+        "[Z"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a string representation of a"
+        },
+        "description": "return a string representation of a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "toString",
+      "parameterTypes": [
+        "[Z"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a string representation of a"
+        },
+        "description": "return a string representation of a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "toString",
+      "parameterTypes": [
+        "[Z"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a string representation of a"
+        },
+        "description": "return a string representation of a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "toString",
+      "parameterTypes": [
+        "[Z"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a string representation of a"
+        },
+        "description": "return a string representation of a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "toString",
+      "parameterTypes": [
+        "[Z"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a string representation of a"
+        },
+        "description": "return a string representation of a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "toString",
+      "parameterTypes": [
+        "[Z"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a string representation of a"
+        },
+        "description": "return a string representation of a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "deepToString",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "a string representation of a"
+        },
+        "description": "return a string representation of a",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "setAll",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "java.util.function.IntFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "generator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the generator is null",
+        "guard": {
+          "condition": "generator==null",
+          "description": "if the generator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSetAll",
+      "parameterTypes": [
+        "[Ljava.lang.Object;",
+        "java.util.function.IntFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "generator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the generator is null",
+        "guard": {
+          "condition": "generator==null",
+          "description": "if the generator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "setAll",
+      "parameterTypes": [
+        "[I",
+        "java.util.function.IntUnaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "generator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the generator is null",
+        "guard": {
+          "condition": "generator==null",
+          "description": "if the generator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSetAll",
+      "parameterTypes": [
+        "[I",
+        "java.util.function.IntUnaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "generator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the generator is null",
+        "guard": {
+          "condition": "generator==null",
+          "description": "if the generator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "setAll",
+      "parameterTypes": [
+        "[J",
+        "java.util.function.IntToLongFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "generator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the generator is null",
+        "guard": {
+          "condition": "generator==null",
+          "description": "if the generator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSetAll",
+      "parameterTypes": [
+        "[J",
+        "java.util.function.IntToLongFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "generator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the generator is null",
+        "guard": {
+          "condition": "generator==null",
+          "description": "if the generator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "setAll",
+      "parameterTypes": [
+        "[D",
+        "java.util.function.IntToDoubleFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "generator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the generator is null",
+        "guard": {
+          "condition": "generator==null",
+          "description": "if the generator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "parallelSetAll",
+      "parameterTypes": [
+        "[D",
+        "java.util.function.IntToDoubleFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "generator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the generator is null",
+        "guard": {
+          "condition": "generator==null",
+          "description": "if the generator is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "startInclusive",
+        "endExclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Arrays.spliterator())",
+          "description": "a spliterator for the array elements"
+        },
+        "description": "return a spliterator for the array elements",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "startInclusive",
+        "endExclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Arrays.spliterator())",
+          "description": "a spliterator for the array elements"
+        },
+        "description": "return a spliterator for the array elements",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "startInclusive",
+        "endExclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Arrays.spliterator())",
+          "description": "a spliterator for the array elements"
+        },
+        "description": "return a spliterator for the array elements",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Arrays",
+      "name": "spliterator",
+      "parameterTypes": [
+        "[J",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "array",
+        "startInclusive",
+        "endExclusive"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(java.util.Arrays.spliterator())",
+          "description": "a spliterator for the array elements"
+        },
+        "description": "return a spliterator for the array elements",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

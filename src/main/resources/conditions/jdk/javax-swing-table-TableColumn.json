@@ -1,0 +1,83 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.table.TableColumn",
+      "name": "getHeaderValue",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.HEADER_VALUE_PROPERTY)",
+          "description": "the headerValue property"
+        },
+        "description": "return the headerValue property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.table.TableColumn",
+      "name": "getHeaderRenderer",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.HEADER_RENDERER_PROPERTY)",
+          "description": "the headerRenderer property"
+        },
+        "description": "return the headerRenderer property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.table.TableColumn",
+      "name": "getCellRenderer",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.CELL_RENDERER_PROPERTY)",
+          "description": "the cellRenderer property"
+        },
+        "description": "return the cellRenderer property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

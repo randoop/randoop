@@ -1,0 +1,364 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "java.io.File",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pathname"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the pathname argument is null",
+        "guard": {
+          "condition": "pathname==null",
+          "description": "If the pathname argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "java.io.File",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "child"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If child is null",
+        "guard": {
+          "condition": "child==null",
+          "description": "If child is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "java.io.File",
+      "parameterTypes": [
+        "java.io.File",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "child"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If child is null",
+        "guard": {
+          "condition": "child==null",
+          "description": "If child is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "java.io.File",
+      "parameterTypes": [
+        "java.net.URI"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "uri"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If uri is null",
+        "guard": {
+          "condition": "uri==null",
+          "description": "If uri is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "renameTo",
+      "parameterTypes": [
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dest"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If parameter dest is null",
+        "guard": {
+          "condition": "dest==null",
+          "description": "If parameter dest is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "setLastModified",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "time"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the argument is negative",
+        "guard": {
+          "condition": "time<0",
+          "description": "If the argument is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "setReadable",
+      "parameterTypes": [
+        "boolean",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "readable",
+        "ownerOnly"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if and only if the operation succeeded. The operation will fail if the user does not have permission to change the access permissions of this abstract pathname. If readable is false and the underlying file system does not implement a read permission, then the operation will fail."
+        },
+        "description": "return true if and only if the operation succeeded. The operation will fail if the user does not have permission to change the access permissions of this abstract pathname. If readable is false and the underlying file system does not implement a read permission, then the operation will fail.",
+        "guard": {
+          "condition": "readable==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "setReadable",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "readable"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if and only if the operation succeeded. The operation will fail if the user does not have permission to change the access permissions of this abstract pathname. If readable is false and the underlying file system does not implement a read permission, then the operation will fail."
+        },
+        "description": "return true if and only if the operation succeeded. The operation will fail if the user does not have permission to change the access permissions of this abstract pathname. If readable is false and the underlying file system does not implement a read permission, then the operation will fail.",
+        "guard": {
+          "condition": "readable==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "setExecutable",
+      "parameterTypes": [
+        "boolean",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "executable",
+        "ownerOnly"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if and only if the operation succeeded. The operation will fail if the user does not have permission to change the access permissions of this abstract pathname. If executable is false and the underlying file system does not implement an execute permission, then the operation will fail."
+        },
+        "description": "return true if and only if the operation succeeded. The operation will fail if the user does not have permission to change the access permissions of this abstract pathname. If executable is false and the underlying file system does not implement an execute permission, then the operation will fail.",
+        "guard": {
+          "condition": "executable==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "setExecutable",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "executable"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if and only if the operation succeeded. The operation will fail if the user does not have permission to change the access permissions of this abstract pathname. If executable is false and the underlying file system does not implement an execute permission, then the operation will fail."
+        },
+        "description": "return true if and only if the operation succeeded. The operation will fail if the user does not have permission to change the access permissions of this abstract pathname. If executable is false and the underlying file system does not implement an execute permission, then the operation will fail.",
+        "guard": {
+          "condition": "executable==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "createTempFile",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String",
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "prefix",
+        "suffix",
+        "directory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the prefix argument contains fewer than three characters",
+        "guard": {
+          "condition": "prefix.contains(java.lang.CharSequence)",
+          "description": "If the prefix argument contains fewer than three characters"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.File",
+      "name": "createTempFile",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "prefix",
+        "suffix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the prefix argument contains fewer than three characters",
+        "guard": {
+          "condition": "prefix.contains(java.lang.CharSequence)",
+          "description": "If the prefix argument contains fewer than three characters"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

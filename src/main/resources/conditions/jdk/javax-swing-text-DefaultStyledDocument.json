@@ -1,0 +1,245 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultStyledDocument",
+      "name": "insert",
+      "parameterTypes": [
+        "int",
+        "[Ljavax.swing.text.DefaultStyledDocument$ElementSpec;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "data"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the starting offset >= 0",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the starting offset >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultStyledDocument",
+      "name": "removeElement",
+      "parameterTypes": [
+        "javax.swing.text.Element"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "elem"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the element is null",
+        "guard": {
+          "condition": "elem==null",
+          "description": "if the element is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultStyledDocument",
+      "name": "addStyle",
+      "parameterTypes": [
+        "java.lang.String",
+        "javax.swing.text.Style"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nm",
+        "parent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(parent)",
+          "description": "the style"
+        },
+        "description": "return the style",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultStyledDocument",
+      "name": "setLogicalStyle",
+      "parameterTypes": [
+        "int",
+        "javax.swing.text.Style"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the offset from the start of the document >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the offset from the start of the document >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultStyledDocument",
+      "name": "getLogicalStyle",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the location to translate to a paragraph and determine the logical style assigned >= 0. This is an offset from the start of the document.",
+        "guard": {
+          "condition": "p>=0",
+          "description": "the location to translate to a paragraph and determine the logical style assigned >= 0. This is an offset from the start of the document."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultStyledDocument",
+      "name": "setCharacterAttributes",
+      "parameterTypes": [
+        "int",
+        "int",
+        "javax.swing.text.AttributeSet",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "length",
+        "s",
+        "replace"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the length >= 0",
+        "guard": {
+          "condition": "length>=0",
+          "description": "the length >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultStyledDocument",
+      "name": "setParagraphAttributes",
+      "parameterTypes": [
+        "int",
+        "int",
+        "javax.swing.text.AttributeSet",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset",
+        "length",
+        "s",
+        "replace"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the offset into the paragraph >= 0",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the offset into the paragraph >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultStyledDocument",
+      "name": "getCharacterElement",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(pos)",
+          "description": "the element"
+        },
+        "description": "return the element",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

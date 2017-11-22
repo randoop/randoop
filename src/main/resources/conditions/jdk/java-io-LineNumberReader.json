@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.LineNumberReader",
+      "name": "skip",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "n"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If n is negative",
+        "guard": {
+          "condition": "n<0",
+          "description": "If n is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,78 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandleInfo",
+      "name": "reflectAs",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.invoke.MethodHandles$Lookup"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "expected",
+        "lookup"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either argument is null",
+        "guard": {
+          "condition": "expected==null || lookup==null",
+          "description": "if either argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodHandleInfo",
+      "name": "toString",
+      "parameterTypes": [
+        "int",
+        "java.lang.Class",
+        "java.lang.String",
+        "java.lang.invoke.MethodType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "kind",
+        "defc",
+        "name",
+        "type"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if any reference argument is null",
+        "guard": {
+          "condition": "defc==null || name==null || type==null",
+          "description": "if any reference argument is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(name)",
+          "description": "a string of the form \"RK C.N:MT\""
+        },
+        "description": "return a string of the form \"RK C.N:MT\"",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

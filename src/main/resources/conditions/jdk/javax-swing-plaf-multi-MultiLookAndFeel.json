@@ -1,0 +1,87 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.multi.MultiLookAndFeel",
+      "name": "isNativeLookAndFeel",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "false"
+        },
+        "description": "return false",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.multi.MultiLookAndFeel",
+      "name": "isSupportedLookAndFeel",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true"
+        },
+        "description": "return true",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.multi.MultiLookAndFeel",
+      "name": "createUIs",
+      "parameterTypes": [
+        "javax.swing.plaf.ComponentUI",
+        "java.util.Vector",
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mui",
+        "uis",
+        "target"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the ComponentUI object that represents the complete UI for the target component; this should be an instance of one of the MultiXxxxUI classes",
+        "guard": {
+          "condition": "mui instanceof one",
+          "description": "the ComponentUI object that represents the complete UI for the target component; this should be an instance of one of the MultiXxxxUI classes"
+        }
+      }
+    ]
+  }
+]

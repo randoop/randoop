@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.colorchooser.DefaultSwatchChooserPanel",
+      "name": "getMnemonic",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result<=0",
+          "description": "KeyEvent.VK constant identifying the mnemonic; <= 0 for no mnemonic"
+        },
+        "description": "return KeyEvent.VK constant identifying the mnemonic; <= 0 for no mnemonic",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

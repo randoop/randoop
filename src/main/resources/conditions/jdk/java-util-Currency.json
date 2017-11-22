@@ -1,0 +1,114 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Currency",
+      "name": "getInstance",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "currencyCode"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if currencyCode is null",
+        "guard": {
+          "condition": "currencyCode==null",
+          "description": "if currencyCode is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Currency",
+      "name": "getInstance",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale or its country code is null",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale or its country code is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Currency",
+      "name": "getSymbol",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale is null",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Currency",
+      "name": "getDisplayName",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale is null",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

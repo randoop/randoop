@@ -1,0 +1,89 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.MaskFormatter",
+      "name": "javax.swing.text.MaskFormatter",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mask"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.text.ParseException",
+        "description": "throws ParseException if mask does not contain valid mask characters",
+        "guard": {
+          "condition": "(mask.contains(java.lang.CharSequence)) == false",
+          "description": "if mask does not contain valid mask characters"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.MaskFormatter",
+      "name": "setMask",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mask"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.text.ParseException",
+        "description": "throws ParseException if mask does not contain valid mask characters",
+        "guard": {
+          "condition": "(mask.contains(java.lang.CharSequence)) == false",
+          "description": "if mask does not contain valid mask characters"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.MaskFormatter",
+      "name": "valueToString",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.toString())",
+          "description": "String representation of value"
+        },
+        "description": "return String representation of value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,212 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.TimeZone",
+      "name": "getOffset",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "era",
+        "year",
+        "month",
+        "day",
+        "dayOfWeek",
+        "milliseconds"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the month in the given date. Month is 0-based. e.g., 0 for January.",
+        "guard": {
+          "condition": "month==0",
+          "description": "the month in the given date. Month is 0-based. e.g., 0 for January."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.TimeZone",
+      "name": "getID",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the ID of this time zone."
+        },
+        "description": "return the ID of this time zone.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TimeZone",
+      "name": "getDisplayName",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale is null.",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TimeZone",
+      "name": "getDisplayName",
+      "parameterTypes": [
+        "boolean",
+        "int",
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "daylight",
+        "style",
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale is null.",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TimeZone",
+      "name": "getTimeZone",
+      "parameterTypes": [
+        "java.time.ZoneId"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "zoneId"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if zoneId is null",
+        "guard": {
+          "condition": "zoneId==null",
+          "description": "if zoneId is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TimeZone",
+      "name": "hasSameRules",
+      "parameterTypes": [
+        "java.util.TimeZone"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "other"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the other zone is not null and is the same as this one, with the possible exception of the ID"
+        },
+        "description": "return true if the other zone is not null and is the same as this one, with the possible exception of the ID",
+        "guard": {
+          "condition": "(other==null)==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.TimeZone",
+      "name": "clone",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a clone of this TimeZone"
+        },
+        "description": "return a clone of this TimeZone",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

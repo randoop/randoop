@@ -1,0 +1,35 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.ScrollPaneLayout",
+      "name": "addSingletonComponent",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "oldC",
+        "newC"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(newC)",
+          "description": "the newC"
+        },
+        "description": "return the newC",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

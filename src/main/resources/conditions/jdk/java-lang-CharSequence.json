@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.CharSequence",
+      "name": "charAt",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the index argument is negative or not less than length()",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the index argument is negative or not less than length()"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.CharSequence",
+      "name": "subSequence",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "end"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if start or end are negative, if end is greater than length(), or if start is greater than end",
+        "guard": {
+          "condition": "start<0 || end<0 || start>end",
+          "description": "if start or end are negative, if end is greater than length(), or if start is greater than end"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

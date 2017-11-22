@@ -13,13 +13,18 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   /** An empty, immutable set of error-revealing checks. */
   public static final InvalidChecks EMPTY = new InvalidChecks();
 
-  private InvalidExceptionCheck check;
+  // Either an InvalidExceptionCheck or an InvalidValueCheck.
+  private Check check;
 
   /** Create an empty, mutable set of invalid checks. */
   public InvalidChecks() {}
 
-  /** Create a singleton set of invalid checks. */
-  public InvalidChecks(InvalidExceptionCheck check) {
+  /**
+   * Create a singleton set of invalid checks.
+   *
+   * @param check the sole member of the newly-created singleton set
+   */
+  public InvalidChecks(Check check) {
     add(check);
   }
 
@@ -52,8 +57,13 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   }
 
   @Override
-  public InvalidExceptionCheck getExceptionCheck() {
-    return check;
+  public ExceptionCheck getExceptionCheck() {
+    // TODO is this right?  The result might be an InvalidValueCheck
+    if (check instanceof InvalidExceptionCheck) {
+      return (InvalidExceptionCheck) check;
+    } else {
+      return null;
+    }
   }
 
   @Override
@@ -65,10 +75,10 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
       throw new BugInRandoopException(
           String.format("add(%s) when InvalidChecks already contains %s", check, this.check));
     }
-    if (!(check instanceof InvalidExceptionCheck)) {
-      throw new Error("Expected InvalidExceptionCheck: " + check);
+    if (!((check instanceof InvalidExceptionCheck) || (check instanceof InvalidValueCheck))) {
+      throw new Error("Expected Invalid{Exception,Value}Check, got " + check);
     }
-    this.check = (InvalidExceptionCheck) check;
+    this.check = check;
   }
 
   @Override

@@ -1,0 +1,40 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.FileTreeWalker",
+      "name": "java.nio.file.FileTreeWalker",
+      "parameterTypes": [
+        "java.util.Collection",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "options",
+        "maxDepth"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if maxDepth is negative",
+        "guard": {
+          "condition": "maxDepth<0",
+          "description": "if maxDepth is negative"
+        }
+      },
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if (@code options} contains an element that is not a FileVisitOption",
+        "guard": {
+          "condition": "options.contains(java.lang.Object)",
+          "description": "if (@code options} contains an element that is not a FileVisitOption"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

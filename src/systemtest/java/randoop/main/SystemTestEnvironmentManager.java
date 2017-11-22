@@ -4,7 +4,6 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -77,27 +76,13 @@ class SystemTestEnvironmentManager {
     Path testInputClassDir =
         buildDir.resolve("classes/java/testInput"); // XXX breaks when Gradle changes
     Path jacocoAgentPath = buildDir.resolve("jacocoagent/jacocoagent.jar");
-    Path libsPath = buildDir.resolve("libs");
-    Path replacecallAgentPath = null;
-    Path coveredClassAgentPath = null;
-    Path randoopJarPath = null;
-    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(libsPath)) {
-      for (Path entry : dirStream) {
-        String entryName = entry.getFileName().toString();
-        if (entryName.startsWith("covered-class")) {
-          coveredClassAgentPath = entry;
-        }
-        if (entryName.startsWith("replacecall")) {
-          replacecallAgentPath = entry;
-        }
-        if (entryName.startsWith("randoop-all")) {
-          randoopJarPath = entry;
-        }
-      }
-    } catch (IOException e) {
-      fail("unable to get build directory contents");
-    }
-    assert randoopJarPath != null : "libsPath = " + libsPath;
+
+    Path randoopJarPath = getPathFromProperty("jar.randoop");
+    Path replacecallAgentPath = getPathFromProperty("jar.replacecall.agent");
+    Path coveredClassAgentPath = getPathFromProperty("jar.covered.class.agent");
+
+    assert randoopJarPath != null;
+
     return new SystemTestEnvironmentManager(
         classpath + File.pathSeparator + randoopJarPath,
         workingDir,

@@ -1,0 +1,111 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Polygon",
+      "name": "java.awt.Polygon",
+      "parameterTypes": [
+        "[I",
+        "[I",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "xpoints",
+        "ypoints",
+        "npoints"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NegativeArraySizeException",
+        "description": "throws NegativeArraySizeException if the value of npoints is negative.",
+        "guard": {
+          "condition": "npoints<0",
+          "description": "if the value of npoints is negative."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if xpoints or ypoints is null.",
+        "guard": {
+          "condition": "xpoints==null || ypoints==null",
+          "description": "if xpoints or ypoints is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Polygon",
+      "name": "getBoundingBox",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getBounds())",
+          "description": "the bounds of this Polygon."
+        },
+        "description": "return the bounds of this Polygon.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Polygon",
+      "name": "contains",
+      "parameterTypes": [
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the Polygon contains the Point; false otherwise."
+        },
+        "description": "return true if the Polygon contains the Point; false otherwise.",
+        "guard": {
+          "condition": "target.contains(java.awt.geom.Rectangle2D)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the Polygon contains the Point; false otherwise."
+        },
+        "description": "return true if the Polygon contains the Point; false otherwise.",
+        "guard": {
+          "condition": "target.contains(java.awt.geom.Rectangle2D)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

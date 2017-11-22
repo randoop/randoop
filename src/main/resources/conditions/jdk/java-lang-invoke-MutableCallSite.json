@@ -1,0 +1,114 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MutableCallSite",
+      "name": "java.lang.invoke.MutableCallSite",
+      "parameterTypes": [
+        "java.lang.invoke.MethodType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "type"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the proposed type is null",
+        "guard": {
+          "condition": "type==null",
+          "description": "if the proposed type is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MutableCallSite",
+      "name": "java.lang.invoke.MutableCallSite",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the proposed target is null",
+        "guard": {
+          "condition": "target==null",
+          "description": "if the proposed target is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MutableCallSite",
+      "name": "setTarget",
+      "parameterTypes": [
+        "java.lang.invoke.MethodHandle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newTarget"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the proposed new target is null",
+        "guard": {
+          "condition": "newTarget==null",
+          "description": "if the proposed new target is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MutableCallSite",
+      "name": "syncAll",
+      "parameterTypes": [
+        "[Ljava.lang.invoke.MutableCallSite;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "sites"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the sites array reference is null or the array contains a null",
+        "guard": {
+          "condition": "sites==null",
+          "description": "if the sites array reference is null or the array contains a null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

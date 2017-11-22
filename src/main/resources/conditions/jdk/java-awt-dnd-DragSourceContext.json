@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DragSourceContext",
+      "name": "java.awt.dnd.DragSourceContext",
+      "parameterTypes": [
+        "java.awt.dnd.peer.DragSourceContextPeer",
+        "java.awt.dnd.DragGestureEvent",
+        "java.awt.Cursor",
+        "java.awt.Image",
+        "java.awt.Point",
+        "java.awt.datatransfer.Transferable",
+        "java.awt.dnd.DragSourceListener"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dscp",
+        "trigger",
+        "dragCursor",
+        "dragImage",
+        "offset",
+        "t",
+        "dsl"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the Component associated with the trigger event is null.",
+        "guard": {
+          "condition": "t==null",
+          "description": "if the Component associated with the trigger event is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the DragSource for the trigger event is null.",
+        "guard": {
+          "condition": "t==null",
+          "description": "if the DragSource for the trigger event is null."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dscp, trigger, or t are null, or if dragImage is non-null and offset is null",
+        "guard": {
+          "condition": "dscp==null || t==null || dragImage!=null || offset==null && offset==null",
+          "description": "if dscp, trigger, or t are null, or if dragImage is non-null and offset is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

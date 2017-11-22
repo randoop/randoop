@@ -1,0 +1,406 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "compare",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o1",
+        "o2"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if an argument is null and this comparator does not permit null arguments",
+        "guard": {
+          "condition": "o1==null",
+          "description": "if an argument is null and this comparator does not permit null arguments"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "thenComparing",
+      "parameterTypes": [
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "other"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null.",
+        "guard": {
+          "condition": "other==null",
+          "description": "if the argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "thenComparing",
+      "parameterTypes": [
+        "java.util.function.Function",
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyExtractor",
+        "keyComparator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either argument is null.",
+        "guard": {
+          "condition": "keyExtractor==null || keyComparator==null",
+          "description": "if either argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "thenComparing",
+      "parameterTypes": [
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyExtractor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null.",
+        "guard": {
+          "condition": "keyExtractor==null",
+          "description": "if the argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "thenComparingInt",
+      "parameterTypes": [
+        "java.util.function.ToIntFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyExtractor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null.",
+        "guard": {
+          "condition": "keyExtractor==null",
+          "description": "if the argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "thenComparingLong",
+      "parameterTypes": [
+        "java.util.function.ToLongFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyExtractor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null.",
+        "guard": {
+          "condition": "keyExtractor==null",
+          "description": "if the argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "thenComparingDouble",
+      "parameterTypes": [
+        "java.util.function.ToDoubleFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyExtractor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null.",
+        "guard": {
+          "condition": "keyExtractor==null",
+          "description": "if the argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "nullsFirst",
+      "parameterTypes": [
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comparator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result!=null",
+          "description": "a comparator that considers null to be less than non-null, and compares non-null objects with the supplied Comparator."
+        },
+        "description": "return a comparator that considers null to be less than non-null, and compares non-null objects with the supplied Comparator.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "nullsLast",
+      "parameterTypes": [
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comparator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result!=null",
+          "description": "a comparator that considers null to be greater than non-null, and compares non-null objects with the supplied Comparator."
+        },
+        "description": "return a comparator that considers null to be greater than non-null, and compares non-null objects with the supplied Comparator.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "comparing",
+      "parameterTypes": [
+        "java.util.function.Function",
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyExtractor",
+        "keyComparator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if either argument is null",
+        "guard": {
+          "condition": "keyExtractor==null || keyComparator==null",
+          "description": "if either argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "comparing",
+      "parameterTypes": [
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyExtractor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "keyExtractor==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "comparingInt",
+      "parameterTypes": [
+        "java.util.function.ToIntFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyExtractor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "keyExtractor==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "comparingLong",
+      "parameterTypes": [
+        "java.util.function.ToLongFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyExtractor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "keyExtractor==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Comparator",
+      "name": "comparingDouble",
+      "parameterTypes": [
+        "java.util.function.ToDoubleFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyExtractor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the argument is null",
+        "guard": {
+          "condition": "keyExtractor==null",
+          "description": "if the argument is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

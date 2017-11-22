@@ -1,0 +1,140 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.LookAndFeel",
+      "name": "uninstallBorder",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.LookAndFeel",
+      "name": "installProperty",
+      "parameterTypes": [
+        "javax.swing.JComponent",
+        "java.lang.String",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "propertyName",
+        "propertyValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the property value has not been set by the developer and the type does not match the property's type",
+        "guard": {
+          "condition": "(propertyValue!=null) == false",
+          "description": "if the property value has not been set by the developer and the type does not match the property's type"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if c is null, or the named property has not been set by the developer and propertyValue is null",
+        "guard": {
+          "condition": "c==null || propertyValue==null || (propertyValue!=null) == false && propertyValue==null",
+          "description": "if c is null, or the named property has not been set by the developer and propertyValue is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.LookAndFeel",
+      "name": "makeKeyBindings",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "keyBindingList"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if keyBindingList is null",
+        "guard": {
+          "condition": "keyBindingList==null",
+          "description": "if keyBindingList is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(keyBindingList)",
+          "description": "an array of KeyBindings"
+        },
+        "description": "return an array of KeyBindings",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.LookAndFeel",
+      "name": "makeComponentInputMap",
+      "parameterTypes": [
+        "javax.swing.JComponent",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "keys"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if c is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if c is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

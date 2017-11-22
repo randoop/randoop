@@ -1,0 +1,329 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Dialog",
+      "name": "java.awt.Dialog",
+      "parameterTypes": [
+        "java.awt.Window"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "owner"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the owner is not an instance of Dialog or Frame",
+        "guard": {
+          "condition": "(owner instanceof Dialog) == false",
+          "description": "if the owner is not an instance of Dialog or Frame"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the owner of the dialog. The owner must be an instance of Dialog, Frame, any of their descendents or null",
+        "guard": {
+          "condition": "owner instanceof Dialog",
+          "description": "the owner of the dialog. The owner must be an instance of Dialog, Frame, any of their descendents or null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Dialog",
+      "name": "java.awt.Dialog",
+      "parameterTypes": [
+        "java.awt.Window",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "owner",
+        "title"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the owner is not an instance of Dialog or Frame",
+        "guard": {
+          "condition": "(owner instanceof Dialog) == false",
+          "description": "if the owner is not an instance of Dialog or Frame"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the owner of the dialog. The owner must be an instance of Dialog, Frame, any of their descendents or null",
+        "guard": {
+          "condition": "owner instanceof Dialog",
+          "description": "the owner of the dialog. The owner must be an instance of Dialog, Frame, any of their descendents or null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Dialog",
+      "name": "java.awt.Dialog",
+      "parameterTypes": [
+        "java.awt.Window",
+        "java.awt.Dialog$ModalityType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "owner",
+        "modalityType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the owner is not an instance of Dialog or Frame",
+        "guard": {
+          "condition": "(owner instanceof Dialog) == false",
+          "description": "if the owner is not an instance of Dialog or Frame"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the owner of the dialog. The owner must be an instance of Dialog, Frame, any of their descendents or null",
+        "guard": {
+          "condition": "owner instanceof Dialog",
+          "description": "the owner of the dialog. The owner must be an instance of Dialog, Frame, any of their descendents or null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Dialog",
+      "name": "java.awt.Dialog",
+      "parameterTypes": [
+        "java.awt.Window",
+        "java.lang.String",
+        "java.awt.Dialog$ModalityType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "owner",
+        "title",
+        "modalityType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the owner is not an instance of Dialog or Frame",
+        "guard": {
+          "condition": "(owner instanceof Dialog) == false",
+          "description": "if the owner is not an instance of Dialog or Frame"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the owner of the dialog. The owner must be an instance of Dialog, Frame, any of their descendents or null",
+        "guard": {
+          "condition": "owner instanceof Dialog",
+          "description": "the owner of the dialog. The owner must be an instance of Dialog, Frame, any of their descendents or null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Dialog",
+      "name": "java.awt.Dialog",
+      "parameterTypes": [
+        "java.awt.Window",
+        "java.lang.String",
+        "java.awt.Dialog$ModalityType",
+        "java.awt.GraphicsConfiguration"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "owner",
+        "title",
+        "modalityType",
+        "gc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the owner is not an instance of Dialog or Frame",
+        "guard": {
+          "condition": "(owner instanceof Dialog) == false",
+          "description": "if the owner is not an instance of Dialog or Frame"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the owner of the dialog. The owner must be an instance of Dialog, Frame, any of their descendents or null",
+        "guard": {
+          "condition": "owner instanceof Dialog",
+          "description": "the owner of the dialog. The owner must be an instance of Dialog, Frame, any of their descendents or null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Dialog",
+      "name": "getModalityType",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "modality type of this dialog"
+        },
+        "description": "return modality type of this dialog",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Dialog",
+      "name": "getTitle",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "the title of this dialog window. The title may be null."
+        },
+        "description": "return the title of this dialog window. The title may be null.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Dialog",
+      "name": "setVisible",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "if true, makes the Dialog visible, otherwise hides the Dialog. If the dialog and/or its owner are not yet displayable, both are made displayable. The dialog will be validated prior to being made visible. If false, hides the Dialog and then causes setVisible(true) to return if it is currently blocked. Notes for modal dialogs. setVisible(true): If the dialog is not already visible, this call will not return until the dialog is hidden by calling setVisible(false) or dispose. setVisible(false): Hides the dialog and then returns on setVisible(true) if it is currently blocked. It is OK to call this method from the event dispatching thread because the toolkit ensures that other events are not blocked while this method is blocked.",
+        "guard": {
+          "condition": "(target.isVisible()) == false",
+          "description": "if true, makes the Dialog visible, otherwise hides the Dialog. If the dialog and/or its owner are not yet displayable, both are made displayable. The dialog will be validated prior to being made visible. If false, hides the Dialog and then causes setVisible(true) to return if it is currently blocked. Notes for modal dialogs. setVisible(true): If the dialog is not already visible, this call will not return until the dialog is hidden by calling setVisible(false) or dispose. setVisible(false): Hides the dialog and then returns on setVisible(true) if it is currently blocked. It is OK to call this method from the event dispatching thread because the toolkit ensures that other events are not blocked while this method is blocked."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Dialog",
+      "name": "setUndecorated",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "undecorated"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if the dialog is displayable",
+        "guard": {
+          "condition": "target.isDisplayable()",
+          "description": "if the dialog is displayable"
+        }
+      },
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if undecorated is false, and this dialog does not have the default shape",
+        "guard": {
+          "condition": "undecorated==false",
+          "description": "if undecorated is false, and this dialog does not have the default shape"
+        }
+      },
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if undecorated is false, and this dialog opacity is less than 1.0f",
+        "guard": {
+          "condition": "undecorated==false && target<1.0",
+          "description": "if undecorated is false, and this dialog opacity is less than 1.0f"
+        }
+      },
+      {
+        "exception": "java.awt.IllegalComponentStateException",
+        "description": "throws IllegalComponentStateException if undecorated is false, and the alpha value of this dialog background color is less than 1.0f",
+        "guard": {
+          "condition": "undecorated==false",
+          "description": "if undecorated is false, and the alpha value of this dialog background color is less than 1.0f"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]
