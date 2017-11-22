@@ -220,7 +220,8 @@ public class ExecutableSequence {
    * @param gen the check generator for tests
    */
   public void execute(ExecutionVisitor visitor, TestCheckGenerator gen) {
-    execute(visitor, gen, true);
+    // execute(visitor, gen, true);
+    execute(visitor, gen, false);
   }
 
   /**
