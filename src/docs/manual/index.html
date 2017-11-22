@@ -1207,13 +1207,13 @@ To use it:
 <ul>
   <li>When running Randoop, pass the following command-line options to <code>java</code>:
 <pre>
-    -Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar
+-Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar
 </pre>
   </li>
   <li>When running the generated tests, add the file <code>replacecall-3.1.5.jar</code> to the boot class path,
     and pass the same command-line options to <code>java</code>:
 <pre>
-    -Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar
+-Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar
 </pre>
 </li>
 </ul>
@@ -1260,7 +1260,7 @@ worker.org.gradle.
 and run the agent with the <code>--dont-transform</code> command-line option with the filename as the argument:
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--dont-transform=gradle-exclusions.txt
+-javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--dont-transform=gradle-exclusions.txt
 </pre>
 
 <p>
@@ -1274,7 +1274,7 @@ For a different environment, you can determine what classes are being affected b
   <code>--debug</code> flag
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--debug
+-javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--debug
 </pre>
 <p>
 and looking in the file <code>transform-log.txt</code> to see which methods are being transformed.
@@ -1302,7 +1302,7 @@ The replacecall agent is able to use the implementation classes to discover repl
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--replacement-file=replacement-file.txt
+-javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--replacement-file=replacement-file.txt
 </pre>
 
 <p>
@@ -1431,7 +1431,7 @@ exception escaping the method as the rep invariant being violated.
   option for java
 </p>
 <pre><code>
-  -javaagent:$(RANDOOP_PATH)/covered-class-3.1.5.jar
+-javaagent:$(RANDOOP_PATH)/covered-class-3.1.5.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
