@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicRadioButtonUI",
+      "name": "createUI",
+      "parameterTypes": [
+        "javax.swing.JComponent"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "an instance of BasicRadioButtonUI"
+        },
+        "description": "return an instance of BasicRadioButtonUI",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

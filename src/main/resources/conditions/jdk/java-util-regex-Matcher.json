@@ -1,0 +1,146 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.regex.Matcher",
+      "name": "toMatchResult",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a MatchResult with the state of this matcher"
+        },
+        "description": "return a MatchResult with the state of this matcher",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.regex.Matcher",
+      "name": "usePattern",
+      "parameterTypes": [
+        "java.util.regex.Pattern"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newPattern"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If newPattern is null",
+        "guard": {
+          "condition": "newPattern==null",
+          "description": "If newPattern is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.regex.Matcher",
+      "name": "find",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException If start is less than zero or if start is greater than the length of the input sequence.",
+        "guard": {
+          "condition": "start<0",
+          "description": "If start is less than zero or if start is greater than the length of the input sequence."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.regex.Matcher",
+      "name": "quoteReplacement",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(s)",
+          "description": "A literal string replacement"
+        },
+        "description": "return A literal string replacement",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.regex.Matcher",
+      "name": "region",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "end"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException If start or end is less than zero, if start is greater than the length of the input sequence, if end is greater than the length of the input sequence, or if start is greater than end.",
+        "guard": {
+          "condition": "start<0 || end<0 || start>target",
+          "description": "If start or end is less than zero, if start is greater than the length of the input sequence, if end is greater than the length of the input sequence, or if start is greater than end."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

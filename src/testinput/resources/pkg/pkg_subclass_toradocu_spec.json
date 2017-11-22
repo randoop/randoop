@@ -1,0 +1,83 @@
+[
+  {
+    "operation": {
+      "classname": "pkg.SubClass",
+      "name": "methodWithOverride",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "count"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the object count, must be positive",
+        "guard": {
+          "condition": "count>0",
+          "description": "the object count, must be positive"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "pkg.SubClass",
+      "name": "methodWithImplicitOverride",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "count"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the object count, must be positive",
+        "guard": {
+          "condition": "count>0",
+          "description": "the object count, must be positive"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "pkg.SuperClass",
+      "name": "methodWithoutOverride",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "count"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the something count, must be positive",
+        "guard": {
+          "condition": "count>0",
+          "description": "the something count, must be positive"
+        }
+      }
+    ]
+  }
+]

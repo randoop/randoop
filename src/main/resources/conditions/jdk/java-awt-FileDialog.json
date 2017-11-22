@@ -1,0 +1,119 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.FileDialog",
+      "name": "java.awt.FileDialog",
+      "parameterTypes": [
+        "java.awt.Dialog"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if parent is null; this exception is always thrown when GraphicsEnvironment.isHeadless returns true",
+        "guard": {
+          "condition": "parent==null",
+          "description": "if parent is null; this exception is always thrown when GraphicsEnvironment.isHeadless returns true"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.FileDialog",
+      "name": "java.awt.FileDialog",
+      "parameterTypes": [
+        "java.awt.Dialog",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "title"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if parent is null; this exception is always thrown when GraphicsEnvironment.isHeadless returns true",
+        "guard": {
+          "condition": "parent==null",
+          "description": "if parent is null; this exception is always thrown when GraphicsEnvironment.isHeadless returns true"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.FileDialog",
+      "name": "java.awt.FileDialog",
+      "parameterTypes": [
+        "java.awt.Dialog",
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "title",
+        "mode"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if parent is null; this exception is always thrown when GraphicsEnvironment.isHeadless returns true",
+        "guard": {
+          "condition": "parent==null",
+          "description": "if parent is null; this exception is always thrown when GraphicsEnvironment.isHeadless returns true"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.FileDialog",
+      "name": "getDirectory",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the (potentially null or invalid) directory of this FileDialog"
+        },
+        "description": "return the (potentially null or invalid) directory of this FileDialog",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

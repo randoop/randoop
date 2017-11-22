@@ -15,7 +15,7 @@ import randoop.util.TimeoutExceededException;
  * occurrences of {@code OutOfMemoryError} or {@code StackOverflowError} are always treated as
  * invalid.
  */
-public class ValidityCheckingGenerator implements TestCheckGenerator {
+public class ValidityCheckingGenerator extends TestCheckGenerator {
 
   /** The predicate to determine whether a test sequence is valid */
   private ExceptionPredicate isInvalid;

@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import randoop.BugInRandoopException;
 import randoop.Globals;
+import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
@@ -126,6 +127,7 @@ public class OperationModel {
    * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
+   * @param operationCollection the collection of operation specifications
    * @return the {@link OperationModel} constructed with the given arguments
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
@@ -138,7 +140,8 @@ public class OperationModel {
       Set<String> coveredClassesGoalNames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList)
+      List<String> literalsFileList,
+      SpecificationCollection operationCollection)
       throws SignatureParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
@@ -157,12 +160,90 @@ public class OperationModel {
     OmitMethodsPredicate omitPredicate = new OmitMethodsPredicate(omitmethods);
 
     model.addOperationsFromClasses(
-        model.classTypes, visibility, reflectionPredicate, omitPredicate);
+        model.classTypes, visibility, reflectionPredicate, omitPredicate, operationCollection);
     model.addOperationsUsingSignatures(
         methodSignatures, visibility, reflectionPredicate, omitPredicate);
     model.addObjectConstructor();
 
     return model;
+  }
+
+  /**
+   * Factory method to construct an operation model for a particular set of classes without an
+   * omitmethods list or behavior specifications.
+   *
+   * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
+   *     classes and class members
+   * @param reflectionPredicate the reflection predicate to determine which classes and class
+   *     members are used
+   * @param classnames the names of classes under test
+   * @param coveredClassnames the names of classes to be tested by exercised heuristic
+   * @param methodSignatures the signatures of methods to be added to the model
+   * @param errorHandler the handler for bad file name errors
+   * @param literalsFileList the list of literals file names
+   * @return the operation model for the parameters
+   * @throws SignatureParseException if a method signature is ill-formed
+   * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   */
+  static OperationModel createModel(
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      Set<String> classnames,
+      Set<String> coveredClassnames,
+      Set<String> methodSignatures,
+      ClassNameErrorHandler errorHandler,
+      List<String> literalsFileList)
+      throws NoSuchMethodException, SignatureParseException {
+    return createModel(
+        visibility,
+        reflectionPredicate,
+        new ArrayList<Pattern>(),
+        classnames,
+        coveredClassnames,
+        methodSignatures,
+        errorHandler,
+        literalsFileList,
+        null);
+  }
+
+  /**
+   * Factory method to construct an operation model for a particular set of classes without behavior
+   * specifications.
+   *
+   * @param visibility the {@link VisibilityPredicate} to test accessibility of classes and class
+   *     members
+   * @param reflectionPredicate the reflection predicate to determine which classes and class
+   *     members are used
+   * @param omitmethods the patterns for operations that should be omitted
+   * @param classnames the names of classes under test
+   * @param coveredClassnames the names of classes to be tested by covered class heuristic
+   * @param methodSignatures the signatures of methods to be added to the model
+   * @param errorHandler the handler for bad file name errors
+   * @param literalsFileList the list of literals file names
+   * @return the {@link OperationModel} constructed with the given arguments
+   * @throws SignatureParseException if a method signature is ill-formed
+   * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   */
+  public static OperationModel createModel(
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      List<Pattern> omitmethods,
+      Set<String> classnames,
+      Set<String> coveredClassnames,
+      Set<String> methodSignatures,
+      ClassNameErrorHandler errorHandler,
+      List<String> literalsFileList)
+      throws NoSuchMethodException, SignatureParseException {
+    return createModel(
+        visibility,
+        reflectionPredicate,
+        omitmethods,
+        classnames,
+        coveredClassnames,
+        methodSignatures,
+        errorHandler,
+        literalsFileList,
+        null);
   }
 
   /**
@@ -455,16 +536,20 @@ public class OperationModel {
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the predicate for omitting operations
+   * @param operationSpecifications the collection of {@link
+   *     randoop.condition.specification.OperationSpecification}
    */
   private void addOperationsFromClasses(
       Set<ClassOrInterfaceType> classTypes,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate) {
+      OmitMethodsPredicate omitPredicate,
+      SpecificationCollection operationSpecifications) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : classTypes) {
       OperationExtractor extractor =
-          new OperationExtractor(classType, reflectionPredicate, omitPredicate, visibility);
+          new OperationExtractor(
+              classType, reflectionPredicate, omitPredicate, visibility, operationSpecifications);
       mgr.apply(extractor, classType.getRuntimeClass());
       operations.addAll(extractor.getOperations());
     }

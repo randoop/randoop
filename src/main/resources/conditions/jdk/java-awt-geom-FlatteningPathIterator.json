@@ -1,0 +1,34 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.geom.FlatteningPathIterator",
+      "name": "java.awt.geom.FlatteningPathIterator",
+      "parameterTypes": [
+        "java.awt.geom.PathIterator",
+        "double",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "flatness",
+        "limit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if flatness or limit is less than zero",
+        "guard": {
+          "condition": "flatness<0 || limit<0",
+          "description": "if flatness or limit is less than zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,31 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.Timer",
+      "name": "javax.swing.Timer",
+      "parameterTypes": [
+        "int",
+        "java.awt.event.ActionListener"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "delay",
+        "listener"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "an initial listener; can be null",
+        "guard": {
+          "condition": "listener==null",
+          "description": "an initial listener; can be null"
+        }
+      }
+    ]
+  }
+]

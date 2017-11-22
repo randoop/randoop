@@ -1,0 +1,604 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "get",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "getBoolean",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(java.lang.Object))",
+          "description": "the value of the boolean field"
+        },
+        "description": "return the value of the boolean field",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "getByte",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(java.lang.Object))",
+          "description": "the value of the byte field"
+        },
+        "description": "return the value of the byte field",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "getChar",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "getShort",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "getInt",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "getLong",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "getFloat",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "getDouble",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "set",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "setBoolean",
+      "parameterTypes": [
+        "java.lang.Object",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "z"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "setByte",
+      "parameterTypes": [
+        "java.lang.Object",
+        "byte"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "setChar",
+      "parameterTypes": [
+        "java.lang.Object",
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "setShort",
+      "parameterTypes": [
+        "java.lang.Object",
+        "short"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "setInt",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "i"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "setLong",
+      "parameterTypes": [
+        "java.lang.Object",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "l"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "setFloat",
+      "parameterTypes": [
+        "java.lang.Object",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "setDouble",
+      "parameterTypes": [
+        "java.lang.Object",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "d"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified object is null and the field is an instance field.",
+        "guard": {
+          "condition": "obj==null",
+          "description": "if the specified object is null and the field is an instance field."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "getAnnotation",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.Field",
+      "name": "getAnnotationsByType",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "annotationClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the given annotation class is null",
+        "guard": {
+          "condition": "annotationClass==null",
+          "description": "if the given annotation class is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

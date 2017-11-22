@@ -297,7 +297,6 @@ public class InstantiationTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              null,
               names,
               coveredClassnames,
               methodSignatures,

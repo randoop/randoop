@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.management.MemoryPoolMXBean",
+      "name": "setUsageThreshold",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "threshold"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if threshold is negative or greater than the maximum amount of memory for this memory pool if defined.",
+        "guard": {
+          "condition": "threshold<0",
+          "description": "if threshold is negative or greater than the maximum amount of memory for this memory pool if defined."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.management.MemoryPoolMXBean",
+      "name": "setCollectionUsageThreshold",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "threshold"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if threshold is negative or greater than the maximum amount of memory for this memory pool if defined.",
+        "guard": {
+          "condition": "threshold<0",
+          "description": "if threshold is negative or greater than the maximum amount of memory for this memory pool if defined."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

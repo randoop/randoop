@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicSplitPaneUI",
+      "name": "getKeyboardMoveIncrement",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "increment via keyboard methods."
+        },
+        "description": "return increment via keyboard methods.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

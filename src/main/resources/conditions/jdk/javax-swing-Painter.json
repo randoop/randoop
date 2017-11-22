@@ -1,0 +1,35 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.Painter",
+      "name": "paint",
+      "parameterTypes": [
+        "java.awt.Graphics2D",
+        "java.lang.Object",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "g",
+        "object",
+        "width",
+        "height"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The Graphics2D to render to. This must not be null.",
+        "guard": {
+          "condition": "(g==null) == false",
+          "description": "The Graphics2D to render to. This must not be null."
+        }
+      }
+    ]
+  }
+]

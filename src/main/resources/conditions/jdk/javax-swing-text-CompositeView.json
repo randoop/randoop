@@ -1,0 +1,490 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "getView",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "n"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(n)",
+          "description": "the view at index n"
+        },
+        "description": "return the view at index n",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "getChildAllocation",
+      "parameterTypes": [
+        "int",
+        "java.awt.Shape"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index",
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the allocation to the child"
+        },
+        "description": "return the allocation to the child",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "modelToView",
+      "parameterTypes": [
+        "int",
+        "java.awt.Shape",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position to convert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position to convert >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "viewToModel",
+      "parameterTypes": [
+        "float",
+        "float",
+        "java.awt.Shape",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "a",
+        "bias"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0",
+          "description": "the location within the model that best represents the given point in the view >= 0"
+        },
+        "description": "return the location within the model that best represents the given point in the view >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "getViewIndex",
+      "parameterTypes": [
+        "int",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "isBefore",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "alloc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X coordinate >= 0"
+        }
+      },
+      {
+        "description": "the Y coordinate >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the Y coordinate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "isAfter",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "alloc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X coordinate >= 0"
+        }
+      },
+      {
+        "description": "the Y coordinate >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the Y coordinate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "getViewAtPoint",
+      "parameterTypes": [
+        "int",
+        "int",
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "alloc"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0",
+        "guard": {
+          "condition": "x>=0",
+          "description": "the X coordinate >= 0"
+        }
+      },
+      {
+        "description": "the Y coordinate >= 0",
+        "guard": {
+          "condition": "y>=0",
+          "description": "the Y coordinate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "getViewAtPosition",
+      "parameterTypes": [
+        "int",
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "getViewIndexAtPosition",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "setInsets",
+      "parameterTypes": [
+        "short",
+        "short",
+        "short",
+        "short"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "top",
+        "left",
+        "bottom",
+        "right"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the top inset >= 0",
+        "guard": {
+          "condition": "top>=0",
+          "description": "the top inset >= 0"
+        }
+      },
+      {
+        "description": "the left inset >= 0",
+        "guard": {
+          "condition": "left>=0",
+          "description": "the left inset >= 0"
+        }
+      },
+      {
+        "description": "the bottom inset >= 0",
+        "guard": {
+          "condition": "bottom>=0",
+          "description": "the bottom inset >= 0"
+        }
+      },
+      {
+        "description": "the right inset >= 0",
+        "guard": {
+          "condition": "right>=0",
+          "description": "the right inset >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "getNextNorthSouthVisualPositionFrom",
+      "parameterTypes": [
+        "int",
+        "javax.swing.text.Position$Bias",
+        "java.awt.Shape",
+        "int",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "b",
+        "a",
+        "direction",
+        "biasRet"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position to convert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position to convert >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "getNextEastWestVisualPositionFrom",
+      "parameterTypes": [
+        "int",
+        "javax.swing.text.Position$Bias",
+        "java.awt.Shape",
+        "int",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "b",
+        "a",
+        "direction",
+        "biasRet"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position to convert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position to convert >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.CompositeView",
+      "name": "flipEastAndWestAtEnds",
+      "parameterTypes": [
+        "int",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "position",
+        "bias"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "false"
+        },
+        "description": "return false",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

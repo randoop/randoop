@@ -1,0 +1,35 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.table.AbstractTableModel",
+      "name": "isCellEditable",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rowIndex",
+        "columnIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "false"
+        },
+        "description": "return false",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

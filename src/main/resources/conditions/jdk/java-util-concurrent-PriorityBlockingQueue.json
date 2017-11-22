@@ -1,0 +1,326 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.PriorityBlockingQueue",
+      "name": "java.util.concurrent.PriorityBlockingQueue",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialCapacity"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if initialCapacity is less than 1",
+        "guard": {
+          "condition": "initialCapacity<1",
+          "description": "if initialCapacity is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.PriorityBlockingQueue",
+      "name": "java.util.concurrent.PriorityBlockingQueue",
+      "parameterTypes": [
+        "int",
+        "java.util.Comparator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "initialCapacity",
+        "comparator"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if initialCapacity is less than 1",
+        "guard": {
+          "condition": "initialCapacity<1",
+          "description": "if initialCapacity is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.PriorityBlockingQueue",
+      "name": "java.util.concurrent.PriorityBlockingQueue",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection or any of its elements are null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection or any of its elements are null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.PriorityBlockingQueue",
+      "name": "add",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "true (as specified by Collection.add(E))"
+        },
+        "description": "return true (as specified by Collection.add(E))",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.PriorityBlockingQueue",
+      "name": "offer",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "true (as specified by Queue.offer(E))"
+        },
+        "description": "return true (as specified by Queue.offer(E))",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.PriorityBlockingQueue",
+      "name": "put",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.PriorityBlockingQueue",
+      "name": "offer",
+      "parameterTypes": [
+        "java.lang.Object",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e",
+        "timeout",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "true (as specified by BlockingQueue.offer)"
+        },
+        "description": "return true (as specified by BlockingQueue.offer)",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.PriorityBlockingQueue",
+      "name": "drainTo",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.PriorityBlockingQueue",
+      "name": "drainTo",
+      "parameterTypes": [
+        "java.util.Collection",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c",
+        "maxElements"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.PriorityBlockingQueue",
+      "name": "toArray",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array is null",
+        "guard": {
+          "condition": "a==null",
+          "description": "if the specified array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

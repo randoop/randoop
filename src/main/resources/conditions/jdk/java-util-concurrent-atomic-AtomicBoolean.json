@@ -1,0 +1,60 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicBoolean",
+      "name": "getAndSet",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicBoolean",
+      "name": "toString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the String representation of the current value"
+        },
+        "description": "return the String representation of the current value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

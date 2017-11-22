@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.Reader",
+      "name": "read",
+      "parameterTypes": [
+        "java.nio.CharBuffer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "target"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if target is null",
+        "guard": {
+          "condition": "target==null",
+          "description": "if target is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.Reader",
+      "name": "skip",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "n"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If n is negative.",
+        "guard": {
+          "condition": "n<0",
+          "description": "If n is negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

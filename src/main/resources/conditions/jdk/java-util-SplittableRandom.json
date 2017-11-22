@@ -1,0 +1,565 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "internalNextLong",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "origin",
+        "bound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the least value, unless greater than bound",
+        "guard": {
+          "condition": "origin>bound",
+          "description": "the least value, unless greater than bound"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "internalNextInt",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "origin",
+        "bound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the least value, unless greater than bound",
+        "guard": {
+          "condition": "origin>bound",
+          "description": "the least value, unless greater than bound"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "internalNextDouble",
+      "parameterTypes": [
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "origin",
+        "bound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the least value, unless greater than bound",
+        "guard": {
+          "condition": "origin>bound",
+          "description": "the least value, unless greater than bound"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "nextInt",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bound is not positive",
+        "guard": {
+          "condition": "(bound>0) == false",
+          "description": "if bound is not positive"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the upper bound (exclusive). Must be positive.",
+        "guard": {
+          "condition": "bound>0",
+          "description": "the upper bound (exclusive). Must be positive."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "nextInt",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "origin",
+        "bound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if origin is greater than or equal to bound",
+        "guard": {
+          "condition": "origin>=bound",
+          "description": "if origin is greater than or equal to bound"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "nextLong",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bound is not positive",
+        "guard": {
+          "condition": "(bound>0) == false",
+          "description": "if bound is not positive"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the upper bound (exclusive). Must be positive.",
+        "guard": {
+          "condition": "bound>0",
+          "description": "the upper bound (exclusive). Must be positive."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "nextLong",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "origin",
+        "bound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if origin is greater than or equal to bound",
+        "guard": {
+          "condition": "origin>=bound",
+          "description": "if origin is greater than or equal to bound"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "nextDouble",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bound is not positive",
+        "guard": {
+          "condition": "(bound>0) == false",
+          "description": "if bound is not positive"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the upper bound (exclusive). Must be positive.",
+        "guard": {
+          "condition": "bound>0",
+          "description": "the upper bound (exclusive). Must be positive."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "nextDouble",
+      "parameterTypes": [
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "origin",
+        "bound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if origin is greater than or equal to bound",
+        "guard": {
+          "condition": "origin>=bound",
+          "description": "if origin is greater than or equal to bound"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "ints",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "streamSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if streamSize is less than zero",
+        "guard": {
+          "condition": "streamSize<0",
+          "description": "if streamSize is less than zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "ints",
+      "parameterTypes": [
+        "long",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "streamSize",
+        "randomNumberOrigin",
+        "randomNumberBound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if streamSize is less than zero, or randomNumberOrigin is greater than or equal to randomNumberBound",
+        "guard": {
+          "condition": "streamSize<0",
+          "description": "if streamSize is less than zero, or randomNumberOrigin is greater than or equal to randomNumberBound"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "ints",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "randomNumberOrigin",
+        "randomNumberBound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if randomNumberOrigin is greater than or equal to randomNumberBound",
+        "guard": {
+          "condition": "randomNumberOrigin>=randomNumberBound",
+          "description": "if randomNumberOrigin is greater than or equal to randomNumberBound"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "longs",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "streamSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if streamSize is less than zero",
+        "guard": {
+          "condition": "streamSize<0",
+          "description": "if streamSize is less than zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "longs",
+      "parameterTypes": [
+        "long",
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "streamSize",
+        "randomNumberOrigin",
+        "randomNumberBound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if streamSize is less than zero, or randomNumberOrigin is greater than or equal to randomNumberBound",
+        "guard": {
+          "condition": "streamSize<0",
+          "description": "if streamSize is less than zero, or randomNumberOrigin is greater than or equal to randomNumberBound"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "longs",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "randomNumberOrigin",
+        "randomNumberBound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if randomNumberOrigin is greater than or equal to randomNumberBound",
+        "guard": {
+          "condition": "randomNumberOrigin>=randomNumberBound",
+          "description": "if randomNumberOrigin is greater than or equal to randomNumberBound"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "doubles",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "streamSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if streamSize is less than zero",
+        "guard": {
+          "condition": "streamSize<0",
+          "description": "if streamSize is less than zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "doubles",
+      "parameterTypes": [
+        "long",
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "streamSize",
+        "randomNumberOrigin",
+        "randomNumberBound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if streamSize is less than zero",
+        "guard": {
+          "condition": "streamSize<0",
+          "description": "if streamSize is less than zero"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if randomNumberOrigin is greater than or equal to randomNumberBound",
+        "guard": {
+          "condition": "randomNumberOrigin>=randomNumberBound",
+          "description": "if randomNumberOrigin is greater than or equal to randomNumberBound"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.SplittableRandom",
+      "name": "doubles",
+      "parameterTypes": [
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "randomNumberOrigin",
+        "randomNumberBound"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if randomNumberOrigin is greater than or equal to randomNumberBound",
+        "guard": {
+          "condition": "randomNumberOrigin>=randomNumberBound",
+          "description": "if randomNumberOrigin is greater than or equal to randomNumberBound"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

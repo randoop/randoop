@@ -1,0 +1,459 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.IndexColorModel",
+      "name": "java.awt.image.IndexColorModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[B",
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bits",
+        "size",
+        "r",
+        "g",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bits is less than 1 or greater than 16",
+        "guard": {
+          "condition": "bits<1 || bits>16",
+          "description": "if bits is less than 1 or greater than 16"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size is less than 1",
+        "guard": {
+          "condition": "size<1",
+          "description": "if size is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.IndexColorModel",
+      "name": "java.awt.image.IndexColorModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[B",
+        "[B",
+        "[B",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bits",
+        "size",
+        "r",
+        "g",
+        "b",
+        "trans"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bits is less than 1 or greater than 16",
+        "guard": {
+          "condition": "bits<1 || bits>16",
+          "description": "if bits is less than 1 or greater than 16"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size is less than 1",
+        "guard": {
+          "condition": "size<1",
+          "description": "if size is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.IndexColorModel",
+      "name": "java.awt.image.IndexColorModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[B",
+        "[B",
+        "[B",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bits",
+        "size",
+        "r",
+        "g",
+        "b",
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bits is less than 1 or greater than 16",
+        "guard": {
+          "condition": "bits<1 || bits>16",
+          "description": "if bits is less than 1 or greater than 16"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size is less than 1",
+        "guard": {
+          "condition": "size<1",
+          "description": "if size is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.IndexColorModel",
+      "name": "java.awt.image.IndexColorModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[B",
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bits",
+        "size",
+        "cmap",
+        "start",
+        "hasalpha"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bits is less than 1 or greater than 16",
+        "guard": {
+          "condition": "bits<1 || bits>16",
+          "description": "if bits is less than 1 or greater than 16"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size is less than 1",
+        "guard": {
+          "condition": "size<1",
+          "description": "if size is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.IndexColorModel",
+      "name": "java.awt.image.IndexColorModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[B",
+        "int",
+        "boolean",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bits",
+        "size",
+        "cmap",
+        "start",
+        "hasalpha",
+        "trans"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bits is less than 1 or greater than 16",
+        "guard": {
+          "condition": "bits<1 || bits>16",
+          "description": "if bits is less than 1 or greater than 16"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size is less than 1",
+        "guard": {
+          "condition": "size<1",
+          "description": "if size is less than 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.IndexColorModel",
+      "name": "java.awt.image.IndexColorModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[I",
+        "int",
+        "boolean",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bits",
+        "size",
+        "cmap",
+        "start",
+        "hasalpha",
+        "trans",
+        "transferType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bits is less than 1 or greater than 16",
+        "guard": {
+          "condition": "bits<1 || bits>16",
+          "description": "if bits is less than 1 or greater than 16"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size is less than 1",
+        "guard": {
+          "condition": "size<1",
+          "description": "if size is less than 1"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if transferType is not one of DataBuffer.TYPE_BYTE or DataBuffer.TYPE_USHORT",
+        "guard": {
+          "condition": "(transferType==1) == false",
+          "description": "if transferType is not one of DataBuffer.TYPE_BYTE or DataBuffer.TYPE_USHORT"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.IndexColorModel",
+      "name": "java.awt.image.IndexColorModel",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[I",
+        "int",
+        "int",
+        "java.math.BigInteger"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "bits",
+        "size",
+        "cmap",
+        "start",
+        "transferType",
+        "validBits"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if bits is less than 1 or greater than 16",
+        "guard": {
+          "condition": "bits<1 || bits>16",
+          "description": "if bits is less than 1 or greater than 16"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if size is less than 1",
+        "guard": {
+          "condition": "size<1",
+          "description": "if size is less than 1"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if transferType is not one of DataBuffer.TYPE_BYTE or DataBuffer.TYPE_USHORT",
+        "guard": {
+          "condition": "(transferType==1) == false",
+          "description": "if transferType is not one of DataBuffer.TYPE_BYTE or DataBuffer.TYPE_USHORT"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.IndexColorModel",
+      "name": "getTransparency",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the transparency of this IndexColorModel"
+        },
+        "description": "return the transparency of this IndexColorModel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.IndexColorModel",
+      "name": "getComponents",
+      "parameterTypes": [
+        "java.lang.Object",
+        "[I",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pixel",
+        "components",
+        "offset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException if transferType is not one of the supported transfer types",
+        "guard": {
+          "condition": "(target.getTransferType()==1) == false",
+          "description": "if transferType is not one of the supported transfer types"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.IndexColorModel",
+      "name": "getDataElements",
+      "parameterTypes": [
+        "[I",
+        "int",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "components",
+        "offset",
+        "pixel"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException if transferType is not one of the supported transfer types",
+        "guard": {
+          "condition": "(target.getTransferType()==1) == false",
+          "description": "if transferType is not one of the supported transfer types"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.IndexColorModel",
+      "name": "createCompatibleSampleModel",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "w",
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if w or h is not greater than 0",
+        "guard": {
+          "condition": "(w>0) == false || (h>0) == false",
+          "description": "if w or h is not greater than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

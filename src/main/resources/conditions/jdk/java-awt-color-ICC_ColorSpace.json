@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.color.ICC_ColorSpace",
+      "name": "getMinValue",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "component"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if component is less than 0 or greater than numComponents - 1.",
+        "guard": {
+          "condition": "component<0 || component>target.getNumComponents()",
+          "description": "if component is less than 0 or greater than numComponents - 1."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.color.ICC_ColorSpace",
+      "name": "getMaxValue",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "component"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if component is less than 0 or greater than numComponents - 1.",
+        "guard": {
+          "condition": "component<0 || component>target.getNumComponents()",
+          "description": "if component is less than 0 or greater than numComponents - 1."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

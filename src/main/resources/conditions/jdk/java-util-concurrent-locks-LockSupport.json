@@ -1,0 +1,42 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.locks.LockSupport",
+      "name": "getBlocker",
+      "parameterTypes": [
+        "java.lang.Thread"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "t"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if argument is null",
+        "guard": {
+          "condition": "t==null",
+          "description": "if argument is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(t)",
+          "description": "the blocker"
+        },
+        "description": "return the blocker",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

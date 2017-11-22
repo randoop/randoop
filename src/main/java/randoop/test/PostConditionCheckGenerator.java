@@ -1,31 +1,33 @@
 package randoop.test;
 
 import java.util.ArrayList;
+import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.condition.Condition;
+import randoop.condition.ExecutableBooleanExpression;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 
 /** Checks the given post-conditions after the last statement of a sequence. */
-public class PostConditionCheckGenerator implements TestCheckGenerator {
+public class PostConditionCheckGenerator extends TestCheckGenerator {
 
-  /** the post-condition */
-  private final Condition postcondition;
+  /** the post-conditions */
+  private final List<ExecutableBooleanExpression> postConditions;
 
   /**
    * Create a {@link TestCheckGenerator} to test the given post-condition.
    *
-   * @param postcondition the post-condition to be tested in generated {@link TestChecks}
+   * @param postConditions the post-condition to be tested in generated {@link TestChecks}
    */
-  public PostConditionCheckGenerator(Condition postcondition) {
-    this.postcondition = postcondition;
+  public PostConditionCheckGenerator(List<ExecutableBooleanExpression> postConditions) {
+    this.postConditions = postConditions;
   }
 
   /**
-   * Tests the post-condition against the values in the given {@link ExecutableSequence}, and if the
-   * condition is not satisfied returns a {@link ErrorRevealingChecks}.
+   * Tests all of the the post-conditions against the values in the given {@link
+   * ExecutableSequence}, and if the condition is not satisfied returns a {@link
+   * ErrorRevealingChecks}.
    *
    * <p>Note that the operation input values passed to the post-condition are the values
    * post-execution.
@@ -47,11 +49,18 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
       if (eseq.sequence.getStatement(finalIndex).getOperation().isStatic()) {
         inputValues = addNullReceiver(inputValues);
       }
-      PostConditionCheck postCheck = new PostConditionCheck(postcondition, inputs);
-      if (!postcondition.check(inputValues)) {
-        return new ErrorRevealingChecks(postCheck);
+
+      List<ExecutableBooleanExpression> failed = new ArrayList<>();
+      for (ExecutableBooleanExpression postCondition : postConditions) {
+        if (!postCondition.check(inputValues)) {
+          failed.add(postCondition);
+        }
+      }
+      eseq.sequence.disableShortForm();
+      if (failed.isEmpty()) {
+        return new RegressionChecks(new PostConditionCheck(postConditions, inputs));
       } else {
-        return new RegressionChecks(postCheck);
+        return new ErrorRevealingChecks(new PostConditionCheck(failed, inputs));
       }
     } else { // if execution was exceptional, return empty checks
       return ErrorRevealingChecks.EMPTY;

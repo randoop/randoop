@@ -1,0 +1,333 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "setDragEnabled",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.awt.HeadlessException",
+        "description": "throws HeadlessException if b is true and GraphicsEnvironment.isHeadless() returns true",
+        "guard": {
+          "condition": "b==true && b==true",
+          "description": "if b is true and GraphicsEnvironment.isHeadless() returns true"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "getDragEnabled",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the dragEnabled property"
+        },
+        "description": "return the value of the dragEnabled property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "getCurrentDirectory",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the current directory"
+        },
+        "description": "return the current directory",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "showOpenDialog",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the parent component of the dialog, can be null; see showDialog for details",
+        "guard": {
+          "condition": "parent==null",
+          "description": "the parent component of the dialog, can be null; see showDialog for details"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "showSaveDialog",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the parent component of the dialog, can be null; see showDialog for details",
+        "guard": {
+          "condition": "parent==null",
+          "description": "the parent component of the dialog, can be null; see showDialog for details"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "showDialog",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "approveButtonText"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the parent component of the dialog; can be null",
+        "guard": {
+          "condition": "parent==null",
+          "description": "the parent component of the dialog; can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "createDialog",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the parent component of the dialog; can be null",
+        "guard": {
+          "condition": "parent==null",
+          "description": "the parent component of the dialog; can be null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "getControlButtonsAreShown",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the controlButtonsAreShown property"
+        },
+        "description": "return the value of the controlButtonsAreShown property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "getApproveButtonMnemonic",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "an integer value for the mnemonic key"
+        },
+        "description": "return an integer value for the mnemonic key",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "isFileHidingEnabled",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the status of the file hiding property"
+        },
+        "description": "return the status of the file hiding property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "getIcon",
+      "parameterTypes": [
+        "java.io.File"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(f)",
+          "description": "the Icon for this file, or type of file"
+        },
+        "description": "return the Icon for this file, or type of file",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JFileChooser",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JFileChooser"
+        },
+        "description": "return a string representation of this JFileChooser",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

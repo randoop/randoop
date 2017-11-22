@@ -1,0 +1,73 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.ButtonGroup",
+      "name": "setSelected",
+      "parameterTypes": [
+        "javax.swing.ButtonModel",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "true if this button is to be selected, otherwise false",
+        "guard": {
+          "condition": "target.isSelected(m)",
+          "description": "true if this button is to be selected, otherwise false"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.ButtonGroup",
+      "name": "isSelected",
+      "parameterTypes": [
+        "javax.swing.ButtonModel"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "m"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the button is selected, otherwise returns false"
+        },
+        "description": "return true if the button is selected, otherwise returns false",
+        "guard": {
+          "condition": "m.isSelected()",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the button is selected, otherwise returns false"
+        },
+        "description": "return true if the button is selected, otherwise returns false",
+        "guard": {
+          "condition": "m.isSelected()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

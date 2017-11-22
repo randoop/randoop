@@ -1,0 +1,101 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.ZoneView",
+      "name": "setMaxZonesLoaded",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mzl"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if mzl is < 1",
+        "guard": {
+          "condition": "mzl<1",
+          "description": "if mzl is < 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the desired maximum number of zones to be actively loaded, must be greater than 0",
+        "guard": {
+          "condition": "mzl>0",
+          "description": "the desired maximum number of zones to be actively loaded, must be greater than 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.ZoneView",
+      "name": "createZone",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p0",
+        "p1"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the start of the desired zone. This should be >= getStartOffset() and < getEndOffset(). This value should also be < p1.",
+        "guard": {
+          "condition": "(p0>=p1) || (target<p0)",
+          "description": "the start of the desired zone. This should be >= getStartOffset() and < getEndOffset(). This value should also be < p1."
+        }
+      },
+      {
+        "description": "the end of the desired zone. This should be > getStartOffset() and <= getEndOffset(). This value should also be > p0.",
+        "guard": {
+          "condition": "(p0>p1) || (target>p0)",
+          "description": "the end of the desired zone. This should be > getStartOffset() and <= getEndOffset(). This value should also be > p0."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.ZoneView",
+      "name": "getViewIndexAtPosition",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  }
+]

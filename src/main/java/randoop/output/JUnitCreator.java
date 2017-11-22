@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import randoop.BugInRandoopException;
 import randoop.Globals;
@@ -104,6 +105,7 @@ public class JUnitCreator {
       BlockStmt afterAllBody,
       BlockStmt beforeEachBody,
       BlockStmt afterEachBody) {
+    assert !Objects.equals(junit_package_name, "");
     JUnitCreator junitCreator = new JUnitCreator(junit_package_name);
     if (beforeAllBody != null) {
       junitCreator.addBeforeAll(beforeAllBody);
@@ -121,6 +123,7 @@ public class JUnitCreator {
   }
 
   private JUnitCreator(String packageName) {
+    assert !Objects.equals(packageName, "");
     this.packageName = packageName;
     this.classMethodCounts = new LinkedHashMap<>();
   }
@@ -166,7 +169,7 @@ public class JUnitCreator {
     this.classMethodCounts.put(testClassName, sequences.size());
 
     CompilationUnit compilationUnit = new CompilationUnit();
-    if (packageName != null && !packageName.isEmpty()) {
+    if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
     }
 
@@ -337,7 +340,7 @@ public class JUnitCreator {
    */
   public String createTestSuite(String suiteClassName, Set<String> testClassNames) {
     CompilationUnit compilationUnit = new CompilationUnit();
-    if (packageName != null && !packageName.isEmpty()) {
+    if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
     }
     List<ImportDeclaration> imports = new ArrayList<>();
@@ -379,7 +382,7 @@ public class JUnitCreator {
    */
   public String createTestDriver(String driverName, Set<String> testClassNames) {
     CompilationUnit compilationUnit = new CompilationUnit();
-    if (packageName != null && !packageName.isEmpty()) {
+    if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
     }
 

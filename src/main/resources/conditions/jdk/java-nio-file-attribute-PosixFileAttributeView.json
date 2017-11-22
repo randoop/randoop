@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.attribute.PosixFileAttributeView",
+      "name": "setPermissions",
+      "parameterTypes": [
+        "java.util.Set"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "perms"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ClassCastException",
+        "description": "throws ClassCastException if the sets contains elements that are not of type PosixFilePermission",
+        "guard": {
+          "condition": "perms.contains(java.lang.Object)",
+          "description": "if the sets contains elements that are not of type PosixFilePermission"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,198 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.geom.Area",
+      "name": "java.awt.geom.Area",
+      "parameterTypes": [
+        "java.awt.Shape"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if s is null",
+        "guard": {
+          "condition": "s==null",
+          "description": "if s is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Area",
+      "name": "add",
+      "parameterTypes": [
+        "java.awt.geom.Area"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rhs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rhs is null",
+        "guard": {
+          "condition": "rhs==null",
+          "description": "if rhs is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Area",
+      "name": "subtract",
+      "parameterTypes": [
+        "java.awt.geom.Area"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rhs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rhs is null",
+        "guard": {
+          "condition": "rhs==null",
+          "description": "if rhs is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Area",
+      "name": "intersect",
+      "parameterTypes": [
+        "java.awt.geom.Area"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rhs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rhs is null",
+        "guard": {
+          "condition": "rhs==null",
+          "description": "if rhs is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Area",
+      "name": "exclusiveOr",
+      "parameterTypes": [
+        "java.awt.geom.Area"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rhs"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rhs is null",
+        "guard": {
+          "condition": "rhs==null",
+          "description": "if rhs is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Area",
+      "name": "transform",
+      "parameterTypes": [
+        "java.awt.geom.AffineTransform"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "t"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if t is null",
+        "guard": {
+          "condition": "t==null",
+          "description": "if t is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.geom.Area",
+      "name": "createTransformedArea",
+      "parameterTypes": [
+        "java.awt.geom.AffineTransform"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "t"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if t is null",
+        "guard": {
+          "condition": "t==null",
+          "description": "if t is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

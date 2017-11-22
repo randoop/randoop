@@ -1,0 +1,480 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "java.util.prefs.AbstractPreferences",
+      "parameterTypes": [
+        "java.util.prefs.AbstractPreferences",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if name contains a slash ('/'), or parent is null and name isn't \"\".",
+        "guard": {
+          "condition": "name.contains(java.lang.CharSequence) || parent==null",
+          "description": "if name contains a slash ('/'), or parent is null and name isn't \"\"."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "put",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key or value is null.",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if key or value is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "get",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "def"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null. (A null default is permitted.)",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null. (A null default is permitted.)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "remove",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null..",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null.."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "putInt",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "getInt",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "def"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "putLong",
+      "parameterTypes": [
+        "java.lang.String",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "getLong",
+      "parameterTypes": [
+        "java.lang.String",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "def"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "putBoolean",
+      "parameterTypes": [
+        "java.lang.String",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "getBoolean",
+      "parameterTypes": [
+        "java.lang.String",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "def"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "putFloat",
+      "parameterTypes": [
+        "java.lang.String",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "getFloat",
+      "parameterTypes": [
+        "java.lang.String",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "def"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "putDouble",
+      "parameterTypes": [
+        "java.lang.String",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "getDouble",
+      "parameterTypes": [
+        "java.lang.String",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "def"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "putByteArray",
+      "parameterTypes": [
+        "java.lang.String",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key or value is null.",
+        "guard": {
+          "condition": "key==null || value==null",
+          "description": "if key or value is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.prefs.AbstractPreferences",
+      "name": "getByteArray",
+      "parameterTypes": [
+        "java.lang.String",
+        "[B"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "def"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if key is null. (A null value for def is permitted.)",
+        "guard": {
+          "condition": "key==null",
+          "description": "if key is null. (A null value for def is permitted.)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

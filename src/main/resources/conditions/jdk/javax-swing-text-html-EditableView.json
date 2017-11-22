@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.EditableView",
+      "name": "isVisible",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the Component is visible."
+        },
+        "description": "return true if the Component is visible.",
+        "guard": {
+          "condition": "target.getComponent().isVisible()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

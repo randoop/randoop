@@ -1,0 +1,104 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.event.ActionEvent",
+      "name": "java.awt.event.ActionEvent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "command"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.ActionEvent",
+      "name": "java.awt.event.ActionEvent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "command",
+        "modifiers"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.event.ActionEvent",
+      "name": "java.awt.event.ActionEvent",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "java.lang.String",
+        "long",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "source",
+        "id",
+        "command",
+        "when",
+        "modifiers"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if source is null",
+        "guard": {
+          "condition": "source==null",
+          "description": "if source is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

@@ -1,0 +1,142 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.KeyboardFocusManager",
+      "name": "getGlobalFocusOwner",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getFocusOwner())",
+          "description": "the focus owner"
+        },
+        "description": "return the focus owner",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.KeyboardFocusManager",
+      "name": "getGlobalActiveWindow",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getActiveWindow())",
+          "description": "the active Window"
+        },
+        "description": "return the active Window",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.KeyboardFocusManager",
+      "name": "setDefaultFocusTraversalPolicy",
+      "parameterTypes": [
+        "java.awt.FocusTraversalPolicy"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "defaultPolicy"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if defaultPolicy is null",
+        "guard": {
+          "condition": "defaultPolicy==null",
+          "description": "if defaultPolicy is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.KeyboardFocusManager",
+      "name": "setDefaultFocusTraversalKeys",
+      "parameterTypes": [
+        "int",
+        "java.util.Set"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id",
+        "keystrokes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS, or if keystrokes is null, or if keystrokes contains null, or if any keystroke represents a KEY_TYPED event, or if any keystroke already maps to another default focus traversal operation",
+        "guard": {
+          "condition": "(id==1) == false || keystrokes==null || keystrokes.contains(null)",
+          "description": "if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS, or if keystrokes is null, or if keystrokes contains null, or if any keystroke represents a KEY_TYPED event, or if any keystroke already maps to another default focus traversal operation"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.KeyboardFocusManager",
+      "name": "getDefaultFocusTraversalKeys",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS",
+        "guard": {
+          "condition": "(id==1) == false",
+          "description": "if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

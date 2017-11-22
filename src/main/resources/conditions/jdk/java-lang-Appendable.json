@@ -1,0 +1,100 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Appendable",
+      "name": "append",
+      "parameterTypes": [
+        "java.lang.CharSequence"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "csq"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The character sequence to append. If csq is null, then the four characters \"null\" are appended to this Appendable.",
+        "guard": {
+          "condition": "csq==null",
+          "description": "The character sequence to append. If csq is null, then the four characters \"null\" are appended to this Appendable."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Appendable",
+      "name": "append",
+      "parameterTypes": [
+        "java.lang.CharSequence",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "csq",
+        "start",
+        "end"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException If start or end are negative, start is greater than end, or end is greater than csq.length()",
+        "guard": {
+          "condition": "start<0 || end<0 || end>csq.length() || start>end",
+          "description": "If start or end are negative, start is greater than end, or end is greater than csq.length()"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "The character sequence from which a subsequence will be appended. If csq is null, then characters will be appended as if csq contained the four characters \"null\".",
+        "guard": {
+          "condition": "csq==null",
+          "description": "The character sequence from which a subsequence will be appended. If csq is null, then characters will be appended as if csq contained the four characters \"null\"."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Appendable",
+      "name": "append",
+      "parameterTypes": [
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(c)",
+          "description": "A reference to this Appendable"
+        },
+        "description": "return A reference to this Appendable",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

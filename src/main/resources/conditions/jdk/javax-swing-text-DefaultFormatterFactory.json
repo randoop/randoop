@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultFormatterFactory",
+      "name": "getNullFormatter",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "JFormattedTextField.AbstractFormatter to use when the value is null"
+        },
+        "description": "return JFormattedTextField.AbstractFormatter to use when the value is null",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

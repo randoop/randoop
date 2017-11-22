@@ -1,0 +1,57 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.OceanTheme",
+      "name": "addCustomEntriesToTable",
+      "parameterTypes": [
+        "javax.swing.UIDefaults"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "table"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if table is null",
+        "guard": {
+          "condition": "table==null",
+          "description": "if table is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.metal.OceanTheme",
+      "name": "getControlTextColor",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getControl())",
+          "description": "the control text color"
+        },
+        "description": "return the control text color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

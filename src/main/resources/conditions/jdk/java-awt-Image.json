@@ -1,0 +1,92 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Image",
+      "name": "getProperty",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.awt.image.ImageObserver"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "observer"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the property name is null.",
+        "guard": {
+          "condition": "name==null",
+          "description": "if the property name is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Image",
+      "name": "getScaledInstance",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "width",
+        "height",
+        "hints"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width or height is zero.",
+        "guard": {
+          "condition": "width==0 || height==0",
+          "description": "if width or height is zero."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Image",
+      "name": "setAccelerationPriority",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "priority"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if priority is less than zero or greater than 1.",
+        "guard": {
+          "condition": "priority<0 || priority>1",
+          "description": "if priority is less than zero or greater than 1."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

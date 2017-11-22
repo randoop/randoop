@@ -1,0 +1,90 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.ThreadGroup",
+      "name": "java.lang.ThreadGroup",
+      "parameterTypes": [
+        "java.lang.ThreadGroup",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "parent",
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the thread group argument is null.",
+        "guard": {
+          "condition": "parent==null",
+          "description": "if the thread group argument is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ThreadGroup",
+      "name": "getParent",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==null",
+          "description": "the parent of this thread group. The top-level thread group is the only thread group whose parent is null."
+        },
+        "description": "return the parent of this thread group. The top-level thread group is the only thread group whose parent is null.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.ThreadGroup",
+      "name": "allowThreadSuspension",
+      "parameterTypes": [
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(b)",
+          "description": "true on success"
+        },
+        "description": "return true on success",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,514 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "addFirst",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this deque does not permit null elements",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null and this deque does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "addLast",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this deque does not permit null elements",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null and this deque does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "offerFirst",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this deque does not permit null elements",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null and this deque does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "offerLast",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this deque does not permit null elements",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null and this deque does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "removeFirst",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "removeLast",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the tail of this deque"
+        },
+        "description": "return the tail of this deque",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "getFirst",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "getLast",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the tail of this deque"
+        },
+        "description": "return the tail of this deque",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "removeFirstOccurrence",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this deque does not permit null elements (optional)",
+        "guard": {
+          "condition": "o==null",
+          "description": "if the specified element is null and this deque does not permit null elements (optional)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "removeLastOccurrence",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this deque does not permit null elements (optional)",
+        "guard": {
+          "condition": "o==null",
+          "description": "if the specified element is null and this deque does not permit null elements (optional)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "add",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this deque does not permit null elements",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null and this deque does not permit null elements"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "true (as specified by Collection.add(E))"
+        },
+        "description": "return true (as specified by Collection.add(E))",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "offer",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this deque does not permit null elements",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null and this deque does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "remove",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "element",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "push",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this deque does not permit null elements",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null and this deque does not permit null elements"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "pop",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.NoSuchElementException",
+        "description": "throws NoSuchElementException if this deque is empty",
+        "guard": {
+          "condition": "target.isEmpty()",
+          "description": "if this deque is empty"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "remove",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this deque does not permit null elements (optional)",
+        "guard": {
+          "condition": "o==null",
+          "description": "if the specified element is null and this deque does not permit null elements (optional)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Deque",
+      "name": "contains",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this deque does not permit null elements (optional)",
+        "guard": {
+          "condition": "o==null",
+          "description": "if the specified element is null and this deque does not permit null elements (optional)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

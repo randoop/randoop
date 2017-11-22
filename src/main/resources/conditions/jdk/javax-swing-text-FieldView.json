@@ -1,0 +1,104 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.FieldView",
+      "name": "getResizeWeight",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "axis"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.RIGHT)",
+          "description": "the weight -> 1 for View.X_AXIS, else 0"
+        },
+        "description": "return the weight -> 1 for View.X_AXIS, else 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.FieldView",
+      "name": "modelToView",
+      "parameterTypes": [
+        "int",
+        "java.awt.Shape",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "pos",
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position to convert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position to convert >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.FieldView",
+      "name": "viewToModel",
+      "parameterTypes": [
+        "float",
+        "float",
+        "java.awt.Shape",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fx",
+        "fy",
+        "a",
+        "bias"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the X coordinate >= 0.0f",
+        "guard": {
+          "condition": "fx>=0.0",
+          "description": "the X coordinate >= 0.0f"
+        }
+      },
+      {
+        "description": "the Y coordinate >= 0.0f",
+        "guard": {
+          "condition": "fy>=0.0",
+          "description": "the Y coordinate >= 0.0f"
+        }
+      }
+    ]
+  }
+]

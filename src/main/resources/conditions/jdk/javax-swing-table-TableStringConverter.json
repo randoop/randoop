@@ -1,0 +1,34 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.table.TableStringConverter",
+      "name": "toString",
+      "parameterTypes": [
+        "javax.swing.table.TableModel",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "model",
+        "row",
+        "column"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if model is null",
+        "guard": {
+          "condition": "model==null",
+          "description": "if model is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

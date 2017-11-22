@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.DefaultHighlighter",
+      "name": "addHighlight",
+      "parameterTypes": [
+        "int",
+        "int",
+        "javax.swing.text.Highlighter$HighlightPainter"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p0",
+        "p1",
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the end offset of the range to highlight >= p0",
+        "guard": {
+          "condition": "p0>=p0",
+          "description": "the end offset of the range to highlight >= p0"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,84 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.AWTPermission",
+      "name": "java.awt.AWTPermission",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if name is null.",
+        "guard": {
+          "condition": "name==null",
+          "description": "if name is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if name is empty.",
+        "guard": {
+          "condition": "name.isEmpty()",
+          "description": "if name is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.AWTPermission",
+      "name": "java.awt.AWTPermission",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "actions"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if name is null.",
+        "guard": {
+          "condition": "name==null",
+          "description": "if name is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if name is empty.",
+        "guard": {
+          "condition": "name.isEmpty()",
+          "description": "if name is empty."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "should be null",
+        "guard": {
+          "condition": "actions==null",
+          "description": "should be null"
+        }
+      }
+    ]
+  }
+]

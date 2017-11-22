@@ -1148,13 +1148,11 @@ public final class Sequence implements WeightedElement {
     if (!Log.isLoggingOn()) {
       return;
     }
-
     try {
       GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.write(this.toFullCodeString());
       GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.flush();
-
     } catch (IOException e) {
       throw new BugInRandoopException("Error while logging sequence", e);
     }
@@ -1169,6 +1167,16 @@ public final class Sequence implements WeightedElement {
    */
   boolean canUseShortForm() {
     return allowShortForm;
+  }
+
+  /**
+   * Disables the use of variable values as arguments in this sequence. This is a hack to deal with
+   * inability to determine when a variable definition is necessary because it is used more than
+   * once, which is an issue because post-conditions can use variables but don't have the abilility
+   * to use the short-form.
+   */
+  public void disableShortForm() {
+    allowShortForm = false;
   }
 
   /**

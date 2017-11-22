@@ -30,7 +30,7 @@ import randoop.util.TupleSet;
  * <p>If the execution throws an exception considered to be an error, the visitor generates a {@code
  * NoExceptionCheck} indicating that the statement should not throw the exception.
  */
-public final class ContractCheckingGenerator implements TestCheckGenerator {
+public final class ContractCheckingGenerator extends TestCheckGenerator {
 
   private ContractSet contracts;
   private ExceptionPredicate exceptionPredicate;
@@ -122,7 +122,12 @@ public final class ContractCheckingGenerator implements TestCheckGenerator {
     return ErrorRevealingChecks.EMPTY;
   }
 
-  /** Return a TestChecks that contains only the given check. */
+  /**
+   * Return a TestChecks that contains only the given check.
+   *
+   * @param check the sole member of the singleton TestChecks
+   * @return a TestChecks that contains only the given check
+   */
   private TestChecks<?> singletonTestCheck(Check check) {
     // System.out.printf("singletonTestCheck([class %s] %s)%n", check.getClass(), check);
     // new Error().printStackTrace();

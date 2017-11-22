@@ -7,6 +7,8 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.TreeSet;
 import randoop.BugInRandoopException;
+import randoop.condition.ExecutableSpecification;
+import randoop.condition.SpecificationCollection;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.MethodCall;
@@ -46,6 +48,9 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The predicate to test visibility. */
   private final VisibilityPredicate visibilityPredicate;
 
+  /** The specifications (pre/post/throws-conditions). */
+  private final SpecificationCollection operationSpecifications;
+
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
    * members of the class satisfying the given visibility and reflection predicates and that don't
@@ -58,17 +63,20 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param visibilityPredicate the predicate for test visibility
+   * @param operationSpecifications the specifications (pre/post/throws-conditions)
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
-      VisibilityPredicate visibilityPredicate) {
+      VisibilityPredicate visibilityPredicate,
+      SpecificationCollection operationSpecifications) {
     this.classType = classType;
     this.operations = new TreeSet<>();
     this.reflectionPredicate = reflectionPredicate;
     this.omitPredicate = omitPredicate;
     this.visibilityPredicate = visibilityPredicate;
+    this.operationSpecifications = operationSpecifications;
   }
 
   /**
@@ -83,7 +91,29 @@ public class OperationExtractor extends DefaultClassVisitor {
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
       VisibilityPredicate visibilityPredicate) {
-    this(classType, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
+    this(
+        classType,
+        reflectionPredicate,
+        OmitMethodsPredicate.NO_OMISSION,
+        visibilityPredicate,
+        null);
+  }
+
+  /**
+   * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
+   * members of the class satisfying the given visibility and reflection predicates.
+   *
+   * @param classType the declaring class for collected operations
+   * @param reflectionPredicate the reflection predicate
+   * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
+   * @param visibilityPredicate the predicate for test visibility
+   */
+  public OperationExtractor(
+      ClassOrInterfaceType classType,
+      ReflectionPredicate reflectionPredicate,
+      OmitMethodsPredicate omitPredicate,
+      VisibilityPredicate visibilityPredicate) {
+    this(classType, reflectionPredicate, omitPredicate, visibilityPredicate, null);
   }
 
   /**
@@ -158,6 +188,13 @@ public class OperationExtractor extends DefaultClassVisitor {
     }
     checkSubTypes(operation);
     if (!omitPredicate.shouldOmit(operation)) {
+      if (operationSpecifications != null) {
+        ExecutableSpecification execSpec =
+            operationSpecifications.getExecutableSpecification(constructor);
+        if (!execSpec.isEmpty()) {
+          operation.addExecutableSpecification(execSpec);
+        }
+      }
       if (debug) {
         System.out.println("OperationExtractor.visit: add operation " + operation);
       }
@@ -205,6 +242,13 @@ public class OperationExtractor extends DefaultClassVisitor {
     // method in classType. So, create operation with the classType as declaring type for omit
     // search.
     if (!omitPredicate.shouldOmit(operation.getOperationForType(classType))) {
+      if (operationSpecifications != null) {
+        ExecutableSpecification execSpec =
+            operationSpecifications.getExecutableSpecification(method);
+        if (!execSpec.isEmpty()) {
+          operation.addExecutableSpecification(execSpec);
+        }
+      }
       if (debug) {
         System.out.println("OperationExtractor.visit: add operation " + operation);
       }

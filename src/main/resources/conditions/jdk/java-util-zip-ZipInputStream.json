@@ -1,0 +1,62 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.zip.ZipInputStream",
+      "name": "read",
+      "parameterTypes": [
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "b",
+        "off",
+        "len"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if b is null.",
+        "guard": {
+          "condition": "b==null",
+          "description": "if b is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.zip.ZipInputStream",
+      "name": "skip",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "n"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if n < 0",
+        "guard": {
+          "condition": "n<0",
+          "description": "if n < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]
