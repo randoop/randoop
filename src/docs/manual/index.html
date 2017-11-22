@@ -46,14 +46,13 @@ The Randoop homepage is
           <li><a href="#replacecall-load-exclusions">Replacement exclusions</a></li>
           <li><a href="#replacecall-replacement-definition">Defining replacements</a></li>
         </ul></li>
-      <li><a href="#specifying-behavior">Specifying the behavior of your code</a>
+      <li><a href="#specifying-behavior">Specifying expected code behavior (pre- and post-conditions)</a>
         <ul>
-          <li><a href="#method-specifications">Method specifications</a>
+          <li><a href="#spec-json-method-specifications">Method specifications</a>
             <ul>
-              <li><a href="#method-signatures">Method signatures</a></li>
-              <li><a href="#parameter-names">Parameter names</a></li>
-              <li><a href="#condition-details">Specifying conditions</a></li>
-              <li><a href="#method-specification-syntax">Method specification syntax</a></li>
+              <li><a href="#spec-json-method-signatures">Method signatures</a></li>
+              <li><a href="#spec-json-parameter-names">Formal parameter names</a></li>
+              <li><a href="#spec-json-conditions">Specifying conditions</a></li>
               <li><a href="#method-specification-evaluation-rules">Evaluation rules</a></li>
             </ul></li>
           <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
@@ -1389,10 +1388,10 @@ Keep the following in mind when defining replacements:
 </ul>
 
 
-<h2 id="specifying-behavior">Specifying the behavior of your code</h2>
+<h2 id="specifying-behavior">Specifying expected code behavior (pre- and post-conditions)</h2>
 
 <p>
-You can provide a specification of the behavior of your code.  Randoop will
+You can provide a specification of the expected behavior of code.  Randoop will
 use the specification to better classify method calls as error-revealing,
 expected behavior, or invalid.
 </p>
@@ -1405,45 +1404,45 @@ classes</a>.
 </p>
 
 
-<h3 id="method-specifications">Method specifications</h3>
+<h3 id="spec-json-method-specifications">Method specifications</h3>
 
 <p>
 A specification of a method (including constructors) indicates the
 circumstances when the method can be called, and how it should behave when
-called.  The <code>--specifications=file</code> command-line option names a
-file containing the method specifications.  The file format is a JSON list
-with elements that are the serialized form of
-the <a href="../api/randoop/condition/specification/OperationSpecification.html">OperationSpecification</a>
-class.  An <a href="net_connection_spec.json">example specification
-file</a>, which provides specifications for an example
-class <code><a href="net_connection_java.txt">net.Connection</a></code>.
-The serialized form is described below, with more detail in
-the <a href="../api/randoop/condition/specification/OperationSpecification.html">API
-documentation</a>.
+called.
 </p>
 
 <p>
-This section uses the following terminology:
-</p>
-<ul>
-  <li>A <em>guard</em> is a Boolean expression that is evaluated in the
-      pre-state &mdash; that is, before a method starts to execute.</li>
-  <li>A <em>property</em> is a Boolean expression that is evaluated in the
-      post-state &mdash; that is, after a method has finished executing.</li>
-</ul>
-<p>
-The expression for a guard or property may not throw an exception.
+The <code>--specifications=file</code> command-line option names a file
+containing the method specifications.  The file format is a JSON list with
+elements that are the serialized form of
+the <a href="../api/randoop/condition/specification/OperationSpecification.html">OperationSpecification</a>
+class.  Randoop comes with an <a href="net_connection_spec.json">example
+specification file</a>, which provides specifications for an example
+class <code><a href="net_connection_java.txt">net.Connection</a></code>.
 </p>
 
 <p>
 A method specification consists of the method signature, parameter names, a
 list of pre-conditions, a list of (normal) post-conditions, and a list of
-throws-conditions (exceptional post-conditions).  Parts of the
-specification are optional, details are given below.
+throws-conditions (exceptional post-conditions):
+
+<pre><code>
+  {
+    "operation": <i>method-signature</i>,
+    "identifiers": <i>formal-parameters</i>,
+    "pre-conditions": <i>pre-condition-list</i>,
+    "post-conditions": <i>normal-post-condition-list</i>,
+    "throws-conditions": <i>throws-condition-list</i>
+  }
+</code></pre>
+
+<p>
+where only the <code>operation</code> field is required.
 </p>
 
 
-<h4 id="method-signatures">Method signatures</h4>
+<h4 id="spec-json-method-signatures">Method signatures</h4>
 
 <p>
 A method signature uniquely describes a method.  It consists of the
@@ -1455,9 +1454,7 @@ in <code>pkg.Class$InnerClass</code>.
 </p>
 
 <p>
-The method signature is given as a JSON object with fields <code>classname</code>,
-<code>name</code>, and <code>parameterTypes</code>, all of which are
-required.  For instance, the method <code>net.Connection.send(int)</code>
+The method <code>net.Connection.send(int)</code>
 is represented as
 </p>
 
@@ -1470,41 +1467,32 @@ is represented as
 </code></pre>
 
 
-<h4 id="parameter-names">Parameter names</h4>
+<h4 id="spec-json-parameter-names">Formal parameter names</h4>
 
 <p>
-A guard is a boolean expression that can use the formal parameters (including
-the receiver); a property can also refer to the return value.
-These expressions may use default names for the receiver (<code>receiver</code>)
-and the return value (<code>result</code>), but the specification must
-name the method parameters; for example:
-</p>
-
-<pre><code>
-  { "parameters": [ "code" ] }
-</code></pre>
-
-<p>
-indicates that the single formal parameter of the method is referred to by
-the name <code>code</code>, and that the defaults will be used for receiver
-and return value.
-</p>
-
-<p>
-Optionally, you may specify a name for the receiver and for the return
-value.  For example:
+The conditions in a specification use identifiers, or variable names, to
+refer to formal parameters and the result.  This part of the specification
+gives the names.
+For example:
 </p>
 
 <pre><code>
   {
-    "parameters": [ "code" ],
+    "parameters": [ "coded" ],
     "receiverName": "target",
     "returnName": "returnValue"
   }
 </code></pre>
 
+<p>
+indicates that the single formal parameter of the method is referred to by
+the name <code>coded</code>.
+The receiver name may be omitted (default: <code>receiver</code>),
+and the return value name may be omitted (default: <code>result</code>).
+</p>
 
-<h4 id="condition-details">Specifying conditions</h4>
+
+<h4 id="spec-json-conditions">Specifying conditions</h4>
 
 <p>
 The specification contains 3 lists of conditions, one for each different
@@ -1515,15 +1503,13 @@ type of condition.
   <dt><i>Pre-condition</i></dt>
   <dd>
   <p>
-  A <i>pre-condition</i> indicates a requirement that must be satisfied
-  by the caller.  If the caller does not satisfy the pre-condition,
-  then the call is invalid.  A pre-condition is a guard:  a boolean
-  expression evaluated before the call occurs.
+  A <i>pre-condition</i> indicates a requirement that must be satisfied by
+  the caller.  Its guard is a Boolean expression that is evaluated in the
+  pre-state &mdash; that is, before a method starts to execute.  If the
+  caller does not satisfy the pre-condition, then the call is invalid.
   </p>
 
   <p>
-  A pre-condition is written as a JSON object with a field
-  <code>guard</code>, which is minimally the text of the expression.
   To specify that the argument to a call to <code>net.Connection.send(int)</code>
   must be positive, you could write the condition
   </p>
@@ -1531,21 +1517,19 @@ type of condition.
   <pre><code>
     {
       "description": "the code must be positive",
-      "guard": "code &gt; 0"
+      "guard": "coded &gt; 0"
     }
   </code></pre>
 
   <p>
   The condition has an optional field <code>description</code>
-  that Randoop will use in comments in the generated tests.
+  that Randoop uses in comments in the generated tests.
   </p>
 
   <p>
-  All pre-conditions are checked before a call is made to a method.  This
-  means that if we wanted a condition requiring both that
-  the <code>Connection</code> is open and the code is nonnegative, then
-  this could be written equivalently as a single
-  pre-condition <code>receiver.isOpen() &amp;&amp; code &gt; 0</code> or as
+  To require that the <code>Connection</code> is open and the code is
+  non-negative, you could equivalently write a single
+  pre-condition <code>receiver.isOpen() &amp;&amp; code &gt; 0</code> or
   two pre-conditions <code>receiver.isOpen()</code> and <code>code &gt;
   0</code>.
   </p>
@@ -1560,15 +1544,15 @@ type of condition.
     implementation. A normal postcondition indicates what values the method
     returns. If the caller satisfies the method's pre-condition and the method
     returns normally (without throwing an exception), then the post-condition
-    must be satisfied or else the method is buggy.  If an exception is thrown,
-    the ordinary rules are used to classify the call.
+    must be satisfied or else the method is buggy.
     </p>
 
     <p>
-    You specify a normal post-condition as guard-property pair.
-    (A property is given using the same format as a guard.)
-    In the example file, the method <code>net.Connection.receive()</code> has
-    the post-condition
+    You specify a normal post-condition as guard-property pair.  (A
+    property is given using the same format as a guard, but a property is
+    evaluated in the post-state &mdash; that is, after a method has
+    finished executing.)  In the example file, the
+    method <code>net.Connection.receive()</code> has the post-condition:
     </p>
 
   <pre><code>
@@ -1580,12 +1564,8 @@ type of condition.
   </code></pre>
 
   <p>
-  which requires that the return value always be non-negative.
-  </p>
-
-  <p>
-  The guards of post-conditions are evaluated in the order that the post-conditions
-  are listed. This means that we could have a list like
+  The guards of post-conditions are evaluated in the order that the
+  post-conditions are listed.  The list
   </p>
 
   <pre><code>
@@ -1604,8 +1584,8 @@ type of condition.
   </code></pre>
 
   <p>
-    that indicates the error-case should be tested first, followed by the
-    general case that has the guard <code>true</code>.
+    indicates that the error-case should be tested first, followed by the
+    general case that has the vacuous guard <code>true</code>.
   </p>
 
   </dd>
@@ -1640,7 +1620,7 @@ type of condition.
     <p>
     Similar to normal post-conditions, throws-conditions are given in a list.
     The list, however, is treated as a set (meaning unordered), and may contain
-    duplicate guards and exceptions. This enables a method whose behavior is specified as
+    duplicate guards and exceptions. A method whose behavior is specified as
     </p>
 
     <pre><code>
@@ -1659,32 +1639,12 @@ type of condition.
     </code></pre>
 
     <p>
-    to be considered as correct if, when called with <code>a==null</code> and
+    is considered as correct if, when called with <code>a==null</code> and
     <code>i==-1</code>, it throws either of the specified exceptions.
     </p>
   </dd>
 </dl>
 
-
-<h4 id="method-specification-syntax">Method specification syntax</h4>
-
-<p>
-Given these details, the full specification is specified as a JSON object as
-</p>
-
-<pre><code>
-  {
-    "operation": <i>operation-object</i>,
-    "identifiers": <i>parameter-object</i>,
-    "pre-conditions": <i>pre-condition-list</i>,
-    "post-conditions": <i>normal-post-condition-list</i>,
-    "throws-conditions": <i>throws-condition-list</i>
-  }
-</code></pre>
-
-<p>
-where only the <code>operation</code> field is required.
-</p>
 
 <h4 id="method-specification-evaluation-rules">Evaluation rules</h4>
 
@@ -1698,24 +1658,26 @@ Randoop classifies a test sequence according to its last method call.
     classifies the method call as invalid and the sequence is discarded.
   </li>
   <li>
-    If the guard of any throws-condition is satisfied before the call, the exception
-    from the condition is added to a set <code>expected</code> of expected exceptions.
-    If the call throws a checked exception, the sequence is classified as
-    having expected behavior if the thrown exception is a member of the set
-    <code>expected</code>, or is a subclass of a member
-    of <code>expected</code>, and is otherwise classified as error-revealing.
-    If the call terminates normally, the sequence is classified as error-revealing.
+    If the guard of any throws-condition is satisfied before the call, the
+    exception from the condition is added to a set <code>expected</code> of
+    expected exceptions.  If the call throws a checked exception, the
+    sequence is classified as having expected behavior if the thrown
+    exception is a member of the set <code>expected</code>, or is a
+    subclass of a member of <code>expected</code>, and is otherwise
+    classified as error-revealing.  If the <code>expected</code> set is
+    non-empty and the call terminates normally, the sequence is classified
+    as error-revealing.
   </li>
   <li>
-    If the guard of a normal-precondition is satisfied before the call, the property
-    for the first satisfied guard is checked after the call.
-    If the call terminates normally, the sequence is classifed as having
+    If the guard of a normal-precondition is satisfied before the call, the
+    property for the first satisfied guard is checked after the call.
+    If the call terminates normally, the sequence is classified as having
     expected behavior if the property is satisfied.
     Otherwise, the sequence is classified as error-revealing.
   </li>
   <li>
     If the method is inherited, the method call is also checked against all
-    specifications of overriden methods in the inheritance chain.
+    specifications of overridden methods in the inheritance chain.
     If the call is invalid by any specification, the sequence is classified
     as invalid.
     If the call is error-revealing by any specification, the sequence is
@@ -2171,7 +2133,7 @@ sequential Java program are:
 <p>
 Randoop extends previously-generated tests by adding new method calls to them.
 If, in the new longer test, one of the embedded subtests throws an exception
-(even though when previously run on its own the subtest passed),
+(even though when previously run on its own, the subtest passed),
 then we say the test is <i>flaky</i>.
 </p>
 
@@ -2413,19 +2375,19 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  subsequences online unpub javac TypeN postcondition jarpath
  -->
-<!--  LocalWords:  test1 o1 t1 s1 var0 arrayList0 Type0 Type1 Type2 o2 oom
+<!--  LocalWords:  oom Xmx jdk OperationSpecification
  -->
-<!--  LocalWords:  test10 var1 var2 s2 a1 ErrorTest RegressionTest o3 sgn
+<!--  LocalWords:  ErrorTest RegressionTest sgn
  -->
-<!--  LocalWords:  npe a' c' subtests AssertionError basename myclasspath
+<!--  LocalWords:  npe subtests AssertionError basename myclasspath
  -->
 <!--  LocalWords:  Comparator sof toradocu JSON Param unpublicized JRE Ren
  -->
 <!--  LocalWords:  classpaths ExampleClass Ayman Abdelghany Waylon lang
  -->
-<!--  LocalWords:  Inozemtseva Kalauskas Xmx3000m ErrorTest0 sourcepath
+<!--  LocalWords:  Inozemtseva Kalauskas Xmx3000m sourcepath
  -->
-<!--  LocalWords:  RegressionTest0 JUnitCore ncdf attemptedLimit
+<!--  LocalWords:  JUnitCore ncdf attemptedLimit
  -->
 <!--  LocalWords:  generatedLimit outputLimit progressintervalmillis
  -->

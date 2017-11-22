@@ -33,7 +33,7 @@
     },
     "identifiers": {
       "parameters": [
-        "code"
+        "coded"
       ],
       "receiverName": "receiver",
       "returnName": "result"
@@ -44,7 +44,7 @@
       {
         "description": "the code must be positive",
         "guard": {
-          "condition": "code > 0",
+          "condition": "coded > 0",
           "description": "the code must be positive"
         }
       }
