@@ -8,7 +8,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -75,7 +74,10 @@ public class ExecutableSequence {
    */
   public long gentime = -1;
 
-  /** How long it took to execute this sequence in nanoseconds. */
+  /**
+   * How long it took to execute this sequence in nanoseconds. Is -1 until the sequence completes
+   * execution.
+   */
   public long exectime = -1;
 
   /**
@@ -366,7 +368,7 @@ public class ExecutableSequence {
         executeStatement(sequence, executionResults.theList, i, inputValues);
 
         // make sure statement executed
-        ExecutionOutcome statementResult = executionResults.get(i);
+        ExecutionOutcome statementResult = getResult(i);
         if (statementResult instanceof NotExecuted) {
           throw new Error("Unexecuted statement in sequence: " + this.toString());
         }
@@ -485,7 +487,6 @@ public class ExecutableSequence {
    * @return the outcome of the statement at index
    */
   public ExecutionOutcome getResult(int index) {
-    checkExecuted();
     return executionResults.get(index);
   }
 
@@ -495,7 +496,6 @@ public class ExecutableSequence {
    * @return the {@code TestChecks} generated from the most recent execution
    */
   public TestChecks<?> getChecks() {
-    checkExecuted();
     return checks;
   }
 
@@ -507,7 +507,6 @@ public class ExecutableSequence {
    *     completed normally
    */
   private Object getValue(int index) {
-    checkExecuted();
     ExecutionOutcome result = getResult(index);
     if (result instanceof NormalExecution) {
       return ((NormalExecution) result).getRuntimeValue();
@@ -613,7 +612,6 @@ public class ExecutableSequence {
    * @return true if execution of the i-th statement terminated normally
    */
   private boolean isNormalExecution(int i) {
-    checkExecuted();
     return getResult(i) instanceof NormalExecution;
   }
 
@@ -769,12 +767,5 @@ public class ExecutableSequence {
    */
   public int size() {
     return sequence.size();
-  }
-
-  /** Throws an exception if this sequence has not yet been executed. */
-  private void checkExecuted() {
-    if (exectime == -1) {
-      throw new BugInRandoopException("Sequence has not yet been executed.");
-    }
   }
 }
