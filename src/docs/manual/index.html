@@ -2165,6 +2165,7 @@ sequential Java program are:
   </li>
 </ul>
 
+
 <h3 id="flaky-tests">Randoop stopped because of a flaky test</h3>
 
 <p>
@@ -2249,6 +2250,29 @@ example, sort lists before using them, override <code>toString</code>, and
 call <code>new Random()</code> with a fixed seed), or you can
 use <a href="#option:omitmethods"><code>--omitmethods</code></a> to prevent
 Randoop from calling them.
+</p>
+
+<p>
+A difference in JDK implementation details can lead to different results.
+(This is not flakiness, but can still be an irritation.)
+Consider a class
+</p>
+<pre>
+public class Corner extends JComponent { ... }
+</pre>
+
+<p>
+In JDK 7, <code>Corner</code>'s </code>getAccessibleContext</code> method is
+inherited from </code>JComponent</code>.
+In JDK 8, </code>Corner</code>'s </code>getAccessibleContext</code> method
+is inherited from </code>java.awt.Component</code>.
+Randoop discovers a different set of operations
+(because </code>Corner.class.getMethods()</code> returns different results
+depending on the JDK).  Given different sets, Randoop may may different
+choices and produce different tests.  There can be implementation changes
+even within a single JDK major version, such as two different versions of
+JDK 8.  These differences can lead to tests that passed on one JDK
+implementation but fail on another.
 </p>
 
 
@@ -2397,7 +2421,15 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  Comparator sof toradocu JSON Param unpublicized JRE Ren
  -->
-<!--  LocalWords:  classpaths ExampleClass Ayman Abdelghany Waylon
+<!--  LocalWords:  classpaths ExampleClass Ayman Abdelghany Waylon lang
  -->
-<!--  LocalWords:  Inozemtseva Kalauskas
+<!--  LocalWords:  Inozemtseva Kalauskas Xmx3000m ErrorTest0 sourcepath
+ -->
+<!--  LocalWords:  RegressionTest0 JUnitCore ncdf attemptedLimit
+ -->
+<!--  LocalWords:  generatedLimit outputLimit progressintervalmillis
+ -->
+<!--  LocalWords:  progressintervalsteps minimizetimeout JComponent
+ -->
+<!--  LocalWords:  getAccessibleContext getMethods searchable
  -->
