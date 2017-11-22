@@ -220,8 +220,12 @@ public class ExecutableSequence {
    * @param gen the check generator for tests
    */
   public void execute(ExecutionVisitor visitor, TestCheckGenerator gen) {
-    // execute(visitor, gen, true);
-    execute(visitor, gen, false);
+    // TODO: Setting the third argument to false would mask fewer errors.  Doing so causes 3 Randoop
+    // system tests to fail (because some sequence throws an exception before the last statement).
+    // One is innocuous:  java.lang.OutOfMemoryError due to creation of a very large object --
+    // repeated executions evenutally exhaust memory.  Two others are odd: failures in
+    // sun.reflect.DelegatingMethodAccessorImpl.invoke called by java.lang.reflect.Method.invoke.
+    execute(visitor, gen, true);
   }
 
   /**
