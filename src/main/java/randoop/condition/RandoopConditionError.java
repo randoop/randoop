@@ -33,17 +33,29 @@ public class RandoopConditionError extends Error {
     super(message, cause);
   }
 
-  /** Indicate which file was being read when the error occurred. */
+  /**
+   * Indicate which file was being read when the error occurred.
+   *
+   * @param file the file
+   */
   public void setFile(File file) {
     this.file = file;
   }
 
-  /** Get the local message (ignoring the message of the cause). */
+  /**
+   * Set the local message (ignoring the message of the cause).
+   *
+   * @param message the string to use as the local message for this Error
+   */
   public void setThisMessage(String message) {
     thisMessage = message;
   }
 
-  /** Set the local message (ignoring the message of the cause). */
+  /**
+   * Set the local message (ignoring the message of the cause).
+   *
+   * @return the local message (ignoring the message of the cause)
+   */
   public String getThisMessage() {
     return thisMessage;
   }

@@ -21,7 +21,12 @@ public abstract class TestCheckGenerator {
    */
   public abstract TestChecks<?> generateTestChecks(ExecutableSequence eseq);
 
-  /** Returns true if this generator contains a generator of the given class. */
+  /**
+   * Returns true if this generator contains a generator of the given class.
+   *
+   * @param genClass the generator class to search for in this
+   * @return true iff this generator contains a generator of the given class
+   */
   public boolean hasGenerator(Class<? extends TestCheckGenerator> genClass) {
     return this.getClass() == genClass;
   }

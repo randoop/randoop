@@ -607,6 +607,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /**
    * Sets the specification; any previous value is ignored (so the method name {@code
    * addExecutableSpecification} may be misleading).
+   *
+   * @param execSpec the specification to use for this object
    */
   public void addExecutableSpecification(ExecutableSpecification execSpec) {
     this.execSpec = execSpec;

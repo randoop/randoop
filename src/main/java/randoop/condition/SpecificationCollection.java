@@ -263,10 +263,9 @@ public class SpecificationCollection {
     if (specification == null) {
       execSpec = new ExecutableSpecification();
     } else {
-      SpecificationTranslator translator =
-          SpecificationTranslator.createTranslator(
-              accessibleObject, specification.getIdentifiers(), compiler);
-      execSpec = translator.createExecutableSpecification(specification);
+      execSpec =
+          SpecificationTranslator.createExecutableSpecification(
+              accessibleObject, specification, compiler);
     }
 
     if (accessibleObject instanceof Method) {

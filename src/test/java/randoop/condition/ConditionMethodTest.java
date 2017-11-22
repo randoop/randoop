@@ -59,27 +59,27 @@ public class ConditionMethodTest {
 
   @Test
   public void testErrorThrown() {
-    boolean old_fail_on_condition_error = GenInputsAbstract.fail_on_condition_error;
-    GenInputsAbstract.fail_on_condition_error = false;
+    RawSignature signature =
+        new RawSignature(
+            "randoop.condition",
+            "ErrorThrownCondition",
+            "test",
+            new Class<?>[] {ConditionWithException.class});
+    ExecutableBooleanExpression error =
+        createCondition(
+            signature,
+            "(randoop.condition.ConditionWithException r)",
+            "r.errorPredicate()",
+            "throws an Error");
 
+    boolean old_ignore_condition_exception = GenInputsAbstract.ignore_condition_exception;
+    GenInputsAbstract.ignore_condition_exception = true;
     try {
-      RawSignature signature =
-          new RawSignature(
-              "randoop.condition",
-              "ErrorThrownCondition",
-              "test",
-              new Class<?>[] {ConditionWithException.class});
-      ExecutableBooleanExpression error =
-          createCondition(
-              signature,
-              "(randoop.condition.ConditionWithException r)",
-              "r.errorPredicate()",
-              "throws an Error");
       assertFalse(
           "should be false when error thrown",
           error.check(new Object[] {new ConditionWithException()}));
     } finally {
-      GenInputsAbstract.fail_on_condition_error = old_fail_on_condition_error;
+      GenInputsAbstract.ignore_condition_exception = old_ignore_condition_exception;
     }
   }
 
@@ -97,9 +97,16 @@ public class ConditionMethodTest {
             "(randoop.condition.ConditionWithException r)",
             "r.throwablePredicate()",
             "throws a Throwable");
-    assertFalse(
-        "should be false when exception thrown",
-        throwable.check(new Object[] {new ConditionWithException()}));
+
+    boolean old_ignore_condition_exception = GenInputsAbstract.ignore_condition_exception;
+    GenInputsAbstract.ignore_condition_exception = true;
+    try {
+      assertFalse(
+          "should be false when exception thrown",
+          throwable.check(new Object[] {new ConditionWithException()}));
+    } finally {
+      GenInputsAbstract.ignore_condition_exception = old_ignore_condition_exception;
+    }
   }
 
   private ExecutableBooleanExpression createCondition(
