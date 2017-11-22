@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -28,10 +29,10 @@ import randoop.util.IdentityMultiMap;
 import randoop.util.ProgressDisplay;
 
 /**
- * An ExecutableSequence wraps a {@link Sequence} with functionality for executing the sequence (the
- * {@link #execute(ExecutionVisitor, TestCheckGenerator)} and {@link #execute(ExecutionVisitor,
- * TestCheckGenerator, boolean)} methods). It also lets the client add {@link Check}s that check
- * expected behaviors of the execution.
+ * An ExecutableSequence wraps a {@link Sequence} with functionality for executing the sequence, via
+ * methods {@link #execute(ExecutionVisitor, TestCheckGenerator)} and {@link
+ * #execute(ExecutionVisitor, TestCheckGenerator, boolean)}. It also lets the client add {@link
+ * Check}s that check expected behaviors of the execution.
  *
  * <p>An ExecutableSequence augments a sequence with three additional pieces of data:
  *
@@ -52,19 +53,6 @@ import randoop.util.ProgressDisplay;
  * are added or removed by the client of the ExecutableSequence. One way of doing this is by
  * implementing an {@link ExecutionVisitor} and passing it as an argument to the {@code execute}
  * method.
- *
- * <p>NOTES.
- *
- * <ul>
- *   <li>It only makes sense to call the following methods <b>after</b> executing the i-th statement
- *       in a sequence:
- *       <ul>
- *         <li>{@link #isNormalExecution}
- *         <li>{@link #getResult}
- *         <li>{@link #getValue}
- *       </ul>
- *
- * </ul>
  */
 public class ExecutableSequence {
 
@@ -83,20 +71,17 @@ public class ExecutableSequence {
 
   /**
    * How long it took to generate this sequence in nanoseconds, excluding execution time. Must be
-   * directly set by the generator that creates this object (no code in this class sets its value).
+   * directly set by the generator that creates this object (No code in this class sets its value.)
    */
   public long gentime = -1;
 
-  /**
-   * How long it took to execute this sequence in nanoseconds, excluding generation time. Must be
-   * directly set by the generator that creates this object. (no code in this class sets its value).
-   */
+  /** How long it took to execute this sequence in nanoseconds. */
   public long exectime = -1;
 
   /**
    * Flag to record whether execution of sequence has a null input.
    *
-   * <p>[This is wonky, it really belongs to execution.]
+   * <p>TODO: This is wonky, it really belongs to execution.
    */
   private boolean hasNullInput;
 
@@ -229,25 +214,19 @@ public class ExecutableSequence {
   }
 
   /**
-   * Execute this sequence, invoking the given visitor as the execution unfolds. After invoking this
-   * method, the client can query the outcome of executing each statement via the method {@link
-   * #getResult}.
-   *
-   * <p>The method {@code execute(ExecutionVisitor v)} executes the code that the sequence
-   * represents. This method uses reflection to execute each element in the sequence (method call,
-   * constructor call, primitive or array declaration, etc). Before executing each statement (e.g.
-   * the i-th statement), execute(v) calls v.visitBefore(this, i), and after executing each
-   * statement, it calls v.visitAfter(this, i). The purpose of the visitor is to examine the
-   * unfolding execution, and take some action depending on its intended purpose. For example, it
-   * may decorate the sequence with {@link Check}s about the execution.
+   * Execute this sequence, invoking the given visitor as the execution unfolds. For example, the
+   * visitor may decorate the sequence with {@link Check}s about the execution.
    *
    * <ul>
-   *   <li>Before the sequence is executed, clears execution results and calls {@code
-   *       visitor.initialize(this)}.
-   *   <li>Executes each statement in the sequence. Before executing each statement calls the given
-   *       visitor's {@code visitBefore} method. After executing each statement, calls the visitor's
-   *       {@code visitAfter} method.
-   *   <li>Tests the pre-, post-, and throws-conditions for the last statement.
+   *   <li>Clear execution results and call {@code visitor.initialize(this)}.
+   *   <li>For each statement in the sequence:
+   *       <ul>
+   *         <li>call {@code visitor.visitBefore(this, i)}
+   *         <li>execute the statement, using reflection
+   *         <li>call {@code visitor.visitAfter(this, i)}
+   *       </ul>
+   *
+   *   <li>Test the pre-, post-, and throws-conditions for the last statement.
    *   <li>Execution stops if one of the following conditions holds:
    *       <ul>
    *         <li>All statements in the sequences have been executed.
@@ -261,9 +240,12 @@ public class ExecutableSequence {
    *
    * </ul>
    *
-   * <h3 id="eval-algorithm">Condition Evaluation Algorithm</h3>
+   * <p>After invoking this method, the client can query the outcome of executing each statement via
+   * the method {@link #getResult}.
    *
-   * This method implements the condition evaluation algorithm described below.
+   * <p><b>Condition Evaluation Algorithm</b>
+   *
+   * <p>This method implements the condition evaluation algorithm described below.
    *
    * <p><i>Input</i>: a {@link randoop.operation.TypedClassOperation}, the {@link
    * randoop.condition.ExecutableSpecification} for the method, and arguments for a call to the
@@ -350,66 +332,71 @@ public class ExecutableSequence {
   @SuppressWarnings("SameParameterValue")
   private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
 
-    visitor.initialize(this);
+    long startTime = System.nanoTime();
+    try { // try statement for timing
 
-    // reset execution result values
-    hasNullInput = false;
-    executionResults.theList.clear();
-    for (int i = 0; i < sequence.size(); i++) {
-      executionResults.theList.add(NotExecuted.create());
-    }
+      visitor.initialize(this);
 
-    for (int i = 0; i < this.sequence.size(); i++) {
+      // reset execution result values
+      hasNullInput = false;
+      executionResults.theList.clear();
+      for (int i = 0; i < sequence.size(); i++) {
+        executionResults.theList.add(NotExecuted.create());
+      }
 
-      // Find and collect the input values to i-th statement.
-      List<Variable> inputs = sequence.getInputs(i);
-      Object[] inputValues;
+      for (int i = 0; i < this.sequence.size(); i++) {
 
-      inputValues = getRuntimeInputs(executionResults.theList, inputs);
+        // Collect the input values to i-th statement.
+        Object[] inputValues = getRuntimeInputs(executionResults.theList, sequence.getInputs(i));
 
-      if (i == this.sequence.size() - 1) {
-        TypedOperation operation = this.sequence.getStatement(i).getOperation();
-        if (operation.isConstructorCall() || operation.isMethodCall()) {
-          ExpectedOutcomeTable outcomeTable = operation.checkConditions(inputValues);
-          if (outcomeTable.isInvalidCall()) {
-            checks = new InvalidChecks(new InvalidValueCheck(this, i));
-            return;
+        if (i == this.sequence.size() - 1) {
+          // This is the last statement in the sequence.
+          TypedOperation operation = this.sequence.getStatement(i).getOperation();
+          if (operation.isConstructorCall() || operation.isMethodCall()) {
+            ExpectedOutcomeTable outcomeTable = operation.checkConditions(inputValues);
+            if (outcomeTable.isInvalidCall()) {
+              checks = new InvalidChecks(new InvalidValueCheck(this, i));
+              return;
+            }
+            gen = outcomeTable.addPostCheckGenerator(gen);
           }
-          gen = outcomeTable.addPostCheckGenerator(gen);
         }
-      }
 
-      visitor.visitBeforeStatement(this, i);
-      executeStatement(sequence, executionResults.theList, i, inputValues);
+        visitor.visitBeforeStatement(this, i);
+        executeStatement(sequence, executionResults.theList, i, inputValues);
 
-      // make sure statement executed
-      ExecutionOutcome statementResult = getResult(i);
-      if (statementResult instanceof NotExecuted) {
-        throw new Error("Unexecuted statement in sequence: " + this.toString());
-      }
-      // make sure no exception before final statement of sequence
-      if ((statementResult instanceof ExceptionalExecution) && i < sequence.size() - 1) {
-        if (ignoreException) {
-          // this preserves previous behavior, which was simply to return if
-          // exception occurred
-          break;
-        } else {
-          String msg =
-              "Encountered exception before final statement of error-revealing test (statement "
-                  + i
-                  + "): ";
-          throw new Error(
-              msg + ((ExceptionalExecution) statementResult).getException().getMessage());
+        // make sure statement executed
+        ExecutionOutcome statementResult = getResult(i);
+        if (statementResult instanceof NotExecuted) {
+          throw new Error("Unexecuted statement in sequence: " + this.toString());
         }
+        // make sure no exception before final statement of sequence
+        if ((statementResult instanceof ExceptionalExecution) && i < sequence.size() - 1) {
+          if (ignoreException) {
+            // this preserves previous behavior, which was simply to return if
+            // exception occurred
+            break;
+          } else {
+            String msg =
+                "Encountered exception before final statement of error-revealing test (statement "
+                    + i
+                    + "): ";
+            throw new Error(
+                msg + ((ExceptionalExecution) statementResult).getException().getMessage());
+          }
+        }
+
+        visitor.visitAfterStatement(this, i);
       }
 
-      visitor.visitAfterStatement(this, i);
+      visitor.visitAfterSequence(this);
+
+      // This is the only client call to generateTestChecks().
+      checks = gen.generateTestChecks(this);
+
+    } finally {
+      exectime = System.nanoTime() - startTime;
     }
-
-    visitor.visitAfterSequence(this);
-
-    // This is the only client call to generateTestChecks().
-    checks = gen.generateTestChecks(this);
   }
 
   public Object[] getRuntimeInputs(List<Variable> inputs) {
@@ -498,7 +485,7 @@ public class ExecutableSequence {
    * @return the outcome of the statement at index
    */
   public ExecutionOutcome getResult(int index) {
-    sequence.checkIndex(index);
+    checkExecuted();
     return executionResults.get(index);
   }
 
@@ -508,6 +495,7 @@ public class ExecutableSequence {
    * @return the {@code TestChecks} generated from the most recent execution
    */
   public TestChecks<?> getChecks() {
+    checkExecuted();
     return checks;
   }
 
@@ -519,6 +507,7 @@ public class ExecutableSequence {
    *     completed normally
    */
   private Object getValue(int index) {
+    checkExecuted();
     ExecutionOutcome result = getResult(index);
     if (result instanceof NormalExecution) {
       return ((NormalExecution) result).getRuntimeValue();
@@ -624,7 +613,7 @@ public class ExecutableSequence {
    * @return true if execution of the i-th statement terminated normally
    */
   private boolean isNormalExecution(int i) {
-    sequence.checkIndex(i);
+    checkExecuted();
     return getResult(i) instanceof NormalExecution;
   }
 
@@ -780,5 +769,12 @@ public class ExecutableSequence {
    */
   public int size() {
     return sequence.size();
+  }
+
+  /** Throws an exception if this sequence has not yet been executed. */
+  private void checkExecuted() {
+    if (exectime == -1) {
+      throw new BugInRandoopException("Sequence has not yet been executed.");
+    }
   }
 }
