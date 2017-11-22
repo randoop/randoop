@@ -18,13 +18,18 @@ import randoop.types.ClassOrInterfaceType;
  * checks or error-revealing checks.
  */
 public class ExpectedExceptionGenerator extends TestCheckGenerator {
+  /**
+   * The list of lists of throws clauses for which the guard expression was satisfied. Each list of
+   * throwsclauses represents one specification, and each such list must be satisfied.
+   */
   private final List<List<ThrowsClause>> exceptionSets;
 
   /**
    * Creates an {@link ExpectedExceptionGenerator} for the list of sets of expected exceptions.
    *
-   * @param exceptionSets a list of expected exceptions to be searched when testing an exception
-   *     thrown by the operation in the final statement of the sequence
+   * @param exceptionSets a list of lists of expected exceptions to be searched when testing an
+   *     exception thrown by the operation in the final statement of the sequence. Each list of
+   *     expected exceptions must be satisfied.
    */
   public ExpectedExceptionGenerator(List<List<ThrowsClause>> exceptionSets) {
     this.exceptionSets = exceptionSets;
@@ -92,9 +97,10 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Returns the type of the expected exception.
+   * Returns the types of the expected exceptions. Each list of throwsclauses represents one
+   * specification, and each such list must be satisfied.
    *
-   * @return the type of the expected exception
+   * @return the types of the expected exceptions
    */
   public List<List<ThrowsClause>> getExpected() {
     return exceptionSets;

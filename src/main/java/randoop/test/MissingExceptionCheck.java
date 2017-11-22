@@ -14,6 +14,10 @@ import randoop.condition.ThrowsClause;
  */
 public class MissingExceptionCheck implements Check {
 
+  /**
+   * The list of lists of throws clauses for which the guard expression was satisfied. Each list of
+   * throwsclauses represents one specification, and each such list must be satisfied.
+   */
   private final List<List<ThrowsClause>> expected;
 
   /** The index of the statement where the exception should be thrown */
