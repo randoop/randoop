@@ -2262,12 +2262,12 @@ public class Corner extends JComponent { ... }
 </pre>
 
 <p>
-In JDK 7, <code>Corner</code>'s </code>getAccessibleContext</code> method is
-inherited from </code>JComponent</code>.
-In JDK 8, </code>Corner</code>'s </code>getAccessibleContext</code> method
-is inherited from </code>java.awt.Component</code>.
+In JDK 7, <code>Corner</code>'s <code>getAccessibleContext</code> method is
+inherited from <code>JComponent</code>.
+In JDK 8, <code>Corner</code>'s <code>getAccessibleContext</code> method
+is inherited from <code>java.awt.Component</code>.
 Randoop discovers a different set of operations
-(because </code>Corner.class.getMethods()</code> returns different results
+(because <code>Corner.class.getMethods()</code> returns different results
 depending on the JDK).  Given different sets, Randoop may may different
 choices and produce different tests.  There can be implementation changes
 even within a single JDK major version, such as two different versions of
