@@ -306,12 +306,13 @@ public class ExecutableSequence {
             // exception occurred
             break;
           } else {
+            Throwable e = ((ExceptionalExecution) statementResult).getException();
             String msg =
                 "Encountered exception before final statement of error-revealing test (statement "
                     + i
-                    + "): ";
-            throw new Error(
-                msg + ((ExceptionalExecution) statementResult).getException().getMessage());
+                    + "): "
+                    + e.getMessage();
+            throw new Error(msg, e);
           }
         }
 
@@ -393,7 +394,7 @@ public class ExecutableSequence {
       try {
         r = statement.execute(inputVariables, Globals.blackHole);
       } catch (SequenceExecutionException e) {
-        throw new SequenceExecutionException("Exception during execution of " + statement, e);
+        throw new SequenceExecutionException("Problem while executing " + statement, e);
       }
       assert r != null;
       if (GenInputsAbstract.capture_output) {
@@ -409,7 +410,7 @@ public class ExecutableSequence {
   /**
    * This method is typically used by ExecutionVisitors.
    *
-   * <p>The result of executing the i-th element of the sequence.
+   * <p>The result of executing the index-th element of the sequence.
    *
    * @param index the statement index
    * @return the outcome of the statement at index
@@ -428,11 +429,11 @@ public class ExecutableSequence {
   }
 
   /**
-   * The result of executing the i-th element of the sequence.
+   * The result of executing the index-th element of the sequence.
    *
    * @param index which element to obtain
-   * @return the result of executing the i-th element of the sequence, if that element's execution
-   *     completed normally
+   * @return the result of executing the index-th element of the sequence, if that element's
+   *     execution completed normally
    */
   private Object getValue(int index) {
     ExecutionOutcome result = getResult(index);
@@ -452,30 +453,29 @@ public class ExecutableSequence {
     Set<ReferenceValue> values = new LinkedHashSet<>();
 
     Object outputValue = getValue(sequence.size() - 1);
-    if (outputValue != null) {
-      Variable outputVariable = sequence.getLastVariable();
-
-      Type outputType = outputVariable.getType();
-
-      if (outputType.isReferenceType() && !outputType.isString()) {
-        ReferenceValue value = new ReferenceValue((ReferenceType) outputType, outputValue);
-        values.add(value);
-        variableMap.put(outputValue, outputVariable);
-      }
-    }
+    Variable outputVariable = sequence.getLastVariable();
+    addReferenceValue(outputVariable, outputValue, values);
 
     for (Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
       Object inputValue = getValue(inputVariable.index);
-      if (inputValue != null) {
-        Type inputType = inputVariable.getType();
-        if (inputType.isReferenceType() && !inputType.isString()) {
-          values.add(new ReferenceValue((ReferenceType) inputType, inputValue));
-          variableMap.put(inputValue, inputVariable);
-        }
-      }
+      addReferenceValue(inputVariable, inputValue, values);
     }
 
     return new ArrayList<>(values);
+  }
+
+  /**
+   * If the variable has a non-String reference type, add its value to the set and also add a
+   * mapping to to {@link #variableMap}.
+   */
+  private void addReferenceValue(Variable variable, Object value, Set<ReferenceValue> refValues) {
+    if (value != null) {
+      Type type = variable.getType();
+      if (type.isReferenceType() && !type.isString()) {
+        refValues.add(new ReferenceValue((ReferenceType) type, value));
+        variableMap.put(value, variable);
+      }
+    }
   }
 
   /**
@@ -494,14 +494,8 @@ public class ExecutableSequence {
     for (int i = 0; i < sequence.size() - 1; i++) {
       if (!skipSet.contains(i)) {
         Object value = getValue(i);
-        if (value != null) {
-          Variable variable = sequence.getVariable(i);
-          Type type = variable.getType();
-          if (type.isReferenceType() && !type.isString()) {
-            values.add(new ReferenceValue((ReferenceType) type, value));
-            variableMap.put(value, variable);
-          }
-        }
+        Variable variable = sequence.getVariable(i);
+        addReferenceValue(variable, value, values);
       }
     }
     return new ArrayList<>(values);
