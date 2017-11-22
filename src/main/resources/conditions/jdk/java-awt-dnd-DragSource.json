@@ -1,0 +1,94 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.dnd.DragSource",
+      "name": "createDragSourceContext",
+      "parameterTypes": [
+        "java.awt.dnd.peer.DragSourceContextPeer",
+        "java.awt.dnd.DragGestureEvent",
+        "java.awt.Cursor",
+        "java.awt.Image",
+        "java.awt.Point",
+        "java.awt.datatransfer.Transferable",
+        "java.awt.dnd.DragSourceListener"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "dscp",
+        "dgl",
+        "dragCursor",
+        "dragImage",
+        "imageOffset",
+        "t",
+        "dsl"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dscp is null",
+        "guard": {
+          "condition": "dscp==null",
+          "description": "if dscp is null"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dgl is null",
+        "guard": {
+          "condition": "dgl==null",
+          "description": "if dgl is null"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if dragImage is not null and imageOffset is null",
+        "guard": {
+          "condition": "(dragImage==null) == false && imageOffset==null",
+          "description": "if dragImage is not null and imageOffset is null"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if t is null",
+        "guard": {
+          "condition": "t==null",
+          "description": "if t is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the Component associated with the trigger event is null.",
+        "guard": {
+          "condition": "t==null",
+          "description": "if the Component associated with the trigger event is null."
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the source actions for the DragGestureRecognizer associated with the trigger event are equal to DnDConstants.ACTION_NONE.",
+        "guard": {
+          "condition": "target==t.ACTION_NONE",
+          "description": "if the source actions for the DragGestureRecognizer associated with the trigger event are equal to DnDConstants.ACTION_NONE."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(t)",
+          "description": "the DragSourceContext"
+        },
+        "description": "return the DragSourceContext",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

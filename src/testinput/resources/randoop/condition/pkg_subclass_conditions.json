@@ -1,0 +1,17 @@
+[
+  {
+    "operation": {
+      "classname": "",
+      "name": "",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "receiver",
+      "returnName": "result"
+    },
+    "throwsSpecifications": [],
+    "postSpecifications": [],
+    "preSpecifications": []
+  }
+]

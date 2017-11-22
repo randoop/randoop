@@ -1,0 +1,99 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.NavigationFilter",
+      "name": "setDot",
+      "parameterTypes": [
+        "javax.swing.text.NavigationFilter$FilterBypass",
+        "int",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fb",
+        "dot",
+        "bias"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "dot>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.NavigationFilter",
+      "name": "moveDot",
+      "parameterTypes": [
+        "javax.swing.text.NavigationFilter$FilterBypass",
+        "int",
+        "javax.swing.text.Position$Bias"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fb",
+        "dot",
+        "bias"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position >= 0",
+        "guard": {
+          "condition": "dot>=0",
+          "description": "the position >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.NavigationFilter",
+      "name": "getNextVisualPositionFrom",
+      "parameterTypes": [
+        "javax.swing.text.JTextComponent",
+        "int",
+        "javax.swing.text.Position$Bias",
+        "int",
+        "[Ljavax.swing.text.Position$Bias;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "text",
+        "pos",
+        "bias",
+        "direction",
+        "biasRet"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the direction from the current position that can be thought of as the arrow keys typically found on a keyboard. This will be one of the following values: SwingConstants.WEST SwingConstants.EAST SwingConstants.NORTH SwingConstants.SOUTH",
+        "guard": {
+          "condition": "direction==1",
+          "description": "the direction from the current position that can be thought of as the arrow keys typically found on a keyboard. This will be one of the following values: SwingConstants.WEST SwingConstants.EAST SwingConstants.NORTH SwingConstants.SOUTH"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,114 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImageFilter",
+      "name": "java.awt.image.BufferedImageFilter",
+      "parameterTypes": [
+        "java.awt.image.BufferedImageOp"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "op"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if op is null",
+        "guard": {
+          "condition": "op==null",
+          "description": "if op is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImageFilter",
+      "name": "setPixels",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "java.awt.image.ColorModel",
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "model",
+        "pixels",
+        "off",
+        "scansize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width or height are less than zero.",
+        "guard": {
+          "condition": "x<0 || x<0",
+          "description": "if width or height are less than zero."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.BufferedImageFilter",
+      "name": "setPixels",
+      "parameterTypes": [
+        "int",
+        "int",
+        "int",
+        "int",
+        "java.awt.image.ColorModel",
+        "[B",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "w",
+        "h",
+        "model",
+        "pixels",
+        "off",
+        "scansize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if width or height are less than zero.",
+        "guard": {
+          "condition": "x<0 || x<0",
+          "description": "if width or height are less than zero."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

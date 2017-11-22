@@ -1,0 +1,68 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Canvas",
+      "name": "createBufferStrategy",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "numBuffers"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if numBuffers is less than 1.",
+        "guard": {
+          "condition": "numBuffers<1",
+          "description": "if numBuffers is less than 1."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Canvas",
+      "name": "createBufferStrategy",
+      "parameterTypes": [
+        "int",
+        "java.awt.BufferCapabilities"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "numBuffers",
+        "caps"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if numBuffers is less than 1, or if caps is null",
+        "guard": {
+          "condition": "numBuffers<1 || caps==null",
+          "description": "if numBuffers is less than 1, or if caps is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the required capabilities for creating the buffer strategy; cannot be null",
+        "guard": {
+          "condition": "(caps==null) == false",
+          "description": "the required capabilities for creating the buffer strategy; cannot be null"
+        }
+      }
+    ]
+  }
+]

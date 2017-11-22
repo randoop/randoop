@@ -1,0 +1,93 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.StyleSheet",
+      "name": "loadRules",
+      "parameterTypes": [
+        "java.io.Reader",
+        "java.net.URL"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "in",
+        "ref"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the stream to read the CSS grammar from",
+        "guard": {
+          "condition": "in.ready()",
+          "description": "the stream to read the CSS grammar from"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.StyleSheet",
+      "name": "getForeground",
+      "parameterTypes": [
+        "javax.swing.text.AttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the color"
+        },
+        "description": "return the color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.html.StyleSheet",
+      "name": "getBackground",
+      "parameterTypes": [
+        "javax.swing.text.AttributeSet"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the color"
+        },
+        "description": "return the color",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

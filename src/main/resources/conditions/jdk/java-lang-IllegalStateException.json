@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.IllegalStateException",
+      "name": "java.lang.IllegalStateException",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the String that contains a detailed message",
+        "guard": {
+          "condition": "s.contains(java.lang.CharSequence)",
+          "description": "the String that contains a detailed message"
+        }
+      }
+    ]
+  }
+]

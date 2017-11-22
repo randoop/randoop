@@ -40,7 +40,7 @@ public class RawSignature {
    */
   public RawSignature(
       String packageName, String classname, String name, Class<?>[] parameterTypes) {
-    assert packageName == null || !packageName.isEmpty();
+    assert !Objects.equals(packageName, "");
     this.packageName = packageName;
     this.classname = classname;
     this.name = name;

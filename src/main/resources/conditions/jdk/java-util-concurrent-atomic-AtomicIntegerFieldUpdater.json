@@ -1,0 +1,231 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerFieldUpdater",
+      "name": "newUpdater",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "tclass",
+        "fieldName"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the updater"
+        },
+        "description": "return the updater",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerFieldUpdater",
+      "name": "getAndSet",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "newValue"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerFieldUpdater",
+      "name": "getAndIncrement",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerFieldUpdater",
+      "name": "getAndDecrement",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerFieldUpdater",
+      "name": "getAndAdd",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "delta"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerFieldUpdater",
+      "name": "getAndUpdate",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.util.function.IntUnaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "updateFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.atomic.AtomicIntegerFieldUpdater",
+      "name": "getAndAccumulate",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "java.util.function.IntBinaryOperator"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj",
+        "x",
+        "accumulatorFunction"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get(T))",
+          "description": "the previous value"
+        },
+        "description": "return the previous value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

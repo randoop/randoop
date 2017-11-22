@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.geom.Path2D",
+      "name": "clone",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a clone of this instance."
+        },
+        "description": "return a clone of this instance.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

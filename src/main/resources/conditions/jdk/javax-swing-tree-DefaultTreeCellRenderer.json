@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.tree.DefaultTreeCellRenderer",
+      "name": "getFont",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "this component's font; if a font has not been set for this component, the font of its parent is returned"
+        },
+        "description": "return this component's font; if a font has not been set for this component, the font of its parent is returned",
+        "guard": {
+          "condition": "(target.getX()!=null)==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

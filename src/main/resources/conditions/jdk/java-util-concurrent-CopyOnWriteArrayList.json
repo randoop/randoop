@@ -1,0 +1,360 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "java.util.concurrent.CopyOnWriteArrayList",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "java.util.concurrent.CopyOnWriteArrayList",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "toCopyIn"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array is null",
+        "guard": {
+          "condition": "toCopyIn==null",
+          "description": "if the specified array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "isEmpty",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this list contains no elements"
+        },
+        "description": "return true if this list contains no elements",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "indexOf",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if the specified index is negative",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the specified index is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "toArray",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array is null",
+        "guard": {
+          "condition": "a==null",
+          "description": "if the specified array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "add",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(e)",
+          "description": "true (as specified by Collection.add(E))"
+        },
+        "description": "return true (as specified by Collection.add(E))",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "removeRange",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if fromIndex or toIndex out of range (fromIndex < 0 || toIndex > size() || toIndex < fromIndex)",
+        "guard": {
+          "condition": "fromIndex<0",
+          "description": "if fromIndex or toIndex out of range (fromIndex < 0 || toIndex > size() || toIndex < fromIndex)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "containsAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this list contains all of the elements of the specified collection"
+        },
+        "description": "return true if this list contains all of the elements of the specified collection",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "addAllAbsent",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "addAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "addAll",
+      "parameterTypes": [
+        "int",
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index",
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified collection is null",
+        "guard": {
+          "condition": "c==null",
+          "description": "if the specified collection is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CopyOnWriteArrayList",
+      "name": "subList",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fromIndex",
+        "toIndex"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException for an illegal endpoint index value (fromIndex < 0 || toIndex > size || fromIndex > toIndex)",
+        "guard": {
+          "condition": "fromIndex<0",
+          "description": "for an illegal endpoint index value (fromIndex < 0 || toIndex > size || fromIndex > toIndex)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

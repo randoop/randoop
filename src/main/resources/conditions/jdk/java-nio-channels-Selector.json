@@ -1,0 +1,38 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.Selector",
+      "name": "select",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "timeout"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the value of the timeout argument is negative",
+        "guard": {
+          "condition": "timeout<0",
+          "description": "If the value of the timeout argument is negative"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "If positive, block for up to timeout milliseconds, more or less, while waiting for a channel to become ready; if zero, block indefinitely; must not be negative",
+        "guard": {
+          "condition": "(timeout<0) == false",
+          "description": "If positive, block for up to timeout milliseconds, more or less, while waiting for a channel to become ready; if zero, block indefinitely; must not be negative"
+        }
+      }
+    ]
+  }
+]

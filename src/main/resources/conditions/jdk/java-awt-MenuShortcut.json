@@ -1,0 +1,56 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.MenuShortcut",
+      "name": "equals",
+      "parameterTypes": [
+        "java.awt.MenuShortcut"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the MenuShortcut to compare with this.",
+        "guard": {
+          "condition": "s==target",
+          "description": "the MenuShortcut to compare with this."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.MenuShortcut",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the Object to compare with this.",
+        "guard": {
+          "condition": "obj==target",
+          "description": "the Object to compare with this."
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.basic.BasicFileChooserUI",
+      "name": "getDirectory",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the value of the directory property"
+        },
+        "description": "return the value of the directory property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

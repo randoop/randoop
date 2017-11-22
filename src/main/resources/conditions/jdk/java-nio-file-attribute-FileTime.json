@@ -1,0 +1,62 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.attribute.FileTime",
+      "name": "from",
+      "parameterTypes": [
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the value since the epoch (1970-01-01T00:00:00Z); can be negative",
+        "guard": {
+          "condition": "value<0",
+          "description": "the value since the epoch (1970-01-01T00:00:00Z); can be negative"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.attribute.FileTime",
+      "name": "to",
+      "parameterTypes": [
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result<0",
+          "description": "value in the given unit of granularity, since the epoch since the epoch (1970-01-01T00:00:00Z); can be negative"
+        },
+        "description": "return value in the given unit of granularity, since the epoch since the epoch (1970-01-01T00:00:00Z); can be negative",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.channels.SeekableByteChannel",
+      "name": "position",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newPosition"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the new position is negative",
+        "guard": {
+          "condition": "newPosition<0",
+          "description": "If the new position is negative"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This channel"
+        },
+        "description": "return This channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.channels.SeekableByteChannel",
+      "name": "truncate",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "size"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If the new size is negative",
+        "guard": {
+          "condition": "size<0",
+          "description": "If the new size is negative"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This channel"
+        },
+        "description": "return This channel",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

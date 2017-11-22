@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import randoop.ExecutionOutcome;
-import randoop.condition.Condition;
+import randoop.condition.ExecutableSpecification;
+import randoop.condition.ExpectedOutcomeTable;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -41,6 +42,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /** The output type. */
   private final Type outputType;
 
+  /** The specification for this operation */
+  private ExecutableSpecification execSpec;
+
   /**
    * Create typed operation for the given {@link Operation}.
    *
@@ -52,6 +56,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
+    this.execSpec = null;
   }
 
   @Override
@@ -566,11 +571,28 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
+   * Tests the specification for this operation against the argument values and returns the {@link
+   * ExpectedOutcomeTable} indicating the results of checking the pre-conditions of the
+   * specifications of the operation.
+   *
+   * @param values the argument values
+   * @return the {@link ExpectedOutcomeTable} indicating the results of checking the pre-conditions
+   *     of the specifications of the operation
+   */
+  public ExpectedOutcomeTable checkPrestate(Object[] values) {
+    if (execSpec == null) {
+      return new ExpectedOutcomeTable();
+    }
+    return execSpec.checkPrestate(addNullReceiver(values));
+  }
+
+  /**
    * Fixes the argument array for checking an {@link Operation} -- inserting {@code null} as first
    * argument when this operation is static.
    *
    * @param values the argument array for this operation
-   * @return the corresponding operation array for checking a {@link Condition}
+   * @return the corresponding operation array for checking a {@link
+   *     randoop.condition.ExecutableBooleanExpression}
    */
   private Object[] addNullReceiver(Object[] values) {
     Object[] args = values;
@@ -580,5 +602,15 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       System.arraycopy(values, 0, args, 1, values.length);
     }
     return args;
+  }
+
+  /**
+   * Sets the specification; any previous value is ignored (so the method name {@code
+   * addExecutableSpecification} may be misleading).
+   *
+   * @param execSpec the specification to use for this object
+   */
+  public void addExecutableSpecification(ExecutableSpecification execSpec) {
+    this.execSpec = execSpec;
   }
 }

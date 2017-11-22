@@ -1,0 +1,34 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.charset.CoderResult",
+      "name": "throwException",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.nio.BufferUnderflowException",
+        "description": "throws BufferUnderflowException If this object is UNDERFLOW",
+        "guard": {
+          "condition": "target.isUnderflow()",
+          "description": "If this object is UNDERFLOW"
+        }
+      },
+      {
+        "exception": "java.nio.BufferOverflowException",
+        "description": "throws BufferOverflowException If this object is OVERFLOW",
+        "guard": {
+          "condition": "target.isOverflow()",
+          "description": "If this object is OVERFLOW"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

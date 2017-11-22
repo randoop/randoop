@@ -1,0 +1,229 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.instrument.Instrumentation",
+      "name": "addTransformer",
+      "parameterTypes": [
+        "java.lang.instrument.ClassFileTransformer",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "transformer",
+        "canRetransform"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.UnsupportedOperationException",
+        "description": "throws UnsupportedOperationException if canRetransform is true and the current configuration of the JVM does not allow retransformation (isRetransformClassesSupported() is false)",
+        "guard": {
+          "condition": "canRetransform==true",
+          "description": "if canRetransform is true and the current configuration of the JVM does not allow retransformation (isRetransformClassesSupported() is false)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.instrument.Instrumentation",
+      "name": "retransformClasses",
+      "parameterTypes": [
+        "[Ljava.lang.Class;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "classes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the supplied classes array or any of its components is null.",
+        "guard": {
+          "condition": "classes==null",
+          "description": "if the supplied classes array or any of its components is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.instrument.Instrumentation",
+      "name": "redefineClasses",
+      "parameterTypes": [
+        "[Ljava.lang.instrument.ClassDefinition;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "definitions"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the supplied definitions array or any of its components is null",
+        "guard": {
+          "condition": "definitions==null",
+          "description": "if the supplied definitions array or any of its components is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.instrument.Instrumentation",
+      "name": "isModifiableClass",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "theClass"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified class is null.",
+        "guard": {
+          "condition": "theClass==null",
+          "description": "if the specified class is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.instrument.Instrumentation",
+      "name": "getObjectSize",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "objectToSize"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the supplied Object is null.",
+        "guard": {
+          "condition": "objectToSize==null",
+          "description": "if the supplied Object is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.instrument.Instrumentation",
+      "name": "appendToBootstrapClassLoaderSearch",
+      "parameterTypes": [
+        "java.util.jar.JarFile"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "jarfile"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If jarfile is null.",
+        "guard": {
+          "condition": "jarfile==null",
+          "description": "If jarfile is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.instrument.Instrumentation",
+      "name": "appendToSystemClassLoaderSearch",
+      "parameterTypes": [
+        "java.util.jar.JarFile"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "jarfile"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If jarfile is null.",
+        "guard": {
+          "condition": "jarfile==null",
+          "description": "If jarfile is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.instrument.Instrumentation",
+      "name": "setNativeMethodPrefix",
+      "parameterTypes": [
+        "java.lang.instrument.ClassFileTransformer",
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "transformer",
+        "prefix"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The prefix to apply to wrapped native methods when retrying a failed native method resolution. If prefix is either null or the empty string, then failed native method resolutions are not retried for this transformer.",
+        "guard": {
+          "condition": "prefix==null",
+          "description": "The prefix to apply to wrapped native methods when retrying a failed native method resolution. If prefix is either null or the empty string, then failed native method resolutions are not retried for this transformer."
+        }
+      }
+    ]
+  }
+]

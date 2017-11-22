@@ -1,0 +1,90 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.TransferQueue",
+      "name": "tryTransfer",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.TransferQueue",
+      "name": "transfer",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.TransferQueue",
+      "name": "tryTransfer",
+      "parameterTypes": [
+        "java.lang.Object",
+        "long",
+        "java.util.concurrent.TimeUnit"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e",
+        "timeout",
+        "unit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

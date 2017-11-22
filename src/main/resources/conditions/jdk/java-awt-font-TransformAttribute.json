@@ -1,0 +1,40 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.font.TransformAttribute",
+      "name": "isIdentity",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the wrapped transform is an identity transform; false otherwise."
+        },
+        "description": "return true if the wrapped transform is an identity transform; false otherwise.",
+        "guard": {
+          "condition": "target.getTransform().isIdentity()",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the wrapped transform is an identity transform; false otherwise."
+        },
+        "description": "return true if the wrapped transform is an identity transform; false otherwise.",
+        "guard": {
+          "condition": "target.getTransform().isIdentity()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

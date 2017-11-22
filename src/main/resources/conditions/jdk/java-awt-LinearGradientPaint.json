@@ -1,0 +1,172 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.LinearGradientPaint",
+      "name": "java.awt.LinearGradientPaint",
+      "parameterTypes": [
+        "float",
+        "float",
+        "float",
+        "float",
+        "[F",
+        "[Ljava.awt.Color;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "startX",
+        "startY",
+        "endX",
+        "endY",
+        "fractions",
+        "colors"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fractions array is null, or colors array is null,",
+        "guard": {
+          "condition": "fractions==null || fractions==null",
+          "description": "if fractions array is null, or colors array is null,"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if start and end points are the same points, or fractions.length != colors.length, or colors is less than 2 in size, or a fractions value is less than 0.0 or greater than 1.0, or the fractions are not provided in strictly increasing order",
+        "guard": {
+          "condition": "startX<2 || startY<2 || endX<2 || endY<2 && startX<2 || startY<2 || endX<2 || endY<2",
+          "description": "if start and end points are the same points, or fractions.length != colors.length, or colors is less than 2 in size, or a fractions value is less than 0.0 or greater than 1.0, or the fractions are not provided in strictly increasing order"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.LinearGradientPaint",
+      "name": "java.awt.LinearGradientPaint",
+      "parameterTypes": [
+        "float",
+        "float",
+        "float",
+        "float",
+        "[F",
+        "[Ljava.awt.Color;",
+        "java.awt.MultipleGradientPaint$CycleMethod"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "startX",
+        "startY",
+        "endX",
+        "endY",
+        "fractions",
+        "colors",
+        "cycleMethod"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if fractions array is null, or colors array is null, or cycleMethod is null",
+        "guard": {
+          "condition": "fractions==null || fractions==null",
+          "description": "if fractions array is null, or colors array is null, or cycleMethod is null"
+        }
+      },
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if start and end points are the same points, or fractions.length != colors.length, or colors is less than 2 in size, or a fractions value is less than 0.0 or greater than 1.0, or the fractions are not provided in strictly increasing order",
+        "guard": {
+          "condition": "startX<2 || startY<2 || endX<2 || endY<2 && startX<2 || startY<2 || endX<2 || endY<2",
+          "description": "if start and end points are the same points, or fractions.length != colors.length, or colors is less than 2 in size, or a fractions value is less than 0.0 or greater than 1.0, or the fractions are not provided in strictly increasing order"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.LinearGradientPaint",
+      "name": "java.awt.LinearGradientPaint",
+      "parameterTypes": [
+        "java.awt.geom.Point2D",
+        "java.awt.geom.Point2D",
+        "[F",
+        "[Ljava.awt.Color;",
+        "java.awt.MultipleGradientPaint$CycleMethod"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "end",
+        "fractions",
+        "colors",
+        "cycleMethod"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if one of the points is null, or fractions array is null, or colors array is null, or cycleMethod is null",
+        "guard": {
+          "condition": "start==null || end==null || fractions==null || fractions==null || end==null",
+          "description": "if one of the points is null, or fractions array is null, or colors array is null, or cycleMethod is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.LinearGradientPaint",
+      "name": "java.awt.LinearGradientPaint",
+      "parameterTypes": [
+        "java.awt.geom.Point2D",
+        "java.awt.geom.Point2D",
+        "[F",
+        "[Ljava.awt.Color;",
+        "java.awt.MultipleGradientPaint$CycleMethod",
+        "java.awt.MultipleGradientPaint$ColorSpaceType",
+        "java.awt.geom.AffineTransform"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "end",
+        "fractions",
+        "colors",
+        "cycleMethod",
+        "colorSpace",
+        "gradientTransform"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if one of the points is null, or fractions array is null, or colors array is null, or cycleMethod is null, or colorSpace is null, or gradientTransform is null",
+        "guard": {
+          "condition": "start==null || end==null || fractions==null || fractions==null || end==null || colorSpace==null",
+          "description": "if one of the points is null, or fractions array is null, or colors array is null, or cycleMethod is null, or colorSpace is null, or gradientTransform is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

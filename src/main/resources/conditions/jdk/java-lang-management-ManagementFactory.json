@@ -1,0 +1,118 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.management.ManagementFactory",
+      "name": "getPlatformMXBean",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mxbeanInterface"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if mxbeanInterface is not a platform management interface or not a singleton platform MXBean.",
+        "guard": {
+          "condition": "(mxbeanInterface.isInterface()) == false",
+          "description": "if mxbeanInterface is not a platform management interface or not a singleton platform MXBean."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.management.ManagementFactory",
+      "name": "getPlatformMXBeans",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mxbeanInterface"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if mxbeanInterface is not a platform management interface.",
+        "guard": {
+          "condition": "(mxbeanInterface.isInterface()) == false",
+          "description": "if mxbeanInterface is not a platform management interface."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.management.ManagementFactory",
+      "name": "getPlatformMXBean",
+      "parameterTypes": [
+        "javax.management.MBeanServerConnection",
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "connection",
+        "mxbeanInterface"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if mxbeanInterface is not a platform management interface or not a singleton platform MXBean.",
+        "guard": {
+          "condition": "(mxbeanInterface.isInterface()) == false",
+          "description": "if mxbeanInterface is not a platform management interface or not a singleton platform MXBean."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.management.ManagementFactory",
+      "name": "getPlatformMXBeans",
+      "parameterTypes": [
+        "javax.management.MBeanServerConnection",
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "connection",
+        "mxbeanInterface"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if mxbeanInterface is not a platform management interface.",
+        "guard": {
+          "condition": "(mxbeanInterface.isInterface()) == false",
+          "description": "if mxbeanInterface is not a platform management interface."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

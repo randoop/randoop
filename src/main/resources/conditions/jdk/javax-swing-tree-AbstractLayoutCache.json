@@ -1,0 +1,37 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.tree.AbstractLayoutCache",
+      "name": "getNodeDimensions",
+      "parameterTypes": [
+        "java.lang.Object",
+        "int",
+        "int",
+        "boolean",
+        "java.awt.Rectangle"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value",
+        "row",
+        "depth",
+        "expanded",
+        "placeIn"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "true if row is expanded, false otherwise",
+        "guard": {
+          "condition": "row==false",
+          "description": "true if row is expanded, false otherwise"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.function.Consumer",
+      "name": "andThen",
+      "parameterTypes": [
+        "java.util.function.Consumer"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "after"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if after is null",
+        "guard": {
+          "condition": "after==null",
+          "description": "if after is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

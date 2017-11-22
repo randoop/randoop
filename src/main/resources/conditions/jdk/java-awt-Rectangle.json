@@ -1,0 +1,125 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Rectangle",
+      "name": "getWidth",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the width of the bounding Rectangle."
+        },
+        "description": "return the width of the bounding Rectangle.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Rectangle",
+      "name": "getHeight",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the height of the bounding Rectangle."
+        },
+        "description": "return the height of the bounding Rectangle.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Rectangle",
+      "name": "getBounds",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result=={the}",
+          "description": "a new Rectangle, equal to the bounding Rectangle for this Rectangle."
+        },
+        "description": "return a new Rectangle, equal to the bounding Rectangle for this Rectangle.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Rectangle",
+      "name": "equals",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "obj"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the objects are equal; false otherwise."
+        },
+        "description": "return true if the objects are equal; false otherwise.",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the objects are equal; false otherwise."
+        },
+        "description": "return true if the objects are equal; false otherwise.",
+        "guard": {
+          "condition": "obj.equals(obj)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

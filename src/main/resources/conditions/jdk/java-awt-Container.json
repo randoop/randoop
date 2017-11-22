@@ -1,0 +1,774 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "getComponentCount",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the number of components in this panel."
+        },
+        "description": "return the number of components in this panel.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "getComponent",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "n"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(n)",
+          "description": "the nth component in this container."
+        },
+        "description": "return the nth component in this container.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "getComponents",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "an array of all the components in this container."
+        },
+        "description": "return an array of all the components in this container.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "getInsets",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the insets of this container."
+        },
+        "description": "return the insets of this container.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "add",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comp"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if comp is null",
+        "guard": {
+          "condition": "comp==null",
+          "description": "if comp is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the component argument"
+        },
+        "description": "return the component argument",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "add",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "name",
+        "comp"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if comp is null",
+        "guard": {
+          "condition": "comp==null",
+          "description": "if comp is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "add",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comp",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if comp is null",
+        "guard": {
+          "condition": "comp==null",
+          "description": "if comp is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(comp)",
+          "description": "the component comp"
+        },
+        "description": "return the component comp",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "setComponentZOrder",
+      "parameterTypes": [
+        "java.awt.Component",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comp",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if comp is null",
+        "guard": {
+          "condition": "comp==null",
+          "description": "if comp is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "add",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comp",
+        "constraints"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if comp is null",
+        "guard": {
+          "condition": "comp==null",
+          "description": "if comp is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "add",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comp",
+        "constraints",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if comp is null",
+        "guard": {
+          "condition": "comp==null",
+          "description": "if comp is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "an object expressing layout constraints for this",
+        "guard": {
+          "condition": "constraints==target",
+          "description": "an object expressing layout constraints for this"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "addImpl",
+      "parameterTypes": [
+        "java.awt.Component",
+        "java.lang.Object",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comp",
+        "constraints",
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if comp is null",
+        "guard": {
+          "condition": "comp==null",
+          "description": "if comp is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "remove",
+      "parameterTypes": [
+        "java.awt.Component"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "comp"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if comp is null",
+        "guard": {
+          "condition": "comp==null",
+          "description": "if comp is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "getListeners",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "listenerType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if listenerType is null",
+        "guard": {
+          "condition": "listenerType==null",
+          "description": "if listenerType is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "getComponentAt",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "null if the component does not contain the position. If there is no child component at the requested point and the point is within the bounds of the container the container itself is returned; otherwise the top-most child is returned."
+        },
+        "description": "return null if the component does not contain the position. If there is no child component at the requested point and the point is within the bounds of the container the container itself is returned; otherwise the top-most child is returned.",
+        "guard": {
+          "condition": "(target.getComponent(x,y))==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "findComponentAt",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "null if the component does not contain the position. If there is no child component at the requested point and the point is within the bounds of the container the container itself is returned."
+        },
+        "description": "return null if the component does not contain the position. If there is no child component at the requested point and the point is within the bounds of the container the container itself is returned.",
+        "guard": {
+          "condition": "(target.getComponent(x,y))==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "findComponentAt",
+      "parameterTypes": [
+        "java.awt.Point"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "p"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if p is null",
+        "guard": {
+          "condition": "p==null",
+          "description": "if p is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the parameter string of this container"
+        },
+        "description": "return the parameter string of this container",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "list",
+      "parameterTypes": [
+        "java.io.PrintStream",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "indent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if out is null",
+        "guard": {
+          "condition": "out==null",
+          "description": "if out is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "list",
+      "parameterTypes": [
+        "java.io.PrintWriter",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "out",
+        "indent"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if out is null",
+        "guard": {
+          "condition": "out==null",
+          "description": "if out is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "setFocusTraversalKeys",
+      "parameterTypes": [
+        "int",
+        "java.util.Set"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id",
+        "keystrokes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS, or if keystrokes contains null, or if any keystroke represents a KEY_TYPED event, or if any keystroke already maps to another focus traversal operation for this Container",
+        "guard": {
+          "condition": "(id==1) == false || keystrokes.contains(null)",
+          "description": "if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS, or if keystrokes contains null, or if any keystroke represents a KEY_TYPED event, or if any keystroke already maps to another focus traversal operation for this Container"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "getFocusTraversalKeys",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS",
+        "guard": {
+          "condition": "(id==1) == false",
+          "description": "if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "areFocusTraversalKeysSet",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "id"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS",
+        "guard": {
+          "condition": "(id==1) == false",
+          "description": "if id is not one of KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, or KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "isFocusTraversalPolicySet",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the focus traversal policy has been explicitly set for this Container; false otherwise."
+        },
+        "description": "return true if the focus traversal policy has been explicitly set for this Container; false otherwise.",
+        "guard": {
+          "condition": "target.getFocusTraversalPolicy()!=null",
+          "description": ""
+        }
+      },
+      {
+        "property": {
+          "condition": "result==false",
+          "description": "true if the focus traversal policy has been explicitly set for this Container; false otherwise."
+        },
+        "description": "return true if the focus traversal policy has been explicitly set for this Container; false otherwise.",
+        "guard": {
+          "condition": "target.getFocusTraversalPolicy()!=null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "applyComponentOrientation",
+      "parameterTypes": [
+        "java.awt.ComponentOrientation"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if orientation is null.",
+        "guard": {
+          "condition": "o==null",
+          "description": "if orientation is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.Container",
+      "name": "getAccessibleChildrenCount",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the number of accessible children in the object"
+        },
+        "description": "return the number of accessible children in the object",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

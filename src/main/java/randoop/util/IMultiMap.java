@@ -2,10 +2,7 @@ package randoop.util;
 
 import java.util.Set;
 
-/**
- * Represents a relation from a set of T1s (the keys) to another set of T2s (the values). In
- * particular, each key maps to a set of values.
- */
+/** A multimap, which maps each key to a set of values. */
 public interface IMultiMap<T1, T2> {
 
   /**

@@ -1,0 +1,33 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.logging.Formatter",
+      "name": "getTail",
+      "parameterTypes": [
+        "java.util.logging.Handler"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "h"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(h)",
+          "description": "tail string"
+        },
+        "description": "return tail string",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

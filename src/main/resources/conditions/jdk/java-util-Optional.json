@@ -1,0 +1,238 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Optional",
+      "name": "empty",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "an empty Optional"
+        },
+        "description": "return an empty Optional",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Optional",
+      "name": "of",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if value is null",
+        "guard": {
+          "condition": "value==null",
+          "description": "if value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the value to be present, which must be non-null",
+        "guard": {
+          "condition": "value!=null",
+          "description": "the value to be present, which must be non-null"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.util.Optional",
+      "name": "ofNullable",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "an Optional with a present value if the specified value is non-null, otherwise an empty Optional"
+        },
+        "description": "return an Optional with a present value if the specified value is non-null, otherwise an empty Optional",
+        "guard": {
+          "condition": "value!=null",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Optional",
+      "name": "filter",
+      "parameterTypes": [
+        "java.util.function.Predicate"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "predicate"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the predicate is null",
+        "guard": {
+          "condition": "predicate==null",
+          "description": "if the predicate is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Optional",
+      "name": "map",
+      "parameterTypes": [
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mapper"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the mapping function is null",
+        "guard": {
+          "condition": "mapper==null",
+          "description": "if the mapping function is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Optional",
+      "name": "flatMap",
+      "parameterTypes": [
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "mapper"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the mapping function is null or returns a null result",
+        "guard": {
+          "condition": "mapper==null",
+          "description": "if the mapping function is null or returns a null result"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Optional",
+      "name": "orElseThrow",
+      "parameterTypes": [
+        "java.util.function.Supplier"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "exceptionSupplier"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the present value"
+        },
+        "description": "return the present value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Optional",
+      "name": "toString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.get())",
+          "description": "the string representation of this instance"
+        },
+        "description": "return the string representation of this instance",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

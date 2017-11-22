@@ -1,0 +1,145 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JCheckBox",
+      "name": "javax.swing.JCheckBox",
+      "parameterTypes": [
+        "javax.swing.Icon",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "icon",
+        "selected"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "a boolean value indicating the initial selection state. If true the check box is selected",
+        "guard": {
+          "condition": "target.isSelected()",
+          "description": "a boolean value indicating the initial selection state. If true the check box is selected"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JCheckBox",
+      "name": "javax.swing.JCheckBox",
+      "parameterTypes": [
+        "java.lang.String",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "text",
+        "selected"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "a boolean value indicating the initial selection state. If true the check box is selected",
+        "guard": {
+          "condition": "target.isSelected()",
+          "description": "a boolean value indicating the initial selection state. If true the check box is selected"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JCheckBox",
+      "name": "javax.swing.JCheckBox",
+      "parameterTypes": [
+        "java.lang.String",
+        "javax.swing.Icon",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "text",
+        "icon",
+        "selected"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "a boolean value indicating the initial selection state. If true the check box is selected",
+        "guard": {
+          "condition": "target.isSelected()",
+          "description": "a boolean value indicating the initial selection state. If true the check box is selected"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JCheckBox",
+      "name": "isBorderPaintedFlat",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the value of the borderPaintedFlat property"
+        },
+        "description": "return the value of the borderPaintedFlat property",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JCheckBox",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JCheckBox."
+        },
+        "description": "return a string representation of this JCheckBox.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

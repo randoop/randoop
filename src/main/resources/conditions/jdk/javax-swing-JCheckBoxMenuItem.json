@@ -1,0 +1,83 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JCheckBoxMenuItem",
+      "name": "getUIClassID",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "\"CheckBoxMenuItemUI\""
+        },
+        "description": "return \"CheckBoxMenuItemUI\"",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JCheckBoxMenuItem",
+      "name": "getState",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if the item is selected"
+        },
+        "description": "return true if the item is selected",
+        "guard": {
+          "condition": "target.isSelected()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JCheckBoxMenuItem",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JCheckBoxMenuItem."
+        },
+        "description": "return a string representation of this JCheckBoxMenuItem.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

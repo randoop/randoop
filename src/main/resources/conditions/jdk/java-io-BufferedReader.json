@@ -1,0 +1,115 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.BufferedReader",
+      "name": "java.io.BufferedReader",
+      "parameterTypes": [
+        "java.io.Reader",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "in",
+        "sz"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If sz <= 0",
+        "guard": {
+          "condition": "sz<=0",
+          "description": "If sz <= 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.BufferedReader",
+      "name": "skip",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "n"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If n is negative.",
+        "guard": {
+          "condition": "n<0",
+          "description": "If n is negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.BufferedReader",
+      "name": "mark",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "readAheadLimit"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException If readAheadLimit < 0",
+        "guard": {
+          "condition": "readAheadLimit<0",
+          "description": "If readAheadLimit < 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.BufferedReader",
+      "name": "lines",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result<{String}",
+          "description": "a Stream<String> providing the lines of text described by this BufferedReader"
+        },
+        "description": "return a Stream<String> providing the lines of text described by this BufferedReader",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

@@ -1,0 +1,90 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.reflect.WeakCache",
+      "name": "java.lang.reflect.WeakCache",
+      "parameterTypes": [
+        "java.util.function.BiFunction",
+        "java.util.function.BiFunction"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "subKeyFactory",
+        "valueFactory"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if subKeyFactory or valueFactory is null.",
+        "guard": {
+          "condition": "subKeyFactory==null || valueFactory==null",
+          "description": "if subKeyFactory or valueFactory is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.WeakCache",
+      "name": "get",
+      "parameterTypes": [
+        "java.lang.Object",
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "key",
+        "parameter"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if parameter passed in or sub-key calculated by subKeyFactory or value calculated by valueFactory is null.",
+        "guard": {
+          "condition": "key==null",
+          "description": "if parameter passed in or sub-key calculated by subKeyFactory or value calculated by valueFactory is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.reflect.WeakCache",
+      "name": "containsValue",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if value is null",
+        "guard": {
+          "condition": "value==null",
+          "description": "if value is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

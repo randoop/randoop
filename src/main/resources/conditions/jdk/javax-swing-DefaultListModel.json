@@ -1,0 +1,30 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.DefaultListModel",
+      "name": "getElementAt",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "index"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArrayIndexOutOfBoundsException",
+        "description": "throws ArrayIndexOutOfBoundsException if the index is negative or greater than the current size of this list",
+        "guard": {
+          "condition": "index<0",
+          "description": "if the index is negative or greater than the current size of this list"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

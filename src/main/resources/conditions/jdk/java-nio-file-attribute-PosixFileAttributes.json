@@ -1,0 +1,56 @@
+[
+  {
+    "operation": {
+      "classname": "java.nio.file.attribute.PosixFileAttributes",
+      "name": "owner",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.size())",
+          "description": "the file owner"
+        },
+        "description": "return the file owner",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.nio.file.attribute.PosixFileAttributes",
+      "name": "group",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.size())",
+          "description": "the file group owner"
+        },
+        "description": "return the file group owner",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

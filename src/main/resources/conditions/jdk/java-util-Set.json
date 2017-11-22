@@ -1,0 +1,156 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.Set",
+      "name": "isEmpty",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this set contains no elements"
+        },
+        "description": "return true if this set contains no elements",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Set",
+      "name": "contains",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "o"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this set does not permit null elements (optional)",
+        "guard": {
+          "condition": "o==null",
+          "description": "if the specified element is null and this set does not permit null elements (optional)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Set",
+      "name": "toArray",
+      "parameterTypes": [
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified array is null",
+        "guard": {
+          "condition": "a==null",
+          "description": "if the specified array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Set",
+      "name": "add",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "e"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the specified element is null and this set does not permit null elements",
+        "guard": {
+          "condition": "e==null",
+          "description": "if the specified element is null and this set does not permit null elements"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this set did not already contain the specified element"
+        },
+        "description": "return true if this set did not already contain the specified element",
+        "guard": {
+          "condition": "(target.contains(java.lang.Object))==false",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.Set",
+      "name": "containsAll",
+      "parameterTypes": [
+        "java.util.Collection"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if this set contains all of the elements of the specified collection"
+        },
+        "description": "return true if this set contains all of the elements of the specified collection",
+        "guard": {
+          "condition": "target.contains(java.lang.Object)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

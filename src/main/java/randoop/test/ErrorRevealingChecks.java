@@ -28,13 +28,21 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
     this.checks = new LinkedHashSet<>();
   }
 
-  /** Create a singleton set of error checks. */
+  /**
+   * Create a singleton set of error checks.
+   *
+   * @param check the check to put in the newly-created singleton set
+   */
   public ErrorRevealingChecks(Check check) {
     validateCheck(check);
     this.checks = Collections.<Check>singleton(check);
   }
 
-  /** Throw an exception if {@code check} is not acceptable for this class. */
+  /**
+   * Throw an exception if {@code check} is not acceptable for this class.
+   *
+   * @param check the check that a client is trying to insert into this
+   */
   private static void validateCheck(Check check) {
     if ((check instanceof ExceptionCheck) && !(check instanceof ExpectedExceptionCheck)) {
       throw new Error(

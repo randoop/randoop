@@ -1,0 +1,89 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.function.Predicate",
+      "name": "and",
+      "parameterTypes": [
+        "java.util.function.Predicate"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "other"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if other is null",
+        "guard": {
+          "condition": "other==null",
+          "description": "if other is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.function.Predicate",
+      "name": "or",
+      "parameterTypes": [
+        "java.util.function.Predicate"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "other"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if other is null",
+        "guard": {
+          "condition": "other==null",
+          "description": "if other is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.function.Predicate",
+      "name": "isEqual",
+      "parameterTypes": [
+        "java.lang.Object"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "targetRef"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "a predicate that tests if two arguments are equal according to Objects.equals(Object, Object)"
+        },
+        "description": "return a predicate that tests if two arguments are equal according to Objects.equals(Object, Object)",
+        "guard": {
+          "condition": "targetRef.equals(targetRef)",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

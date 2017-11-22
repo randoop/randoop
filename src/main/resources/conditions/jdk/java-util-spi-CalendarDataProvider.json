@@ -1,0 +1,58 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.spi.CalendarDataProvider",
+      "name": "getFirstDayOfWeek",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale is null.",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.spi.CalendarDataProvider",
+      "name": "getMinimalDaysInFirstWeek",
+      "parameterTypes": [
+        "java.util.Locale"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "locale"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if locale is null.",
+        "guard": {
+          "condition": "locale==null",
+          "description": "if locale is null."
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

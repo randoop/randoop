@@ -1,0 +1,85 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JOptionPane",
+      "name": "setMessageType",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.RuntimeException",
+        "description": "throws RuntimeException if newType is not one of the legal values listed above",
+        "guard": {
+          "condition": "(newType==1) == false",
+          "description": "if newType is not one of the legal values listed above"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JOptionPane",
+      "name": "setOptionType",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "newType"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.RuntimeException",
+        "description": "throws RuntimeException if newType is not one of the legal values listed above",
+        "guard": {
+          "condition": "(newType==1) == false",
+          "description": "if newType is not one of the legal values listed above"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JOptionPane",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JOptionPane"
+        },
+        "description": "return a string representation of this JOptionPane",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

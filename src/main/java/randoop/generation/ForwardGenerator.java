@@ -133,16 +133,11 @@ public class ForwardGenerator extends AbstractGenerator {
 
     setCurrentSequence(eSeq.sequence);
 
-    long endTime = System.nanoTime();
-    long gentime = endTime - startTime;
-    startTime = endTime; // reset start time.
+    long gentime1 = System.nanoTime() - startTime;
 
     eSeq.execute(executionVisitor, checkGenerator);
 
-    endTime = System.nanoTime();
-
-    eSeq.exectime = endTime - startTime;
-    startTime = endTime; // reset start time.
+    startTime = System.nanoTime(); // reset start time.
 
     determineActiveIndices(eSeq);
 
@@ -150,9 +145,9 @@ public class ForwardGenerator extends AbstractGenerator {
       componentManager.addGeneratedSequence(eSeq.sequence);
     }
 
-    endTime = System.nanoTime();
-    gentime += endTime - startTime;
-    eSeq.gentime = gentime;
+    long gentime2 = System.nanoTime() - startTime;
+
+    eSeq.gentime = gentime1 + gentime2;
 
     return eSeq;
   }

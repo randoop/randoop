@@ -1,0 +1,97 @@
+[
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletionStage",
+      "name": "thenCompose",
+      "parameterTypes": [
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fn"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the CompletionStage"
+        },
+        "description": "return the CompletionStage",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletionStage",
+      "name": "thenComposeAsync",
+      "parameterTypes": [
+        "java.util.function.Function"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fn"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the CompletionStage"
+        },
+        "description": "return the CompletionStage",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.util.concurrent.CompletionStage",
+      "name": "thenComposeAsync",
+      "parameterTypes": [
+        "java.util.function.Function",
+        "java.util.concurrent.Executor"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "fn",
+        "executor"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the CompletionStage"
+        },
+        "description": "return the CompletionStage",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

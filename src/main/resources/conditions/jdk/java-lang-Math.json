@@ -1,0 +1,1671 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "sin",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the sine of the argument."
+        },
+        "description": "return the sine of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "cos",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the cosine of the argument."
+        },
+        "description": "return the cosine of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "tan",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the tangent of the argument."
+        },
+        "description": "return the tangent of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "atan",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the arc tangent of the argument."
+        },
+        "description": "return the arc tangent of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "toRadians",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "angdeg"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.E)",
+          "description": "the measurement of the angle angdeg in radians."
+        },
+        "description": "return the measurement of the angle angdeg in radians.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "toDegrees",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "angrad"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.E)",
+          "description": "the measurement of the angle angrad in degrees."
+        },
+        "description": "return the measurement of the angle angrad in degrees.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "log",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the value ln a, the natural logarithm of a."
+        },
+        "description": "return the value ln a, the natural logarithm of a.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "log10",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the base 10 logarithm of a."
+        },
+        "description": "return the base 10 logarithm of a.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "sqrt",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result<0",
+          "description": "the positive square root of a. If the argument is NaN or less than zero, the result is NaN."
+        },
+        "description": "return the positive square root of a. If the argument is NaN or less than zero, the result is NaN.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "cbrt",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the cube root of a."
+        },
+        "description": "return the cube root of a.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "random",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>=0.0",
+          "description": "a pseudorandom double greater than or equal to 0.0 and less than 1.0."
+        },
+        "description": "return a pseudorandom double greater than or equal to 0.0 and less than 1.0.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "addExact",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "addExact",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "subtractExact",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "subtractExact",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "multiplyExact",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "multiplyExact",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "incrementExact",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "incrementExact",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "decrementExact",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "decrementExact",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "negateExact",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "negateExact",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the result"
+        },
+        "description": "return the result",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "toIntExact",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.E)",
+          "description": "the argument as an int"
+        },
+        "description": "return the argument as an int",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "floorDiv",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArithmeticException",
+        "description": "throws ArithmeticException if the divisor y is zero",
+        "guard": {
+          "condition": "y==0",
+          "description": "if the divisor y is zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "floorDiv",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArithmeticException",
+        "description": "throws ArithmeticException if the divisor y is zero",
+        "guard": {
+          "condition": "y==0",
+          "description": "if the divisor y is zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "floorMod",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArithmeticException",
+        "description": "throws ArithmeticException if the divisor y is zero",
+        "guard": {
+          "condition": "y==0",
+          "description": "if the divisor y is zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "floorMod",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.ArithmeticException",
+        "description": "throws ArithmeticException if the divisor y is zero",
+        "guard": {
+          "condition": "y==0",
+          "description": "if the divisor y is zero"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "abs",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the absolute value of the argument."
+        },
+        "description": "return the absolute value of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "abs",
+      "parameterTypes": [
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the absolute value of the argument."
+        },
+        "description": "return the absolute value of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "abs",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the absolute value of the argument."
+        },
+        "description": "return the absolute value of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "abs",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the absolute value of the argument."
+        },
+        "description": "return the absolute value of the argument.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "max",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the larger of a and b."
+        },
+        "description": "return the larger of a and b.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "max",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the larger of a and b."
+        },
+        "description": "return the larger of a and b.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "max",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the larger of a and b."
+        },
+        "description": "return the larger of a and b.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "max",
+      "parameterTypes": [
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the larger of a and b."
+        },
+        "description": "return the larger of a and b.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "min",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the smaller of a and b."
+        },
+        "description": "return the smaller of a and b.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "min",
+      "parameterTypes": [
+        "long",
+        "long"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the smaller of a and b."
+        },
+        "description": "return the smaller of a and b.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "min",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the smaller of a and b."
+        },
+        "description": "return the smaller of a and b.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "min",
+      "parameterTypes": [
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "a",
+        "b"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(a)",
+          "description": "the smaller of a and b."
+        },
+        "description": "return the smaller of a and b.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "ulp",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "d"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(d)",
+          "description": "the size of an ulp of the argument"
+        },
+        "description": "return the size of an ulp of the argument",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "ulp",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(f)",
+          "description": "the size of an ulp of the argument"
+        },
+        "description": "return the size of an ulp of the argument",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "sinh",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "The hyperbolic sine of x."
+        },
+        "description": "return The hyperbolic sine of x.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "cosh",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "The hyperbolic cosine of x."
+        },
+        "description": "return The hyperbolic cosine of x.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "tanh",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "The hyperbolic tangent of x."
+        },
+        "description": "return The hyperbolic tangent of x.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "hypot",
+      "parameterTypes": [
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "sqrt(x2 +y2) without intermediate overflow or underflow"
+        },
+        "description": "return sqrt(x2 +y2) without intermediate overflow or underflow",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "expm1",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the value ex - 1."
+        },
+        "description": "return the value ex - 1.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "copySign",
+      "parameterTypes": [
+        "double",
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "magnitude",
+        "sign"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.E)",
+          "description": "a value with the magnitude of magnitude and the sign of sign."
+        },
+        "description": "return a value with the magnitude of magnitude and the sign of sign.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "copySign",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "magnitude",
+        "sign"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.E)",
+          "description": "a value with the magnitude of magnitude and the sign of sign."
+        },
+        "description": "return a value with the magnitude of magnitude and the sign of sign.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "getExponent",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(f)",
+          "description": "the unbiased exponent of the argument"
+        },
+        "description": "return the unbiased exponent of the argument",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "getExponent",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "d"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(d)",
+          "description": "the unbiased exponent of the argument"
+        },
+        "description": "return the unbiased exponent of the argument",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "nextUp",
+      "parameterTypes": [
+        "double"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "d"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(d)",
+          "description": "The adjacent floating-point value closer to positive infinity."
+        },
+        "description": "return The adjacent floating-point value closer to positive infinity.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.Math",
+      "name": "nextUp",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(f)",
+          "description": "The adjacent floating-point value closer to positive infinity."
+        },
+        "description": "return The adjacent floating-point value closer to positive infinity.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

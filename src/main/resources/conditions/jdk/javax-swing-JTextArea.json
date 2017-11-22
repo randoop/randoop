@@ -1,0 +1,669 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "javax.swing.JTextArea",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rows",
+        "columns"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the rows or columns arguments are negative.",
+        "guard": {
+          "condition": "rows<0 || columns<0 || rows<0 || columns<0",
+          "description": "if the rows or columns arguments are negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the number of rows >= 0",
+        "guard": {
+          "condition": "rows>=0",
+          "description": "the number of rows >= 0"
+        }
+      },
+      {
+        "description": "the number of columns >= 0",
+        "guard": {
+          "condition": "columns>=0",
+          "description": "the number of columns >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "javax.swing.JTextArea",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "text",
+        "rows",
+        "columns"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the rows or columns arguments are negative.",
+        "guard": {
+          "condition": "rows<0 || columns<0 || rows<0 || columns<0",
+          "description": "if the rows or columns arguments are negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the number of rows >= 0",
+        "guard": {
+          "condition": "rows>=0",
+          "description": "the number of rows >= 0"
+        }
+      },
+      {
+        "description": "the number of columns >= 0",
+        "guard": {
+          "condition": "columns>=0",
+          "description": "the number of columns >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "javax.swing.JTextArea",
+      "parameterTypes": [
+        "javax.swing.text.Document",
+        "java.lang.String",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "doc",
+        "text",
+        "rows",
+        "columns"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if the rows or columns arguments are negative.",
+        "guard": {
+          "condition": "rows<0 || columns<0 || rows<0 || columns<0",
+          "description": "if the rows or columns arguments are negative."
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the number of rows >= 0",
+        "guard": {
+          "condition": "rows>=0",
+          "description": "the number of rows >= 0"
+        }
+      },
+      {
+        "description": "the number of columns >= 0",
+        "guard": {
+          "condition": "columns>=0",
+          "description": "the number of columns >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "getUIClassID",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the ID (\"TextAreaUI\")"
+        },
+        "description": "return the ID (\"TextAreaUI\")",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "getTabSize",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the number of characters"
+        },
+        "description": "return the number of characters",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "getLineOfOffset",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "offset"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "javax.swing.text.BadLocationException",
+        "description": "throws BadLocationException thrown if the offset is less than zero or greater than the document length.",
+        "guard": {
+          "condition": "offset<0",
+          "description": "thrown if the offset is less than zero or greater than the document length."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the line number >= 0"
+        },
+        "description": "return the line number >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the offset >= 0",
+        "guard": {
+          "condition": "offset>=0",
+          "description": "the offset >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "getLineCount",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result>0",
+          "description": "the number of lines > 0"
+        },
+        "description": "return the number of lines > 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "getLineStartOffset",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "line"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "javax.swing.text.BadLocationException",
+        "description": "throws BadLocationException thrown if the line is less than zero or greater or equal to the number of lines contained in the document (as reported by getLineCount).",
+        "guard": {
+          "condition": "line<0",
+          "description": "thrown if the line is less than zero or greater or equal to the number of lines contained in the document (as reported by getLineCount)."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the offset >= 0"
+        },
+        "description": "return the offset >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the line number to translate >= 0",
+        "guard": {
+          "condition": "line>=0",
+          "description": "the line number to translate >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "getLineEndOffset",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "line"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "javax.swing.text.BadLocationException",
+        "description": "throws BadLocationException Thrown if the line is less than zero or greater or equal to the number of lines contained in the document (as reported by getLineCount).",
+        "guard": {
+          "condition": "line<0",
+          "description": "Thrown if the line is less than zero or greater or equal to the number of lines contained in the document (as reported by getLineCount)."
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(line)",
+          "description": "the offset >= 0"
+        },
+        "description": "return the offset >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the line >= 0",
+        "guard": {
+          "condition": "line>=0",
+          "description": "the line >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "insert",
+      "parameterTypes": [
+        "java.lang.String",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "str",
+        "pos"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the position at which to insert >= 0",
+        "guard": {
+          "condition": "pos>=0",
+          "description": "the position at which to insert >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "replaceRange",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "str",
+        "start",
+        "end"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the start position >= 0",
+        "guard": {
+          "condition": "start>=0",
+          "description": "the start position >= 0"
+        }
+      },
+      {
+        "description": "the end position >= start",
+        "guard": {
+          "condition": "end>=start",
+          "description": "the end position >= start"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "getRows",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the number of rows >= 0"
+        },
+        "description": "return the number of rows >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "setRows",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rows"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if rows is less than 0",
+        "guard": {
+          "condition": "rows<0",
+          "description": "if rows is less than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the number of rows >= 0",
+        "guard": {
+          "condition": "rows>=0",
+          "description": "the number of rows >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "getRowHeight",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getHeight())",
+          "description": "the height >= 1"
+        },
+        "description": "return the height >= 1",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "getColumns",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "number of columns >= 0"
+        },
+        "description": "return number of columns >= 0",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "setColumns",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "columns"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if columns is less than 0",
+        "guard": {
+          "condition": "columns<0",
+          "description": "if columns is less than 0"
+        }
+      }
+    ],
+    "post": [],
+    "pre": [
+      {
+        "description": "the number of columns >= 0",
+        "guard": {
+          "condition": "columns>=0",
+          "description": "the number of columns >= 0"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "getColumnWidth",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "the column width >= 1"
+        },
+        "description": "return the column width >= 1",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "getPreferredSize",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.size())",
+          "description": "the size"
+        },
+        "description": "return the size",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.JTextArea",
+      "name": "paramString",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target.getX())",
+          "description": "a string representation of this JTextArea."
+        },
+        "description": "return a string representation of this JTextArea.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

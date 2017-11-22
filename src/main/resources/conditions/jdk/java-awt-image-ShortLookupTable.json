@@ -1,0 +1,68 @@
+[
+  {
+    "operation": {
+      "classname": "java.awt.image.ShortLookupTable",
+      "name": "lookupPixel",
+      "parameterTypes": [
+        "[S",
+        "[S"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "dst"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(src)",
+          "description": "the array dst, an int array of samples."
+        },
+        "description": "return the array dst, an int array of samples.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.awt.image.ShortLookupTable",
+      "name": "lookupPixel",
+      "parameterTypes": [
+        "[S",
+        "[S"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "src",
+        "dst"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(src)",
+          "description": "the array dst, an int array of samples."
+        },
+        "description": "return the array dst, an int array of samples.",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

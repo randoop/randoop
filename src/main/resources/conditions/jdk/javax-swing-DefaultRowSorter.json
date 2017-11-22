@@ -1,0 +1,85 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.DefaultRowSorter",
+      "name": "setModelWrapper",
+      "parameterTypes": [
+        "javax.swing.DefaultRowSorter$ModelWrapper"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "modelWrapper"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if modelWrapper is null",
+        "guard": {
+          "condition": "modelWrapper==null",
+          "description": "if modelWrapper is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.DefaultRowSorter",
+      "name": "setMaxSortKeys",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "max"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if max < 1",
+        "guard": {
+          "condition": "max<1",
+          "description": "if max < 1"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.DefaultRowSorter",
+      "name": "setRowFilter",
+      "parameterTypes": [
+        "javax.swing.RowFilter"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "filter"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "the filter used to determine what entries should be included",
+        "guard": {
+          "condition": "filter.include(javax.swing.RowFilter.javax.swing.RowFilter$Entry<? extends M, ? extends I>)",
+          "description": "the filter used to determine what entries should be included"
+        }
+      }
+    ]
+  }
+]

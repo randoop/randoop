@@ -191,7 +191,13 @@ public abstract class ObjectContract {
     }
   }
 
-  /** Return an ObjectCheck indicating that a contract failed. */
+  /**
+   * Return an ObjectCheck indicating that a contract failed.
+   *
+   * @param eseq the sequence for which a contract failed
+   * @param values the input values
+   * @return an ObjectCheck indicating that a contract failed
+   */
   ObjectCheck failedContract(ExecutableSequence eseq, Object[] values) {
     Variable[] varArray = new Variable[values.length];
     for (int i = 0; i < varArray.length; i++) {

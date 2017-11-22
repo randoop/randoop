@@ -1,0 +1,558 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "methodType",
+      "parameterTypes": [
+        "java.lang.Class",
+        "[Ljava.lang.Class;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rtype",
+        "ptypes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rtype or ptypes or any element of ptypes is null",
+        "guard": {
+          "condition": "rtype==null || ptypes==null || ptypes==null",
+          "description": "if rtype or ptypes or any element of ptypes is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "methodType",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.util.List"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rtype",
+        "ptypes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rtype or ptypes or any element of ptypes is null",
+        "guard": {
+          "condition": "rtype==null || ptypes==null || ptypes==null",
+          "description": "if rtype or ptypes or any element of ptypes is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "methodType",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.Class",
+        "[Ljava.lang.Class;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rtype",
+        "ptype0",
+        "ptypes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rtype or ptype0 or ptypes or any element of ptypes is null",
+        "guard": {
+          "condition": "rtype==null || ptype0==null || ptypes==null",
+          "description": "if rtype or ptype0 or ptypes or any element of ptypes is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "methodType",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rtype"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rtype is null",
+        "guard": {
+          "condition": "rtype==null",
+          "description": "if rtype is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "methodType",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rtype",
+        "ptype0"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rtype or ptype0 is null",
+        "guard": {
+          "condition": "rtype==null || ptype0==null",
+          "description": "if rtype or ptype0 is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "methodType",
+      "parameterTypes": [
+        "java.lang.Class",
+        "java.lang.invoke.MethodType"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "rtype",
+        "ptypes"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if rtype or ptypes is null",
+        "guard": {
+          "condition": "rtype==null || ptypes==null",
+          "description": "if rtype or ptypes is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "genericMethodType",
+      "parameterTypes": [
+        "int",
+        "boolean"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "objectArgCount",
+        "finalArray"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if objectArgCount is negative or greater than 255 (or 254, if finalArray is true)",
+        "guard": {
+          "condition": "objectArgCount<0 || objectArgCount>255 || finalArray==true",
+          "description": "if objectArgCount is negative or greater than 255 (or 254, if finalArray is true)"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "genericMethodType",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "objectArgCount"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if objectArgCount is negative or greater than 255",
+        "guard": {
+          "condition": "objectArgCount<0 || objectArgCount>255",
+          "description": "if objectArgCount is negative or greater than 255"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "changeParameterType",
+      "parameterTypes": [
+        "int",
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "num",
+        "nptype"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if nptype is null",
+        "guard": {
+          "condition": "nptype==null",
+          "description": "if nptype is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "insertParameterTypes",
+      "parameterTypes": [
+        "int",
+        "[Ljava.lang.Class;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "num",
+        "ptypesToInsert"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if num is negative or greater than parameterCount()",
+        "guard": {
+          "condition": "num<0",
+          "description": "if num is negative or greater than parameterCount()"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if ptypesToInsert or any of its elements is null",
+        "guard": {
+          "condition": "ptypesToInsert==null",
+          "description": "if ptypesToInsert or any of its elements is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "appendParameterTypes",
+      "parameterTypes": [
+        "[Ljava.lang.Class;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ptypesToInsert"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if ptypesToInsert or any of its elements is null",
+        "guard": {
+          "condition": "ptypesToInsert==null",
+          "description": "if ptypesToInsert or any of its elements is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "insertParameterTypes",
+      "parameterTypes": [
+        "int",
+        "java.util.List"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "num",
+        "ptypesToInsert"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if num is negative or greater than parameterCount()",
+        "guard": {
+          "condition": "num<0",
+          "description": "if num is negative or greater than parameterCount()"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if ptypesToInsert or any of its elements is null",
+        "guard": {
+          "condition": "ptypesToInsert==null",
+          "description": "if ptypesToInsert or any of its elements is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "appendParameterTypes",
+      "parameterTypes": [
+        "java.util.List"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "ptypesToInsert"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if ptypesToInsert or any of its elements is null",
+        "guard": {
+          "condition": "ptypesToInsert==null",
+          "description": "if ptypesToInsert or any of its elements is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "replaceParameterTypes",
+      "parameterTypes": [
+        "int",
+        "int",
+        "[Ljava.lang.Class;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "end",
+        "ptypesToInsert"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if start is negative or greater than parameterCount() or if end is negative or greater than parameterCount() or if start is greater than end",
+        "guard": {
+          "condition": "start<0 || start>target.parameterCount() || start>end || start>end || end<0",
+          "description": "if start is negative or greater than parameterCount() or if end is negative or greater than parameterCount() or if start is greater than end"
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if ptypesToInsert or any of its elements is null",
+        "guard": {
+          "condition": "ptypesToInsert==null",
+          "description": "if ptypesToInsert or any of its elements is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "dropParameterTypes",
+      "parameterTypes": [
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "start",
+        "end"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException if start is negative or greater than parameterCount() or if end is negative or greater than parameterCount() or if start is greater than end",
+        "guard": {
+          "condition": "start<0 || start>target.parameterCount() || start>end || start>end || end<0",
+          "description": "if start is negative or greater than parameterCount() or if end is negative or greater than parameterCount() or if start is greater than end"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "changeReturnType",
+      "parameterTypes": [
+        "java.lang.Class"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "nrtype"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if nrtype is null",
+        "guard": {
+          "condition": "nrtype==null",
+          "description": "if nrtype is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "parameterSlotDepth",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "num"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if num is negative or greater than parameterCount()",
+        "guard": {
+          "condition": "num<0",
+          "description": "if num is negative or greater than parameterCount()"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.lang.invoke.MethodType",
+      "name": "fromMethodDescriptorString",
+      "parameterTypes": [
+        "java.lang.String",
+        "java.lang.ClassLoader"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "descriptor",
+        "loader"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if the string is null",
+        "guard": {
+          "condition": "descriptor==null",
+          "description": "if the string is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

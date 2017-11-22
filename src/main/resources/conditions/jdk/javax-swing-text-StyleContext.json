@@ -1,0 +1,103 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.text.StyleContext",
+      "name": "getDefaultStyleContext",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "the context"
+        },
+        "description": "return the context",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.StyleContext",
+      "name": "getFont",
+      "parameterTypes": [
+        "java.lang.String",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "family",
+        "style",
+        "size"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(size)",
+          "description": "the new font"
+        },
+        "description": "return the new font",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "the point size >= 1",
+        "guard": {
+          "condition": "size>=1",
+          "description": "the point size >= 1"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.text.StyleContext",
+      "name": "getFontMetrics",
+      "parameterTypes": [
+        "java.awt.Font"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "f"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(f)",
+          "description": "the metrics"
+        },
+        "description": "return the metrics",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

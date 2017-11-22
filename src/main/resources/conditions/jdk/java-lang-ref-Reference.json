@@ -1,0 +1,29 @@
+[
+  {
+    "operation": {
+      "classname": "java.lang.ref.Reference",
+      "name": "isEnqueued",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result==true",
+          "description": "true if and only if this reference object has been enqueued"
+        },
+        "description": "return true if and only if this reference object has been enqueued",
+        "guard": {
+          "condition": "target.enqueue()",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

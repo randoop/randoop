@@ -59,6 +59,7 @@ public class ExpectedExceptionCheckGen {
    * Returns the nearest visible superclass -- usually the argument itself.
    *
    * @param c the class for which superclass is needed
+   * @param visibility only superclasess satisfying this predicate may be returned
    * @return the nearest public class that is the argument or a superclass
    */
   private static Class<?> nearestVisibleSuperclass(Class<?> c, VisibilityPredicate visibility) {
@@ -73,6 +74,7 @@ public class ExpectedExceptionCheckGen {
    * given class.
    *
    * @param c the exception class
+   * @param visibility only superclasess satisfying this predicate may be returned
    * @return the nearest public visible, c or a superclass of c
    */
   public static String getCatchClassName(

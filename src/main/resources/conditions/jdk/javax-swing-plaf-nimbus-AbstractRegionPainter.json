@@ -1,0 +1,243 @@
+[
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.AbstractRegionPainter",
+      "name": "configureGraphics",
+      "parameterTypes": [
+        "java.awt.Graphics2D"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "g"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "The Graphics2D object to configure. Will not be null.",
+        "guard": {
+          "condition": "(g==null) == false",
+          "description": "The Graphics2D object to configure. Will not be null."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.AbstractRegionPainter",
+      "name": "decodeX",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if x < 0 or x > 3",
+        "guard": {
+          "condition": "x<0 || x>3",
+          "description": "if x < 0 or x > 3"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(x)",
+          "description": "the decoded x value"
+        },
+        "description": "return the decoded x value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.AbstractRegionPainter",
+      "name": "decodeY",
+      "parameterTypes": [
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "y"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if y < 0 or y > 3",
+        "guard": {
+          "condition": "y<0 || y>3",
+          "description": "if y < 0 or y > 3"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(y)",
+          "description": "the decoded y value"
+        },
+        "description": "return the decoded y value",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.AbstractRegionPainter",
+      "name": "decodeAnchorX",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "dx"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if x < 0 or x > 3",
+        "guard": {
+          "condition": "x<0 || x>3",
+          "description": "if x < 0 or x > 3"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.AbstractRegionPainter",
+      "name": "decodeAnchorY",
+      "parameterTypes": [
+        "float",
+        "float"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "y",
+        "dy"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "throws IllegalArgumentException if y < 0 or y > 3",
+        "guard": {
+          "condition": "y<0 || y>3",
+          "description": "if y < 0 or y > 3"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.AbstractRegionPainter",
+      "name": "decodeGradient",
+      "parameterTypes": [
+        "float",
+        "float",
+        "float",
+        "float",
+        "[F",
+        "[Ljava.awt.Color;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x1",
+        "y1",
+        "x2",
+        "y2",
+        "midpoints",
+        "colors"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if midpoints array is null, or colors array is null,",
+        "guard": {
+          "condition": "midpoints==null || midpoints==null",
+          "description": "if midpoints array is null, or colors array is null,"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "javax.swing.plaf.nimbus.AbstractRegionPainter",
+      "name": "decodeRadialGradient",
+      "parameterTypes": [
+        "float",
+        "float",
+        "float",
+        "[F",
+        "[Ljava.awt.Color;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "x",
+        "y",
+        "r",
+        "midpoints",
+        "colors"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if midpoints array is null, or colors array is null",
+        "guard": {
+          "condition": "midpoints==null || midpoints==null",
+          "description": "if midpoints array is null, or colors array is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  }
+]

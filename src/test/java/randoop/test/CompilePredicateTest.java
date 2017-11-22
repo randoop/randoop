@@ -109,7 +109,7 @@ public class CompilePredicateTest {
       fail("unsupported encoding");
     }
     assertNotNull(source);
-    JUnitCreator jUnitCreator = JUnitCreator.getTestCreator("", null, null, null, null);
+    JUnitCreator jUnitCreator = JUnitCreator.getTestCreator(null, null, null, null, null);
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
 
     assertFalse("predicate should fail on code", pred.testSource("CompRegression0", source, ""));
