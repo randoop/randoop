@@ -579,7 +579,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the {@link ExpectedOutcomeTable} indicating the results of checking the pre-conditions
    *     of the specifications of the operation
    */
-  public ExpectedOutcomeTable checkConditions(Object[] values) {
+  public ExpectedOutcomeTable checkPrestate(Object[] values) {
     if (execSpec == null) {
       return new ExpectedOutcomeTable();
     }

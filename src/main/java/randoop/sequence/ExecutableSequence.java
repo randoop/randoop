@@ -58,7 +58,7 @@ public class ExecutableSequence {
   /** The underlying sequence. */
   public Sequence sequence;
 
-  /** The checks for this sequence */
+  /** The checks for the last statement in this sequence. */
   private TestChecks<?> checks;
 
   /**
@@ -85,15 +85,15 @@ public class ExecutableSequence {
    *
    * <p>TODO: This is wonky, it really belongs to execution.
    */
-  private boolean hasNullInput;
+  private boolean hasNullInput = false;
 
   /** Output buffer used to capture the output from the executed sequence */
   private static ByteArrayOutputStream output_buffer = new ByteArrayOutputStream();
 
   private static PrintStream ps_output_buffer = new PrintStream(output_buffer);
 
-  /* Maps values to the variables that hold them. */
-  private IdentityMultiMap<Object, Variable> variableMap;
+  /* Maps a value to the set of variables that hold it. */
+  private IdentityMultiMap<Object, Variable> variableMap = new IdentityMultiMap<>();
 
   /**
    * Create an executable sequence that executes the given sequence.
@@ -103,8 +103,14 @@ public class ExecutableSequence {
   public ExecutableSequence(Sequence sequence) {
     this.sequence = sequence;
     this.executionResults = new Execution(sequence);
-    this.hasNullInput = false;
-    this.variableMap = new IdentityMultiMap<>();
+  }
+
+  /** Reset this object to its initial state. */
+  private void reset() {
+    executionResults = new Execution(sequence);
+    exectime = -1;
+    hasNullInput = false;
+    variableMap = new IdentityMultiMap<>();
   }
 
   @Override
@@ -144,8 +150,8 @@ public class ExecutableSequence {
     for (int i = 0; i < sequence.size(); i++) {
 
       // Only print primitive declarations if the last/only statement
-      // of the sequence, because, otherwise, primitive values will be used as
-      // actual parameters: e.g. "foo(3)" instead of "int x = 3 ; foo(x)"
+      // of the sequence.  Usually, primitive values are used as arguments:
+      // e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
       if (sequence.canUseShortForm()
           && sequence.getStatement(i).getShortForm() != null
           && i < sequence.size() - 1) {
@@ -157,6 +163,8 @@ public class ExecutableSequence {
 
       if (i == sequence.size() - 1 && checks != null) {
         // Print exception check first, if present.
+        // This makes its pre-statement part the last pre-statement part,
+        // and its post-statement part the first post-statement part.
         Check exObs = checks.getExceptionCheck();
         if (exObs != null) {
           oneStatement.insert(0, exObs.toCodeStringPreStatement());
@@ -219,16 +227,18 @@ public class ExecutableSequence {
    * Execute this sequence, invoking the given visitor as the execution unfolds. For example, the
    * visitor may decorate the sequence with {@link Check}s about the execution.
    *
+   * <p>This method operates as follows:
+   *
    * <ul>
    *   <li>Clear execution results and call {@code visitor.initialize(this)}.
    *   <li>For each statement in the sequence:
    *       <ul>
    *         <li>call {@code visitor.visitBefore(this, i)}
-   *         <li>execute the statement, using reflection
+   *         <li>execute the i-th statement, using reflection
    *         <li>call {@code visitor.visitAfter(this, i)}
    *       </ul>
    *
-   *   <li>Test the pre-, post-, and throws-conditions for the last statement.
+   *   <li>For the last statement, check its specifications (pre-, post-, and throws-conditions).
    *   <li>Execution stops if one of the following conditions holds:
    *       <ul>
    *         <li>All statements in the sequences have been executed.
@@ -245,88 +255,8 @@ public class ExecutableSequence {
    * <p>After invoking this method, the client can query the outcome of executing each statement via
    * the method {@link #getResult}.
    *
-   * <p><b>Condition Evaluation Algorithm</b>
-   *
-   * <p>This method implements the condition evaluation algorithm described below.
-   *
-   * <p><i>Input</i>: a {@link randoop.operation.TypedClassOperation}, the {@link
-   * randoop.condition.ExecutableSpecification} for the method, and arguments for a call to the
-   * operation. [TODO: this isn't actually the input!]
-   *
-   * <p><i>Goal</i>: classify the call to the operation using the arguments as {@link
-   * randoop.main.GenInputsAbstract.BehaviorType#EXPECTED}, {@link
-   * randoop.main.GenInputsAbstract.BehaviorType#INVALID} or {@link
-   * randoop.main.GenInputsAbstract.BehaviorType#ERROR} based on the elements of {@link
-   * randoop.condition.ExecutableSpecification}.
-   *
-   * <p><i>Definitions</i>: An {@link randoop.condition.ExecutableBooleanExpression}, {@code
-   * expression}, is <i>satisfied</i> on the method arguments if {@code expression.check(values)}
-   * evaluates to true, and it <i>fails</i> otherwise.
-   *
-   * <p><i>Description</i>: The algorithm consists of two phases: (1) evaluating guards of the
-   * specifications before the call, and (2) checking for expected behavior after the call.
-   * Specifically, the first phase saves the results of the evaluation in a {@link
-   * randoop.condition.ExpectedOutcomeTable} table that is used in the second phase.
-   *
-   * <p>This algorithm is applied before the standard rules for classification, and so unclassified
-   * calls will fall through to contract checking and exception classification.
-   *
-   * <p><i>Before call</i>:
-   *
-   * <ol>
-   *   <li>Create a {@link randoop.condition.ExpectedOutcomeTable} by calling {@link
-   *       randoop.condition.ExecutableSpecification#checkPrestate(java.lang.Object[])}, which
-   *       creates a table entry corresponding to each specification of the operation. [TODO: does
-   *       it create a table or an entry? I think an entry.]
-   *   <li>If {@link randoop.condition.ExpectedOutcomeTable#isInvalidCall()} then classify as {@link
-   *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}, and don't make the call. This
-   *       avoids making a call on invalid arguments unless the specification indicates that
-   *       exceptions should be thrown.
-   *   <li>Otherwise, create a {@link randoop.test.TestCheckGenerator} by calling {@link
-   *       randoop.condition.ExpectedOutcomeTable#addPostCheckGenerator(randoop.test.TestCheckGenerator)}.
-   *       This method selects the check generator as follows:
-   *       <ol>
-   *         <li>If any table entry contains an expected exception set, a {@link
-   *             randoop.test.ExpectedExceptionGenerator} is returned.
-   *         <li>If there are no expected exceptions, and no satisfied {@link
-   *             randoop.condition.ExecutableBooleanExpression}s for any {@link
-   *             randoop.condition.specification.Precondition}, return an {@link
-   *             randoop.test.InvalidCheckGenerator}.
-   *         <li>Otherwise, if there are {@link randoop.condition.ExecutableBooleanExpression} to
-   *             evaluate, then extend the current generator with a {@link
-   *             randoop.test.PostConditionCheckGenerator}.
-   *       </ol>
-   *
-   * </ol>
-   *
-   * <p><i>After call</i>:
-   *
-   * <p>The check generator created before the call is applied to the results of the call.
-   *
-   * <ol>
-   *   <li>The {@link randoop.test.ExpectedExceptionGenerator} is evaluated over the expected
-   *       exception set such that
-   *       <ul>
-   *         <li>If an exception is thrown by the call and the thrown exception is a member of the
-   *             set, then classify as {@link randoop.main.GenInputsAbstract.BehaviorType#EXPECTED}.
-   *         <li>If an exception is thrown by the call and the thrown exception is not a member of
-   *             the set, classify as {@link randoop.main.GenInputsAbstract.BehaviorType#ERROR}
-   *             (because the specification required an exception to be thrown, but it was not
-   *             thrown).
-   *         <li>If no exception is thrown, then classify as {@link
-   *             randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
-   *       </ul>
-   *
-   *   <li>The {@link randoop.test.InvalidCheckGenerator} will classify the call as {@link
-   *       randoop.main.GenInputsAbstract.BehaviorType#INVALID}.
-   *   <li>The {@link randoop.test.PostConditionCheckGenerator} will, for each table entry where all
-   *       guards were satisfied, check the corresponding {@link
-   *       randoop.condition.ExecutableBooleanExpression}, if one exists. If any such expression
-   *       fails, then classify as {@link randoop.main.GenInputsAbstract.BehaviorType#ERROR}.
-   * </ol>
-   *
    * @param visitor the {@code ExecutionVisitor}
-   * @param gen the check generator
+   * @param gen the initial check generator, which this augments then uses
    * @param ignoreException the flag to indicate exceptions should be ignored
    * @throws Error if execution of the sequence throws an exception and {@code
    *     ignoreException==false}
@@ -339,12 +269,7 @@ public class ExecutableSequence {
 
       visitor.initialize(this);
 
-      // reset execution result values
-      hasNullInput = false;
-      executionResults.theList.clear();
-      for (int i = 0; i < sequence.size(); i++) {
-        executionResults.theList.add(NotExecuted.create());
-      }
+      this.reset();
 
       for (int i = 0; i < this.sequence.size(); i++) {
 
@@ -355,7 +280,9 @@ public class ExecutableSequence {
           // This is the last statement in the sequence.
           TypedOperation operation = this.sequence.getStatement(i).getOperation();
           if (operation.isConstructorCall() || operation.isMethodCall()) {
-            ExpectedOutcomeTable outcomeTable = operation.checkConditions(inputValues);
+            // Phase 1 of specification checking:  evaluate guards of the specifications before the
+            // call.
+            ExpectedOutcomeTable outcomeTable = operation.checkPrestate(inputValues);
             if (outcomeTable.isInvalidCall()) {
               checks = new InvalidChecks(new InvalidValueCheck(this, i));
               return;
@@ -393,6 +320,7 @@ public class ExecutableSequence {
 
       visitor.visitAfterSequence(this);
 
+      // Phase 2 of specification checking: check for expected behavior after the call.
       // This is the only client call to generateTestChecks().
       checks = gen.generateTestChecks(this);
 
