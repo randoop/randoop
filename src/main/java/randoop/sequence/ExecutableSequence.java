@@ -309,10 +309,12 @@ public class ExecutableSequence {
           } else {
             Throwable e = ((ExceptionalExecution) statementResult).getException();
             String msg =
-                "Encountered exception before final statement of error-revealing test (statement "
+                "Exception before final statement (statement "
                     + i
                     + "): "
-                    + e.getMessage();
+                    + (e.getMessage() == null ? "" : e.getMessage())
+                    + Globals.lineSep
+                    + sequence;
             throw new Error(msg, e);
           }
         }

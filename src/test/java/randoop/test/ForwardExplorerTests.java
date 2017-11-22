@@ -1,7 +1,6 @@
 package randoop.test;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
@@ -138,11 +137,7 @@ public class ForwardExplorerTests {
     explorer.setTestCheckGenerator(createChecker(new ContractSet()));
     explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
-    try {
-      explorer.createAndClassifySequences();
-    } catch (Throwable t) {
-      fail("Exception during generation: " + t);
-    }
+    explorer.createAndClassifySequences();
     explorer.getOperationHistory().outputTable();
     ReflectionExecutor.timeout = oldTimeout;
     GenInputsAbstract.progressintervalsteps = oldProgressintervalsteps;
@@ -200,11 +195,7 @@ public class ForwardExplorerTests {
     explorer.setTestCheckGenerator(createChecker(new ContractSet()));
     explorer.setTestPredicate(createOutputTest());
     TestUtils.setAllLogs(explorer);
-    try {
-      explorer.createAndClassifySequences();
-    } catch (Throwable t) {
-      fail("Exception during generation: " + t);
-    }
+    explorer.createAndClassifySequences();
     explorer.getOperationHistory().outputTable();
     for (Sequence s : explorer.getAllSequences()) {
       String str = s.toCodeString();
