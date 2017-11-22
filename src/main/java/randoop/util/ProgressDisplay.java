@@ -116,8 +116,7 @@ public class ProgressDisplay extends Thread {
     System.out.println(" * Randoop is executing a sequence that contains nonterminating behavior.");
     System.out.println(
         "   Determine the nonterminating method and fix it or exclude it from Randoop.");
-    System.out.println("Last sequence generated:");
-    System.out.println();
+    System.out.println("Here is the last sequence generated, which is probably the one being run:");
     System.out.println(AbstractGenerator.currSeq);
     System.out.println();
     System.out.println("Will print all thread stack traces (twice) and exit with code 1.");
