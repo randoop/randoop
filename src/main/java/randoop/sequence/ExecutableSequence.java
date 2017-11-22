@@ -366,7 +366,7 @@ public class ExecutableSequence {
         executeStatement(sequence, executionResults.theList, i, inputValues);
 
         // make sure statement executed
-        ExecutionOutcome statementResult = getResult(i);
+        ExecutionOutcome statementResult = executionResults.get(i);
         if (statementResult instanceof NotExecuted) {
           throw new Error("Unexecuted statement in sequence: " + this.toString());
         }
