@@ -49,7 +49,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
       for (List<ThrowsClause> exceptionSet : exceptionSets) {
         ClassOrInterfaceType matchingType = findMatchingExpectedType(throwableType, exceptionSet);
         if (matchingType == null) {
-          //XXX this doesn't carry information about exception that occurred
+          // XXX this doesn't carry information about exception that occurred
           return getMissingExceptionTestChecks(finalIndex);
         }
       }
