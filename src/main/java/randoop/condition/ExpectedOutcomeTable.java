@@ -72,7 +72,10 @@ public class ExpectedOutcomeTable {
   /** The list of post-conditions whose guard expression was satisfied. */
   private final List<ExecutableBooleanExpression> postConditions = new ArrayList<>();
 
-  /** The list of lists of throws clauses for which the guard expression was satisfied. */
+  /**
+   * The list of lists of throws clauses for which the guard expression was satisfied. Each list of
+   * throwsclauses represents one specification, and each such list must be satisfied.
+   */
   private final List<List<ThrowsClause>> exceptionSets = new ArrayList<>();
 
   /** Creates an empty {@link ExpectedOutcomeTable}. */
