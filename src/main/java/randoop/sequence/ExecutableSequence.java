@@ -624,13 +624,7 @@ public class ExecutableSequence {
       return false;
     }
     ExecutableSequence that = (ExecutableSequence) obj;
-    if (!this.sequence.equals(that.sequence)) {
-      return false;
-    }
-    if (this.checks == null) {
-      return (that.checks == null);
-    }
-    return this.checks.equals(that.checks);
+    return this.sequence.equals(that.sequence) && Objects.equals(this.checks, that.checks);
   }
 
   /**
