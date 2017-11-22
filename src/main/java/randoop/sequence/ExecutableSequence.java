@@ -257,7 +257,7 @@ public class ExecutableSequence {
    *
    * @param visitor the {@code ExecutionVisitor}
    * @param gen the initial check generator, which this augments then uses
-   * @param ignoreException the flag to indicate exceptions should be ignored
+   * @param ignoreException if true, ignore exceptions thrown before the last statement
    * @throws Error if execution of the sequence throws an exception and {@code
    *     ignoreException==false}
    */
