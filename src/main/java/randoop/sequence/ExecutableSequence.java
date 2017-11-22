@@ -309,12 +309,13 @@ public class ExecutableSequence {
           } else {
             Throwable e = ((ExceptionalExecution) statementResult).getException();
             String msg =
-                "Exception before final statement (statement "
-                    + i
-                    + "): "
-                    + (e.getMessage() == null ? "" : e.getMessage())
-                    + Globals.lineSep
-                    + sequence;
+                String.format(
+                    "Exception before final statement%n  statement %d = %s, input = %s):%n  %s%n%s",
+                    i,
+                    sequence.getStatement(i),
+                    inputValues,
+                    (e.getMessage() == null ? "[no detail message]" : e.getMessage()),
+                    sequence);
             throw new Error(msg, e);
           }
         }
