@@ -2043,6 +2043,40 @@ solutions:
   </li>
 </ul>
 
+<p id="no-input-generation"> <!-- short id to keep the full URL on one line -->
+If Randoop gets stuck, it outputs
+"*** Randoop has spent over <em>N</em> seconds executing the following test."
+Randoop creates and executes one test at a time, so
+a long-running sequence will prevent Randoop from creating new tests.
+Two possible reasons for a long-running test are:
+</p>
+<ul>
+  <li>Randoop is executing a test that contains nonterminating behavior,
+    or that takes very long to execute.
+
+    <p>
+    You can determine the nonterminating method by examining the stack
+    traces that Randoop prints, or by examining or running the given test.
+    Then, you can fix the nonterminating method (if it is buggy)
+    or exclude it from Randoop.
+    </p>
+
+    <p>
+    Another possibility is to run Randoop with the command-line option
+    <a href="#option:usethreads"><code>--usethreads=true</code></a>,
+    without fixing the method or excluding it from Randoop.
+    </p>
+  </li>
+  <li>
+    Java has run out of memory and is thrashing.
+    This explanation is likely if Randoop had become progressively slower
+    before getting stuck; examine Randoop's progress output to see if this
+    is the case.
+    Give Java more memory by running <code>java</code> with,
+    say, <code>-Xmx3000m</code>.
+  </li>
+</ul>
+
 
 <h3 id="nontermination">Randoop does not terminate</h3>
 
@@ -2375,7 +2409,7 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  subsequences online unpub javac TypeN postcondition jarpath
  -->
-<!--  LocalWords:  oom Xmx jdk OperationSpecification
+<!--  LocalWords:  oom Xmx jdk OperationSpecification subtest
  -->
 <!--  LocalWords:  ErrorTest RegressionTest sgn
  -->
