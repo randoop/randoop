@@ -31,7 +31,7 @@ public abstract class ReflectionCode {
   }
 
   protected final void setHasStarted() {
-    if (hasRun) {
+    if (hasStarted) {
       throw new ReflectionCodeException("cannot run this twice");
     }
     hasStarted = true;
@@ -89,7 +89,6 @@ public abstract class ReflectionCode {
     }
   }
 
-  // TODO: What is an "internal exception"?
   /**
    * Execute the reflection code. All Randoop implementation errors must be thrown as
    * ReflectionCodeException because everything else is caught.

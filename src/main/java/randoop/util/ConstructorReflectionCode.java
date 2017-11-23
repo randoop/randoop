@@ -7,6 +7,7 @@ import java.util.Arrays;
 /** Wraps a constructor together with its arguments, ready for execution. Can be run only once. */
 public final class ConstructorReflectionCode extends ReflectionCode {
   private final Constructor<?> constructor;
+  /** If an inner class has a receiver, it is the first element of this array. */
   private final Object[] inputs;
 
   public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {

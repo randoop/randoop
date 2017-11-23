@@ -48,4 +48,9 @@ public class RunnerThread extends Thread {
   private void executeReflectionCode() throws ReflectionCode.ReflectionCodeException {
     code.runReflectionCode();
   }
+
+  /** Return the ReflectionCode that is being, or was, run. */
+  public ReflectionCode getCode() {
+    return code;
+  }
 }

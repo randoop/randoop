@@ -134,7 +134,10 @@ public final class ReflectionExecutor {
 
       if (!runnerThread.runFinished) {
         if (Log.isLoggingOn()) {
-          Log.log("Exceeded max wait: aborting test input.");
+          Log.log("Exceeded timeout: aborting execution of call:");
+          Log.log("  " + runnerThread.getCode());
+          // TODO: is it possible to give the test being executed?
+          // (Maybe not here, but it has been previously logged.)
         }
 
         // We use this deprecated method because it's the only way to
