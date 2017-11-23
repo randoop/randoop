@@ -2045,7 +2045,8 @@ solutions:
 
 <p id="no-input-generation"> <!-- short id to keep the full URL on one line -->
 If Randoop gets stuck, it outputs
-"*** Randoop has spent over <em>N</em> seconds executing the following test."
+"*** Randoop has spent over 10 seconds executing the following test.",
+but it does not output any tests.
 Randoop creates and executes one test at a time, so
 a long-running sequence will prevent Randoop from creating new tests.
 Two possible reasons for a long-running test are:
@@ -2055,11 +2056,20 @@ Two possible reasons for a long-running test are:
     or that takes very long to execute.
 
     <p>
-    You can determine the nonterminating method by examining the stack
-    traces that Randoop prints, or by examining or running the given test.
-    Then, you can fix the nonterminating method (if it is buggy)
-    or exclude it from Randoop.
+    The best solution is to determine the long-running method, then
+    fix it (if it is buggy) or exclude Randoop from calling it.
+    Here are ways to determine which method took a long time to execute:
     </p>
+    <ul>
+      <li>Examine the stack traces that Randoop prints.</li>
+      <li>Examine the test that Randoop was running.</li>
+      <li>Run the test that Randoop was running.</li>
+      <li>Run Randoop with command-line options
+	<code>--usethreads --log=randoop.log</code>,
+	and examine the logs, which report which methods were terminated
+	because they ran for too long.
+      </li>
+    </ul>
 
     <p>
     Another possibility is to run Randoop with the command-line option

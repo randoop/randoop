@@ -103,16 +103,6 @@ public class ProgressDisplay extends Thread {
     }
   }
 
-  /** Returns a string representation of the timeout. */
-  private String timeoutSeconds() {
-    double seconds = (exit_if_no_steps_after_milliseconds / 1000.0);
-    if (seconds == (int) seconds) {
-      return "" + (int) seconds;
-    } else {
-      return String.format("%.1f", seconds);
-    }
-  }
-
   // Ideally, on timeout we would terminate step() without shutting down the entire Randoop process.
   // That is not possible in general, unless the test is running in its own thread.
   // Thread.interrupt() just sets the thread's interrupt status.
@@ -121,7 +111,8 @@ public class ProgressDisplay extends Thread {
     System.out.println();
     System.out.println();
     System.out.printf(
-        "*** Randoop has spent over %s seconds executing the following test.%n", timeoutSeconds());
+        "*** Randoop has spent over %s seconds executing the following test.%n",
+        exit_if_no_steps_after_milliseconds / 1000);
     System.out.println(
         "See https://randoop.github.io/randoop/manual/index.html#no-input-generation .");
     System.out.println();
