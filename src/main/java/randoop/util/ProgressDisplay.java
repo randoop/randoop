@@ -90,7 +90,7 @@ public class ProgressDisplay extends Thread {
         // for several seconds, we're probably in an infinite loop, and should exit.
         updateLastStep();
         long now = System.currentTimeMillis();
-        if (now - lastNumStepsIncrease > exit_if_no_steps_after_milliseconds) {
+        if (now - lastStepTime > exit_if_no_steps_after_milliseconds) {
           printStackTraceAndExit();
         }
       }
@@ -103,20 +103,19 @@ public class ProgressDisplay extends Thread {
     }
   }
 
+  // Ideally, on timeout we would terminate step() without shutting down the entire Randoop process.
+  // That is not possible in general, unless the test is running in its own thread.
+  // Thread.interrupt() just sets the thread's interrupt status.
+  // So, tell the user to fix the problem or to run with --usethreads.
   private void printStackTraceAndExit() {
-
     System.out.println();
     System.out.println();
-    System.out.print("*** Randoop has detected no input generation attempts after ");
-    System.out.println((exit_if_no_steps_after_milliseconds / 1000) + " seconds.");
-    System.out.println("Two possible reasons are:");
-    System.out.println(" * Java has run out of memory and is thrashing.");
-    System.out.println("   This is likely if the progress update has become progressively slower.");
-    System.out.println("   Give Java more memory by running with, say, -Xmx3000m.");
-    System.out.println(" * Randoop is executing a sequence that contains nonterminating behavior.");
+    System.out.printf(
+        "*** Randoop has spent over %s seconds executing the following test.%n",
+        exit_if_no_steps_after_milliseconds / 1000);
     System.out.println(
-        "   Determine the nonterminating method and fix it or exclude it from Randoop.");
-    System.out.println("Here is the last sequence generated, which is probably the one being run:");
+        "See https://randoop.github.io/randoop/manual/index.html#no-input-generation .");
+    System.out.println();
     System.out.println(AbstractGenerator.currSeq);
     System.out.println();
     System.out.println("Will print all thread stack traces (twice) and exit with code 1.");
@@ -147,13 +146,13 @@ public class ProgressDisplay extends Thread {
     System.out.println("--------------------------------------------------");
   }
 
-  private long lastNumStepsIncrease = System.currentTimeMillis();
+  private long lastStepTime = System.currentTimeMillis();
   private long lastNumSteps = 0;
 
   private void updateLastStep() {
     long seqs = generator.num_steps;
     if (seqs > lastNumSteps) {
-      lastNumStepsIncrease = System.currentTimeMillis();
+      lastStepTime = System.currentTimeMillis();
       lastNumSteps = seqs;
     }
   }

@@ -9,12 +9,11 @@ import java.util.Arrays;
 public final class MethodReflectionCode extends ReflectionCode {
 
   private final Method method;
+  /** May be null. */
   private final Object receiver;
+
   private final Object[] inputs;
 
-  /*
-   * receiver is ok to be null - will cause NPE on invocation
-   */
   public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
     this.receiver = receiver;
     this.method = method;
@@ -25,8 +24,8 @@ public final class MethodReflectionCode extends ReflectionCode {
       Log.logLine("not accessible: " + this.method);
       // TODO something is bizarre - it seems that a public method can be
       // not-accessible sometimes. RatNum(int,int)
-      // TODO you cannot just throw the exception below - because no
-      // sequences will be created in the randoop.experiments.
+      // TODO you cannot just throw the exception below - because no sequences
+      // will be created in the randoop.experiments.
       // throw new IllegalStateException("Not accessible: " + this.meth);
     }
   }

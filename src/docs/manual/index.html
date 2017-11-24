@@ -2043,6 +2043,50 @@ solutions:
   </li>
 </ul>
 
+<p id="no-input-generation"> <!-- short id to keep the full URL on one line -->
+If Randoop gets stuck, it outputs
+"*** Randoop has spent over 10 seconds executing the following test.",
+but it does not output any tests.
+Randoop creates and executes one test at a time, so
+a long-running sequence will prevent Randoop from creating new tests.
+Two possible reasons for a long-running test are:
+</p>
+<ul>
+  <li>Randoop is executing a test that contains nonterminating behavior,
+    or that takes very long to execute.
+
+    <p>
+    The best solution is to determine the long-running method, then
+    fix it (if it is buggy) or exclude Randoop from calling it.
+    Here are ways to determine which method took a long time to execute:
+    </p>
+    <ul>
+      <li>Examine the stack traces that Randoop prints.</li>
+      <li>Examine the test that Randoop was running.</li>
+      <li>Run the test that Randoop was running.</li>
+      <li>Run Randoop with command-line options
+	<code>--usethreads --log=randoop.log</code>,
+	and examine the logs, which report which methods were terminated
+	because they ran for too long.
+      </li>
+    </ul>
+
+    <p>
+    Another possibility is to run Randoop with the command-line option
+    <a href="#option:usethreads"><code>--usethreads=true</code></a>,
+    without fixing the method or excluding it from Randoop.
+    </p>
+  </li>
+  <li>
+    Java has run out of memory and is thrashing.
+    This explanation is likely if Randoop had become progressively slower
+    before getting stuck; examine Randoop's progress output to see if this
+    is the case.
+    Give Java more memory by running <code>java</code> with,
+    say, <code>-Xmx3000m</code>.
+  </li>
+</ul>
+
 
 <h3 id="nontermination">Randoop does not terminate</h3>
 
@@ -2375,7 +2419,7 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  subsequences online unpub javac TypeN postcondition jarpath
  -->
-<!--  LocalWords:  oom Xmx jdk OperationSpecification
+<!--  LocalWords:  oom Xmx jdk OperationSpecification subtest
  -->
 <!--  LocalWords:  ErrorTest RegressionTest sgn
  -->
