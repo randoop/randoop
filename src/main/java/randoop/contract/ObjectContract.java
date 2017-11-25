@@ -112,13 +112,14 @@ public abstract class ObjectContract {
     ExecutionOutcome outcome = ObjectContractUtils.execute(this, values);
 
     if (Log.isLoggingOn()) {
-      Log.logLine("Executed contract " + this.getClass());
-      //   Log.logLine("  values (length %d) =%n", values.length);
-      //   for (Object value : values) {
-      //     Log.logLine(
-      //         "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
-      //   }
-      Log.logLine("  Contract outcome = " + outcome);
+      // Commented out because it makes the logs too big.  Uncomment when debugging this code.
+      // Log.logLine("Executed contract " + this.getClass());
+      // Log.logLine("  values (length %d) =%n", values.length);
+      // for (Object value : values) {
+      //   Log.logLine(
+      //       "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
+      // }
+      // Log.logLine("  Contract outcome = " + outcome);
     }
 
     if (outcome instanceof NormalExecution) {
