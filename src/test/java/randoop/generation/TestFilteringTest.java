@@ -73,7 +73,7 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputLimit = 1000;
+    GenInputsAbstract.output_limit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -105,8 +105,8 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.generatedLimit = 1000;
-    GenInputsAbstract.outputLimit = 1000;
+    GenInputsAbstract.generated_limit = 1000;
+    GenInputsAbstract.output_limit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -136,7 +136,7 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputLimit = 1000;
+    GenInputsAbstract.output_limit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -150,7 +150,7 @@ public class TestFilteringTest {
 
   /**
    * Make sure that no regression tests are output when no-regression-tests is set. Better to set
-   * generatedLimit here since most tests are regression tests.
+   * generated_limit here since most tests are regression tests.
    */
   @Test
   public void noRegressionOutputTest() {
@@ -169,8 +169,8 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.generatedLimit = 1000;
-    GenInputsAbstract.outputLimit = 1000;
+    GenInputsAbstract.generated_limit = 1000;
+    GenInputsAbstract.output_limit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -182,7 +182,7 @@ public class TestFilteringTest {
     assertTrue("should have some error tests", eTests.size() > 0);
   }
 
-  /** Having both Error and Regression tests turned off should give nothing. Set generatedLimit. */
+  /** Having both Error and Regression tests turned off should give nothing. Set generated_limit. */
   @Test
   public void noErrorOrRegressionOutputTest() {
     randoop.util.Randomness.setSeed(0);
@@ -200,8 +200,8 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.generatedLimit = 1000;
-    GenInputsAbstract.outputLimit = 1000;
+    GenInputsAbstract.generated_limit = 1000;
+    GenInputsAbstract.output_limit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -231,8 +231,8 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.generatedLimit = 1000;
-    GenInputsAbstract.outputLimit = 1000;
+    GenInputsAbstract.generated_limit = 1000;
+    GenInputsAbstract.output_limit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;

@@ -214,10 +214,10 @@ public abstract class AbstractGenerator {
    * @return true iff any stopping criterion is met
    */
   protected boolean shouldStop() {
-    return (limits.timeLimitMillis != 0 && elapsedTime() >= limits.timeLimitMillis)
-        || (numAttemptedSequences() >= limits.attemptedLimit)
-        || (numGeneratedSequences() >= limits.generatedLimit)
-        || (numOutputSequences() >= limits.outputLimit)
+    return (limits.time_limit_millis != 0 && elapsedTime() >= limits.time_limit_millis)
+        || (numAttemptedSequences() >= limits.attempted_limit)
+        || (numGeneratedSequences() >= limits.generated_limit)
+        || (numOutputSequences() >= limits.output_limit)
         || (GenInputsAbstract.stop_on_error_test && numErrorSequences() > 0)
         || (stopper != null && stopper.shouldStop())
         || (listenerMgr != null && listenerMgr.shouldStopGeneration());

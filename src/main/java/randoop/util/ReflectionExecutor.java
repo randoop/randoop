@@ -36,14 +36,14 @@ public final class ReflectionExecutor {
   public static boolean usethreads = false;
 
   // Should only be accessed by method checkOptionsValid.
-  public static int TIMEOUT_DEFAULT = 5000;
+  public static int CALL_TIMEOUT_DEFAULT = 5000;
 
   /**
    * After this many milliseconds, a non-returning method call, and its associated test, are stopped
    * forcefully. Only meaningful if {@code --usethreads} is also specified.
    */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
-  public static int timeout = TIMEOUT_DEFAULT;
+  public static int call_timeout = CALL_TIMEOUT_DEFAULT;
 
   // Execution statistics.
   private static long normal_exec_duration = 0;
@@ -89,7 +89,7 @@ public final class ReflectionExecutor {
         executeReflectionCodeThreaded(code, out);
       } catch (TimeoutExceededException e) {
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
-        return new ExceptionalExecution(e, timeout * 1000);
+        return new ExceptionalExecution(e, call_timeout * 1000);
       }
     } else {
       executeReflectionCodeUnThreaded(code, out);
@@ -133,7 +133,7 @@ public final class ReflectionExecutor {
       runnerThread.start();
 
       // If test doesn't finish in time, suspend it.
-      runnerThread.join(timeout);
+      runnerThread.join(call_timeout);
 
       if (!runnerThread.runFinished) {
         if (Log.isLoggingOn()) {

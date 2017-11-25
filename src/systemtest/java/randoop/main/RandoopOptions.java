@@ -56,7 +56,7 @@ class RandoopOptions {
       options.setOption("log", testEnvironment.workingDir + "/randoop-log.txt");
     }
     options.setFlag("deterministic");
-    options.setOption("timeLimit", "0");
+    options.setOption("time_limit", "0");
     options.unsetFlag("minimize-error-test");
 
     // Use value from environment variable if command-line argument was not set

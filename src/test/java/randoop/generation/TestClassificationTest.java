@@ -86,7 +86,7 @@ public class TestClassificationTest {
     GenInputsAbstract.cm_exception = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputLimit = 1000;
+    GenInputsAbstract.output_limit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -134,7 +134,7 @@ public class TestClassificationTest {
     GenInputsAbstract.cm_exception = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.ERROR;
     GenInputsAbstract.sof_exception = BehaviorType.ERROR;
-    GenInputsAbstract.outputLimit = 1000;
+    GenInputsAbstract.output_limit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -195,7 +195,7 @@ public class TestClassificationTest {
     GenInputsAbstract.cm_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.oom_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.sof_exception = BehaviorType.EXPECTED;
-    GenInputsAbstract.outputLimit = 1000;
+    GenInputsAbstract.output_limit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -242,7 +242,7 @@ public class TestClassificationTest {
     GenInputsAbstract.cm_exception = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputLimit = 1000;
+    GenInputsAbstract.output_limit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -304,7 +304,7 @@ public class TestClassificationTest {
     GenInputsAbstract.cm_exception = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputLimit = 1000;
+    GenInputsAbstract.output_limit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -359,7 +359,7 @@ public class TestClassificationTest {
     ReflectionExecutor.resetStatistics();
 
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
-    GenInputsAbstract.generatedLimit = 100;
+    GenInputsAbstract.generated_limit = 100;
     Class<?> c = FlakyStore.class;
     ComponentManager componentManager = getComponentManager();
     VisibilityPredicate visibility = IS_PUBLIC;
