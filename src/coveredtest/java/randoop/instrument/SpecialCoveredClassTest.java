@@ -55,8 +55,8 @@ public class SpecialCoveredClassTest {
     GenInputsAbstract.require_covered_classes =
         new File("instrument/testcase/special-coveredclasses.txt");
     ReflectionExecutor.usethreads = false;
-    GenInputsAbstract.generatedLimit = 10000;
-    GenInputsAbstract.outputLimit = 5000;
+    GenInputsAbstract.generated_limit = 10000;
+    GenInputsAbstract.output_limit = 5000;
     randoop.util.Randomness.setSeed(0);
 
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
