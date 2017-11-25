@@ -24,7 +24,8 @@ public final class ReflectionExecutor {
   /**
    * If true, Randoop executes each test in a separate thread and kills tests that take too long to
    * finish, as determined by the --timeout command-line argument. Tests killed in this manner are
-   * not reported to the user, but are recorded in Randoop's debugging logs.
+   * not reported to the user, but are recorded in Randoop's log. Use the <code>--log</code>
+   * command-line option to make Randoop produce the log.
    *
    * <p>Use this option if Randoop does not terminate, which is usually due to execution of code
    * under test that results in an infinite loop or that waits for user input. The downside of this
