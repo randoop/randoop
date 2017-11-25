@@ -34,11 +34,11 @@ public class NonterminatingInputTest {
       fail("type error: " + e.getMessage());
     }
     s = s.extend(con, new ArrayList<Variable>());
-    int oldTimeout = ReflectionExecutor.timeout;
-    ReflectionExecutor.timeout = 500;
+    int oldCallTimeout = ReflectionExecutor.call_timeout;
+    ReflectionExecutor.call_timeout = 500;
     ExecutableSequence es = new ExecutableSequence(s);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
-    ReflectionExecutor.timeout = oldTimeout;
+    ReflectionExecutor.call_timeout = oldCallTimeout;
     assertTrue(es.throwsException(TimeoutExceededException.class));
   }
 

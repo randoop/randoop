@@ -119,8 +119,8 @@ public class ForwardExplorerTests {
     classes.add(BiSort.class);
     // GenFailures.progressdisplay = false;
     // Log.log = new FileWriter("templog.txt");
-    int oldTimeout = ReflectionExecutor.timeout;
-    ReflectionExecutor.timeout = 500;
+    int oldCallTimeout = ReflectionExecutor.call_timeout;
+    ReflectionExecutor.call_timeout = 500;
     long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
     GenInputsAbstract.progressintervalsteps = 100;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
@@ -139,7 +139,7 @@ public class ForwardExplorerTests {
     TestUtils.setAllLogs(explorer);
     explorer.createAndClassifySequences();
     explorer.getOperationHistory().outputTable();
-    ReflectionExecutor.timeout = oldTimeout;
+    ReflectionExecutor.call_timeout = oldCallTimeout;
     GenInputsAbstract.progressintervalsteps = oldProgressintervalsteps;
     for (Sequence s : explorer.getAllSequences()) {
       String str = s.toCodeString();

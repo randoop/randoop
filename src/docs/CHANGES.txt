@@ -63,6 +63,7 @@ The --timelimit command-line option has been renamed to --time-limit.
 The --inputlimit command-line option has been renamed to --generated-limit.
 The --outputlimit command-line option has been renamed to --output-limit.
 New --attempted-limit command-line option is a new way to limit test generation.
+The --timeout command-line option has been renamed to --call-timout.
 
 The option --include-if-classname-appears has been renamed to
 --require-classname-in-test.
