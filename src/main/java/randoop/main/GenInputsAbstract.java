@@ -749,6 +749,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "Invalid parameter combination: --deterministic without --timeLimit=0");
     }
 
+    if (ReflectionExecutor.timeout != ReflectionExecutor.TIMEOUT_DEFAULT
+        && !ReflectionExecutor.usethreads) {
+      throw new RuntimeException("Invalid parameter combination: --timeout without --usethreads");
+    }
+
     if (timeLimit == 0
         && attemptedLimit >= LIMIT_DEFAULT
         && generatedLimit >= LIMIT_DEFAULT
