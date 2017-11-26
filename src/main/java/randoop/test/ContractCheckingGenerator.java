@@ -16,7 +16,6 @@ import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.Log;
 import randoop.util.TupleSet;
 
 /**
@@ -161,9 +160,10 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
                 + " must match contract arity "
                 + contract.getArity();
         if (typesMatch(contract.getInputTypes(), tuple)) {
-          if (Log.isLoggingOn()) {
-            Log.logLine("Checking contract " + contract.getClass());
-          }
+          // Commented out because it makes the logs too big.  Uncomment when debugging this code.
+          // if (Log.isLoggingOn()) {
+          //   Log.logLine("Checking contract " + contract.getClass());
+          // }
           Check check = contract.checkContract(eseq, values);
           if (check != null) {
             return check;
