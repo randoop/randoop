@@ -1181,7 +1181,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
              If true, Randoop executes each test in a separate thread and kills tests that take too long to
  finish, as determined by the --timeout command-line argument. Tests killed in this manner are
- not reported to the user.
+ not reported to the user, but are recorded in Randoop's debugging logs.
 
  <p>Use this option if Randoop does not terminate, which is usually due to execution of code
  under test that results in an infinite loop or that waits for user input. The downside of this
