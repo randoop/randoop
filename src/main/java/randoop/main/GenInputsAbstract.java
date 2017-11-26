@@ -153,7 +153,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Whether to output error-revealing tests. Disables all output when used with {@code
    * --no-regression-tests}. Restricting output can result in long runs if the default values of
-   * {@code --generatedLimit} and {@code --timeLimit} are used.
+   * {@code --generated-limit} and {@code --time-limit} are used.
    */
   ///////////////////////////////////////////////////////////////////////////
   @OptionGroup("Which tests to output")
@@ -163,7 +163,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Whether to output regression tests. Disables all output when used with {@code
    * --no-error-revealing-tests}. Restricting output can result in long runs if the default values
-   * of {@code --generatedLimit} and {@code --timeLimit} are used.
+   * of {@code --generated-limit} and {@code --time-limit} are used.
    */
   @Option("Whether to output regression tests")
   public static boolean no_regression_tests = false;
@@ -366,17 +366,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Limiting test generation")
   @Option("Maximum number of seconds to spend generating tests")
-  public static int timeLimit = 100;
+  public static int time_limit = 100;
 
   private static int LIMIT_DEFAULT = 100000000;
 
   /** Maximum number of attempts to generate a test method candidate. */
   @Option("Maximum number of attempts to generate a candidate test")
-  public static int attemptedLimit = LIMIT_DEFAULT;
+  public static int attempted_limit = LIMIT_DEFAULT;
 
   /** Maximum number of test method candidates generated internally. */
   @Option("Maximum number of candidate tests generated")
-  public static int generatedLimit = LIMIT_DEFAULT;
+  public static int generated_limit = LIMIT_DEFAULT;
 
   /**
    * The maximum number of regression and error-revealing tests to output. If there is no output,
@@ -387,7 +387,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * smaller than this limit.
    */
   @Option("Maximum number of tests to ouput")
-  public static int outputLimit = LIMIT_DEFAULT;
+  public static int output_limit = LIMIT_DEFAULT;
 
   /**
    * Wraps the three ways of limiting Randoop test generation.
@@ -396,35 +396,35 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   public static class Limits {
     /* Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no limit. */
-    public int timeLimitMillis;
+    public int time_limit_millis;
     /* Maximum number of attempts to generate a sequence. Must be non-negative. */
-    public int attemptedLimit;
+    public int attempted_limit;
     /* Maximum number of sequences to generate. Must be non-negative. */
-    public int generatedLimit;
+    public int generated_limit;
     /* Maximum number of sequences to output. Must be non-negative. */
-    public int outputLimit;
+    public int output_limit;
 
     public Limits() {
       this(
-          GenInputsAbstract.timeLimit,
-          GenInputsAbstract.attemptedLimit,
-          GenInputsAbstract.generatedLimit,
-          GenInputsAbstract.outputLimit);
+          GenInputsAbstract.time_limit,
+          GenInputsAbstract.attempted_limit,
+          GenInputsAbstract.generated_limit,
+          GenInputsAbstract.output_limit);
     }
 
     /**
-     * @param timeLimit maximum time in seconds to spend in generation. Must be non-negative. Zero
+     * @param time_limit maximum time in seconds to spend in generation. Must be non-negative. Zero
      *     means no limit.
-     * @param attemptedLimit the maximum number of attempts to create a sequence. Must be
+     * @param attempted_limit the maximum number of attempts to create a sequence. Must be
      *     non-negative.
-     * @param generatedLimit the maximum number of sequences to output. Must be non-negative.
-     * @param outputLimit the maximum number of sequences to generate. Must be non-negative.
+     * @param generated_limit the maximum number of sequences to output. Must be non-negative.
+     * @param output_limit the maximum number of sequences to generate. Must be non-negative.
      */
-    public Limits(int timeLimit, int attemptedLimit, int generatedLimit, int outputLimit) {
-      this.timeLimitMillis = timeLimit * 1000;
-      this.attemptedLimit = attemptedLimit;
-      this.generatedLimit = generatedLimit;
-      this.outputLimit = outputLimit;
+    public Limits(int time_limit, int attempted_limit, int generated_limit, int output_limit) {
+      this.time_limit_millis = time_limit * 1000;
+      this.attempted_limit = attempted_limit;
+      this.generated_limit = generated_limit;
+      this.output_limit = output_limit;
     }
   }
 
@@ -616,9 +616,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Run test generation without output. May be desirable when running with a visitor.
    *
-   * <p>NOTE: Because there is no output, the value of {@code --outputLimit} will never be met, so
-   * be sure to set {@code --generatedLimit} or {@code --timeLimit} to a reasonable value when using
-   * this option.
+   * <p>NOTE: Because there is no output, the value of {@code --output-limit} will never be met, so
+   * be sure to set {@code --generated-limit} or {@code --time-limit} to a reasonable value when
+   * using this option.
    */
   @Option("Run Randoop but do not output JUnit tests")
   public static boolean dont_output_tests = false;
@@ -744,19 +744,19 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "Invalid parameter combination: --deterministic with --usethreads");
     }
 
-    if (deterministic && timeLimit != 0) {
+    if (deterministic && time_limit != 0) {
       throw new RuntimeException(
-          "Invalid parameter combination: --deterministic without --timeLimit=0");
+          "Invalid parameter combination: --deterministic without --time-limit=0");
     }
 
-    if (timeLimit == 0
-        && attemptedLimit >= LIMIT_DEFAULT
-        && generatedLimit >= LIMIT_DEFAULT
-        && outputLimit >= LIMIT_DEFAULT) {
+    if (time_limit == 0
+        && attempted_limit >= LIMIT_DEFAULT
+        && generated_limit >= LIMIT_DEFAULT
+        && output_limit >= LIMIT_DEFAULT) {
       throw new RuntimeException(
           String.format(
-              "Unlikely parameter combination: --timeLimit=%s --attemptedLimit=%s --generatedLimit=%s --outputLimit=%s",
-              timeLimit, attemptedLimit, generatedLimit, outputLimit));
+              "Unlikely parameter combination: --time-limit=%s --attempted-limit=%s --generated-limit=%s --output-limit=%s",
+              time_limit, attempted_limit, generated_limit, output_limit));
     }
 
     if (classlist == null && methodlist == null && testclass.isEmpty()) {

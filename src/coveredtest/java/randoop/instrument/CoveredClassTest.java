@@ -51,9 +51,9 @@ public class CoveredClassTest {
     optionsCache.saveState();
     GenInputsAbstract.deterministic = true;
     GenInputsAbstract.minimize_error_test = false;
-    GenInputsAbstract.timeLimit = 0;
-    GenInputsAbstract.generatedLimit = 10000;
-    GenInputsAbstract.outputLimit = 5000;
+    GenInputsAbstract.time_limit = 0;
+    GenInputsAbstract.generated_limit = 10000;
+    GenInputsAbstract.output_limit = 5000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
   }
 

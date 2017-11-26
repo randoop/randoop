@@ -839,10 +839,10 @@ Randoop about your application, and that is how we recommend using Randoop.
       <ul>
             <li id="option:no-error-revealing-tests"><b>--no-error-revealing-tests=</b><i>boolean</i>.
              Whether to output error-revealing tests. Disables all output when used with <code>--no-regression-tests</code>. Restricting output can result in long runs if the default values of
- <code>--generatedLimit</code> and <code>--timeLimit</code> are used. [default false]
+ <code>--generated-limit</code> and <code>--time-limit</code> are used. [default false]
             <li id="option:no-regression-tests"><b>--no-regression-tests=</b><i>boolean</i>.
              Whether to output regression tests. Disables all output when used with <code>--no-error-revealing-tests</code>. Restricting output can result in long runs if the default values
- of <code>--generatedLimit</code> and <code>--timeLimit</code> are used. [default false]
+ of <code>--generated-limit</code> and <code>--time-limit</code> are used. [default false]
             <li id="option:no-regression-assertions"><b>--no-regression-assertions=</b><i>boolean</i>.
              Whether to include assertions in regression tests. If false, then the regression tests contain
  no assertions (except that if the test throws an exception, it should continue to throw an
@@ -994,17 +994,17 @@ Randoop about your application, and that is how we recommend using Randoop.
       </ul>
   <li id="optiongroup:Limiting-test-generation">Limiting test generation
       <ul>
-            <li id="option:timeLimit"><b>--timeLimit=</b><i>int</i>.
+            <li id="option:time-limit"><b>--time-limit=</b><i>int</i>.
              Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop
  is nondeterministic: it may generate different test suites on different runs.
 
  <p>The default value is appropriate for generating tests for a single class in the context of a
  larger program, but is too small to be effective for generating tests for an entire program. [default 100]
-            <li id="option:attemptedLimit"><b>--attemptedLimit=</b><i>int</i>.
+            <li id="option:attempted-limit"><b>--attempted-limit=</b><i>int</i>.
              Maximum number of attempts to generate a test method candidate. [default 100000000]
-            <li id="option:generatedLimit"><b>--generatedLimit=</b><i>int</i>.
+            <li id="option:generated-limit"><b>--generated-limit=</b><i>int</i>.
              Maximum number of test method candidates generated internally. [default 100000000]
-            <li id="option:outputLimit"><b>--outputLimit=</b><i>int</i>.
+            <li id="option:output-limit"><b>--output-limit=</b><i>int</i>.
              The maximum number of regression and error-revealing tests to output. If there is no output,
  this limit has no effect. There is no output when using either <code>--dont-output-tests</code> or
  <code>--no-error-revealing-tests</code> together with <code>--no-regression-tests</code>.
@@ -1124,9 +1124,9 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>.
              Run test generation without output. May be desirable when running with a visitor.
 
- <p>NOTE: Because there is no output, the value of <code>--outputLimit</code> will never be met, so
- be sure to set <code>--generatedLimit</code> or <code>--timeLimit</code> to a reasonable value when using
- this option. [default false]
+ <p>NOTE: Because there is no output, the value of <code>--output-limit</code> will never be met, so
+ be sure to set <code>--generated-limit</code> or <code>--time-limit</code> to a reasonable value when
+ using this option. [default false]
             <li id="option:junit-reflection-allowed"><b>--junit-reflection-allowed=</b><i>boolean</i>.
              Whether to use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
  invocations can interfere with code instrumentation, such as by the DynComp tool. If that is a
@@ -1187,7 +1187,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  under test that results in an infinite loop or that waits for user input. The downside of this
  option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
  parallel, merely in isolation. [default false]
-            <li id="option:timeout"><b>--timeout=</b><i>int</i>.
+            <li id="option:call-timeout"><b>--call-timeout=</b><i>int</i>.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
  forcefully. Only meaningful if <code>--usethreads</code> is also specified. [default 5000]
       </ul>
