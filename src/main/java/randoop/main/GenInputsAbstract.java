@@ -679,7 +679,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
 
-  /** A file to which to log lots of information. If not specified, no logging is done. */
+  /**
+   * A file to which to log lots of information. If not specified, no logging is done. Enabling the
+   * logs slows down Randoop.
+   */
   @Option("<filename> Name of a file to which to log lots of information")
   public static FileWriter log = null;
 
