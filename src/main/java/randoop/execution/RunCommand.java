@@ -1,11 +1,16 @@
 package randoop.execution;
 
+import static org.apache.commons.codec.CharEncoding.UTF_8;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import plume.TimeLimitProcess;
 import plume.UtilMDE;
 import randoop.Globals;
+import randoop.util.Log;
 
 /**
  * Class providing the {@link #run(List, File, long)} method to run a command in a separate process
@@ -28,6 +33,36 @@ public class RunCommand {
       throws CommandException {
     ProcessBuilder processBuilder = new ProcessBuilder(command);
     processBuilder.directory(workingDirectory);
+
+    Log.logPrintf("RunCommand.run():%n");
+    Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilMDE.join(command, " "));
+    Log.logPrintf("  timeout=%s, environment: %s%n", timeout, processBuilder.environment());
+    // Temporary debugging output
+    Log.logPrintf("  which java:%n");
+    try {
+      ProcessBuilder ps = new ProcessBuilder("java.exe", "-version");
+      Log.logPrintf("  which java (2):%n");
+      ps.redirectErrorStream(true);
+      Log.logPrintf("  which java (3):%n");
+      Process pr = ps.start();
+      Log.logPrintf("  which java (4):%n");
+
+      BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream(), UTF_8));
+      Log.logPrintf("  which java (5):%n");
+      String line;
+      Log.logPrintf("  which java (6):%n");
+      while ((line = in.readLine()) != null) {
+        System.out.println(line);
+      }
+      Log.logPrintf("  which java (7):%n");
+      pr.waitFor();
+      Log.logPrintf("  which java (8):%n");
+
+      in.close();
+      Log.logPrintf("  which java (9):%n");
+    } catch (IOException | InterruptedException t) {
+      throw new Error(t);
+    }
 
     TimeLimitProcess p;
 
