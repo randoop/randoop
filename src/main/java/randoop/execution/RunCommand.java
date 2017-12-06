@@ -38,6 +38,8 @@ public class RunCommand {
     Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilMDE.join(command, " "));
     Log.logPrintf("  timeout=%s, environment: %s%n", timeout, processBuilder.environment());
     // Temporary debugging output
+    Log.logPrintf("  sun.boot.class.path=%s%n", System.getProperty("sun.boot.class.path"));
+    Log.logPrintf("  java.class.path=%s%n", System.getProperty("java.class.path"));
     Log.logPrintf("  which java:%n");
     try {
       ProcessBuilder ps = new ProcessBuilder("java.exe", "-version");
