@@ -40,28 +40,20 @@ public class RunCommand {
     // Temporary debugging output
     Log.logPrintf("  sun.boot.class.path=%s%n", System.getProperty("sun.boot.class.path"));
     Log.logPrintf("  java.class.path=%s%n", System.getProperty("java.class.path"));
-    Log.logPrintf("  which java:%n");
+    Log.logPrintf("  which java: ");
     try {
       ProcessBuilder ps = new ProcessBuilder("which", "java");
-      Log.logPrintf("  which java (2):%n");
       ps.redirectErrorStream(true);
-      Log.logPrintf("  which java (3):%n");
       Process pr = ps.start();
-      Log.logPrintf("  which java (4):%n");
 
       BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream(), UTF_8));
-      Log.logPrintf("  which java (5):%n");
       String line;
-      Log.logPrintf("  which java (6):%n");
       while ((line = in.readLine()) != null) {
-        System.out.println(line);
+        Log.logPrintf(line);
       }
-      Log.logPrintf("  which java (7):%n");
       pr.waitFor();
-      Log.logPrintf("  which java (8):%n");
 
       in.close();
-      Log.logPrintf("  which java (9):%n");
     } catch (IOException | InterruptedException t) {
       throw new Error(t);
     }
