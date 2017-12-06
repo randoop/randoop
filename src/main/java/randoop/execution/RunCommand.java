@@ -42,7 +42,7 @@ public class RunCommand {
     Log.logPrintf("  java.class.path=%s%n", System.getProperty("java.class.path"));
     Log.logPrintf("  which java:%n");
     try {
-      ProcessBuilder ps = new ProcessBuilder("java.exe", "-version");
+      ProcessBuilder ps = new ProcessBuilder("which", "java");
       Log.logPrintf("  which java (2):%n");
       ps.redirectErrorStream(true);
       Log.logPrintf("  which java (3):%n");
