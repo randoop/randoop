@@ -9,9 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -260,20 +258,20 @@ public class FailingTestFilter implements CodeWriter {
       String packageName, String classname, String classSource, Path destinationDir) {
     // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
     // which will compile from source, once it is able to write the class file to disk.
-    List<File> sourceFiles = new ArrayList<>();
+    File sourceFile;
     try {
-      sourceFiles.add(javaFileWriter.writeClassCode(packageName, classname, classSource));
+      sourceFile = javaFileWriter.writeClassCode(packageName, classname, classSource);
     } catch (RandoopOutputException e) {
       throw new BugInRandoopException("Output error during flaky-test filtering", e);
     }
     FileCompiler fileCompiler = new FileCompiler();
     try {
-      fileCompiler.compile(sourceFiles, destinationDir);
+      fileCompiler.compile(sourceFile, destinationDir);
     } catch (FileCompiler.FileCompilerException e) {
       throw new BugInRandoopException(
           String.format(
               "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s): code = %n%s",
-              sourceFiles, destinationDir, classSource),
+              sourceFile, destinationDir, classSource),
           e);
     }
   }
