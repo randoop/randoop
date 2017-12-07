@@ -59,6 +59,12 @@ The Randoop homepage is
         </ul></li>
       <li><a href="#covered-filter">Instrumenting classes for filtering tests on covered-classes</a></li>
       <li><a href="#primitives">Specifying additional primitive values</a></li>
+      <li><a href="#nondeterminism">Nondeterminism</a>
+        <ul>
+          <li><a href="#nondeterminism-changed-program">Changes to the program or its environment</a></li>
+          <li><a href="#nondeterminism-command-line-arguments">Command-line arguments enable nondeterminism</a></li>
+          <li><a href="#nondeterminism-in-program-under-test">Nondeterministic program under test</a></li>
+        </ul></li>
     </ul></li>
   <li><a href="#getting_help">Getting help</a>
     <ul>
@@ -68,7 +74,7 @@ The Randoop homepage is
           <li><a href="#no-class-found">Randoop cannot find class-under-test</a></li>
           <li><a href="#not-enough-tests-created">Randoop does not create enough tests, or creates no tests</a></li>
           <li><a href="#nontermination">Randoop does not terminate</a></li>
-          <li><a href="#nondeterminism">Randoop produces different output on different runs</a></li>
+          <li><a href="#different-output">Randoop produces different output on different runs</a></li>
           <li><a href="#flaky-tests">Randoop stopped because of a flaky test</a></li>
           <li><a href="#regression-tests-do-not-pass">Randoop produces a regression test suite that does not pass</a></li>
           <li><a href="#dependent-tests">Tests behave differently in isolation or when reordered</a></li>
@@ -833,7 +839,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
  side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
- such methods (say, using the --omitmethods command-line option). [default false]
+ such methods; see the Randoop manual. [default false]
       </ul>
   <li id="optiongroup:Which-tests-to-output">Which tests to output
       <ul>
@@ -1163,7 +1169,8 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:debug-checks"><b>--debug-checks=</b><i>boolean</i>.
              Perform expensive internal checks (for Randoop debugging) [default false]
             <li id="option:log"><b>--log=</b><i>filename</i>.
-             A file to which to log lots of information. If not specified, no logging is done.
+             A file to which to log lots of information. If not specified, no logging is done. Enabling the
+ logs slows down Randoop.
             <li id="option:selection-log"><b>--selection-log=</b><i>string</i>.
              A destination to which to log selections; helps find sources of non-determinism. Either the
  name of a file or a hyphen ("-") indicating that standard output should be used. If not
@@ -1181,7 +1188,8 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
              If true, Randoop executes each test in a separate thread and kills tests that take too long to
  finish, as determined by the --timeout command-line argument. Tests killed in this manner are
- not reported to the user, but are recorded in Randoop's debugging logs.
+ not reported to the user, but are recorded in Randoop's log. Use the <code>--log</code>
+ command-line option to make Randoop produce the log.
 
  <p>Use this option if Randoop does not terminate, which is usually due to execution of code
  under test that results in an infinite loop or that waits for user input. The downside of this
@@ -1900,6 +1908,137 @@ classes under test
 </ul>
 
 
+<h2 id="nondeterminism">Nondeterminism</h2>
+
+<p>
+Randoop is deterministic:  if you run Randoop twice, Randoop should output the
+same test suite.
+</p>
+
+<p>
+This section gives several reasons why Randoop may produce different output
+when you run it twice, and tells you how to debug the problem.
+If after investigating these possibiliities, you find that Randoop is
+nondeterministic because of a bug in Randoop,
+please <a href="#bug-reporting">report it</a> so that we can investigate
+and correct the problem.
+</p>
+
+<p>
+If you <em>want</em> Randoop to produce different test suites, supply
+different values for the
+<a href="#option:randomseed"><code>--randomseed</code></a> command-line argument.
+</p>
+
+
+<h3 id="nondeterminism-changed-program">Changes to the program or its environment</h3>
+
+<p>
+You changed the program or its environment.
+</p>
+
+<p>
+Changing the JDK counts as a change to the program.
+For example, consider a class
+</p>
+<pre>
+public class Corner extends JComponent { ... }
+</pre>
+
+<p>
+In JDK 7, <code>Corner</code>'s <code>getAccessibleContext</code> method is
+inherited from <code>JComponent</code>.
+In JDK 8, <code>Corner</code>'s <code>getAccessibleContext</code> method is
+inherited from <code>java.awt.Component</code>.
+Randoop discovers a different set of operations
+(because <code>Corner.class.getMethods()</code> returns different results
+depending on the JDK).  Given different sets, Randoop may may different
+choices and produce different tests.
+</p>
+
+<p>
+There can be implementation changes even within a single JDK major version,
+such as two different versions of JDK 8.  These differences can lead to
+different Randoop outputs, or to tests that passed on one JDK
+implementation but fail on another.
+</p>
+
+
+<h3 id="nondeterminism-command-line-arguments">Command-line arguments enable nondeterminism</h3>
+
+<p>
+You instructed Randoop to behave nondeterministically,
+for example by specifying a timeout.  To forbid use of such options, pass
+the <a href="#option:randomseed"><code>--deterministic</code></a> command-line
+argument.
+</p>
+
+
+<h3 id="nondeterminism-in-program-under-test">Nondeterministic program under test</h3>
+
+<p>
+The program under test is nondeterministic.
+</p>
+
+<p>
+  To determine which method is nondeterministic, run Randoop with debug
+  logs, in particular the <a href="#option:log"><code>--log</code></a> and
+  <a href="#option:selection-log"><code>--selection-log</code></a>
+  command-line options.  Compare these files for the two runs, and the
+  first place that they differ will indicate where the program is
+  nondeterministic.
+</p>
+
+<p>
+Here are some ways to eliminate nondeterminism in a sequential Java program:
+</p>
+
+<ul>
+  <li>
+    Some collections have arbitrary iteration order, such as <code>HashMap</code> and <code>HashSet</code>.
+    Either sort their results, or replace the data structures by
+    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashMap.html"><code>LinkedHashMap</code></a>
+    and
+    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashSet.html"><code>LinkedHashSet</code></a>.
+  </li>
+  <li>
+    Some APIs produce results in arbitrary order, such
+    as <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html#list--">File.list()</a>
+    and <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html#listFiles--">File.listFiles()</a>.
+    Sort their results before using them.
+  </li>
+  <li>
+    <code>Object.hashCode()</code> depends on where the object is laid out
+    in memory, which depends on when the garbage collector
+    runs.  <code>Object.toString()</code> depends
+    on <code>Object.hashCode()</code>.  Every class should
+    override <code>hashCode()</code>, <code>equals()</code> (for
+    consistency with <code>hashCode()</code>), and <code>toString()</code>.
+    Furthermore, don't instantiate the <code>Object</code> class, as
+    in <code>new Object()</code>; instead, use some class that overrides
+    the methods.
+  </li>
+  <li>
+    Don't call <code>new Random()</code> without an argument.  Instead, use
+    (for example) <code>new Random(0)</code>.
+  </li>
+  <li>
+    Don't use time and date functions to obtain the current time.
+  </li>
+</ul>
+
+<p>
+Some of these changes can be made programmatically by use of
+Randoop's <a href="#replacecall">replacecall agent</a>.
+</p>
+
+<p>
+If you cannot make a particular method deterministic, then you can
+use <a href="#option:omitmethods"><code>--omitmethods</code></a> to prevent
+Randoop from calling the method.
+</p>
+
+
 <h1 id="getting_help">Getting help</h1>
 
 <p>You can get help on Randoop in the following ways:</p>
@@ -2124,52 +2263,11 @@ Here are three ways to deal with the problem.
 </ul>
 
 
-<h3 id="nondeterminism">Randoop produces different output on different runs</h3>
+<h3 id="different-output">Randoop produces different output on different runs</h3>
 
 <p>
-If you run Randoop twice with the same arguments, it may or may not
-produce the identical test suite.  You can use the
-<a href="#option:randomseed"><code>--randomseed</code></a> command-line
-argument to make Randoop produce different tests.
-You can use the <a href="#option:randomseed"><code>--deterministic</code></a>
-command-line argument to make Randoop deterministic.
+See the manual section on <a href="#nondeterminism">nondeterminism</a>.
 </p>
-
-<p>
-If running Randoop twice produces different test suites when
-<a href="#option:randomseed"><code>--deterministic</code></a>
-is supplied on the command line, then there is
-nondeterminism in your program.  Some ways to eliminate nondeterminism in a
-sequential Java program are:
-</p>
-
-<ul>
-  <li>
-    Use
-    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashMap.html"><code>LinkedHashMap</code></a>
-    and
-    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashSet.html"><code>LinkedHashSet</code></a>
-    rather than HashMap and HashSet.
-  </li>
-  <li>
-    Override <code>hashCode()</code>, so that your program does not use
-    <code>Object.hashCode()</code> which is nondeterministic (it depends on when the
-    garbage collector runs).  Also don't instantiate the <code>Object</code> class,
-    as in <code>new Object()</code>; instead, use some class that overrides
-    <code>hashCode()</code>.
-  </li>
-  <li>
-    Mitigate other sources of nondeterminism, such as always calling
-    <code>Arrays.sort</code> on the result of <code>File.listFiles</code>.
-  </li>
-  <li>
-    Don't depend on wall-clock or CPU time, either in your program or in
-    Randoop.  (Randoop forbids using the
-    <a href="#option:timeLimit"><code>--timeLimit</code></a> command-line
-    option at the same time as
-    <a href="#option:deterministic"><code>--deterministic</code></a>).
-  </li>
-</ul>
 
 
 <h3 id="flaky-tests">Randoop stopped because of a flaky test</h3>
@@ -2239,46 +2337,8 @@ rather than discarding them after generating them.
 <p>
 Randoop outputs regression tests that passed during test generation.  If
 the regression tests fail when you run them, they are said to be flaky.
-This is usually due to nondeterminism in the program under test.  Some
-examples of nondeterminism are:
-</p>
-<ul>
-<li>iteration over <code>HashMap</code>s and <code>HashSet</code>s</li>
-<li><code>File.list()</code></li>
-<li><code>Object.toString()</code>, <code>Object.hashCode()</code></li>
-<li><code>new Random()</code></li>
-<li>time and date functions</li>
-</ul>
-
-<p>
-For each of these, you can either make your program deterministic (for
-example, sort lists before using them, override <code>toString</code>, and
-call <code>new Random()</code> with a fixed seed), or you can
-use <a href="#option:omitmethods"><code>--omitmethods</code></a> to prevent
-Randoop from calling them.
-</p>
-
-<p>
-A difference in JDK implementation details can lead to different results.
-(This is not flakiness, but can still be an irritation.)
-Consider a class
-</p>
-<pre>
-public class Corner extends JComponent { ... }
-</pre>
-
-<p>
-In JDK 7, <code>Corner</code>'s <code>getAccessibleContext</code> method is
-inherited from <code>JComponent</code>.
-In JDK 8, <code>Corner</code>'s <code>getAccessibleContext</code> method
-is inherited from <code>java.awt.Component</code>.
-Randoop discovers a different set of operations
-(because <code>Corner.class.getMethods()</code> returns different results
-depending on the JDK).  Given different sets, Randoop may may different
-choices and produce different tests.  There can be implementation changes
-even within a single JDK major version, such as two different versions of
-JDK 8.  These differences can lead to tests that passed on one JDK
-implementation but fail on another.
+This is due to nondeterminism in the program under test.
+See the manual section on <a href="#nondeterminism">nondeterminism</a>.
 </p>
 
 

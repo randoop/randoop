@@ -145,7 +145,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
    * side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
-   * such methods (say, using the --omitmethods command-line option).
+   * such methods; see the Randoop manual.
    */
   @Option("Whether to ignore non-determinism in test execution")
   public static boolean ignore_flaky_tests = false;
@@ -670,8 +670,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Run noisily: display information such as progress updates.")
   public static boolean progressdisplay = true;
 
+  // Default value for progressintervalmillis; helps to see if user has set it.
+  public static long PROGRESSINTERVALMILLIS_DEFAULT = 60000;
+
   @Option("Display progress message every <int> milliseconds. -1 means no display.")
-  public static long progressintervalmillis = 60000;
+  public static long progressintervalmillis = PROGRESSINTERVALMILLIS_DEFAULT;
 
   @Option("Display progress message every <int> attempts to create a test; -1 means none")
   public static long progressintervalsteps = 1000;
@@ -750,6 +753,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (deterministic && time_limit != 0) {
       throw new RuntimeException(
           "Invalid parameter combination: --deterministic without --time-limit=0");
+    }
+
+    if (deterministic && progressintervalmillis != -1) {
+      if (progressintervalmillis == PROGRESSINTERVALMILLIS_DEFAULT) {
+        // User didn't supply --progressintervalmillis_default; set it to -1 to suppress output
+        progressintervalmillis = -1;
+      } else {
+        throw new RuntimeException(
+            "Invalid parameter combination: --deterministic with --progressintervalmillis");
+      }
     }
 
     if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_DEFAULT
