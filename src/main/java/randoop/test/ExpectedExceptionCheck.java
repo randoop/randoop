@@ -68,14 +68,17 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
 
   /**
    * Ensures that the fail message built from an exception message is formatted propertly for use in
-   * an assertion by removing newlines. Also, escapes embedded quotes; i.e. {@code "} &rArr; {@code
-   * \"}.
+   * an assertion by removing newlines. Also, escapes embedded quotes and embedded back slashes.
    *
    * @param message the message to convert
    * @return the message with newlines removed
    */
   private static String fixMessage(String message) {
-    message = message.replaceAll("\"", "\\\\\"");
-    return message.replaceAll("[\\r\\n]+", ".");
+    // remove some special characters
+    message = message.replaceAll("[\\r\\n\\t]+", ".");
+    // add '\' escape to all '\'
+    message = message.replace("\\", "\\\\");
+    // add '\' escape to all '"'
+    return message.replace("\"", "\\\"");
   }
 }
