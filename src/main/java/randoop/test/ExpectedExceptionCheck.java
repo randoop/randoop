@@ -1,5 +1,6 @@
 package randoop.test;
 
+import plume.UtilMDE;
 import randoop.Globals;
 
 /**
@@ -42,8 +43,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
               + "; message: "
               + exception.getMessage();
     }
-    message = fixMessage(message);
-    String assertion = "org.junit.Assert.fail(\"" + message + "\")";
+    String assertion = "org.junit.Assert.fail(\"" + UtilMDE.escapeNonJava(message) + "\")";
     b.append(Globals.lineSep).append("  ").append(assertion).append(";").append(Globals.lineSep);
   }
 
@@ -64,18 +64,5 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
       b.append("    ").append(assertion).append(";").append(Globals.lineSep);
       b.append("  }").append(Globals.lineSep);
     }
-  }
-
-  /**
-   * Ensures that the fail message built from an exception message is formatted propertly for use in
-   * an assertion by removing newlines. Also, escapes embedded quotes; i.e. {@code "} &rArr; {@code
-   * \"}.
-   *
-   * @param message the message to convert
-   * @return the message with newlines removed
-   */
-  private static String fixMessage(String message) {
-    message = message.replaceAll("\"", "\\\\\"");
-    return message.replaceAll("[\\r\\n]+", ".");
   }
 }
