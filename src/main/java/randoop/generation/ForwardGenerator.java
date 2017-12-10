@@ -198,10 +198,10 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (!seq.isNormalExecution()) {
-      Log.logLine("Sequence throws exception or has failure: excluding from extension pool.");
-      Log.logLine(
-          "Statement with non-normal execution: "
-              + seq.statementToCodeString(seq.getNonNormalExecutionIndex()));
+      int i = seq.getNonNormalExecutionIndex();
+      Log.logLine("Excluding from extension pool due to exception or failure in statement " + i);
+      Log.logLine("  Statement: " + seq.statementToCodeString(i));
+      Log.logLine("  Result: " + seq.getResult(i));
       seq.sequence.clearAllActiveFlags();
       return;
     }

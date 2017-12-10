@@ -3,6 +3,7 @@ package randoop.compile;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
@@ -39,8 +40,8 @@ public class FileCompiler {
   /**
    * Compile the given source files, writing resulting class files to the destination directory.
    *
-   * @param sourceFiles the list of {@code File} objects for the Java source files
-   * @param destinationDir the {@code Path} of the destination directory for class files
+   * @param sourceFiles the Java source files
+   * @param destinationDir the destination directory for class files
    * @throws FileCompilerException if the compilation fails
    */
   public void compile(List<File> sourceFiles, Path destinationDir) throws FileCompilerException {
@@ -62,6 +63,17 @@ public class FileCompiler {
       throw new FileCompilerException(
           "Compilation failed", sourceFiles, compileOptions, diagnostics);
     }
+  }
+
+  /**
+   * Compile the given source file, writing resulting class files to the destination directory.
+   *
+   * @param sourceFile the Java source file
+   * @param destinationDir the destination directory for class files
+   * @throws FileCompilerException if the compilation fails
+   */
+  public void compile(File sourceFile, Path destinationDir) throws FileCompilerException {
+    compile(Collections.singletonList(sourceFile), destinationDir);
   }
 
   /** Exception for errors during compilation using {@link FileCompiler}. */
