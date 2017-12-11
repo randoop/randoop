@@ -120,16 +120,21 @@ class VariableRenamer {
         varName = "collection";
       }
 
-      // Only use the first type argument to construct the name to simplify things.
-      TypeArgument argument = ((ClassOrInterfaceType) type).getTypeArguments().get(0);
-      if (argument.isWildcard()) {
-        varName = "wildcard" + capitalizeString(varName);
-      } else {
-        if (depth >= 0) {
-          String argumentName =
-              getVariableName(((ReferenceArgument) argument).getReferenceType(), depth - 1);
+      List<TypeArgument> arglist = ((ClassOrInterfaceType) type).getTypeArguments();
+      // TODO: This test seems like a hack.  Shouldn't the arglist always be empty
+      /// for a parameterized type?
+      if (!arglist.isEmpty()) {
+        // Only use the first type argument to construct the name to simplify things.
+        TypeArgument argument = arglist.get(0);
+        if (argument.isWildcard()) {
+          varName = "wildcard" + capitalizeString(varName);
+        } else {
+          if (depth >= 0) {
+            String argumentName =
+                getVariableName(((ReferenceArgument) argument).getReferenceType(), depth - 1);
 
-          varName = argumentName + capitalizeString(varName);
+            varName = argumentName + capitalizeString(varName);
+          }
         }
       }
     }
