@@ -399,8 +399,6 @@ public class SpecificationTranslator {
    * Returns the poststate expression method signature from this object. This signature includes the
    * parameters of the prestate expression signature, plus the return type.
    *
-   * <p><<<<<<< HEAD
-   *
    * <p>Only used for testing.
    *
    * @return the poststate expression method signature for this object
@@ -414,9 +412,7 @@ public class SpecificationTranslator {
    *
    * <p>Only used for testing. ||||||| merged common ancestors
    *
-   * <p>Used for testing. =======
-   *
-   * <p>Only used for testing. >>>>>>> 5a1520bf8a7db2b955dc2bad831ac21f3fd7d9d1
+   * <p>Only used for testing.
    *
    * @return the compiler for this object
    */
