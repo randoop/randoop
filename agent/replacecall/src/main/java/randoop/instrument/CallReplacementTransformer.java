@@ -130,7 +130,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         debug_transform.log("transform: EXIT class %s transformed", className);
         return javaClass.getBytes();
       } else {
-        debug_transform.log("transform: EXIT class %s not transformed", className);
+        debug_transform.log(
+            "transform: EXIT class %s not transformed (nothing to replace)", className);
         return null;
       }
     } catch (IllegalClassFormatException e) {
