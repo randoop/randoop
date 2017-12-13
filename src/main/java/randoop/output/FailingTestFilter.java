@@ -18,6 +18,7 @@ import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.execution.TestEnvironment;
+import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.RandoopUsageError;
 
@@ -268,11 +269,21 @@ public class FailingTestFilter implements CodeWriter {
     try {
       fileCompiler.compile(sourceFile, destinationDir);
     } catch (FileCompiler.FileCompilerException e) {
-      throw new BugInRandoopException(
+      String message =
           String.format(
-              "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s): code = %n%s",
-              sourceFile, destinationDir, classSource),
-          e);
+              "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n",
+              sourceFile, destinationDir);
+      if (GenInputsAbstract.print_file_system_state) {
+        message = message.concat(String.format("Source file:%n%s%n", classSource));
+      } else {
+        message =
+            message.concat(
+                "(You may use the --print-file-system-state option to dump a copy of the source file.)\n");
+      }
+      message =
+          message.concat(
+              String.format("Diagnostics:%n%s%n", (e.getDiagnostics()).getDiagnostics()));
+      throw new BugInRandoopException(message, e);
     }
   }
 

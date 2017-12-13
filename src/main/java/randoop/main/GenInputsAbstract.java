@@ -701,6 +701,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Log destination for operation usage counts. Should be a file or stdout \"-\".")
   public static String operation_history_log = null;
 
+  @Option("Display source if a generated test contains a compilation error.")
+  public static boolean print_file_system_state = false;
+
   /**
    * Create sequences but never execute them. Used to test performance of Randoop's sequence
    * generation code.
