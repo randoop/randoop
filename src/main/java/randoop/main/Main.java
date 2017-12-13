@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import randoop.BugInRandoopException;
 import randoop.generation.AbstractGenerator;
+import randoop.util.StringPrintWriter;
 
 /**
  * Main entry point for Randoop. Asks the command handlers who can handle the command given by the
@@ -80,10 +81,15 @@ public class Main {
     } catch (BugInRandoopException e) {
       System.out.println();
       System.out.println("Randoop failed in an unexpected way.");
-      System.out.println("Please report at https://github.com/randoop/randoop/issues .");
-      e.printStackTrace();
-      System.err.flush();
-      success = false;
+      System.out.println("Please report at https://github.com/randoop/randoop/issues.");
+
+      // Calls to flush() do not untangle System.out and System.err;
+      // probably an OS issue, not Java.  So we do the following
+      // to send printStackTrace() to System.out not System.err.
+      StringPrintWriter out = new StringPrintWriter();
+      e.printStackTrace(out);
+      System.out.println(out.getString());
+      System.exit(1);
     } catch (Throwable e) {
 
       System.out.println();
