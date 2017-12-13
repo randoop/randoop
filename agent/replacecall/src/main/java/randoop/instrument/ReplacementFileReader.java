@@ -50,7 +50,7 @@ class ReplacementFileReader {
    * constructors is unnecessary.
    */
   private static final String SIGNATURE_STRING =
-      DOT_DELIMITED_IDS + "\\(?:\\.<init>\\)?" + "\\([^)]*\\)";
+      DOT_DELIMITED_IDS + "(?:\\.<init>)?" + "\\([^)]*\\)";
 
   /**
    * Unanchored pattern to match of method replacements consisting of a pair of signatures. Uses the
