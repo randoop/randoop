@@ -49,7 +49,11 @@ public class RunnerThread extends Thread {
     code.runReflectionCode();
   }
 
-  /** Return the ReflectionCode that is being, or was, run. */
+  /**
+   * Return the ReflectionCode that is being, or was, run.
+   *
+   * @return the ReflectionCode that is being, or was, run
+   */
   public ReflectionCode getCode() {
     return code;
   }

@@ -475,6 +475,10 @@ public class ExecutableSequence {
   /**
    * If the variable has a non-String reference type, add its value to the set and also add a
    * mapping to to {@link #variableMap}.
+   *
+   * @param variable the variable whose value to add to the set
+   * @param value the variable's value
+   * @param refValues the set to which to add
    */
   private void addReferenceValue(Variable variable, Object value, Set<ReferenceValue> refValues) {
     if (value != null) {
