@@ -20,7 +20,9 @@ before_script:
 # want more info when running tests and building manual
 # NOTE: the tasks here should at least be a subset of build task dependency in build.gradle
 #       update that task if you change this list
+# The fcntl line works around a bug where Travis truncates logs and fails.
 script:
+- python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"
 - REMOTE_ORIGIN_URL=`git config --get remote.origin.url`
 - echo "JDKVER=${JDKVER}"
 - echo "TRAVIS_BRANCH=${TRAVIS_BRANCH}"
