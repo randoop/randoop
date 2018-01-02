@@ -111,6 +111,15 @@ public class FailingTestFilter implements CodeWriter {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
 
+  //
+  private static final Pattern DECLARATION_LINE =
+      Pattern.compile(
+          "^[ \t]*"
+              + randoop.instrument.ReplacementFileReader.DOT_DELIMITED_IDS
+              + "[ \t]+"
+              + randoop.instrument.ReplacementFileReader.ID_STRING
+              + "[ \t]*=[ \t]*");
+
   /**
    * Comments out lines with failing assertions. Uses the failures in the {@code status} from
    * running JUnit with {@code javaCode} to identify lines with failing assertions.
@@ -127,12 +136,10 @@ public class FailingTestFilter implements CodeWriter {
       String packageName, String classname, String javaCode, Status status) {
     assert !Objects.equals(packageName, "");
 
-    /* Iterator to move through JUnit output. (JUnit only writes to standard output.) */
+    // Iterator to move through JUnit output. (JUnit only writes to standard output.)
     Iterator<String> lineIterator = status.standardOutputLines.iterator();
 
-    /*
-     * First, find the message that indicates the number of failures in the run.
-     */
+    // First, find the message that indicates the number of failures in the run.
     Match failureCountMatch;
     try {
       failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
@@ -157,27 +164,19 @@ public class FailingTestFilter implements CodeWriter {
       throw new BugInRandoopException("JUnit has non-zero exit status, but no failure found");
     }
 
-    /*
-     * Then read the rest of the file to find each failure.
-     */
+    // Then, read the rest of the file to find each failure.
 
-    /*
-     * Split Java code text so that we can match the line number for the assertion with the code.
-     * Use same line break as used to write test class file.
-     */
+    // Split Java code text so that we can match the line number for the assertion with the code.
+    // Use same line break as used to write test class file.
     String[] javaCodeLines = javaCode.split(Globals.lineSep);
 
     for (int failureCount = 0; failureCount < totalFailures; failureCount++) {
-      /*
-       * Read until beginning of failure
-       */
+      // Read until beginning of failure
       Match failureHeaderMatch = readUntilMatch(lineIterator, FAILURE_HEADER_PATTERN);
       String line = failureHeaderMatch.line;
       String methodName = failureHeaderMatch.group;
 
-      /*
-       * If the method name in the failure message is not a test method, throw an exception.
-       */
+      // If the method name in the failure message is not a test method, throw an exception.
       if (!methodName.matches(GenTests.TEST_METHOD_NAME_PREFIX + "\\d+")) {
         if (line.contains("initializationError")) {
           throw new BugInRandoopException(
@@ -190,10 +189,8 @@ public class FailingTestFilter implements CodeWriter {
         }
       }
 
-      /*
-       * Search for the stacktrace entry corresponding to the test method, and capture the line
-       * number.
-       */
+      // Search for the stacktrace entry corresponding to the test method, and capture the line
+      // number.
       String qualifiedClassname = ((packageName == null) ? "" : (packageName + ".")) + classname;
       Pattern linePattern =
           Pattern.compile(
@@ -212,7 +209,8 @@ public class FailingTestFilter implements CodeWriter {
                 + "]: "
                 + failureLineMatch.line);
       }
-      javaCodeLines[lineNumber - 1] = "// flaky: " + javaCodeLines[lineNumber - 1];
+      String flakyLine = javaCodeLines[lineNumber - 1];
+      javaCodeLines[lineNumber - 1] = "// flaky: " + flakyLine;
     }
 
     // XXX For efficiency, have this method return the array and redo writeClass so that it writes from array (?).
