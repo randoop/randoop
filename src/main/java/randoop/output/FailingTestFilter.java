@@ -49,7 +49,7 @@ public class FailingTestFilter implements CodeWriter {
       Pattern.compile("\\d+\\)\\s+(" + ID_STRING + ")\\(" + DOT_DELIMITED_IDS + "\\)");
 
   private static final String TYPE_REGEX =
-      randoop.instrument.ReplacementFileReader.DOT_DELIMITED_IDS + "(?:<[^<>]*>)?" + "(?:\\[\\])*";
+      randoop.instrument.ReplacementFileReader.DOT_DELIMITED_IDS + "(?:<[^=;]*>)?" + "(?:\\[\\])*";
 
   /** The {@link randoop.execution.TestEnvironment} for running the test classes. */
   private final TestEnvironment testEnvironment;
