@@ -3,6 +3,7 @@ package randoop.main;
 import java.util.ArrayList;
 import java.util.List;
 import randoop.BugInRandoopException;
+import randoop.Globals;
 import randoop.generation.AbstractGenerator;
 
 /**
@@ -100,7 +101,10 @@ public class Main {
         System.out.println();
         System.out.println("Randoop failed.");
         System.out.println("Last sequence under execution: ");
-        System.out.println(AbstractGenerator.currSeq);
+        String[] lines = AbstractGenerator.currSeq.toString().split(Globals.lineSep);
+        for (String line : lines) {
+          System.out.println(line);
+        }
         System.exit(1);
       }
     }
