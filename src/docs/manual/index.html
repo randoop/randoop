@@ -610,9 +610,14 @@ and it will fail if the code is changed to no longer throw that exception.
 <h3 id="regression_test_failures">Regression test failures</h3>
 
 <p>
-If a regression test fails, there are three possible causes.  You need to
-debug the test failure to determine which is the cause, and then take the
-appropriate action.
+If a regression test fails even though you have not changed your program,
+then the test is <a href="#flaky-tests">flaky</a>.
+</p>
+
+<p>
+If a regression test fails after you change your program, there are three
+possible causes.  You need to debug the test failure to determine which is
+the cause, and then take the appropriate action.
 </p>
 <ul>
   <li>
@@ -630,15 +635,12 @@ appropriate action.
     an inconsequential change.  For example, maybe
     the tests depend on the order of elements in a hash
     table.<br />
-    In this case, you need to re-run Randoop, informing it not to depend on
-    observations that may vary from run to run.  You can use the
-    <a href="#option:omitmethods"><code>--omitmethods</code></a> or
-    or <a href="#option:omitmethods_list"><code>--omitmethods-list</code></a>
-    command-line
-    option, or you can replace its behavior with a different implementation
-    (such as a deterministic one or a mock) using the <a href="#replacecall"><code>replacecall</code> feature of the Randoop agent</a>.
+    In this case, you need to re-run
+    Randoop, <a href="#nondeterminism-in-program-under-test">informing it
+    not to depend on observations that may vary from run to run</a>.
     You can also see the techniques suggested in the paper
-    <a href="http://homes.cs.washington.edu/~mernst/pubs/maintainable-tests-ase2011.pdf">Scaling Up Automated Test Generation</a>.
+    <a href="http://homes.cs.washington.edu/~mernst/pubs/maintainable-tests-ase2011.pdf">Scaling
+    Up Automated Test Generation</a>.
   </li>
 </ul>
 
@@ -1920,7 +1922,7 @@ same test suite.
 <p>
 This section gives several reasons why Randoop may produce different output
 when you run it twice, and tells you how to debug the problem.
-If after investigating these possibiliities, you find that Randoop is
+If after investigating these possibilities, you find that Randoop is
 nondeterministic because of a bug in Randoop,
 please <a href="#bug-reporting">report it</a> so that we can investigate
 and correct the problem.
@@ -1952,9 +1954,9 @@ In JDK 7, <code>Corner</code>'s <code>getAccessibleContext</code> method is
 inherited from <code>JComponent</code>.
 In JDK 8, <code>Corner</code>'s <code>getAccessibleContext</code> method is
 inherited from <code>java.awt.Component</code>.
-Randoop discovers a different set of operations
-(because <code>Corner.class.getMethods()</code> returns different results
-depending on the JDK).  Given different sets, Randoop may may different
+Depending on the JDK in use, Randoop discovers a different set of operations,
+because <code>Corner.class.getMethods()</code> returns different results
+depending on the JDK.  Given different sets, Randoop may make different
 choices and produce different tests.
 </p>
 
@@ -1979,21 +1981,29 @@ argument.
 <h3 id="nondeterminism-in-program-under-test">Nondeterministic program under test</h3>
 
 <p>
-The program under test is nondeterministic.
+The program under test is nondeterministic.  This can cause Randoop to
+produce different tests on different runs, but more seriously, it can cause
+Randoop to produce <a href="#flaky-tests">flaky tests</a> that sometimes
+pass and sometimes fail.
 </p>
 
 <p>
-  To determine which method is nondeterministic, run Randoop with debug
-  logs, in particular the <a href="#option:log"><code>--log</code></a> and
-  <a href="#option:selection-log"><code>--selection-log</code></a>
-  command-line options.  Compare these files for the two runs, and the
-  first place that they differ will indicate where the program is
-  nondeterministic.
+To determine which method is nondeterministic, run Randoop with
+the <a href="#option:log"><code>--log</code></a> and
+<a href="#option:selection-log"><code>--selection-log</code></a>
+command-line options.  Compare the logs across runs, and the first
+place that they differ indicates where the program is nondeterministic.
 </p>
 
 <p>
+If the program under test is nondeterministic, you have several options:
+</p>
+
+<ol>
+<li>
+Change the program to be deterministic.
+In addition to making the program more testable, this is likely to make the program easier to debug.
 Here are some ways to eliminate nondeterminism in a sequential Java program:
-</p>
 
 <ul>
   <li>
@@ -2028,16 +2038,39 @@ Here are some ways to eliminate nondeterminism in a sequential Java program:
     Don't use time and date functions to obtain the current time.
   </li>
 </ul>
+</li>
 
-<p>
-Some of these changes can be made programmatically by use of
+<li>
+Transform the program at run time to make changes like the ones above, replacing
+the method's behavior with a different implementation
+(such as a deterministic one or a mock).
+You can do this by using
 Randoop's <a href="#replacecall">replacecall agent</a>.
-</p>
+</li>
+
+<li>
+Prevent Randoop from directly calling problematic methods.
+Use the <a href="#option:omitmethods"><code>--omitmethods</code></a> 
+or <a href="#option:omitmethods_list"><code>--omitmethods-list</code></a>
+command-line argument.
+</li>
+
+<li>
+Instruct Randoop to attempt to discard or repair any flaky tests that it
+generates.
+Use the
+<a href="#option:ignore-flaky-tests"><code>--ignore-flaky-tests</code></a>
+command-line argument.
+This is a last resort because Randoop may output a small test suite due to
+discarding many of the generated tests.
+When possible, is better to avoid generating flaky tests
+rather than discarding them after generating them.
+</li>
+</ol>
 
 <p>
-If you cannot make a particular method deterministic, then you can
-use <a href="#option:omitmethods"><code>--omitmethods</code></a> to prevent
-Randoop from calling the method.
+You can also see the techniques suggested in the paper
+<a href="http://homes.cs.washington.edu/~mernst/pubs/maintainable-tests-ase2011.pdf">Scaling Up Automated Test Generation</a>.
 </p>
 
 
@@ -2275,62 +2308,46 @@ See the manual section on <a href="#nondeterminism">nondeterminism</a>.
 <h3 id="flaky-tests">Randoop stopped because of a flaky test</h3>
 
 <p>
+A test is <i>flaky</i> if it behaves differently on different executions.
+</p>
+  
+<!--
+<p>
 Randoop extends previously-generated tests by adding new method calls to them.
 If, in the new longer test, one of the embedded subtests throws an exception
 (even though when previously run on its own, the subtest passed),
 then we say the test is <i>flaky</i>.
 </p>
+-->
 
 <p>
-Flaky tests are usually due to global side effects, such as setting a
-static field; a Randoop-generated test might set the field directly or call
-a method that sets the field.
-Such methods are not appropriate for randomly-generated
-tests, and so you should not call Randoop on such methods.  Calling Randoop
-on a method that side-effects local state, such as a field of the receiver
-or of an argument, is fine.
+There are two main reasons for flaky tests.  One is global side effects:  a
+Randoop-generated test might call a method that sets a static field or
+creates/deletes a file.  (Calling Randoop on a method that side-effects
+local state, such as a field of the receiver or of an argument, is fine.)
+Another reason is nondeterminism:  the program under test might behave
+differently on different runs.  Such behaviors are not appropriate for in
+unit tests, so you should not call Randoop on such methods.
 </p>
 
 <p>
-If Randoop
-encounters a flaky test, Randoop halts so that you can correct your
-invocation of Randoop, excluding the global-side-effecting method from
-consideration.  You can do so by passing the
-<a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
-option.
+If Randoop encounters a flaky test, Randoop halts so that you
+can <a href="#nondeterminism-in-program-under-test">correct your invocation
+of Randoop</a>.
 </p>
 
 <p>
-To help you determine which method to omit, when logging is turned on
-(using the <a href="#option:log"><code>--log</code></a> option) Randoop
-logs the list of method calls and field manipulations since the
-first execution of the subsequence where the exception occurred.
-You should determine which of these methods affected global state, and then
-exclude it by using the
-<a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
-option.
-</p>
-
-<p>
-If you find a flaky test that does not result from a method that side-effects
-global state, then please help us improve Randoop by submitting an issue via the
+If you find a flaky test that does not result from side effects or
+nondeterminism in the program, then please help us improve Randoop by
+submitting an issue via the
 <a href="https://github.com/randoop/randoop/issues" rel="nofollow">issue
-tracker</a> to let us know what you encountered.
+tracker</a>.
+<!-- True, but doesn't add much to the manual.
 (Randoop already discards any test with a flaky occurrence of an
 <code>OutOfMemoryError</code> or <code>StackOverflowError</code> as invalid.
 Additional information can help us find other heuristics that avoid generating
 flaky tests, or improve this documentation.)
-</p>
-
-<p>
-If you are unable to determine which method caused the flaky tests and
-exclude it using the
-<a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
-option, then you can resort to the command-line argument
-<a href="#option:ignore-flaky-tests"><code>--ignore-flaky-tests</code></a>
-to discard the flaky tests.
-This is a last resort because it is better to avoid generating flaky tests
-rather than discarding them after generating them.
+-->
 </p>
 
 
