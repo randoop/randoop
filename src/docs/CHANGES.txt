@@ -45,7 +45,11 @@ Added the --print-file-system-state command-line argument (default = false).
 When set to true, any generated tests containing compilation errors
 will be copied to standard out.
 
-Fixes a problem in progress reporting where the wrong count was being used for
+Renamed the --ignore-flaky-tests option to --flaky-test-behavior.  This is now
+an enum: HALT - Halt and give a diagnostic message (default); DISCARD: Discard
+the flaky test; and OUTPUT: Output the flaky test.
+
+Fixed a problem in progress reporting where the wrong count was being used for
 error-revealing sequences.
 
 Added the --deterministic command-line argument (default = false).  When

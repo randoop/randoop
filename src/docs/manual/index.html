@@ -833,13 +833,19 @@ Randoop about your application, and that is how we recommend using Randoop.
  a member of the same package as the generated tests. [default false]
             <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>.
              Ignore class names specified by user that cannot be found [default false]
-            <li id="option:ignore-flaky-tests"><b>--ignore-flaky-tests=</b><i>boolean</i>.
-             If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
- differently on different executions. If true, Randoop ignores them and does not output them.
+            <li id="option:flaky-test-behavior"><b>--flaky-test-behavior=</b><i>enum</i>.
+             How to respond to non-determinism in test execution. Flaky tests are tests that behave
+ differently on different executions.
 
- <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
- side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
- such methods; see the Randoop manual. [default false]
+ <p>Setting this option to DISCARD or OUTPUT should be considered a last resort. Flaky tests are
+ usually due to calling Randoop on side-effecting or nondeterministic methods, and a better
+ solution is not to call Randoop on such methods; see the Randoop manual. See: <code>FlakyTestAction</code>. [default HALT]
+<ul>
+  <li><b>HALT</b> A flaky test should cause Randoop to halt and give a diagnostic message.
+  <li><b>DISCARD</b> A flaky test should be discarded.
+  <li><b>OUTPUT</b> A flaky test should be ignored and output anyway.
+</ul>
+
       </ul>
   <li id="optiongroup:Which-tests-to-output">Which tests to output
       <ul>
