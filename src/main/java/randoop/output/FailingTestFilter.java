@@ -2,6 +2,7 @@ package randoop.output;
 
 import static randoop.execution.RunCommand.CommandException;
 import static randoop.execution.RunCommand.Status;
+import static randoop.main.GenInputsAbstract.FlakyTestAction;
 import static randoop.reflection.SignatureParser.DOT_DELIMITED_IDS;
 import static randoop.reflection.SignatureParser.ID_STRING;
 
@@ -85,7 +86,7 @@ public class FailingTestFilter implements CodeWriter {
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     int pass = 0; // Used to create unique working directory name.
-    boolean passing = false;
+    boolean passing = GenInputsAbstract.flaky_test_behavior == FlakyTestAction.OUTPUT;
 
     while (!passing) {
       Path workingDirectory = createWorkingDirectory(classname, pass);
@@ -288,6 +289,24 @@ public class FailingTestFilter implements CodeWriter {
                 + failureLineMatch.line);
       }
 
+      if (GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT) {
+        String message =
+            "A test code assertion failed during flaky-test filtering. Most likely,%n"
+                + "you ran Randoop on a program with nondeterministic behavior. See the%n"
+                + "Randoop manual's discussion of nondeterminism for ways to handle this.%n"
+                + String.format(
+                    "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
+                    classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]);
+        if (GenInputsAbstract.print_file_system_state) {
+          message = message.concat(String.format("Source file:%n%s%n", javaCode));
+        } else {
+          message =
+              String.format(
+                  "(You may use the --print-file-system-state option to dump a copy of the source file.)%n");
+        }
+        throw new RandoopUsageError(message);
+      }
+
       javaCodeLines[lineNumber - 1] = flakyLineReplacement(javaCodeLines[lineNumber - 1]);
     }
 
@@ -302,6 +321,7 @@ public class FailingTestFilter implements CodeWriter {
    * @param status the result of running JUnit
    * @param qualifiedClassname the name of the JUnit class, used only for debugging output
    * @param javaCode the JUnit class source code, used only for debugging output
+   * @return the number of JUnit failures
    */
   private int numJunitFailures(
       Iterator<String> lineIterator, Status status, String qualifiedClassname, String javaCode) {

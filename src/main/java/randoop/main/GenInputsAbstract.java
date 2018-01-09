@@ -140,15 +140,30 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean fail_on_generation_error = false;
 
   /**
-   * If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
-   * differently on different executions. If true, Randoop ignores them and does not output them.
+   * Possible behaviors if Randoop generates a flaky test.
    *
-   * <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
-   * side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
-   * such methods; see the Randoop manual.
+   * @see #flaky_test_behavior
    */
-  @Option("Whether to ignore non-determinism in test execution")
-  public static boolean ignore_flaky_tests = false;
+  public enum FlakyTestAction {
+    /** Randoop halts with a diagnostic message. */
+    HALT,
+    /** Discard the flaky test. */
+    DISCARD,
+    /** Output the flaky test; the resulting test suite may fail when it is run. */
+    OUTPUT
+  }
+
+  /**
+   * What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
+   * different executions.
+   *
+   * <p>Setting this option to {@code DISCARD} or {@code OUTPUT} should be considered a last resort.
+   * Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
+   * and a better solution is not to call Randoop on such methods; see the discussion of
+   * nondeterminism in the Randoop manual.
+   */
+  @Option("What to do if a flaky test is generated")
+  public static FlakyTestAction flaky_test_behavior = FlakyTestAction.HALT;
 
   /**
    * Whether to output error-revealing tests. Disables all output when used with {@code
