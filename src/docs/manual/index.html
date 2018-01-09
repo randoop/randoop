@@ -834,16 +834,17 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>.
              Ignore class names specified by user that cannot be found [default false]
             <li id="option:flaky-test-behavior"><b>--flaky-test-behavior=</b><i>enum</i>.
-             How to respond to non-determinism in test execution. Flaky tests are tests that behave
- differently on different executions.
+             What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
+ different executions.
 
- <p>Setting this option to DISCARD or OUTPUT should be considered a last resort. Flaky tests are
- usually due to calling Randoop on side-effecting or nondeterministic methods, and a better
- solution is not to call Randoop on such methods; see the Randoop manual. See: <code>FlakyTestAction</code>. [default HALT]
+ <p>Setting this option to <code>DISCARD</code> or <code>OUTPUT</code> should be considered a last resort.
+ Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
+ and a better solution is not to call Randoop on such methods; see the discussion of
+ nondeterminism in the Randoop manual. [default HALT]
 <ul>
-  <li><b>HALT</b> A flaky test should cause Randoop to halt and give a diagnostic message.
-  <li><b>DISCARD</b> A flaky test should be discarded.
-  <li><b>OUTPUT</b> A flaky test should be ignored and output anyway.
+  <li><b>HALT</b> Randoop halts with a diagnostic message.
+  <li><b>DISCARD</b> Discard the flaky test.
+  <li><b>OUTPUT</b> Output the flaky test; the resulting test suite may fail when it is run.
 </ul>
 
       </ul>

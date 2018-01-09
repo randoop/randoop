@@ -86,8 +86,7 @@ public class FailingTestFilter implements CodeWriter {
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     int pass = 0; // Used to create unique working directory name.
-    boolean passing =
-        GenInputsAbstract.flaky_test_behavior == FlakyTestAction.OUTPUT ? true : false;
+    boolean passing = GenInputsAbstract.flaky_test_behavior == FlakyTestAction.OUTPUT;
 
     while (!passing) {
       Path workingDirectory = createWorkingDirectory(classname, pass);
@@ -292,18 +291,18 @@ public class FailingTestFilter implements CodeWriter {
 
       if (GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT) {
         String message =
-            "A test code assertion failed during flaky-test filtering. Most likely, you ran Randoop on a program with nondeterministic behavior.  See section #nondeterminism-in-program-under-test for ways to handle this.";
-        message =
-            message.concat(
-                String.format(
-                    "%nClass: %s, Method: %s, Line number: %d, Source line:%n%s%n",
-                    classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]));
+            "A test code assertion failed during flaky-test filtering. Most likely,%n"
+                + "you ran Randoop on a program with nondeterministic behavior. See the%n"
+                + "Randoop manual's discussion of nondeterminism for ways to handle this.%n"
+                + String.format(
+                    "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
+                    classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]);
         if (GenInputsAbstract.print_file_system_state) {
           message = message.concat(String.format("Source file:%n%s%n", javaCode));
         } else {
           message =
-              message.concat(
-                  "(You may use the --print-file-system-state option to dump a copy of the source file.)\n");
+              String.format(
+                  "(You may use the --print-file-system-state option to dump a copy of the source file.)%n");
         }
         throw new RandoopUsageError(message);
       }

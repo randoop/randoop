@@ -896,8 +896,7 @@ public class GenTests extends GenInputsAbstract {
     // Start with checking for invalid exceptions.
     TestCheckGenerator testGen =
         new ValidityCheckingGenerator(
-            IS_INVALID,
-            GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT ? true : false);
+            IS_INVALID, GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT);
 
     // Extend with contract checker.
     ContractCheckingGenerator contractVisitor = new ContractCheckingGenerator(contracts, IS_ERROR);

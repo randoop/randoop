@@ -140,30 +140,29 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean fail_on_generation_error = false;
 
   /**
-   * The possible values of the flaky_test_behavior command-line argument.
+   * Possible behaviors if Randoop generates a flaky test.
    *
    * @see #flaky_test_behavior
    */
   public enum FlakyTestAction {
-    /** A flaky test should cause Randoop to halt and give a diagnostic message. */
+    /** Randoop halts with a diagnostic message. */
     HALT,
-    /** A flaky test should be discarded. */
+    /** Discard the flaky test. */
     DISCARD,
-    /** A flaky test should be ignored and output anyway. */
+    /** Output the flaky test; the resulting test suite may fail when it is run. */
     OUTPUT
   }
 
   /**
-   * How to respond to non-determinism in test execution. Flaky tests are tests that behave
-   * differently on different executions.
+   * What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
+   * different executions.
    *
-   * <p>Setting this option to DISCARD or OUTPUT should be considered a last resort. Flaky tests are
-   * usually due to calling Randoop on side-effecting or nondeterministic methods, and a better
-   * solution is not to call Randoop on such methods; see the Randoop manual.
-   *
-   * @see FlakyTestAction
+   * <p>Setting this option to {@code DISCARD} or {@code OUTPUT} should be considered a last resort.
+   * Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
+   * and a better solution is not to call Randoop on such methods; see the discussion of
+   * nondeterminism in the Randoop manual.
    */
-  @Option("How to respond to non-determinism in test execution")
+  @Option("What to do if a flaky test is generated")
   public static FlakyTestAction flaky_test_behavior = FlakyTestAction.HALT;
 
   /**
