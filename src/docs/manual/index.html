@@ -694,7 +694,8 @@ Here is how Randoop attempts to generate a test:
 
 <p>
   The user can provide limits on any part of the test generation process, or on
-  Randoop's run time.  Test generation stops when any of the following occurs:
+  Randoop's run time.  Test generation stops when any of the following occurs
+  (this is controlled by method <code>AbstractGenerator.shouldStop</code>):
 </p>
 <ul>
   <li>
@@ -718,7 +719,20 @@ Here is how Randoop attempts to generate a test:
     <a href="#option:stop-on-error-test"><code>--stop-on-error-test=true</code></a>
     was supplied.
   </li>
+  <li>
+    a custom <code>Stopper</code> was provided and it indicates that
+    generation should stop (see the Randoop code).
+  </li>
+  <li>
+    a <code>RandoopListenerManager</code>'s <code>IEventListener</code> it
+    indicates that generation should stop (see the Randoop code).
+  </li>
 </ul>
+
+<p>
+Furthermore, see the <a href="#optiongroup:Threading">ommand-line options
+for threading</a> for additional per-test time limits.
+</p>
 
 
 <h2 id="minimize">Minimizing a failing JUnit test suite</h2>
@@ -845,7 +859,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  nondeterminism in the Randoop manual. [default HALT]
 <ul>
   <li><b>HALT</b> Randoop halts with a diagnostic message.
-  <li><b>DISCARD</b> Discard the flaky test.
+  <li><b>DISCARD</b> Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
+ down by a factor of 2 or more.
   <li><b>OUTPUT</b> Output the flaky test; the resulting test suite may fail when it is run.
 </ul>
 
@@ -1194,12 +1209,12 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:visitor"><b>--visitor=</b><i>string</i> <code>[+]</code>.
              Install the given runtime visitor. See class randoop.ExecutionVisitor.
       </ul>
-  <li id="optiongroup:Threading-and-timeouts">Threading and timeouts
+  <li id="optiongroup:Threading">Threading
       <ul>
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
              If true, Randoop executes each test in a separate thread and kills tests that take too long to
- finish, as determined by the --timeout command-line argument. Tests killed in this manner are
- not reported to the user, but are recorded in Randoop's log. Use the <code>--log</code>
+ finish, as determined by the --call-timeout command-line argument. Tests killed in this manner
+ are not reported to the user, but are recorded in Randoop's log. Use the <code>--log</code>
  command-line option to make Randoop produce the log.
 
  <p>Use this option if Randoop does not terminate, which is usually due to execution of code

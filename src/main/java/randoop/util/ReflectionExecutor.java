@@ -32,7 +32,7 @@ public final class ReflectionExecutor {
    * option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
    * parallel, merely in isolation.
    */
-  @OptionGroup("Threading and timeouts")
+  @OptionGroup("Threading")
   @Option("Execute each test in a separate thread, with timeout")
   public static boolean usethreads = false;
 
