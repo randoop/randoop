@@ -238,7 +238,7 @@ java -classpath $(RANDOOP_JAR) randoop.main.Main help minimize
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
 <pre class="code">
-java -Xmx3000m -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --timeLimit=60
+java -Xmx3000m -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --time-limit=60
 </pre>
 </li>
 
@@ -309,7 +309,7 @@ java.util.TreeSet</pre>
 <p>
 and invoke Randoop as follows: </p>
 
-<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --timeLimit=60</pre>
+<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --time-limit=60</pre>
 
 
 <p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
@@ -698,7 +698,7 @@ Here is how Randoop attempts to generate a test:
 </p>
 <ul>
   <li>
-    The time limit (<a href="#option:timeLimit"><code>--timeLimit</code></a>)
+    The time limit (<a href="#option:time-limit"><code>--time-limit</code></a>)
     is reached, or
   </li>
   <li>
@@ -2483,7 +2483,7 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->
-<!--  LocalWords:  usethreads testclass timeLimit classlist myclasses hashcode
+<!--  LocalWords:  usethreads testclass classlist myclasses hashcode
  -->
 <!--  LocalWords:  RandoopTest hashCode NullPointerException Throwable boolean
  -->

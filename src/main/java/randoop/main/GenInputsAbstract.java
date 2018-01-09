@@ -147,7 +147,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public enum FlakyTestAction {
     /** Randoop halts with a diagnostic message. */
     HALT,
-    /** Discard the flaky test. */
+    /**
+     * Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
+     * down by a factor of 2 or more.
+     */
     DISCARD,
     /** Output the flaky test; the resulting test suite may fail when it is run. */
     OUTPUT
@@ -785,7 +788,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_DEFAULT
         && !ReflectionExecutor.usethreads) {
-      throw new RuntimeException("Invalid parameter combination: --timeout without --usethreads");
+      throw new RuntimeException(
+          "Invalid parameter combination: --call-timeout without --usethreads");
     }
 
     if (time_limit == 0
