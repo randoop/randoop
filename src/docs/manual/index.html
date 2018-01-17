@@ -1305,8 +1305,8 @@ By default, the agent makes the following replacements:
 </ul>
 <p>
 In addition, Randoop treats replaced methods as if the methods were given as arguments
-to <a href="#option:omitmethods"><code>--omitmethods</code></a> and does not create
-direct calls to them in test cases.
+to <a href="#option:omitmethods"><code>--omitmethods</code></a>.
+This prevents Randoop from creating tests with direct calls to them.
 </p>
 
 
@@ -1318,7 +1318,8 @@ There are some classes to which the replacecall agent should not be applied.
 </p>
 
 <p>
-If you are using the agent in a build environment such as Ant, Maven or Gradle, it is also necessary to exclude the build environment classes.
+If you are using the agent in a build environment such as Ant, Maven, or
+Gradle, it is necessary to exclude the build environment classes.
 For instance, when running the agent on generated tests in a Gradle project using the Java plugin, the replacement of <code>System.exit</code>
 will affect the behavior of the build, and we should exclude the Gradle packages from being transformed.
 To exclude these packages, place the package names in an exclusion file <code>gradle-exclusions.txt</code>
@@ -1328,16 +1329,18 @@ org.gradle.
 worker.org.gradle.
 </pre>
 <p>
-and run the agent with the <code>--dont-transform</code> command-line option with the filename as the argument:
+and run the agent with the <code>--dont-transform</code> command-line option
+and the filename as its argument:
 </p>
 <pre>
 -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--dont-transform=gradle-exclusions.txt
 </pre>
 
 <p>
-The exclusion file is simply a list of package names &mdash; one package per line.
-All package names will be treated as if they end with a period, whether or not they do, and are used to match the prefix of the fully-qualified classname.
+The exclusion file is a list of package names &mdash; one package per line.
 (Blank lines and <code>//</code>-style comments are ignored.)
+If a package name does not end with a period, one will be added.
+The package name is used to match the prefix of the fully-qualified classname.
 </p>
 
 <p>
@@ -1365,8 +1368,8 @@ with the exception of packages in <code>java.awt</code> and <code>javax.swing</c
 <h3 id="replacecall-replacement-definition">Defining replacements</h3>
 
 <p>
-You can define your own method replacements by writing mock implementations and specifying the replacements in a text file.
-The replacecall agent is able to use the implementation classes to discover replacements.
+To define your own method replacements, you will write mock implementations (<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java">example</a>)
+and you will specify the replacements in a replacement file (<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/resources/default-replacements.txt">example</a>).
 </p>
 
 <p>
@@ -1377,34 +1380,31 @@ Give the replacement file to the replacecall agent using the <code>--replacement
 </pre>
 
 <p>
-A replacement method must be static and non-private; and should have an
-identical signature to the original, unless the original method is non-static,
-in which case, the first parameter type should be the containing class of the
-original method.
+A replacement method must be static and non-private.
+If the original method is static, the replacement method should have the
+identical signature.
+If the original method is non-static, then the replacement method should 
+have an additional first parameter whose type should be the containing
+class of the original method.
 For instance, a call to <code>java.awt.Component.show()</code> would be replaced
 by a call to a method with the signature <code>show(java.awt.Component)</code>.
-See the default
-<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java">Component class</a>
-for an example mock class.
+An example mock class is 
+<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java"><code>randoop.mock.java.awt.Component</code></a>.
 </p>
 
 <p>
-To organize your mock classes, it is recommended that you choose a package prefix
-and keep the package structure of the original classes.
+To simplify your replacement file and keep your mock classes organized, it
+is recommended that you choose a package prefix and keep the package
+structure of the original classes.
 The example file uses <code>projectmock</code> as the prefix, so the fully-qualified
 name of the <code>JOptionPane</code> mock class is <code>projectmock.javax.swing.JOptionPane</code>.
 (You may need to <a href="replacecall-load-exclusions">exclude</a> this package if any of the replacement methods use otherwise replaced methods.)
 </p>
 
 <p>
-The more you adhere to the original class organization, the simpler your replacement file can be.
-However, the only constraint on organization is that a replacement method named in the replacement file exist in some class.
-</p>
-
-<p>
-The default replacements are all classes in the package <code>randoop.mock</code> with the same name as the declaring class of the original method.
-So, the default mock for <code>java.awt.Component.show()</code> is <code>randoop.mock.java.awt.Component.show(java.awt.Component)</code>.
-You should not use the <code>randoop.mock</code> prefix for your own mock classes.
+Randoop comes with default replacements, which are in sub-packages
+of <code>randoop.mock</code>.  You should not use
+the <code>randoop.mock</code> prefix for your own mock classes.
 </p>
 
 <p>
@@ -1412,12 +1412,11 @@ Keep the following in mind when defining replacements:
 </p>
 <ul>
   <li>
-    Only methods may be replaced.
+    Only methods may be replaced. <!-- TODO: does this mean not constructors? -->
   </li>
   <li>
-    Replacements should avoid changing methods that return values. For instance,
-    don't replace a method that return int with another that just returns zero.  The
-    reason is that this can change the behavior of client code.
+    If you define a replocement for a method that returns a value,
+    it can change the behavior of client code.
   </li>
 </ul>
 
