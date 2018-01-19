@@ -55,7 +55,7 @@ public class Main {
     // If there was no handler for the command, print error message and exit.
     if (handler == null) {
       System.out.println("Unrecognized command: " + command + ".");
-      System.out.println("For more help, invoke Randoop " + "with \"help\" as its sole argument.");
+      System.out.println("For more help, invoke Randoop with \"help\" as its sole argument.");
       System.exit(1);
     }
 
