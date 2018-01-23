@@ -26,6 +26,8 @@ plugins {
    * Plugin that applies Google's Error Prone linter (http://errorprone.info/).
    * https://github.com/tbroyer/gradle-errorprone-plugin
    * Elsewhere this file excludes src/testinput from directories examined by Error Prone.
+   * To run Error Prone, do:  ./gradlew compileJava
+   * There is no separate target to just run Error Prone.
    */
   id "net.ltgt.errorprone-base" version "0.0.11" // 0.0.13 does not work with Java 7
 }

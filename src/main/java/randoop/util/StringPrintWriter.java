@@ -34,7 +34,7 @@ import java.io.StringWriter;
  * @author Gary D. Gregory
  * @since 2.0
  */
-class StringPrintWriter extends PrintWriter {
+public class StringPrintWriter extends PrintWriter {
 
   /** Constructs a new instance. */
   public StringPrintWriter() {

@@ -85,8 +85,7 @@ public class Help extends CommandHandler {
           return true;
         }
       }
-      throw new RandoopUsageError(
-          "The command you asked help for " + "was not recognized: " + command);
+      throw new RandoopUsageError("The command you asked help for was not recognized: " + command);
     }
 
     return true;

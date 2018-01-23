@@ -3,6 +3,7 @@ package randoop.main;
 import java.util.ArrayList;
 import java.util.List;
 import randoop.BugInRandoopException;
+import randoop.Globals;
 import randoop.generation.AbstractGenerator;
 
 /**
@@ -54,7 +55,7 @@ public class Main {
     // If there was no handler for the command, print error message and exit.
     if (handler == null) {
       System.out.println("Unrecognized command: " + command + ".");
-      System.out.println("For more help, invoke Randoop " + "with \"help\" as its sole argument.");
+      System.out.println("For more help, invoke Randoop with \"help\" as its sole argument.");
       System.exit(1);
     }
 
@@ -81,15 +82,17 @@ public class Main {
       System.out.println();
       System.out.println("Randoop failed in an unexpected way.");
       System.out.println("Please report at https://github.com/randoop/randoop/issues .");
-      e.printStackTrace();
-      System.err.flush();
-      success = false;
+
+      // Calls to flush() do not untangle System.out and System.err;
+      // probably an OS issue, not Java.  So we send printStackTrace()
+      // to System.out not System.err.
+      e.printStackTrace(System.out);
+      System.exit(1);
     } catch (Throwable e) {
 
       System.out.println();
       System.out.println("Throwable thrown while handling command: " + e);
-      e.printStackTrace();
-      System.err.flush();
+      e.printStackTrace(System.out);
       success = false;
 
     } finally {
@@ -98,7 +101,10 @@ public class Main {
         System.out.println();
         System.out.println("Randoop failed.");
         System.out.println("Last sequence under execution: ");
-        System.out.println(AbstractGenerator.currSeq);
+        String[] lines = AbstractGenerator.currSeq.toString().split(Globals.lineSep);
+        for (String line : lines) {
+          System.out.println(line);
+        }
         System.exit(1);
       }
     }

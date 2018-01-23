@@ -44,7 +44,7 @@ public class SequenceCompiler {
 
     if (this.compiler == null) {
       throw new IllegalStateException(
-          "Cannot find the Java compiler. " + "Check that classpath includes tools.jar");
+          "Cannot find the Java compiler. Check that classpath includes tools.jar");
     }
 
     JavaFileManager standardFileManager = compiler.getStandardFileManager(null, null, null);

@@ -2,6 +2,7 @@ package randoop.output;
 
 import static randoop.execution.RunCommand.CommandException;
 import static randoop.execution.RunCommand.Status;
+import static randoop.main.GenInputsAbstract.FlakyTestAction;
 import static randoop.reflection.SignatureParser.DOT_DELIMITED_IDS;
 import static randoop.reflection.SignatureParser.ID_STRING;
 
@@ -10,14 +11,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 import plume.UtilMDE;
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.execution.TestEnvironment;
+import randoop.generation.AbstractGenerator;
+import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.RandoopUsageError;
 
@@ -42,6 +48,9 @@ public class FailingTestFilter implements CodeWriter {
 
   private static final Pattern FAILURE_HEADER_PATTERN =
       Pattern.compile("\\d+\\)\\s+(" + ID_STRING + ")\\(" + DOT_DELIMITED_IDS + "\\)");
+
+  private static final String TYPE_REGEX =
+      randoop.instrument.ReplacementFileReader.DOT_DELIMITED_IDS + "(?:<[^=;]*>)?" + "(?:\\[\\])*";
 
   /** The {@link randoop.execution.TestEnvironment} for running the test classes. */
   private final TestEnvironment testEnvironment;
@@ -74,32 +83,47 @@ public class FailingTestFilter implements CodeWriter {
       throws RandoopOutputException {
     assert !Objects.equals(packageName, "");
 
-    String qualifiedClassname = ((packageName == null) ? "" : (packageName + ".")) + classname;
+    String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     int pass = 0; // Used to create unique working directory name.
-    boolean passing = false;
+    boolean passing = GenInputsAbstract.flaky_test_behavior == FlakyTestAction.OUTPUT;
 
     while (!passing) {
       Path workingDirectory = createWorkingDirectory(classname, pass);
-
-      compileTestClass(packageName, classname, classSource, workingDirectory);
-
-      Status status;
       try {
-        status = testEnvironment.runTest(qualifiedClassname, workingDirectory.toFile());
-      } catch (CommandException e) {
-        throw new BugInRandoopException("Error filtering regression tests", e);
-      }
 
-      if (status.exitStatus == 0) {
-        passing = true;
-      } else if (status.timedOut) {
-        throw new Error("Timed out: " + qualifiedClassname);
-      } else {
-        classSource = commentFailingAssertions(packageName, classname, classSource, status);
+        try {
+          compileTestClass(packageName, classname, classSource, workingDirectory);
+        } catch (FileCompiler.FileCompilerException e) {
+          classSource =
+              commentCatchStatements(
+                  packageName,
+                  classname,
+                  classSource,
+                  (e.getDiagnostics()).getDiagnostics(),
+                  workingDirectory,
+                  e);
+          continue;
+        }
+
+        Status status;
+        try {
+          status = testEnvironment.runTest(qualifiedClassname, workingDirectory.toFile());
+        } catch (CommandException e) {
+          throw new BugInRandoopException("Error filtering regression tests", e);
+        }
+
+        if (status.exitStatus == 0) {
+          passing = true;
+        } else if (status.timedOut) {
+          throw new Error("Timed out: " + qualifiedClassname);
+        } else {
+          classSource = commentFailingAssertions(packageName, classname, classSource, status);
+        }
+      } finally {
+        UtilMDE.deleteDir(workingDirectory.toFile());
+        pass++;
       }
-      pass++;
-      UtilMDE.deleteDir(workingDirectory.toFile());
     }
     return javaFileWriter.writeClassCode(packageName, classname, classSource);
   }
@@ -110,14 +134,102 @@ public class FailingTestFilter implements CodeWriter {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
 
+  /* Matches a variable declaration. Capturing group 1 is through the "=", 2 is the type, 3 is the initializer. */
+  private static final Pattern VARIABLE_DECLARATION_LINE =
+      Pattern.compile(
+          "^([ \t]*"
+              + ("(" + TYPE_REGEX + ")")
+              + "[ \t]+"
+              + randoop.instrument.ReplacementFileReader.ID_STRING
+              + "[ \t]*=[ \t]*)(.*)$");
+
+  /**
+   * Comments out lines with unnecessary catch or try statements. Fails if any other compilation
+   * errors exist. Ignores compilation warnings.
+   *
+   * @param packageName the package name of the test class
+   * @param classname the simple (unqualified) name of the test class
+   * @param javaCode the source code for the test class; each assertion must be on its own line
+   * @param diagnostics the errors and warnings from compiling the class
+   * @param destinationDir the directory that contains the source code, used only for debugging
+   * @param e the exception that was raised when compiling the source code, used only for debugging
+   * @return the class source edited so that failing assertions are replaced by comments
+   * @throws BugInRandoopException if there is an unhandled compilation error (i.e., not about an
+   *     unnecessary catch or try statement)
+   */
+  private String commentCatchStatements(
+      String packageName,
+      String classname,
+      String javaCode,
+      List<Diagnostic<? extends JavaFileObject>> diagnostics,
+      Path destinationDir,
+      FileCompiler.FileCompilerException e) {
+    assert !Objects.equals(packageName, "");
+    String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
+
+    String[] javaCodeLines = javaCode.split(Globals.lineSep);
+
+    for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
+      if (diagnostic.getKind() != Diagnostic.Kind.ERROR) {
+        continue;
+      }
+
+      String msg = diagnostic.getMessage(null);
+      int lineNumber = (int) diagnostic.getLineNumber();
+
+      if (msg.contains("is never thrown in body of corresponding try statement")) {
+        javaCodeLines[lineNumber - 1] = "// flaky: " + javaCodeLines[lineNumber - 1];
+      } else if (msg.contains("'try' without 'catch', 'finally' or resource declarations")) {
+        javaCodeLines[lineNumber - 1] = "{ // flaky: " + javaCodeLines[lineNumber - 1];
+      } else {
+        System.out.println("unhandled diagnostic: " + diagnostic.getMessage(null));
+        compilationError( // sourceFile,
+            destinationDir, javaCode, diagnostics, e);
+      }
+    }
+
+    // XXX For efficiency, have this method return the array and redo writeClass so that it writes from array (?).
+    return UtilMDE.join(javaCodeLines, Globals.lineSep);
+  }
+
+  /**
+   * Issue an exception because of a non-recoverable compilation error.
+   *
+   * @param destinationDir the directory that contains the source code, used only for debugging
+   * @param classSource the text of the test class
+   * @param diagnostics the errors and warnings from compiling the class
+   * @param e the exception that was raised when compiling the source code, used only for debugging
+   */
+  private void compilationError(
+      // String sourceFile,
+      Path destinationDir,
+      String classSource,
+      List<Diagnostic<? extends JavaFileObject>> diagnostics,
+      FileCompiler.FileCompilerException e) {
+
+    String message =
+        String.format(
+            "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n",
+            "sourceFile", destinationDir);
+    if (GenInputsAbstract.print_file_system_state) {
+      message = message.concat(String.format("Source file:%n%s%n", classSource));
+    } else {
+      message =
+          message.concat(
+              "(You may use the --print-file-system-state option to dump a copy of the source file.)\n");
+    }
+    message = message.concat(String.format("Diagnostics:%n%s%n", diagnostics));
+    throw new BugInRandoopException(message, e);
+  }
+
   /**
    * Comments out lines with failing assertions. Uses the failures in the {@code status} from
    * running JUnit with {@code javaCode} to identify lines with failing assertions.
    *
    * @param packageName the package name of the test class
-   * @param classname the name of the test class
-   * @param javaCode the source code for the test class, each assertion must be on its own line
-   * @param status the {@link randoop.execution.RunCommand.Status} for running the test with JUnit
+   * @param classname the simple (unqualified) name of the test class
+   * @param javaCode the source code for the test class; each assertion must be on its own line
+   * @param status the {@link randoop.execution.RunCommand.Status} from running the test with JUnit
    * @return the class source edited so that failing assertions are replaced by comments
    * @throws BugInRandoopException if {@code status} contains output for a failure not involving a
    *     Randoop-generated test method
@@ -125,58 +237,26 @@ public class FailingTestFilter implements CodeWriter {
   private String commentFailingAssertions(
       String packageName, String classname, String javaCode, Status status) {
     assert !Objects.equals(packageName, "");
+    String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
-    /* Iterator to move through JUnit output. (JUnit only writes to standard output.) */
+    // Iterator to move through JUnit output. (JUnit only writes to standard output.)
     Iterator<String> lineIterator = status.standardOutputLines.iterator();
 
-    /*
-     * First, find the message that indicates the number of failures in the run.
-     */
-    Match failureCountMatch;
-    try {
-      failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
-    } catch (NotMatchedException e) {
-      if (status.errorOutputLines.size() == 1) {
-        String stderr = status.errorOutputLines.get(0);
-        if (stderr.equals("Error: Could not find or load main class org.junit.runner.JUnitCore")) {
-          throw new RandoopUsageError(
-              "Classpath does not contain JUnit.  "
-                  + "Please correct the classpath and re-run Randoop.");
-        }
-      }
-      throw new BugInRandoopException(
-          // Including javaCode is a bit too verbose.
-          // String.format("%s %s status=%s%n%s", packageName, classname, status, javaCode)
-          String.format(
-              "Did not find \"%s\" in %s.%s status=%s",
-              FAILURE_MESSAGE_PATTERN.pattern(), packageName, classname, status));
-    }
-    int totalFailures = Integer.parseInt(failureCountMatch.group);
-    if (totalFailures < 0) {
-      throw new BugInRandoopException("JUnit has non-zero exit status, but no failure found");
-    }
+    int totalFailures = numJunitFailures(lineIterator, status, qualifiedClassname, javaCode);
 
-    /*
-     * Then read the rest of the file to find each failure.
-     */
+    // Then, read the rest of the file to find each failure.
 
-    /*
-     * Split Java code text so that we can match the line number for the assertion with the code.
-     * Use same line break as used to write test class file.
-     */
+    // Split Java code text so that we can match the line number for the assertion with the code.
+    // Use same line break as used to write test class file.
     String[] javaCodeLines = javaCode.split(Globals.lineSep);
 
     for (int failureCount = 0; failureCount < totalFailures; failureCount++) {
-      /*
-       * Read until beginning of failure
-       */
+      // Read until beginning of failure
       Match failureHeaderMatch = readUntilMatch(lineIterator, FAILURE_HEADER_PATTERN);
       String line = failureHeaderMatch.line;
       String methodName = failureHeaderMatch.group;
 
-      /*
-       * If the method name in the failure message is not a test method, throw an exception.
-       */
+      // Check that the method name in the failure message is a test method.
       if (!methodName.matches(GenTests.TEST_METHOD_NAME_PREFIX + "\\d+")) {
         if (line.contains("initializationError")) {
           throw new BugInRandoopException(
@@ -189,11 +269,8 @@ public class FailingTestFilter implements CodeWriter {
         }
       }
 
-      /*
-       * Search for the stacktrace entry corresponding to the test method, and capture the line
-       * number.
-       */
-      String qualifiedClassname = ((packageName == null) ? "" : (packageName + ".")) + classname;
+      // Search for the stacktrace entry corresponding to the test method, and capture the line
+      // number.
       Pattern linePattern =
           Pattern.compile(
               String.format(
@@ -211,11 +288,118 @@ public class FailingTestFilter implements CodeWriter {
                 + "]: "
                 + failureLineMatch.line);
       }
-      javaCodeLines[lineNumber - 1] = "// flaky: " + javaCodeLines[lineNumber - 1];
+
+      if (GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT) {
+        String message =
+            "A test code assertion failed during flaky-test filtering. Most likely,%n"
+                + "you ran Randoop on a program with nondeterministic behavior. See the%n"
+                + "Randoop manual's discussion of nondeterminism for ways to handle this.%n"
+                + String.format(
+                    "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
+                    classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]);
+        if (GenInputsAbstract.print_file_system_state) {
+          message = message.concat(String.format("Source file:%n%s%n", javaCode));
+        } else {
+          message =
+              String.format(
+                  "(You may use the --print-file-system-state option to dump a copy of the source file.)%n");
+        }
+        throw new RandoopUsageError(message);
+      }
+
+      javaCodeLines[lineNumber - 1] = flakyLineReplacement(javaCodeLines[lineNumber - 1]);
     }
 
     // XXX For efficiency, have this method return the array and redo writeClass so that it writes from array (?).
     return UtilMDE.join(javaCodeLines, Globals.lineSep);
+  }
+
+  /**
+   * Return the number of JUnit failures, parsed from the JUnit output.
+   *
+   * @param lineIterator an iterator over the lines of JUnit output
+   * @param status the result of running JUnit
+   * @param qualifiedClassname the name of the JUnit class, used only for debugging output
+   * @param javaCode the JUnit class source code, used only for debugging output
+   * @return the number of JUnit failures
+   */
+  private int numJunitFailures(
+      Iterator<String> lineIterator, Status status, String qualifiedClassname, String javaCode) {
+    Match failureCountMatch;
+    try {
+      failureCountMatch = readUntilMatch(lineIterator, FAILURE_MESSAGE_PATTERN);
+    } catch (NotMatchedException e) {
+      if (status.errorOutputLines.size() == 1) {
+        String stderr = status.errorOutputLines.get(0);
+        if (stderr.equals("Error: Could not find or load main class org.junit.runner.JUnitCore")) {
+          throw new RandoopUsageError(
+              "Classpath does not contain JUnit.  "
+                  + "Please correct the classpath and re-run Randoop.");
+        }
+      }
+      StringBuilder errorMessage = new StringBuilder();
+      errorMessage.append(
+          String.format(
+              "Did not find \"%s\" in execution of %s%nstatus=%s%n",
+              FAILURE_MESSAGE_PATTERN.pattern(), qualifiedClassname, status));
+      errorMessage.append("Standard output:");
+      errorMessage.append(Globals.lineSep);
+      for (String line : status.standardOutputLines) {
+        errorMessage.append(line);
+        errorMessage.append(Globals.lineSep);
+      }
+      errorMessage.append("... end of standard output.");
+      errorMessage.append(Globals.lineSep);
+      if (AbstractGenerator.dump_sequences) {
+        errorMessage.append(Globals.lineSep);
+        errorMessage.append("Generated tests:");
+        errorMessage.append(Globals.lineSep);
+        errorMessage.append(javaCode);
+      }
+      throw new BugInRandoopException(errorMessage.toString());
+    }
+    int totalFailures = Integer.parseInt(failureCountMatch.group);
+    if (totalFailures <= 0) {
+      throw new BugInRandoopException("JUnit has non-zero exit status, but no failure found");
+    }
+    return totalFailures;
+  }
+
+  /**
+   * Given a flaky line (one that throws an exception but was not expected to), return a commented
+   * version of the line that does no computation.
+   *
+   * @param flakyLine the line that throws an exception
+   * @return the line, with its computation commented out
+   */
+  private String flakyLineReplacement(String flakyLine) {
+    Matcher varDeclMatcher = VARIABLE_DECLARATION_LINE.matcher(flakyLine);
+    String commentedLine;
+    if (varDeclMatcher.matches()) {
+      String varType = varDeclMatcher.group(2);
+      String newInitializer;
+      switch (varType) {
+        case "boolean":
+          newInitializer = "false";
+          break;
+        case "byte":
+        case "char":
+        case "short":
+        case "int":
+        case "long":
+          newInitializer = "0";
+          break;
+        case "float":
+        case "double":
+          newInitializer = "0.0";
+          break;
+        default:
+          newInitializer = "null";
+      }
+      return varDeclMatcher.group(1) + newInitializer + "; // flaky: " + varDeclMatcher.group(3);
+    } else {
+      return "// flaky: " + flakyLine;
+    }
   }
 
   /**
@@ -252,10 +436,12 @@ public class FailingTestFilter implements CodeWriter {
    * @param classname the name of the test class
    * @param classSource the text of the test class
    * @param destinationDir the directory for class file output
-   * @throws BugInRandoopException if the file does not compile
+   * @return the name of the file
+   * @throws FileCompiler.FileCompilerException if the file does not compile
    */
-  private void compileTestClass(
-      String packageName, String classname, String classSource, Path destinationDir) {
+  private File compileTestClass(
+      String packageName, String classname, String classSource, Path destinationDir)
+      throws FileCompiler.FileCompilerException {
     // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
     // which will compile from source, once it is able to write the class file to disk.
     File sourceFile;
@@ -265,15 +451,8 @@ public class FailingTestFilter implements CodeWriter {
       throw new BugInRandoopException("Output error during flaky-test filtering", e);
     }
     FileCompiler fileCompiler = new FileCompiler();
-    try {
-      fileCompiler.compile(sourceFile, destinationDir);
-    } catch (FileCompiler.FileCompilerException e) {
-      throw new BugInRandoopException(
-          String.format(
-              "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s): code = %n%s",
-              sourceFile, destinationDir, classSource),
-          e);
-    }
+    fileCompiler.compile(sourceFile, destinationDir);
+    return sourceFile;
   }
 
   /**

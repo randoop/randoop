@@ -50,9 +50,9 @@ public class RunnerThread extends Thread {
   }
 
   /**
-   * Return the code that is being, or was, run.
+   * Return the ReflectionCode that is being, or was, run.
    *
-   * @return the code being run by this thread
+   * @return the ReflectionCode that is being, or was, run
    */
   public ReflectionCode getCode() {
     return code;

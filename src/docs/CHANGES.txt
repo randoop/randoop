@@ -1,4 +1,4 @@
-Version 4.0.0, released October ??, 2017
+Version 4.0.0, released December ??, 2017
 
 Randoop contains a test suite minimizer.  Given a test suite containing
 failing tests, it creates a test suite with smaller tests that fail the
@@ -41,7 +41,15 @@ exclusive use of --methodlist.
 New option --operation-history-log will write table of operation used during
 generation to either a file or standard out as indicated by the argument.
 
-Fixes a problem in progress reporting where the wrong count was being used for
+Added the --print-file-system-state command-line argument (default = false).
+When set to true, any generated tests containing compilation errors
+will be copied to standard out.
+
+Renamed the --ignore-flaky-tests option to --flaky-test-behavior.  This is now
+an enum: HALT - Halt and give a diagnostic message (default); DISCARD: Discard
+the flaky test; and OUTPUT: Output the flaky test.
+
+Fixed a problem in progress reporting where the wrong count was being used for
 error-revealing sequences.
 
 Added the --deterministic command-line argument (default = false).  When

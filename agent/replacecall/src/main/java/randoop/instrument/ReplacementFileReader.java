@@ -29,17 +29,16 @@ import plume.EntryReader;
  * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
  * documentation</a> for the file format.
  */
-class ReplacementFileReader {
+public class ReplacementFileReader {
 
   /** Regex for Java identifiers */
-  private static final String ID_STRING =
-      "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+  public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**
    * Regex to match a sequence of identifiers separated by periods. Corresponds to package names,
    * fully-qualified classnames, or method names with fully-qualified classname.
    */
-  private static final String DOT_DELIMITED_IDS = ID_STRING + "(?:\\." + ID_STRING + ")*";
+  public static final String DOT_DELIMITED_IDS = ID_STRING + "(?:\\." + ID_STRING + ")*";
 
   /**
    * Naive regex to match a method signature consisting of a fully-qualified method name followed by

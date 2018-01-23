@@ -64,7 +64,10 @@ public class RandoopConditionError extends Error {
   public String getMessage() {
     String thisLocalMessage = (thisMessage != null ? thisMessage : super.getMessage());
     String fileMessage = (file != null ? (" while reading file " + file) : "");
-    String causeMessage = (getCause() != null ? (": " + getCause().getMessage()) : "");
+    String causeMessage =
+        (getCause() != null && getCause().getMessage() != null
+            ? (": " + getCause().getMessage())
+            : "");
     return thisLocalMessage + fileMessage + causeMessage;
   }
 }

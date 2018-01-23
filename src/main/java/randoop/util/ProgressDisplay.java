@@ -88,9 +88,11 @@ public class ProgressDisplay extends Thread {
       if (!ReflectionExecutor.usethreads) {
         // Check that we're still making progress.  If no new inputs are generated
         // for several seconds, we're probably in an infinite loop, and should exit.
-        updateLastStep();
+        updateLastStepTime();
         long now = System.currentTimeMillis();
         if (now - lastStepTime > exit_if_no_steps_after_milliseconds) {
+          // TODO: The stack trace of this thread is not interesting.
+          // This should print the stack trace of the thread that is running a test.
           printStackTraceAndExit();
         }
       }
@@ -146,10 +148,13 @@ public class ProgressDisplay extends Thread {
     System.out.println("--------------------------------------------------");
   }
 
+  /** When the most recent step completed. */
   private long lastStepTime = System.currentTimeMillis();
+  /** The step number of the most recent step. */
   private long lastNumSteps = 0;
 
-  private void updateLastStep() {
+  /** Set {@code lastStepTime} to when the most recent step completed. */
+  private void updateLastStepTime() {
     long seqs = generator.num_steps;
     if (seqs > lastNumSteps) {
       lastStepTime = System.currentTimeMillis();

@@ -238,7 +238,7 @@ java -classpath $(RANDOOP_JAR) randoop.main.Main help minimize
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
 <pre class="code">
-java -Xmx3000m -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --timeLimit=60
+java -Xmx3000m -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --time-limit=60
 </pre>
 </li>
 
@@ -309,7 +309,7 @@ java.util.TreeSet</pre>
 <p>
 and invoke Randoop as follows: </p>
 
-<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --timeLimit=60</pre>
+<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --time-limit=60</pre>
 
 
 <p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
@@ -610,9 +610,14 @@ and it will fail if the code is changed to no longer throw that exception.
 <h3 id="regression_test_failures">Regression test failures</h3>
 
 <p>
-If a regression test fails, there are three possible causes.  You need to
-debug the test failure to determine which is the cause, and then take the
-appropriate action.
+If a regression test fails even though you have not changed your program,
+then the test is <a href="#flaky-tests">flaky</a>.
+</p>
+
+<p>
+If a regression test fails after you change your program, there are three
+possible causes.  You need to debug the test failure to determine which is
+the cause, and then take the appropriate action.
 </p>
 <ul>
   <li>
@@ -630,15 +635,12 @@ appropriate action.
     an inconsequential change.  For example, maybe
     the tests depend on the order of elements in a hash
     table.<br />
-    In this case, you need to re-run Randoop, informing it not to depend on
-    observations that may vary from run to run.  You can use the
-    <a href="#option:omitmethods"><code>--omitmethods</code></a> or
-    or <a href="#option:omitmethods_list"><code>--omitmethods-list</code></a>
-    command-line
-    option, or you can replace its behavior with a different implementation
-    (such as a deterministic one or a mock) using the <a href="#replacecall"><code>replacecall</code> feature of the Randoop agent</a>.
+    In this case, you need to re-run
+    Randoop, <a href="#nondeterminism-in-program-under-test">informing it
+    not to depend on observations that may vary from run to run</a>.
     You can also see the techniques suggested in the paper
-    <a href="http://homes.cs.washington.edu/~mernst/pubs/maintainable-tests-ase2011.pdf">Scaling Up Automated Test Generation</a>.
+    <a href="http://homes.cs.washington.edu/~mernst/pubs/maintainable-tests-ase2011.pdf">Scaling
+    Up Automated Test Generation</a>.
   </li>
 </ul>
 
@@ -692,11 +694,12 @@ Here is how Randoop attempts to generate a test:
 
 <p>
   The user can provide limits on any part of the test generation process, or on
-  Randoop's run time.  Test generation stops when any of the following occurs:
+  Randoop's run time.  Test generation stops when any of the following occurs
+  (this is controlled by method <code>AbstractGenerator.shouldStop</code>):
 </p>
 <ul>
   <li>
-    The time limit (<a href="#option:timeLimit"><code>--timeLimit</code></a>)
+    The time limit (<a href="#option:time-limit"><code>--time-limit</code></a>)
     is reached, or
   </li>
   <li>
@@ -716,7 +719,20 @@ Here is how Randoop attempts to generate a test:
     <a href="#option:stop-on-error-test"><code>--stop-on-error-test=true</code></a>
     was supplied.
   </li>
+  <li>
+    a custom <code>Stopper</code> was provided and it indicates that
+    generation should stop (see the Randoop code).
+  </li>
+  <li>
+    a <code>RandoopListenerManager</code>'s <code>IEventListener</code> it
+    indicates that generation should stop (see the Randoop code).
+  </li>
 </ul>
+
+<p>
+Furthermore, see the <a href="#optiongroup:Threading">ommand-line options
+for threading</a> for additional per-test time limits.
+</p>
 
 
 <h2 id="minimize">Minimizing a failing JUnit test suite</h2>
@@ -833,13 +849,21 @@ Randoop about your application, and that is how we recommend using Randoop.
  a member of the same package as the generated tests. [default false]
             <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>.
              Ignore class names specified by user that cannot be found [default false]
-            <li id="option:ignore-flaky-tests"><b>--ignore-flaky-tests=</b><i>boolean</i>.
-             If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
- differently on different executions. If true, Randoop ignores them and does not output them.
+            <li id="option:flaky-test-behavior"><b>--flaky-test-behavior=</b><i>enum</i>.
+             What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
+ different executions.
 
- <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
- side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
- such methods; see the Randoop manual. [default false]
+ <p>Setting this option to <code>DISCARD</code> or <code>OUTPUT</code> should be considered a last resort.
+ Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
+ and a better solution is not to call Randoop on such methods; see the discussion of
+ nondeterminism in the Randoop manual. [default HALT]
+<ul>
+  <li><b>HALT</b> Randoop halts with a diagnostic message.
+  <li><b>DISCARD</b> Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
+ down by a factor of 2 or more.
+  <li><b>OUTPUT</b> Output the flaky test; the resulting test suite may fail when it is run.
+</ul>
+
       </ul>
   <li id="optiongroup:Which-tests-to-output">Which tests to output
       <ul>
@@ -1177,18 +1201,20 @@ Randoop about your application, and that is how we recommend using Randoop.
  specified, no logging is done.
             <li id="option:operation-history-log"><b>--operation-history-log=</b><i>string</i>.
              A file to which to log the operation usage history.
+            <li id="option:print-file-system-state"><b>--print-file-system-state=</b><i>boolean</i>.
+             Display source if a generated test contains a compilation error. [default false]
       </ul>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
       <ul>
             <li id="option:visitor"><b>--visitor=</b><i>string</i> <code>[+]</code>.
              Install the given runtime visitor. See class randoop.ExecutionVisitor.
       </ul>
-  <li id="optiongroup:Threading-and-timeouts">Threading and timeouts
+  <li id="optiongroup:Threading">Threading
       <ul>
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
              If true, Randoop executes each test in a separate thread and kills tests that take too long to
- finish, as determined by the --timeout command-line argument. Tests killed in this manner are
- not reported to the user, but are recorded in Randoop's log. Use the <code>--log</code>
+ finish, as determined by the --call-timeout command-line argument. Tests killed in this manner
+ are not reported to the user, but are recorded in Randoop's log. Use the <code>--log</code>
  command-line option to make Randoop produce the log.
 
  <p>Use this option if Randoop does not terminate, which is usually due to execution of code
@@ -1279,8 +1305,8 @@ By default, the agent makes the following replacements:
 </ul>
 <p>
 In addition, Randoop treats replaced methods as if the methods were given as arguments
-to <a href="#option:omitmethods"><code>--omitmethods</code></a> and does not create
-direct calls to them in test cases.
+to <a href="#option:omitmethods"><code>--omitmethods</code></a>.
+This prevents Randoop from creating tests with direct calls to them.
 </p>
 
 
@@ -1292,7 +1318,8 @@ There are some classes to which the replacecall agent should not be applied.
 </p>
 
 <p>
-If you are using the agent in a build environment such as Ant, Maven or Gradle, it is also necessary to exclude the build environment classes.
+If you are using the agent in a build environment such as Ant, Maven, or
+Gradle, it is necessary to exclude the build environment classes.
 For instance, when running the agent on generated tests in a Gradle project using the Java plugin, the replacement of <code>System.exit</code>
 will affect the behavior of the build, and we should exclude the Gradle packages from being transformed.
 To exclude these packages, place the package names in an exclusion file <code>gradle-exclusions.txt</code>
@@ -1302,16 +1329,18 @@ org.gradle.
 worker.org.gradle.
 </pre>
 <p>
-and run the agent with the <code>--dont-transform</code> command-line option with the filename as the argument:
+and run the agent with the <code>--dont-transform</code> command-line option
+and the filename as its argument:
 </p>
 <pre>
 -javaagent:$(RANDOOP_PATH)/replacecall-3.1.5.jar=--dont-transform=gradle-exclusions.txt
 </pre>
 
 <p>
-The exclusion file is simply a list of package names &mdash; one package per line.
-All package names will be treated as if they end with a period, whether or not they do, and are used to match the prefix of the fully-qualified classname.
+The exclusion file is a list of package names &mdash; one package per line.
 (Blank lines and <code>//</code>-style comments are ignored.)
+If a package name does not end with a period, one will be added.
+The package name is used to match the prefix of the fully-qualified classname.
 </p>
 
 <p>
@@ -1339,8 +1368,8 @@ with the exception of packages in <code>java.awt</code> and <code>javax.swing</c
 <h3 id="replacecall-replacement-definition">Defining replacements</h3>
 
 <p>
-You can define your own method replacements by writing mock implementations and specifying the replacements in a text file.
-The replacecall agent is able to use the implementation classes to discover replacements.
+To define your own method replacements, you will write mock implementations (<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java">example</a>)
+and you will specify the replacements in a replacement file (<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/resources/default-replacements.txt">example</a>).
 </p>
 
 <p>
@@ -1351,34 +1380,31 @@ Give the replacement file to the replacecall agent using the <code>--replacement
 </pre>
 
 <p>
-A replacement method must be static and non-private; and should have an
-identical signature to the original, unless the original method is non-static,
-in which case, the first parameter type should be the containing class of the
-original method.
+A replacement method must be static and non-private.
+If the original method is static, the replacement method should have the
+identical signature.
+If the original method is non-static, then the replacement method should 
+have an additional first parameter whose type should be the containing
+class of the original method.
 For instance, a call to <code>java.awt.Component.show()</code> would be replaced
 by a call to a method with the signature <code>show(java.awt.Component)</code>.
-See the default
-<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java">Component class</a>
-for an example mock class.
+An example mock class is 
+<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java"><code>randoop.mock.java.awt.Component</code></a>.
 </p>
 
 <p>
-To organize your mock classes, it is recommended that you choose a package prefix
-and keep the package structure of the original classes.
+To simplify your replacement file and keep your mock classes organized, it
+is recommended that you choose a package prefix and keep the package
+structure of the original classes.
 The example file uses <code>projectmock</code> as the prefix, so the fully-qualified
 name of the <code>JOptionPane</code> mock class is <code>projectmock.javax.swing.JOptionPane</code>.
 (You may need to <a href="replacecall-load-exclusions">exclude</a> this package if any of the replacement methods use otherwise replaced methods.)
 </p>
 
 <p>
-The more you adhere to the original class organization, the simpler your replacement file can be.
-However, the only constraint on organization is that a replacement method named in the replacement file exist in some class.
-</p>
-
-<p>
-The default replacements are all classes in the package <code>randoop.mock</code> with the same name as the declaring class of the original method.
-So, the default mock for <code>java.awt.Component.show()</code> is <code>randoop.mock.java.awt.Component.show(java.awt.Component)</code>.
-You should not use the <code>randoop.mock</code> prefix for your own mock classes.
+Randoop comes with default replacements, which are in sub-packages
+of <code>randoop.mock</code>.  You should not use
+the <code>randoop.mock</code> prefix for your own mock classes.
 </p>
 
 <p>
@@ -1386,12 +1412,11 @@ Keep the following in mind when defining replacements:
 </p>
 <ul>
   <li>
-    Only methods may be replaced.
+    Only methods may be replaced. <!-- TODO: does this mean not constructors? -->
   </li>
   <li>
-    Replacements should avoid changing methods that return values. For instance,
-    don't replace a method that return int with another that just returns zero.  The
-    reason is that this can change the behavior of client code.
+    If you define a replocement for a method that returns a value,
+    it can change the behavior of client code.
   </li>
 </ul>
 
@@ -1918,7 +1943,7 @@ same test suite.
 <p>
 This section gives several reasons why Randoop may produce different output
 when you run it twice, and tells you how to debug the problem.
-If after investigating these possibiliities, you find that Randoop is
+If after investigating these possibilities, you find that Randoop is
 nondeterministic because of a bug in Randoop,
 please <a href="#bug-reporting">report it</a> so that we can investigate
 and correct the problem.
@@ -1950,9 +1975,9 @@ In JDK 7, <code>Corner</code>'s <code>getAccessibleContext</code> method is
 inherited from <code>JComponent</code>.
 In JDK 8, <code>Corner</code>'s <code>getAccessibleContext</code> method is
 inherited from <code>java.awt.Component</code>.
-Randoop discovers a different set of operations
-(because <code>Corner.class.getMethods()</code> returns different results
-depending on the JDK).  Given different sets, Randoop may may different
+Depending on the JDK in use, Randoop discovers a different set of operations,
+because <code>Corner.class.getMethods()</code> returns different results
+depending on the JDK.  Given different sets, Randoop may make different
 choices and produce different tests.
 </p>
 
@@ -1977,21 +2002,29 @@ argument.
 <h3 id="nondeterminism-in-program-under-test">Nondeterministic program under test</h3>
 
 <p>
-The program under test is nondeterministic.
+The program under test is nondeterministic.  This can cause Randoop to
+produce different tests on different runs, but more seriously, it can cause
+Randoop to produce <a href="#flaky-tests">flaky tests</a> that sometimes
+pass and sometimes fail.
 </p>
 
 <p>
-  To determine which method is nondeterministic, run Randoop with debug
-  logs, in particular the <a href="#option:log"><code>--log</code></a> and
-  <a href="#option:selection-log"><code>--selection-log</code></a>
-  command-line options.  Compare these files for the two runs, and the
-  first place that they differ will indicate where the program is
-  nondeterministic.
+To determine which method is nondeterministic, run Randoop with
+the <a href="#option:log"><code>--log</code></a> and
+<a href="#option:selection-log"><code>--selection-log</code></a>
+command-line options.  Compare the logs across runs, and the first
+place that they differ indicates where the program is nondeterministic.
 </p>
 
 <p>
+If the program under test is nondeterministic, you have several options:
+</p>
+
+<ol>
+<li>
+Change the program to be deterministic.
+In addition to making the program more testable, this is likely to make the program easier to debug.
 Here are some ways to eliminate nondeterminism in a sequential Java program:
-</p>
 
 <ul>
   <li>
@@ -2026,16 +2059,39 @@ Here are some ways to eliminate nondeterminism in a sequential Java program:
     Don't use time and date functions to obtain the current time.
   </li>
 </ul>
+</li>
 
-<p>
-Some of these changes can be made programmatically by use of
+<li>
+Transform the program at run time to make changes like the ones above, replacing
+the method's behavior with a different implementation
+(such as a deterministic one or a mock).
+You can do this by using
 Randoop's <a href="#replacecall">replacecall agent</a>.
-</p>
+</li>
+
+<li>
+Prevent Randoop from directly calling problematic methods.
+Use the <a href="#option:omitmethods"><code>--omitmethods</code></a> 
+or <a href="#option:omitmethods_list"><code>--omitmethods-list</code></a>
+command-line argument.
+</li>
+
+<li>
+Instruct Randoop to attempt to discard or repair any flaky tests that it
+generates.
+Use the
+<a href="#option:ignore-flaky-tests"><code>--ignore-flaky-tests</code></a>
+command-line argument.
+This is a last resort because Randoop may output a small test suite due to
+discarding many of the generated tests.
+When possible, is better to avoid generating flaky tests
+rather than discarding them after generating them.
+</li>
+</ol>
 
 <p>
-If you cannot make a particular method deterministic, then you can
-use <a href="#option:omitmethods"><code>--omitmethods</code></a> to prevent
-Randoop from calling the method.
+You can also see the techniques suggested in the paper
+<a href="http://homes.cs.washington.edu/~mernst/pubs/maintainable-tests-ase2011.pdf">Scaling Up Automated Test Generation</a>.
 </p>
 
 
@@ -2273,62 +2329,46 @@ See the manual section on <a href="#nondeterminism">nondeterminism</a>.
 <h3 id="flaky-tests">Randoop stopped because of a flaky test</h3>
 
 <p>
+A test is <i>flaky</i> if it behaves differently on different executions.
+</p>
+  
+<!--
+<p>
 Randoop extends previously-generated tests by adding new method calls to them.
 If, in the new longer test, one of the embedded subtests throws an exception
 (even though when previously run on its own, the subtest passed),
 then we say the test is <i>flaky</i>.
 </p>
+-->
 
 <p>
-Flaky tests are usually due to global side effects, such as setting a
-static field; a Randoop-generated test might set the field directly or call
-a method that sets the field.
-Such methods are not appropriate for randomly-generated
-tests, and so you should not call Randoop on such methods.  Calling Randoop
-on a method that side-effects local state, such as a field of the receiver
-or of an argument, is fine.
+There are two main reasons for flaky tests.  One is global side effects:  a
+Randoop-generated test might call a method that sets a static field or
+creates/deletes a file.  (Calling Randoop on a method that side-effects
+local state, such as a field of the receiver or of an argument, is fine.)
+Another reason is nondeterminism:  the program under test might behave
+differently on different runs.  Such behaviors are not appropriate for in
+unit tests, so you should not call Randoop on such methods.
 </p>
 
 <p>
-If Randoop
-encounters a flaky test, Randoop halts so that you can correct your
-invocation of Randoop, excluding the global-side-effecting method from
-consideration.  You can do so by passing the
-<a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
-option.
+If Randoop encounters a flaky test, Randoop halts so that you
+can <a href="#nondeterminism-in-program-under-test">correct your invocation
+of Randoop</a>.
 </p>
 
 <p>
-To help you determine which method to omit, when logging is turned on
-(using the <a href="#option:log"><code>--log</code></a> option) Randoop
-logs the list of method calls and field manipulations since the
-first execution of the subsequence where the exception occurred.
-You should determine which of these methods affected global state, and then
-exclude it by using the
-<a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
-option.
-</p>
-
-<p>
-If you find a flaky test that does not result from a method that side-effects
-global state, then please help us improve Randoop by submitting an issue via the
+If you find a flaky test that does not result from side effects or
+nondeterminism in the program, then please help us improve Randoop by
+submitting an issue via the
 <a href="https://github.com/randoop/randoop/issues" rel="nofollow">issue
-tracker</a> to let us know what you encountered.
+tracker</a>.
+<!-- True, but doesn't add much to the manual.
 (Randoop already discards any test with a flaky occurrence of an
 <code>OutOfMemoryError</code> or <code>StackOverflowError</code> as invalid.
 Additional information can help us find other heuristics that avoid generating
 flaky tests, or improve this documentation.)
-</p>
-
-<p>
-If you are unable to determine which method caused the flaky tests and
-exclude it using the
-<a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
-option, then you can resort to the command-line argument
-<a href="#option:ignore-flaky-tests"><code>--ignore-flaky-tests</code></a>
-to discard the flaky tests.
-This is a last resort because it is better to avoid generating flaky tests
-rather than discarding them after generating them.
+-->
 </p>
 
 
@@ -2457,7 +2497,7 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->
-<!--  LocalWords:  usethreads testclass timeLimit classlist myclasses hashcode
+<!--  LocalWords:  usethreads testclass classlist myclasses hashcode
  -->
 <!--  LocalWords:  RandoopTest hashCode NullPointerException Throwable boolean
  -->
