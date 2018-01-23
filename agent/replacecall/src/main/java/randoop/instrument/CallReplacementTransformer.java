@@ -121,6 +121,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     try {
       ClassGen cg = new ClassGen(c);
       if (transformClass(cg)) {
+        // If transformClass returns true, it has also transformed the class.
         JavaClass javaClass = cg.getJavaClass();
         if (ReplaceCallAgent.debug) {
           Path filepath = ReplaceCallAgent.debugPath.resolve(className + ".class");
@@ -129,7 +130,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         debug_transform.log("transform: EXIT class %s transformed", className);
         return javaClass.getBytes();
       } else {
-        debug_transform.log("transform: EXIT class %s not transformed", className);
+        debug_transform.log(
+            "transform: EXIT class %s not transformed (nothing to replace)", className);
         return null;
       }
     } catch (IllegalClassFormatException e) {
@@ -271,11 +273,12 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    */
   private boolean transformMethod(MethodGen mg, InstructionFactory ifact, ConstantPoolGen pgen)
       throws IllegalClassFormatException {
-    boolean transformed = false;
-    // Loop through each instruction, making substitutions
     debug_transform.log("transformMethod: ENTER %s.%s%n", mg.getClassName(), mg.getName());
     InstructionList instructionList = mg.getInstructionList();
     InstructionHandle instructionHandle = instructionList.getStart();
+
+    // Loop through each instruction, making substitutions
+    boolean transformed = false;
     while (instructionHandle != null) {
 
       debug_instrument_inst.log(
@@ -314,59 +317,62 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   private InvokeInstruction getReplacementInstruction(
       MethodGen mg, Instruction inst, InstructionFactory ifact, ConstantPoolGen pgen)
       throws IllegalClassFormatException {
-    debug_transform.log(
-        "getReplacementInstruction: ENTER %s.%s%n", mg.getClassName(), mg.getName());
+    debug_transform.log("getReplacementInstruction: ENTER %s%n", inst);
     if (!(inst instanceof InvokeInstruction)) {
-      debug_transform.log(
-          "getReplacementInstruction: EXIT %s.%s%n", mg.getClassName(), mg.getName());
+      debug_transform.log("getReplacementInstruction: EXIT %s (not an InvokeInstruction)%n", inst);
       return null;
     }
 
-    InvokeInstruction invocation = (InvokeInstruction) inst;
-    MethodSignature orig = MethodSignature.of(invocation, pgen);
+    InvokeInstruction origInvocation = (InvokeInstruction) inst;
+    MethodSignature origSig = MethodSignature.of(origInvocation, pgen);
 
-    MethodSignature call = replacementMap.get(orig);
-    if (call == null) {
+    MethodSignature newSig = replacementMap.get(origSig);
+    if (newSig == null) {
       debug_transform.log(
-          "%s.%s: No replacement for %s%n", mg.getClassName(), mg.getName(), orig.toString());
-      debug_transform.log(
-          "getReplacementInstruction: EXIT %s.%s%n", mg.getClassName(), mg.getName());
+          "%s.%s: No replacement for %s%n", mg.getClassName(), mg.getName(), origSig.toString());
+      debug_transform.log("getReplacementInstruction: EXIT %s%n", inst);
       return null;
     }
 
     debug_transform.log(
         "%s.%s: Replacing method %s with %s%n",
-        mg.getClassName(), mg.getName(), orig.toString(), call);
+        mg.getClassName(), mg.getName(), origSig.toString(), newSig);
 
-    InvokeInstruction instruction;
+    InvokeInstruction newInvocation;
 
-    switch (inst.getOpcode()) {
+    switch (origInvocation.getOpcode()) {
       case Const.INVOKEINTERFACE:
       case Const.INVOKESPECIAL:
       case Const.INVOKEVIRTUAL:
+        // TODO: I am not confident that these always have an implicit receiver.
+        // Constructors (invokespecial) usually don't have one.
+        // Maybe interface methods can now be static too?
+        // It seems that a more correct implementation would be to check whether there is
+        // a receiver, and if so to change the signature as below.
         /*
          * These calls have an implicit receiver ({@code this}) argument. Since the conversion is
          * to a static call, the receiver type is inserted at the beginning of the argument type
          * array. This argument has already been explicitly pushed onto the stack, so modifying the
          * call signature is enough.
          */
-        Type instanceType = invocation.getReferenceType(pgen);
-        Type[] arguments = BCELUtil.prependToArray(instanceType, invocation.getArgumentTypes(pgen));
-        instruction =
+        Type instanceType = origInvocation.getReferenceType(pgen);
+        Type[] arguments =
+            BCELUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pgen));
+        newInvocation =
             ifact.createInvoke(
-                call.getClassname(),
-                call.getName(),
-                invocation.getReturnType(pgen),
+                newSig.getClassname(),
+                newSig.getName(),
+                origInvocation.getReturnType(pgen),
                 arguments,
                 Const.INVOKESTATIC);
         break;
       case Const.INVOKESTATIC:
-        instruction =
+        newInvocation =
             ifact.createInvoke(
-                call.getClassname(),
-                call.getName(),
-                invocation.getReturnType(pgen),
-                invocation.getArgumentTypes(pgen),
+                newSig.getClassname(),
+                newSig.getName(),
+                origInvocation.getReturnType(pgen),
+                origInvocation.getArgumentTypes(pgen),
                 Const.INVOKESTATIC);
         break;
       default:
@@ -377,14 +383,16 @@ public class CallReplacementTransformer implements ClassFileTransformer {
             mg.getClassName(), mg.getName());
         String msg =
             String.format(
-                "Unexpected invoke instruction in %s.%s", mg.getClassName(), mg.getName());
+                "Unexpected invoke instruction %s in %s.%s",
+                origInvocation, mg.getClassName(), mg.getName());
         throw new IllegalClassFormatException(msg);
     }
-    debug_transform.log("getReplacementInstruction: EXIT %s.%s%n", mg.getClassName(), mg.getName());
-    return instruction;
+    debug_transform.log(
+        "getReplacementInstruction: EXIT %s => %s%n", origInvocation, newInvocation);
+    return newInvocation;
   }
 
-  /** Dumps out {@link #replacementMap} to the debug_map logger */
+  /** Dumps out {@link #replacementMap} to the debug_map logger, if that logger is enabled. */
   private void logReplacementMap() {
     if (debug_map.enabled()) {
       if (replacementMap.isEmpty()) {
@@ -397,7 +405,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     }
   }
 
-  /** Adds a shutdown hook that prints out {@link #replacementMap} */
+  /** Adds a shutdown hook that prints out {@link #replacementMap}, if debug logging is enabled. */
   void addMapFileShutdownHook() {
     Runtime.getRuntime()
         .addShutdownHook(
