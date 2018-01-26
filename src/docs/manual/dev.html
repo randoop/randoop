@@ -29,6 +29,7 @@
     </ul></li>
   <li><a href="#testing-randoop">Testing Randoop</a>
     <ul>
+      <li><a href="#coverage-tests">Check Randop code coverage</a></li>
       <li><a href="#travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</a></li>
       <li><a href="#addtests">Adding tests</a>
         <ul>
@@ -368,6 +369,17 @@ You can minimize the test with a command like this:
 java -ea -cp randoop-all-3.1.5.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
+
+
+<h2 id="coverage-tests">Check Randop code coverage</h2>
+
+<p>
+As part of running the Randoop test suite, the system uses the Jacoco tool to calculate the amount
+of the Randoop source code base that is covered by the generated tests.  This process also produces
+a series of reports that may be found in <code>build/reports/jacoco/test/html</code> and its subdirectories.
+A summary of the results is in the file <code>build/reports/jacoco/test/jacocoTestReport.xml</code>.
+The overall coverage can be extracted from this file by running <code>./calc-coverage.pl</code>.
+</p>
 
 
 <h2 id="travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</h2>
