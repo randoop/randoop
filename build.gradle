@@ -255,7 +255,9 @@ tasks.withType(JavaCompile).each { t ->
       t.toolChain ErrorProneToolChain.create(project)
       t.options.compilerArgs += [
         // undocumented, and suggestion seems bad
-        '-Xep:NamedParameters:OFF'
+        '-Xep:NamedParameters:OFF',
+ 	// Is always a false positive in my experience.
+	'-Xep:StringSplitter:OFF'
         // TODO: uncomment once we run the Interning Checker on Randoop
         // '-Xep:ReferenceEquality:OFF'
         ]
