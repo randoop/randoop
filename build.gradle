@@ -52,7 +52,7 @@ allprojects {
 }
 
 /******
- * Configuration specific to Randoop and not agents
+ * Configuration specific to Randoop and not agents.
  * Configuration for agent FOO appears in agents/FOO/FOO.gradle .
  ******/
 
@@ -114,6 +114,7 @@ sourceSets {
 
 configurations {
   plume
+
   implementation.extendsFrom plume
 
   manual {
@@ -699,19 +700,31 @@ task updateDevTOC( type:Exec, dependsOn: ['clonePlumeLib' ]) {
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
 }
 
+// Debugging of exec tasks.  Alternately, run "gradle --debug", but that swamps you with output.
+allprojects {
+  tasks.withType(Exec) {
+    doFirst {
+      println commandLine
+    }
+  }
+}
+
+// TODO: Why isn't this a Javadoc task?  That is, why does it call javadoc
+// from the command line?
 /*
- * Applies plume.OptionsDoclet to src/docs/manual/index.html to add
+ * Applies OptionsDoclet to src/docs/manual/index.html to add
  * command-line arguments extracted from the given @Option annotated classes.
  * Applied in-place.
  */
 task updateUserOptions(dependsOn: 'assemble') {
-  description "Runs plume.OptionsDoclet on src/docs/manual/index.html"
-  def classpath = files(configurations.manual.files).asPath
+  description "Runs OptionsDoclet on src/docs/manual/index.html"
+  // def classpath = files(configurations.manual.files).asPath
+  def classpath = sourceSets.main.runtimeClasspath + ":" + files(configurations.manual.files).asPath + ":" + sourceSets.systemTest.runtimeClasspath
   def docFile = file("${projectDir}/src/docs/manual/index.html")
   def options = [
     "-classpath", classpath,
     "-docletpath", classpath,
-    "-doclet", "plume.OptionsDoclet",
+    "-doclet", "org.plumelib.options.OptionsDoclet",
     "-docfile", docFile,
     "-i",
   ]
@@ -722,6 +735,8 @@ task updateUserOptions(dependsOn: 'assemble') {
     file("${projectDir}/src/main/java/randoop/main/Minimize.java")
   ]
   doLast {
+    // TODO: how do I do this???
+    // println [ "javadoc" ] + options + fileList
     project.exec {
       commandLine = [ "javadoc" ] + options + fileList
     }
