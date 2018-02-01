@@ -4,8 +4,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import plume.Options;
-import plume.Options.ArgException;
+import org.plumelib.options.Options;
+import org.plumelib.options.Options.ArgException;
 import randoop.Globals;
 import randoop.util.Util;
 

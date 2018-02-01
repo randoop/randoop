@@ -1,8 +1,8 @@
 package randoop.util;
 
 import java.io.PrintStream;
-import plume.Option;
-import plume.OptionGroup;
+import org.plumelib.options.Option;
+import org.plumelib.options.OptionGroup;
 import plume.UtilMDE;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;

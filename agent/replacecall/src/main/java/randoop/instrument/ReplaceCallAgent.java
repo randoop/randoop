@@ -16,9 +16,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.plumelib.options.Option;
+import org.plumelib.options.Options;
 import plume.EntryReader;
-import plume.Option;
-import plume.Options;
 import plume.UtilMDE;
 import randoop.MethodReplacements;
 
