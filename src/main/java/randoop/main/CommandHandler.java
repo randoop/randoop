@@ -3,7 +3,7 @@ package randoop.main;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import plume.Options;
+import org.plumelib.options.Options;
 import randoop.Globals;
 import randoop.util.Util;
 

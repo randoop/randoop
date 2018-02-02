@@ -52,7 +52,7 @@ allprojects {
 }
 
 /******
- * Configuration specific to Randoop and not agents
+ * Configuration specific to Randoop and not agents.
  * Configuration for agent FOO appears in agents/FOO/FOO.gradle .
  ******/
 
@@ -114,12 +114,8 @@ sourceSets {
 
 configurations {
   plume
-  implementation.extendsFrom plume
 
-  manual {
-    description = "Generate user and developer documentation"
-    extendsFrom plume
-  }
+  implementation.extendsFrom plume
 
   /*
    * Used to manage javaagent jar file
@@ -139,6 +135,7 @@ configurations {
 dependencies {
   /* Randoop uses local copy of Plume */
   plume files('lib/plume.jar')
+  implementation 'org.plumelib:options:0.2.2'
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
   implementation group: 'junit', name: 'junit', version: '4.+'
   implementation files(project(':replacecall').sourceSets.main.output)
@@ -166,12 +163,12 @@ dependencies {
   /*
    * source set systemTest
    */
-   systemTestImplementation files('lib/plume.jar')
-   systemTestImplementation group: 'junit', name: 'junit', version: '4.+'
-   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.7.201606060606'
-   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.7.7.201606060606'
-   systemTestRuntimeOnly sourceSets.testInput.output
+  systemTestImplementation files('lib/plume.jar')
+  systemTestImplementation group: 'junit', name: 'junit', version: '4.+'
+  systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.7.201606060606'
+  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.7.7.201606060606'
+  systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
    * sourceSet testInput depends on output of main.
@@ -179,15 +176,6 @@ dependencies {
    */
   testInputImplementation sourceSets.main.output
   testInputImplementation group: 'junit', name: 'junit', version: '4.+'
-
-  /*
-   * building documentation uses Options doclet that is part of plume, and
-   * requires compiled source.
-   */
-  manual sourceSets.main.output
-
-  /* JavaParser used by Minimize for the manual */
-  manual group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
 }
 
 /*
@@ -561,6 +549,7 @@ shadowJar {
   relocate 'org.ccil.cowan.tagsoup', 'randoop.org.ccil.cowan.tagsoup'
   relocate 'org.checkerframework', 'randoop.org.checkerframework'
   relocate 'org.ini4j', 'randoop.org.ini4j'
+  relocate 'org.plumelib', 'randoop.org.plumelib'
   relocate 'org.slf4j', 'randoop.org.slf4j'
   relocate 'org.tigris.subversion', 'randoop.org.tigris.subversion'
   relocate 'org.tmatesoft', 'randoop.org.tmatesoft'
@@ -697,19 +686,21 @@ task updateDevTOC( type:Exec, dependsOn: ['clonePlumeLib' ]) {
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
 }
 
+// TODO: Why isn't this a Javadoc task?  That is, why does it call javadoc
+// from the command line?
 /*
- * Applies plume.OptionsDoclet to src/docs/manual/index.html to add
+ * Applies OptionsDoclet to src/docs/manual/index.html to add
  * command-line arguments extracted from the given @Option annotated classes.
  * Applied in-place.
  */
 task updateUserOptions(dependsOn: 'assemble') {
-  description "Runs plume.OptionsDoclet on src/docs/manual/index.html"
-  def classpath = files(configurations.manual.files).asPath
+  description "Runs OptionsDoclet on src/docs/manual/index.html"
+  def classpath = sourceSets.main.runtimeClasspath.asPath
   def docFile = file("${projectDir}/src/docs/manual/index.html")
   def options = [
     "-classpath", classpath,
-    "-docletpath", classpath,
-    "-doclet", "plume.OptionsDoclet",
+    "-docletpath", classpath,    // doclet loads class files from the documented classes
+    "-doclet", "org.plumelib.options.OptionsDoclet",
     "-docfile", docFile,
     "-i",
   ]
@@ -766,7 +757,7 @@ task validateAPI(type: Exec, dependsOn: 'javadoc') {
 /*
  * WARNING: do not run this task unless you mean to wipe out the project pages
  * directory. It can be repopulated by publishSite, but the contents will be
- * based on changes to the files in src/docs and the javadoc in the source.
+ * based on changes to the files in src/docs and the Javadoc in the source.
  */
 task cleanSite {
   group=null
@@ -782,8 +773,9 @@ task cleanSite {
 
 /*
  * Publishes changes to the project documentation to the project pages directory
- * (docs). This task ensures that all old site files are removed, new javadoc is
- * generated, the manual is updated, and the HTML has been validated.
+ * (docs). This task ensures that all old site files are removed, new API
+ * documentation is generated, the manual is updated, and the HTML has been
+ * validated.
  *
  * Note that the contents of any subdirectory of build/docs will be included in
  * the site. Currently, this is only the api directory generated by the javadoc
