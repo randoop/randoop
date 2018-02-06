@@ -28,11 +28,11 @@ public class Help extends CommandHandler {
   }
 
   @Override
-  public boolean handle(String[] args_raw) {
+  public boolean handle(String[] argsWithOptions) {
 
     String[] args = null;
     try {
-      args = foptions.parse(args_raw);
+      args = foptions.parse(argsWithOptions);
       if (args.length > 1) {
         throw new ArgException("Unrecognized arguments: " + Arrays.toString(args));
       }
