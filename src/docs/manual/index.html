@@ -44,7 +44,10 @@ The Randoop homepage is
       <li><a href="#replacecall">Avoiding calls to specific methods</a>
         <ul>
           <li><a href="#replacecall-load-exclusions">Replacement exclusions</a></li>
-          <li><a href="#replacecall-replacement-definition">Defining replacements</a></li>
+          <li><a href="#replacecall-replacement-definition">Defining replacements</a>
+            <ul>
+              <li><a href="#replacecall-replacement-implementation">Implementing replacement classes</a></li>
+            </ul></li>
         </ul></li>
       <li><a href="#specifying-behavior">Specifying expected code behavior (pre- and post-conditions)</a>
         <ul>
@@ -730,7 +733,7 @@ Here is how Randoop attempts to generate a test:
 </ul>
 
 <p>
-Furthermore, see the <a href="#optiongroup:Threading">ommand-line options
+Furthermore, see the <a href="#optiongroup:Threading">command-line options
 for threading</a> for additional per-test time limits.
 </p>
 
@@ -1416,27 +1419,23 @@ Keep the following in mind when defining replacements:
     Only methods may be replaced. <!-- TODO: does this mean not constructors? -->
   </li>
   <li>
-    If you define a replocement for a method that returns a value,
+    If you define a replacement for a method that returns a value,
     it can change the behavior of client code.
   </li>
 </ul>
 
 
 <h4 id="replacecall-replacement-implementation">Implementing replacement classes</h4>
-<p>
-  In some cases, it might be desirable to replace an instance method call of an object
-  with an instance method call of a different object. It is typically desirable to use
-  a map to associate instances of the original receiver to instances that will be used
-  to replace the call. As an example, the default replacement to the class <code>java.util.Random</code>
-  maps each instance of <code>java.util.Random()</code> to a different instance of
-  <code>java.util.Random(0)</code>. The calls to instance methods such as <code>nextInt()</code>,
-  <code>nextFloat()</code>, and <code>nextDouble()</code>, are delegated to instances of <code>java.util.Random</code>
-  that are seeded with the value of zero.
 
-  This technique of mapping instances to different instances can also be useful in cases
-  where it is desirable to have different types between the original receiver and the object
-  replacing the original receiver.
+<p>
+Sometimes, a replacement for an instance method needs to use a different
+object than the receiver (it might have the same or a different type than
+the receiver).  In this case, your replacement class should maintain a map
+from instances of the original receiver to instances that will be used in
+the replacement.  An example appears in {@code
+randoop.mock.java.util.MockRandom}.
 </p>
+
 
 <h2 id="specifying-behavior">Specifying expected code behavior (pre- and post-conditions)</h2>
 
