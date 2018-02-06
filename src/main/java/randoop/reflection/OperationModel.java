@@ -524,7 +524,10 @@ public class OperationModel {
     } catch (ClassNotFoundException e) {
       errorHandler.handle(classname);
     } catch (Throwable e) {
-      errorHandler.handle(classname, e.getCause());
+      if (e.getCause() != null) {
+        e = e.getCause();
+      }
+      errorHandler.handle(classname, e);
     }
     return null;
   }

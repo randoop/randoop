@@ -12,10 +12,6 @@ plugins {
   id 'idea'
   id 'jacoco'
 
-  // grgit has too many limitations; don't use it.
-  // /* https://github.com/ajoberstar/gradle-git */
-  // id 'org.ajoberstar.grgit' version '1.4.2'
-
   /*
    * Plugin that applies Google-Java-format to the Java files in the project.
    * https://github.com/sherter/google-java-format-gradle-plugin
@@ -135,7 +131,7 @@ configurations {
 dependencies {
   /* Randoop uses local copy of Plume */
   plume files('lib/plume.jar')
-  implementation 'org.plumelib:options:0.2.2'
+  implementation 'org.plumelib:options:0.3.1' // also update in agent/replacecall/replacecall.gradle
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
   implementation group: 'junit', name: 'junit', version: '4.+'
   implementation files(project(':replacecall').sourceSets.main.output)
@@ -590,35 +586,27 @@ task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']
  */
 
  /*
-  * Get the plume-lib repo using gradle-git, and save into utils/plume-lib
+  * Clone or update the plume-lib and checklink repositories.
   */
+// Grgit has too many limitations.  Use exec instead.
 task clonePlumeLib {
   doLast {
-    def plumeFolder = file("$buildDir/utils/plume-lib")
-    if ( ! plumeFolder.exists() ) {
-      // Grgit has too many limitations.  Use the command line instead.
-      // // TODO: This should be a shallow clone, to make it complete faster.
-      // // That's not yet supported: https://github.com/ajoberstar/grgit/issues/155 .
-      // org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
-      // // Unfortunately, grgit's clone of plume-lib has uncommitted changes
-      // // (changes to execute bits).  Fix the two that matter.  (Don't set
-      // // every file in plume-lib bin to executable, because that would also
-      // // make changes, which would cause errors when pulling.)
-      // exec {
-      //   commandLine 'chmod', '+x', "$buildDir/utils/plume-lib/bin/preplace", "$buildDir/utils/plume-lib/bin/html-update-toc"
-      // }
-
+    if ( ! file("$buildDir/utils/plume-lib").exists() ) {
       exec {
         commandLine 'git', 'clone', '--depth', '1', "https://github.com/mernst/plume-lib.git", "$buildDir/utils/plume-lib"
       }
+      exec {
+        commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/checklink.git", "$buildDir/utils/checklink"
+      }
     } else {
-      // Given that grgit is not used above, there's no point using it here.
-      // def grgit = org.ajoberstar.grgit.Grgit.open(dir: plumeFolder)
-      // grgit.pull()
-
+      // Ignore exit value so this works when not connected to the Internet.
       exec {
         workingDir "$buildDir/utils/plume-lib"
-        // Ignore exit value so this works when not connected to the Internet.
+        ignoreExitValue true
+        commandLine 'git', 'pull', '-q'
+      }
+      exec {
+        workingDir "$buildDir/utils/checklink"
         ignoreExitValue true
         commandLine 'git', 'pull', '-q'
       }
@@ -849,7 +837,7 @@ task tagsNoTests(type: Exec, dependsOn: 'clonePlumeLib') {
 task checklink(type: Exec, dependsOn: 'clonePlumeLib') {
   group 'Validation'
   description "Run checklink on randoop.github.io/randoop/ and write output to checklink-log.txt"
-  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
+  environment PATH: "$System.env.PATH:$buildDir/utils/checklink"
   commandLine 'bash', '-c', """
      checklink -q -r `grep -v '^#' build/utils/plume-lib/bin/checklink-args.txt` https://randoop.github.io/randoop/ &> checklink-log.txt
   """

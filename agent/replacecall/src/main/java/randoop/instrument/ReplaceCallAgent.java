@@ -89,7 +89,7 @@ public class ReplaceCallAgent {
     try {
       if (agentArgs != null) { // If there are any arguments, parse them
         Options options = new Options(ReplaceCallAgent.class);
-        String[] target_args = options.parse_or_usage(agentArgs);
+        String[] target_args = options.parse(true, Options.tokenize(agentArgs));
         if (target_args.length > 0) {
           System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
           System.exit(1); // Exit on bad user input.
