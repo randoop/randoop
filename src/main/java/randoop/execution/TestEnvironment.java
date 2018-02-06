@@ -105,7 +105,7 @@ public class TestEnvironment {
     }
 
     command.add("-classpath");
-    command.add(testClasspath + File.pathSeparator + ".");
+    command.add("." + File.pathSeparator + testClasspath);
     command.add("org.junit.runner.JUnitCore");
 
     return command;
