@@ -70,7 +70,7 @@ class ProcessStatus {
     long timeout = 15 * 60 * 1000; // use 15 minutes for timeout
 
     ProcessBuilder randoopBuilder = new ProcessBuilder(command);
-    randoopBuilder.redirectErrorStream(true);
+    randoopBuilder.redirectErrorStream(true); // join standard output error & standard error streams
 
     TimeLimitProcess p = null;
 
