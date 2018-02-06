@@ -1296,7 +1296,7 @@ public class RandoopSystemTest {
     //
     options.setOption("output_limit", "1000");
     options.setOption("generated_limit", "3000");
-    options.setOption("flaky-test-behavior", "OUTPUT");
+    options.setOption("flaky-test-behavior", "DISCARD");
     options.setOption("operation-history-log", "-");
     options.setFlag("usethreads");
     options.unsetFlag("deterministic");
@@ -1466,7 +1466,7 @@ public class RandoopSystemTest {
 
     options.setOption("output_limit", "4");
     options.setOption("generated_limit", "10");
-    options.setOption("flaky-test-behavior", "OUTPUT");
+    options.setOption("flaky-test-behavior", "DISCARD");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
