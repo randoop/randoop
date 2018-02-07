@@ -588,19 +588,16 @@ task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']
 
  /*
   * Clone or update the plume-lib and checklink repositories.
+  *
+  * Grgit has too many limitations.  Use exec instead.
   */
-// Grgit has too many limitations.  Use exec instead.
-task cloneLibs {
+task cloneLibs( dependsOn: [ 'cloneChecklink', 'cloneHtmlTools', 'clonePlumeLib' ]) { }
+
+task cloneChecklink {
   doLast {
     if ( ! file("$buildDir/utils/checklink").exists() ) {
       exec {
         commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/checklink.git", "$buildDir/utils/checklink"
-      }
-      exec {
-        commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/html-tools.git", "$buildDir/utils/html-tools"
-      }
-      exec {
-        commandLine 'git', 'clone', '--depth', '1', "https://github.com/mernst/plume-lib.git", "$buildDir/utils/plume-lib"
       }
     } else {
       // Ignore exit value so this does not halt the build when not connected to the Internet.
@@ -609,11 +606,35 @@ task cloneLibs {
         ignoreExitValue true
         commandLine 'git', 'pull', '-q'
       }
+    }
+  }
+}
+
+task cloneHtmlTools {
+  doLast {
+    if ( ! file("$buildDir/utils/html-tools").exists() ) {
+      exec {
+        commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/html-tools.git", "$buildDir/utils/html-tools"
+      }
+    } else {
+      // Ignore exit value so this does not halt the build when not connected to the Internet.
       exec {
         workingDir "$buildDir/utils/html-tools"
         ignoreExitValue true
         commandLine 'git', 'pull', '-q'
       }
+    }
+  }
+}
+
+task clonePlumeLib {
+  doLast {
+    if ( ! file("$buildDir/utils/plume-lib").exists() ) {
+      exec {
+        commandLine 'git', 'clone', '--depth', '1', "https://github.com/mernst/plume-lib.git", "$buildDir/utils/plume-lib"
+      }
+    } else {
+      // Ignore exit value so this does not halt the build when not connected to the Internet.
       exec {
         workingDir "$buildDir/utils/plume-lib"
         ignoreExitValue true
