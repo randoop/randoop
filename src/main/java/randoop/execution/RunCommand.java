@@ -54,23 +54,6 @@ public class RunCommand {
     Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilMDE.join(command, " "));
     Log.logPrintf("  timeout=%s, environment: %s%n", timeout, System.getenv());
 
-    // Temporary debugging output
-    Log.logPrintf("  sun.boot.class.path=%s%n", System.getProperty("sun.boot.class.path"));
-    Log.logPrintf("  java.class.path=%s%n", System.getProperty("java.class.path"));
-    Log.logPrintf("  which java: ");
-    try {
-      CommandLine cmd = new CommandLine("which");
-      cmd.addArgument("java");
-      DefaultExecutor exec = new DefaultExecutor();
-      final ByteArrayOutputStream out = new ByteArrayOutputStream();
-      PumpStreamHandler handler = new PumpStreamHandler(out);
-      exec.setStreamHandler(handler);
-      exec.execute(cmd);
-      Log.logPrintf(out.toString());
-    } catch (IOException t) {
-      throw new Error(t);
-    }
-
     try {
       executor.execute(cmdLine, resultHandler);
     } catch (IOException e) {
