@@ -589,24 +589,32 @@ task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']
   * Clone or update the plume-lib and checklink repositories.
   */
 // Grgit has too many limitations.  Use exec instead.
-task clonePlumeLib {
+task cloneLibs {
   doLast {
-    if ( ! file("$buildDir/utils/plume-lib").exists() ) {
-      exec {
-        commandLine 'git', 'clone', '--depth', '1', "https://github.com/mernst/plume-lib.git", "$buildDir/utils/plume-lib"
-      }
+    if ( ! file("$buildDir/utils/checklink").exists() ) {
       exec {
         commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/checklink.git", "$buildDir/utils/checklink"
       }
-    } else {
-      // Ignore exit value so this works when not connected to the Internet.
       exec {
-        workingDir "$buildDir/utils/plume-lib"
+        commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/html-tools.git", "$buildDir/utils/html-tools"
+      }
+      exec {
+        commandLine 'git', 'clone', '--depth', '1', "https://github.com/mernst/plume-lib.git", "$buildDir/utils/plume-lib"
+      }
+    } else {
+      // Ignore exit value so this does not halt the build when not connected to the Internet.
+      exec {
+        workingDir "$buildDir/utils/checklink"
         ignoreExitValue true
         commandLine 'git', 'pull', '-q'
       }
       exec {
-        workingDir "$buildDir/utils/checklink"
+        workingDir "$buildDir/utils/html-tools"
+        ignoreExitValue true
+        commandLine 'git', 'pull', '-q'
+      }
+      exec {
+        workingDir "$buildDir/utils/plume-lib"
         ignoreExitValue true
         commandLine 'git', 'pull', '-q'
       }
@@ -632,7 +640,7 @@ javadoc {
 }
 
 // needed for javadoc.doLast
-javadoc.dependsOn clonePlumeLib
+javadoc.dependsOn cloneLibs
 
 javadoc.doLast {
   def preplace = file("$buildDir/utils/plume-lib/bin/preplace")
@@ -659,8 +667,8 @@ build.dependsOn javadoc
  * Configuration of updateUserTOC task to update the table-of-contents for the
  * user documentation.
  */
-task updateUserTOC( type:Exec, dependsOn: [ 'clonePlumeLib' ]) {
-  executable file("$buildDir/utils/plume-lib/bin/html-update-toc")
+task updateUserTOC( type:Exec, dependsOn: [ 'cloneLibs' ]) {
+  executable file("$buildDir/utils/html-tools/html-update-toc")
   args  file("${projectDir}/src/docs/manual/index.html")
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
 }
@@ -668,8 +676,8 @@ task updateUserTOC( type:Exec, dependsOn: [ 'clonePlumeLib' ]) {
 /* Configuration of task updateDevTOC to update table of contents in developer
  * documentation.
  */
-task updateDevTOC( type:Exec, dependsOn: ['clonePlumeLib' ]) {
-  executable file("$buildDir/utils/plume-lib/bin/html-update-toc")
+task updateDevTOC( type:Exec, dependsOn: ['cloneLibs' ]) {
+  executable file("$buildDir/utils/html-tools/html-update-toc")
   args file("${projectDir}/src/docs/manual/dev.html")
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
 }
@@ -818,7 +826,7 @@ task wrapper(type: Wrapper) {
 
 /*************** Other tool configs *************/
 /* Make Emacs TAGS table */
-task tags(type: Exec, dependsOn: 'clonePlumeLib') {
+task tags(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
@@ -826,7 +834,7 @@ task tags(type: Exec, dependsOn: 'clonePlumeLib') {
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
-task tagsNoTests(type: Exec, dependsOn: 'clonePlumeLib') {
+task tagsNoTests(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
@@ -834,7 +842,7 @@ task tagsNoTests(type: Exec, dependsOn: 'clonePlumeLib') {
 }
 
 /* Run checklink */
-task checklink(type: Exec, dependsOn: 'clonePlumeLib') {
+task checklink(type: Exec, dependsOn: 'cloneLibs') {
   group 'Validation'
   description "Run checklink on randoop.github.io/randoop/ and write output to checklink-log.txt"
   environment PATH: "$System.env.PATH:$buildDir/utils/checklink"
