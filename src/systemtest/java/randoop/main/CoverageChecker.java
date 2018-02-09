@@ -56,6 +56,7 @@ class CoverageChecker {
    * exclusions.
    *
    * @param options the options
+   * @param methodSpecs which methods should be covered; see {@link #methods}
    */
   CoverageChecker(RandoopOptions options, String... methodSpecs) {
     this(options.getClassnames());

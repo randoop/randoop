@@ -295,8 +295,8 @@ After the build, the classpath should include either of the following
 </code> </li>
 </ul>
 <p>
-It is recommended that the classpath for classes under test be placed before
-Plume-lib, should there be a conflict in included classes.
+On the classpath, put classes under test before
+<code>plume.jar</code>, in case of a conflict.
 </p>
 
 <p>
@@ -385,10 +385,10 @@ Invoke the script with <code>-help</code> for a full list of options.
 
 <p>
 It should be noted that this is just one of four Randoop coverage tests.  The other three are:<br>
-<!-- README_COVERAGE.md should be made a link after pull request 109 is merged. -->
-<a href="https://github.com/rjust/defects4j">Defects4j</a>: See the file README_COVERAGE.md for details.<br>
+<a href="https://github.com/rjust/defects4j">Defects4j</a>: See the file <a href="https://github.com/rjust/defects4j/blob/master/framework/test/README.md">README.md</a> for details.<br>
 <a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage">Pascali</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage/blob/master/README.md">README.md</a> for details.<br>
-<a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage">Toradocu</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage/blob/master/README.md">README.md</a> for details.
+<a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage">Toradocu</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage/blob/master/README.md">README.md</a> for details.<br>
+The Pascali and Toradocu repositories are located on the University of Washington GitLab server.  Contact Michael Ernst (mernst@cs.washington.edu) or Mark Roberts (markro@cs.washington.edu) if you need access.
 </p>
 <!-- There needs to be a discussion of coverage improving with each release (or at least not regressing).
 Should it be here or in the "releasing a new version of Randoop" section?. -->
