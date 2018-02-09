@@ -168,7 +168,7 @@ public final class Randomness {
 
   /**
    * Randomly selects an element from a weighted distribution of elements. These weights are with
-   * respect to each other. They are not normalized (they might add up to any value.)
+   * respect to each other. They are not normalized (they might add up to any value).
    *
    * <p>Iterates through the entire list once, then does a binary search to select the element.
    *
