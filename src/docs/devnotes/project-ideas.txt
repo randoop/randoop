@@ -57,7 +57,7 @@ Randoop for C/C++ programs
       dealing with the debug information is very hard.  Or use another library
       that may be easier to use outside of Valgrind.
 
-      6-8 man weeks
+      6-8 person weeks
 
     - Integrate C/C++ symbol information with Randoop.  Either by creating 
       native calls for Fjalar or by running Fjalar separately, writing the
@@ -65,7 +65,7 @@ Randoop for C/C++ programs
       Java.  Another approach would be to combine this with the previous task
       and write a Java dwarf reader.  But I don't think that is best
 
-      2 man weeks
+      2 person weeks
 
     - Support C/C++ test sequences.  Basically this is building C/C++ 
       support into all of the types that now presume Java reflection.  
@@ -74,13 +74,13 @@ Randoop for C/C++ programs
       be handled just as Java ones are, including reading and writing
       serialized versions and source versions.
 
-      3 man weeks
+      3 person weeks
 
     - Execute C/C++ test sequences by writing out source, compiling and 
       running it.  An interesting problem here will be handling exceptions
       and other problems that occur when running.
 
-      4 man weeks
+      4 person weeks
 
     - Optimize executing test sequences by dynamically creating the code
       to make the calls.  Some of the work (such as setting up the stack)
@@ -89,15 +89,15 @@ Randoop for C/C++ programs
       runtime errors.  This would seem to require JINI native calls added
       to the Java program (or a separate C based program).
 
-      12 man weeks.
+      12 person weeks.
 
     - Misc.  All of the things I haven't thought of.
 
-      8 man weeks.
+      8 person weeks.
 
   Interestingly, this is less than I would have originally thought.
   I think it is perhaps relatively possible to have something working at
-  a similar level to what we have today for Java in about 6 man months of
+  a similar level to what we have today for Java in about 6 person months of
   work.  Calendar time would probably be significantly longer unless the
   person doing this had nothing else to do.
 
@@ -107,25 +107,25 @@ Extensions to Randoop
     by the user.  Now, the security manager has to be specified by the user
     in the normal fashion on the command line
 
-    1 man week
+    1 person week
 
   - Support an annotation that specifies a routine that returns a set of 
     legal values for a parameter (that randoop wouldn't otherwise guess)
 
-    2 man weeks
+    2 person weeks
 
   - Complete the dynamic dataflow enhancement to Randoop.  This works to some
     extent, but there are quite a few issues.  And there need to be better
     responses to the information built into Randoop
 
-    4-8 man weeks
+    4-8 person weeks
 
   - Support null and reference immutability annotations
     This could both cut down the search space and possibly allow more
     actual errors to be found (such as null dereference errors when nulls
     are allowed).
 
-    4 man weeks (presuming reflection relatively easily supports annotations)
+    4 person weeks (presuming reflection relatively easily supports annotations)
 
   - Automatic reduction of the test cases down to a more manageable
     size.  Not sure how best to do this or how well this would work, but
@@ -135,10 +135,10 @@ Extensions to Randoop
     differently) then it might be pretty easy to work with a fairly large
     number of tests.
 
-    6-10 man weeks.
+    6-10 person weeks.
 
   - Investigate more test cases (perhaps Daikon), find classes that are
     not well covered and figure out how to improve things.
 
     Could spend virtually any amount of time on this, but I figure that
-    some progress would get made in 4 man weeks.
+    some progress would get made in 4 person weeks.
