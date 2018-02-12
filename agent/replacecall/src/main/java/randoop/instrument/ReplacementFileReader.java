@@ -19,7 +19,6 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.bcel.generic.Type;
-import plume.BCELUtil;
 import plume.EntryReader;
 
 /**
@@ -282,7 +281,7 @@ public class ReplacementFileReader {
       String originalClassname,
       Class<?> replacementClass)
       throws ReplacementException {
-    final Type originalType = BCELUtil.classname_to_type(originalClassname);
+    final Type originalType = BcelUtil.classnameToType(originalClassname);
     for (Method method : replacementClass.getDeclaredMethods()) {
       int modifiers = method.getModifiers() & Modifier.methodModifiers();
       if (Modifier.isPrivate(modifiers)) {

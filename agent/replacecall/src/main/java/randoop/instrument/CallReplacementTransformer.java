@@ -22,7 +22,7 @@ import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.Type;
-import plume.BCELUtil;
+import org.plumelib.bcelutil.BcelUtil;
 import plume.SimpleLog;
 
 /**
@@ -357,7 +357,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
          */
         Type instanceType = origInvocation.getReferenceType(pgen);
         Type[] arguments =
-            BCELUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pgen));
+            BcelUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pgen));
         newInvocation =
             ifact.createInvoke(
                 newSig.getClassname(),
