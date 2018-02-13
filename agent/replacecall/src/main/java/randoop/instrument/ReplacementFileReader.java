@@ -19,6 +19,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.bcel.generic.Type;
+import org.plumelib.bcelutil.BcelUtil;
 import plume.EntryReader;
 
 /**

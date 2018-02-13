@@ -6,7 +6,8 @@ import java.util.Objects;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
-import org.plumelib.bcel.JvmUtil;
+import org.plumelib.bcelutil.BcelUtil;
+import org.plumelib.bcelutil.JvmUtil;
 import plume.UtilMDE;
 
 /**

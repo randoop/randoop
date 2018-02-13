@@ -3,7 +3,7 @@ package randoop.util;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.plumelib.bcel.JvmUtil;
+import org.plumelib.bcelutil.JvmUtil;
 import plume.UtilMDE;
 import randoop.Globals;
 
