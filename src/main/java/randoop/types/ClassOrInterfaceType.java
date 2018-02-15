@@ -410,7 +410,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public boolean isSubtypeOf(Type otherType) {
     if (debug) {
-      System.out.printf("isSubtypeOf(%s, %s)%n", this, otherType);
+      System.out.printf("ClassOrInterfaceType.isSubtypeOf(%s, %s)%n", this, otherType);
     }
 
     // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
@@ -421,7 +421,16 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     // This handles two cases: this==otherType, or otherType==Object
+    if (debug) {
+      System.out.printf("isSubtypeOf: about to call super.isSubtypeOf%n");
+    }
     if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+
+    // Special case.  Is this too broad?
+    if (this.getRuntimeClass().equals(otherType.getRuntimeClass())
+        && (this instanceof NonParameterizedType || otherType instanceof NonParameterizedType)) {
       return true;
     }
 
@@ -435,7 +444,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (otherType.isInterface()) {
       for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
         if (debug) {
-          System.out.printf("  iface: %s%n", iface);
+          System.out.printf("  isSubtypeOf iface: %s%n", iface);
         }
 
         if (iface.equals(otherType)) {
@@ -452,6 +461,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     // If this type is an interface, it has no superclasses, so there is nothing to do
     if (this.isInterface()) {
+      if (debug) {
+        System.out.printf("  isSubtypeOf: returning false because this is not an interface%n");
+      }
       return false;
     }
 
@@ -462,6 +474,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (superClassType == null || superClassType.isObject()) {
       // Search has failed; stop.
+      if (debug) {
+        System.out.printf(
+            "  isSubtypeOf: returning false because superClassType = %s%n", superClassType);
+      }
       return false;
     }
 
