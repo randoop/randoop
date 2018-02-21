@@ -13,6 +13,7 @@
 <ul>
   <li><a href="#test-generation-projects">Test generation projects</a>
     <ul>
+      <li><a href="#starter-projects">Starter project: fix an issue</a></li>
       <li><a href="#better-choice-of-methods">Better choice of methods</a>
         <ul>
           <li><a href="#mimic-real-call-sequences">Mimic real call sequences</a></li>
@@ -31,9 +32,7 @@
   <li><a href="#user-interface-and-user-experience-projects">User interface and user experience projects</a>
     <ul>
       <li><a href="#test-cases-with-debugging-clues">Test cases with debugging clues</a></li>
-      <li><a href="#integration-with-eclipse">Integration with Eclipse</a></li>
     </ul></li>
-  <li><a href="#test-generation-for-c">Test generation for other languages, such as C</a></li>
   <li><a href="#other-projects">Other projects</a></li>
 </ul>
 <!-- end toc -->
@@ -69,6 +68,13 @@ in the Sun JDK 1.5:</p>
   with library classes (such as <code>java.util</code>).  Randoop is already used at
   companies like ABB and Microsoft, and on open-source projects.</p>
 
+<p>Some of the projects are interesting and useful engineering that will
+  make Randoop more effective for developers.  Some projects are
+  publishable research that extends scientific knowledge about test
+  generation approaches.  And many projects include both aspects.
+  </p>
+
+<!--
 <p>Our project ideas are of several kinds:</p>
 
 <ul>
@@ -76,9 +82,12 @@ in the Sun JDK 1.5:</p>
   <li>Improving the internal test generation engine of Randoop so that it generates better test cases.</li>
   <li>Improving the user interface and user experience.</li>
 </ul>
+-->
 
-<p><strong>Required skills:</strong>  Most of these projects require facility with Java.  The
-other requires knowledge of C.  You should
+<p><strong>Required skills:</strong>  These projects require facility with
+  Java, because Randoop is written in Java.
+  <!-- One requires knowledge of C. -->
+You should
 be very comfortable with the idea of unit testing.
 You should know how unit testing helps you and where it can hinder you,
 and you should be passionate about improving the tradeoff.
@@ -90,6 +99,29 @@ hearing from you!</p>
 
 
 <h1 id="test-generation-projects">Test generation projects</h1>
+
+<p>
+Related to the projects on better random choices,
+    <a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT (Guided Random Testing)</a> is a variant of Randoop that adds some
+    features to Randoop.  In a recent competition among testing tools, GRT
+    won.
+    GRT's source code isn't available, and some of the
+    features that GRT claims are already part of Randoop anyway.
+    Incorporate the rest into Randoop in order to create a tool with all
+    the positive features of each.
+</p>
+
+
+<h2 id="starter-projects">Starter project: fix an issue</h2>
+
+<p>
+One way to get familiar with the Randoop codebase is to fix some issue in
+the issue tracker.
+Particularly good choices
+are <a href="https://github.com/randoop/randoop/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22">issues
+    labeled as "help wanted"</a>.
+</p>
+
 
 <h2 id="better-choice-of-methods">Better choice of methods</h2>
 
@@ -109,7 +141,7 @@ next method to test. Here are a few example strategies; the project would involv
 <p>
 Randoop's generated test sequences are random and may not be characteristic
 of real use.  One problem is that there may be restrictions on usage of a
-class:  <code>close</code> may only be called after <code>open</code>, or arguments
+class:  <code>close</code> should only be called after <code>open</code>, or arguments
 must have particular relationships, such as the non-array argument to
 binary search must appear in the array argument.  Another problem is that
 random invocations may not create interesting data structures, such as very
@@ -117,7 +149,7 @@ large ones or ones with particular qualities such as duplicate elements.
 </p>
 
 <p>
-Randoop does a very good job of generating tests for library classes (such
+Randoop does a good job of generating tests for library classes (such
 as <code>java.util.*</code>) that have few restrictions on their calling sequences and
 parameters.  Classes that make up programs often have a number of
 restrictions on both the sequences of calls and their parameters.
@@ -125,8 +157,8 @@ restrictions on both the sequences of calls and their parameters.
 
 <p>
 We want to extend the system to provide better coverage for such
-classes. One way to do this is to do analysis (either dynamic or static)
-that determines valid and invalid sequences of calls. For example, Randoop
+classes. Randoop could infer which sequences of calls are valid and
+invalid.  For example, Randoop
 could observe what call sequences real code makes, perhaps using a tool
 like
 <a href="http://homes.cs.washington.edu/~mernst/pubs/oo-test-gen-mtoos2006-abstract.html">Palulu</a>. Then,
@@ -144,15 +176,15 @@ whether mimicking real executions is worthwhile overall.
 <h2 id="better-choice-of-arguments">Better choice of arguments</h2>
 
 <p>Suppose that Randoop wants to create a call to a method with a parameter of
-type T1.  Currently, Randoop selects an object of type T1 at random.
+type <code>T1</code>.  Currently, Randoop selects an object of type <code>T1</code> at random.
 Randoop can do better.  Here is one idea; other approaches are possible.</p>
 
 <p>
 Randoop could determine what fields a method will read, and then chose an
 object for which those fields have been recently side-effected.
-As an example, when obtaining a point to pass to the getX() method, a point
-produced by the setX() or move() method is more interesting than one
-produced by the setY() method.</p>
+As an example, when obtaining a <code>Point</code> to pass to the getX() method, a <code>Point</code>
+produced by the <code>setX()</code> or <code>move()</code> method is more interesting than one
+produced by the <code>setY()</code> method.</p>
 
 <p>As another example, Randoop could choose objects that are most likely to
 achieve additional coverage in the called method, perhaps because the
@@ -216,9 +248,11 @@ but captures all the dependencies.</p>
 
 <p>Either a static or a dynamic analysis could perform this task.</p>
 
-<p>We would like to convert this sequence of interdependent tests into a set of tests that are independent of one another and can be run in any order, or any subset of them can be run.</p>
+<p>Here are some additional details.</p>
 
-<p>Background:  A test consists of alternating actions and observations:</p>
+<h4>Background</h4> <!-- omit from toc -->
+
+<p>A test consists of alternating actions and observations:</p>
 
 <pre><code>a1
 o11
@@ -237,8 +271,13 @@ o2m_2
 Each observation is a method invocation, that Randoop chose because Randoop believed that the observer method would NOT affect the state of any object but would reveal information about it.
 The test oracle checks the result of each method call (actions and observers) against an expected value that was obtained by running the method at test generation time.</p>
 
-<p>Input:  n tests that might depend on one another
-Output:  n independent tests that may be run in any order (each of these is a subset of one of the original tests), plus one big test that concatenates all n of the original tests.  The big test must be run in a fresh JVM or sandbox, or at least as the last test of the suite.
+<h4>Input</h4> <!-- omit from toc -->
+
+n tests that might depend on one another
+
+<h4>Output</h4> <!-- omit from toc -->
+
+n independent tests that may be run in any order (each of these is a subset of one of the original tests), plus one big test that concatenates all n of the original tests.  The big test must be run in a fresh JVM or sandbox, or at least as the last test of the suite.
 The big test may seem problematic -- too hard to understand and debug -- but it is no worse than the original suite, and at least it is honest in putting all the possible effects together.  I suspect that slicing, delta debugging, or other test case minimization approaches will be extremely effective on the big test for those situations where it fails but none of the little tests does.
 One could imagine putting only a subset of the original tests into the big test suite, but including everything is more likely to catch serendipitous interactions among rarely-called methods.  We could empirically evaluate whether that benefit is worthwhile.</p>
 
@@ -249,14 +288,18 @@ One could imagine putting only a subset of the original tests into the big test 
   <li>whether this test affects the outputs of methods in subsequent tests.  (If observers are guaranteed to be side-effect-free, then that is relevant only for action methods.)</li>
 </ul>
 <p>
-Only the latter property matters:  An independent test that can be run in any order, must have no side effects on global (static) state.
+Only the latter property matters:  An independent test that can be run in
+any order, and has no side effects on global (static) state.
 We could compute the property via a static analysis, or by executing the tests to see what happens.</p>
 
 <p>Static analysis seems cleaner to me.  Compute what action methods can write to static fields.  For each test t, construct a new unit test that is just like t, but it omits all actions (&amp; their associated observers) that side-effect static fields.  Now, those unit tests can be run in any order.  Also concatenate all omitted actions (or, more likely, all actions whatsoever) into one big test that must be run in a new JVM.</p>
 
-<p>Dynamic analysis:  In a new JVM, run all tests and compute oracles.  For each test t, run (in a new JVM) t followed by all tests.  If any test does not satisfy its oracle, then say that the test t has side effects on global state.  (This isn't quite right:  The effect of test t may be masked by the effect of the first test, for example.)  Retain all side-effect-free tests as unit tests.  (Verify that they don't affect one another by running them all in a new JVM, in random order; do this (say) 5 times.)  Concatenate all other tests (or maybe all tests whatsoever) as one big test that must be run in a new JVM, or at least as the last test of the suite.</p>
+<h4>Dynamic analysis</h4> <!-- omit from toc -->
 
-<p>Questions:
+In a new JVM, run all tests and compute oracles.  For each test t, run (in a new JVM) t followed by all tests.  If any test does not satisfy its oracle, then say that the test t has side effects on global state.  (This isn't quite right:  The effect of test t may be masked by the effect of the first test, for example.)  Retain all side-effect-free tests as unit tests.  (Verify that they don't affect one another by running them all in a new JVM, in random order; do this (say) 5 times.)  Concatenate all other tests (or maybe all tests whatsoever) as one big test that must be run in a new JVM, or at least as the last test of the suite.</p>
+
+<h4>Questions</h4> <!-- omit from toc -->
+
 What % of tests are separable?  This will affect whether the technique is able to create independent tests, or those end up empty and the algorithm's output is just the big hairball.test.  That would be no worse than the current situation, and at least the user would know that interdependent tests are a problem.</p>
 
 
@@ -294,6 +337,13 @@ wrapper idea, see
 <a href="http://people.csail.mit.edu/cpacheco/publications/randoop-case-study-abstract.html">Finding
 Errors in .NET with Feedback-Directed Random Testing</a> (Section 3).
 </p>
+
+<p>
+  Another approach is to use a safe security manager that can easily be extended
+    by the user.  Currently, the security manager has to be specified by the user
+  in the normal fashion on the command line.
+</p>
+
 
 
 <h2 id="parallelizing-randoop">Parallelizing Randoop</h2>
@@ -395,6 +445,13 @@ compelling.
     available tools aren't great.  Enhance an existing purity analysis, or
     create a new one.
   </li>
+  <li>
+    As a start, make Randoop support manually-written null and reference immutability annotations
+    This could both cut down the search space and possibly allow more
+    actual errors to be found (such as null dereference errors when nulls
+    are allowed).  It would indicate whether the rest of the project is
+    worth pursing.
+  </li>
 </ul>
 
 
@@ -455,7 +512,7 @@ test). For example, consider the following test generated by Randoop:
 <p>In theory this sounds simple, but there are several issues that make the problem interesting: creating a set of variations of a test is non-trivial, and synthesizing test executions into useful comments, are both non-trivial tasks.</p>
 
 
-<h2 id="integration-with-eclipse">Integration with Eclipse</h2>
+<!-- <h2 id="integration-with-eclipse">Integration with Eclipse</h2>
 
 <p>Today, Randoop is a command-line program. There are many ways in which the tool could be integrated into an IDE like Eclipse.</p>
 
@@ -470,9 +527,10 @@ comfortable enough with the command line.
 </p>
 
 <p><strong>Additional required skills:</strong>  You should have experience with (or be able to quickly learn) Eclipse's plugin infrastructure.</p>
+-->
 
 
-<h1 id="test-generation-for-c">Test generation for other languages, such as C</h1>
+<!-- <h1 id="test-generation-for-c">Test generation for other languages, such as C</h1>
 
 <p>Many test generation techniques have been proposed and evaluated in the
 context of Java.  Randoop works for Java and C#.
@@ -495,6 +553,108 @@ evaluate it.  Other languages than C would also be interesting.</p>
 <p><strong>Additional required skills:</strong>  In addition to familiarity with C, it is
 helpful to know, or be able to quickly learn, the C system interface.  For
 example, the <code>fork</code> call is likely to come in very handy.</p>
+-->
+
+<!--
+Randoop for C/C++ programs
+
+  There are two major ways in which this could be approached.  First would
+  be to work with C/C++ source using some existing analysis tools that
+  support C.  This has all of the disadvantages that we encountered with
+  dfec (difficulty supporting different variants of C).  But its possible
+  that better tools exist today for parsing C programs and obtaining
+  information about them.  A little bit of time looking into this though,
+  seems to indicate that while this might be somewhat improved it is still
+  not easy and that issues with specific programs would still arise.
+
+  The other major alternative would be to work with binaries and debug
+  information as does fjalar.  There are certainly issues with the debug
+  information (as Robert has discovered) and it is not easy to figure out
+  everything that you need to know.  But these issues seem more constrained
+  than do those related to the many dialects of C/C++.  I think that would
+  be the easiest way to get the symbol information.  Its possible that
+  when not operating under valgrind, that there are easier approaches to
+  obtaining the dwarf information (eg, libdwarf,
+  http://reality.sgiweb.org/davea/dwarf.html and others)
+
+  After the symbol information is obtained, the next step is to generate
+  and run the test sequences.  Generation should be pretty similar to
+  Java.  There are semantic differences between Java and C/C++, but it
+  seems like there is a pretty straightforward map between them (even for
+  C programs)
+
+  There are again two approaches to running the sequences.  The easiest
+  approach would be to write out the source of the sequence, compile it,
+  and run it.  This has the downside of adding a lot of overhead.  Also,
+  Randoop is based around feedback from the runs, so each sequence really
+  needs to be run immediately (ie, you can't easily batch them up to cut down on
+  the overhead).  Another approach would be to dynamically build the
+  code for the sequences.  Its possible that a tool such as DynamoRio might
+  make this easier.  This would be significantly harder, but would probably
+  achieve dramatic performance improvements.  I think the way to approach
+  this would be to implement the source approach first and add the code
+  gen approach later to improve the performance.
+
+  There is also a platform question.  I presume that since our other tools
+  are linux based (ie, fjalar, kvasir), that this would be linux based as
+  well.
+
+  The following rough task list is based on using debug information and the
+  source approach to running tests on linux.  It also presumes that the
+  new tool will still be written in Java (and in fact that Randoop/Java and
+  Randoop/C will be a single program)
+
+    - Gather symbol information (list of routines and their parameters)
+      from debug (DWARF) information.  Based on Fjalar.  This is difficult
+      to estimate.  I talked to Robert and if all of the information we need
+      is already handled by Fjalar this isn't too hard, but if it is not, then
+      dealing with the debug information is very hard.  Or use another library
+      that may be easier to use outside of Valgrind.
+
+      6-8 person weeks
+
+    - Integrate C/C++ symbol information with Randoop.  Either by creating 
+      native calls for Fjalar or by running Fjalar separately, writing the
+      information to a more understandable file format, and reading that into
+      Java.  Another approach would be to combine this with the previous task
+      and write a Java dwarf reader.  But I don't think that is best
+
+      2 person weeks
+
+    - Support C/C++ test sequences.  Basically this is building C/C++ 
+      support into all of the types that now presume Java reflection.  
+      Optimally a test sequence could include either Java or C/C++ 
+      sequences.  After this is complete, the C/C++ test sequences could
+      be handled just as Java ones are, including reading and writing
+      serialized versions and source versions.
+
+      3 person weeks
+
+    - Execute C/C++ test sequences by writing out source, compiling and 
+      running it.  An interesting problem here will be handling exceptions
+      and other problems that occur when running.
+
+      4 person weeks
+
+    - Optimize executing test sequences by dynamically creating the code
+      to make the calls.  Some of the work (such as setting up the stack)
+      could perhaps be done directly rather than with dynamically created
+      code.  Again, a big problem will be dealing with exceptions and other
+      runtime errors.  This would seem to require JINI native calls added
+      to the Java program (or a separate C based program).
+
+      12 person weeks.
+
+    - Misc.  All of the things I haven't thought of.
+
+      8 person weeks.
+
+  Interestingly, this is less than I would have originally thought.
+  I think it is perhaps relatively possible to have something working at
+  a similar level to what we have today for Java in about 6 person months of
+  work.  Calendar time would probably be significantly longer unless the
+  person doing this had nothing else to do.
+-->
 
 
 <h1 id="other-projects">Other projects</h1>
@@ -516,25 +676,29 @@ started with Randoop development and make a contribution.
     reflection, making them accessible for execution.
   </li>
   <li>
-    <a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT (Guided Random Testing)</a> is a variant of Randoop that adds some
-    features to Randoop.  In a recent competition among testing tools, GRT
-    won.
-    GRT's source code isn't available, and some of the
-    features that GRT claims are already part of Randoop anyway.
-    Incorporate the rest into Randoop in order to create a tool with all
-    the positive features of each.
-  </li>
-  <li>
     Combine Randoop and EvoSuite.  EvoSuite has multiple components: test
     generation, test evaluation, test minimization.  If EvoSuite's test
     generation component were replaced by Randoop, what would the effect
     be?  Another way of asking this is how much of EvoSuite's good
-    performance is due to its different components.
+    performance is due to its different components, and how much is due to
+    its core search-based algorithm.
   </li>
   <li>
     Compare Randoop to QuickCheck, which is another popular test generation
     tool.  Once you see the ways in which each of them is better than the
     other, add features to each to make each one better.
+
+    <p>
+      A key difference is that QuickCheck requires the user to provide
+      generators for values, whereas Randoop creates them automatically.
+      Which is more effective in practice?
+    </p>
+
+    <p>
+      Randoop could be extended to make it easier to specify a routine that returns a set of 
+      legal values for a parameter (that Randoop wouldn't otherwise guess).
+    </p>
+
   </li>
   <li>
     Better classification.  Given a test that throws an exception (or does
@@ -550,7 +714,9 @@ started with Randoop development and make a contribution.
     Read specifications about method behavior, such as whether a method is
     pure or whether a particular parameter may be null, and make Randoop
     respect those specifications.  The specifications could be expressed as
-    Java annotations.
+    Java annotations or as Javadoc comments (see
+    the <a href="https://github.com/albertogoffi/toradocu">Toradocu</a>
+    project).
   </li>
   <li>
     Create your own enhancement suggestion.  Run Randoop on a benchmark
