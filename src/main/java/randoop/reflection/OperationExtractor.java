@@ -157,6 +157,11 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   // TODO: poor name
   private void checkSubTypes(TypedClassOperation operation) {
+
+    if (operation.getDeclaringType().isGeneric() && !classType.hasWildcard()) {
+      if (classType.isSubtypeOf(operation.getDeclaringType().getRawtype()))
+        return;
+    }
     if (!classType.isSubtypeOf(operation.getDeclaringType())) {
       throw new BugInRandoopException(
           String.format(
