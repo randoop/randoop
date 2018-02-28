@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CompilableTestPredicate (randoop 3.1.5 API)</title>
+<title>CompilableTestPredicate (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CompilableTestPredicate (randoop 3.1.5 API)";
+            parent.document.title="CompilableTestPredicate (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/test/Check.html" title="interface in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/test/ContractChecker.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/ContractCheckingGenerator.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/test/CompilableTestPredicate.html" target="_top">Frames</a></li>
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li><a href="../../randoop/util/predicate/DefaultPredicate.html" title="class in randoop.util.predicate">randoop.util.predicate.DefaultPredicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</li>
@@ -145,12 +145,18 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../randoop/main/GenTests.html" title="class in randoop.main">GenTests</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#genTests">genTests</a></span></code>
+<div class="block">The <a href="../../randoop/main/GenTests.html" title="class in randoop.main"><code>GenTests</code></a> instance that created this predicate</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output">JUnitCreator</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#junitCreator">junitCreator</a></span></code>
 <div class="block">The <a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output"><code>JUnitCreator</code></a> to generate a class from a <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#nameGenerator">nameGenerator</a></span></code>
 <div class="block">The name generator for temporary class names</div>
@@ -171,7 +177,8 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#CompilableTestPredicate-randoop.output.JUnitCreator-">CompilableTestPredicate</a></span>(<a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output">JUnitCreator</a>&nbsp;junitCreator)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#CompilableTestPredicate-randoop.output.JUnitCreator-randoop.main.GenTests-">CompilableTestPredicate</a></span>(<a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output">JUnitCreator</a>&nbsp;junitCreator,
+                       <a href="../../randoop/main/GenTests.html" title="class in randoop.main">GenTests</a>&nbsp;genTests)</code>
 <div class="block">Creates a predicate using the given <a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output"><code>JUnitCreator</code></a> to construct the test class for each
  sequence.</div>
 </td>
@@ -199,9 +206,9 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>(package private) boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#testSource-java.lang.String-com.github.javaparser.ast.CompilationUnit-java.lang.String-">testSource</a></span>(java.lang.String&nbsp;testClassName,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#testSource-java.lang.String-com.github.javaparser.ast.CompilationUnit-java.lang.String-">testSource</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;testClassName,
           com.github.javaparser.ast.CompilationUnit&nbsp;source,
-          java.lang.String&nbsp;packageName)</code>
+          <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName)</code>
 <div class="block">Test the source text directly.</div>
 </td>
 </tr>
@@ -217,8 +224,8 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -257,11 +264,21 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 <a name="nameGenerator">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>nameGenerator</h4>
 <pre>private final&nbsp;<a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a> nameGenerator</pre>
 <div class="block">The name generator for temporary class names</div>
+</li>
+</ul>
+<a name="genTests">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>genTests</h4>
+<pre>private final&nbsp;<a href="../../randoop/main/GenTests.html" title="class in randoop.main">GenTests</a> genTests</pre>
+<div class="block">The <a href="../../randoop/main/GenTests.html" title="class in randoop.main"><code>GenTests</code></a> instance that created this predicate</div>
 </li>
 </ul>
 </li>
@@ -272,18 +289,20 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="CompilableTestPredicate-randoop.output.JUnitCreator-">
+<a name="CompilableTestPredicate-randoop.output.JUnitCreator-randoop.main.GenTests-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>CompilableTestPredicate</h4>
-<pre>public&nbsp;CompilableTestPredicate(<a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output">JUnitCreator</a>&nbsp;junitCreator)</pre>
+<pre>public&nbsp;CompilableTestPredicate(<a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output">JUnitCreator</a>&nbsp;junitCreator,
+                               <a href="../../randoop/main/GenTests.html" title="class in randoop.main">GenTests</a>&nbsp;genTests)</pre>
 <div class="block">Creates a predicate using the given <a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output"><code>JUnitCreator</code></a> to construct the test class for each
  sequence.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>junitCreator</code> - the <a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output"><code>JUnitCreator</code></a> for this Randoop run</dd>
+<dd><code>genTests</code> - the <a href="../../randoop/main/GenTests.html" title="class in randoop.main"><code>GenTests</code></a> instance to report compilation failures</dd>
 </dl>
 </li>
 </ul>
@@ -319,9 +338,9 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 <ul class="blockListLast">
 <li class="blockList">
 <h4>testSource</h4>
-<pre>boolean&nbsp;testSource(java.lang.String&nbsp;testClassName,
+<pre>boolean&nbsp;testSource(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;testClassName,
                    com.github.javaparser.ast.CompilationUnit&nbsp;source,
-                   java.lang.String&nbsp;packageName)</pre>
+                   <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName)</pre>
 <div class="block">Test the source text directly. This is here to allow the mechanics of the predicate to be
  tested directly. Otherwise, we have to create a broken <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>, which may
  not always be possible.</div>
@@ -329,7 +348,7 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>testClassName</code> - the name of the test class</dd>
 <dd><code>source</code> - the source text for the class</dd>
-<dd><code>packageName</code> - the package name for the test</dd>
+<dd><code>packageName</code> - the package name for the test, null if no package</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the code compiles (without error), false otherwise</dd>
 </dl>
@@ -363,7 +382,7 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/test/Check.html" title="interface in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/test/ContractChecker.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/ContractCheckingGenerator.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/test/CompilableTestPredicate.html" target="_top">Frames</a></li>

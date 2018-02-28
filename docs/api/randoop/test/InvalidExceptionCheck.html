@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>InvalidExceptionCheck (randoop 3.1.5 API)</title>
+<title>InvalidExceptionCheck (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="InvalidExceptionCheck (randoop 3.1.5 API)";
+            parent.document.title="InvalidExceptionCheck (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
+var methods = {"i0":10,"i1":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li><a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">randoop.test.ExceptionCheck</a></li>
@@ -117,7 +117,7 @@ var activeTableTab = "activeTableTab";
 </dl>
 <hr>
 <br>
-<pre>class <span class="typeNameLabel">InvalidExceptionCheck</span>
+<pre>public class <span class="typeNameLabel">InvalidExceptionCheck</span>
 extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></pre>
 <div class="block">An <code>InvalidExceptionCheck</code> represents the occurrence of an exception tagged as an invalid
  behavior during <code>Check</code> generation.</div>
@@ -154,9 +154,9 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidExceptionCheck.html#InvalidExceptionCheck-java.lang.Throwable-int-java.lang.String-">InvalidExceptionCheck</a></span>(java.lang.Throwable&nbsp;exception,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidExceptionCheck.html#InvalidExceptionCheck-java.lang.Throwable-int-java.lang.String-">InvalidExceptionCheck</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;exception,
                      int&nbsp;statementIndex,
-                     java.lang.String&nbsp;catchClassName)</code>&nbsp;</td>
+                     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;catchClassName)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -175,32 +175,14 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidExceptionCheck.html#appendCatchBehavior-java.lang.StringBuilder-">appendCatchBehavior</a></span>(java.lang.StringBuilder&nbsp;b)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidExceptionCheck.html#appendCatchBehavior-java.lang.StringBuilder-">appendCatchBehavior</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html?is-external=true" title="class or interface in java.lang">StringBuilder</a>&nbsp;b)</code>
 <div class="block">Appends code for catch block behavior corresponding to expected exception.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-">appendTryBehavior</a></span>(java.lang.StringBuilder&nbsp;b)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-">appendTryBehavior</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html?is-external=true" title="class or interface in java.lang">StringBuilder</a>&nbsp;b)</code>
 <div class="block">Appends code to follow the statement throwing expected exception in try block.</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidExceptionCheck.html#evaluate-randoop.sequence.Execution-">evaluate</a></span>(<a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</code>
-<div class="block">Evaluates this check on the given execution of a sequence.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidExceptionCheck.html#getID--">getID</a></span>()</code>
-<div class="block">Returns a unique string identifier for the check.</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidExceptionCheck.html#getValue--">getValue</a></span>()</code>
-<div class="block">Returns a short string that can be used to uniquely identify this check.</div>
 </td>
 </tr>
 </table>
@@ -215,8 +197,8 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -238,9 +220,9 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <ul class="blockListLast">
 <li class="blockList">
 <h4>InvalidExceptionCheck</h4>
-<pre>InvalidExceptionCheck(java.lang.Throwable&nbsp;exception,
-                      int&nbsp;statementIndex,
-                      java.lang.String&nbsp;catchClassName)</pre>
+<pre>public&nbsp;InvalidExceptionCheck(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;exception,
+                             int&nbsp;statementIndex,
+                             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;catchClassName)</pre>
 </li>
 </ul>
 </li>
@@ -257,7 +239,7 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>appendCatchBehavior</h4>
-<pre>protected&nbsp;void&nbsp;appendCatchBehavior(java.lang.StringBuilder&nbsp;b)</pre>
+<pre>protected&nbsp;void&nbsp;appendCatchBehavior(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html?is-external=true" title="class or interface in java.lang">StringBuilder</a>&nbsp;b)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/test/ExceptionCheck.html#appendCatchBehavior-java.lang.StringBuilder-">ExceptionCheck</a></code></span></div>
 <div class="block">Appends code for catch block behavior corresponding to expected exception.</div>
 <dl>
@@ -271,10 +253,10 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <a name="appendTryBehavior-java.lang.StringBuilder-">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>appendTryBehavior</h4>
-<pre>protected&nbsp;void&nbsp;appendTryBehavior(java.lang.StringBuilder&nbsp;b)</pre>
+<pre>protected&nbsp;void&nbsp;appendTryBehavior(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html?is-external=true" title="class or interface in java.lang">StringBuilder</a>&nbsp;b)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/test/ExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-">ExceptionCheck</a></code></span></div>
 <div class="block">Appends code to follow the statement throwing expected exception in try block.</div>
 <dl>
@@ -282,68 +264,6 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <dd><code><a href="../../randoop/test/ExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-">appendTryBehavior</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>b</code> - the string builder to which code text is added</dd>
-</dl>
-</li>
-</ul>
-<a name="getValue--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getValue</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getValue()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/test/ExceptionCheck.html#getValue--">ExceptionCheck</a></code></span></div>
-<div class="block">Returns a short string that can be used to uniquely identify this check.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/Check.html#getValue--">getValue</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../randoop/test/ExceptionCheck.html#getValue--">getValue</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the name of the class of the exception thrown</dd>
-</dl>
-</li>
-</ul>
-<a name="getID--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getID</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getID()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#getID--">Check</a></code></span></div>
-<div class="block">Returns a unique string identifier for the check. Two checks are the same if these identifiers
- match. The value is NOT included. Used to match up checks between the same sequence run at
- different times. Note that because of changes in the environment (e.g., static variables), two
- executions of the same sequence may have different checks (because the existence of some checks
- depends on the value of variables)</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/Check.html#getID--">getID</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../randoop/test/ExceptionCheck.html#getID--">getID</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a unique string identifier for this check</dd>
-</dl>
-</li>
-</ul>
-<a name="evaluate-randoop.sequence.Execution-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>evaluate</h4>
-<pre>public&nbsp;boolean&nbsp;evaluate(<a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</pre>
-<div class="block">Evaluates this check on the given execution of a sequence.
-
- <p>An invalid check cannot be evaluated, so this throws an exception.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>execution</code> - the execution of sequence on which to test this check</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if check succeeded, and false otherwise</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalArgumentException</code> - whenever called</dd>
 </dl>
 </li>
 </ul>

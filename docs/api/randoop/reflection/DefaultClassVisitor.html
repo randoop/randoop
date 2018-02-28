@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>DefaultClassVisitor (randoop 3.1.5 API)</title>
+<title>DefaultClassVisitor (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="DefaultClassVisitor (randoop 3.1.5 API)";
+            parent.document.title="DefaultClassVisitor (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.reflection.DefaultClassVisitor</li>
@@ -117,9 +117,9 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">DefaultClassVisitor</span>
-extends java.lang.Object
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
 implements <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a></pre>
-<div class="block">Default implementation of the <code>ClassVisitor</code> class.</div>
+<div class="block">Default implementation of the <code>ClassVisitor</code> class. All methods do nothing.</div>
 </li>
 </ul>
 </div>
@@ -157,37 +157,44 @@ implements <a href="../../randoop/reflection/ClassVisitor.html" title="interface
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visit-java.lang.reflect.Constructor-">visit</a></span>(java.lang.reflect.Constructor&lt;?&gt;&nbsp;c)</code>
-<div class="block">Perform action on a constructor.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visit-java.lang.Class-randoop.reflection.ReflectionManager-">visit</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;c,
+     <a href="../../randoop/reflection/ReflectionManager.html" title="class in randoop.reflection">ReflectionManager</a>&nbsp;reflectionManager)</code>
+<div class="block">Perform action on member class.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visit-java.lang.Enum-">visit</a></span>(java.lang.Enum&lt;?&gt;&nbsp;e)</code>
-<div class="block">Perform an action on an enum value.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visit-java.lang.reflect.Constructor-">visit</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect">Constructor</a>&lt;?&gt;&nbsp;c)</code>
+<div class="block">Perform action on a constructor.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visit-java.lang.reflect.Field-">visit</a></span>(java.lang.reflect.Field&nbsp;f)</code>
-<div class="block">Perform an action on a field.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visit-java.lang.Enum-">visit</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html?is-external=true" title="class or interface in java.lang">Enum</a>&lt;?&gt;&nbsp;e)</code>
+<div class="block">Perform an action on an enum value.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visit-java.lang.reflect.Method-">visit</a></span>(java.lang.reflect.Method&nbsp;m)</code>
-<div class="block">Perform an action on a method.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visit-java.lang.reflect.Field-">visit</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect">Field</a>&nbsp;f)</code>
+<div class="block">Perform an action on a field.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visitAfter-java.lang.Class-">visitAfter</a></span>(java.lang.Class&lt;?&gt;&nbsp;c)</code>
-<div class="block">Perform an action on a class.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visit-java.lang.reflect.Method-">visit</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&nbsp;m)</code>
+<div class="block">Perform an action on a method.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visitBefore-java.lang.Class-">visitBefore</a></span>(java.lang.Class&lt;?&gt;&nbsp;c)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visitAfter-java.lang.Class-">visitAfter</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;c)</code>
+<div class="block">Perform an action on a class.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultClassVisitor.html#visitBefore-java.lang.Class-">visitBefore</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;c)</code>
 <div class="block">Perform an action on a class.</div>
 </td>
 </tr>
@@ -196,8 +203,8 @@ implements <a href="../../randoop/reflection/ClassVisitor.html" title="interface
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -230,13 +237,35 @@ implements <a href="../../randoop/reflection/ClassVisitor.html" title="interface
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="visit-java.lang.Class-randoop.reflection.ReflectionManager-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>visit</h4>
+<pre>public&nbsp;void&nbsp;visit(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;c,
+                  <a href="../../randoop/reflection/ReflectionManager.html" title="class in randoop.reflection">ReflectionManager</a>&nbsp;reflectionManager)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.Class-randoop.reflection.ReflectionManager-">ClassVisitor</a></code></span></div>
+<div class="block">Perform action on member class.
+
+ <p>The <a href="../../randoop/reflection/ReflectionManager.html" title="class in randoop.reflection"><code>ReflectionManager</code></a> is needed to allow visitors to initiate recursive visits if
+ needed.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.Class-randoop.reflection.ReflectionManager-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>c</code> - the member class</dd>
+<dd><code>reflectionManager</code> - the <a href="../../randoop/reflection/ReflectionManager.html" title="class in randoop.reflection"><code>ReflectionManager</code></a> that called this visitor</dd>
+</dl>
+</li>
+</ul>
 <a name="visit-java.lang.reflect.Constructor-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>visit</h4>
-<pre>public&nbsp;void&nbsp;visit(java.lang.reflect.Constructor&lt;?&gt;&nbsp;c)</pre>
+<pre>public&nbsp;void&nbsp;visit(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect">Constructor</a>&lt;?&gt;&nbsp;c)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.reflect.Constructor-">ClassVisitor</a></code></span></div>
 <div class="block">Perform action on a constructor.</div>
 <dl>
@@ -253,7 +282,7 @@ implements <a href="../../randoop/reflection/ClassVisitor.html" title="interface
 <ul class="blockList">
 <li class="blockList">
 <h4>visit</h4>
-<pre>public&nbsp;void&nbsp;visit(java.lang.reflect.Method&nbsp;m)</pre>
+<pre>public&nbsp;void&nbsp;visit(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&nbsp;m)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.reflect.Method-">ClassVisitor</a></code></span></div>
 <div class="block">Perform an action on a method.</div>
 <dl>
@@ -270,7 +299,7 @@ implements <a href="../../randoop/reflection/ClassVisitor.html" title="interface
 <ul class="blockList">
 <li class="blockList">
 <h4>visit</h4>
-<pre>public&nbsp;void&nbsp;visit(java.lang.reflect.Field&nbsp;f)</pre>
+<pre>public&nbsp;void&nbsp;visit(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect">Field</a>&nbsp;f)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.reflect.Field-">ClassVisitor</a></code></span></div>
 <div class="block">Perform an action on a field.</div>
 <dl>
@@ -287,7 +316,7 @@ implements <a href="../../randoop/reflection/ClassVisitor.html" title="interface
 <ul class="blockList">
 <li class="blockList">
 <h4>visit</h4>
-<pre>public&nbsp;void&nbsp;visit(java.lang.Enum&lt;?&gt;&nbsp;e)</pre>
+<pre>public&nbsp;void&nbsp;visit(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html?is-external=true" title="class or interface in java.lang">Enum</a>&lt;?&gt;&nbsp;e)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.Enum-">ClassVisitor</a></code></span></div>
 <div class="block">Perform an action on an enum value.</div>
 <dl>
@@ -304,7 +333,7 @@ implements <a href="../../randoop/reflection/ClassVisitor.html" title="interface
 <ul class="blockList">
 <li class="blockList">
 <h4>visitBefore</h4>
-<pre>public&nbsp;void&nbsp;visitBefore(java.lang.Class&lt;?&gt;&nbsp;c)</pre>
+<pre>public&nbsp;void&nbsp;visitBefore(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;c)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html#visitBefore-java.lang.Class-">ClassVisitor</a></code></span></div>
 <div class="block">Perform an action on a class. Occurs before other visit methods are called.</div>
 <dl>
@@ -321,7 +350,7 @@ implements <a href="../../randoop/reflection/ClassVisitor.html" title="interface
 <ul class="blockListLast">
 <li class="blockList">
 <h4>visitAfter</h4>
-<pre>public&nbsp;void&nbsp;visitAfter(java.lang.Class&lt;?&gt;&nbsp;c)</pre>
+<pre>public&nbsp;void&nbsp;visitAfter(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;c)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html#visitAfter-java.lang.Class-">ClassVisitor</a></code></span></div>
 <div class="block">Perform an action on a class. Called after other visit methods are called.</div>
 <dl>

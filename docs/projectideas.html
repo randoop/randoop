@@ -273,12 +273,15 @@ The test oracle checks the result of each method call (actions and observers) ag
 
 <h4>Input</h4> <!-- omit from toc -->
 
-n tests that might depend on one another
+<p>n tests that might depend on one another</p>
 
 <h4>Output</h4> <!-- omit from toc -->
 
-n independent tests that may be run in any order (each of these is a subset of one of the original tests), plus one big test that concatenates all n of the original tests.  The big test must be run in a fresh JVM or sandbox, or at least as the last test of the suite.
-The big test may seem problematic -- too hard to understand and debug -- but it is no worse than the original suite, and at least it is honest in putting all the possible effects together.  I suspect that slicing, delta debugging, or other test case minimization approaches will be extremely effective on the big test for those situations where it fails but none of the little tests does.
+<p>n independent tests that may be run in any order (each of these is a subset of one of the original tests), plus one big test that concatenates all n of the original tests.  The big test must be run in a fresh JVM or sandbox, or at least as the last test of the suite.</p>
+
+<p>The big test may seem problematic -- too hard to understand and debug -- but it is no worse than the original suite, and at least it is honest in putting all the possible effects together.  I suspect that slicing, delta debugging, or other test case minimization approaches will be extremely effective on the big test for those situations where it fails but none of the little tests does.</p>
+
+<p>
 One could imagine putting only a subset of the original tests into the big test suite, but including everything is more likely to catch serendipitous interactions among rarely-called methods.  We could empirically evaluate whether that benefit is worthwhile.</p>
 
 <p>An analysis can compute 2 distinct properties of a test case:
@@ -296,11 +299,11 @@ We could compute the property via a static analysis, or by executing the tests t
 
 <h4>Dynamic analysis</h4> <!-- omit from toc -->
 
-In a new JVM, run all tests and compute oracles.  For each test t, run (in a new JVM) t followed by all tests.  If any test does not satisfy its oracle, then say that the test t has side effects on global state.  (This isn't quite right:  The effect of test t may be masked by the effect of the first test, for example.)  Retain all side-effect-free tests as unit tests.  (Verify that they don't affect one another by running them all in a new JVM, in random order; do this (say) 5 times.)  Concatenate all other tests (or maybe all tests whatsoever) as one big test that must be run in a new JVM, or at least as the last test of the suite.</p>
+<p>In a new JVM, run all tests and compute oracles.  For each test t, run (in a new JVM) t followed by all tests.  If any test does not satisfy its oracle, then say that the test t has side effects on global state.  (This isn't quite right:  The effect of test t may be masked by the effect of the first test, for example.)  Retain all side-effect-free tests as unit tests.  (Verify that they don't affect one another by running them all in a new JVM, in random order; do this (say) 5 times.)  Concatenate all other tests (or maybe all tests whatsoever) as one big test that must be run in a new JVM, or at least as the last test of the suite.</p>
 
 <h4>Questions</h4> <!-- omit from toc -->
 
-What % of tests are separable?  This will affect whether the technique is able to create independent tests, or those end up empty and the algorithm's output is just the big hairball.test.  That would be no worse than the current situation, and at least the user would know that interdependent tests are a problem.</p>
+<p>What % of tests are separable?  This will affect whether the technique is able to create independent tests, or those end up empty and the algorithm's output is just the big hairball.test.  That would be no worse than the current situation, and at least the user would know that interdependent tests are a problem.</p>
 
 
 <h2 id="flakiness">Flakiness</h2>

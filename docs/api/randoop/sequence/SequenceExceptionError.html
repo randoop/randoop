@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceExceptionError (randoop 3.1.5 API)</title>
+<title>SequenceExceptionError (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceExceptionError (randoop 3.1.5 API)";
+            parent.document.title="SequenceExceptionError (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -96,13 +96,13 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li>java.lang.Throwable</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">java.lang.Throwable</a></li>
 <li>
 <ul class="inheritance">
-<li>java.lang.Error</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Error.html?is-external=true" title="class or interface in java.lang">java.lang.Error</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.sequence.SequenceExceptionError</li>
@@ -118,12 +118,12 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>java.io.Serializable</dd>
+<dd><a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">SequenceExceptionError</span>
-extends java.lang.Error</pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Error.html?is-external=true" title="class or interface in java.lang">Error</a></pre>
 <div class="block">Exception representing occurrence of a "flaky" test sequence where an exception was thrown by a
  statement other than the last of the sequence. Occurs when a statement in an input sequence, that
  previously terminated normally, throws an exception. Includes information needed to report the
@@ -151,7 +151,7 @@ extends java.lang.Error</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.lang.Throwable</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceExceptionError.html#e">e</a></span></code>
 <div class="block">The exception thrown by the sequence</div>
 </td>
@@ -191,7 +191,7 @@ extends java.lang.Error</pre>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceExceptionError.html#SequenceExceptionError-randoop.sequence.ExecutableSequence-int-java.lang.Throwable-">SequenceExceptionError</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;testSequence,
                       int&nbsp;position,
-                      java.lang.Throwable&nbsp;exception)</code>
+                      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;exception)</code>
 <div class="block">Create an exception for the exception thrown by the statement at the given position in the test
  sequence.</div>
 </td>
@@ -212,19 +212,19 @@ extends java.lang.Error</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>java.lang.Throwable</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceExceptionError.html#getError--">getError</a></span>()</code>
 <div class="block">Returns the thrown exception.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceExceptionError.html#getSequence--">getSequence</a></span>()</code>
 <div class="block">Returns the string representation of the test sequence.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceExceptionError.html#getStatement--">getStatement</a></span>()</code>
 <div class="block">Returns the string representation of the statement that threw the exception.</div>
 </td>
@@ -240,15 +240,15 @@ extends java.lang.Error</pre>
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Throwable">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Throwable</h3>
-<code>addSuppressed, fillInStackTrace, getCause, getLocalizedMessage, getMessage, getStackTrace, getSuppressed, initCause, printStackTrace, printStackTrace, printStackTrace, setStackTrace, toString</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#addSuppressed-java.lang.Throwable-" title="class or interface in java.lang">addSuppressed</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#fillInStackTrace--" title="class or interface in java.lang">fillInStackTrace</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#getCause--" title="class or interface in java.lang">getCause</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#getLocalizedMessage--" title="class or interface in java.lang">getLocalizedMessage</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#getMessage--" title="class or interface in java.lang">getMessage</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#getStackTrace--" title="class or interface in java.lang">getStackTrace</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#getSuppressed--" title="class or interface in java.lang">getSuppressed</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#initCause-java.lang.Throwable-" title="class or interface in java.lang">initCause</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#printStackTrace--" title="class or interface in java.lang">printStackTrace</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#printStackTrace-java.io.PrintStream-" title="class or interface in java.lang">printStackTrace</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#printStackTrace-java.io.PrintWriter-" title="class or interface in java.lang">printStackTrace</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#setStackTrace-java.lang.StackTraceElement:A-" title="class or interface in java.lang">setStackTrace</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true#toString--" title="class or interface in java.lang">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -284,7 +284,7 @@ extends java.lang.Error</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>e</h4>
-<pre>private&nbsp;java.lang.Throwable e</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a> e</pre>
 <div class="block">The exception thrown by the sequence</div>
 </li>
 </ul>
@@ -324,7 +324,7 @@ extends java.lang.Error</pre>
 <h4>SequenceExceptionError</h4>
 <pre>public&nbsp;SequenceExceptionError(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;testSequence,
                               int&nbsp;position,
-                              java.lang.Throwable&nbsp;exception)</pre>
+                              <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;exception)</pre>
 <div class="block">Create an exception for the exception thrown by the statement at the given position in the test
  sequence.</div>
 <dl>
@@ -349,7 +349,7 @@ extends java.lang.Error</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getError</h4>
-<pre>public&nbsp;java.lang.Throwable&nbsp;getError()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;getError()</pre>
 <div class="block">Returns the thrown exception.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -363,7 +363,7 @@ extends java.lang.Error</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getStatement</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getStatement()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getStatement()</pre>
 <div class="block">Returns the string representation of the statement that threw the exception.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -377,7 +377,7 @@ extends java.lang.Error</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSequence</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getSequence()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getSequence()</pre>
 <div class="block">Returns the string representation of the test sequence.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>

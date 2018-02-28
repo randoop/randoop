@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>InvalidChecks (randoop 3.1.5 API)</title>
+<title>InvalidChecks (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="InvalidChecks (randoop 3.1.5 API)";
+            parent.document.title="InvalidChecks (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/test/IncludeTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/InvalidCheckGenerator.html" title="class in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../randoop/test/InvalidExceptionCheck.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.test.InvalidChecks</li>
@@ -108,14 +108,15 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></dd>
+<dd><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&gt;</dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">InvalidChecks</span>
-extends java.lang.Object
-implements <a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></pre>
-<div class="block">Implements a set of checks capturing invalid behavior in a sequence.</div>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
+implements <a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&gt;</pre>
+<div class="block">An empty or singleton set. It contains at most one InvalidExceptionCheck, which captures invalid
+ behavior in a sequence.</div>
 </li>
 </ul>
 </div>
@@ -138,6 +139,12 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <td class="colFirst"><code>private <a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#check">check</a></span></code>&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#EMPTY">EMPTY</a></span></code>
+<div class="block">An empty, immutable set of error-revealing checks.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -153,7 +160,14 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#InvalidChecks--">InvalidChecks</a></span>()</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#InvalidChecks--">InvalidChecks</a></span>()</code>
+<div class="block">Create an empty, mutable set of invalid checks.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#InvalidChecks-randoop.test.Check-">InvalidChecks</a></span>(<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&nbsp;check)</code>
+<div class="block">Create a singleton set of invalid checks.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -173,25 +187,25 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#add-randoop.test.Check-">add</a></span>(<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&nbsp;check)</code>
-<div class="block">Add a check to this sequence.</div>
+<div class="block">Add a check to this set.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#commonChecks-randoop.test.TestChecks-">commonChecks</a></span>(<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;checks)</code>
-<div class="block">Returns the consensus checks for two sets of checks.</div>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#checks--">checks</a></span>()</code>
+<div class="block">Get all non-exception checks and whether they are passing for this object.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#count--">count</a></span>()</code>
-<div class="block">Return the number of checks in this test.</div>
+<td class="colFirst"><code><a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#commonChecks-randoop.test.InvalidChecks-">commonChecks</a></span>(<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&nbsp;other)</code>
+<div class="block">Returns the intersection of checks in this set and another set.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.util.Map&lt;<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>,java.lang.Boolean&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#get--">get</a></span>()</code>
-<div class="block">Get all non-exception checks and whether they are passing for this object.</div>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#count--">count</a></span>()</code>
+<div class="block">Return the number of checks in this test.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -215,7 +229,7 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidChecks.html#hasInvalidBehavior--">hasInvalidBehavior</a></span>()</code>
-<div class="block">Indicates whether this set of checks corresponds to valid behaviors.</div>
+<div class="block">Indicates whether this set of checks contains any invalid behaviors.</div>
 </td>
 </tr>
 </table>
@@ -223,8 +237,8 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -240,6 +254,16 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <!--   -->
 </a>
 <h3>Field Detail</h3>
+<a name="EMPTY">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EMPTY</h4>
+<pre>public static final&nbsp;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a> EMPTY</pre>
+<div class="block">An empty, immutable set of error-revealing checks.</div>
+</li>
+</ul>
 <a name="check">
 <!--   -->
 </a>
@@ -260,10 +284,25 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <a name="InvalidChecks--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>InvalidChecks</h4>
 <pre>public&nbsp;InvalidChecks()</pre>
+<div class="block">Create an empty, mutable set of invalid checks.</div>
+</li>
+</ul>
+<a name="InvalidChecks-randoop.test.Check-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>InvalidChecks</h4>
+<pre>public&nbsp;InvalidChecks(<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&nbsp;check)</pre>
+<div class="block">Create a singleton set of invalid checks.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>check</code> - the sole member of the newly-created singleton set</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -285,24 +324,24 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <div class="block">Return the number of checks in this test.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/TestChecks.html#count--">count</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
+<dd><code><a href="../../randoop/test/TestChecks.html#count--">count</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&gt;</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the count of checks in this object</dd>
 </dl>
 </li>
 </ul>
-<a name="get--">
+<a name="checks--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>get</h4>
-<pre>public&nbsp;java.util.Map&lt;<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>,java.lang.Boolean&gt;&nbsp;get()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/TestChecks.html#get--">TestChecks</a></code></span></div>
+<h4>checks</h4>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&gt;&nbsp;checks()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/TestChecks.html#checks--">TestChecks</a></code></span></div>
 <div class="block">Get all non-exception checks and whether they are passing for this object.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/TestChecks.html#get--">get</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
+<dd><code><a href="../../randoop/test/TestChecks.html#checks--">checks</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&gt;</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>all checks with passing status</dd>
 </dl>
@@ -319,7 +358,7 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <div class="block">Indicates whether this object has checks.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/TestChecks.html#hasChecks--">hasChecks</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
+<dd><code><a href="../../randoop/test/TestChecks.html#hasChecks--">hasChecks</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&gt;</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this object has checks, false otherwise</dd>
 </dl>
@@ -337,7 +376,7 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
  is an error revealing test.)</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/TestChecks.html#hasErrorBehavior--">hasErrorBehavior</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
+<dd><code><a href="../../randoop/test/TestChecks.html#hasErrorBehavior--">hasErrorBehavior</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&gt;</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this object has failing checks, false otherwise</dd>
 </dl>
@@ -354,7 +393,7 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <div class="block">Return the exception check in this object if there is one.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/TestChecks.html#getExceptionCheck--">getExceptionCheck</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
+<dd><code><a href="../../randoop/test/TestChecks.html#getExceptionCheck--">getExceptionCheck</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&gt;</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the expected exception check, null otherwise</dd>
 </dl>
@@ -368,32 +407,31 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <h4>add</h4>
 <pre>public&nbsp;void&nbsp;add(<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&nbsp;check)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/TestChecks.html#add-randoop.test.Check-">TestChecks</a></code></span></div>
-<div class="block">Add a check to this sequence.</div>
+<div class="block">Add a check to this set.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/TestChecks.html#add-randoop.test.Check-">add</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
+<dd><code><a href="../../randoop/test/TestChecks.html#add-randoop.test.Check-">add</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&gt;</code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>check</code> - the check object to add to this set of checks</dd>
 </dl>
 </li>
 </ul>
-<a name="commonChecks-randoop.test.TestChecks-">
+<a name="commonChecks-randoop.test.InvalidChecks-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>commonChecks</h4>
-<pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;commonChecks(<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;checks)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/TestChecks.html#commonChecks-randoop.test.TestChecks-">TestChecks</a></code></span></div>
-<div class="block">Returns the consensus checks for two sets of checks. Refuses to compare passing with failing
- checks.</div>
+<pre>public&nbsp;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&nbsp;commonChecks(<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&nbsp;other)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/TestChecks.html#commonChecks-T-">TestChecks</a></code></span></div>
+<div class="block">Returns the intersection of checks in this set and another set.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/TestChecks.html#commonChecks-randoop.test.TestChecks-">commonChecks</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
+<dd><code><a href="../../randoop/test/TestChecks.html#commonChecks-T-">commonChecks</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&gt;</code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>checks</code> - the <code>TestChecks</code> to compare with.</dd>
+<dd><code>other</code> - the <code>TestChecks</code> to compare with.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the checks common to this set of checks and those in <code>checks</code></dd>
+<dd>the checks common to this set of checks and those in <code>other</code></dd>
 </dl>
 </li>
 </ul>
@@ -405,12 +443,12 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <h4>hasInvalidBehavior</h4>
 <pre>public&nbsp;boolean&nbsp;hasInvalidBehavior()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/TestChecks.html#hasInvalidBehavior--">TestChecks</a></code></span></div>
-<div class="block">Indicates whether this set of checks corresponds to valid behaviors.</div>
+<div class="block">Indicates whether this set of checks contains any invalid behaviors.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/TestChecks.html#hasInvalidBehavior--">hasInvalidBehavior</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
+<dd><code><a href="../../randoop/test/TestChecks.html#hasInvalidBehavior--">hasInvalidBehavior</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a>&gt;</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true when has checks for invalid behavior, false otherwise</dd>
+<dd>true when this contains checks for invalid behavior, false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -441,7 +479,7 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/test/IncludeTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/InvalidCheckGenerator.html" title="class in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../randoop/test/InvalidExceptionCheck.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">

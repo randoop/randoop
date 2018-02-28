@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>StaticCache (randoop 3.1.5 API)</title>
+<title>StaticCache (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="StaticCache (randoop 3.1.5 API)";
+            parent.document.title="StaticCache (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/reflection/SignatureParser.html" title="class in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../randoop/reflection/TestValueExtractor.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.reflection.StaticCache</li>
@@ -109,7 +109,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">StaticCache</span>
-extends java.lang.Object</pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Stores the mutable state of a class, allowing it to be saved, printed and restored.</div>
 </li>
 </ul>
@@ -130,13 +130,13 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.lang.Class&lt;?&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/StaticCache.html#declaringClass">declaringClass</a></span></code>
 <div class="block">The class for which static state is to be saved.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private java.util.Map&lt;java.lang.reflect.Field,java.lang.Object&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect">Field</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/StaticCache.html#valueMap">valueMap</a></span></code>
 <div class="block">The map from static fields to a value</div>
 </td>
@@ -156,7 +156,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/StaticCache.html#StaticCache-java.lang.Class-">StaticCache</a></span>(java.lang.Class&lt;?&gt;&nbsp;declaringClass)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/StaticCache.html#StaticCache-java.lang.Class-">StaticCache</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;declaringClass)</code>
 <div class="block">Creates the cache object for a particular class.</div>
 </td>
 </tr>
@@ -198,8 +198,8 @@ extends java.lang.Object</pre>
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -221,7 +221,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>declaringClass</h4>
-<pre>private final&nbsp;java.lang.Class&lt;?&gt; declaringClass</pre>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt; declaringClass</pre>
 <div class="block">The class for which static state is to be saved.</div>
 </li>
 </ul>
@@ -231,7 +231,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>valueMap</h4>
-<pre>private final&nbsp;java.util.Map&lt;java.lang.reflect.Field,java.lang.Object&gt; valueMap</pre>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect">Field</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&gt; valueMap</pre>
 <div class="block">The map from static fields to a value</div>
 </li>
 </ul>
@@ -249,7 +249,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>StaticCache</h4>
-<pre>public&nbsp;StaticCache(java.lang.Class&lt;?&gt;&nbsp;declaringClass)</pre>
+<pre>public&nbsp;StaticCache(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;declaringClass)</pre>
 <div class="block">Creates the cache object for a particular class. State is not saved until <a href="../../randoop/reflection/StaticCache.html#saveState--"><code>saveState()</code></a>
  is called.</div>
 <dl>
@@ -323,7 +323,7 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/reflection/SignatureParser.html" title="class in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../randoop/reflection/TestValueExtractor.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">

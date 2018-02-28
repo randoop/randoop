@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Substitution (randoop 3.1.5 API)</title>
+<title>Substitution (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Substitution (randoop 3.1.5 API)";
+            parent.document.title="Substitution (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.types.Substitution&lt;T&gt;</li>
@@ -109,7 +109,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">Substitution&lt;T&gt;</span>
-extends java.lang.Object</pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Manages the substitution of concrete types for type variables and wildcards in an instantiation
  of a generic class as a parameterized type.
 
@@ -134,13 +134,13 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.util.Map&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>,<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>,<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#map">map</a></span></code>
 <div class="block">The substitution map</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private java.util.Map&lt;java.lang.reflect.Type,<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html?is-external=true" title="class or interface in java.lang.reflect">Type</a>,<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#rawMap">rawMap</a></span></code>
 <div class="block">map on reflection types - used for testing bounds</div>
 </td>
@@ -184,7 +184,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;obj)</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#equals-java.lang.Object-">equals</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;obj)</code></td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&gt;</code></td>
@@ -199,22 +199,22 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;T&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#forArgs-java.util.List-java.util.List-">forArgs</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
-       java.util.List&lt;T&gt;&nbsp;arguments)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#forArgs-java.util.List-java.util.List-">forArgs</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+       <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;T&gt;&nbsp;arguments)</code>
 <div class="block">Create a substitution from the type parameters and the list of arguments.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;T&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#forArgs-java.util.List-T...-">forArgs</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#forArgs-java.util.List-T...-">forArgs</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
        T...&nbsp;arguments)</code>
 <div class="block">Create a substitution from the type parameters to the corresponding type arguments.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#get-java.lang.reflect.Type-">get</a></span>(java.lang.reflect.Type&nbsp;parameter)</code>
-<div class="block">Returns the value for the given <code>Type</code></div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#get-java.lang.reflect.Type-">get</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html?is-external=true" title="class or interface in java.lang.reflect">Type</a>&nbsp;parameter)</code>
+<div class="block">Returns the value for the given <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html?is-external=true" title="class or interface in java.lang.reflect"><code>Type</code></a></div>
 </td>
 </tr>
 <tr id="i6" class="altColor">
@@ -224,7 +224,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code>java.util.Collection&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#getVariables--">getVariables</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
@@ -258,7 +258,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i13" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#toString--">toString</a></span>()</code></td>
 </tr>
 </table>
@@ -266,8 +266,8 @@ extends java.lang.Object</pre>
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -289,7 +289,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>map</h4>
-<pre>private&nbsp;java.util.Map&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>,<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&gt; map</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>,<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&gt; map</pre>
 <div class="block">The substitution map</div>
 </li>
 </ul>
@@ -299,7 +299,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>rawMap</h4>
-<pre>private&nbsp;java.util.Map&lt;java.lang.reflect.Type,<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&gt; rawMap</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html?is-external=true" title="class or interface in java.lang.reflect">Type</a>,<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&gt; rawMap</pre>
 <div class="block">map on reflection types - used for testing bounds</div>
 </li>
 </ul>
@@ -358,8 +358,8 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>forArgs</h4>
-<pre>@SafeVarargs
-public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;T&gt;&nbsp;forArgs(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/SafeVarargs.html?is-external=true" title="class or interface in java.lang">@SafeVarargs</a>
+public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;T&gt;&nbsp;forArgs(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
                                                        T...&nbsp;arguments)</pre>
 <div class="block">Create a substitution from the type parameters to the corresponding type arguments. Requires
  that the number of parameters and arguments agree.</div>
@@ -380,8 +380,8 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html
 <ul class="blockList">
 <li class="blockList">
 <h4>forArgs</h4>
-<pre>public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;T&gt;&nbsp;forArgs(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
-                                          java.util.List&lt;T&gt;&nbsp;arguments)</pre>
+<pre>public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;T&gt;&nbsp;forArgs(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+                                          <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;T&gt;&nbsp;arguments)</pre>
 <div class="block">Create a substitution from the type parameters and the list of arguments.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
@@ -400,10 +400,10 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html
 <ul class="blockList">
 <li class="blockList">
 <h4>equals</h4>
-<pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;obj)</pre>
+<pre>public&nbsp;boolean&nbsp;equals(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;obj)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the substitution maps are identical and false otherwise</dd>
 </dl>
@@ -418,7 +418,7 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html
 <pre>public&nbsp;int&nbsp;hashCode()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -428,10 +428,10 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html
 <ul class="blockList">
 <li class="blockList">
 <h4>toString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a string representation of the substitution</dd>
 </dl>
@@ -496,8 +496,8 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html
 <ul class="blockList">
 <li class="blockList">
 <h4>get</h4>
-<pre>public&nbsp;<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&nbsp;get(java.lang.reflect.Type&nbsp;parameter)</pre>
-<div class="block">Returns the value for the given <code>Type</code></div>
+<pre>public&nbsp;<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&nbsp;get(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html?is-external=true" title="class or interface in java.lang.reflect">Type</a>&nbsp;parameter)</pre>
+<div class="block">Returns the value for the given <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html?is-external=true" title="class or interface in java.lang.reflect"><code>Type</code></a></div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>parameter</code> - the type variable</dd>
@@ -512,7 +512,7 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html
 <ul class="blockList">
 <li class="blockList">
 <h4>getVariables</h4>
-<pre>public&nbsp;java.util.Collection&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;getVariables()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;getVariables()</pre>
 </li>
 </ul>
 <a name="print--">

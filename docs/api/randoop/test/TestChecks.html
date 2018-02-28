@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TestChecks (randoop 3.1.5 API)</title>
+<title>TestChecks (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TestChecks (randoop 3.1.5 API)";
+            parent.document.title="TestChecks (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -48,8 +48,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/test/ValidityCheckingVisitor.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/ValidityCheckingGenerator.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/test/TestChecks.html" target="_top">Frames</a></li>
@@ -92,7 +92,7 @@ var activeTableTab = "activeTableTab";
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">randoop.test</div>
-<h2 title="Interface TestChecks" class="title">Interface TestChecks</h2>
+<h2 title="Interface TestChecks" class="title">Interface TestChecks&lt;T extends TestChecks&lt;T&gt;&gt;</h2>
 </div>
 <div class="contentContainer">
 <div class="description">
@@ -104,13 +104,13 @@ var activeTableTab = "activeTableTab";
 </dl>
 <hr>
 <br>
-<pre>public interface <span class="typeNameLabel">TestChecks</span></pre>
-<div class="block">TestChecks represents the checks for a particular test sequence. Can either be all passing tests
- for a regression test, or all failing tests for an error-revealing test.</div>
+<pre>public interface <span class="typeNameLabel">TestChecks&lt;T extends TestChecks&lt;T&gt;&gt;</span></pre>
+<div class="block">A TestChecks reprents a set of Checks, and possibly a single ExceptionCheck.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/test/RegressionChecks.html" title="class in randoop.test"><code>RegressionChecks</code></a>, 
-<a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a></dd>
+<a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>, 
+<a href="../../randoop/test/InvalidChecks.html" title="class in randoop.test"><code>InvalidChecks</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -133,25 +133,25 @@ var activeTableTab = "activeTableTab";
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/TestChecks.html#add-randoop.test.Check-">add</a></span>(<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&nbsp;ck)</code>
-<div class="block">Add a check to this sequence.</div>
+<div class="block">Add a check to this set.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/TestChecks.html#commonChecks-randoop.test.TestChecks-">commonChecks</a></span>(<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;checks)</code>
-<div class="block">Returns the consensus checks for two sets of checks.</div>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/TestChecks.html#checks--">checks</a></span>()</code>
+<div class="block">Get all non-exception checks and whether they are passing for this object.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/TestChecks.html#count--">count</a></span>()</code>
-<div class="block">Return the number of checks in this test.</div>
+<td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="type parameter in TestChecks">T</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/TestChecks.html#commonChecks-T-">commonChecks</a></span>(<a href="../../randoop/test/TestChecks.html" title="type parameter in TestChecks">T</a>&nbsp;other)</code>
+<div class="block">Returns the intersection of checks in this set and another set.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.util.Map&lt;<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>,java.lang.Boolean&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/TestChecks.html#get--">get</a></span>()</code>
-<div class="block">Get all non-exception checks and whether they are passing for this object.</div>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/TestChecks.html#count--">count</a></span>()</code>
+<div class="block">Return the number of checks in this test.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -175,7 +175,7 @@ var activeTableTab = "activeTableTab";
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/TestChecks.html#hasInvalidBehavior--">hasInvalidBehavior</a></span>()</code>
-<div class="block">Indicates whether this set of checks corresponds to valid behaviors.</div>
+<div class="block">Indicates whether this set of checks contains any invalid behaviors.</div>
 </td>
 </tr>
 </table>
@@ -207,13 +207,13 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="get--">
+<a name="checks--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>get</h4>
-<pre>java.util.Map&lt;<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>,java.lang.Boolean&gt;&nbsp;get()</pre>
+<h4>checks</h4>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&gt;&nbsp;checks()</pre>
 <div class="block">Get all non-exception checks and whether they are passing for this object.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -221,17 +221,17 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="hasInvalidBehavior--">
+<a name="add-randoop.test.Check-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>hasInvalidBehavior</h4>
-<pre>boolean&nbsp;hasInvalidBehavior()</pre>
-<div class="block">Indicates whether this set of checks corresponds to valid behaviors.</div>
+<h4>add</h4>
+<pre>void&nbsp;add(<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&nbsp;ck)</pre>
+<div class="block">Add a check to this set.</div>
 <dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>true when has checks for invalid behavior, false otherwise</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>ck</code> - the check object to add to this set of checks</dd>
 </dl>
 </li>
 </ul>
@@ -246,6 +246,20 @@ var activeTableTab = "activeTableTab";
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this object has checks, false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="hasInvalidBehavior--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hasInvalidBehavior</h4>
+<pre>boolean&nbsp;hasInvalidBehavior()</pre>
+<div class="block">Indicates whether this set of checks contains any invalid behaviors.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true when this contains checks for invalid behavior, false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -278,34 +292,21 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="add-randoop.test.Check-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>add</h4>
-<pre>void&nbsp;add(<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&nbsp;ck)</pre>
-<div class="block">Add a check to this sequence.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>ck</code> - the check object to add to this set of checks</dd>
-</dl>
-</li>
-</ul>
 <a name="commonChecks-randoop.test.TestChecks-">
+<!--   -->
+</a><a name="commonChecks-T-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>commonChecks</h4>
-<pre><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;commonChecks(<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;checks)</pre>
-<div class="block">Returns the consensus checks for two sets of checks. Refuses to compare passing with failing
- checks.</div>
+<pre><a href="../../randoop/test/TestChecks.html" title="type parameter in TestChecks">T</a>&nbsp;commonChecks(<a href="../../randoop/test/TestChecks.html" title="type parameter in TestChecks">T</a>&nbsp;other)</pre>
+<div class="block">Returns the intersection of checks in this set and another set.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>checks</code> - the <code>TestChecks</code> to compare with.</dd>
+<dd><code>other</code> - the <code>TestChecks</code> to compare with.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the checks common to this set of checks and those in <code>checks</code></dd>
+<dd>the checks common to this set of checks and those in <code>other</code></dd>
 </dl>
 </li>
 </ul>
@@ -336,8 +337,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/test/ValidityCheckingVisitor.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/ValidityCheckingGenerator.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/test/TestChecks.html" target="_top">Frames</a></li>

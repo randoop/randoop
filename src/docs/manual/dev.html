@@ -714,11 +714,8 @@ task described below.
   <li>Compile and test.  If any tests fail, fix them and start over.
     <pre>./gradlew clean build</pre>
   </li>
-  <li>Ensure that the Javadoc compiles correctly:
-    <pre>./gradlew javadoc validateAPI</pre>
-  </li>
-  <li>Ensure that the manual is up to date:
-    <pre>./gradlew manual</pre>
+  <li>Ensure that the Javadoc compiles correctly and the manual is up to date:
+    <pre>./gradlew javadoc validateAPI manual valdateSite</pre>
   </li>
 </ol>
 <p>
@@ -747,7 +744,7 @@ This <em>might</em> work to automate the number (not the date), only for files i
 <pre>
   cd src
   'preplace '4\.0\.1' '4.0.2'
-  'preplace '4\.0\.2' '4.0.1'
+  'preplace '4\.0\.0' '4.0.1'
 </pre>
     </li>
   </ol>

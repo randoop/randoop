@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>VariableRenamer (randoop 3.1.5 API)</title>
+<title>VariableRenamer (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="VariableRenamer (randoop 3.1.5 API)";
+            parent.document.title="VariableRenamer (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.sequence.VariableRenamer</li>
@@ -109,7 +109,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>class <span class="typeNameLabel">VariableRenamer</span>
-extends java.lang.Object</pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 </li>
 </ul>
 </div>
@@ -131,7 +131,13 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/VariableRenamer.html#sequence">sequence</a></span></code>
-<div class="block">The sequence in which every variable will be renamed</div>
+<div class="block">The sequence in which every variable will be renamed.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private static int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/VariableRenamer.html#VAR_NAME_MAX_DEPTH">VAR_NAME_MAX_DEPTH</a></span></code>
+<div class="block">Maximum depth to concatenate parameterized type names.</div>
 </td>
 </tr>
 </table>
@@ -167,9 +173,29 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>(package private) static java.lang.String</code></td>
+<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/VariableRenamer.html#capitalizeString-java.lang.String-">capitalizeString</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variableName)</code>
+<div class="block">Capitalize the variable name while preserving any capitalized letters after the first letter.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>(package private) static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/VariableRenamer.html#getVariableName-randoop.types.Type-">getVariableName</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</code>
 <div class="block">Heuristically transforms variables to better names based on its type name.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/VariableRenamer.html#getVariableName-randoop.types.Type-int-">getVariableName</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
+               int&nbsp;depth)</code>
+<div class="block">Heuristically renames each variable to a name that is based on the variable's type.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/VariableRenamer.html#lowercaseFirstCharacter-java.lang.String-">lowercaseFirstCharacter</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variableName)</code>
+<div class="block">Lowercase the first character in the variable name while preserving any capitalized letters
+ after the first letter.</div>
 </td>
 </tr>
 </table>
@@ -177,8 +203,8 @@ extends java.lang.Object</pre>
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -197,11 +223,25 @@ extends java.lang.Object</pre>
 <a name="sequence">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>sequence</h4>
 <pre>public final&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a> sequence</pre>
-<div class="block">The sequence in which every variable will be renamed</div>
+<div class="block">The sequence in which every variable will be renamed.</div>
+</li>
+</ul>
+<a name="VAR_NAME_MAX_DEPTH">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>VAR_NAME_MAX_DEPTH</h4>
+<pre>private static final&nbsp;int VAR_NAME_MAX_DEPTH</pre>
+<div class="block">Maximum depth to concatenate parameterized type names.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../constant-values.html#randoop.sequence.VariableRenamer.VAR_NAME_MAX_DEPTH">Constant Field Values</a></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -232,23 +272,79 @@ extends java.lang.Object</pre>
 <a name="getVariableName-randoop.types.Type-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getVariableName</h4>
-<pre>static&nbsp;java.lang.String&nbsp;getVariableName(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</pre>
+<pre>static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getVariableName(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</pre>
 <div class="block">Heuristically transforms variables to better names based on its type name. Here are some
  examples:
 
- <pre>
-   int var0 = 1     becomes  int i0 = 1
-   ClassName var0 = new ClassName()      becomes ClassName className = new ClassName()
-   Class var0 = null      becomes Class clazz = null
- </pre></div>
+ <pre><code>
+ int var0 = 1 becomes  int int0 = 1
+ ClassName var0 = new ClassName() becomes ClassName className = new ClassName()
+ Class var0 = null becomes Class cls = null
+ Queue&lt;Set&lt;List&lt;Comparable&lt;String&gt;&gt;&gt;&gt; var0 = null becomes Queue&lt;Set&lt;List&lt;Comparable&lt;String&gt;&gt;&gt;&gt; listSetQueue = null
+ ArrayList&lt;String&gt; var0 = null becomes ArrayList&lt;String&gt; strList = null
+ </code></pre></div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the type to use as base of variable name</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a variable name based on its type, without a trailing number</dd>
+<dd>a variable name based on its type, with the first character lowercase and the final
+     character not a digit</dd>
+</dl>
+</li>
+</ul>
+<a name="getVariableName-randoop.types.Type-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVariableName</h4>
+<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getVariableName(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
+                                      int&nbsp;depth)</pre>
+<div class="block">Heuristically renames each variable to a name that is based on the variable's type.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>type</code> - the type to use as the base of the variable name</dd>
+<dd><code>depth</code> - the number of components (i.e. type arguments) of the type that will be used to
+     create a name for the variable</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a variable name based on its type and is camel cased. The first character may be
+     uppercase.</dd>
+</dl>
+</li>
+</ul>
+<a name="capitalizeString-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>capitalizeString</h4>
+<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;capitalizeString(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variableName)</pre>
+<div class="block">Capitalize the variable name while preserving any capitalized letters after the first letter.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>variableName</code> - the name of the variable</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>capitalized form of variable name</dd>
+</dl>
+</li>
+</ul>
+<a name="lowercaseFirstCharacter-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>lowercaseFirstCharacter</h4>
+<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;lowercaseFirstCharacter(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variableName)</pre>
+<div class="block">Lowercase the first character in the variable name while preserving any capitalized letters
+ after the first letter.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>variableName</code> - the name of the variable</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>variableName with the first letter lowercased</dd>
 </dl>
 </li>
 </ul>
