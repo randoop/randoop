@@ -760,6 +760,7 @@ This <em>might</em> work to automate the number (not the date), only for files i
   the <code>docs</code> directory.
 <pre>
   ./gradlew clean buildRelease
+  git add -A .
   git commit . -m "Update version to $NEWVERSION"
   git push
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
