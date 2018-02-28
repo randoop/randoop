@@ -286,7 +286,7 @@ After the build, the classpath should include either of the following
 <ul>
   <li>
 <code>
-&lt;randoop-path&gt;/build/libs/randoop-3.1.5.jar:&lt;randoop-path&gt;/lib/plume.jar
+&lt;randoop-path&gt;/build/libs/randoop-4.0.0.jar:&lt;randoop-path&gt;/lib/plume.jar
 </code>
 </li>
 <li>
@@ -305,7 +305,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-3.1.5.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.0.0.jar</code></pre>
 
 
 
@@ -366,7 +366,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-3.1.5.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.0.0.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -613,7 +613,7 @@ since the test run method only looks for JUnit suite classes.
 
 <p>
   Any user-visible changes should be documented in the changelog
-  <code>devnotes/CHANGES.txt</code>.
+  <code>src/docs/CHANGES.txt</code>.
   This text is used for documenting releases, so keeping it up-to-date and
   ready for public release saves time in the long run.
   Order the information by importance to the user.
@@ -682,7 +682,7 @@ task described below.
 
 <p>
   Additional documentation that is not published to the project website is located
-  in <code>devnotes</code>.  This includes the change log, diagrams,
+  in <code>src/docs</code>.  This includes the change log, diagrams,
   and project ideas documents.
 </p>
 
@@ -731,23 +731,23 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>3.1.5</em>
-NEWVERSION=<em>3.1.6</em></pre>
+OLDVERSION=<em>4.0.0</em>
+NEWVERSION=<em>4.0.1</em></pre>
       These are used for working with git.
     </li>
-    <li>Update the version number and date in each of:
-      <ul>
-        <li><code>build.gradle</code></li>
-        <li><code>src/main/java/randoop/Globals.java</code></li>
-        <li><code>devnotes/CHANGES.txt</code></li>
-        <li><code>src/docs/manual/index.html</code> (many locations)</li>
-        <li><code>src/docs/manual/dev.html</code> (this document)</li>
-      </ul>
+    <li>Update the version number and date in these files:
+<pre>
+build.gradle
+src/docs/CHANGES.txt
+src/docs/manual/dev.html
+src/docs/manual/index.html
+src/main/java/randoop/Globals.java
+</pre>
       TODO: automate this step
     </li>
   </ol>
 </li>
-<li>Double-check that the changelog <code>devnotes/CHANGES.txt</code> is up-to-date
+<li>Double-check that the changelog <code>src/docs/CHANGES.txt</code> is up-to-date
   by running a command
   <pre>git log v$OLDVERSION..</pre>
   and ensuring that no user-visible changes have been missed.
