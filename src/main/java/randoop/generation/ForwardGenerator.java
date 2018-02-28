@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import plume.Pair;
 import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.Globals;
@@ -669,9 +668,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // At this point, we have a list of candidate sequences and need to select a
       // randomly-chosen sequence from the list.
-      Pair<Variable, Sequence> varAndSeq = randomVariable(candidates, inputType, isReceiver);
-      Variable randomVariable = varAndSeq.a;
-      Sequence chosenSeq = varAndSeq.b;
+      VarAndSeq varAndSeq = randomVariable(candidates, inputType, isReceiver);
+      Variable randomVariable = varAndSeq.var;
+      Sequence chosenSeq = varAndSeq.seq;
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {
@@ -696,8 +695,18 @@ public class ForwardGenerator extends AbstractGenerator {
     return new InputsAndSuccessFlag(true, sequences, variables);
   }
 
-  Pair<Variable, Sequence> randomVariable(
-      SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
+  // A pair of a variable and a sequence
+  private static class VarAndSeq {
+    final Variable var;
+    final Sequence seq;
+
+    VarAndSeq(Variable var, Sequence seq) {
+      this.var = var;
+      this.seq = seq;
+    }
+  }
+
+  VarAndSeq randomVariable(SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
 
       Sequence chosenSeq;
@@ -746,16 +755,16 @@ public class ForwardGenerator extends AbstractGenerator {
         //     "Selected null or primitive value as the receiver for a method call");
       }
 
-      return new Pair<>(randomVariable, chosenSeq);
+      return new VarAndSeq(randomVariable, chosenSeq);
     }
     // Can't get here unless isReceiver is true.  TODO: fix design so this cannot happen.
     assert isReceiver;
     // Try every element of the list, in order.
-    List<Pair<Variable, Sequence>> validResults = new ArrayList<>();
+    List<VarAndSeq> validResults = new ArrayList<>();
     for (int i = 0; i < candidates.size(); i++) {
       Sequence s = candidates.get(i);
       Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);
-      validResults.add(new Pair<>(randomVariable, s));
+      validResults.add(new VarAndSeq(randomVariable, s));
     }
     if (validResults.size() == 0) {
       throw new BugInRandoopException(
