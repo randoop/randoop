@@ -743,7 +743,12 @@ src/docs/manual/dev.html
 src/docs/manual/index.html
 src/main/java/randoop/Globals.java
 </pre>
-      TODO: automate this step
+This <em>might</em> work to automate the number (not the date), only for files in <code>src/</code> (double-check it!):
+<pre>
+  cd src
+  'preplace '4\.0\.1' '4.0.2'
+  'preplace '4\.0\.2' '4.0.1'
+</pre>
     </li>
   </ol>
 </li>
@@ -753,20 +758,13 @@ src/main/java/randoop/Globals.java
   and ensuring that no user-visible changes have been missed.
   Have a colleague review the changelog entry.
 </li>
-  <li>Create the distribution files with <code>./gradlew clean buildRelease</code>.
-    This will run any tasks that are needed for the release, and will also
-    replace the project site in the <code>docs</code> directory.
-  </li>
-  <li>
-    Commit and push those changes.
+<li>Create the distribution files, commit, make a tag, and push.  This takes
+  a while because it runs all the tests.  It also updates the project site in
+  the <code>docs</code> directory.
 <pre>
+  ./gradlew clean buildRelease
   git commit . -m "Update version to $NEWVERSION"
   git push
-</pre>
-  </li>
-  <li>Make a
-    repository tag:
-    <pre>
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
   git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
@@ -775,8 +773,8 @@ src/main/java/randoop/Globals.java
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
-    click "Tags", click "add release notes" for the new tag (e.g., v<em>3.1.6</em>),
-    name it "Randoop version <em>3.1.6</em>", use the changelog entry as the
+    click "Tags", click "add release notes" for the new tag,
+    name it "Randoop version <em>4.0.1</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
     jar files from <code>build/libs</code>,
     upload the zip file from <code>build/distributions</code>
@@ -794,9 +792,9 @@ src/main/java/randoop/Globals.java
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
-    Subject: Randoop version <em>3.1.6</em>
+    Subject: Randoop version <em>4.0.1</em>
     <br/>
-    Randoop <em>3.1.6</em> has been released and is available at
+    Randoop <em>4.0.1</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
 </ol>
