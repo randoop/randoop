@@ -839,7 +839,7 @@ task validateSite {
       commandLine "html5validator", "--root", "docs/", "--ignore", "docs/api"
     }
   } else {
-    commandLine "echo", "WARNING: HTML validation of site is only run in Java 8+"
+    println "WARNING: HTML validation of site is only run in Java 8+"
   }
 }
 
