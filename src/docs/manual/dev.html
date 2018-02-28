@@ -766,6 +766,9 @@ This <em>might</em> work to automate the number (not the date), only for files i
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
   git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
+    Wait for the <a href="https://travis-ci.org/randoop/randoop">Travis CI</a>
+    build to succeed.  If it fails, commit fixes, then re-tag and re-push tags
+    (adding <code>-f</code> to both commands).
   </li>
   <li>Follow the
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
