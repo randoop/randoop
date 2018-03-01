@@ -825,7 +825,7 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) 
 }
 
 /*
- * Applies HTML5 validator to project site HTML
+ * Applies HTML5 validator to project site HTML, including the manual
  */
 task validateSite {
   description "Run html5validator to find HTML errors in site files (excludes manual and api)"
