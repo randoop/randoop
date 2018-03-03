@@ -29,8 +29,8 @@ plugins {
 }
 
 // Checker Framework pluggable type-checking
-// apply from: "checkerframework-annos-in-comments.gradle"
-apply from: "checkerframework.gradle"
+apply from: "checkerframework-annos-in-comments.gradle"
+// apply from: "checkerframework.gradle"
 
 /* Common build configuration for Randoop and agents */
 allprojects {
