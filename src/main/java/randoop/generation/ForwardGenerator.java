@@ -63,10 +63,10 @@ public class ForwardGenerator extends AbstractGenerator {
       new ArrayListSimpleList<>();
 
   /** Hyperparameter for balancing branch coverage and number of time a method was chosen. */
-  private final double alpha = 0.5;
+  private final double alpha = 0.7;
 
   /** Hyperparameter for decreasing weights. */
-  private final double p = 1;
+  private final double p = 0.5;
 
   /** Maximum number of successful calls to any method under test. */
   private int maxSuccessfulCalls = 0;
@@ -204,17 +204,24 @@ public class ForwardGenerator extends AbstractGenerator {
     // Increment our step counter.
     stepNum += 1;
 
+    // Print method weights.
+    if (stepNum % interval == 0) {
+      for (TypedOperation to : methodWeights.keySet()) {
+        System.out.println(to.toString() + ": " + methodWeights.get(to));
+      }
+      System.out.println(">>>");
+      for (TypedOperation to : methodSuccCalls.keySet()) {
+        System.out.println(to.toString() + ": " + methodSuccCalls.get(to));
+      }
+    }
+
     // After the specified interval, recompute the current coverage information.
     if (stepNum % interval == 0) {
       // Clear the method selections map.
       methodSelections.clear();
 
-      long start = System.currentTimeMillis();
-
       // Collect coverage information of all methods under test.
       CoverageTracker.instance.collect();
-
-      System.out.println("Time taken: " + (System.currentTimeMillis() - start));
     }
 
     // The number of methods under test, corresponds to |M| in the GRT paper.
@@ -282,7 +289,6 @@ public class ForwardGenerator extends AbstractGenerator {
     }
     value += 1;
     map.put(key, value);
-
     return value;
   }
 
