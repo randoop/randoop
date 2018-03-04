@@ -1,14 +1,17 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.main.CoverageTracker;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
@@ -37,6 +40,39 @@ import randoop.util.SimpleList;
 
 /** Randoop's forward, component-based generator. */
 public class ForwardGenerator extends AbstractGenerator {
+
+  /**
+   * Map of methods under test to their weights. These weights are dynamic and depend on branch
+   * coverage.
+   */
+  private final Map<TypedOperation, Double> methodWeights = new HashMap<>();
+
+  /**
+   * Map of methods under test to the number of times they have been selected for the new sequence.
+   * Reset everytime coverage is recomputed.
+   */
+  private final Map<TypedOperation, Integer> methodSelections = new HashMap<>();
+
+  /** Map of methods under test to the number of times they have been successfully invoked. */
+  private final Map<TypedOperation, Integer> methodSuccCalls = new HashMap<>();
+
+  /**
+   * Simple list of operations, identical to operations list. Needed for getting weighted member.
+   */
+  private final ArrayListSimpleList<TypedOperation> operationSimpleList =
+      new ArrayListSimpleList<>();
+
+  /** Hyperparameter for balancing branch coverage and number of time a method was chosen. */
+  private final double alpha = 0.5;
+
+  /** Hyperparameter for decreasing weights. */
+  private final double p = 1;
+
+  /** Maximum number of successful calls to any method under test. */
+  private int maxSuccessfulCalls = 0;
+
+  /** Step number used to determine when to recompute method weights. */
+  private int stepNum = 0;
 
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
@@ -92,6 +128,11 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
+
+    // Copy all operations into the SimpleList of operations.
+    for (TypedOperation operation : operations) {
+      operationSimpleList.add(operation);
+    }
   }
 
   /**
@@ -118,6 +159,9 @@ public class ForwardGenerator extends AbstractGenerator {
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
       componentManager.clearGeneratedSequences();
     }
+
+    // Recompute the weights for all methods under tests at regular intervals.
+    processWeightsForMethods(10);
 
     ExecutableSequence eSeq = createNewUniqueSequence();
 
@@ -149,6 +193,97 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.gentime = gentime1 + gentime2;
 
     return eSeq;
+  }
+
+  /**
+   * Recompute weights for all methods under test at regular intervals.
+   *
+   * @param interval interval at which to recompute weights
+   */
+  private void processWeightsForMethods(int interval) {
+    // Increment our step counter.
+    stepNum += 1;
+
+    // After the specified interval, recompute the current coverage information.
+    if (stepNum % interval == 0) {
+      // Clear the method selections map.
+      methodSelections.clear();
+
+      long start = System.currentTimeMillis();
+
+      // Collect coverage information of all methods under test.
+      CoverageTracker.instance.collect();
+
+      System.out.println("Time taken: " + (System.currentTimeMillis() - start));
+    }
+
+    // The number of methods under test, corresponds to |M| in the GRT paper.
+    int numOperations = this.operations.size();
+
+    // Default weight is uniform probability.
+    double weight = 1.0 / numOperations;
+
+    // Recompute weights for all operations.
+    for (TypedOperation operation : this.operations) {
+      CoverageTracker.CoverageDetails covDet =
+          CoverageTracker.instance.getDetailsForMethod(operation.getName());
+
+      // Use default weight if no coverage details are available.
+      // This is the case for classes like java.lang.Object (not explicitly under test).
+      if (covDet != null) {
+        // The number of successful invocations of this method.
+        Integer numSuccessfulInvocation = methodSuccCalls.get(operation);
+        if (numSuccessfulInvocation == null) {
+          numSuccessfulInvocation = 0;
+        }
+
+        // Uncovered branch ratio of this method.
+        double uncoveredRatio = 0;
+        if (covDet.getNumBranches() != 0) {
+          uncoveredRatio = (double) covDet.getUncoveredBranches() / covDet.getNumBranches();
+        }
+
+        // Call ratio of this method.
+        double callRatio = 0;
+        if (maxSuccessfulCalls != 0) {
+          callRatio = numSuccessfulInvocation.doubleValue() / maxSuccessfulCalls;
+        }
+
+        // Corresponds to w(m, 0) in the GRT paper.
+        weight = alpha * uncoveredRatio + (1 - alpha) * (1 - callRatio);
+
+        // Corresponds to the k variable in the GRT paper.
+        Integer numSelectionsOfMethod = methodSelections.get(operation);
+        if (numSelectionsOfMethod != null) {
+          double val1 =
+              (-3.0 / Math.log(1 - p))
+                  * (Math.pow(p, numSelectionsOfMethod) / numSelectionsOfMethod);
+          double val2 = 1.0 / Math.log(numOperations + 3);
+          weight *= Math.max(val1, val2);
+        }
+      }
+
+      // Assign the weight to the operation in the methods' weight map.
+      methodWeights.put(operation, weight);
+    }
+  }
+
+  /**
+   * Increment value mapped to from key in map.
+   *
+   * @param map input map
+   * @param key key to use
+   * @return resulting value
+   */
+  private int incrementInMap(Map<TypedOperation, Integer> map, TypedOperation key) {
+    Integer value = map.get(key);
+    if (value == null) {
+      value = 0;
+    }
+    value += 1;
+    map.put(key, value);
+
+    return value;
   }
 
   @Override
@@ -275,7 +410,22 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // Select a StatementInfo
-    TypedOperation operation = Randomness.randomMember(this.operations);
+    TypedOperation operation;
+
+    // If bloodhound is enabled, choose the next operation while considering the methods' weights.
+    if (GenInputsAbstract.enable_blood_hound) {
+      operation = Randomness.randomMemberWeighted(this.operationSimpleList, methodWeights);
+    } else {
+      operation = Randomness.randomMember(this.operations);
+    }
+
+    // Update the number of times this method was selected for a new sequence.
+    incrementInMap(methodSelections, operation);
+
+    // Update the number of times this method was successfully invoked.
+    int numOfSuccInvocations = incrementInMap(methodSuccCalls, operation);
+    maxSuccessfulCalls = Math.max(maxSuccessfulCalls, numOfSuccInvocations);
+
     Log.logLine("Selected operation: " + operation.toString());
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {

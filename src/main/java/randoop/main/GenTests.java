@@ -530,6 +530,9 @@ public class GenTests extends GenInputsAbstract {
     // so dump after all done.
     explorer.getOperationHistory().outputTable();
 
+    // Shutdown coverage tracking object.
+    CoverageTracker.instance.finish();
+
     return true;
   }
 

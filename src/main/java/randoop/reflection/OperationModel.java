@@ -37,6 +37,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
+import randoop.main.CoverageTracker;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
@@ -470,6 +471,7 @@ public class OperationModel {
     Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
     for (String classname : classnames) {
       Class<?> c = getClass(classname, errorHandler);
+      c = CoverageTracker.instance.getInstrumentedClass(c != null ? c.getName() : "");
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null && !visitedClasses.contains(c)) {
         visitedClasses.add(c);
@@ -503,6 +505,7 @@ public class OperationModel {
     for (String classname : coveredClassesGoalNames) {
       if (!classnames.contains(classname)) {
         Class<?> c = getClass(classname, errorHandler);
+        c = CoverageTracker.instance.getInstrumentedClass(c != null ? c.getName() : "");
         if (c != null) {
           if (!visibility.isVisible(c)) {
             System.out.println(
