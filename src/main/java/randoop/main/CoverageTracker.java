@@ -177,6 +177,8 @@ public class CoverageTracker {
         }
         methodDetails.setNumBranches(cm.getBranchCounter().getTotalCount());
         methodDetails.setUncoveredBranches(cm.getBranchCounter().getMissedCount());
+
+        coverageDetailsMap.put(methodName, methodDetails);
       }
     }
     System.out.println("---------------------------");
@@ -195,5 +197,9 @@ public class CoverageTracker {
    */
   public CoverageDetails getDetailsForMethod(String methodName) {
     return this.coverageDetailsMap.get(methodName);
+  }
+
+  public Map<String, CoverageDetails> getCoverageDetailsMap() {
+    return coverageDetailsMap;
   }
 }

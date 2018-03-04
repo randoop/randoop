@@ -204,19 +204,14 @@ public class ForwardGenerator extends AbstractGenerator {
     // Increment our step counter.
     stepNum += 1;
 
-    // Print method weights.
+    // After the specified interval, recompute the current coverage information.
     if (stepNum % interval == 0) {
+
+      // Print method weights.
       for (TypedOperation to : methodWeights.keySet()) {
         System.out.println(to.toString() + ": " + methodWeights.get(to));
       }
-      System.out.println(">>>");
-      for (TypedOperation to : methodSuccCalls.keySet()) {
-        System.out.println(to.toString() + ": " + methodSuccCalls.get(to));
-      }
-    }
 
-    // After the specified interval, recompute the current coverage information.
-    if (stepNum % interval == 0) {
       // Clear the method selections map.
       methodSelections.clear();
 
@@ -238,6 +233,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // Use default weight if no coverage details are available.
       // This is the case for classes like java.lang.Object (not explicitly under test).
       if (covDet != null) {
+
         // The number of successful invocations of this method.
         Integer numSuccessfulInvocation = methodSuccCalls.get(operation);
         if (numSuccessfulInvocation == null) {
