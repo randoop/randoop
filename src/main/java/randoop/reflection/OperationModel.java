@@ -471,7 +471,10 @@ public class OperationModel {
     Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
     for (String classname : classnames) {
       Class<?> c = getClass(classname, errorHandler);
-      c = CoverageTracker.instance.getInstrumentedClass(c != null ? c.getName() : "");
+      if (c != null) {
+        // Instrument the class for coverage collection.
+        c = CoverageTracker.instance.getInstrumentedClass(c.getName());
+      }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null && !visitedClasses.contains(c)) {
         visitedClasses.add(c);
@@ -505,7 +508,10 @@ public class OperationModel {
     for (String classname : coveredClassesGoalNames) {
       if (!classnames.contains(classname)) {
         Class<?> c = getClass(classname, errorHandler);
-        c = CoverageTracker.instance.getInstrumentedClass(c != null ? c.getName() : "");
+        if (c != null) {
+          // Instrument the class for coverage collection.
+          c = CoverageTracker.instance.getInstrumentedClass(c.getName());
+        }
         if (c != null) {
           if (!visibility.isVisible(c)) {
             System.out.println(

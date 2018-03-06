@@ -160,9 +160,6 @@ public class ForwardGenerator extends AbstractGenerator {
       componentManager.clearGeneratedSequences();
     }
 
-    // Recompute the weights for all methods under tests at regular intervals.
-    processWeightsForMethods(10);
-
     ExecutableSequence eSeq = createNewUniqueSequence();
 
     if (eSeq == null) {
@@ -201,18 +198,10 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param interval interval at which to recompute weights
    */
   private void processWeightsForMethods(int interval) {
-    // Increment our step counter.
     stepNum += 1;
 
     // After the specified interval, recompute the current coverage information.
     if (stepNum % interval == 0) {
-
-      // Print method weights.
-      for (TypedOperation to : methodWeights.keySet()) {
-        System.out.println(to.toString() + ": " + methodWeights.get(to));
-      }
-
-      // Clear the method selections map.
       methodSelections.clear();
 
       // Collect coverage information of all methods under test.
@@ -415,18 +404,21 @@ public class ForwardGenerator extends AbstractGenerator {
     TypedOperation operation;
 
     // If bloodhound is enabled, choose the next operation while considering the methods' weights.
-    if (GenInputsAbstract.enable_blood_hound) {
+    if (GenInputsAbstract.enable_bloodhound) {
+      // Recompute the weights for all methods under tests at regular intervals.
+      processWeightsForMethods(10);
+
       operation = Randomness.randomMemberWeighted(this.operationSimpleList, methodWeights);
+
+      // Update the number of times this method was selected for a new sequence.
+      incrementInMap(methodSelections, operation);
+
+      // Update the number of times this method was successfully invoked.
+      int numOfSuccInvocations = incrementInMap(methodSuccCalls, operation);
+      maxSuccessfulCalls = Math.max(maxSuccessfulCalls, numOfSuccInvocations);
     } else {
       operation = Randomness.randomMember(this.operations);
     }
-
-    // Update the number of times this method was selected for a new sequence.
-    incrementInMap(methodSelections, operation);
-
-    // Update the number of times this method was successfully invoked.
-    int numOfSuccInvocations = incrementInMap(methodSuccCalls, operation);
-    maxSuccessfulCalls = Math.max(maxSuccessfulCalls, numOfSuccInvocations);
 
     Log.logLine("Selected operation: " + operation.toString());
 
