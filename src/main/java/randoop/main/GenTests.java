@@ -374,7 +374,9 @@ public class GenTests extends GenInputsAbstract {
 
     /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
     operationModel.log();
-    TestUtils.setOperationLog(new PrintWriter(GenInputsAbstract.operation_history_log), explorer);
+    if (GenInputsAbstract.operation_history_log != null) {
+      TestUtils.setOperationLog(new PrintWriter(GenInputsAbstract.operation_history_log), explorer);
+    }
     TestUtils.setSelectionLog(GenInputsAbstract.selection_log);
 
     // These two debugging lines make runNoOutputTest() fail:
