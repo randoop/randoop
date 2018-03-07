@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import plume.SimpleLog;
 import randoop.main.GenInputsAbstract;
 import randoop.util.Randomness;
@@ -98,8 +99,24 @@ public class TestUtils {
       System.out.println("setOperationLog(" + file + ")");
     }
     if (file != null && !file.isEmpty()) {
-      SimpleLog logger = new SimpleLog(file);
-      OperationHistoryLogger historyLogger = new OperationHistoryLogger(logger);
+      setOperationLog(file, generator);
+    }
+  }
+
+  /**
+   * If the PrintWriter is non-null, sets the operation history logger for the generator using the
+   * file.
+   *
+   * @param pw the PrintWriter to write the log to; does nothing if pw is null
+   * @param generator the generator for which logger is to be set
+   */
+  public static void setOperationLog(PrintWriter pw, AbstractGenerator generator) {
+    // This println statement causes system test runNoOutputTest to fail.
+    if (debug) {
+      System.out.println("setOperationLog(" + pw + ")");
+    }
+    if (pw != null) {
+      OperationHistoryLogger historyLogger = new OperationHistoryLogger(pw);
       generator.setOperationHistoryLogger(historyLogger);
     }
   }
