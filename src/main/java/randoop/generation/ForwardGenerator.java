@@ -208,6 +208,10 @@ public class ForwardGenerator extends AbstractGenerator {
       CoverageTracker.instance.collect();
     }
 
+    //    for (TypedOperation to : methodWeights.keySet()) {
+    //      System.out.println(to + "    " + methodWeights.get(to));
+    //    }
+
     // The number of methods under test, corresponds to |M| in the GRT paper.
     int numOperations = this.operations.size();
 
@@ -230,13 +234,13 @@ public class ForwardGenerator extends AbstractGenerator {
         }
 
         // Uncovered branch ratio of this method.
-        double uncoveredRatio = 0;
+        double uncoveredRatio = 0.5;
         if (covDet.getNumBranches() != 0) {
           uncoveredRatio = (double) covDet.getUncoveredBranches() / covDet.getNumBranches();
         }
 
         // Call ratio of this method.
-        double callRatio = 0;
+        double callRatio = 0.5;
         if (maxSuccessfulCalls != 0) {
           callRatio = numSuccessfulInvocation.doubleValue() / maxSuccessfulCalls;
         }

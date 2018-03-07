@@ -204,6 +204,9 @@ public final class Randomness {
                 + weight);
       }
       if (weight <= 0) {
+        for (T to : weights.keySet()) {
+          System.out.println(to + "    " + weights.get(to));
+        }
         throw new BugInRandoopException("Weight should be positive: " + weight);
       }
       cumulativeWeights[i] = totalWeight;
