@@ -9,6 +9,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -31,7 +32,6 @@ import java.util.regex.Pattern;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import plume.EntryReader;
-import plume.SimpleLog;
 import plume.UtilMDE;
 import randoop.BugInRandoopException;
 import randoop.ExecutionVisitor;
@@ -150,8 +150,6 @@ public class GenTests extends GenInputsAbstract {
             + "This means that two runs of Randoop may generate the same tests. "
             + "To get variation across runs, use the --randomseed option.");
   }
-
-  public static SimpleLog progress = new SimpleLog(true);
 
   private static Options options =
       new Options(
@@ -376,7 +374,9 @@ public class GenTests extends GenInputsAbstract {
 
     /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
     operationModel.log();
-    TestUtils.setOperationLog(GenInputsAbstract.operation_history_log, explorer);
+    if (GenInputsAbstract.operation_history_log != null) {
+      TestUtils.setOperationLog(new PrintWriter(GenInputsAbstract.operation_history_log), explorer);
+    }
     TestUtils.setSelectionLog(GenInputsAbstract.selection_log);
 
     // These two debugging lines make runNoOutputTest() fail:

@@ -2,9 +2,8 @@ package randoop.generation;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import plume.SimpleLog;
+import java.io.PrintWriter;
 import randoop.main.GenInputsAbstract;
-import randoop.util.Randomness;
 
 /**
  * Utility methods for setting up selection and operation-history logging in integration tests that
@@ -55,7 +54,8 @@ public class TestUtils {
   }
 
   /**
-   * Uses the system property {@code randoop.selection.log} to set {@link Randomness#selectionLog}.
+   * Uses the system property {@code randoop.selection.log} to set {@link
+   * GenInputsAbstract#selection_log}.
    */
   public static void setSelectionLog() {
     String selectionLog = System.getProperty("randoop.selection.log");
@@ -63,17 +63,34 @@ public class TestUtils {
   }
 
   /**
-   * Uses the argument to set {@link Randomness#selectionLog}.
+   * Uses the argument to set {@link GenInputsAbstract#selection_log}.
    *
    * @param file the file to write the log to; does nothing if file is null
    */
+  @SuppressWarnings("DefaultCharset") // TODO: should specify a charset
   public static void setSelectionLog(String file) {
     if (debug) {
       System.out.println("setSelectionLog(" + file + ")");
     }
     if (file != null && !file.isEmpty()) {
-      Randomness.selectionLog = new SimpleLog(file);
+      try {
+        setSelectionLog(new FileWriter(file));
+      } catch (IOException e) {
+        throw new Error("problem creating FileWriter for " + file, e);
+      }
     }
+  }
+
+  /**
+   * Uses the argument to set {@link GenInputsAbstract#selection_log}.
+   *
+   * @param fw the FileWriter to write the log to; does nothing if fw is null
+   */
+  public static void setSelectionLog(FileWriter fw) {
+    if (debug) {
+      System.out.println("setSelectionLog(" + fw + ")");
+    }
+    GenInputsAbstract.selection_log = fw;
   }
 
   /**
@@ -98,8 +115,24 @@ public class TestUtils {
       System.out.println("setOperationLog(" + file + ")");
     }
     if (file != null && !file.isEmpty()) {
-      SimpleLog logger = new SimpleLog(file);
-      OperationHistoryLogger historyLogger = new OperationHistoryLogger(logger);
+      setOperationLog(file, generator);
+    }
+  }
+
+  /**
+   * If the PrintWriter is non-null, sets the operation history logger for the generator using the
+   * file.
+   *
+   * @param pw the PrintWriter to write the log to; does nothing if pw is null
+   * @param generator the generator for which logger is to be set
+   */
+  public static void setOperationLog(PrintWriter pw, AbstractGenerator generator) {
+    // This println statement causes system test runNoOutputTest to fail.
+    if (debug) {
+      System.out.println("setOperationLog(" + pw + ")");
+    }
+    if (pw != null) {
+      OperationHistoryLogger historyLogger = new OperationHistoryLogger(pw);
       generator.setOperationHistoryLogger(historyLogger);
     }
   }
