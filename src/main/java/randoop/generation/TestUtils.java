@@ -4,7 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import randoop.main.GenInputsAbstract;
-import randoop.util.Randomness;
 
 /**
  * Utility methods for setting up selection and operation-history logging in integration tests that
@@ -55,7 +54,8 @@ public class TestUtils {
   }
 
   /**
-   * Uses the system property {@code randoop.selection.log} to set {@link Randomness#selectionLog}.
+   * Uses the system property {@code randoop.selection.log} to set {@link
+   * GenInputsAbstract#selection_log}.
    */
   public static void setSelectionLog() {
     String selectionLog = System.getProperty("randoop.selection.log");
@@ -63,10 +63,11 @@ public class TestUtils {
   }
 
   /**
-   * Uses the argument to set {@link Randomness#selectionLog}.
+   * Uses the argument to set {@link GenInputsAbstract#selection_log}.
    *
    * @param file the file to write the log to; does nothing if file is null
    */
+  @SuppressWarnings("DefaultCharset") // TODO: should specify a charset
   public static void setSelectionLog(String file) {
     if (debug) {
       System.out.println("setSelectionLog(" + file + ")");
@@ -81,9 +82,9 @@ public class TestUtils {
   }
 
   /**
-   * Uses the argument to set {@link Randomness#selectionLog}.
+   * Uses the argument to set {@link GenInputsAbstract#selection_log}.
    *
-   * @param file the file to write the log to; does nothing if file is null
+   * @param fw the FileWriter to write the log to; does nothing if fw is null
    */
   public static void setSelectionLog(FileWriter fw) {
     if (debug) {
