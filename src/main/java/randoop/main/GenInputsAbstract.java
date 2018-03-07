@@ -709,12 +709,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FileWriter log = null;
 
   /**
-   * A destination to which to log selections; helps find sources of non-determinism. Either the
-   * name of a file or a hyphen ("-") indicating that standard output should be used. If not
-   * specified, no logging is done.
+   * A file to which to log selections; helps find sources of non-determinism. If not specified, no
+   * logging is done.
    */
-  @Option("Log destination for logging each random selection. Should be a file or stdout \"-\".")
-  public static String selection_log = null;
+  @Option(
+      "<filename> Log destination for logging each random selection. Should be a file or stdout \"-\".")
+  public static FileWriter selection_log = null;
 
   /** A file to which to log the operation usage history. */
   @Option("Log destination for operation usage counts. Should be a file or stdout \"-\".")
