@@ -244,7 +244,7 @@ import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
 tasks.withType(JavaCompile).each { t ->
   if (JavaVersion.current().isJava8Compatible()) {
-    if (!t.name.equals("compileTestInputJava")) {
+    if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
       t.toolChain ErrorProneToolChain.create(project)
       t.options.compilerArgs += [
         // undocumented, and suggestion seems bad
