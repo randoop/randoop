@@ -1,12 +1,12 @@
 package randoop.generation;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import plume.SimpleLog;
 import randoop.operation.TypedOperation;
 
 // TODO: It's weird to call this a "history log" when it is just a summary, printed at the end of
@@ -18,7 +18,7 @@ import randoop.operation.TypedOperation;
 public class OperationHistoryLogger implements OperationHistoryLogInterface {
 
   /** The {@code PrintWriter} for outputting the operation history as a table */
-  private final SimpleLog logger;
+  private final PrintWriter writer;
 
   /** A sparse representation for the operation-outcome table */
   private final Map<TypedOperation, Map<OperationOutcome, Integer>> operationMap;
@@ -26,12 +26,11 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
   /**
    * Creates an {@link OperationHistoryLogger} that will write to the given {@code PrintWriter}.
    *
-   * @param logger the {@code PrintWriter} for writing the table from the created operation history
+   * @param writer the {@code PrintWriter} for writing the table from the created operation history
    */
-  public OperationHistoryLogger(SimpleLog logger) {
-    this.logger = logger;
+  public OperationHistoryLogger(PrintWriter writer) {
+    this.writer = writer;
     this.operationMap = new HashMap<>();
-    this.logger.line_oriented = false; // don't want the logger to manage newlines
   }
 
   @Override
@@ -39,7 +38,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
     Map<OperationOutcome, Integer> outcomeMap = operationMap.get(operation);
     int count = 0;
     if (outcomeMap == null) {
-      outcomeMap = new EnumMap<>(OperationOutcome.class);
+      outcomeMap = new EnumMap<OperationOutcome, Integer>(OperationOutcome.class);
     } else {
       Integer countInteger = outcomeMap.get(outcome);
       if (countInteger != null) {
@@ -53,7 +52,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
 
   @Override
   public void outputTable() {
-    logger.log("%nOperation History:%n");
+    writer.format("%nOperation History:%n");
     int maxNameLength = 0;
     for (TypedOperation operation : operationMap.keySet()) {
       int nameLength = operation.getSignatureString().length();
@@ -65,6 +64,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
     for (TypedOperation key : keys) {
       printRow(maxNameLength, formatMap, key, operationMap.get(key));
     }
+    writer.flush();
   }
 
   /**
@@ -75,13 +75,14 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
    * @return a map from {@link OperationOutcome} value to numeric column format for subsequent rows
    */
   private Map<OperationOutcome, String> printHeader(int firstColumnLength) {
-    Map<OperationOutcome, String> formatMap = new EnumMap<>(OperationOutcome.class);
-    logger.log("%-" + firstColumnLength + "s", "Operation");
+    Map<OperationOutcome, String> formatMap =
+        new EnumMap<OperationOutcome, String>(OperationOutcome.class);
+    writer.format("%-" + firstColumnLength + "s", "Operation");
     for (OperationOutcome outcome : OperationOutcome.values()) {
-      logger.log("\t%" + outcome.name().length() + "s", outcome);
+      writer.format("\t%" + outcome.name().length() + "s", outcome);
       formatMap.put(outcome, "\t%" + outcome.name().length() + "d");
     }
-    logger.log("%n");
+    writer.format("%n");
     return formatMap;
   }
 
@@ -99,14 +100,14 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
       Map<OperationOutcome, String> formatMap,
       TypedOperation operation,
       Map<OperationOutcome, Integer> countMap) {
-    logger.log("%-" + firstColumnLength + "s", operation.getSignatureString());
+    writer.format("%-" + firstColumnLength + "s", operation.getSignatureString());
     for (OperationOutcome outcome : OperationOutcome.values()) {
       Integer count = countMap.get(outcome);
       if (count == null) {
         count = 0;
       }
-      logger.log(formatMap.get(outcome), count);
+      writer.format(formatMap.get(outcome), count);
     }
-    logger.log("%n");
+    writer.format("%n");
   }
 }
