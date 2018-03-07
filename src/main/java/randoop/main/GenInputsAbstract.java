@@ -712,8 +712,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file to which to log selections; helps find sources of non-determinism. If not specified, no
    * logging is done.
    */
-  @Option("File to which to log each random selection")
-  public static String selection_log = null;
+  @Option("<filename> File to which to log each random selection")
+  public static FileWriter selection_log = null;
 
   /** Name of a file to which to log the operation usage history. */
   @Option("Track and log operation usage counts to this file")

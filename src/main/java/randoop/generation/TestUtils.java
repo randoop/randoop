@@ -3,7 +3,6 @@ package randoop.generation;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import plume.SimpleLog;
 import randoop.main.GenInputsAbstract;
 import randoop.util.Randomness;
 
@@ -73,8 +72,24 @@ public class TestUtils {
       System.out.println("setSelectionLog(" + file + ")");
     }
     if (file != null && !file.isEmpty()) {
-      Randomness.selectionLog = new SimpleLog(file);
+      try {
+        setSelectionLog(new FileWriter(file));
+      } catch (IOException e) {
+        throw new Error("problem creating FileWriter for " + file, e);
+      }
     }
+  }
+
+  /**
+   * Uses the argument to set {@link Randomness#selectionLog}.
+   *
+   * @param file the file to write the log to; does nothing if file is null
+   */
+  public static void setSelectionLog(FileWriter fw) {
+    if (debug) {
+      System.out.println("setSelectionLog(" + fw + ")");
+    }
+    GenInputsAbstract.selection_log = fw;
   }
 
   /**
