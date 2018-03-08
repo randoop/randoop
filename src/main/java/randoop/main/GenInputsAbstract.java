@@ -715,7 +715,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("<filename> File to which to log each random selection")
   public static FileWriter selection_log = null;
 
-  /** Name of a file to which to log the operation usage history. */
+  /** A file to which to log the operation usage history. */
   @Option("Track and log operation usage counts to this file")
   public static FileWriter operation_history_log = null;
 
