@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import plume.EntryReader;
+import org.plumelib.util.EntryReader;
 
 /**
  * Manages the options for a run of Randoop within a system test method so that the information can

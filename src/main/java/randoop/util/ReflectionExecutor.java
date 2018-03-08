@@ -3,7 +3,7 @@ package randoop.util;
 import java.io.PrintStream;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -192,9 +192,9 @@ public final class ReflectionExecutor {
       try {
         // Workaround for http://bugs.sun.com/view_bug.do?bug_id=6973831
         // Note that field Throwable.suppressedExceptions only exists in JDK 7.
-        Object eSuppressedExceptions = UtilMDE.getPrivateField(e, "suppressedExceptions");
+        Object eSuppressedExceptions = UtilPlume.getPrivateField(e, "suppressedExceptions");
         if (eSuppressedExceptions == null) {
-          UtilMDE.setFinalField(e, "suppressedExceptions", new java.util.ArrayList<>());
+          UtilPlume.setFinalField(e, "suppressedExceptions", new java.util.ArrayList<>());
         }
       } catch (NoSuchFieldException nsfe) {
         out.println("This can't happen on JDK7 (can on JDK6): NoSuchFieldException " + nsfe);

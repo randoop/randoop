@@ -12,7 +12,7 @@ import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
 import org.plumelib.options.Unpublicized;
-import plume.EntryReader;
+import org.plumelib.util.EntryReader;
 import randoop.Globals;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;

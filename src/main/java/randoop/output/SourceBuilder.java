@@ -1,7 +1,7 @@
 package randoop.output;
 
 import java.util.List;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
 /** Common behavior for source builder classes. */
@@ -14,7 +14,7 @@ abstract class SourceBuilder {
    * @return the {@code String} constructed from the tokens
    */
   String createLine(String... toks) {
-    return UtilMDE.join(toks, " ");
+    return UtilPlume.join(toks, " ");
   }
 
   /**

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 
 /**
  * Represents the raw type signature for an {@code java.lang.reflect.AccessibleObject}. This
@@ -115,7 +115,7 @@ public class RawSignature {
     return ((packageName == null) ? "" : packageName + ".")
         + ((classname.equals(name)) ? name : classname + "." + name)
         + "("
-        + UtilMDE.join(typeNames, ",")
+        + UtilPlume.join(typeNames, ",")
         + ")";
   }
 
@@ -171,7 +171,7 @@ public class RawSignature {
     for (int i = 0; i < parameterTypes.length; i++) {
       paramDeclarations.add(parameterTypes[i].getCanonicalName() + " " + parameterNames.get(i));
     }
-    return "(" + UtilMDE.join(paramDeclarations, ", ") + ")";
+    return "(" + UtilPlume.join(paramDeclarations, ", ") + ")";
   }
 
   /**
