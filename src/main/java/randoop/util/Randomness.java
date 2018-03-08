@@ -1,13 +1,14 @@
 package randoop.util;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import plume.SimpleLog;
 import randoop.BugInRandoopException;
+import randoop.main.GenInputsAbstract;
 
 /**
  * A simple-to-use wrapper around {@link java.util.Random}.
@@ -16,7 +17,6 @@ import randoop.BugInRandoopException;
  */
 public final class Randomness {
 
-  public static SimpleLog selectionLog = new SimpleLog(false);
   /** 0 = no output, 1 = brief output, 2 = verbose output */
   public static int verbosity = 1;
 
@@ -217,13 +217,18 @@ public final class Randomness {
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom("randomMemberWeighted(SimpleList, Map)");
     double chosenPoint = Randomness.random.nextDouble() * totalWeight;
-    if (selectionLog.enabled()) {
-      selectionLog.log(
-          "chosenPoint = %s, cumulativeWeights = %s%n", chosenPoint, cumulativeWeights);
+    if (GenInputsAbstract.selection_log != null) {
+      try {
+        GenInputsAbstract.selection_log.write(
+            String.format(
+                "chosenPoint = %s, cumulativeWeights = %s%n", chosenPoint, cumulativeWeights));
+      } catch (IOException e) {
+        throw new Error("Problem writing to selection-log", e);
+      }
     }
 
     int index = binarySearchForIndex(cumulativeWeights, chosenPoint);
-    if (selectionLog.enabled()) { // body is expensive
+    if (GenInputsAbstract.selection_log != null) { // body is expensive
       logSelection(
           index,
           "randomMemberWeighted(List,Map)",
@@ -318,15 +323,22 @@ public final class Randomness {
    * @param argument the method argument
    */
   private static void logSelection(Object returnValue, String methodName, Object argument) {
-    if (selectionLog.enabled() && verbosity > 0) {
+    if (GenInputsAbstract.selection_log != null && verbosity > 0) {
       StackTraceElement[] trace = Thread.currentThread().getStackTrace();
       String methodWithArg = methodName;
       if (argument != null) {
         methodWithArg += "(" + toString(argument) + ")";
       }
-      selectionLog.log(
-          "#%d: %s => %s; seed %s; called from %s%n",
-          totalCallsToRandom, methodWithArg, returnValue, getSeed(), trace[3]);
+      try {
+        String msg =
+            String.format(
+                "#%d: %s => %s; seed %s; called from %s%n",
+                totalCallsToRandom, methodWithArg, returnValue, getSeed(), trace[3]);
+        GenInputsAbstract.selection_log.write(msg);
+        GenInputsAbstract.selection_log.flush();
+      } catch (IOException e) {
+        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
+      }
     }
   }
 
