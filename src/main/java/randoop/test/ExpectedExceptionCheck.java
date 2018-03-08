@@ -1,6 +1,6 @@
 package randoop.test;
 
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
 /**
@@ -43,7 +43,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
               + "; message: "
               + exception.getMessage();
     }
-    String assertion = "org.junit.Assert.fail(\"" + UtilMDE.escapeNonJava(message) + "\")";
+    String assertion = "org.junit.Assert.fail(\"" + UtilPlume.escapeNonJava(message) + "\")";
     b.append(Globals.lineSep).append("  ").append(assertion).append(";").append(Globals.lineSep);
   }
 

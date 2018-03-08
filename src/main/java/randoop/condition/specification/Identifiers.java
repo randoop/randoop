@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
@@ -135,7 +135,7 @@ public class Identifiers {
         + "\""
         + ", \"parameters\": "
         + "[ \""
-        + UtilMDE.join(parameters, "\", \"")
+        + UtilPlume.join(parameters, "\", \"")
         + "\"]"
         + ", \"returnName\": "
         + "\""

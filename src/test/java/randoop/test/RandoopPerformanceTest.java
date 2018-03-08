@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import plume.EntryReader;
+import org.plumelib.util.EntryReader;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;

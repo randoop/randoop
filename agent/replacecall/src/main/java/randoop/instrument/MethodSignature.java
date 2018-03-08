@@ -8,7 +8,7 @@ import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.bcelutil.JvmUtil;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 
 /**
  * Defines a method in a way that can be used to substitute method calls using BCEL. A method is
@@ -149,7 +149,7 @@ public class MethodSignature {
    */
   @Override
   public String toString() {
-    return String.format("%s.%s(%s)", classname, name, UtilMDE.join(paramTypes, ", "));
+    return String.format("%s.%s(%s)", classname, name, UtilPlume.join(paramTypes, ", "));
   }
 
   /**
@@ -227,7 +227,7 @@ public class MethodSignature {
    */
   private Class<?> typeToClass(Type type) throws ClassNotFoundException {
     String name = JvmUtil.fieldDescriptorToClassGetName(type.getSignature());
-    return UtilMDE.classForName(name);
+    return UtilPlume.classForName(name);
   }
 
   /**

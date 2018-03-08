@@ -18,8 +18,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
-import plume.EntryReader;
-import plume.UtilMDE;
+import org.plumelib.util.EntryReader;
+import org.plumelib.util.UtilPlume;
 import randoop.MethodReplacements;
 
 /**
@@ -269,7 +269,7 @@ public class ReplaceCallAgent {
     if (exclusionFilePath != null) {
       args.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
     }
-    return UtilMDE.join(args, ",");
+    return UtilPlume.join(args, ",");
   }
 
   /**

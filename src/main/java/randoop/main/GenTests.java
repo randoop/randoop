@@ -31,8 +31,8 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
-import plume.EntryReader;
-import plume.UtilMDE;
+import org.plumelib.util.EntryReader;
+import org.plumelib.util.UtilPlume;
 import randoop.BugInRandoopException;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
@@ -553,7 +553,7 @@ public class GenTests extends GenInputsAbstract {
       }
       abspaths[i] = abs;
     }
-    return UtilMDE.join(abspaths, File.pathSeparator);
+    return UtilPlume.join(abspaths, File.pathSeparator);
   }
 
   /**
@@ -948,7 +948,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     try {
-      return UtilMDE.fileLines(filename);
+      return UtilPlume.fileLines(filename);
     } catch (IOException e) {
       System.err.println("Unable to read " + filename);
       System.exit(1);
