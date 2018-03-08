@@ -28,7 +28,7 @@ plugins {
   id "net.ltgt.errorprone-base" version "0.0.11" // 0.0.13 does not work with Java 7
 }
 
-// Checker Framework pluggable type-checking
+// For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
 apply from: "checkerframework-annos-in-comments.gradle"
 // apply from: "checkerframework.gradle"
 
