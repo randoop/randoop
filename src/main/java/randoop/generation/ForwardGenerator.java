@@ -194,6 +194,13 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /**
    * Recompute weights for all methods under test at regular intervals.
+   * Each method under test is assigned a weight based on a weighted combination
+   * of the number of branches uncovered and the ratio between the number of
+   * times this method has been invoked and the maximum number of times any method
+   * under test has been invoked.
+   * The weighting scheme is based on the scheme described by the authors of
+   * the Guided Random Testing (GRT) paper. We have chosen our own reasonable values
+   * for all parameters that were left unspecified by the authors of GRT.
    *
    * @param interval interval at which to recompute weights
    */
@@ -207,10 +214,6 @@ public class ForwardGenerator extends AbstractGenerator {
       // Collect coverage information of all methods under test.
       CoverageTracker.instance.collect();
     }
-
-    //    for (TypedOperation to : methodWeights.keySet()) {
-    //      System.out.println(to + "    " + methodWeights.get(to));
-    //    }
 
     // The number of methods under test, corresponds to |M| in the GRT paper.
     int numOperations = this.operations.size();
@@ -227,19 +230,19 @@ public class ForwardGenerator extends AbstractGenerator {
       // This is the case for classes like java.lang.Object (not explicitly under test).
       if (covDet != null) {
 
-        // The number of successful invocations of this method.
+        // The number of successful invocations of this method. Corresponds to succ(m).
         Integer numSuccessfulInvocation = methodSuccCalls.get(operation);
         if (numSuccessfulInvocation == null) {
           numSuccessfulInvocation = 0;
         }
 
-        // Uncovered branch ratio of this method.
+        // Uncovered branch ratio of this method. Corresponds to uncovRatio(m) in the GRT paper.
         double uncoveredRatio = 0.5;
         if (covDet.getNumBranches() != 0) {
           uncoveredRatio = (double) covDet.getUncoveredBranches() / covDet.getNumBranches();
         }
 
-        // Call ratio of this method.
+        // Call ratio of this method. Corresponds to succ(m) / maxSucc(M) in the GRT paper.
         double callRatio = 0.5;
         if (maxSuccessfulCalls != 0) {
           callRatio = numSuccessfulInvocation.doubleValue() / maxSuccessfulCalls;
@@ -251,6 +254,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // Corresponds to the k variable in the GRT paper.
         Integer numSelectionsOfMethod = methodSelections.get(operation);
         if (numSelectionsOfMethod != null) {
+          // Corresponds to the case where k >= 1.
           double val1 =
               (-3.0 / Math.log(1 - p))
                   * (Math.pow(p, numSelectionsOfMethod) / numSelectionsOfMethod);
