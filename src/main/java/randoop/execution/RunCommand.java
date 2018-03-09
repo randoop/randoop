@@ -10,7 +10,7 @@ import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.util.Log;
 
@@ -51,7 +51,7 @@ public class RunCommand {
     executor.setStreamHandler(streamHandler);
 
     Log.logPrintf("RunCommand.run():%n");
-    Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilMDE.join(command, " "));
+    Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilPlume.join(command, " "));
     Log.logPrintf("  timeout=%s, environment: %s%n", timeout, System.getenv());
 
     try {
@@ -138,7 +138,7 @@ public class RunCommand {
       sb.append(
           String.format(
               "Status for command \"%s\" = %d (timedOut=%s)",
-              UtilMDE.join(command, " "), exitStatus, timedOut));
+              UtilPlume.join(command, " "), exitStatus, timedOut));
       describeLines("stdout", standardOutputLines, sb);
       describeLines("stderr", errorOutputLines, sb);
       return sb.toString();
@@ -156,7 +156,7 @@ public class RunCommand {
         sb.append(", ");
         sb.append(source);
         sb.append("=\"");
-        sb.append(UtilMDE.join(lines, Globals.lineSep));
+        sb.append(UtilPlume.join(lines, Globals.lineSep));
         sb.append("\"");
         sb.append(Globals.lineSep);
       } else {

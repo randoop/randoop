@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
@@ -121,7 +121,7 @@ public class FailingTestFilter implements CodeWriter {
           classSource = commentFailingAssertions(packageName, classname, classSource, status);
         }
       } finally {
-        UtilMDE.deleteDir(workingDirectory.toFile());
+        UtilPlume.deleteDir(workingDirectory.toFile());
         pass++;
       }
     }
@@ -189,7 +189,7 @@ public class FailingTestFilter implements CodeWriter {
     }
 
     // XXX For efficiency, have this method return the array and redo writeClass so that it writes from array (?).
-    return UtilMDE.join(javaCodeLines, Globals.lineSep);
+    return UtilPlume.join(javaCodeLines, Globals.lineSep);
   }
 
   /**
@@ -311,7 +311,7 @@ public class FailingTestFilter implements CodeWriter {
     }
 
     // XXX For efficiency, have this method return the array and redo writeClass so that it writes from array (?).
-    return UtilMDE.join(javaCodeLines, Globals.lineSep);
+    return UtilPlume.join(javaCodeLines, Globals.lineSep);
   }
 
   /**

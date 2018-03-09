@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 
 /**
  * Manages the substitution of concrete types for type variables and wildcards in an instantiation
@@ -117,7 +117,7 @@ public class Substitution<T> {
     for (Entry<TypeVariable, T> p : map.entrySet()) {
       pairs.add(p.getKey().toString() + " := " + p.getValue().toString());
     }
-    return "[" + UtilMDE.join(pairs, ", ") + "]";
+    return "[" + UtilPlume.join(pairs, ", ") + "]";
   }
 
   /**
