@@ -21,19 +21,20 @@ import org.jacoco.core.runtime.RuntimeData;
 public class CoverageTracker {
   public static final CoverageTracker instance = new CoverageTracker();
 
-  private final IRuntime runtime;
+  private final IRuntime runtime = new LoggerRuntime();
+  private final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
+
+  private final ExecutionDataStore executionData = new ExecutionDataStore();
+  private final SessionInfoStore sessionInfos = new SessionInfoStore();
+
   private final Instrumenter instrumenter;
   private final RuntimeData data;
-  private final MemoryClassLoader memoryClassLoader;
-
-  private final ExecutionDataStore executionData;
-  private final SessionInfoStore sessionInfos;
 
   // Set of names of the classes whose coverage is being tracked and calculated.
-  private final Set<String> trackedClasses;
+  private final Set<String> trackedClasses = new HashSet<>();
 
   // Map from method name to coverage details.
-  private final Map<String, CoverageDetails> coverageDetailsMap;
+  private final Map<String, CoverageDetails> coverageDetailsMap = new HashMap<>();
 
   /**
    * Coverage details related to a single method under test. Tracks total number of branches and
@@ -43,38 +44,18 @@ public class CoverageTracker {
     private int numBranches;
     private int uncoveredBranches;
 
-    /**
-     * Update number of branches to numBranches.
-     *
-     * @param numBranches number of branches of this method.
-     */
     private void setNumBranches(int numBranches) {
       this.numBranches = numBranches;
     }
 
-    /**
-     * Set the number of uncovered branches.
-     *
-     * @param uncoveredBranches number of uncovered branches of this method.
-     */
     private void setUncoveredBranches(int uncoveredBranches) {
       this.uncoveredBranches = uncoveredBranches;
     }
 
-    /**
-     * Return total number of branches
-     *
-     * @return number of branches of this method.
-     */
     public int getNumBranches() {
       return numBranches;
     }
 
-    /**
-     * Return the number of uncovered branches.
-     *
-     * @return number of uncovered branches.
-     */
     public int getUncoveredBranches() {
       return uncoveredBranches;
     }
@@ -82,11 +63,7 @@ public class CoverageTracker {
 
   /** Initializes the coverage tracker. */
   private CoverageTracker() {
-    coverageDetailsMap = new HashMap<>();
-
-    runtime = new LoggerRuntime();
     instrumenter = new Instrumenter(runtime);
-    memoryClassLoader = new MemoryClassLoader();
 
     data = new RuntimeData();
     try {
@@ -94,11 +71,6 @@ public class CoverageTracker {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-    executionData = new ExecutionDataStore();
-    sessionInfos = new SessionInfoStore();
-
-    trackedClasses = new HashSet<>();
   }
 
   /**
@@ -113,9 +85,6 @@ public class CoverageTracker {
       return null;
     }
 
-    // Add the name of the class to the set of tracked classes.
-    trackedClasses.add(targetName);
-
     final String resource = '/' + targetName.replace('.', '/') + ".class";
     InputStream original = getClass().getResourceAsStream(resource);
     final byte[] instrumented;
@@ -124,6 +93,9 @@ public class CoverageTracker {
       System.err.println("No resource with name: " + resource + " found!");
       return null;
     }
+
+    // Add the name of the class to the set of tracked classes.
+    trackedClasses.add(targetName);
 
     try {
       // Instrument the class to prepare for coverage collection later.
@@ -197,9 +169,5 @@ public class CoverageTracker {
    */
   public CoverageDetails getDetailsForMethod(String methodName) {
     return this.coverageDetailsMap.get(methodName);
-  }
-
-  public Map<String, CoverageDetails> getCoverageDetailsMap() {
-    return coverageDetailsMap;
   }
 }
