@@ -286,7 +286,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // If bloodhound is enabled, choose the next operation while considering the methods' weights.
     if (GenInputsAbstract.enable_bloodhound) {
       // Recompute the weights for all methods under tests at regular intervals.
-      bloodhound.processWeightsForOperations(10);
+      bloodhound.processWeightsForOperations(100);
       operation = bloodhound.getNextOperation();
     } else {
       operation = Randomness.randomMember(this.operations);

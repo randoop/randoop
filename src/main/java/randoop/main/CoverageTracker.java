@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.jacoco.core.analysis.*;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
@@ -72,46 +73,61 @@ public class CoverageTracker {
   }
 
   /**
+   * Instruments and loads into memory, each class that is under test.
+   *
+   * @param classNames {@code Set} containing the names of the classes under test.
+   */
+  public void instrumentAndLoadAllClasses(Set<String> classNames) {
+    if (classNames == null) {
+      return;
+    }
+
+    // Instrument and load into memory, each class that is under test.
+    for (String className : classNames) {
+      final byte[] instrumented;
+
+      final String resource = '/' + className.replace('.', '/') + ".class";
+      InputStream original = getClass().getResourceAsStream(resource);
+
+      if (original == null) {
+        System.err.println("No resource with name: " + resource + " found!");
+        continue;
+      }
+
+      try {
+        // Instrument the class to prepare for coverage collection later.
+        instrumented = instrumenter.instrument(original, className);
+        original.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+        continue;
+      }
+
+      memoryClassLoader.addDefinition(className, instrumented);
+    }
+  }
+
+  /**
    * Returns the instrumented version of the class.
    *
-   * @param targetName name of the class
+   * @param className name of the class
    * @return {@Code Class} object that has been instrumented for coverage data collection. null if
    *     class with target name cannot be found.
    */
-  public Class<?> getInstrumentedClass(String targetName) {
-    if (targetName == null || targetName.isEmpty()) {
+  public Class<?> getInstrumentedClass(String className) {
+    if (className == null || className.isEmpty()) {
       return null;
     }
 
-    Class<?> instrumentedClass = instrumentedClasses.get(targetName);
+    // Check our cache first, to see if this class has already been loaded.
+    Class<?> instrumentedClass = instrumentedClasses.get(className);
     if (instrumentedClass != null) {
-      System.out.println(">>LOADED " + targetName);
       return instrumentedClass;
     }
 
-    final String resource = '/' + targetName.replace('.', '/') + ".class";
-    InputStream original = getClass().getResourceAsStream(resource);
-    final byte[] instrumented;
-
-    if (original == null) {
-      System.err.println("No resource with name: " + resource + " found!");
-      return null;
-    }
-
     try {
-      // Instrument the class to prepare for coverage collection later.
-      instrumented = instrumenter.instrument(original, targetName);
-      original.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-      return null;
-    }
-
-    System.out.println(">>LOADING " + targetName);
-    memoryClassLoader.addDefinition(targetName, instrumented);
-    try {
-      instrumentedClass = memoryClassLoader.loadClass(targetName);
-      instrumentedClasses.put(targetName, instrumentedClass);
+      instrumentedClass = memoryClassLoader.loadClass(className);
+      instrumentedClasses.put(className, instrumentedClass);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
@@ -142,9 +158,9 @@ public class CoverageTracker {
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
       for (final IMethodCoverage cm : cc.getMethods()) {
         String methodName = cc.getName() + "." + cm.getName();
-        System.out.println(methodName);
-        System.out.println("Total branches: " + cm.getBranchCounter().getTotalCount());
-        System.out.println("Missed count: " + cm.getBranchCounter().getMissedCount());
+//        System.out.println(methodName);
+//        System.out.println("Total branches: " + cm.getBranchCounter().getTotalCount());
+//        System.out.println("Missed count: " + cm.getBranchCounter().getMissedCount());
 
         CoverageDetails methodDetails = coverageDetailsMap.get(methodName);
         if (methodDetails == null) {
@@ -156,7 +172,7 @@ public class CoverageTracker {
         coverageDetailsMap.put(methodName, methodDetails);
       }
     }
-    System.out.println("---------------------------");
+//    System.out.println("---------------------------");
   }
 
   /** Clean up the coverage tracker instance. */

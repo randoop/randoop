@@ -83,6 +83,10 @@ public class Bloodhound {
 
       // Collect coverage information of all methods under test.
       CoverageTracker.instance.collect();
+
+      //      for (TypedOperation to : methodWeights.keySet()) {
+      //        System.out.println(to + " " + methodWeights.get(to));
+      //      }
     }
 
     // The number of methods under test, corresponds to |M| in the GRT paper.
@@ -108,30 +112,34 @@ public class Bloodhound {
           numSuccessfulInvocation = 0;
         }
 
-        // Uncovered branch ratio of this method. Corresponds to uncovRatio(m) in the GRT paper.
-        double uncoveredRatio = 0.5;
-        if (covDet.getNumBranches() != 0) {
-          uncoveredRatio = (double) covDet.getUncoveredBranches() / covDet.getNumBranches();
-        }
+        // If this method has no uncovered branches, or it's been invoked the current maximum number
+        // of times, use the default weight and skip this step.
+        if (covDet.getUncoveredBranches() != 0 && numSuccessfulInvocation != maxSuccessfulCalls) {
+          // Uncovered branch ratio of this method. Corresponds to uncovRatio(m) in the GRT paper.
+          double uncoveredRatio = 0.5;
+          if (covDet.getNumBranches() != 0) {
+            uncoveredRatio = (double) covDet.getUncoveredBranches() / covDet.getNumBranches();
+          }
 
-        // Call ratio of this method. Corresponds to succ(m) / maxSucc(M) in the GRT paper.
-        double callRatio = 0.5;
-        if (maxSuccessfulCalls != 0) {
-          callRatio = numSuccessfulInvocation.doubleValue() / maxSuccessfulCalls;
-        }
+          // Call ratio of this method. Corresponds to succ(m) / maxSucc(M) in the GRT paper.
+          double callRatio = 0.5;
+          if (maxSuccessfulCalls != 0) {
+            callRatio = numSuccessfulInvocation.doubleValue() / maxSuccessfulCalls;
+          }
 
-        // Corresponds to w(m, 0) in the GRT paper.
-        weight = alpha * uncoveredRatio + (1 - alpha) * (1 - callRatio);
+          // Corresponds to w(m, 0) in the GRT paper.
+          weight = alpha * uncoveredRatio + (1 - alpha) * (1 - callRatio);
 
-        // Corresponds to the k variable in the GRT paper.
-        Integer numSelectionsOfMethod = methodSelections.get(operation);
-        if (numSelectionsOfMethod != null) {
-          // Corresponds to the case where k >= 1.
-          double val1 =
-              (-3.0 / Math.log(1 - p))
-                  * (Math.pow(p, numSelectionsOfMethod) / numSelectionsOfMethod);
-          double val2 = 1.0 / Math.log(numOperations + 3);
-          weight *= Math.max(val1, val2);
+          // Corresponds to the k variable in the GRT paper.
+          Integer numSelectionsOfMethod = methodSelections.get(operation);
+          if (numSelectionsOfMethod != null) {
+            // Corresponds to the case where k >= 1.
+            double val1 =
+                (-3.0 / Math.log(1 - p))
+                    * (Math.pow(p, numSelectionsOfMethod) / numSelectionsOfMethod);
+            double val2 = 1.0 / Math.log(numOperations + 3);
+            weight *= Math.max(val1, val2);
+          }
         }
       }
 

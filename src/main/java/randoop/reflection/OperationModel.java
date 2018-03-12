@@ -467,15 +467,15 @@ public class OperationModel {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
 
+    // Need to load in instrumented versions of all classes under test first.
+    CoverageTracker.instance.instrumentAndLoadAllClasses(classnames);
+
     // Collect classes under test
     Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
     for (String classname : classnames) {
-      Class<?> c = getClass(classname, errorHandler);
-      if (c != null) {
-        // Instrument the class for coverage collection.
-        c = CoverageTracker.instance.getInstrumentedClass(c.getName());
-      }
-      //       Note that c could be null if errorHandler just warns on bad names
+      Class<?> c = CoverageTracker.instance.getInstrumentedClass(classname);
+
+      // Note that c could be null if errorHandler just warns on bad names
       if (c != null && !visitedClasses.contains(c)) {
         visitedClasses.add(c);
 
@@ -507,11 +507,7 @@ public class OperationModel {
     // Collect covered classes
     for (String classname : coveredClassesGoalNames) {
       if (!classnames.contains(classname)) {
-        Class<?> c = getClass(classname, errorHandler);
-        if (c != null) {
-          //         Instrument the class for coverage collection.
-          c = CoverageTracker.instance.getInstrumentedClass(c.getName());
-        }
+        Class<?> c = CoverageTracker.instance.getInstrumentedClass(classname);
         if (c != null) {
           if (!visibility.isVisible(c)) {
             System.out.println(

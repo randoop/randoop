@@ -8,6 +8,7 @@ public class MemoryClassLoader extends ClassLoader {
   // Map from class name to the byte representation of the class.
   private final Map<String, byte[]> definitions = new HashMap<>();
 
+  // Map from class name to class object.
   private final Map<String, Class<?>> loadedClasses = new HashMap<>();
 
   /**
@@ -20,31 +21,31 @@ public class MemoryClassLoader extends ClassLoader {
     definitions.put(name, bytes);
   }
 
+  /**
+   * Loads the class with the given name into this ClassLoader.
+   *
+   * @param name name of the class that is being loaded.
+   * @param resolve if true, resolve the class.
+   * @return the resulting {@code Class<?>} object.
+   * @throws ClassNotFoundException if class with name is not found.
+   */
   @Override
   protected Class<?> loadClass(final String name, final boolean resolve)
       throws ClassNotFoundException {
     Class<?> loadedClass = loadedClasses.get(name);
     if (loadedClass != null) {
-      System.out.println("LOADED " + name);
       return loadedClass;
     }
-    System.out.println("LOADING " + name);
 
     final byte[] bytes = definitions.get(name);
     if (bytes != null) {
       loadedClass = defineClass(name, bytes, 0, bytes.length);
     } else {
-      try {
-        loadedClass = CoverageTracker.instance.getInstrumentedClass(name);
-      } catch (SecurityException e) {
-        loadedClass = null;
-      }
-      if (loadedClass == null) {
-        loadedClass = super.loadClass(name, resolve);
-      }
+      loadedClass = super.loadClass(name, resolve);
     }
 
     loadedClasses.put(name, loadedClass);
+
     return loadedClass;
   }
 }
