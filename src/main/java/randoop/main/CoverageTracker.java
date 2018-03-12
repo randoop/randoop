@@ -3,9 +3,7 @@ package randoop.main;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import org.jacoco.core.analysis.*;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
@@ -30,11 +28,11 @@ public class CoverageTracker {
   private final Instrumenter instrumenter;
   private final RuntimeData data;
 
-  // Set of names of the classes whose coverage is being tracked and calculated.
-  private final Set<String> trackedClasses = new HashSet<>();
-
   // Map from method name to coverage details.
   private final Map<String, CoverageDetails> coverageDetailsMap = new HashMap<>();
+
+  // Map for all classes that are instrumented through the {@code CoverageTracker} class.
+  private final Map<String, Class<?>> instrumentedClasses = new HashMap<>();
 
   /**
    * Coverage details related to a single method under test. Tracks total number of branches and
@@ -85,6 +83,12 @@ public class CoverageTracker {
       return null;
     }
 
+    Class<?> instrumentedClass = instrumentedClasses.get(targetName);
+    if (instrumentedClass != null) {
+      System.out.println(">>LOADED " + targetName);
+      return instrumentedClass;
+    }
+
     final String resource = '/' + targetName.replace('.', '/') + ".class";
     InputStream original = getClass().getResourceAsStream(resource);
     final byte[] instrumented;
@@ -93,9 +97,6 @@ public class CoverageTracker {
       System.err.println("No resource with name: " + resource + " found!");
       return null;
     }
-
-    // Add the name of the class to the set of tracked classes.
-    trackedClasses.add(targetName);
 
     try {
       // Instrument the class to prepare for coverage collection later.
@@ -106,13 +107,15 @@ public class CoverageTracker {
       return null;
     }
 
+    System.out.println(">>LOADING " + targetName);
     memoryClassLoader.addDefinition(targetName, instrumented);
     try {
-      return memoryClassLoader.loadClass(targetName);
+      instrumentedClass = memoryClassLoader.loadClass(targetName);
+      instrumentedClasses.put(targetName, instrumentedClass);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
-    return null;
+    return instrumentedClass;
   }
 
   /** Collect coverage information for all methods under test. Updates the coverageDetailsMap. */
@@ -124,7 +127,7 @@ public class CoverageTracker {
     Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 
     // Analyze the coverage of each of the tracked classes.
-    for (String className : trackedClasses) {
+    for (String className : instrumentedClasses.keySet()) {
       String resource = '/' + className.replace('.', '/') + ".class";
       InputStream original = getClass().getResourceAsStream(resource);
       try {

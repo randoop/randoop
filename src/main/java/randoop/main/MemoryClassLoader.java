@@ -25,14 +25,23 @@ public class MemoryClassLoader extends ClassLoader {
       throws ClassNotFoundException {
     Class<?> loadedClass = loadedClasses.get(name);
     if (loadedClass != null) {
+      System.out.println("LOADED " + name);
       return loadedClass;
     }
+    System.out.println("LOADING " + name);
 
     final byte[] bytes = definitions.get(name);
     if (bytes != null) {
       loadedClass = defineClass(name, bytes, 0, bytes.length);
     } else {
-      loadedClass = super.loadClass(name, resolve);
+      try {
+        loadedClass = CoverageTracker.instance.getInstrumentedClass(name);
+      } catch (SecurityException e) {
+        loadedClass = null;
+      }
+      if (loadedClass == null) {
+        loadedClass = super.loadClass(name, resolve);
+      }
     }
 
     loadedClasses.put(name, loadedClass);
