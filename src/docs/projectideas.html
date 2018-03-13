@@ -19,6 +19,7 @@
           <li><a href="#mimic-real-call-sequences">Mimic real call sequences</a></li>
         </ul></li>
       <li><a href="#better-choice-of-arguments">Better choice of arguments</a></li>
+      <li><a href="#Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</a></li>
       <li><a href="#creating-independent-tests">Creating independent tests</a>
         <ul>
           <li><a href="#Approach_1:_Undo_state_changes">Approach 1: Undo state changes</a></li>
@@ -189,6 +190,46 @@ produced by the <code>setY()</code> method.</p>
 <p>As another example, Randoop could choose objects that are most likely to
 achieve additional coverage in the called method, perhaps because the
 values will cause particular branches to be taken.</p>
+
+
+<h2 id="Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</h2>
+
+<p>
+<a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT (Guided
+Random Testing)</a> is a variant of the Randoop test generator that adds some
+features to Randoop.  In a recent competition among testing tools, GRT won.
+</p>
+
+<p>
+Programmers who want to use GRT are out of luck, because GRT's source code isn't
+available.  Furthermore, some of the features that GRT claims were already part
+of Randoop, which casts doubt on the experimental methodology.  It is certain
+that some of GRT's ideas are good ones, but we don't know which ones.
+</p>
+
+<p>
+GRT's techniques are
+</p>
+
+<dl>
+<dt>Constant mining (static)</dt>
+<dd>Extract constants from the program under test for both global usage (seed the main object pool) and for local usage as inputs for specific methods.</dd>
+<dt>Impurity (static + dynamic)</dt>
+<dd>Perform static purity analysis for all methods under test. At run-time, fuzz selected input from the object pool based on a Gaussian distribution
+and purity results.</dd>
+<dt>Elephant brain (dynamic)</dt>
+<dd>Manage method sequences (to create inputs) in the object pool with the exact types obtained at run-time.</dd>
+<dt>Detective (static + dynamic)</dt>
+<dd>Analyze the method input and return type dependency statically, and construct missing input data on demand at run-time.</dd>
+<dt>Orienteering (dynamic)</dt>
+<dd>Favor method sequences that require lower cost to execute, which accelerates testing for other components.</dd>
+<dt>Bloodhound (dynamic)</dt>
+<dd>Guide method selection and sequence generation by coverage information at run-time.</dd>
+</dl>
+
+<p>
+The goal of this project is to re-implement some or all the GRT techniques in the open-source <a href="https://randoop.github.io/randoop/">Randoop</a> implementation, and then to evaluate the benefits of each one.
+</p>
 
 
 <h2 id="creating-independent-tests">Creating independent tests</h2>
