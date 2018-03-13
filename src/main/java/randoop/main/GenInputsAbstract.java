@@ -706,18 +706,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file to which to log lots of information. If not specified, no logging is done. Enabling the
    * logs slows down Randoop.
    */
-  @Option("<filename> Name of a file to which to log lots of information")
+  @Option("<filename> Log lots of information to this file")
   public static FileWriter log = null;
 
   /**
    * A file to which to log selections; helps find sources of non-determinism. If not specified, no
    * logging is done.
    */
-  @Option("<filename> File to which to log each random selection")
+  @Option("<filename> Log each random selection to this file")
   public static FileWriter selection_log = null;
 
   /** A file to which to log the operation usage history. */
-  @Option("Track and log operation usage counts to this file")
+  @Option("<filename> Log operation usage counts to this file")
   public static FileWriter operation_history_log = null;
 
   @Option("Display source if a generated test contains a compilation error.")
