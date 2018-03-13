@@ -2304,11 +2304,16 @@ Two possible reasons for a long-running test are:
 <h3 id="nontermination">Randoop does not terminate</h3>
 
 <p>
-If Randoop does not terminate, that might be because Randoop is creating
+When Randoop does not terminate, that is usually because Randoop is creating
 tests that do not terminate (or that execute for a very long time).
-Here are three ways to deal with the problem.
 </p>
 <ul>
+  <li>
+    Determine the test that is currently executing.  Use
+    the <a href="#option:usethreads"><code>--log=filename</code></a>
+    command-line option, and the currently-executing test should be at the
+    end of the file.
+  </li>
   <li>
     Determine which calls are executing by examining the stack trace.
     Use the <a
@@ -2329,12 +2334,11 @@ Here are three ways to deal with the problem.
     which any directly-called method takes
     <a href="#option:usethreads"><code>too long</code></a> to run.
   </li>
-  <li>
-    If you suspect the problem may be a bug in Randoop, use the
-    <code>--log=filename</code> command-line option, and either examine the
-    log or send it to the Randoop developers for diagnosis.
-  </li>
 </ul>
+
+<p>
+If you cannot fix the problem that causes the long execution, you might want to <a href="option:omitmethods">exclude the method</a> from testing.
+</p>
 
 
 <h3 id="different-output">Randoop produces different output on different runs</h3>
