@@ -365,7 +365,7 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
   </li>
   <li> <i>M</i> does not match any of the patterns given
        via <a href="#option:omitmethods"><code>--omitmethods</code></a>.
-       or <a href="#option:omitmethods_list"><code>--omitmethods-list</code></a>.
+       or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>.
        </li>
   <li> All of the following are accessible from the package of the tests
        (set with <a href="#option:junit-package-name"><code>--junit-package-name</code></a>):
@@ -509,7 +509,7 @@ succinct: it shows a small number of method calls leading up to the
 assertion violation. Because Randoop's generation is random, the actual
 test revealing the error can be significantly longer, and contain many
 irrelevant calls that are not necessary to reveal the contract violation.
-You may wish to <a href="#minimize_failing_test_suite">minimize the test
+You may wish to <a href="#minimize">minimize the test
 case</a> to ease debugging.
 </p>
 
@@ -706,15 +706,16 @@ Here is how Randoop attempts to generate a test:
   </li>
   <li>
     the number of attempts to generate a sequence reaches the step limit
-    (<a href="#option:attemtedLimit"><code>--attemptedLimit</code></a>), or
+    (<a href="#option:attemted-limit"><code>--attempted-limit</code></a>), or
   </li>
   <li>
     the number of generated sequences reaches the input limit
-    (<a href="#option:generatedLimit"><code>--generatedLimit</code></a>), or
+
+    (<a href="#option:generated-limit"><code>--generated-limit</code></a>), or
   </li>
   <li>
     the number of error-revealing and regression tests reaches the output
-    limit (<a href="#option:outputLimit"><code>--outputLimit</code></a>).
+    limit (<a href="#option:output-limit"><code>--output-limit</code></a>).
   </li>
   <li>
     one error-revealing test is generated, and
@@ -1398,9 +1399,11 @@ An example mock class is
 To simplify your replacement file and keep your mock classes organized, it
 is recommended that you choose a package prefix and keep the package
 structure of the original classes.
-The example file uses <code>randoop.mock</code> as the prefix, so the fully-qualified
-name of the <code>JOptionPane</code> mock class is <code>randoop.mock.javax.swing.JOptionPane</code>.
-(You may need to <a href="replacecall-load-exclusions">exclude</a> this package if any of the replacement methods use otherwise replaced methods.)
+The example file uses <code>randoop.mock</code> as the prefix, so the
+fully-qualified name of the <code>JOptionPane</code> mock class
+is <code>randoop.mock.javax.swing.JOptionPane</code>.  (You may need
+to <a href="#replacecall-load-exclusions">exclude</a> this package if any
+of the replacement methods use otherwise replaced methods.)
 </p>
 
 <p>
@@ -1444,9 +1447,9 @@ expected behavior, or invalid.
 </p>
 
 <p>
-You can specify both <a href="#method-specifications">the behavior of
+You can specify both <a href="#spec-json-method-specifications">the behavior of
 methods and constructors</a>,
-and <a href="#representation-invariants">representation invariants for
+and <a href="#checkrep">representation invariants for
 classes</a>.
 </p>
 
@@ -1495,7 +1498,7 @@ where only the <code>operation</code> field is required.
 A method signature uniquely describes a method.  It consists of the
 declaring class, method name, and parameter types.  Types are given in the
 format used
-by <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--"><code>Class.forName()</code></a>;
+by <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--"><code>Class.forName()</code></a>;
 for example, member classes are set off with "<code>$</code>", as
 in <code>pkg.Class$InnerClass</code>.
 </p>
@@ -1734,7 +1737,7 @@ Randoop classifies a test sequence according to its last method call.
   </li>
   <li>
     Otherwise, the sequence is classified according to the
-    rules of <a href="#classifying-tests">classifying tests</a>.
+    rules of <a href="#classifying_tests">classifying tests</a>.
   </li>
 </ol>
 
@@ -2086,7 +2089,7 @@ Randoop's <a href="#replacecall">replacecall agent</a>.
 <li>
 Prevent Randoop from directly calling problematic methods.
 Use the <a href="#option:omitmethods"><code>--omitmethods</code></a> 
-or <a href="#option:omitmethods_list"><code>--omitmethods-list</code></a>
+or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>
 command-line argument.
 </li>
 
@@ -2094,7 +2097,7 @@ command-line argument.
 Instruct Randoop to attempt to discard or repair any flaky tests that it
 generates.
 Use the
-<a href="#option:ignore-flaky-tests"><code>--ignore-flaky-tests</code></a>
+<a href="#option:flaky-test-behavior"><code>--flaky-test-behavior</code></a>
 command-line argument.
 This is a last resort because Randoop may output a small test suite due to
 discarding many of the generated tests.

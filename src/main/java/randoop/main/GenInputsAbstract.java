@@ -62,7 +62,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // Javadoc is pasted into the manual, but not in Javadoc proper.
   /**
    * A file containing a list of methods and constructors to test, each given as a <a
-   * href="#fully-qualified-signature">fully-qualified signature</a> on a separate line.
+   * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+   * signature</a> on a separate line.
    *
    * <p>These methods augment any methods from classes given by the {@code --testclass} or {@code
    * --classlist} options.
@@ -78,9 +79,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * not prevent indirect calls to such methods from other, allowed methods.
    *
    * <p>Randoop will not directly call a method whose <a
-   * href="#fully-qualified-signature">fully-qualified signature</a> matches the regular expression,
-   * or a method inherited from a superclass or interface whose signature matches the regular
-   * expression.
+   * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+   * signature</a> matches the regular expression, or a method inherited from a superclass or
+   * interface whose signature matches the regular expression.
    *
    * <p>If the regular expression contains anchors "{@code ^}" and "{@code $}", they refer to the
    * beginning and the end of the signature string.
