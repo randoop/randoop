@@ -19,6 +19,7 @@
           <li><a href="#mimic-real-call-sequences">Mimic real call sequences</a></li>
         </ul></li>
       <li><a href="#better-choice-of-arguments">Better choice of arguments</a></li>
+      <li><a href="#known-bad-arguments">Avoid known bad arguments</a></li>
       <li><a href="#Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</a></li>
       <li><a href="#creating-independent-tests">Creating independent tests</a>
         <ul>
@@ -190,6 +191,35 @@ produced by the <code>setY()</code> method.</p>
 <p>As another example, Randoop could choose objects that are most likely to
 achieve additional coverage in the called method, perhaps because the
 values will cause particular branches to be taken.</p>
+
+
+<h2 id="known-bad-arguments">Avoid known bad arguments</h2>
+
+<p>
+Sometimes Randoop creates tests that do not terminate or that take a long time to execute.
+For example, Randoop once tried to create a <a href="https://github.com/randoop/randoop/issues/315">test that executed an enormously large exponentiation</a>:
+</p>
+
+<pre><code>
+bigFraction3 = -104 / 5
+bigInteger25 = 1561321067192303346130420089702102441699871430851380131368332415577876285112504379523988395794851806993803452448222179606997671319406528676747268949561732973027887
+bigFraction3.pow(bigInteger25);
+</code></pre>
+
+<p>
+Such a call will not terminate in a reasonable amount of time.
+</p>
+
+<p>
+To detect infinitely-looping tests, Randoop can run with
+the <code>--usethreads</code> command-line option.  However, that reduces
+performance.
+</p>
+
+<p>
+When a programmer can characterize which inputs to a method are reasonable,
+it would be nice for Randoop to avoid creating such tests.
+</p>
 
 
 <h2 id="Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</h2>
