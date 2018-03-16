@@ -29,7 +29,7 @@ public class BinTree {
   //----
   private static void outputTestSequence(int number) {}
 
-  public static Set<String> tests = new HashSet<>();
+  public static Set<String> branchFingerprints = new HashSet<>();
 
   // private static Set abs_states = new HashSet();
 
@@ -39,7 +39,6 @@ public class BinTree {
     String res = br + ",";
     //For Basic Block Coverage
     //START comment here
-
     BTNode temp;
     if (n0 == null) {
       res += "-";
@@ -65,12 +64,12 @@ public class BinTree {
     }
     //End comment here
 
-    if (!tests.contains(res)) {
-      tests.add(res);
-      System.out.println("Test case number " + tests.size() + " for '" + res + "': ");
+    if (!branchFingerprints.contains(res)) {
+      branchFingerprints.add(res);
+      System.out.println("Test case number " + branchFingerprints.size() + " for '" + res + "': ");
       // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
-      counter = tests.size();
-      return tests.size();
+      counter = branchFingerprints.size();
+      return branchFingerprints.size();
     }
     return 0;
   }

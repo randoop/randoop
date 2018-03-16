@@ -31,72 +31,67 @@ public class FibHeap {
   //   @NotPartOfState
   private Vector<Node> cachedNodes = new Vector<>();
 
-  public static Set<String> tests = new HashSet<>();
+  /**
+   * Gives information similar to branch coverage. Each element is created by {@link #gen}. Each
+   * element is a string of the form branchNumber + "," + node1 + node2 + extra, where branchNumber
+   * is a branch output in the program and nodeN is a brief string fingerprint of the node; see
+   * {@link #nodeRepresentation}.
+   */
+  // TODO: RENAME
+  public static Set<String> branchFingerprints = new HashSet<>();
 
   // private static Set abs_states = new HashSet();
 
   public static int counter = 0;
 
-  private static int gen_native(int br, Node n, Node m) {
+  /** Return a string "1" or "0" depending on whether the argument is true or false. */
+  private static String asBinary(boolean b) {
+    return b ? "1" : "0";
+  }
 
-    String res = br + ",";
-    //        For Basic Block Coverage
-    //        START comment here
-
-    Node temp;
-
+  /**
+   * Given a node, produces a 5-character fingerprint of the node, where each character is '0' or
+   * '1'. Returns "null" if the argument is null.
+   */
+  private static String nodeRepresentation(Node n) {
     if (n == null) {
-      res += "null";
+      return "null";
     } else {
-      temp = n.child;
-      res += (temp == null) ? "1" : "0";
-      temp = n.parent;
-      res += (temp == null) ? "1" : "0";
-      temp = n.right;
-      res += (temp == n) ? "1" : "0";
-      temp = n.left;
-      res += (temp == n) ? "1" : "0";
-      int deg = n.degree;
-      res += (deg == 0) ? "1" : "0";
-    }
-    if (m == null) {
-      res += "null";
-    } else {
-      temp = m.child;
-      res += (temp == null) ? "1" : "0";
-      temp = m.parent;
-      res += (temp == null) ? "1" : "0";
-      temp = m.right;
-      res += (temp == n) ? "1" : "0";
-      temp = m.left;
-      res += (temp == n) ? "1" : "0";
-      int deg = m.degree;
-      res += (deg == 0) ? "1" : "0";
-    }
-    if (n != null && m != null) {
-      // commented out because of symbolic execution...
-      //        int temp2;
-      //        temp = n.cost;
-      //        temp2 = n.cost;
-      //        res += (temp>temp2)?"1":"0";
-      temp = n.child;
-      res += (temp == m) ? "1" : "0";
-      temp = m.child;
-      res += (temp == n) ? "1" : "0";
-    }
-    //For Basic Block Coverage
-    //END comment here
 
-    if (!tests.contains(res)) {
-      tests.add(res);
+      return asBinary(n.child == null)
+          + asBinary(n.parent == null)
+          + asBinary(n.right == n)
+          + asBinary(n.left == n)
+          + asBinary(n.degree == 0);
+    }
+  }
+
+  private static int gen_native(int br, Node n, Node m) {
+    String branchCoverage = br + "," + nodeRepresentation(n) + nodeRepresentation(m);
+    // commented out because of symbolic execution...
+    //        branchCoverage += asBinary(n.cost>m.cost);
+    branchCoverage += asBinary(n.child == m) + asBinary(m.child == n);
+
+    if (!branchFingerprints.contains(branchCoverage)) {
+      branchFingerprints.add(branchCoverage);
       // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
-      System.out.println("Test case number " + tests.size() + " for '" + res + "': ");
-      counter = tests.size();
-      return tests.size();
+      System.out.println(
+          "Test case number " + branchFingerprints.size() + " for '" + branchCoverage + "': ");
+      counter = branchFingerprints.size();
+      return branchFingerprints.size();
     }
     return 0;
   }
 
+  /**
+   * This method constructs a string representation of its three arguments and inserts that in the
+   * {@link #branchFingerprints} set; see it for documentation of the output of this method.
+   *
+   * <p>In this file, gen() is called as the first statement, on both branches of every conditional.
+   * Therefore, at the end of execution, {@link #branchFingerprints} contains very fine-grained
+   * information about branch coverege: for each branch, each time it was executed, the relevant
+   * node(s).
+   */
   private static void gen(int br, Node n, Node m) { //SPECIFY
     int c = gen_native(br, n, m); //SPECIFY
     if (c != 0) outputTestSequence(c);
@@ -115,7 +110,9 @@ public class FibHeap {
         cut(y, z);
         cascadingCut(z);
       }
-    else gen(2, y, null);
+    else {
+      gen(2, y, null);
+    }
   }
 
   private void consolidate() {
@@ -146,7 +143,9 @@ public class FibHeap {
           Node temp = y;
           y = x;
           x = temp;
-        } else gen(7, x, y);
+        } else {
+          gen(7, x, y);
+        }
         link(y, x);
         A[d] = null;
         d++;
@@ -172,7 +171,9 @@ public class FibHeap {
           if (A[i].cost < min.cost) {
             gen(10, A[i], min);
             min = A[i];
-          } else gen(11, A[i], min);
+          } else {
+            gen(11, A[i], min);
+          }
         } else {
           gen(12, A[i], null);
           min = A[i];
@@ -186,11 +187,15 @@ public class FibHeap {
     if (y.child == x) {
       gen(13, x, y);
       y.child = x.right;
-    } else gen(20, x, y);
+    } else {
+      gen(20, x, y);
+    }
     if (y.degree == 0) {
       gen(14, y, x);
       y.child = null;
-    } else gen(24, x, y);
+    } else {
+      gen(24, x, y);
+    }
     x.left = min;
     x.right = min.right;
     min.right = x;

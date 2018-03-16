@@ -31,7 +31,7 @@ public class TreeMap {
 
   private native boolean checkAbstractState(int which);
 
-  public static Set<String> tests = new HashSet<>();
+  public static Set<String> branchFingerprints = new HashSet<>();
 
   public static int counter = 0;
 
@@ -40,7 +40,6 @@ public class TreeMap {
     String res = br + ",";
     //For Basic Block Coverage
     //START comment here
-
     if (e == null) {
       res += "entry=null";
     } else {
@@ -57,13 +56,13 @@ public class TreeMap {
     //For Basic Block Coverage
     //END comment here
 
-    if (!tests.contains(res)) {
-      tests.add(res);
+    if (!branchFingerprints.contains(res)) {
+      branchFingerprints.add(res);
       // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
-      System.out.println("Test case number " + tests.size() + " for '" + res + "': ");
+      System.out.println("Test case number " + branchFingerprints.size() + " for '" + res + "': ");
       //System.out.println("tree = " + tree);
-      counter = tests.size();
-      return tests.size();
+      counter = branchFingerprints.size();
+      return branchFingerprints.size();
     }
     return 0;
   }
