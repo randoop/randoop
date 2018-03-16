@@ -37,7 +37,6 @@ public class FibHeap {
    * is a branch output in the program and nodeN is a brief string fingerprint of the node; see
    * {@link #nodeRepresentation}.
    */
-  // TODO: RENAME
   public static Set<String> branchFingerprints = new HashSet<>();
 
   // private static Set abs_states = new HashSet();
