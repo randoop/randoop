@@ -123,7 +123,7 @@ public class ICSE07ContainersTest {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
-    final int numBranches = 96;
+    final int goalBranches = 96;
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(FibHeap.class);
@@ -133,7 +133,7 @@ public class ICSE07ContainersTest {
         new IStopper() {
           @Override
           public boolean shouldStop() {
-            return FibHeap.branchFingerprints.size() >= numBranches;
+            return FibHeap.branchFingerprints.size() >= goalBranches;
           }
         };
     Set<String> excludeNames = new TreeSet<>();
@@ -147,7 +147,7 @@ public class ICSE07ContainersTest {
         Pattern.compile(
             "decreaseKey|delete\\(randoop.test.issta2006.Node\\)|empty\\(\\)|insert\\(randoop.test.issta2006.Node\\)|min\\(\\)|size\\(\\)|union"));
     runRandoop("FibHeap", classList, omitPatterns, stopper, excludeNames);
-    assertEquals(numBranches, FibHeap.branchFingerprints.size());
+    assertEquals(goalBranches, FibHeap.branchFingerprints.size());
   }
 
   @Test
@@ -155,7 +155,7 @@ public class ICSE07ContainersTest {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
-    final int numBranches = 54;
+    final int goalBranches = 54;
     GenInputsAbstract.null_ratio = 0.5;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinTree.class);
@@ -164,7 +164,7 @@ public class ICSE07ContainersTest {
         new IStopper() {
           @Override
           public boolean shouldStop() {
-            return BinTree.branchFingerprints.size() >= numBranches;
+            return BinTree.branchFingerprints.size() >= goalBranches;
           }
         };
     Set<String> excludeNames = new TreeSet<>();
@@ -176,7 +176,7 @@ public class ICSE07ContainersTest {
     List<Pattern> omitPatterns = new ArrayList<>();
     omitPatterns.add(Pattern.compile("find\\(int\\)|gen_native"));
     runRandoop("BinTree", classList, omitPatterns, stopper, excludeNames);
-    assertEquals(numBranches, BinTree.branchFingerprints.size());
+    assertEquals(goalBranches, BinTree.branchFingerprints.size());
   }
 
   @Test
@@ -184,7 +184,7 @@ public class ICSE07ContainersTest {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
-    final int numBranches = 106;
+    final int goalBranches = 106;
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(TreeMap.class);
@@ -193,7 +193,7 @@ public class ICSE07ContainersTest {
         new IStopper() {
           @Override
           public boolean shouldStop() {
-            return TreeMap.branchFingerprints.size() >= numBranches;
+            return TreeMap.branchFingerprints.size() >= goalBranches;
           }
         };
     Set<String> excludeNames = new TreeSet<>();
@@ -207,7 +207,7 @@ public class ICSE07ContainersTest {
         Pattern.compile(
             "toString\\(\\)|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"));
     runRandoop("TreeMap", classList, omitPatterns, stopper, excludeNames);
-    assertEquals(numBranches, TreeMap.branchFingerprints.size());
+    assertEquals(goalBranches, TreeMap.branchFingerprints.size());
   }
 
   @Test
@@ -215,7 +215,7 @@ public class ICSE07ContainersTest {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
-    final int numBranches = 101;
+    final int goalBranches = 101;
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinomialHeap.class);
@@ -224,7 +224,7 @@ public class ICSE07ContainersTest {
         new IStopper() {
           @Override
           public boolean shouldStop() {
-            return BinomialHeap.branchFingerprints.size() >= numBranches;
+            return BinomialHeap.branchFingerprints.size() >= goalBranches;
           }
         };
     Set<String> excludeNames = new TreeSet<>();
@@ -236,6 +236,6 @@ public class ICSE07ContainersTest {
     List<Pattern> omitPatterns = new ArrayList<>();
     omitPatterns.add(Pattern.compile("findMinimum\\(\\)"));
     runRandoop("BinomialHeap", classList, omitPatterns, stopper, excludeNames);
-    assertEquals(numBranches, randoop.test.issta2006.BinomialHeap.branchFingerprints.size());
+    assertEquals(goalBranches, randoop.test.issta2006.BinomialHeap.branchFingerprints.size());
   }
 }

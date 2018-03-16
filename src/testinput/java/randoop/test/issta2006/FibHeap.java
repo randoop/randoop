@@ -57,7 +57,6 @@ public class FibHeap {
     if (n == null) {
       return "null";
     } else {
-
       return asBinary(n.child == null)
           + asBinary(n.parent == null)
           + asBinary(n.right == n)
