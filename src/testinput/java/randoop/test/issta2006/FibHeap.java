@@ -65,10 +65,20 @@ public class FibHeap {
   }
 
   private static int gen_native(int br, Node n, Node m) {
-    String res = br + "," + nodeFingerprint(n) + nodeFingerprint(m);
-    // commented out because of symbolic execution...
-    //        res += asBinary(n.cost>m.cost);
-    res += asBinary(n.child == m) + asBinary(m.child == n);
+    String res = br + ",";
+    //        For Basic Block Coverage
+    //        START comment here
+
+    res += nodeFingerprint(n);
+    res += nodeFingerprint(m);
+    if (n != null && m != null) {
+      // commented out because of symbolic execution...
+      //        res += asBinary(n.cost>m.cost);
+      res += asBinary(n.child == m);
+      res += asBinary(m.child == n);
+    }
+    //For Basic Block Coverage
+    //END comment here
 
     if (!branchFingerprints.contains(res)) {
       branchFingerprints.add(res);
