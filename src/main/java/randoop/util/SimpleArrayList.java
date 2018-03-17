@@ -4,21 +4,21 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrayListSimpleList<T> extends SimpleList<T> implements Serializable {
+public class SimpleArrayList<T> extends SimpleList<T> implements Serializable {
 
   private static final long serialVersionUID = 9155161101212598259L;
 
   public final ArrayList<T> theList;
 
-  public ArrayListSimpleList(ArrayList<T> list) {
+  public SimpleArrayList(ArrayList<T> list) {
     theList = new ArrayList<>(list);
   }
 
-  public ArrayListSimpleList() {
+  public SimpleArrayList() {
     theList = new ArrayList<>();
   }
 
-  public ArrayListSimpleList(int capacity) {
+  public SimpleArrayList(int capacity) {
     theList = new ArrayList<>(capacity);
   }
 

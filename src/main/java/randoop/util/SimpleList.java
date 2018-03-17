@@ -3,28 +3,24 @@ package randoop.util;
 import java.util.List;
 
 /**
- * List implementation used by Randoop to store the sequence of {@code Statement}s making up a
- * Sequence.
+ * Stores a sequence of items, much like a regular {@code List}. Subclasses exist that permit
+ * efficient appending and concatenation:
+ *
+ * <ul>
+ *   <li>{@link SimpleArrayList}: a typical list is stored as an array list.
+ *   <li>{@link ListOfLists}: a list that only stores pointers to its constituent sub-lists.
+ *   <li>{@link OneMoreElementList}: stores a SimpleList plus one additional final element.
+ * </ul>
  *
  * <p>IMPLEMENTATION NOTE
  *
  * <p>Randoop's main generator ({@link randoop.generation.ForwardGenerator ForwardGenerator})
- * creates new sequences by concatenating existing sequences and appending a statement at the end. A
- * naive implementation of concatenation copies the elements of the concatenated sub-sequences into
- * a new list. The first implementation of Sequence concatenation took this approach.
- *
- * <p>When profiling Randoop, we observed that naive concatenation took up a large portion of the
+ * creates new sequences by concatenating existing sequences and appending a statement at the end.
+ * When profiling Randoop, we observed that naive concatenation took up a large portion of the
  * tool's running time, and the component set (i.e. the set of stored sequences used to create more
  * sequences) quickly exhausted the memory available.
  *
- * <p>To improve memory and time efficiency, we now do concatenation differently. We store the list
- * of statements in a Sequence in a SimpleList, an abstract class that has three subclasses:
- *
- * <ul>
- *   <li>{@link ArrayListSimpleList}: a typical list is stored as an array list.
- *   <li>{@link ListOfLists}: a list that only stores pointers to its constituent sub-lists.
- *   <li>{@link OneMoreElementList}: stores a SimpleList plus one additional final element.
- * </ul>
+ * <p>To improve memory and time efficiency, we now do concatenation differently.
  *
  * <p>When concatenating N Sequences to create a new sequence, we store the concatenated sequence
  * statements in a ListofLists, which takes space (and creation time) proportional to N, not to the
