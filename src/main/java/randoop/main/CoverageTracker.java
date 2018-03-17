@@ -158,9 +158,9 @@ public class CoverageTracker {
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
       for (final IMethodCoverage cm : cc.getMethods()) {
         String methodName = cc.getName() + "." + cm.getName();
-//        System.out.println(methodName);
-//        System.out.println("Total branches: " + cm.getBranchCounter().getTotalCount());
-//        System.out.println("Missed count: " + cm.getBranchCounter().getMissedCount());
+        //        System.out.println(methodName);
+        //        System.out.println("Total branches: " + cm.getBranchCounter().getTotalCount());
+        //        System.out.println("Missed count: " + cm.getBranchCounter().getMissedCount());
 
         CoverageDetails methodDetails = coverageDetailsMap.get(methodName);
         if (methodDetails == null) {
@@ -172,7 +172,7 @@ public class CoverageTracker {
         coverageDetailsMap.put(methodName, methodDetails);
       }
     }
-//    System.out.println("---------------------------");
+    //    System.out.println("---------------------------");
   }
 
   /** Clean up the coverage tracker instance. */
