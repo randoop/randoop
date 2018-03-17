@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 public class ListOfListsSelectorTest {
@@ -24,10 +24,10 @@ public class ListOfListsSelectorTest {
   @BeforeClass
   public static void setUp() throws Exception {
 
-    ArrayListSimpleList<Integer> l1List = new ArrayListSimpleList<>();
-    ArrayListSimpleList<Integer> l2List = new ArrayListSimpleList<>();
+    SimpleArrayList<Integer> l1List = new SimpleArrayList<>();
+    SimpleArrayList<Integer> l2List = new SimpleArrayList<>();
     l2List.add(1);
-    ArrayListSimpleList<Integer> l3List = new ArrayListSimpleList<>();
+    SimpleArrayList<Integer> l3List = new SimpleArrayList<>();
     l3List.add(2);
     l3List.add(3);
 

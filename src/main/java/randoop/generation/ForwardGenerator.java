@@ -28,11 +28,11 @@ import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /** Randoop's forward, component-based generator. */
@@ -565,8 +565,7 @@ public class ForwardGenerator extends AbstractGenerator {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
-          candidateVars.add(
-              new ArrayListSimpleList<>(new ArrayList<>(typesToVars.getValues(match))));
+          candidateVars.add(new SimpleArrayList<Integer>(typesToVars.getValues(match)));
         }
 
         // If any type-compatible variables found, pick one at random as the
@@ -624,7 +623,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
         Log.logLine("Collection creation heuristic: will create helper of type " + classType);
-        ArrayListSimpleList<Sequence> l2 = new ArrayListSimpleList<>();
+        SimpleArrayList<Sequence> l2 = new SimpleArrayList<>();
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
         if (creationSequence != null) {
