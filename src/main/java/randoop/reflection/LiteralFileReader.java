@@ -54,10 +54,6 @@ public class LiteralFileReader {
     throw new Error("Do not instantiate");
   }
 
-  private static final String CLASSLITERALS = "CLASSLITERALS";
-  private static final String CLASSNAME = "CLASSNAME";
-  private static final String LITERALS = "LITERALS";
-
   /**
    * Returns a map from class to list of constants.
    *
@@ -73,8 +69,8 @@ public class LiteralFileReader {
           @Override
           public void processRecord(List<String> lines) {
 
-            if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals(CLASSNAME))) {
-              throwRecordSyntaxError("record does not begin with \"" + CLASSNAME + "\"", lines, 0);
+            if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals("CLASSNAME"))) {
+              throwRecordSyntaxError("record does not begin with \"CLASSNAME\"", lines, 0);
             }
 
             if (!(lines.size() >= 2)) {
@@ -90,8 +86,8 @@ public class LiteralFileReader {
             assert cls != null;
             ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(cls);
 
-            if (!(lines.size() >= 3 && lines.get(2).trim().toUpperCase().equals(LITERALS))) {
-              throwRecordSyntaxError("Missing field \"" + LITERALS + "\"", lines, 2);
+            if (!(lines.size() >= 3 && lines.get(2).trim().toUpperCase().equals("LITERALS"))) {
+              throwRecordSyntaxError("Missing field \"LITERALS\"", lines, 2);
             }
 
             for (int i = 3; i < lines.size(); i++) {
@@ -105,7 +101,7 @@ public class LiteralFileReader {
           }
         };
 
-    RecordListReader reader = new RecordListReader(CLASSLITERALS, processor);
+    RecordListReader reader = new RecordListReader("CLASSLITERALS", processor);
     reader.parse(inFile);
 
     return map;
