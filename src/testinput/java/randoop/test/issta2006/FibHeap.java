@@ -35,7 +35,7 @@ public class FibHeap {
    * Gives information similar to branch coverage. Each element is created by {@link #gen}. Each
    * element is a string of the form branchNumber + "," + node1 + node2 + extra, where branchNumber
    * is a branch output in the program and nodeN is a brief string fingerprint of the node; see
-   * {@link #nodeRepresentation}.
+   * {@link #nodeFingerprint}.
    */
   public static Set<String> branchFingerprints = new HashSet<>();
 
@@ -52,7 +52,7 @@ public class FibHeap {
    * Given a node, produces a 5-character fingerprint of the node, where each character is '0' or
    * '1'. Returns "null" if the argument is null.
    */
-  private static String nodeRepresentation(Node n) {
+  private static String nodeFingerprint(Node n) {
     if (n == null) {
       return "null";
     } else {
@@ -65,16 +65,15 @@ public class FibHeap {
   }
 
   private static int gen_native(int br, Node n, Node m) {
-    String branchCoverage = br + "," + nodeRepresentation(n) + nodeRepresentation(m);
+    String res = br + "," + nodeFingerprint(n) + nodeFingerprint(m);
     // commented out because of symbolic execution...
-    //        branchCoverage += asBinary(n.cost>m.cost);
-    branchCoverage += asBinary(n.child == m) + asBinary(m.child == n);
+    //        res += asBinary(n.cost>m.cost);
+    res += asBinary(n.child == m) + asBinary(m.child == n);
 
-    if (!branchFingerprints.contains(branchCoverage)) {
-      branchFingerprints.add(branchCoverage);
+    if (!branchFingerprints.contains(res)) {
+      branchFingerprints.add(res);
       // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
-      System.out.println(
-          "Test case number " + branchFingerprints.size() + " for '" + branchCoverage + "': ");
+      System.out.println("Test case number " + branchFingerprints.size() + " for '" + res + "': ");
       counter = branchFingerprints.size();
       return branchFingerprints.size();
     }
@@ -99,7 +98,7 @@ public class FibHeap {
 
   private void cascadingCut(Node y) {
     Node z = y.parent;
-    if (z != null)
+    if (z != null) {
       if (!y.mark) {
         gen(0, y, null);
         y.mark = true;
@@ -108,7 +107,7 @@ public class FibHeap {
         cut(y, z);
         cascadingCut(z);
       }
-    else {
+    } else {
       gen(2, y, null);
     }
   }

@@ -148,8 +148,6 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
   private static int gen_native(int br, BinomialHeapNode n1, BinomialHeapNode n2) {
     String res = br + ",";
     // For Basic Block Coverage
-    BinomialHeapNode temp, temp2;
-
     res += nodeFingerprint(n1);
     res += nodeFingerprint(n2);
     if (n1 != null && n2 != null) {
