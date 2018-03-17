@@ -111,11 +111,11 @@ public class Bloodhound {
 
         // If this method has no uncovered branches, or it's been invoked the current maximum number
         // of times, use the default weight and skip this step.
-        if (covDet.getUncoveredBranches() != 0 && numSuccessfulInvocation != maxSuccessfulCalls) {
+        if (covDet.uncoveredBranches != 0 && numSuccessfulInvocation != maxSuccessfulCalls) {
           // Uncovered branch ratio of this method. Corresponds to uncovRatio(m) in the GRT paper.
           double uncoveredRatio = 0.5;
-          if (covDet.getNumBranches() != 0) {
-            uncoveredRatio = (double) covDet.getUncoveredBranches() / covDet.getNumBranches();
+          if (covDet.numBranches != 0) {
+            uncoveredRatio = (double) covDet.uncoveredBranches / covDet.numBranches;
           }
 
           // Call ratio of this method. Corresponds to succ(m) / maxSucc(M) in the GRT paper.
@@ -149,7 +149,7 @@ public class Bloodhound {
    * Retrieve the next method for constructing a new sequence while also considering each method's
    * weights. Update the number of times the method has been selected.
    *
-   * @return the chosen {@code TypedOperation} for the new sequence.
+   * @return the chosen {@code TypedOperation} for the new sequence
    */
   public TypedOperation getNextOperation() {
     TypedOperation operation = Randomness.randomMemberWeighted(operationSimpleList, methodWeights);

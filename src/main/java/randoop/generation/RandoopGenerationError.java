@@ -44,7 +44,7 @@ public class RandoopGenerationError extends Error {
   /**
    * Return the {@code Throwable} for this error.
    *
-   * @return the {@code Throwable} for this error.
+   * @return the {@code Throwable} for this error
    */
   public Throwable getException() {
     return exception;

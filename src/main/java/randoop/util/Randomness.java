@@ -204,8 +204,9 @@ public final class Randomness {
                 + weight);
       }
       if (weight <= 0) {
+        System.out.println("Bad weights:");
         for (T to : weights.keySet()) {
-          System.out.println(to + "    " + weights.get(to));
+          System.out.println("  " + to + "    " + weights.get(to));
         }
         throw new BugInRandoopException("Weight should be positive: " + weight);
       }
