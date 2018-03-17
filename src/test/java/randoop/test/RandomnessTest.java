@@ -3,8 +3,8 @@ package randoop.test;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import junit.framework.TestCase;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
 import randoop.util.WeightedElement;
 
 public class RandomnessTest extends TestCase {
@@ -34,7 +34,7 @@ public class RandomnessTest extends TestCase {
     }
 
     // Create a list of weighted elements.
-    ArrayListSimpleList<WeightedElt> list = new ArrayListSimpleList<>();
+    SimpleArrayList<WeightedElt> list = new SimpleArrayList<>();
     int sumOfAllWeights = 0;
     for (int i = 1; i < 10; i++) {
       int weight = i;
