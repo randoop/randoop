@@ -24,7 +24,10 @@ The Randoop homepage is
 <ul>
   <li><a href="#Introduction">Introduction</a></li>
   <li><a href="#getting_randoop">Installing Randoop</a></li>
-  <li><a href="#running_randoop">Running Randoop</a></li>
+  <li><a href="#running_randoop">Running Randoop</a>
+    <ul>
+      <li><a href="#maven-plugin">Maven plugin</a></li>
+    </ul></li>
   <li><a href="#generating_tests">Generating tests</a>
     <ul>
       <li><a href="#example_collections">Example: Generating tests for <code>java.util.Collections</code></a></li>
@@ -87,11 +90,6 @@ The Randoop homepage is
   <li><a href="#credits">Credits</a></li>
 </ul>
 <!-- end toc -->
-
-<p>
-There is a <a href="http://search.maven.org/#search%7Cga%7C1%7Crandoop">Maven plug-in</a> with source at
-<a href="https://bitbucket.org/javydreamercsw/randoop-maven-plugin/">https://bitbucket.org/javydreamercsw/randoop-maven-plugin/</a>.
-</p>
 
 <p>
 <a href="https://github.com/abb-iss/Randoop.NET">Randoop.NET</a> is a version of Randoop that works with Microsoft's .NET platform, such as the C# programming language.
@@ -262,6 +260,23 @@ You don't need the <code>-classpath</code> argument if you add
 <code>$(RANDOOP_JAR)</code> to your classpath.
 </p>
 
+
+<h2 id="maven-plugin">Maven plugin</h2>
+
+<p>
+Marian Zaplatynski created
+a <a href="https://github.com/zaplatynski/randoop-maven-plugin">Maven
+plugin for using Randoop</a>.  It enables you to generate and execute tests
+for a program that uses the Maven build system.
+</p>
+
+<!-- As of 3/17/2018, this was last updated in December 2012 -->
+<!--
+<p>
+There is a <a href="http://search.maven.org/#search%7Cga%7C1%7Crandoop">Maven plug-in</a> in the Central Repository with source (but no documentation) at
+<a href="https://bitbucket.org/javydreamercsw/randoop-maven-plugin/">https://bitbucket.org/javydreamercsw/randoop-maven-plugin/</a>.
+</p>
+-->
 
 
 <h1 id="generating_tests">Generating tests</h1>
