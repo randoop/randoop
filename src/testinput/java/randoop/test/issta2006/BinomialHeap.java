@@ -127,7 +127,7 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
 
   //private native boolean checkAbstractState(int which);
 
-  public static Set<String> tests = new HashSet<>();
+  public static Set<String> branchFingerprints = new HashSet<>();
 
   // private static Set abs_states = new HashSet();
 
@@ -164,12 +164,12 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
       if (itemp > itemp2) res += ">";
     }
     //END comment here
-    if (!tests.contains(res)) {
-      tests.add(res);
+    if (!branchFingerprints.contains(res)) {
+      branchFingerprints.add(res);
       // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
-      System.out.println("Test case number " + tests.size() + " for '" + res + "': ");
-      counter = tests.size();
-      return tests.size();
+      System.out.println("Test case number " + branchFingerprints.size() + " for '" + res + "': ");
+      counter = branchFingerprints.size();
+      return branchFingerprints.size();
     }
     return 0;
   }
