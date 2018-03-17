@@ -42,17 +42,16 @@ public class FibHeap {
     return b ? "1" : "0";
   }
 
-  private static int gen_native(int br, Node n, Node m) {
-
-    String res = br + ",";
-    //        For Basic Block Coverage
-    //        START comment here
-
-    Node temp;
-
+  /**
+   * Given a node, produces a 5-character fingerprint of the node, where each character is '0' or
+   * '1'. Returns "null" if the argument is null.
+   */
+  private static String nodeFingerprint(Node n) {
+    String res = "";
     if (n == null) {
       res += "null";
     } else {
+      Node temp;
       temp = n.child;
       res += asBinary(temp == null);
       temp = n.parent;
@@ -64,21 +63,19 @@ public class FibHeap {
       int deg = n.degree;
       res += asBinary(deg == 0);
     }
-    if (m == null) {
-      res += "null";
-    } else {
-      temp = m.child;
-      res += asBinary(temp == null);
-      temp = m.parent;
-      res += asBinary(temp == null);
-      temp = m.right;
-      res += asBinary(temp == n);
-      temp = m.left;
-      res += asBinary(temp == n);
-      int deg = m.degree;
-      res += asBinary(deg == 0);
-    }
+    return res;
+  }
+
+  private static int gen_native(int br, Node n, Node m) {
+
+    String res = br + ",";
+    //        For Basic Block Coverage
+    //        START comment here
+
+    res += nodeFingerprint(n);
+    res += nodeFingerprint(m);
     if (n != null && m != null) {
+      Node temp;
       // commented out because of symbolic execution...
       //        int temp2;
       //        temp = n.cost;
