@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>LiteralFileReader (randoop 3.1.5 API)</title>
+<title>LiteralFileReader (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="LiteralFileReader (randoop 3.1.5 API)";
+            parent.document.title="LiteralFileReader (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/reflection/ListEnumerator.html" title="class in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/reflection/NotPrivateVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/reflection/LiteralFileReader.html" target="_top">Frames</a></li>
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.reflection.LiteralFileReader</li>
@@ -109,7 +109,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">LiteralFileReader</span>
-extends java.lang.Object</pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Method <a href="../../randoop/reflection/LiteralFileReader.html#parse-java.lang.String-"><code>parse(java.lang.String)</code></a> reads a file specifying literal values to use during generation. The text
  file should contain one or more records of the form:
 
@@ -129,8 +129,7 @@ extends java.lang.Object</pre>
  <ul>
    <li>classname is the fully-qualified name of a valid class. More specifically,
        TypeNames.getTypeForName(classname) must return a valid Class object.
-   <li>Each type:value pair describes the type and value of a literal (for example, <code>int:3
-       </code>).
+   <li>Each type:value pair describes the type and value of a literal (for example, <code>int:3</code>).
  </ul>
 
  Blank lines and comment lines (lines starting with "#") are ignored, both between records and
@@ -162,15 +161,15 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#CLASSLITERALS">CLASSLITERALS</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#CLASSNAME">CLASSNAME</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#LITERALS">LITERALS</a></span></code>&nbsp;</td>
 </tr>
 </table>
@@ -209,35 +208,35 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#appendRecord-java.lang.StringBuilder-java.util.List-int-">appendRecord</a></span>(java.lang.StringBuilder&nbsp;b,
-            java.util.List&lt;java.lang.String&gt;&nbsp;lines,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#appendRecord-java.lang.StringBuilder-java.util.List-int-">appendRecord</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html?is-external=true" title="class or interface in java.lang">StringBuilder</a>&nbsp;b,
+            <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;lines,
             int&nbsp;i)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>,<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#parse-java.lang.String-">parse</a></span>(java.lang.String&nbsp;inFile)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#parse-java.lang.String-">parse</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;inFile)</code>
 <div class="block">Returns a map from class to list of constants.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#throwInvalidRecordError-java.lang.Exception-java.util.List-int-">throwInvalidRecordError</a></span>(java.lang.Exception&nbsp;e,
-                       java.util.List&lt;java.lang.String&gt;&nbsp;lines,
-                       int&nbsp;i)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#throwRecordSyntaxError-java.lang.Exception-java.util.List-int-">throwRecordSyntaxError</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e,
+                      <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;lines,
+                      int&nbsp;i)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#throwInvalidRecordError-java.lang.String-java.util.List-int-">throwInvalidRecordError</a></span>(java.lang.String&nbsp;string,
-                       java.util.List&lt;java.lang.String&gt;&nbsp;lines,
-                       int&nbsp;i)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#throwRecordSyntaxError-java.lang.String-java.util.List-int-">throwRecordSyntaxError</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;string,
+                      <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;lines,
+                      int&nbsp;i)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -259,7 +258,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>CLASSLITERALS</h4>
-<pre>private static final&nbsp;java.lang.String CLASSLITERALS</pre>
+<pre>private static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> CLASSLITERALS</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../constant-values.html#randoop.reflection.LiteralFileReader.CLASSLITERALS">Constant Field Values</a></dd>
@@ -272,7 +271,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>CLASSNAME</h4>
-<pre>private static final&nbsp;java.lang.String CLASSNAME</pre>
+<pre>private static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> CLASSNAME</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../constant-values.html#randoop.reflection.LiteralFileReader.CLASSNAME">Constant Field Values</a></dd>
@@ -285,7 +284,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>LITERALS</h4>
-<pre>private static final&nbsp;java.lang.String LITERALS</pre>
+<pre>private static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> LITERALS</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../constant-values.html#randoop.reflection.LiteralFileReader.LITERALS">Constant Field Values</a></dd>
@@ -323,7 +322,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>parse</h4>
-<pre>public static&nbsp;<a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>,<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;parse(java.lang.String&nbsp;inFile)</pre>
+<pre>public static&nbsp;<a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>,<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;parse(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;inFile)</pre>
 <div class="block">Returns a map from class to list of constants.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -333,26 +332,26 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="throwInvalidRecordError-java.lang.Exception-java.util.List-int-">
+<a name="throwRecordSyntaxError-java.lang.Exception-java.util.List-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>throwInvalidRecordError</h4>
-<pre>private static&nbsp;void&nbsp;throwInvalidRecordError(java.lang.Exception&nbsp;e,
-                                            java.util.List&lt;java.lang.String&gt;&nbsp;lines,
-                                            int&nbsp;i)</pre>
+<h4>throwRecordSyntaxError</h4>
+<pre>private static&nbsp;void&nbsp;throwRecordSyntaxError(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e,
+                                           <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;lines,
+                                           int&nbsp;i)</pre>
 </li>
 </ul>
-<a name="throwInvalidRecordError-java.lang.String-java.util.List-int-">
+<a name="throwRecordSyntaxError-java.lang.String-java.util.List-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>throwInvalidRecordError</h4>
-<pre>private static&nbsp;void&nbsp;throwInvalidRecordError(java.lang.String&nbsp;string,
-                                            java.util.List&lt;java.lang.String&gt;&nbsp;lines,
-                                            int&nbsp;i)</pre>
+<h4>throwRecordSyntaxError</h4>
+<pre>private static&nbsp;void&nbsp;throwRecordSyntaxError(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;string,
+                                           <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;lines,
+                                           int&nbsp;i)</pre>
 </li>
 </ul>
 <a name="appendRecord-java.lang.StringBuilder-java.util.List-int-">
@@ -361,8 +360,8 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>appendRecord</h4>
-<pre>private static&nbsp;void&nbsp;appendRecord(java.lang.StringBuilder&nbsp;b,
-                                 java.util.List&lt;java.lang.String&gt;&nbsp;lines,
+<pre>private static&nbsp;void&nbsp;appendRecord(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html?is-external=true" title="class or interface in java.lang">StringBuilder</a>&nbsp;b,
+                                 <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;lines,
                                  int&nbsp;i)</pre>
 </li>
 </ul>
@@ -394,7 +393,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/reflection/ListEnumerator.html" title="class in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/reflection/NotPrivateVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/reflection/LiteralFileReader.html" target="_top">Frames</a></li>

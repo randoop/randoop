@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.generation (randoop 3.1.5 API)</title>
+<title>randoop.generation (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.generation (randoop 3.1.5 API)";
+            parent.document.title="randoop.generation (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -99,6 +99,12 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation">OperationHistoryLogInterface</a></td>
+<td class="colLast">
+<div class="block">Interface for classes that log the usage of operations in the generated sequences.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/generation/StateMatcher.html" title="interface in randoop.generation">StateMatcher</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -126,18 +132,28 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/generation/DefaultOperationHistoryLogger.html" title="class in randoop.generation">DefaultOperationHistoryLogger</a></td>
+<td class="colLast">
+<div class="block">The default implementation of the <a href="../../randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation"><code>OperationHistoryLogInterface</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/EqualsMethodMatcher.html" title="class in randoop.generation">EqualsMethodMatcher</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/generation/EverythingIsDifferentMatcher.html" title="class in randoop.generation">EverythingIsDifferentMatcher</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/ForwardGenerator.html" title="class in randoop.generation">ForwardGenerator</a></td>
 <td class="colLast">
 <div class="block">Randoop's forward, component-based generator.</div>
 </td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/generation/ForwardGenerator.VarAndSeq.html" title="class in randoop.generation">ForwardGenerator.VarAndSeq</a></td>
+<td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/HelperSequenceCreator.html" title="class in randoop.generation">HelperSequenceCreator</a></td>
@@ -155,13 +171,44 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/generation/OperationHistoryLogger.html" title="class in randoop.generation">OperationHistoryLogger</a></td>
+<td class="colLast">
+<div class="block">The working implementation of a <a href="../../randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation"><code>OperationHistoryLogInterface</code></a> that will collect and print
+ the operation history log to the <code>PrintWriter</code> given when constructed.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/RandoopListenerManager.html" title="class in randoop.generation">RandoopListenerManager</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/generation/SeedSequences.html" title="class in randoop.generation">SeedSequences</a></td>
 <td class="colLast">
 <div class="block">Provides functionality for creating a set of sequences that create a set of primitive values.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/generation/TestUtils.html" title="class in randoop.generation">TestUtils</a></td>
+<td class="colLast">
+<div class="block">Utility methods for setting up selection and operation-history logging in integration tests that
+ use a generator.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList">
+<table class="typeSummary" border="0" cellpadding="3" cellspacing="0" summary="Enum Summary table, listing enums, and an explanation">
+<caption><span>Enum Summary</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Enum</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/generation/OperationOutcome.html" title="enum in randoop.generation">OperationOutcome</a></td>
+<td class="colLast">
+<div class="block">Representations for outcomes after an operation is selected during generation.</div>
 </td>
 </tr>
 </tbody>

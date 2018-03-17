@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceCompiler (randoop 3.1.5 API)</title>
+<title>SequenceCompiler (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceCompiler (randoop 3.1.5 API)";
+            parent.document.title="SequenceCompiler (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.compile.SequenceCompiler</li>
@@ -109,7 +109,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">SequenceCompiler</span>
-extends java.lang.Object</pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Compiles a Java class given as a <code>String</code>.
 
  <p>A simplified version of the <code>javaxtools.compiler.CharSequenceCompiler</code> from <a
@@ -140,7 +140,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private javax.tools.JavaCompiler</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaCompiler.html?is-external=true" title="class or interface in javax.tools">JavaCompiler</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#compiler">compiler</a></span></code>
 <div class="block">the Java compiler</div>
 </td>
@@ -152,7 +152,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#options">options</a></span></code>
 <div class="block">the options to the compiler</div>
 </td>
@@ -173,7 +173,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#SequenceCompiler-randoop.compile.SequenceClassLoader-java.util.List-">SequenceCompiler</a></span>(<a href="../../randoop/compile/SequenceClassLoader.html" title="class in randoop.compile">SequenceClassLoader</a>&nbsp;classLoader,
-                java.util.List&lt;java.lang.String&gt;&nbsp;options)</code>
+                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;options)</code>
 <div class="block">Creates a <a href="../../randoop/compile/SequenceCompiler.html" title="class in randoop.compile"><code>SequenceCompiler</code></a> with the given <code>ClassLoader</code>, options list, and <code>DiagnosticsCollector</code>.</div>
 </td>
 </tr>
@@ -193,23 +193,35 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>&lt;T&gt;&nbsp;java.lang.Class&lt;T&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#compile-java.lang.String-java.lang.String-java.lang.String-">compile</a></span>(java.lang.String&nbsp;packageName,
-       java.lang.String&nbsp;classname,
-       java.lang.String&nbsp;classSource)</code>
-<div class="block">Compiles the given class and returns the <code>Class&lt;?&gt;</code> object for the class.</div>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#compile-java.lang.String-java.lang.String-java.lang.String-">compile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
+       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname,
+       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;javaSource)</code>
+<div class="block">Compiles the given class.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#compileCheck-java.lang.String-java.lang.String-java.lang.String-">compileCheck</a></span>(java.lang.String&nbsp;packageName,
-            java.lang.String&nbsp;classname,
-            java.lang.String&nbsp;classSource)</code>&nbsp;</td>
+<td class="colFirst"><code>private boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#compile-java.lang.String-java.lang.String-java.lang.String-javax.tools.DiagnosticCollector-">compile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
+       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname,
+       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;javaSource,
+       <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/DiagnosticCollector.html?is-external=true" title="class or interface in javax.tools">DiagnosticCollector</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaFileObject.html?is-external=true" title="class or interface in javax.tools">JavaFileObject</a>&gt;&nbsp;diagnostics)</code>
+<div class="block">A helper method for the <a href="../../randoop/compile/SequenceCompiler.html#compile-java.lang.String-java.lang.String-java.lang.String-"><code>compile(String, String, String)</code></a> and <a href="../../randoop/compile/SequenceCompiler.html#isCompilable-java.lang.String-java.lang.String-java.lang.String-"><code>isCompilable(String, String, String)</code></a> methods: compiles the given class using the given
+ diagnostics collector.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>private &lt;T&gt;&nbsp;java.lang.Class&lt;T&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#loadClass-java.lang.String-java.lang.String-">loadClass</a></span>(java.lang.String&nbsp;packageName,
-         java.lang.String&nbsp;classname)</code>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#isCompilable-java.lang.String-java.lang.String-java.lang.String-">isCompilable</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
+            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname,
+            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;javaSource)</code>
+<div class="block">Indicates whether the given class is compilable.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#loadClass-java.lang.String-java.lang.String-">loadClass</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
+         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname)</code>
 <div class="block">Loads the <code>Class&lt;T&gt;</code> object for the named class.</div>
 </td>
 </tr>
@@ -218,8 +230,8 @@ extends java.lang.Object</pre>
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -235,26 +247,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="compiler">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>compiler</h4>
-<pre>private final&nbsp;javax.tools.JavaCompiler compiler</pre>
-<div class="block">the Java compiler</div>
-</li>
-</ul>
-<a name="options">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>options</h4>
-<pre>private final&nbsp;java.util.List&lt;java.lang.String&gt; options</pre>
-<div class="block">the options to the compiler</div>
-</li>
-</ul>
 <a name="classLoader">
 <!--   -->
 </a>
@@ -265,13 +257,33 @@ extends java.lang.Object</pre>
 <div class="block">The <code>ClassLoader</code> for this compiler</div>
 </li>
 </ul>
+<a name="options">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>options</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt; options</pre>
+<div class="block">the options to the compiler</div>
+</li>
+</ul>
+<a name="compiler">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>compiler</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaCompiler.html?is-external=true" title="class or interface in javax.tools">JavaCompiler</a> compiler</pre>
+<div class="block">the Java compiler</div>
+</li>
+</ul>
 <a name="fileManager">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>fileManager</h4>
-<pre>private&nbsp;<a href="../../randoop/compile/SequenceJavaFileManager.html" title="class in randoop.compile">SequenceJavaFileManager</a> fileManager</pre>
+<pre>private final&nbsp;<a href="../../randoop/compile/SequenceJavaFileManager.html" title="class in randoop.compile">SequenceJavaFileManager</a> fileManager</pre>
 <div class="block">The <code>FileManager</code> for this compiler</div>
 </li>
 </ul>
@@ -290,7 +302,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>SequenceCompiler</h4>
 <pre>public&nbsp;SequenceCompiler(<a href="../../randoop/compile/SequenceClassLoader.html" title="class in randoop.compile">SequenceClassLoader</a>&nbsp;classLoader,
-                        java.util.List&lt;java.lang.String&gt;&nbsp;options)</pre>
+                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;options)</pre>
 <div class="block">Creates a <a href="../../randoop/compile/SequenceCompiler.html" title="class in randoop.compile"><code>SequenceCompiler</code></a> with the given <code>ClassLoader</code>, options list, and <code>DiagnosticsCollector</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -307,40 +319,69 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="isCompilable-java.lang.String-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isCompilable</h4>
+<pre>public&nbsp;boolean&nbsp;isCompilable(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
+                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname,
+                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;javaSource)</pre>
+<div class="block">Indicates whether the given class is compilable.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>packageName</code> - the package name for the class, null if default package</dd>
+<dd><code>classname</code> - the simple name of the class</dd>
+<dd><code>javaSource</code> - the source text of the class</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if class source was successfully compiled, false otherwise</dd>
+</dl>
+</li>
+</ul>
 <a name="compile-java.lang.String-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>compile</h4>
-<pre>public&nbsp;&lt;T&gt;&nbsp;java.lang.Class&lt;T&gt;&nbsp;compile(java.lang.String&nbsp;packageName,
-                                      java.lang.String&nbsp;classname,
-                                      java.lang.String&nbsp;classSource)
-                               throws <a href="../../randoop/compile/SequenceCompilerException.html" title="class in randoop.compile">SequenceCompilerException</a></pre>
-<div class="block">Compiles the given class and returns the <code>Class&lt;?&gt;</code> object for the class.</div>
+<pre>public&nbsp;void&nbsp;compile(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname,
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;javaSource)
+             throws <a href="../../randoop/compile/SequenceCompilerException.html" title="class in randoop.compile">SequenceCompilerException</a></pre>
+<div class="block">Compiles the given class. If this method returns normally, compilation was successful.</div>
 <dl>
-<dt><span class="paramLabel">Type Parameters:</span></dt>
-<dd><code>T</code> - the type of the class (use a wildcard if you aren't sure)</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>packageName</code> - the package of the class</dd>
-<dd><code>classname</code> - the (unqualified) name of the class</dd>
-<dd><code>classSource</code> - the source text of the class</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the <code>Class&lt;T&gt;</code> object for the class</dd>
+<dd><code>packageName</code> - the package of the class, null if default package</dd>
+<dd><code>classname</code> - the simple name of the class</dd>
+<dd><code>javaSource</code> - the source text of the class</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../randoop/compile/SequenceCompilerException.html" title="class in randoop.compile">SequenceCompilerException</a></code> - if the compilation fails or the class cannot be loaded</dd>
+<dd><code><a href="../../randoop/compile/SequenceCompilerException.html" title="class in randoop.compile">SequenceCompilerException</a></code> - if the compilation fails</dd>
 </dl>
 </li>
 </ul>
-<a name="compileCheck-java.lang.String-java.lang.String-java.lang.String-">
+<a name="compile-java.lang.String-java.lang.String-java.lang.String-javax.tools.DiagnosticCollector-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>compileCheck</h4>
-<pre>public&nbsp;boolean&nbsp;compileCheck(java.lang.String&nbsp;packageName,
-                            java.lang.String&nbsp;classname,
-                            java.lang.String&nbsp;classSource)</pre>
+<h4>compile</h4>
+<pre>private&nbsp;boolean&nbsp;compile(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
+                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname,
+                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;javaSource,
+                        <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/DiagnosticCollector.html?is-external=true" title="class or interface in javax.tools">DiagnosticCollector</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaFileObject.html?is-external=true" title="class or interface in javax.tools">JavaFileObject</a>&gt;&nbsp;diagnostics)</pre>
+<div class="block">A helper method for the <a href="../../randoop/compile/SequenceCompiler.html#compile-java.lang.String-java.lang.String-java.lang.String-"><code>compile(String, String, String)</code></a> and <a href="../../randoop/compile/SequenceCompiler.html#isCompilable-java.lang.String-java.lang.String-java.lang.String-"><code>isCompilable(String, String, String)</code></a> methods: compiles the given class using the given
+ diagnostics collector.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>packageName</code> - the package of the class, null if default package</dd>
+<dd><code>classname</code> - the simple name of the class</dd>
+<dd><code>javaSource</code> - the source text of the class</dd>
+<dd><code>diagnostics</code> - the <code>DiagnosticsCollector</code> object to use for the compilation. Always
+     use a new diagnostics collector each compilation to avoid accumulating errors.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if the class source is successfully compiled, false otherwise</dd>
+</dl>
 </li>
 </ul>
 <a name="loadClass-java.lang.String-java.lang.String-">
@@ -349,20 +390,20 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>loadClass</h4>
-<pre>private&nbsp;&lt;T&gt;&nbsp;java.lang.Class&lt;T&gt;&nbsp;loadClass(java.lang.String&nbsp;packageName,
-                                         java.lang.String&nbsp;classname)
-                                  throws java.lang.ClassNotFoundException</pre>
+<pre>public&nbsp;&lt;T&gt;&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;T&gt;&nbsp;loadClass(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
+                              <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname)
+                       throws <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/ClassNotFoundException.html?is-external=true" title="class or interface in java.lang">ClassNotFoundException</a></pre>
 <div class="block">Loads the <code>Class&lt;T&gt;</code> object for the named class.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
 <dd><code>T</code> - the class type</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>packageName</code> - the package of the class</dd>
+<dd><code>packageName</code> - the package of the class, null if default package</dd>
 <dd><code>classname</code> - the name of the class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <code>Class&lt;T&gt;</code> object with the class name</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.ClassNotFoundException</code> - if the class cannot be loaded</dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/ClassNotFoundException.html?is-external=true" title="class or interface in java.lang">ClassNotFoundException</a></code> - if the class cannot be loaded</dd>
 </dl>
 </li>
 </ul>

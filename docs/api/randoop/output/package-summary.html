@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.output (randoop 3.1.5 API)</title>
+<title>randoop.output (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.output (randoop 3.1.5 API)";
+            parent.document.title="randoop.output (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -74,6 +74,23 @@
 <div class="contentContainer">
 <ul class="blockList">
 <li class="blockList">
+<table class="typeSummary" border="0" cellpadding="3" cellspacing="0" summary="Interface Summary table, listing interfaces, and an explanation">
+<caption><span>Interface Summary</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Interface</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/output/CodeWriter.html" title="interface in randoop.output">CodeWriter</a></td>
+<td class="colLast">
+<div class="block">Interface for a method <code>writeClassCode</code> that writes a class to a file.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList">
 <table class="typeSummary" border="0" cellpadding="3" cellspacing="0" summary="Class Summary table, listing classes, and an explanation">
 <caption><span>Class Summary</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
@@ -82,13 +99,65 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/output/ClassRenamingVisitor.html" title="class in randoop.output">ClassRenamingVisitor</a></td>
+<td class="colLast">
+<div class="block">JavaParser visitor to rename classes.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/output/ClassTypeNameSimplifyVisitor.html" title="class in randoop.output">ClassTypeNameSimplifyVisitor</a></td>
+<td class="colLast">
+<div class="block">JavaParser Visitor to simplify type names.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/output/ClassTypeVisitor.html" title="class in randoop.output">ClassTypeVisitor</a></td>
+<td class="colLast">
+<div class="block">Visitor for Class types in JavaParser AST.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/output/FailingTestFilter.html" title="class in randoop.output">FailingTestFilter</a></td>
+<td class="colLast">
+<div class="block">A <a href="../../randoop/output/CodeWriter.html" title="interface in randoop.output"><code>CodeWriter</code></a> that outputs JUnit tests with assertions that fail commented out.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/output/FailingTestFilter.Match.html" title="class in randoop.output">FailingTestFilter.Match</a></td>
+<td class="colLast">
+<div class="block">The line and first group from the match of a <code>Pattern</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/output/FieldAccessTypeNameSimplifyVisitor.html" title="class in randoop.output">FieldAccessTypeNameSimplifyVisitor</a></td>
+<td class="colLast">
+<div class="block">JavaParser visitor to simplify field access in a test method.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/output/JavaFileWriter.html" title="class in randoop.output">JavaFileWriter</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">A <a href="../../randoop/output/CodeWriter.html" title="interface in randoop.output"><code>CodeWriter</code></a> that writes JUnit4 test class source text to a <code>.java</code> file with
+ annotations so that tests are executed in ascending alphabetical order by test method name.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output">JUnitCreator</a></td>
 <td class="colLast">
 <div class="block">Creates Java source as <code>String</code> for a suite of JUnit4 tests.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/output/MethodTypeNameSimplifyVisitor.html" title="class in randoop.output">MethodTypeNameSimplifyVisitor</a></td>
+<td class="colLast">
+<div class="block">JavaParser visitor to simplify type names in method calls</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/output/MinimizerWriter.html" title="class in randoop.output">MinimizerWriter</a></td>
+<td class="colLast">
+<div class="block">A <a href="../../randoop/output/CodeWriter.html" title="interface in randoop.output"><code>CodeWriter</code></a> that, for an error-revealing test class, writes both the original and
+ minimized class.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -98,10 +167,37 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/output/PrimitiveAndWrappedTypeVarNameCollector.html" title="class in randoop.output">PrimitiveAndWrappedTypeVarNameCollector</a></td>
+<td class="colLast">
+<div class="block">Visit every variable declaration.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/output/RandoopOutputException.html" title="class in randoop.output">RandoopOutputException</a></td>
+<td class="colLast">
+<div class="block">An exception (usually an IOException) occurred while writing tests to a file.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/output/SourceBuilder.html" title="class in randoop.output">SourceBuilder</a></td>
 <td class="colLast">
 <div class="block">Common behavior for source builder classes.</div>
 </td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList">
+<table class="typeSummary" border="0" cellpadding="3" cellspacing="0" summary="Exception Summary table, listing exceptions, and an explanation">
+<caption><span>Exception Summary</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Exception</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/output/FailingTestFilter.NotMatchedException.html" title="class in randoop.output">FailingTestFilter.NotMatchedException</a></td>
+<td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
 </table>

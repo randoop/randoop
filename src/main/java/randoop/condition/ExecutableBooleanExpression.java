@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
@@ -240,7 +240,7 @@ public class ExecutableBooleanExpression {
     if (packageName != null) {
       packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
-    return UtilMDE.join(
+    return UtilPlume.join(
         new String[] {
           packageDeclaration + "public class " + expressionClassName + " {",
           "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",

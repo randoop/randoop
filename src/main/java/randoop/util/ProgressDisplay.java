@@ -4,7 +4,7 @@ import java.lang.InterruptedException;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.RandoopListenerManager;
@@ -177,7 +177,7 @@ public class ProgressDisplay extends Thread {
     if (noProgressOutput()) return;
     // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
-    System.out.print("\r" + UtilMDE.rpad("", 199)); // erase about 200 characters of text
+    System.out.print("\r" + UtilPlume.rpad("", 199)); // erase about 200 characters of text
     System.out.print("\r"); // return to beginning of line
     System.out.flush();
   }

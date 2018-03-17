@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeInstantiator (randoop 3.1.5 API)</title>
+<title>TypeInstantiator (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeInstantiator (randoop 3.1.5 API)";
+            parent.document.title="TypeInstantiator (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.reflection.TypeInstantiator</li>
@@ -109,7 +109,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">TypeInstantiator</span>
-extends java.lang.Object</pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Function object to instantiate type parameters from a set of input types.</div>
 </li>
 </ul>
@@ -130,7 +130,7 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#inputTypes">inputTypes</a></span></code>
 <div class="block">The set of input types for this model</div>
 </td>
@@ -150,7 +150,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#TypeInstantiator-java.util.Set-">TypeInstantiator</a></span>(java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;inputTypes)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#TypeInstantiator-java.util.Set-">TypeInstantiator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;inputTypes)</code>
 <div class="block">Creates a <a href="../../randoop/reflection/TypeInstantiator.html" title="class in randoop.reflection"><code>TypeInstantiator</code></a> object using the given types to construct instantiating
  substitutions.</div>
 </td>
@@ -171,22 +171,22 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#collectSubstitutions-java.util.List-randoop.types.Substitution-">collectSubstitutions</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#collectSubstitutions-java.util.List-randoop.types.Substitution-">collectSubstitutions</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
                     <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
 <div class="block">Recursive function to collect the list of substitutions that extend a substitution for the
  given type parameters.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>private java.util.List&lt;java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#getCandidateTypeLists-java.util.List-">getCandidateTypeLists</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</code>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#getCandidateTypeLists-java.util.List-">getCandidateTypeLists</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</code>
 <div class="block">Constructs the list of lists of candidate types for the given type parameters.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#getInstantiations-java.util.List-randoop.types.Substitution-randoop.types.TypeCheck-">getInstantiations</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#getInstantiations-java.util.List-randoop.types.Substitution-randoop.types.TypeCheck-">getInstantiations</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
                  <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;initialSubstitution,
                  <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types">TypeCheck</a>&nbsp;typeCheck)</code>
 <div class="block">Adds instantiating substitutions for the given parameters to the list if satisfies the given
@@ -196,7 +196,7 @@ extends java.lang.Object</pre>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#getSearchTypeSubstitution-randoop.types.GenericClassType-java.util.List-">getSearchTypeSubstitution</a></span>(<a href="../../randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a>&nbsp;searchType,
-                         java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</code>&nbsp;</td>
+                         <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a></code></td>
@@ -223,14 +223,14 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectAndExtend-java.util.List-randoop.types.Substitution-">selectAndExtend</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectAndExtend-java.util.List-randoop.types.Substitution-">selectAndExtend</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
                <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
 <div class="block">Selects types independently for a list of type parameters, and extends the given substitution
  by the substitution of the selected types for the parameters.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
-<td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectCandidates-randoop.types.TypeVariable-">selectCandidates</a></span>(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;argument)</code>
 <div class="block">Selects all input types that potentially satisfies the bounds on the argument.</div>
 </td>
@@ -258,13 +258,13 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectSubstitution-java.util.List-">selectSubstitution</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectSubstitution-java.util.List-">selectSubstitution</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</code>
 <div class="block">Selects an instantiating substitution for the given list of type variables.</div>
 </td>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectSubstitution-java.util.List-randoop.types.Substitution-">selectSubstitution</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectSubstitution-java.util.List-randoop.types.Substitution-">selectSubstitution</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
                   <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
 <div class="block">Extends the given substitution by instantiations for the given list of type variables.</div>
 </td>
@@ -280,8 +280,8 @@ extends java.lang.Object</pre>
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -303,7 +303,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>inputTypes</h4>
-<pre>private final&nbsp;java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; inputTypes</pre>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; inputTypes</pre>
 <div class="block">The set of input types for this model</div>
 </li>
 </ul>
@@ -321,7 +321,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>TypeInstantiator</h4>
-<pre>public&nbsp;TypeInstantiator(java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;inputTypes)</pre>
+<pre>public&nbsp;TypeInstantiator(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;inputTypes)</pre>
 <div class="block">Creates a <a href="../../randoop/reflection/TypeInstantiator.html" title="class in randoop.reflection"><code>TypeInstantiator</code></a> object using the given types to construct instantiating
  substitutions.</div>
 <dl>
@@ -374,7 +374,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getSearchTypeSubstitution</h4>
 <pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;getSearchTypeSubstitution(<a href="../../randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a>&nbsp;searchType,
-                                                              java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</pre>
+                                                              <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</pre>
 </li>
 </ul>
 <a name="instantiateDeclaringClass-randoop.types.ClassOrInterfaceType-">
@@ -465,7 +465,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>selectSubstitution</h4>
-<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectSubstitution(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</pre>
+<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectSubstitution(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</pre>
 <div class="block">Selects an instantiating substitution for the given list of type variables.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -484,7 +484,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>selectSubstitution</h4>
-<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectSubstitution(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
+<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectSubstitution(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
                                                        <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
 <div class="block">Extends the given substitution by instantiations for the given list of type variables. If any
  of the type variables has a generic bound, assumes there are dependencies and enumerates all
@@ -506,8 +506,8 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>collectSubstitutions</h4>
-<pre>private&nbsp;java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;collectSubstitutions(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
-                                                                         <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;collectSubstitutions(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
+                                                               <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
 <div class="block">Recursive function to collect the list of substitutions that extend a substitution for the
  given type parameters.</div>
 <dl>
@@ -525,7 +525,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>selectAndExtend</h4>
-<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectAndExtend(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectAndExtend(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
                                                     <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
 <div class="block">Selects types independently for a list of type parameters, and extends the given substitution
  by the substitution of the selected types for the parameters.
@@ -547,9 +547,9 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getInstantiations</h4>
-<pre>private&nbsp;java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;getInstantiations(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
-                                                                      <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;initialSubstitution,
-                                                                      <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types">TypeCheck</a>&nbsp;typeCheck)</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;getInstantiations(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+                                                            <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;initialSubstitution,
+                                                            <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types">TypeCheck</a>&nbsp;typeCheck)</pre>
 <div class="block">Adds instantiating substitutions for the given parameters to the list if satisfies the given
  type check predicate. Each constructed substitution extends the given initial substitution.
  Assumes that the parameters are or are refinements of the set of parameters check by the type
@@ -570,7 +570,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getCandidateTypeLists</h4>
-<pre>private&nbsp;java.util.List&lt;java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;getCandidateTypeLists(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;getCandidateTypeLists(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</pre>
 <div class="block">Constructs the list of lists of candidate types for the given type parameters. Each list is the
  list of candidates for the parameter in the corresponding position of the given list as
  determined by <a href="../../randoop/reflection/TypeInstantiator.html#selectCandidates-randoop.types.TypeVariable-"><code>selectCandidates(TypeVariable)</code></a>.</div>
@@ -589,7 +589,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>selectCandidates</h4>
-<pre>private&nbsp;java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectCandidates(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;argument)</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectCandidates(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;argument)</pre>
 <div class="block">Selects all input types that potentially satisfies the bounds on the argument. If a bound has
  another type parameter, then the default bound is tested.</div>
 <dl>

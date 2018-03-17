@@ -7,7 +7,7 @@ services:
 
 env:
   global:
-    - THIS_REPO=checker-framework
+    - THIS_REPO=randoop
     - OS=ubuntu
   matrix:
     - OS=ubuntu JDKVER=jdk7 GROUP=test

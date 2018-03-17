@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import plume.Triple;
 
 public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
@@ -22,9 +21,22 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     REMOVE
   }
 
-  private final List<Triple<Ops, T1, T2>> ops;
+  private final List<OpKeyVal> ops;
 
   private int steps;
+
+  // A triple of an operation, a key, and a value
+  private class OpKeyVal {
+    final Ops op;
+    final T1 key;
+    final T2 val;
+
+    OpKeyVal(final Ops op, final T1 key, final T2 val) {
+      this.op = op;
+      this.key = key;
+      this.val = val;
+    }
+  }
 
   public ReversibleMultiMap() {
     map = new LinkedHashMap<>();
@@ -42,7 +54,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   public void add(T1 key, T2 value) {
     if (verbose_log && Log.isLoggingOn()) Log.logLine("ADD " + key + " ->" + value);
     add_bare(key, value);
-    ops.add(new Triple<>(Ops.ADD, key, value));
+    ops.add(new OpKeyVal(Ops.ADD, key, value));
     steps++;
   }
 
@@ -71,7 +83,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   public void remove(T1 key, T2 value) {
     if (verbose_log && Log.isLoggingOn()) Log.logLine("REMOVE " + key + " ->" + value);
     remove_bare(key, value);
-    ops.add(new Triple<>(Ops.REMOVE, key, value));
+    ops.add(new OpKeyVal(Ops.REMOVE, key, value));
     steps++;
   }
 
@@ -112,19 +124,22 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
   private void undoLastOp() {
     if (ops.isEmpty()) throw new IllegalStateException("ops empty.");
-    Triple<Ops, T1, T2> last = ops.remove(ops.size() - 1);
+    OpKeyVal last = ops.remove(ops.size() - 1);
+    Ops op = last.op;
+    T1 key = last.key;
+    T2 val = last.val;
 
-    if (last.a == Ops.ADD) {
+    if (op == Ops.ADD) {
       // Remove the mapping.
-      if (Log.isLoggingOn()) Log.logLine("REMOVE " + last.b + " ->" + last.c);
-      remove_bare(last.b, last.c);
-    } else if (last.a == Ops.REMOVE) {
+      if (Log.isLoggingOn()) Log.logLine("REMOVE " + key + " ->" + val);
+      remove_bare(key, val);
+    } else if (op == Ops.REMOVE) {
       // Add the mapping.
-      if (Log.isLoggingOn()) Log.logLine("ADD " + last.b + " ->" + last.c);
-      add_bare(last.b, last.c);
+      if (Log.isLoggingOn()) Log.logLine("ADD " + key + " ->" + val);
+      add_bare(key, val);
     } else {
       // Really, we should never get here.
-      throw new IllegalStateException("Unhandled op: " + last.a);
+      throw new IllegalStateException("Unhandled op: " + op);
     }
   }
 

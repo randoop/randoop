@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TestCheckGenerator (randoop 3.1.5 API)</title>
+<title>TestCheckGenerator (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,14 +12,14 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TestCheckGenerator (randoop 3.1.5 API)";
+            parent.document.title="TestCheckGenerator (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":6};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
+var methods = {"i0":6,"i1":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -75,13 +75,13 @@ var activeTableTab = "activeTableTab";
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
@@ -92,19 +92,28 @@ var activeTableTab = "activeTableTab";
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">randoop.test</div>
-<h2 title="Interface TestCheckGenerator" class="title">Interface TestCheckGenerator</h2>
+<h2 title="Class TestCheckGenerator" class="title">Class TestCheckGenerator</h2>
 </div>
 <div class="contentContainer">
+<ul class="inheritance">
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>
+<ul class="inheritance">
+<li>randoop.test.TestCheckGenerator</li>
+</ul>
+</li>
+</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
 <dl>
-<dt>All Known Implementing Classes:</dt>
-<dd><a href="../../randoop/test/ContractCheckingVisitor.html" title="class in randoop.test">ContractCheckingVisitor</a>, <a href="../../randoop/test/DummyCheckGenerator.html" title="class in randoop.test">DummyCheckGenerator</a>, <a href="../../randoop/test/ExpectedExceptionGenerator.html" title="class in randoop.test">ExpectedExceptionGenerator</a>, <a href="../../randoop/test/ExtendGenerator.html" title="class in randoop.test">ExtendGenerator</a>, <a href="../../randoop/test/PostConditionCheckGenerator.html" title="class in randoop.test">PostConditionCheckGenerator</a>, <a href="../../randoop/test/RegressionCaptureVisitor.html" title="class in randoop.test">RegressionCaptureVisitor</a>, <a href="../../randoop/test/ValidityCheckingVisitor.html" title="class in randoop.test">ValidityCheckingVisitor</a></dd>
+<dt>Direct Known Subclasses:</dt>
+<dd><a href="../../randoop/test/ContractCheckingGenerator.html" title="class in randoop.test">ContractCheckingGenerator</a>, <a href="../../randoop/test/DummyCheckGenerator.html" title="class in randoop.test">DummyCheckGenerator</a>, <a href="../../randoop/test/ExpectedExceptionGenerator.html" title="class in randoop.test">ExpectedExceptionGenerator</a>, <a href="../../randoop/test/ExtendGenerator.html" title="class in randoop.test">ExtendGenerator</a>, <a href="../../randoop/test/InvalidCheckGenerator.html" title="class in randoop.test">InvalidCheckGenerator</a>, <a href="../../randoop/test/PostConditionCheckGenerator.html" title="class in randoop.test">PostConditionCheckGenerator</a>, <a href="../../randoop/test/RegressionCaptureGenerator.html" title="class in randoop.test">RegressionCaptureGenerator</a>, <a href="../../randoop/test/ValidityCheckingGenerator.html" title="class in randoop.test">ValidityCheckingGenerator</a></dd>
 </dl>
 <hr>
 <br>
-<pre>public interface <span class="typeNameLabel">TestCheckGenerator</span></pre>
+<pre>public abstract class <span class="typeNameLabel">TestCheckGenerator</span>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Generates a set of test checks from a test sequence that has been executed.
 
  <p>Note: a generator does not determine which sequences become output. Instead a generator
@@ -116,6 +125,23 @@ var activeTableTab = "activeTableTab";
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/TestCheckGenerator.html#TestCheckGenerator--">TestCheckGenerator</a></span>()</code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ========== METHOD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method.summary">
@@ -123,19 +149,32 @@ var activeTableTab = "activeTableTab";
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/TestCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
- of this generator.</div>
+<td class="colFirst"><code>abstract <a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;?&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/TestCheckGenerator.html#generateTestChecks-randoop.sequence.ExecutableSequence-">generateTestChecks</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
+<div class="block">Generate a <a href="../../randoop/test/TestChecks.html" title="interface in randoop.test"><code>TestChecks</code></a> object for the executed sequence <code>eseq</code> based on the
+ criteria of this generator.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/TestCheckGenerator.html#hasGenerator-java.lang.Class-">hasGenerator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">TestCheckGenerator</a>&gt;&nbsp;genClass)</code>
+<div class="block">Returns true if this generator contains a generator of the given class.</div>
 </td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
+</ul>
 </li>
 </ul>
 </li>
@@ -144,26 +183,59 @@ var activeTableTab = "activeTableTab";
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="TestCheckGenerator--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>TestCheckGenerator</h4>
+<pre>public&nbsp;TestCheckGenerator()</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ============ METHOD DETAIL ========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method.detail">
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="visit-randoop.sequence.ExecutableSequence-">
+<a name="generateTestChecks-randoop.sequence.ExecutableSequence-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>generateTestChecks</h4>
+<pre>public abstract&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;?&gt;&nbsp;generateTestChecks(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
+<div class="block">Generate a <a href="../../randoop/test/TestChecks.html" title="interface in randoop.test"><code>TestChecks</code></a> object for the executed sequence <code>eseq</code> based on the
+ criteria of this generator.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>eseq</code> - the sequence for which checks are generated</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the generated check set for the sequence</dd>
+</dl>
+</li>
+</ul>
+<a name="hasGenerator-java.lang.Class-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>visit</h4>
-<pre><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;visit(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
- of this generator.</div>
+<h4>hasGenerator</h4>
+<pre>public&nbsp;boolean&nbsp;hasGenerator(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">TestCheckGenerator</a>&gt;&nbsp;genClass)</pre>
+<div class="block">Returns true if this generator contains a generator of the given class.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>s</code> - the sequence for which checks are generated</dd>
+<dd><code>genClass</code> - the generator class to search for in this</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the generated check set for the sequence</dd>
+<dd>true iff this generator contains a generator of the given class</dd>
 </dl>
 </li>
 </ul>
@@ -221,13 +293,13 @@ var activeTableTab = "activeTableTab";
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>

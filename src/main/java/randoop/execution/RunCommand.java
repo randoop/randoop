@@ -1,14 +1,16 @@
 package randoop.execution;
 
-import static org.apache.commons.codec.CharEncoding.UTF_8;
-
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
-import plume.TimeLimitProcess;
-import plume.UtilMDE;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.PumpStreamHandler;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.util.Log;
 
@@ -31,63 +33,57 @@ public class RunCommand {
    */
   static Status run(List<String> command, File workingDirectory, long timeout)
       throws CommandException {
-    ProcessBuilder processBuilder = new ProcessBuilder(command);
-    processBuilder.directory(workingDirectory);
+
+    String[] args = command.toArray(new String[0]);
+    CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
+    cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
+
+    DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
+    DefaultExecutor executor = new DefaultExecutor();
+    executor.setWorkingDirectory(workingDirectory);
+
+    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+    executor.setWatchdog(watchdog);
+
+    final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+    final ByteArrayOutputStream errStream = new ByteArrayOutputStream();
+    PumpStreamHandler streamHandler = new PumpStreamHandler(outStream, errStream);
+    executor.setStreamHandler(streamHandler);
 
     Log.logPrintf("RunCommand.run():%n");
-    Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilMDE.join(command, " "));
-    Log.logPrintf("  timeout=%s, environment: %s%n", timeout, processBuilder.environment());
-    // Temporary debugging output
-    Log.logPrintf("  sun.boot.class.path=%s%n", System.getProperty("sun.boot.class.path"));
-    Log.logPrintf("  java.class.path=%s%n", System.getProperty("java.class.path"));
-    Log.logPrintf("  which java: ");
-    try {
-      ProcessBuilder ps = new ProcessBuilder("which", "java");
-      ps.redirectErrorStream(true);
-      Process pr = ps.start();
-
-      BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream(), UTF_8));
-      String line;
-      while ((line = in.readLine()) != null) {
-        Log.logPrintf(line);
-      }
-      pr.waitFor();
-
-      in.close();
-    } catch (IOException | InterruptedException t) {
-      throw new Error(t);
-    }
-
-    TimeLimitProcess p;
+    Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilPlume.join(command, " "));
+    Log.logPrintf("  timeout=%s, environment: %s%n", timeout, System.getenv());
 
     try {
-      p = new TimeLimitProcess(processBuilder.start(), timeout, true);
+      executor.execute(cmdLine, resultHandler);
     } catch (IOException e) {
       throw new CommandException("Exception starting process", e);
     }
 
     int exitValue = -1;
     try {
-      exitValue = p.waitFor();
+      resultHandler.waitFor();
+      exitValue = resultHandler.getExitValue();
     } catch (InterruptedException e) {
-      // Ignore exception, but p.timed_out() records that the process timed out.
+      // Ignore exception, but watchdog.killedProcess() records that the process timed out.
     }
+    boolean timedOut = executor.isFailure(exitValue) && watchdog.killedProcess();
 
     List<String> standardOutputLines;
     try {
-      standardOutputLines = UtilMDE.streamLines(p.getInputStream());
-    } catch (IOException e) {
+      standardOutputLines = Arrays.asList(outStream.toString().split(Globals.lineSep));
+    } catch (RuntimeException e) {
       throw new CommandException("Exception getting process standard output", e);
     }
 
     List<String> errorOutputLines;
     try {
-      errorOutputLines = UtilMDE.streamLines(p.getErrorStream());
-    } catch (IOException e) {
+      errorOutputLines = Arrays.asList(errStream.toString().split(Globals.lineSep));
+    } catch (RuntimeException e) {
       throw new CommandException("Exception getting process error output", e);
     }
 
-    return new Status(command, exitValue, p.timed_out(), standardOutputLines, errorOutputLines);
+    return new Status(command, exitValue, timedOut, standardOutputLines, errorOutputLines);
   }
 
   /**
@@ -142,7 +138,7 @@ public class RunCommand {
       sb.append(
           String.format(
               "Status for command \"%s\" = %d (timedOut=%s)",
-              UtilMDE.join(command, " "), exitStatus, timedOut));
+              UtilPlume.join(command, " "), exitStatus, timedOut));
       describeLines("stdout", standardOutputLines, sb);
       describeLines("stderr", errorOutputLines, sb);
       return sb.toString();
@@ -160,7 +156,7 @@ public class RunCommand {
         sb.append(", ");
         sb.append(source);
         sb.append("=\"");
-        sb.append(UtilMDE.join(lines, Globals.lineSep));
+        sb.append(UtilPlume.join(lines, Globals.lineSep));
         sb.append("\"");
         sb.append(Globals.lineSep);
       } else {

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.main (randoop 3.1.5 API)</title>
+<title>randoop.main (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.main (randoop 3.1.5 API)";
+            parent.document.title="randoop.main (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -99,21 +99,34 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/main/CloneVisitor.html" title="class in randoop.main">CloneVisitor</a></td>
+<td class="colLast">
+<div class="block">CloneVisitor is a visitor which makes a deep copy of a JavaParser AST node.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/main/CommandHandler.html" title="class in randoop.main">CommandHandler</a></td>
 <td class="colLast">
 <div class="block">A command is the first argument given to Randoop.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/main/ExceptionBehaviorClassifier.html" title="class in randoop.main">ExceptionBehaviorClassifier</a></td>
 <td class="colLast">
-<div class="block">Method <a href="../../randoop/main/ExceptionBehaviorClassifier.html#classify-java.lang.Throwable-randoop.sequence.ExecutableSequence-"><code>ExceptionBehaviorClassifier.classify(java.lang.Throwable, randoop.sequence.ExecutableSequence)</code></a> classifies exceptions thrown by a test sequence based on the <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main"><code>GenInputsAbstract.BehaviorType</code></a> command-line arguments.</div>
+<div class="block">Static method <a href="../../randoop/main/ExceptionBehaviorClassifier.html#classify-java.lang.Throwable-randoop.sequence.ExecutableSequence-"><code>ExceptionBehaviorClassifier.classify(java.lang.Throwable, randoop.sequence.ExecutableSequence)</code></a> classifies exceptions thrown by a test sequence based on the
+ <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main"><code>GenInputsAbstract.BehaviorType</code></a> command-line arguments.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></td>
 <td class="colLast">
 <div class="block">Container for Randoop options.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/main/GenInputsAbstract.Limits.html" title="class in randoop.main">GenInputsAbstract.Limits</a></td>
+<td class="colLast">
+<div class="block">Wraps the three ways of limiting Randoop test generation.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -128,6 +141,18 @@
 <td class="colFirst"><a href="../../randoop/main/Main.html" title="class in randoop.main">Main</a></td>
 <td class="colLast">
 <div class="block">Main entry point for Randoop.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/main/Minimize.html" title="class in randoop.main">Minimize</a></td>
+<td class="colLast">
+<div class="block">This program minimizes a failing JUnit test suite.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/main/Minimize.Outputs.html" title="class in randoop.main">Minimize.Outputs</a></td>
+<td class="colLast">
+<div class="block">Contains the standard output, standard error, and exit status from running a process.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -173,6 +198,12 @@
 <div class="block">The possible values of the literals_level command-line argument.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/main/GenInputsAbstract.FlakyTestAction.html" title="enum in randoop.main">GenInputsAbstract.FlakyTestAction</a></td>
+<td class="colLast">
+<div class="block">Possible behaviors if Randoop generates a flaky test.</div>
+</td>
+</tr>
 </tbody>
 </table>
 </li>
@@ -185,8 +216,10 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a href="../../randoop/main/RandoopTextuiException.html" title="class in randoop.main">RandoopTextuiException</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colFirst"><a href="../../randoop/main/RandoopUsageError.html" title="class in randoop.main">RandoopUsageError</a></td>
+<td class="colLast">
+<div class="block">Indicates a user error in invoking Randoop.</div>
+</td>
 </tr>
 </tbody>
 </table>
