@@ -124,7 +124,7 @@ public class SequenceCollection {
    */
   public void addAll(SequenceCollection components) {
     for (SimpleArrayList<Sequence> s : components.sequenceMap.values()) {
-      for (Sequence seq : s.theList) {
+      for (Sequence seq : s) {
         add(seq);
       }
     }
@@ -252,7 +252,7 @@ public class SequenceCollection {
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<>();
     for (SimpleArrayList<Sequence> a : sequenceMap.values()) {
-      result.addAll(a.theList);
+      result.addAll(a);
     }
     return result;
   }

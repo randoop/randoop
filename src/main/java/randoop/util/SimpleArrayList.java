@@ -2,58 +2,33 @@ package randoop.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class SimpleArrayList<T> implements SimpleList<T>, Serializable {
+public class SimpleArrayList<E> extends ArrayList<E> implements SimpleList<E>, Serializable {
 
-  private static final long serialVersionUID = 9155161101212598259L;
+  private static final long serialVersionUID = 20180317;
 
-  public final ArrayList<T> theList;
-
-  public SimpleArrayList(ArrayList<T> list) {
-    theList = new ArrayList<>(list);
+  public SimpleArrayList(Collection<? extends E> c) {
+    super(c);
   }
 
   public SimpleArrayList() {
-    theList = new ArrayList<>();
+    super();
   }
 
-  public SimpleArrayList(int capacity) {
-    theList = new ArrayList<>(capacity);
-  }
-
-  @Override
-  public int size() {
-    return theList.size();
-  }
-
-  @Override
-  public boolean isEmpty() {
-    return theList.isEmpty();
-  }
-
-  @Override
-  public T get(int index) {
-    return theList.get(index);
+  public SimpleArrayList(int initialCapacity) {
+    super(initialCapacity);
   }
 
   @Override
   // Return the entire list.
-  public SimpleList<T> getSublist(int index) {
+  public SimpleList<E> getSublist(int index) {
     return this;
   }
 
-  public boolean add(T element) {
-    return theList.add(element);
-  }
-
   @Override
-  public List<T> toJDKList() {
-    return new ArrayList<>(theList);
-  }
-
-  @Override
-  public String toString() {
-    return toJDKList().toString();
+  public List<E> toJDKList() {
+    return new ArrayList<>(this);
   }
 }
