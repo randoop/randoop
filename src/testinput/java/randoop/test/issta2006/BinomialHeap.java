@@ -133,31 +133,23 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
 
   public static int counter = 0;
 
+  private static String nodeFingerprint(BinomialHeapNode n) {
+    String res = "";
+    if (n == null) {
+      res += "null";
+    } else {
+      res += (n.child == null) ? "C-" : "C+";
+      res += (n.sibling == null) ? "S-" : "S+";
+      res += (n.parent == null) ? "P-" : "P+";
+    }
+    return res;
+  }
+
   private static int gen_native(int br, BinomialHeapNode n1, BinomialHeapNode n2) {
     String res = br + ",";
     // For Basic Block Coverage
-    BinomialHeapNode temp, temp2;
-    if (n1 == null) {
-      res += "null";
-    } else {
-      temp = n1.child;
-      res += (temp == null) ? "C-" : "C+";
-      temp = n1.sibling;
-      res += (temp == null) ? "S-" : "S+";
-      temp = n1.parent;
-      res += (temp == null) ? "P-" : "P+";
-    }
-
-    if (n2 == null) {
-      res += "null";
-    } else {
-      temp = n2.child;
-      res += (temp == null) ? "C-" : "C+";
-      temp = n2.sibling;
-      res += (temp == null) ? "S-" : "S+";
-      temp = n2.parent;
-      res += (temp == null) ? "P-" : "P+";
-    }
+    res += nodeFingerprint(n1);
+    res += nodeFingerprint(n2);
     if (n1 != null && n2 != null) {
       // commented out because of symbolic version
       //         temp = env.getIntField(n1,null,"key");
