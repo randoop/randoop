@@ -108,7 +108,7 @@ public class FibHeap {
 
   private void cascadingCut(Node y) {
     Node z = y.parent;
-    if (z != null)
+    if (z != null) {
       if (!y.mark) {
         gen(0, y, null);
         y.mark = true;
@@ -117,7 +117,9 @@ public class FibHeap {
         cut(y, z);
         cascadingCut(z);
       }
-    else gen(2, y, null);
+    } else {
+      gen(2, y, null);
+    }
   }
 
   private void consolidate() {
@@ -148,7 +150,9 @@ public class FibHeap {
           Node temp = y;
           y = x;
           x = temp;
-        } else gen(7, x, y);
+        } else {
+          gen(7, x, y);
+        }
         link(y, x);
         A[d] = null;
         d++;
@@ -174,7 +178,9 @@ public class FibHeap {
           if (A[i].cost < min.cost) {
             gen(10, A[i], min);
             min = A[i];
-          } else gen(11, A[i], min);
+          } else {
+            gen(11, A[i], min);
+          }
         } else {
           gen(12, A[i], null);
           min = A[i];
@@ -188,11 +194,15 @@ public class FibHeap {
     if (y.child == x) {
       gen(13, x, y);
       y.child = x.right;
-    } else gen(20, x, y);
+    } else {
+      gen(20, x, y);
+    }
     if (y.degree == 0) {
       gen(14, y, x);
       y.child = null;
-    } else gen(24, x, y);
+    } else {
+      gen(24, x, y);
+    }
     x.left = min;
     x.right = min.right;
     min.right = x;
