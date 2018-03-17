@@ -37,52 +37,54 @@ public class FibHeap {
 
   public static int counter = 0;
 
+  /** Return a string "1" or "0" depending on whether the argument is true or false. */
+  private static String asBinary(boolean b) {
+    return b ? "1" : "0";
+  }
+
+  /**
+   * Given a node, produces a 5-character fingerprint of the node, where each character is '0' or
+   * '1'. Returns "null" if the argument is null.
+   */
+  private static String nodeFingerprint(Node n) {
+    String res = "";
+    if (n == null) {
+      res += "null";
+    } else {
+      Node temp;
+      temp = n.child;
+      res += asBinary(temp == null);
+      temp = n.parent;
+      res += asBinary(temp == null);
+      temp = n.right;
+      res += asBinary(temp == n);
+      temp = n.left;
+      res += asBinary(temp == n);
+      int deg = n.degree;
+      res += asBinary(deg == 0);
+    }
+    return res;
+  }
+
   private static int gen_native(int br, Node n, Node m) {
 
     String res = br + ",";
     //        For Basic Block Coverage
     //        START comment here
 
-    Node temp;
-
-    if (n == null) {
-      res += "null";
-    } else {
-      temp = n.child;
-      res += (temp == null) ? "1" : "0";
-      temp = n.parent;
-      res += (temp == null) ? "1" : "0";
-      temp = n.right;
-      res += (temp == n) ? "1" : "0";
-      temp = n.left;
-      res += (temp == n) ? "1" : "0";
-      int deg = n.degree;
-      res += (deg == 0) ? "1" : "0";
-    }
-    if (m == null) {
-      res += "null";
-    } else {
-      temp = m.child;
-      res += (temp == null) ? "1" : "0";
-      temp = m.parent;
-      res += (temp == null) ? "1" : "0";
-      temp = m.right;
-      res += (temp == n) ? "1" : "0";
-      temp = m.left;
-      res += (temp == n) ? "1" : "0";
-      int deg = m.degree;
-      res += (deg == 0) ? "1" : "0";
-    }
+    res += nodeFingerprint(n);
+    res += nodeFingerprint(m);
     if (n != null && m != null) {
+      Node temp;
       // commented out because of symbolic execution...
       //        int temp2;
       //        temp = n.cost;
       //        temp2 = n.cost;
       //        res += (temp>temp2)?"1":"0";
       temp = n.child;
-      res += (temp == m) ? "1" : "0";
+      res += asBinary(temp == m);
       temp = m.child;
-      res += (temp == n) ? "1" : "0";
+      res += asBinary(temp == n);
     }
     //For Basic Block Coverage
     //END comment here
