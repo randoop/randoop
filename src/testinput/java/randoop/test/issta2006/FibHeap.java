@@ -31,11 +31,40 @@ public class FibHeap {
   //   @NotPartOfState
   private Vector<Node> cachedNodes = new Vector<>();
 
-  public static Set<String> tests = new HashSet<>();
+  public static Set<String> branchFingerprints = new HashSet<>();
 
   // private static Set abs_states = new HashSet();
 
   public static int counter = 0;
+
+  /** Return a string "1" or "0" depending on whether the argument is true or false. */
+  private static String asBinary(boolean b) {
+    return b ? "1" : "0";
+  }
+
+  /**
+   * Given a node, produces a 5-character fingerprint of the node, where each character is '0' or
+   * '1'. Returns "null" if the argument is null.
+   */
+  private static String nodeFingerprint(Node n) {
+    String res = "";
+    if (n == null) {
+      res += "null";
+    } else {
+      Node temp;
+      temp = n.child;
+      res += asBinary(temp == null);
+      temp = n.parent;
+      res += asBinary(temp == null);
+      temp = n.right;
+      res += asBinary(temp == n);
+      temp = n.left;
+      res += asBinary(temp == n);
+      int deg = n.degree;
+      res += asBinary(deg == 0);
+    }
+    return res;
+  }
 
   private static int gen_native(int br, Node n, Node m) {
 
@@ -43,56 +72,29 @@ public class FibHeap {
     //        For Basic Block Coverage
     //        START comment here
 
-    Node temp;
-
-    if (n == null) {
-      res += "null";
-    } else {
-      temp = n.child;
-      res += (temp == null) ? "1" : "0";
-      temp = n.parent;
-      res += (temp == null) ? "1" : "0";
-      temp = n.right;
-      res += (temp == n) ? "1" : "0";
-      temp = n.left;
-      res += (temp == n) ? "1" : "0";
-      int deg = n.degree;
-      res += (deg == 0) ? "1" : "0";
-    }
-    if (m == null) {
-      res += "null";
-    } else {
-      temp = m.child;
-      res += (temp == null) ? "1" : "0";
-      temp = m.parent;
-      res += (temp == null) ? "1" : "0";
-      temp = m.right;
-      res += (temp == n) ? "1" : "0";
-      temp = m.left;
-      res += (temp == n) ? "1" : "0";
-      int deg = m.degree;
-      res += (deg == 0) ? "1" : "0";
-    }
+    res += nodeFingerprint(n);
+    res += nodeFingerprint(m);
     if (n != null && m != null) {
+      Node temp;
       // commented out because of symbolic execution...
       //        int temp2;
       //        temp = n.cost;
       //        temp2 = n.cost;
       //        res += (temp>temp2)?"1":"0";
       temp = n.child;
-      res += (temp == m) ? "1" : "0";
+      res += asBinary(temp == m);
       temp = m.child;
-      res += (temp == n) ? "1" : "0";
+      res += asBinary(temp == n);
     }
     //For Basic Block Coverage
     //END comment here
 
-    if (!tests.contains(res)) {
-      tests.add(res);
+    if (!branchFingerprints.contains(res)) {
+      branchFingerprints.add(res);
       // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
-      System.out.println("Test case number " + tests.size() + " for '" + res + "': ");
-      counter = tests.size();
-      return tests.size();
+      System.out.println("Test case number " + branchFingerprints.size() + " for '" + res + "': ");
+      counter = branchFingerprints.size();
+      return branchFingerprints.size();
     }
     return 0;
   }
@@ -106,7 +108,7 @@ public class FibHeap {
 
   private void cascadingCut(Node y) {
     Node z = y.parent;
-    if (z != null)
+    if (z != null) {
       if (!y.mark) {
         gen(0, y, null);
         y.mark = true;
@@ -115,7 +117,9 @@ public class FibHeap {
         cut(y, z);
         cascadingCut(z);
       }
-    else gen(2, y, null);
+    } else {
+      gen(2, y, null);
+    }
   }
 
   private void consolidate() {
@@ -146,7 +150,9 @@ public class FibHeap {
           Node temp = y;
           y = x;
           x = temp;
-        } else gen(7, x, y);
+        } else {
+          gen(7, x, y);
+        }
         link(y, x);
         A[d] = null;
         d++;
@@ -172,7 +178,9 @@ public class FibHeap {
           if (A[i].cost < min.cost) {
             gen(10, A[i], min);
             min = A[i];
-          } else gen(11, A[i], min);
+          } else {
+            gen(11, A[i], min);
+          }
         } else {
           gen(12, A[i], null);
           min = A[i];
@@ -186,11 +194,15 @@ public class FibHeap {
     if (y.child == x) {
       gen(13, x, y);
       y.child = x.right;
-    } else gen(20, x, y);
+    } else {
+      gen(20, x, y);
+    }
     if (y.degree == 0) {
       gen(14, y, x);
       y.child = null;
-    } else gen(24, x, y);
+    } else {
+      gen(24, x, y);
+    }
     x.left = min;
     x.right = min.right;
     min.right = x;
