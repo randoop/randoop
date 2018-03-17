@@ -6,8 +6,9 @@ import java.util.Objects;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
-import plume.BCELUtil;
-import plume.UtilMDE;
+import org.plumelib.bcelutil.BcelUtil;
+import org.plumelib.bcelutil.JvmUtil;
+import org.plumelib.util.UtilPlume;
 
 /**
  * Defines a method in a way that can be used to substitute method calls using BCEL. A method is
@@ -92,7 +93,7 @@ public class MethodSignature {
     String methodName = fullMethodName.substring(dotPos + 1);
     Type[] paramTypes = new Type[params.length];
     for (int i = 0; i < params.length; i++) {
-      paramTypes[i] = BCELUtil.classname_to_type(params[i].trim());
+      paramTypes[i] = BcelUtil.classnameToType(params[i].trim());
     }
 
     return new MethodSignature(classname, methodName, paramTypes);
@@ -148,7 +149,7 @@ public class MethodSignature {
    */
   @Override
   public String toString() {
-    return String.format("%s.%s(%s)", classname, name, UtilMDE.join(paramTypes, ", "));
+    return String.format("%s.%s(%s)", classname, name, UtilPlume.join(paramTypes, ", "));
   }
 
   /**
@@ -217,7 +218,7 @@ public class MethodSignature {
   /**
    * Converts the BCEL type to a {@code java.lang.Class} object.
    *
-   * <p>This method replicates the {@code BCELUtils.type_to_class()} method, but does not repackage
+   * <p>This method replicates the {@code BcelUtils.typeToClass()} method, but does not repackage
    * the exception.
    *
    * @param type the type object
@@ -225,8 +226,8 @@ public class MethodSignature {
    * @throws ClassNotFoundException if no {@code Class<?>} was found for the type
    */
   private Class<?> typeToClass(Type type) throws ClassNotFoundException {
-    String name = UtilMDE.fieldDescriptorToClassGetName(type.getSignature());
-    return UtilMDE.classForName(name);
+    String name = JvmUtil.fieldDescriptorToClassGetName(type.getSignature());
+    return UtilPlume.classForName(name);
   }
 
   /**

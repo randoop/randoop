@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
 public final class CollectionsExt {
@@ -47,7 +47,7 @@ public final class CollectionsExt {
     if (c.isEmpty()) {
       return "";
     }
-    return UtilMDE.join(toStringLines(c), Globals.lineSep) + Globals.lineSep;
+    return UtilPlume.join(toStringLines(c), Globals.lineSep) + Globals.lineSep;
   }
 
   /**

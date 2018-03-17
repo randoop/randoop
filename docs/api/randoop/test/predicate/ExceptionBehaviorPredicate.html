@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExceptionBehaviorPredicate (randoop 3.1.5 API)</title>
+<title>ExceptionBehaviorPredicate (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExceptionBehaviorPredicate (randoop 3.1.5 API)";
+            parent.document.title="ExceptionBehaviorPredicate (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.test.predicate.ExceptionBehaviorPredicate</li>
@@ -113,10 +113,10 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">ExceptionBehaviorPredicate</span>
-extends java.lang.Object
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
 implements <a href="../../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a></pre>
 <div class="block">An exception predicate is used to check whether an exception corresponds to a particular
- behavior. Used in <a href="../../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test"><code>TestCheckGenerator</code></a> implementations</div>
+ behavior. Used in <a href="../../../randoop/test/TestCheckGenerator.html" title="class in randoop.test"><code>TestCheckGenerator</code></a> implementations</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../randoop/main/ExceptionBehaviorClassifier.html" title="class in randoop.main"><code>ExceptionBehaviorClassifier</code></a></dd>
@@ -143,6 +143,24 @@ implements <a href="../../../randoop/test/predicate/ExceptionPredicate.html" tit
 <td class="colFirst"><code>private <a href="../../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main">GenInputsAbstract.BehaviorType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html#behavior">behavior</a></span></code>&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html" title="class in randoop.test.predicate">ExceptionBehaviorPredicate</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html#IS_ERROR">IS_ERROR</a></span></code>
+<div class="block">A predicate that checks for error behavior.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html" title="class in randoop.test.predicate">ExceptionBehaviorPredicate</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html#IS_EXPECTED">IS_EXPECTED</a></span></code>
+<div class="block">A predicate that checks for expected behavior.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html" title="class in randoop.test.predicate">ExceptionBehaviorPredicate</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html#IS_INVALID">IS_INVALID</a></span></code>
+<div class="block">A predicate that checks for invalid behavior.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -155,10 +173,12 @@ implements <a href="../../../randoop/test/predicate/ExceptionPredicate.html" tit
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colOne" scope="col">Constructor and Description</th>
+<th class="colFirst" scope="col">Modifier</th>
+<th class="colLast" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html#ExceptionBehaviorPredicate-randoop.main.GenInputsAbstract.BehaviorType-">ExceptionBehaviorPredicate</a></span>(<a href="../../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main">GenInputsAbstract.BehaviorType</a>&nbsp;behavior)</code>
+<td class="colFirst"><code>private </code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html#ExceptionBehaviorPredicate-randoop.main.GenInputsAbstract.BehaviorType-">ExceptionBehaviorPredicate</a></span>(<a href="../../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main">GenInputsAbstract.BehaviorType</a>&nbsp;behavior)</code>
 <div class="block">Creates a predicate that checks for the given behavior.</div>
 </td>
 </tr>
@@ -180,7 +200,7 @@ implements <a href="../../../randoop/test/predicate/ExceptionPredicate.html" tit
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html#test-randoop.ExceptionalExecution-randoop.sequence.ExecutableSequence-">test</a></span>(<a href="../../../randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a>&nbsp;exec,
-    <a href="../../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
+    <a href="../../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
 <div class="block">Test whether the <code>ExceptionalExecution</code> for the given <code>ExecutableSequence</code>
  corresponds to the behavior set for this object.</div>
 </td>
@@ -190,8 +210,8 @@ implements <a href="../../../randoop/test/predicate/ExceptionPredicate.html" tit
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -207,6 +227,36 @@ implements <a href="../../../randoop/test/predicate/ExceptionPredicate.html" tit
 <!--   -->
 </a>
 <h3>Field Detail</h3>
+<a name="IS_INVALID">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>IS_INVALID</h4>
+<pre>public static&nbsp;<a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html" title="class in randoop.test.predicate">ExceptionBehaviorPredicate</a> IS_INVALID</pre>
+<div class="block">A predicate that checks for invalid behavior.</div>
+</li>
+</ul>
+<a name="IS_ERROR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>IS_ERROR</h4>
+<pre>public static&nbsp;<a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html" title="class in randoop.test.predicate">ExceptionBehaviorPredicate</a> IS_ERROR</pre>
+<div class="block">A predicate that checks for error behavior.</div>
+</li>
+</ul>
+<a name="IS_EXPECTED">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>IS_EXPECTED</h4>
+<pre>public static&nbsp;<a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html" title="class in randoop.test.predicate">ExceptionBehaviorPredicate</a> IS_EXPECTED</pre>
+<div class="block">A predicate that checks for expected behavior.</div>
+</li>
+</ul>
 <a name="behavior">
 <!--   -->
 </a>
@@ -230,7 +280,7 @@ implements <a href="../../../randoop/test/predicate/ExceptionPredicate.html" tit
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ExceptionBehaviorPredicate</h4>
-<pre>public&nbsp;ExceptionBehaviorPredicate(<a href="../../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main">GenInputsAbstract.BehaviorType</a>&nbsp;behavior)</pre>
+<pre>private&nbsp;ExceptionBehaviorPredicate(<a href="../../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main">GenInputsAbstract.BehaviorType</a>&nbsp;behavior)</pre>
 <div class="block">Creates a predicate that checks for the given behavior.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -253,7 +303,7 @@ implements <a href="../../../randoop/test/predicate/ExceptionPredicate.html" tit
 <li class="blockList">
 <h4>test</h4>
 <pre>public&nbsp;boolean&nbsp;test(<a href="../../../randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a>&nbsp;exec,
-                    <a href="../../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
+                    <a href="../../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
 <div class="block">Test whether the <code>ExceptionalExecution</code> for the given <code>ExecutableSequence</code>
  corresponds to the behavior set for this object.</div>
 <dl>
@@ -261,7 +311,7 @@ implements <a href="../../../randoop/test/predicate/ExceptionPredicate.html" tit
 <dd><code><a href="../../../randoop/test/predicate/ExceptionPredicate.html#test-randoop.ExceptionalExecution-randoop.sequence.ExecutableSequence-">test</a></code>&nbsp;in interface&nbsp;<code><a href="../../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>exec</code> - the exceptional execution</dd>
-<dd><code>s</code> - the sequence in which exception occurred</dd>
+<dd><code>eseq</code> - the sequence in which exception occurred</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if exception is classified with behavior, and false otherwise</dd>
 </dl>

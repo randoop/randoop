@@ -28,6 +28,10 @@ plugins {
   id "net.ltgt.errorprone-base" version "0.0.11" // 0.0.13 does not work with Java 7
 }
 
+// For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
+apply from: "checkerframework-annos-in-comments.gradle"
+// apply from: "checkerframework.gradle"
+
 /* Common build configuration for Randoop and agents */
 allprojects {
 
@@ -44,7 +48,7 @@ allprojects {
   }
 
   /* Randoop version number - added to generated jar files */
-  version = '3.1.5'
+  version = '4.0.0'
 }
 
 /******
@@ -131,7 +135,12 @@ configurations {
 dependencies {
   /* Randoop uses local copy of Plume */
   plume files('lib/plume.jar')
-  implementation 'org.plumelib:options:0.3.1' // also update in agent/replacecall/replacecall.gradle
+
+  // Keep these in sync with agent/replacecall/replacecall.gradle
+  implementation 'org.plumelib:bcel-util:0.0.4'
+  implementation 'org.plumelib:options:0.3.1'
+  implementation 'org.plumelib:plume-util:0.0.1'
+
   implementation 'org.apache.commons:commons-exec:1.3'
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
   implementation group: 'junit', name: 'junit', version: '4.+'
@@ -161,6 +170,8 @@ dependencies {
    * source set systemTest
    */
   systemTestImplementation files('lib/plume.jar')
+  systemTestImplementation 'org.apache.commons:commons-exec:1.3'
+  systemTestImplementation group: 'org.plumelib', name: 'plume-util', version: '0.0.1'
   systemTestImplementation group: 'junit', name: 'junit', version: '4.+'
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.7.201606060606'
@@ -236,7 +247,7 @@ import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
 tasks.withType(JavaCompile).each { t ->
   if (JavaVersion.current().isJava8Compatible()) {
-    if (!t.name.equals("compileTestInputJava")) {
+    if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
       t.toolChain ErrorProneToolChain.create(project)
       t.options.compilerArgs += [
         // undocumented, and suggestion seems bad
@@ -827,16 +838,21 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) 
 }
 
 /*
- * Applies HTML5 validator to project site HTML
+ * Applies HTML5 validator to project site HTML, including the manual
  */
-task validateSite(type: Exec) {
+task validateSite {
   description "Run html5validator to find HTML errors in site files (excludes manual and api)"
   if (JavaVersion.current().isJava8Compatible()) {
-    environment PATH: "$System.env.PATH"
-    commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
-    commandLine "html5validator", "--root", "docs/", "--ignore", "docs/api"
+    exec {
+      environment PATH: "$System.env.PATH"
+      commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
+    }
+    exec {
+      environment PATH: "$System.env.PATH"
+      commandLine "html5validator", "--root", "docs/", "--ignore", "docs/api"
+    }
   } else {
-    commandLine "echo", "WARNING: HTML validation of site is only run in Java 9+"
+    println "WARNING: HTML validation of site is only run in Java 8+"
   }
 }
 

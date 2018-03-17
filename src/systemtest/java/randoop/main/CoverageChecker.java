@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.report.JavaNames;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 
 /** Checks coverage for a test, managing information needed to perform the coverage checks. */
 class CoverageChecker {
@@ -222,7 +222,7 @@ class CoverageChecker {
         + "."
         + m.getName()
         + "("
-        + UtilMDE.join(params, ", ")
+        + UtilPlume.join(params, ", ")
         + ")";
   }
 

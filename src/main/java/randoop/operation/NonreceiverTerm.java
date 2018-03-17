@@ -3,7 +3,7 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Objects;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
@@ -436,7 +436,7 @@ public final class NonreceiverTerm extends CallableOperation {
                   + " but the string given was not enclosed in quotation marks.";
           throw new OperationParseException(msg);
         }
-        value = UtilMDE.unescapeNonJava(valString.substring(1, valString.length() - 1));
+        value = UtilPlume.unescapeNonJava(valString.substring(1, valString.length() - 1));
         if (!Value.stringLengthOK((String) value)) {
           throw new OperationParseException(
               "Error when parsing String; length is greater than "

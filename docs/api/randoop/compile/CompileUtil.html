@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CompileUtil (randoop 3.1.5 API)</title>
+<title>CompileUtil (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CompileUtil (randoop 3.1.5 API)";
+            parent.document.title="CompileUtil (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9};
+var methods = {"i0":9,"i1":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../randoop/compile/SequenceClassLoader.html" title="class in randoop.compile"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/compile/FileCompiler.html" title="class in randoop.compile"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/compile/CompileUtil.html" target="_top">Frames</a></li>
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.compile.CompileUtil</li>
@@ -109,7 +109,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>class <span class="typeNameLabel">CompileUtil</span>
-extends java.lang.Object</pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Utilities for compiler classes.</div>
 </li>
 </ul>
@@ -130,8 +130,10 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>(package private) static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/CompileUtil.html#JAVA_EXTENSION">JAVA_EXTENSION</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>(package private) static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/CompileUtil.html#JAVA_EXTENSION">JAVA_EXTENSION</a></span></code>
+<div class="block">The file extension for a Java source file</div>
+</td>
 </tr>
 </table>
 </li>
@@ -166,16 +168,25 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>(package private) static java.net.URI</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/CompileUtil.html#toURI-java.lang.String-">toURI</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/CompileUtil.html#printDiagnostics-java.io.PrintWriter-java.util.List-">printDiagnostics</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintWriter.html?is-external=true" title="class or interface in java.io">PrintWriter</a>&nbsp;out,
+                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/Diagnostic.html?is-external=true" title="class or interface in javax.tools">Diagnostic</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaFileObject.html?is-external=true" title="class or interface in javax.tools">JavaFileObject</a>&gt;&gt;&nbsp;diagnostics)</code>
+<div class="block">Prints the compiler diagnostics to the writer.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>(package private) static <a href="https://docs.oracle.com/javase/8/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/CompileUtil.html#toURI-java.lang.String-">toURI</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;pathString)</code>
+<div class="block">Converts the path string to a URI for use by the file manager of the compiler.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -197,7 +208,8 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>JAVA_EXTENSION</h4>
-<pre>static final&nbsp;java.lang.String JAVA_EXTENSION</pre>
+<pre>static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> JAVA_EXTENSION</pre>
+<div class="block">The file extension for a Java source file</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../constant-values.html#randoop.compile.CompileUtil.JAVA_EXTENSION">Constant Field Values</a></dd>
@@ -232,10 +244,35 @@ extends java.lang.Object</pre>
 <a name="toURI-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>toURI</h4>
-<pre>static&nbsp;java.net.URI&nbsp;toURI(java.lang.String&nbsp;name)</pre>
+<pre>static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a>&nbsp;toURI(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;pathString)</pre>
+<div class="block">Converts the path string to a URI for use by the file manager of the compiler.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>pathString</code> - the path to a file as a string</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the <code>URI</code> for the path</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../randoop/compile/SequenceJavaFileManager.html#uri-javax.tools.JavaFileManager.Location-java.lang.String-java.lang.String-"><code>SequenceJavaFileManager.uri(JavaFileManager.Location, String, String)</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="printDiagnostics-java.io.PrintWriter-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>printDiagnostics</h4>
+<pre>public static&nbsp;void&nbsp;printDiagnostics(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintWriter.html?is-external=true" title="class or interface in java.io">PrintWriter</a>&nbsp;out,
+                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/Diagnostic.html?is-external=true" title="class or interface in javax.tools">Diagnostic</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaFileObject.html?is-external=true" title="class or interface in javax.tools">JavaFileObject</a>&gt;&gt;&nbsp;diagnostics)</pre>
+<div class="block">Prints the compiler diagnostics to the writer.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>out</code> - the print writer</dd>
+<dd><code>diagnostics</code> - the compiler diagnostics</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -266,7 +303,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../randoop/compile/SequenceClassLoader.html" title="class in randoop.compile"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/compile/FileCompiler.html" title="class in randoop.compile"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/compile/CompileUtil.html" target="_top">Frames</a></li>

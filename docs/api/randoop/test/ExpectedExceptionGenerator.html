@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExpectedExceptionGenerator (randoop 3.1.5 API)</title>
+<title>ExpectedExceptionGenerator (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,14 +12,14 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExpectedExceptionGenerator (randoop 3.1.5 API)";
+            parent.document.title="ExpectedExceptionGenerator (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":9,"i1":10,"i2":10,"i3":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -96,27 +96,27 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>
+<ul class="inheritance">
+<li><a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">randoop.test.TestCheckGenerator</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.test.ExpectedExceptionGenerator</li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>All Implemented Interfaces:</dt>
-<dd><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">ExpectedExceptionGenerator</span>
-extends java.lang.Object
-implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></pre>
-<div class="block">A <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test"><code>TestCheckGenerator</code></a> that generates checks for exceptions that are expected at a
- particular statement. Creates a <a href="../../randoop/test/ExpectedExceptionCheck.html" title="class in randoop.test"><code>ExpectedExceptionCheck</code></a> that is returned in a <a href="../../randoop/test/RegressionChecks.html" title="class in randoop.test"><code>RegressionChecks</code></a> collection if the exception occurs, or a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>
+extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">TestCheckGenerator</a></pre>
+<div class="block">A <a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test"><code>TestCheckGenerator</code></a> that generates checks for exceptions that are expected at the final
+ statement of a sequence. Creates a <a href="../../randoop/test/ExpectedExceptionCheck.html" title="class in randoop.test"><code>ExpectedExceptionCheck</code></a> that is returned in a <a href="../../randoop/test/RegressionChecks.html" title="class in randoop.test"><code>RegressionChecks</code></a> collection if the exception occurs, or a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>
  collection if not.
 
  <p>Note that this generator is distinct from other check generators that either return regression
@@ -140,12 +140,10 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#conditionComment">conditionComment</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>private <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#expected">expected</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ThrowsClause.html" title="class in randoop.condition">ThrowsClause</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#exceptionSets">exceptionSets</a></span></code>
+<div class="block">The list of lists of throws clauses for which the guard expression was satisfied.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -162,8 +160,9 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#ExpectedExceptionGenerator-randoop.types.ClassOrInterfaceType-java.lang.String-">ExpectedExceptionGenerator</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;expected,
-                          java.lang.String&nbsp;conditionComment)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#ExpectedExceptionGenerator-java.util.List-">ExpectedExceptionGenerator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ThrowsClause.html" title="class in randoop.condition">ThrowsClause</a>&gt;&gt;&nbsp;exceptionSets)</code>
+<div class="block">Creates an <a href="../../randoop/test/ExpectedExceptionGenerator.html" title="class in randoop.test"><code>ExpectedExceptionGenerator</code></a> for the list of sets of expected exceptions.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -175,31 +174,51 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#getExpected--">getExpected</a></span>()</code>
-<div class="block">Returns the type of the expected exception.</div>
+<td class="colFirst"><code>private static <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#findMatchingExpectedType-randoop.types.ClassOrInterfaceType-java.util.List-">findMatchingExpectedType</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;throwableType,
+                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ThrowsClause.html" title="class in randoop.condition">ThrowsClause</a>&gt;&nbsp;throwsClauses)</code>
+<div class="block">Find the first ThrowsClause whose exception is a supertype of (or equal to) <code>throwableType</code>, and return that exception type.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
- of this generator.</div>
+<td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;?&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#generateTestChecks-randoop.sequence.ExecutableSequence-">generateTestChecks</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
+<div class="block">Generate a <a href="../../randoop/test/TestChecks.html" title="interface in randoop.test"><code>TestChecks</code></a> object for the executed sequence <code>eseq</code> based on the
+ criteria of this generator.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ThrowsClause.html" title="class in randoop.condition">ThrowsClause</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#getExpected--">getExpected</a></span>()</code>
+<div class="block">Returns the types of the expected exceptions.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>private <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test">ErrorRevealingChecks</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#getMissingExceptionTestChecks-int-">getMissingExceptionTestChecks</a></span>(int&nbsp;finalIndex)</code>
+<div class="block">Return an ErrorRevealingChecks that checks for a missing exception at the given index.</div>
 </td>
 </tr>
 </table>
 <ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.randoop.test.TestCheckGenerator">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;randoop.test.<a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">TestCheckGenerator</a></h3>
+<code><a href="../../randoop/test/TestCheckGenerator.html#hasGenerator-java.lang.Class-">hasGenerator</a></code></li>
+</ul>
+<ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -215,22 +234,15 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="expected">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>expected</h4>
-<pre>private final&nbsp;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a> expected</pre>
-</li>
-</ul>
-<a name="conditionComment">
+<a name="exceptionSets">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>conditionComment</h4>
-<pre>private final&nbsp;java.lang.String conditionComment</pre>
+<h4>exceptionSets</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ThrowsClause.html" title="class in randoop.condition">ThrowsClause</a>&gt;&gt; exceptionSets</pre>
+<div class="block">The list of lists of throws clauses for which the guard expression was satisfied. Each list of
+ throwsclauses represents one specification, and each such list must be satisfied.</div>
 </li>
 </ul>
 </li>
@@ -241,14 +253,20 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ExpectedExceptionGenerator-randoop.types.ClassOrInterfaceType-java.lang.String-">
+<a name="ExpectedExceptionGenerator-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ExpectedExceptionGenerator</h4>
-<pre>public&nbsp;ExpectedExceptionGenerator(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;expected,
-                                  java.lang.String&nbsp;conditionComment)</pre>
+<pre>public&nbsp;ExpectedExceptionGenerator(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ThrowsClause.html" title="class in randoop.condition">ThrowsClause</a>&gt;&gt;&nbsp;exceptionSets)</pre>
+<div class="block">Creates an <a href="../../randoop/test/ExpectedExceptionGenerator.html" title="class in randoop.test"><code>ExpectedExceptionGenerator</code></a> for the list of sets of expected exceptions.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>exceptionSets</code> - a list of lists of expected exceptions to be searched when testing an
+     exception thrown by the operation in the final statement of the sequence. Each list of
+     expected exceptions must be satisfied.</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -259,24 +277,58 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="visit-randoop.sequence.ExecutableSequence-">
+<a name="generateTestChecks-randoop.sequence.ExecutableSequence-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>visit</h4>
-<pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;visit(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
- of this generator.
+<h4>generateTestChecks</h4>
+<pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;?&gt;&nbsp;generateTestChecks(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
+<div class="block">Generate a <a href="../../randoop/test/TestChecks.html" title="interface in randoop.test"><code>TestChecks</code></a> object for the executed sequence <code>eseq</code> based on the
+ criteria of this generator.
 
  <p>Adds checks for an expected exception at the final statement of the sequence.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/TestCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></code></dd>
+<dd><code><a href="../../randoop/test/TestCheckGenerator.html#generateTestChecks-randoop.sequence.ExecutableSequence-">generateTestChecks</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">TestCheckGenerator</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>s</code> - the sequence for which checks are generated</dd>
+<dd><code>eseq</code> - the sequence for which checks are generated</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the generated check set for the sequence</dd>
+</dl>
+</li>
+</ul>
+<a name="findMatchingExpectedType-randoop.types.ClassOrInterfaceType-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findMatchingExpectedType</h4>
+<pre>private static&nbsp;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;findMatchingExpectedType(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;throwableType,
+                                                             <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ThrowsClause.html" title="class in randoop.condition">ThrowsClause</a>&gt;&nbsp;throwsClauses)</pre>
+<div class="block">Find the first ThrowsClause whose exception is a supertype of (or equal to) <code>throwableType</code>, and return that exception type.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>throwableType</code> - the type to search for</dd>
+<dd><code>throwsClauses</code> - the <a href="../../randoop/condition/ThrowsClause.html" title="class in randoop.condition"><code>ThrowsClause</code></a>s to search within</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the type in the first matching <a href="../../randoop/condition/ThrowsClause.html" title="class in randoop.condition"><code>ThrowsClause</code></a>, or null if none match</dd>
+</dl>
+</li>
+</ul>
+<a name="getMissingExceptionTestChecks-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMissingExceptionTestChecks</h4>
+<pre>private&nbsp;<a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test">ErrorRevealingChecks</a>&nbsp;getMissingExceptionTestChecks(int&nbsp;finalIndex)</pre>
+<div class="block">Return an ErrorRevealingChecks that checks for a missing exception at the given index.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>finalIndex</code> - the index</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the ErrorRevealingChecks object</dd>
 </dl>
 </li>
 </ul>
@@ -286,11 +338,12 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <ul class="blockListLast">
 <li class="blockList">
 <h4>getExpected</h4>
-<pre>public&nbsp;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;getExpected()</pre>
-<div class="block">Returns the type of the expected exception.</div>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ThrowsClause.html" title="class in randoop.condition">ThrowsClause</a>&gt;&gt;&nbsp;getExpected()</pre>
+<div class="block">Returns the types of the expected exceptions. Each list of throwsclauses represents one
+ specification, and each such list must be satisfied.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the type of the expected exception</dd>
+<dd>the types of the expected exceptions</dd>
 </dl>
 </li>
 </ul>

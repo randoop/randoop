@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypedClassOperation (randoop 3.1.5 API)</title>
+<title>TypedClassOperation (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypedClassOperation (randoop 3.1.5 API)";
+            parent.document.title="TypedClassOperation (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">randoop.operation.TypedOperation</a></li>
@@ -113,7 +113,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>java.lang.Comparable&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;, <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></dd>
+<dd><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html?is-external=true" title="class or interface in java.lang">Comparable</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;, <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></dd>
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
@@ -123,7 +123,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">TypedClassOperation</span>
 extends <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></pre>
-<div class="block">Represents a type decoration for an operation that has a declaring class.</div>
+<div class="block">Represents a TypedOperation and its declaring class. Examples of TypedOperations that have a
+ declaring class are a method call or field access.</div>
 </li>
 </ul>
 </div>
@@ -145,7 +146,13 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#declaringType">declaringType</a></span></code>
-<div class="block">The declaring type for this operation</div>
+<div class="block">The declaring type for this operation.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#rawSignature">rawSignature</a></span></code>
+<div class="block">The cached value of <a href="../../randoop/operation/TypedClassOperation.html#getRawSignature--"><code>getRawSignature()</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -188,17 +195,17 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#appendCode-java.util.List-java.lang.StringBuilder-">appendCode</a></span>(java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVars,
-          java.lang.StringBuilder&nbsp;b)</code>
-<div class="block">Produces a Java source code representation of this statement and append it to the given
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#appendCode-java.util.List-java.lang.StringBuilder-">appendCode</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVars,
+          <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html?is-external=true" title="class or interface in java.lang">StringBuilder</a>&nbsp;b)</code>
+<div class="block">Produces a Java source code representation of this operation and appends it to the given
  StringBuilder.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#apply-randoop.types.Substitution-">apply</a></span>(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Creates a <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> from this operation by using the given <a href="../../randoop/types/Substitution.html" title="class in randoop.types"><code>Substitution</code></a> on
- type variables.</div>
+<div class="block">Applies the given substitution to the generic types in this operation, and returns a new
+ operation with the instantiated types.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -209,51 +216,62 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 </td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#compareTo-randoop.operation.TypedOperation-">compareTo</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;op)</code>
-<div class="block">Compares this operation to another <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a>.</div>
-</td>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#equals-java.lang.Object-">equals</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;obj)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;obj)</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#getDeclaringType--">getDeclaringType</a></span>()</code>
-<div class="block">Returns the class in which the operation is defined, or, if the operation represents a value,
- the type of the value.</div>
+<div class="block">Returns the class in which the operation is defined.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#getName--">getName</a></span>()</code>
 <div class="block">Returns the name for the operation.</div>
 </td>
 </tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#getOperationForType-randoop.types.ClassOrInterfaceType-">getOperationForType</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;type)</code>
+<div class="block">Creates an operation with the same name, input types, and output type as this operation, but
+ having the given type as the owning class.</div>
+</td>
+</tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#getTypeParameters--">getTypeParameters</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#getRawSignature--">getRawSignature</a></span>()</code>
+<div class="block">Returns the <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> for this operation if it is a method or constructor call.</div>
+</td>
 </tr>
 <tr id="i8" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#getTypeParameters--">getTypeParameters</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#getUnqualifiedName--">getUnqualifiedName</a></span>()</code>
+<div class="block">Returns the simple name of this operation, not qualified by the declaring class.</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#hasWildcardTypes--">hasWildcardTypes</a></span>()</code>
 <div class="block">Indicates whether this operation has a type that is a wildcard type.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i12" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#toParsableString--">toParsableString</a></span>()</code>
-<div class="block">Returns a string representation of this Operation, which can be read by static parse method for
- class.</div>
+<div class="block">Returns a string representation of this Operation, which can be read by the static <code>parse</code> method for an Operation class.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedClassOperation.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
@@ -262,14 +280,14 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.operation.<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></h3>
-<code><a href="../../randoop/operation/TypedOperation.html#createArrayCreation-randoop.types.ArrayType-">createArrayCreation</a>, <a href="../../randoop/operation/TypedOperation.html#createArrayElementAssignment-randoop.types.ArrayType-">createArrayElementAssignment</a>, <a href="../../randoop/operation/TypedOperation.html#createCast-randoop.types.Type-randoop.types.Type-">createCast</a>, <a href="../../randoop/operation/TypedOperation.html#createGetterForField-java.lang.reflect.Field-randoop.types.ClassOrInterfaceType-">createGetterForField</a>, <a href="../../randoop/operation/TypedOperation.html#createInitializedArrayCreation-randoop.types.ArrayType-int-">createInitializedArrayCreation</a>, <a href="../../randoop/operation/TypedOperation.html#createNonreceiverInitialization-randoop.operation.NonreceiverTerm-">createNonreceiverInitialization</a>, <a href="../../randoop/operation/TypedOperation.html#createNullOrZeroInitializationForType-randoop.types.Type-">createNullOrZeroInitializationForType</a>, <a href="../../randoop/operation/TypedOperation.html#createPrimitiveInitialization-randoop.types.Type-java.lang.Object-">createPrimitiveInitialization</a>, <a href="../../randoop/operation/TypedOperation.html#createSetterForField-java.lang.reflect.Field-randoop.types.ClassOrInterfaceType-">createSetterForField</a>, <a href="../../randoop/operation/TypedOperation.html#execute-java.lang.Object:A-java.io.PrintStream-">execute</a>, <a href="../../randoop/operation/TypedOperation.html#forConstructor-java.lang.reflect.Constructor-">forConstructor</a>, <a href="../../randoop/operation/TypedOperation.html#forMethod-java.lang.reflect.Method-">forMethod</a>, <a href="../../randoop/operation/TypedOperation.html#getInputTypes--">getInputTypes</a>, <a href="../../randoop/operation/TypedOperation.html#getOperation--">getOperation</a>, <a href="../../randoop/operation/TypedOperation.html#getOutputType--">getOutputType</a>, <a href="../../randoop/operation/TypedOperation.html#getValue--">getValue</a>, <a href="../../randoop/operation/TypedOperation.html#isConstantField--">isConstantField</a>, <a href="../../randoop/operation/TypedOperation.html#isConstructorCall--">isConstructorCall</a>, <a href="../../randoop/operation/TypedOperation.html#isGeneric--">isGeneric</a>, <a href="../../randoop/operation/TypedOperation.html#isMessage--">isMessage</a>, <a href="../../randoop/operation/TypedOperation.html#isMethodCall--">isMethodCall</a>, <a href="../../randoop/operation/TypedOperation.html#isNonreceiverType-randoop.types.Type-">isNonreceiverType</a>, <a href="../../randoop/operation/TypedOperation.html#isNonreceivingValue--">isNonreceivingValue</a>, <a href="../../randoop/operation/TypedOperation.html#isStatic--">isStatic</a>, <a href="../../randoop/operation/TypedOperation.html#isUncheckedCast--">isUncheckedCast</a>, <a href="../../randoop/operation/TypedOperation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></code></li>
+<code><a href="../../randoop/operation/TypedOperation.html#addExecutableSpecification-randoop.condition.ExecutableSpecification-">addExecutableSpecification</a>, <a href="../../randoop/operation/TypedOperation.html#checkPrestate-java.lang.Object:A-">checkPrestate</a>, <a href="../../randoop/operation/TypedOperation.html#compareTo-randoop.operation.TypedOperation-">compareTo</a>, <a href="../../randoop/operation/TypedOperation.html#createArrayCreation-randoop.types.ArrayType-">createArrayCreation</a>, <a href="../../randoop/operation/TypedOperation.html#createArrayElementAssignment-randoop.types.ArrayType-">createArrayElementAssignment</a>, <a href="../../randoop/operation/TypedOperation.html#createCast-randoop.types.Type-randoop.types.Type-">createCast</a>, <a href="../../randoop/operation/TypedOperation.html#createGetterForField-java.lang.reflect.Field-randoop.types.ClassOrInterfaceType-">createGetterForField</a>, <a href="../../randoop/operation/TypedOperation.html#createInitializedArrayCreation-randoop.types.ArrayType-int-">createInitializedArrayCreation</a>, <a href="../../randoop/operation/TypedOperation.html#createNonreceiverInitialization-randoop.operation.NonreceiverTerm-">createNonreceiverInitialization</a>, <a href="../../randoop/operation/TypedOperation.html#createNullOrZeroInitializationForType-randoop.types.Type-">createNullOrZeroInitializationForType</a>, <a href="../../randoop/operation/TypedOperation.html#createPrimitiveInitialization-randoop.types.Type-java.lang.Object-">createPrimitiveInitialization</a>, <a href="../../randoop/operation/TypedOperation.html#createSetterForField-java.lang.reflect.Field-randoop.types.ClassOrInterfaceType-">createSetterForField</a>, <a href="../../randoop/operation/TypedOperation.html#execute-java.lang.Object:A-java.io.PrintStream-">execute</a>, <a href="../../randoop/operation/TypedOperation.html#forConstructor-java.lang.reflect.Constructor-">forConstructor</a>, <a href="../../randoop/operation/TypedOperation.html#forMethod-java.lang.reflect.Method-">forMethod</a>, <a href="../../randoop/operation/TypedOperation.html#getInputTypes--">getInputTypes</a>, <a href="../../randoop/operation/TypedOperation.html#getOperation--">getOperation</a>, <a href="../../randoop/operation/TypedOperation.html#getOutputType--">getOutputType</a>, <a href="../../randoop/operation/TypedOperation.html#getSignatureString--">getSignatureString</a>, <a href="../../randoop/operation/TypedOperation.html#getValue--">getValue</a>, <a href="../../randoop/operation/TypedOperation.html#isConstantField--">isConstantField</a>, <a href="../../randoop/operation/TypedOperation.html#isConstructorCall--">isConstructorCall</a>, <a href="../../randoop/operation/TypedOperation.html#isGeneric--">isGeneric</a>, <a href="../../randoop/operation/TypedOperation.html#isMessage--">isMessage</a>, <a href="../../randoop/operation/TypedOperation.html#isMethodCall--">isMethodCall</a>, <a href="../../randoop/operation/TypedOperation.html#isNonreceiverType-randoop.types.Type-">isNonreceiverType</a>, <a href="../../randoop/operation/TypedOperation.html#isNonreceivingValue--">isNonreceivingValue</a>, <a href="../../randoop/operation/TypedOperation.html#isStatic--">isStatic</a>, <a href="../../randoop/operation/TypedOperation.html#isUncheckedCast--">isUncheckedCast</a>, <a href="../../randoop/operation/TypedOperation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -288,11 +306,21 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <a name="declaringType">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>declaringType</h4>
 <pre>private final&nbsp;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a> declaringType</pre>
-<div class="block">The declaring type for this operation</div>
+<div class="block">The declaring type for this operation.</div>
+</li>
+</ul>
+<a name="rawSignature">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>rawSignature</h4>
+<pre>private&nbsp;<a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a> rawSignature</pre>
+<div class="block">The cached value of <a href="../../randoop/operation/TypedClassOperation.html#getRawSignature--"><code>getRawSignature()</code></a>.</div>
 </li>
 </ul>
 </li>
@@ -338,7 +366,7 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <ul class="blockList">
 <li class="blockList">
 <h4>equals</h4>
-<pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;obj)</pre>
+<pre>public&nbsp;boolean&nbsp;equals(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;obj)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/operation/TypedOperation.html#equals-java.lang.Object-">equals</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></dd>
@@ -358,28 +386,6 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 </dl>
 </li>
 </ul>
-<a name="compareTo-randoop.operation.TypedOperation-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>compareTo</h4>
-<pre>public&nbsp;int&nbsp;compareTo(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;op)</pre>
-<div class="block">Compares this operation to another <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a>. Ensures that any <a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation"><code>TypedTermOperation</code></a> objects precedes a <a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation"><code>TypedClassOperation</code></a>. Otherwise, orders <a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation"><code>TypedClassOperation</code></a> objects by first comparing the declaring types, and then comparing by
- <a href="../../randoop/operation/TypedOperation.html#compareTo-randoop.operation.TypedOperation-"><code>TypedOperation.compareTo(TypedOperation)</code></a>.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../randoop/operation/TypedOperation.html#compareTo-randoop.operation.TypedOperation-">compareTo</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></dd>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>op</code> - the <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> to compare with this operation</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>value &lt; 0 if this operation precedes <code>op</code>, 0 if the operations are identical,
-     and &gt; 0 if this operation succeeds op</dd>
-</dl>
-</li>
-</ul>
 <a name="getDeclaringType--">
 <!--   -->
 </a>
@@ -387,8 +393,7 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <li class="blockList">
 <h4>getDeclaringType</h4>
 <pre>public&nbsp;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;getDeclaringType()</pre>
-<div class="block">Returns the class in which the operation is defined, or, if the operation represents a value,
- the type of the value.</div>
+<div class="block">Returns the class in which the operation is defined.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>class to which the operation belongs</dd>
@@ -402,15 +407,17 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <li class="blockList">
 <h4>apply</h4>
 <pre>public&nbsp;<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block">Creates a <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> from this operation by using the given <a href="../../randoop/types/Substitution.html" title="class in randoop.types"><code>Substitution</code></a> on
- type variables.</div>
+<div class="block">Applies the given substitution to the generic types in this operation, and returns a new
+ operation with the instantiated types.
+
+ <p>Applies the substitution to the declaring type, all input types, and the output type.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/TypedOperation.html#apply-randoop.types.Substitution-">apply</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>substitution</code> - the type substitution</dd>
+<dd><code>substitution</code> - the substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the concrete operation with type variables replaced by substitution</dd>
+<dd>the operation resulting from applying the substitution to the types of this operation</dd>
 </dl>
 </li>
 </ul>
@@ -439,16 +446,16 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <ul class="blockList">
 <li class="blockList">
 <h4>appendCode</h4>
-<pre>public&nbsp;void&nbsp;appendCode(java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVars,
-                       java.lang.StringBuilder&nbsp;b)</pre>
-<div class="block">Produces a Java source code representation of this statement and append it to the given
+<pre>public&nbsp;void&nbsp;appendCode(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVars,
+                       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html?is-external=true" title="class or interface in java.lang">StringBuilder</a>&nbsp;b)</pre>
+<div class="block">Produces a Java source code representation of this operation and appends it to the given
  StringBuilder.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/TypedOperation.html#appendCode-java.util.List-java.lang.StringBuilder-">appendCode</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>inputVars</code> - the list of variables that are inputs to operation</dd>
-<dd><code>b</code> - the <code>StringBuilder</code> to which code is added</dd>
+<dd><code>b</code> - the <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html?is-external=true" title="class or interface in java.lang"><code>StringBuilder</code></a> to which code is added</dd>
 </dl>
 </li>
 </ul>
@@ -458,11 +465,10 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <ul class="blockList">
 <li class="blockList">
 <h4>toParsableString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toParsableString()</pre>
-<div class="block">Returns a string representation of this Operation, which can be read by static parse method for
- class. For a class C implementing the Operation interface, this method should return a String s
- such that parsing the string returns an object equivalent to this object, i.e.
- C.parse(this.s).equals(this).</div>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toParsableString()</pre>
+<div class="block">Returns a string representation of this Operation, which can be read by the static <code>parse</code> method for an Operation class. For a class C implementing the Operation interface, this
+ method should return a String s such that parsing the string returns an object equivalent to
+ this object, i.e., C.parse(this.s).equals(this).</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/TypedOperation.html#toParsableString--">toParsableString</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></dd>
@@ -477,7 +483,7 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <ul class="blockList">
 <li class="blockList">
 <h4>toString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/operation/TypedOperation.html#toString--">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></dd>
@@ -490,7 +496,7 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <ul class="blockList">
 <li class="blockList">
 <h4>getName</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#getName--">Operation</a></code></span></div>
 <div class="block">Returns the name for the operation.</div>
 <dl>
@@ -500,6 +506,20 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <dd><code><a href="../../randoop/operation/TypedOperation.html#getName--">getName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the name for this operation</dd>
+</dl>
+</li>
+</ul>
+<a name="getUnqualifiedName--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUnqualifiedName</h4>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getUnqualifiedName()</pre>
+<div class="block">Returns the simple name of this operation, not qualified by the declaring class.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the unqualified name of this operation</dd>
 </dl>
 </li>
 </ul>
@@ -523,13 +543,50 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <a name="getTypeParameters--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getTypeParameters</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;getTypeParameters()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;getTypeParameters()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/operation/TypedOperation.html#getTypeParameters--">getTypeParameters</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getRawSignature--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRawSignature</h4>
+<pre>public&nbsp;<a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a>&nbsp;getRawSignature()</pre>
+<div class="block">Returns the <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> for this operation if it is a method or constructor call.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> of this method or constructor operation, null if this is
+     another kind of operation</dd>
+</dl>
+</li>
+</ul>
+<a name="getOperationForType-randoop.types.ClassOrInterfaceType-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getOperationForType</h4>
+<pre>public&nbsp;<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&nbsp;getOperationForType(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;type)</pre>
+<div class="block">Creates an operation with the same name, input types, and output type as this operation, but
+ having the given type as the owning class.
+
+ <p>Note: this is only a valid object if <code>type</code> has the method. This is definitely the
+ case if <code>type</code> is a subtype of the declaring type of the operation, but this method does
+ not force that check because we sometimes want to create the operation for superclasses.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>type</code> - a type to substitute into the operation</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new operation with <code>type</code> substituted for the declaring type of this operation.
+     This object will be invalid if <code>type</code> does not have the method.</dd>
 </dl>
 </li>
 </ul>

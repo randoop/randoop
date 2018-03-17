@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>IsNotNull (randoop 3.1.5 API)</title>
+<title>IsNotNull (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="IsNotNull (randoop 3.1.5 API)";
+            parent.document.title="IsNotNull (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -74,13 +74,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -96,25 +96,25 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>
+<ul class="inheritance">
+<li><a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract">randoop.contract.ObjectContract</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.contract.IsNotNull</li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>All Implemented Interfaces:</dt>
-<dd><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public final class <span class="typeNameLabel">IsNotNull</span>
-extends java.lang.Object
-implements <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></pre>
+extends <a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract">ObjectContract</a></pre>
 <div class="block">The contract: <code>x != null</code>.
 
  <p>Obviously, this is not a property that must hold of all objects in a test. Randoop creates an
@@ -127,6 +127,25 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static <a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#inputTypes">inputTypes</a></span></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -158,52 +177,45 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;o)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#equals-java.lang.Object-">equals</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#evalExceptionMeansFailure--">evalExceptionMeansFailure</a></span>()</code>
-<div class="block">Communicates to Randoop how to interpret exceptional behavior from the <code>evaluate</code>
- method.</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#evaluate-java.lang.Object...-">evaluate</a></span>(java.lang.Object...&nbsp;objects)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#evaluate-java.lang.Object...-">evaluate</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>...&nbsp;objects)</code>
 <div class="block">Evaluates the contract on the given values.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#get_observer_str--">get_observer_str</a></span>()</code>
 <div class="block">Returns a string describing the observer.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#getArity--">getArity</a></span>()</code>
 <div class="block">The number of values that this contract is over.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#getInputTypes--">getInputTypes</a></span>()</code>
 <div class="block">Returns the input types for this contract.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#toCodeString--">toCodeString</a></span>()</code>
 <div class="block">A string that can be used as Java source code and will result in the expression being
  evaluated.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/IsNotNull.html#toCommentString--">toCommentString</a></span>()</code>
 <div class="block">A string that will be inserted as a comment in the test before the code corresponding to this
  contract.</div>
@@ -211,11 +223,18 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 </tr>
 </table>
 <ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.randoop.contract.ObjectContract">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;randoop.contract.<a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract">ObjectContract</a></h3>
+<code><a href="../../randoop/contract/ObjectContract.html#checkContract-randoop.sequence.ExecutableSequence-java.lang.Object:A-">checkContract</a>, <a href="../../randoop/contract/ObjectContract.html#failedContract-randoop.sequence.ExecutableSequence-java.lang.Object:A-">failedContract</a>, <a href="../../randoop/contract/ObjectContract.html#toStringHandleExceptions-java.lang.Object-">toStringHandleExceptions</a></code></li>
+</ul>
+<ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, finalize, getClass, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -225,6 +244,23 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="inputTypes">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>inputTypes</h4>
+<pre>static&nbsp;<a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a> inputTypes</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
@@ -254,10 +290,10 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <ul class="blockList">
 <li class="blockList">
 <h4>equals</h4>
-<pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;o)</pre>
+<pre>public&nbsp;boolean&nbsp;equals(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;o)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -270,7 +306,7 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <pre>public&nbsp;int&nbsp;hashCode()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -280,26 +316,25 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <ul class="blockList">
 <li class="blockList">
 <h4>evaluate</h4>
-<pre>public&nbsp;boolean&nbsp;evaluate(java.lang.Object...&nbsp;objects)
-                 throws java.lang.Throwable</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#evaluate-java.lang.Object...-">ObjectContract</a></code></span></div>
+<pre>public&nbsp;boolean&nbsp;evaluate(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>...&nbsp;objects)
+                 throws <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a></pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#evaluate-java.lang.Object...-">ObjectContract</a></code></span></div>
 <div class="block">Evaluates the contract on the given values.
 
- <p>When calling this method during execution of a test, Randoop guarantees that <code>objects
- </code> does not contain any <code>null</code> objects, and that <code>
- objects.length == getArity()</code>.
+ <p>When calling this method during execution of a test, Randoop guarantees that <code>objects</code>
+ does not contain any <code>null</code> objects, and that <code>objects.length == getArity()</code>.
 
- <p>This method should return <code>true</code> if the contract was satisfied and <code>false
- </code> if it was violated.</div>
+ <p>This method should return <code>true</code> if the contract was satisfied and <code>false</code> if it
+ was violated.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/contract/ObjectContract.html#evaluate-java.lang.Object...-">evaluate</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></code></dd>
+<dd><code><a href="../../randoop/contract/ObjectContract.html#evaluate-java.lang.Object...-">evaluate</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract">ObjectContract</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>objects</code> - the actual parameters to this contract</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this contract evaluates to true for the given values, and false otherwise</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.Throwable</code> - if an exception is thrown in evaluation</dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a></code> - if an exception is thrown in evaluation</dd>
 </dl>
 </li>
 </ul>
@@ -310,11 +345,11 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <li class="blockList">
 <h4>getArity</h4>
 <pre>public&nbsp;int&nbsp;getArity()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#getArity--">ObjectContract</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#getArity--">ObjectContract</a></code></span></div>
 <div class="block">The number of values that this contract is over.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/contract/ObjectContract.html#getArity--">getArity</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></code></dd>
+<dd><code><a href="../../randoop/contract/ObjectContract.html#getArity--">getArity</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract">ObjectContract</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the number of arguments to the contract</dd>
 </dl>
@@ -327,11 +362,11 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <li class="blockList">
 <h4>getInputTypes</h4>
 <pre>public&nbsp;<a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;getInputTypes()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#getInputTypes--">ObjectContract</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#getInputTypes--">ObjectContract</a></code></span></div>
 <div class="block">Returns the input types for this contract.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/contract/ObjectContract.html#getInputTypes--">getInputTypes</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></code></dd>
+<dd><code><a href="../../randoop/contract/ObjectContract.html#getInputTypes--">getInputTypes</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract">ObjectContract</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the input types for this contract</dd>
 </dl>
@@ -343,8 +378,8 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <ul class="blockList">
 <li class="blockList">
 <h4>toCodeString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toCodeString()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#toCodeString--">ObjectContract</a></code></span></div>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toCodeString()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#toCodeString--">ObjectContract</a></code></span></div>
 <div class="block">A string that can be used as Java source code and will result in the expression being
  evaluated.
 
@@ -354,7 +389,7 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
  something like "x0.equals(x1)".</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/contract/ObjectContract.html#toCodeString--">toCodeString</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></code></dd>
+<dd><code><a href="../../randoop/contract/ObjectContract.html#toCodeString--">toCodeString</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract">ObjectContract</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the code string representation of this contract; must be non-null</dd>
 </dl>
@@ -366,14 +401,14 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <ul class="blockList">
 <li class="blockList">
 <h4>toCommentString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toCommentString()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#toCommentString--">ObjectContract</a></code></span></div>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toCommentString()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#toCommentString--">ObjectContract</a></code></span></div>
 <div class="block">A string that will be inserted as a comment in the test before the code corresponding to this
  contract. Occurrences of variables x0, x1, x2, etc. in the string will be replaced by actual
  values.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/contract/ObjectContract.html#toCommentString--">toCommentString</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></code></dd>
+<dd><code><a href="../../randoop/contract/ObjectContract.html#toCommentString--">toCommentString</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract">ObjectContract</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the comment string representation of this contract</dd>
 </dl>
@@ -382,42 +417,17 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <a name="get_observer_str--">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>get_observer_str</h4>
-<pre>public&nbsp;java.lang.String&nbsp;get_observer_str()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#get_observer_str--">ObjectContract</a></code></span></div>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;get_observer_str()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#get_observer_str--">ObjectContract</a></code></span></div>
 <div class="block">Returns a string describing the observer.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/contract/ObjectContract.html#get_observer_str--">get_observer_str</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></code></dd>
+<dd><code><a href="../../randoop/contract/ObjectContract.html#get_observer_str--">get_observer_str</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract">ObjectContract</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a string description of the contract</dd>
-</dl>
-</li>
-</ul>
-<a name="evalExceptionMeansFailure--">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>evalExceptionMeansFailure</h4>
-<pre>public&nbsp;boolean&nbsp;evalExceptionMeansFailure()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#evalExceptionMeansFailure--">ObjectContract</a></code></span></div>
-<div class="block">Communicates to Randoop how to interpret exceptional behavior from the <code>evaluate</code>
- method.
-
- <p>If this method returns <code>true</code>, Randoop will interpret an exception that escapes
- during evaluation as a failure of the contract.
-
- <p>If the method returns <code>false</code>, Randoop will interpret an exception as passing
- behavior.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/contract/ObjectContract.html#evalExceptionMeansFailure--">evalExceptionMeansFailure</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if an exception in evaluating this contract should be interpreted as a failure,
-     false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -474,13 +484,13 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

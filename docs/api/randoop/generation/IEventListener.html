@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>IEventListener (randoop 3.1.5 API)</title>
+<title>IEventListener (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="IEventListener (randoop 3.1.5 API)";
+            parent.document.title="IEventListener (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -135,7 +135,7 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/IEventListener.html#generationStepPost-randoop.sequence.ExecutableSequence-">generationStepPost</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/IEventListener.html#generationStepPost-randoop.sequence.ExecutableSequence-">generationStepPost</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
 <div class="block">Called by the AbstractGenerator during each generation iteration, immediately after a
  generation <code>step()</code> has completed.</div>
 </td>
@@ -155,7 +155,7 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/IEventListener.html#stopGeneration--">stopGeneration</a></span>()</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/IEventListener.html#shouldStopGeneration--">shouldStopGeneration</a></span>()</code>
 <div class="block">Called by AbstractGenerator to determine if generation should stop.</div>
 </td>
 </tr>
@@ -215,12 +215,12 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>generationStepPost</h4>
-<pre>void&nbsp;generationStepPost(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
+<pre>void&nbsp;generationStepPost(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
 <div class="block">Called by the AbstractGenerator during each generation iteration, immediately after a
  generation <code>step()</code> has completed.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>s</code> - sequence that was generated and executed in the last generation step. Can b null,
+<dd><code>eseq</code> - sequence that was generated and executed in the last generation step. Can b null,
      which means the last step was unable to generate a sequence (e.g. due to a bad random
      choice).</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -243,13 +243,13 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="stopGeneration--">
+<a name="shouldStopGeneration--">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>stopGeneration</h4>
-<pre>boolean&nbsp;stopGeneration()</pre>
+<h4>shouldStopGeneration</h4>
+<pre>boolean&nbsp;shouldStopGeneration()</pre>
 <div class="block">Called by AbstractGenerator to determine if generation should stop. True signals to the
  generator that generation should stop.</div>
 <dl>

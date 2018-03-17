@@ -21,7 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 
 /**
  * A JUnit test class that runs the Randoop system tests, each within its own new JVM. (Thus, there
@@ -584,7 +584,7 @@ public class RandoopSystemTest {
     assertThat(
         "There should be no output; got:"
             + lineSep
-            + UtilMDE.join(randoopRunDesc.processStatus.outputLines, lineSep),
+            + UtilPlume.join(randoopRunDesc.processStatus.outputLines, lineSep),
         randoopRunDesc.processStatus.outputLines.size(),
         is(equalTo(0)));
   }

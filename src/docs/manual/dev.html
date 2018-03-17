@@ -119,6 +119,11 @@
   <code>pip install --user html5validator</code>.
 </p>
 
+<!--
+Unfortunately, gradle seems to require that html5validator is on the path, even if
+you will never run a task that calls html5validator.
+-->
+
 
 <h1 id="compiling">Building Randoop</h1>
 
@@ -286,7 +291,7 @@ After the build, the classpath should include either of the following
 <ul>
   <li>
 <code>
-&lt;randoop-path&gt;/build/libs/randoop-3.1.5.jar:&lt;randoop-path&gt;/lib/plume.jar
+&lt;randoop-path&gt;/build/libs/randoop-4.0.0.jar:&lt;randoop-path&gt;/lib/plume.jar
 </code>
 </li>
 <li>
@@ -305,7 +310,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-3.1.5.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.0.0.jar</code></pre>
 
 
 
@@ -366,7 +371,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-3.1.5.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.0.0.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -374,24 +379,22 @@ java -ea -cp randoop-all-3.1.5.jar randoop.main.Main minimize \
 <h2 id="coverage-tests">Checking Randop code coverage</h2>
 
 <p>
-As part of running the Randoop test suite, the system uses the Jacoco tool to calculate the amount
-of the Randoop source code base that is covered by the generated tests.  This process also produces
-a series of reports that may be found in <code>build/reports/jacoco/test/html</code> and its subdirectories.
-A summary of the results is in the file <code>build/reports/jacoco/test/jacocoTestReport.xml</code>.
-The overall coverage can be extracted from this file by running the perl script: <code>./show-coverage.pl</code>.
-This script will accept an optional argument of an alternative file location.
-Invoke the script with <code>-help</code> for a full list of options.
+  Before making a release, and to evaluate the effect of changes to Randoop, you should compute coverage of Randoop-generated tests for 4 codebases.
 </p>
 
-<p>
-It should be noted that this is just one of four Randoop coverage tests.  The other three are:<br>
-<a href="https://github.com/rjust/defects4j">Defects4j</a>: See the file <a href="https://github.com/rjust/defects4j/blob/master/framework/test/README.md">README.md</a> for details.<br>
-<a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage">Pascali</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage/blob/master/README.md">README.md</a> for details.<br>
-<a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage">Toradocu</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage/blob/master/README.md">README.md</a> for details.<br>
-The Pascali and Toradocu repositories are located on the University of Washington GitLab server.  Contact Michael Ernst (mernst@cs.washington.edu) or Mark Roberts (markro@cs.washington.edu) if you need access.
-</p>
-<!-- There needs to be a discussion of coverage improving with each release (or at least not regressing).
-Should it be here or in the "releasing a new version of Randoop" section?. -->
+<ul>
+  <li>Randoop's test suite.  It produces
+reports in <code>build/reports/jacoco/test/html</code> and its subdirectories.
+A summary of the results is in the file <code>build/reports/jacoco/test/jacocoTestReport.xml</code>.
+The overall coverage can be extracted from this file by running the perl script: <code>scripts/show-coverage.pl</code>.
+This script will accept an optional argument of an alternative file location.
+Invoke the script with <code>-help</code> for a full list of options.
+  </li>
+  <li><a href="https://github.com/rjust/defects4j">Defects4j</a>: See the file <a href="https://github.com/rjust/defects4j/blob/master/framework/test/README.md">README.md</a> for details.</li>
+  <li><a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage">Pascali</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage/blob/master/README.md">README.md</a> for details.</li>
+  <li><a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage">Toradocu</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage/blob/master/README.md">README.md</a> for details.</li>
+</ul>
+
 
 <h2 id="travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</h2>
 
@@ -613,7 +616,7 @@ since the test run method only looks for JUnit suite classes.
 
 <p>
   Any user-visible changes should be documented in the changelog
-  <code>devnotes/CHANGES.txt</code>.
+  <code>src/docs/CHANGES.txt</code>.
   This text is used for documenting releases, so keeping it up-to-date and
   ready for public release saves time in the long run.
   Order the information by importance to the user.
@@ -640,15 +643,9 @@ since the test run method only looks for JUnit suite classes.
 </p>
 <ul>
   <li><code>./gradlew googleJavaFormat</code> (or <code>goJF</code>) to reformat
-    all Java files in the repository. (CAUTION!)</li>
+    all Java files in the repository.</li>
   <li><code>./gradlew verifyGoogleJavaFormat</code> (or <code>verGJF</code>)</li>
 </ul>
-<p>
-  <b>CAUTION</b>: The first command will change every single Java file in the
-  repository, and should not be done before submitting a Pull Request against a
-  branch that is out of format. Instead, make sure that the base branch is
-  reformatted before creating the PR.
-</p>
 
 
 <h2 id="maintaininglibraries">Updating libraries</h2>
@@ -688,7 +685,7 @@ task described below.
 
 <p>
   Additional documentation that is not published to the project website is located
-  in <code>devnotes</code>.  This includes the change log, diagrams,
+  in <code>src/docs</code>.  This includes the change log, diagrams,
   and project ideas documents.
 </p>
 
@@ -720,11 +717,8 @@ task described below.
   <li>Compile and test.  If any tests fail, fix them and start over.
     <pre>./gradlew clean build</pre>
   </li>
-  <li>Ensure that the Javadoc compiles correctly:
-    <pre>./gradlew javadoc validateAPI</pre>
-  </li>
-  <li>Ensure that the manual HTML is valid:
-    <pre>./gradlew manual validateManual</pre>
+  <li>Ensure that the Javadoc compiles correctly and the manual is up to date:
+    <pre>./gradlew javadoc validateAPI manual valdateSite</pre>
   </li>
 </ol>
 <p>
@@ -737,52 +731,58 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>3.1.5</em>
-NEWVERSION=<em>3.1.6</em></pre>
+OLDVERSION=<em>4.0.0</em>
+NEWVERSION=<em>4.0.1</em></pre>
       These are used for working with git.
     </li>
-    <li>Update the version number and date in each of:
-      <ul>
-        <li><code>build.gradle</code></li>
-        <li><code>src/main/java/randoop/Globals.java</code></li>
-        <li><code>devnotes/CHANGES.txt</code></li>
-        <li><code>src/docs/manual/index.html</code> (many locations)</li>
-        <li><code>src/docs/manual/dev.html</code> (this document)</li>
-      </ul>
-      TODO: automate this step
+    <li>Update the version number and date in these files:
+<pre>
+build.gradle
+src/docs/CHANGES.txt
+src/docs/manual/dev.html
+src/docs/manual/index.html
+src/main/java/randoop/Globals.java
+</pre>
+This <em>might</em> work to automate the number (not the date), only for files in <code>src/</code> (double-check it!):
+<pre>
+  cd src
+  'preplace '4\.0\.1' '4.0.2'
+  'preplace '4\.0\.0' '4.0.1'
+</pre>
+    </li>
+    <li>Add an exception for the Randoop zip file
+      to <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args</a>,
+      for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.
     </li>
   </ol>
 </li>
-<li>Double-check that the changelog <code>devnotes/CHANGES.txt</code> is up-to-date
+<li>Double-check that the changelog <code>src/docs/CHANGES.txt</code> is up-to-date
   by running a command
   <pre>git log v$OLDVERSION..</pre>
   and ensuring that no user-visible changes have been missed.
   Have a colleague review the changelog entry.
 </li>
-  <li>Create the distribution files with <code>./gradlew clean buildRelease</code>.
-    This will run any tasks that are needed for the release, and will also
-    replace the project site in the <code>docs</code> directory.
-  </li>
-  <li>
-    Commit and push those changes.
+<li>Create the distribution files, commit, make a tag, and push.  This takes
+  a while because it runs all the tests.  It also updates the project site in
+  the <code>docs</code> directory.
 <pre>
+  ./gradlew clean buildRelease
+  git add -A .
   git commit . -m "Update version to $NEWVERSION"
   git push
-</pre>
-  </li>
-  <li>Make a
-    repository tag:
-    <pre>
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
   git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
+    Wait for the <a href="https://travis-ci.org/randoop/randoop">Travis CI</a>
+    build to succeed.  If it fails, commit fixes, then re-tag and re-push tags
+    (adding <code>-f</code> to both commands).
   </li>
   <li>Follow the
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
-    click "Tags", click "add release notes" for the new tag (e.g., v<em>3.1.6</em>),
-    name it "Randoop version <em>3.1.6</em>", use the changelog entry as the
+    click "Tags", click "add release notes" for the new tag,
+    name it "Randoop version <em>4.0.1</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
     jar files from <code>build/libs</code>,
     upload the zip file from <code>build/distributions</code>
@@ -800,10 +800,23 @@ NEWVERSION=<em>3.1.6</em></pre>
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
-    Subject: Randoop version <em>3.1.6</em>
+    Subject: Randoop version <em>4.0.1</em>
     <br/>
-    Randoop <em>3.1.6</em> has been released and is available at
+    Randoop <em>4.0.1</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
+  </li>
+  <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
+    <ul>
+      <li>
+        Defects4J.  As of this writing, the Randoop version number appears only
+        in files <code>init.sh</code> and <code>framework/test/README.md</code>.
+      </li>
+      <li>
+        MUSE.  Update the <code>integration-test2</code> repository and
+        optionally the <code>pascali-coverage</code> repository
+        (documentation only).
+      </li>
+    </ul>
   </li>
 </ol>
 

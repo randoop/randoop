@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RunnerThread (randoop 3.1.5 API)</title>
+<title>RunnerThread (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RunnerThread (randoop 3.1.5 API)";
+            parent.document.title="RunnerThread (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -96,10 +96,10 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li>java.lang.Thread</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true" title="class or interface in java.lang">java.lang.Thread</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.util.RunnerThread</li>
@@ -113,12 +113,12 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>java.lang.Runnable</dd>
+<dd><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runnable.html?is-external=true" title="class or interface in java.lang">Runnable</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">RunnerThread</span>
-extends java.lang.Thread</pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true" title="class or interface in java.lang">Thread</a></pre>
 </li>
 </ul>
 </div>
@@ -146,8 +146,8 @@ extends java.lang.Thread</pre>
 <li class="blockList"><a name="nested.classes.inherited.from.class.java.lang.Thread">
 <!--   -->
 </a>
-<h3>Nested classes/interfaces inherited from class&nbsp;java.lang.Thread</h3>
-<code>java.lang.Thread.State, java.lang.Thread.UncaughtExceptionHandler</code></li>
+<h3>Nested classes/interfaces inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true" title="class or interface in java.lang">Thread</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.State.html?is-external=true" title="class or interface in java.lang">Thread.State</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.UncaughtExceptionHandler.html?is-external=true" title="class or interface in java.lang">Thread.UncaughtExceptionHandler</a></code></li>
 </ul>
 </li>
 </ul>
@@ -168,14 +168,10 @@ extends java.lang.Thread</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RunnerThread.html#code">code</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.lang.Throwable</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RunnerThread.html#exceptionThrown">exceptionThrown</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
+<td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RunnerThread.html#runFinished">runFinished</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/util/RunnerThread.NextCallMustBe.html" title="enum in randoop.util">RunnerThread.NextCallMustBe</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RunnerThread.html#state">state</a></span></code>&nbsp;</td>
 </tr>
@@ -184,8 +180,8 @@ extends java.lang.Thread</pre>
 <li class="blockList"><a name="fields.inherited.from.class.java.lang.Thread">
 <!--   -->
 </a>
-<h3>Fields inherited from class&nbsp;java.lang.Thread</h3>
-<code>MAX_PRIORITY, MIN_PRIORITY, NORM_PRIORITY</code></li>
+<h3>Fields inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true" title="class or interface in java.lang">Thread</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#MAX_PRIORITY" title="class or interface in java.lang">MAX_PRIORITY</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#MIN_PRIORITY" title="class or interface in java.lang">MIN_PRIORITY</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#NORM_PRIORITY" title="class or interface in java.lang">NORM_PRIORITY</a></code></li>
 </ul>
 </li>
 </ul>
@@ -201,7 +197,7 @@ extends java.lang.Thread</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/util/RunnerThread.html#RunnerThread-java.lang.ThreadGroup-">RunnerThread</a></span>(java.lang.ThreadGroup&nbsp;threadGroup)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/util/RunnerThread.html#RunnerThread-java.lang.ThreadGroup-">RunnerThread</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/ThreadGroup.html?is-external=true" title="class or interface in java.lang">ThreadGroup</a>&nbsp;threadGroup)</code>
 <div class="block">Create a new runner thread.</div>
 </td>
 </tr>
@@ -225,10 +221,16 @@ extends java.lang.Thread</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RunnerThread.html#executeReflectionCode--">executeReflectionCode</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RunnerThread.html#getCode--">getCode</a></span>()</code>
+<div class="block">Return the ReflectionCode that is being, or was, run.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RunnerThread.html#run--">run</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RunnerThread.html#setup-randoop.util.ReflectionCode-">setup</a></span>(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code)</code>&nbsp;</td>
 </tr>
@@ -237,15 +239,15 @@ extends java.lang.Thread</pre>
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Thread">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Thread</h3>
-<code>activeCount, checkAccess, clone, countStackFrames, currentThread, destroy, dumpStack, enumerate, getAllStackTraces, getContextClassLoader, getDefaultUncaughtExceptionHandler, getId, getName, getPriority, getStackTrace, getState, getThreadGroup, getUncaughtExceptionHandler, holdsLock, interrupt, interrupted, isAlive, isDaemon, isInterrupted, join, join, join, resume, setContextClassLoader, setDaemon, setDefaultUncaughtExceptionHandler, setName, setPriority, setUncaughtExceptionHandler, sleep, sleep, start, stop, stop, suspend, toString, yield</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true" title="class or interface in java.lang">Thread</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#activeCount--" title="class or interface in java.lang">activeCount</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#checkAccess--" title="class or interface in java.lang">checkAccess</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#countStackFrames--" title="class or interface in java.lang">countStackFrames</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#currentThread--" title="class or interface in java.lang">currentThread</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#destroy--" title="class or interface in java.lang">destroy</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#dumpStack--" title="class or interface in java.lang">dumpStack</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#enumerate-java.lang.Thread:A-" title="class or interface in java.lang">enumerate</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#getAllStackTraces--" title="class or interface in java.lang">getAllStackTraces</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#getContextClassLoader--" title="class or interface in java.lang">getContextClassLoader</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#getDefaultUncaughtExceptionHandler--" title="class or interface in java.lang">getDefaultUncaughtExceptionHandler</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#getId--" title="class or interface in java.lang">getId</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#getName--" title="class or interface in java.lang">getName</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#getPriority--" title="class or interface in java.lang">getPriority</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#getStackTrace--" title="class or interface in java.lang">getStackTrace</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#getState--" title="class or interface in java.lang">getState</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#getThreadGroup--" title="class or interface in java.lang">getThreadGroup</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#getUncaughtExceptionHandler--" title="class or interface in java.lang">getUncaughtExceptionHandler</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#holdsLock-java.lang.Object-" title="class or interface in java.lang">holdsLock</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#interrupt--" title="class or interface in java.lang">interrupt</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#interrupted--" title="class or interface in java.lang">interrupted</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#isAlive--" title="class or interface in java.lang">isAlive</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#isDaemon--" title="class or interface in java.lang">isDaemon</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#isInterrupted--" title="class or interface in java.lang">isInterrupted</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#join--" title="class or interface in java.lang">join</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#join-long-" title="class or interface in java.lang">join</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#join-long-int-" title="class or interface in java.lang">join</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#resume--" title="class or interface in java.lang">resume</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#setContextClassLoader-java.lang.ClassLoader-" title="class or interface in java.lang">setContextClassLoader</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#setDaemon-boolean-" title="class or interface in java.lang">setDaemon</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#setDefaultUncaughtExceptionHandler-java.lang.Thread.UncaughtExceptionHandler-" title="class or interface in java.lang">setDefaultUncaughtExceptionHandler</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#setName-java.lang.String-" title="class or interface in java.lang">setName</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#setPriority-int-" title="class or interface in java.lang">setPriority</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#setUncaughtExceptionHandler-java.lang.Thread.UncaughtExceptionHandler-" title="class or interface in java.lang">setUncaughtExceptionHandler</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#sleep-long-" title="class or interface in java.lang">sleep</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#sleep-long-int-" title="class or interface in java.lang">sleep</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#start--" title="class or interface in java.lang">start</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#stop--" title="class or interface in java.lang">stop</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#stop-java.lang.Throwable-" title="class or interface in java.lang">stop</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#suspend--" title="class or interface in java.lang">suspend</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#yield--" title="class or interface in java.lang">yield</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -276,16 +278,7 @@ extends java.lang.Thread</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>runFinished</h4>
-<pre>public&nbsp;boolean runFinished</pre>
-</li>
-</ul>
-<a name="exceptionThrown">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>exceptionThrown</h4>
-<pre>public&nbsp;java.lang.Throwable exceptionThrown</pre>
+<pre>boolean runFinished</pre>
 </li>
 </ul>
 <a name="state">
@@ -311,7 +304,7 @@ extends java.lang.Thread</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>RunnerThread</h4>
-<pre>public&nbsp;RunnerThread(java.lang.ThreadGroup&nbsp;threadGroup)</pre>
+<pre>RunnerThread(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/ThreadGroup.html?is-external=true" title="class or interface in java.lang">ThreadGroup</a>&nbsp;threadGroup)</pre>
 <div class="block">Create a new runner thread.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -345,19 +338,38 @@ extends java.lang.Thread</pre>
 <pre>public final&nbsp;void&nbsp;run()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>run</code>&nbsp;in interface&nbsp;<code>java.lang.Runnable</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runnable.html?is-external=true#run--" title="class or interface in java.lang">run</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runnable.html?is-external=true" title="class or interface in java.lang">Runnable</a></code></dd>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>run</code>&nbsp;in class&nbsp;<code>java.lang.Thread</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true#run--" title="class or interface in java.lang">run</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html?is-external=true" title="class or interface in java.lang">Thread</a></code></dd>
 </dl>
 </li>
 </ul>
 <a name="executeReflectionCode--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>executeReflectionCode</h4>
-<pre>private&nbsp;void&nbsp;executeReflectionCode()</pre>
+<pre>private&nbsp;void&nbsp;executeReflectionCode()
+                            throws <a href="../../randoop/util/ReflectionCode.ReflectionCodeException.html" title="class in randoop.util">ReflectionCode.ReflectionCodeException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../randoop/util/ReflectionCode.ReflectionCodeException.html" title="class in randoop.util">ReflectionCode.ReflectionCodeException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getCode--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getCode</h4>
+<pre>public&nbsp;<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;getCode()</pre>
+<div class="block">Return the ReflectionCode that is being, or was, run.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the ReflectionCode that is being, or was, run</dd>
+</dl>
 </li>
 </ul>
 </li>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExecutionOutcome (randoop 3.1.5 API)</title>
+<title>ExecutionOutcome (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../script.js"></script>
@@ -12,14 +12,14 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExecutionOutcome (randoop 3.1.5 API)";
+            parent.document.title="ExecutionOutcome (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":6,"i2":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":10,"i1":10,"i2":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.ExecutionOutcome</li>
@@ -113,9 +113,14 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public abstract class <span class="typeNameLabel">ExecutionOutcome</span>
-extends java.lang.Object</pre>
-<div class="block">Represents the outcome of executing one statement in a sequence, including the value returned by
- the statement, or the exception thrown.</div>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+<div class="block">Represents the outcome of executing one statement in a sequence, including:
+
+ <ul>
+   <li>the value returned by the statement, or the exception thrown.
+   <li>the execution time
+   <li>the textual output
+ </ul></div>
 </li>
 </ul>
 </div>
@@ -135,7 +140,13 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>(package private) java.lang.String</code></td>
+<td class="colFirst"><code>private long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionOutcome.html#executionTime">executionTime</a></span></code>
+<div class="block">The execution time, in nanoseconds.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionOutcome.html#output">output</a></span></code>&nbsp;</td>
 </tr>
 </table>
@@ -153,7 +164,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../randoop/ExecutionOutcome.html#ExecutionOutcome--">ExecutionOutcome</a></span>()</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../randoop/ExecutionOutcome.html#ExecutionOutcome-long-">ExecutionOutcome</a></span>(long&nbsp;executionTime)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -165,26 +176,26 @@ extends java.lang.Object</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionOutcome.html#get_output--">get_output</a></span>()</code>
 <div class="block">Retrieve the output of the statement</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>abstract long</code></td>
+<td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionOutcome.html#getExecutionTime--">getExecutionTime</a></span>()</code>
-<div class="block">How long the associated statement took to execute.</div>
+<div class="block">How long the associated statement took to execute, in nanoseconds.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionOutcome.html#set_output-java.lang.String-">set_output</a></span>(java.lang.String&nbsp;output)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/ExecutionOutcome.html#set_output-java.lang.String-">set_output</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;output)</code>
 <div class="block">Set the output of the statement</div>
 </td>
 </tr>
@@ -193,8 +204,8 @@ extends java.lang.Object</pre>
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -210,13 +221,23 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
+<a name="executionTime">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>executionTime</h4>
+<pre>private final&nbsp;long executionTime</pre>
+<div class="block">The execution time, in nanoseconds.</div>
+</li>
+</ul>
 <a name="output">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>output</h4>
-<pre>java.lang.String output</pre>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> output</pre>
 </li>
 </ul>
 </li>
@@ -227,13 +248,17 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ExecutionOutcome--">
+<a name="ExecutionOutcome-long-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ExecutionOutcome</h4>
-<pre>public&nbsp;ExecutionOutcome()</pre>
+<pre>public&nbsp;ExecutionOutcome(long&nbsp;executionTime)</pre>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>executionTime</code> - the execution time, in nanoseconds</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -250,11 +275,11 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getExecutionTime</h4>
-<pre>public abstract&nbsp;long&nbsp;getExecutionTime()</pre>
-<div class="block">How long the associated statement took to execute.</div>
+<pre>public&nbsp;long&nbsp;getExecutionTime()</pre>
+<div class="block">How long the associated statement took to execute, in nanoseconds.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the execution time for the statement</dd>
+<dd>the execution time for the statement, in nanoseconds</dd>
 </dl>
 </li>
 </ul>
@@ -264,7 +289,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>set_output</h4>
-<pre>public&nbsp;void&nbsp;set_output(java.lang.String&nbsp;output)</pre>
+<pre>public&nbsp;void&nbsp;set_output(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;output)</pre>
 <div class="block">Set the output of the statement</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -278,7 +303,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>get_output</h4>
-<pre>public&nbsp;java.lang.String&nbsp;get_output()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;get_output()</pre>
 <div class="block">Retrieve the output of the statement</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>

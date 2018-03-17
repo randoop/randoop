@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>NoExceptionCheck (randoop 3.1.5 API)</title>
+<title>NoExceptionCheck (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="NoExceptionCheck (randoop 3.1.5 API)";
+            parent.document.title="NoExceptionCheck (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.test.NoExceptionCheck</li>
@@ -113,13 +113,15 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">NoExceptionCheck</span>
-extends java.lang.Object
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
 implements <a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></pre>
-<div class="block">This check represents the fact that a statement should not throw an exception. It is used in an
- error-revealing test to indicate that an exception that is considered to be an error (e.g., not
- "expected" or "invalid") was thrown by the statement during test generation. Only a comment is
- included when the test is output noting the occurrence of the exception during test generation,
- though the statement is expected to throw the method when the error-revealing test is run.</div>
+<div class="block">This check represents the fact that a statement should not throw any exception.
+
+ <p>It is used in an error-revealing test to indicate that an exception that is considered to be
+ an error (e.g., not "expected" or "invalid") was thrown by the statement during test generation.
+ Only a comment is included when the test is output noting the occurrence of the exception during
+ test generation, though the statement is expected to throw the method when the error-revealing
+ test is run.</div>
 </li>
 </ul>
 </div>
@@ -139,12 +141,16 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#exceptionName">exceptionName</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#exceptionName">exceptionName</a></span></code>
+<div class="block">The exception that the statement threw during generation.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#statementIdx">statementIdx</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#statementIdx">statementIdx</a></span></code>
+<div class="block">Indicates which statement is expected to return normally.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -162,7 +168,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#NoExceptionCheck-int-java.lang.String-">NoExceptionCheck</a></span>(int&nbsp;statementIdx,
-                java.lang.String&nbsp;exceptionName)</code>&nbsp;</td>
+                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;exceptionName)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -181,39 +187,21 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;o)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#equals-java.lang.Object-">equals</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#evaluate-randoop.sequence.Execution-">evaluate</a></span>(<a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</code>
-<div class="block">Evaluates this check on the given execution of a sequence.</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#getID--">getID</a></span>()</code>
-<div class="block">Returns a unique string identifier for the check.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#getValue--">getValue</a></span>()</code>
-<div class="block">Returns a short string that can be used to uniquely identify this check.</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#toCodeStringPostStatement--">toCodeStringPostStatement</a></span>()</code>
 <div class="block">Returns the empty string: there is no code associated with this check (if an exception occurs,
  it will be reported by JUnit).</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/NoExceptionCheck.html#toCodeStringPreStatement--">toCodeStringPreStatement</a></span>()</code>
 <div class="block">Returns a string of Java source code to be emitted before a statement containing this check.</div>
 </td>
@@ -223,8 +211,8 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, finalize, getClass, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -247,6 +235,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <li class="blockList">
 <h4>statementIdx</h4>
 <pre>private final&nbsp;int statementIdx</pre>
+<div class="block">Indicates which statement is expected to return normally.</div>
 </li>
 </ul>
 <a name="exceptionName">
@@ -255,7 +244,10 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <ul class="blockListLast">
 <li class="blockList">
 <h4>exceptionName</h4>
-<pre>private&nbsp;java.lang.String exceptionName</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> exceptionName</pre>
+<div class="block">The exception that the statement threw during generation. Used only in a comment in the
+ generated code -- the contract of NoExceptionCheck is that no exception should be thrown,
+ whether or not it's the same as what was observed during generation.</div>
 </li>
 </ul>
 </li>
@@ -273,7 +265,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <li class="blockList">
 <h4>NoExceptionCheck</h4>
 <pre>NoExceptionCheck(int&nbsp;statementIdx,
-                 java.lang.String&nbsp;exceptionName)</pre>
+                 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;exceptionName)</pre>
 </li>
 </ul>
 </li>
@@ -290,10 +282,10 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <ul class="blockList">
 <li class="blockList">
 <h4>equals</h4>
-<pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;o)</pre>
+<pre>public&nbsp;boolean&nbsp;equals(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;o)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -306,45 +298,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <pre>public&nbsp;int&nbsp;hashCode()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-</dl>
-</li>
-</ul>
-<a name="getValue--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getValue</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getValue()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#getValue--">Check</a></code></span></div>
-<div class="block">Returns a short string that can be used to uniquely identify this check.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/Check.html#getValue--">getValue</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a string "value" for this check</dd>
-</dl>
-</li>
-</ul>
-<a name="getID--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getID</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getID()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#getID--">Check</a></code></span></div>
-<div class="block">Returns a unique string identifier for the check. Two checks are the same if these identifiers
- match. The value is NOT included. Used to match up checks between the same sequence run at
- different times. Note that because of changes in the environment (e.g., static variables), two
- executions of the same sequence may have different checks (because the existence of some checks
- depends on the value of variables)</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/Check.html#getID--">getID</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a unique string identifier for this check</dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -354,7 +308,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <ul class="blockList">
 <li class="blockList">
 <h4>toCodeStringPostStatement</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toCodeStringPostStatement()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toCodeStringPostStatement()</pre>
 <div class="block">Returns the empty string: there is no code associated with this check (if an exception occurs,
  it will be reported by JUnit).</div>
 <dl>
@@ -368,10 +322,10 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <a name="toCodeStringPreStatement--">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>toCodeStringPreStatement</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toCodeStringPreStatement()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toCodeStringPreStatement()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#toCodeStringPreStatement--">Check</a></code></span></div>
 <div class="block">Returns a string of Java source code to be emitted before a statement containing this check.</div>
 <dl>
@@ -379,24 +333,6 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <dd><code><a href="../../randoop/test/Check.html#toCodeStringPreStatement--">toCodeStringPreStatement</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the string to be included before the statement</dd>
-</dl>
-</li>
-</ul>
-<a name="evaluate-randoop.sequence.Execution-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>evaluate</h4>
-<pre>public&nbsp;boolean&nbsp;evaluate(<a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</pre>
-<div class="block">Evaluates this check on the given execution of a sequence.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/Check.html#evaluate-randoop.sequence.Execution-">evaluate</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>execution</code> - the execution of sequence on which to test this check</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>true when no exception is observed, false when one is</dd>
 </dl>
 </li>
 </ul>

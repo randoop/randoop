@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.contract (randoop 3.1.5 API)</title>
+<title>randoop.contract (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.contract (randoop 3.1.5 API)";
+            parent.document.title="randoop.contract (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -42,8 +42,8 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/condition/package-summary.html">Prev&nbsp;Package</a></li>
-<li><a href="../../randoop/field/package-summary.html">Next&nbsp;Package</a></li>
+<li><a href="../../randoop/condition/specification/package-summary.html">Prev&nbsp;Package</a></li>
+<li><a href="../../randoop/execution/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/contract/package-summary.html" target="_top">Frames</a></li>
@@ -73,23 +73,6 @@
 </div>
 <div class="contentContainer">
 <ul class="blockList">
-<li class="blockList">
-<table class="typeSummary" border="0" cellpadding="3" cellspacing="0" summary="Interface Summary table, listing interfaces, and an explanation">
-<caption><span>Interface Summary</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Interface</th>
-<th class="colLast" scope="col">Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></td>
-<td class="colLast">
-<div class="block">An object contract represents a property that must hold of any object of a given class.</div>
-</td>
-</tr>
-</tbody>
-</table>
-</li>
 <li class="blockList">
 <table class="typeSummary" border="0" cellpadding="3" cellspacing="0" summary="Class Summary table, listing classes, and an explanation">
 <caption><span>Class Summary</span><span class="tabEnd">&nbsp;</span></caption>
@@ -150,7 +133,7 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/contract/EqualsHashcode.html" title="class in randoop.contract">EqualsHashcode</a></td>
 <td class="colLast">
-<div class="block">The contract: <code>o1.equals(o2) &rArr; o1.hashCode() == o2.hashCode()</code>.</div>
+<div class="block">The contract: <code>o1.equals(o2) ==&gt; o1.hashCode() == o2.hashCode()</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -168,7 +151,7 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/contract/EqualsSymmetric.html" title="class in randoop.contract">EqualsSymmetric</a></td>
 <td class="colLast">
-<div class="block">The contract: <code>o1.equals(o2) &rArr; o2.equals(o1)</code>.</div>
+<div class="block">The contract: <code>o1.equals(o2) ==&gt; o2.equals(o1)</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -180,8 +163,8 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/contract/EqualsTransitive.html" title="class in randoop.contract">EqualsTransitive</a></td>
 <td class="colLast">
-<div class="block">The contract: Checks the transitivity of equals for an object <code>
- (x0.equals(x1) &amp;&amp; x1.equals(x2)) &rarr; x0.equals(x2)</code>.</div>
+<div class="block">The contract: Checks the transitivity of equals for an object <code>(x0.equals(x1) &amp;&amp;
+ x1.equals(x2)) ==&gt; x0.equals(x2)</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -203,24 +186,30 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="../../randoop/contract/ObjectContractUtils.html" title="class in randoop.contract">ObjectContractUtils</a></td>
+<td class="colFirst"><a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract">ObjectContract</a></td>
 <td class="colLast">
-<div class="block">Utility methods for safely executing and printing <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> code.</div>
+<div class="block">An object contract represents a property that must hold of any object of a given class.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/contract/ObjectContractUtils.html" title="class in randoop.contract">ObjectContractUtils</a></td>
+<td class="colLast">
+<div class="block">Utility methods for safely executing and printing <a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract"><code>ObjectContract</code></a> code.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/contract/ObserverEqValue.html" title="class in randoop.contract">ObserverEqValue</a></td>
 <td class="colLast">
 <div class="block">A check recording the value that an observer method returned during execution, e.g.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/contract/PrimValue.html" title="class in randoop.contract">PrimValue</a></td>
 <td class="colLast">
 <div class="block">A check recording the value of a primitive value obtained during execution, (e.g.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/contract/ToStringReturnsNormally.html" title="class in randoop.contract">ToStringReturnsNormally</a></td>
 <td class="colLast">
 <div class="block">Checks that calling toString() on an object does not throw an exception.</div>
@@ -268,8 +257,8 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/condition/package-summary.html">Prev&nbsp;Package</a></li>
-<li><a href="../../randoop/field/package-summary.html">Next&nbsp;Package</a></li>
+<li><a href="../../randoop/condition/specification/package-summary.html">Prev&nbsp;Package</a></li>
+<li><a href="../../randoop/execution/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/contract/package-summary.html" target="_top">Frames</a></li>
