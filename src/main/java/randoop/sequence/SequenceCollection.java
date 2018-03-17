@@ -14,9 +14,9 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /**
@@ -46,7 +46,7 @@ import randoop.util.SimpleList;
 public class SequenceCollection {
 
   // We make it a list to make it easier to pick out an element at random.
-  private Map<Type, ArrayListSimpleList<Sequence>> sequenceMap = new LinkedHashMap<>();
+  private Map<Type, SimpleArrayList<Sequence>> sequenceMap = new LinkedHashMap<>();
 
   private SubTypeSet typeSet = new SubTypeSet(false);
 
@@ -123,8 +123,8 @@ public class SequenceCollection {
    * @param components the sequences to add
    */
   public void addAll(SequenceCollection components) {
-    for (ArrayListSimpleList<Sequence> s : components.sequenceMap.values()) {
-      for (Sequence seq : s.theList) {
+    for (SimpleArrayList<Sequence> s : components.sequenceMap.values()) {
+      for (Sequence seq : s) {
         add(seq);
       }
     }
@@ -179,9 +179,9 @@ public class SequenceCollection {
    * @param type the {@link Type}
    */
   private void updateCompatibleMap(Sequence sequence, Type type) {
-    ArrayListSimpleList<Sequence> set = this.sequenceMap.get(type);
+    SimpleArrayList<Sequence> set = this.sequenceMap.get(type);
     if (set == null) {
-      set = new ArrayListSimpleList<>();
+      set = new SimpleArrayList<>();
       this.sequenceMap.put(type, set);
     }
     if (Log.isLoggingOn()) Log.logLine("Adding sequence of type " + type);
@@ -251,8 +251,8 @@ public class SequenceCollection {
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<>();
-    for (ArrayListSimpleList<Sequence> a : sequenceMap.values()) {
-      result.addAll(a.theList);
+    for (SimpleArrayList<Sequence> a : sequenceMap.values()) {
+      result.addAll(a);
     }
     return result;
   }

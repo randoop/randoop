@@ -27,11 +27,12 @@ import org.plumelib.util.UtilPlume;
  */
 public class RecordListReader {
 
-  // startMarker is "START <recordType>"
-  // endMarker is "END <recordType>"
-  private final String startMarker, endMarker;
+  /** startMarker is "START <recordType>" */
+  private final String startMarker;
+  /** endMarker is "END <recordType>" */
+  private final String endMarker;
 
-  // The object in charge of doing whatever is to be done with the record.
+  /** The object in charge of doing whatever is to be done with the record. */
   private final RecordProcessor processor;
 
   public RecordListReader(String recordType, RecordProcessor proc) {

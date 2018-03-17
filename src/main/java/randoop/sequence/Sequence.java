@@ -17,11 +17,11 @@ import randoop.operation.TypedOperation;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 import randoop.util.WeightedElement;
 
@@ -67,7 +67,7 @@ public final class Sequence implements WeightedElement {
 
   /** Create a new, empty sequence. */
   public Sequence() {
-    this(new ArrayListSimpleList<Statement>(), 0, 0);
+    this(new SimpleArrayList<Statement>(), 0, 0);
   }
 
   /**
@@ -1133,8 +1133,11 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Using compositional structure of this sequence, return the subsequence of this sequence that
-   * contains the statement at the given index.
+   * Return a subsequence of this sequence that contains the statement at the given index. It does
+   * not necessarily contain the first element of this sequence.
+   *
+   * <p>The result depends on the compositional structure of this sequence. The implementation
+   * avoids allocating new objects.
    *
    * @param index the statement position in this sequence
    * @return the sequence containing the index position

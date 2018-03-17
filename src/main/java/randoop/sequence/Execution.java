@@ -16,7 +16,7 @@ import randoop.NotExecuted;
 public final class Execution {
 
   // The execution outcome of each statement.
-  final List<ExecutionOutcome> theList;
+  final List<ExecutionOutcome> outcomes;
 
   private Set<Class<?>> coveredClasses;
 
@@ -27,9 +27,9 @@ public final class Execution {
    * @param owner the executed sequence
    */
   public Execution(Sequence owner) {
-    this.theList = new ArrayList<>(owner.size());
+    this.outcomes = new ArrayList<>(owner.size());
     for (int i = 0; i < owner.size(); i++) {
-      theList.add(NotExecuted.create());
+      outcomes.add(NotExecuted.create());
     }
     this.coveredClasses = new LinkedHashSet<>();
   }
@@ -40,7 +40,7 @@ public final class Execution {
    * @return the size of the list
    */
   public int size() {
-    return theList.size();
+    return outcomes.size();
   }
 
   /**
@@ -50,7 +50,7 @@ public final class Execution {
    * @return the outcome of the ith statement
    */
   public ExecutionOutcome get(int i) {
-    return theList.get(i);
+    return outcomes.get(i);
   }
 
   void addCoveredClass(Class<?> c) {
