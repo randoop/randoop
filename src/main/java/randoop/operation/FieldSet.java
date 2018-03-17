@@ -209,7 +209,7 @@ public class FieldSet extends CallableOperation {
    * predicate.
    *
    * @param reflectionPredicate the {@link ReflectionPredicate} to be checked
-   * @return true only if the field used in this setter satisfies predicate.canUse.
+   * @return true only if the field used in this setter satisfies predicate.canUse
    */
   @Override
   public boolean satisfies(ReflectionPredicate reflectionPredicate) {
