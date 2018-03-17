@@ -37,6 +37,11 @@ public class FibHeap {
 
   public static int counter = 0;
 
+  /** Return a string "1" or "0" depending on whether the argument is true or false. */
+  private static String asBinary(boolean b) {
+    return b ? "1" : "0";
+  }
+
   private static int gen_native(int br, Node n, Node m) {
 
     String res = br + ",";
@@ -49,29 +54,29 @@ public class FibHeap {
       res += "null";
     } else {
       temp = n.child;
-      res += (temp == null) ? "1" : "0";
+      res += asBinary(temp == null);
       temp = n.parent;
-      res += (temp == null) ? "1" : "0";
+      res += asBinary(temp == null);
       temp = n.right;
-      res += (temp == n) ? "1" : "0";
+      res += asBinary(temp == n);
       temp = n.left;
-      res += (temp == n) ? "1" : "0";
+      res += asBinary(temp == n);
       int deg = n.degree;
-      res += (deg == 0) ? "1" : "0";
+      res += asBinary(deg == 0);
     }
     if (m == null) {
       res += "null";
     } else {
       temp = m.child;
-      res += (temp == null) ? "1" : "0";
+      res += asBinary(temp == null);
       temp = m.parent;
-      res += (temp == null) ? "1" : "0";
+      res += asBinary(temp == null);
       temp = m.right;
-      res += (temp == n) ? "1" : "0";
+      res += asBinary(temp == n);
       temp = m.left;
-      res += (temp == n) ? "1" : "0";
+      res += asBinary(temp == n);
       int deg = m.degree;
-      res += (deg == 0) ? "1" : "0";
+      res += asBinary(deg == 0);
     }
     if (n != null && m != null) {
       // commented out because of symbolic execution...
@@ -80,9 +85,9 @@ public class FibHeap {
       //        temp2 = n.cost;
       //        res += (temp>temp2)?"1":"0";
       temp = n.child;
-      res += (temp == m) ? "1" : "0";
+      res += asBinary(temp == m);
       temp = m.child;
-      res += (temp == n) ? "1" : "0";
+      res += asBinary(temp == n);
     }
     //For Basic Block Coverage
     //END comment here
