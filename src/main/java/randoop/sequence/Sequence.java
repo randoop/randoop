@@ -1133,8 +1133,11 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Using compositional structure of this sequence, return the subsequence of this sequence that
-   * contains the statement at the given index.
+   * Return a subsequence of this sequence that contains the statement at the given index. It does
+   * not necessarily contain the first element of this sequence.
+   *
+   * <p>The result depends on the compositional structure of this sequence. The implementation
+   * avoids allocating new objects.
    *
    * @param index the statement position in this sequence
    * @return the sequence containing the index position

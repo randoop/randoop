@@ -30,14 +30,21 @@ import java.util.List;
  * the new statement in a {@code OneMoreElementList}, which takes up only 2 references in memory
  * (and constant creation time).
  */
-public abstract class SimpleList<T> {
+public interface SimpleList<T> {
 
   /**
    * Return the number of elements in this list.
    *
    * @return the number of elements in this list
    */
-  public abstract int size();
+  public int size();
+
+  /**
+   * Test if this list is empty.
+   *
+   * @return true if this list is empty, false otherwise
+   */
+  public boolean isEmpty();
 
   /**
    * Return the element at the given position of this list.
@@ -45,28 +52,23 @@ public abstract class SimpleList<T> {
    * @param index the position for the element
    * @return the element at the index
    */
-  public abstract T get(int index);
+  public T get(int index);
 
   /**
-   * Return the shortest sublist of this list that contains the index based on the compositional
-   * structure of this list.
+   * Return a sublist of this list that contains the index. Does not necessarily contain the first
+   * element.
+   *
+   * <p>The result is always an existing SimpleList, the smallest one that contains the index.
+   * Currently, it is always a {@link SimpleArrayList}.
    *
    * @param index the index into this list
-   * @return the sublist containing this list
+   * @return the sublist containing this index
    */
-  public abstract SimpleList<T> getSublist(int index);
+  public SimpleList<T> getSublist(int index);
 
+  // TODO: Replace some uses of this, such as direct implementations of toString.
   /**
-   * Test if this list is empty.
-   *
-   * @return true if this list is empty, false otherwise
-   */
-  public final boolean isEmpty() {
-    return size() == 0;
-  }
-
-  /**
-   * Returns a java.util.List version of this list.
+   * Returns a java.util.List version of this list. Caution: this operation can be expensive.
    *
    * @return {@link java.util.List} for this list
    */

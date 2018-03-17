@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleArrayList<T> extends SimpleList<T> implements Serializable {
+public class SimpleArrayList<T> implements SimpleList<T>, Serializable {
 
   private static final long serialVersionUID = 9155161101212598259L;
 
@@ -28,11 +28,17 @@ public class SimpleArrayList<T> extends SimpleList<T> implements Serializable {
   }
 
   @Override
+  public boolean isEmpty() {
+    return theList.isEmpty();
+  }
+
+  @Override
   public T get(int index) {
     return theList.get(index);
   }
 
   @Override
+  // Return the entire list.
   public SimpleList<T> getSublist(int index) {
     return this;
   }
