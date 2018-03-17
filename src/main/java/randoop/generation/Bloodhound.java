@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import randoop.main.CoverageTracker;
 import randoop.operation.TypedOperation;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
 
 /**
  * Implements the Bloodhound component, largely as described by the authors of the Guided Random
@@ -34,8 +34,7 @@ public class Bloodhound {
    * List of operations, identical to ForwardGenerator's operation list. Needed for getting weighted
    * member.
    */
-  private final ArrayListSimpleList<TypedOperation> operationSimpleList =
-      new ArrayListSimpleList<>();
+  private SimpleArrayList<TypedOperation> operationSimpleList = new SimpleArrayList<>();
 
   /** Hyper-parameter for balancing branch coverage and number of time a method was chosen. */
   private final double alpha = 0.7;
@@ -55,10 +54,7 @@ public class Bloodhound {
    * @param operations list of operations to copy.
    */
   public void setOperations(List<TypedOperation> operations) {
-    operationSimpleList.theList.clear();
-    for (TypedOperation operation : operations) {
-      operationSimpleList.add(operation);
-    }
+    operationSimpleList = new SimpleArrayList<TypedOperation>(operations);
   }
 
   /**
