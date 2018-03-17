@@ -22,7 +22,7 @@ public class Bloodhound {
   private final Map<TypedOperation, Double> methodWeights = new HashMap<>();
 
   /**
-   * Map of methods under test to the number of times they have been selected for the new sequence.
+   * Map of methods under test to the number of times they have been selected for a new sequence.
    * Cleared every time coverage is recomputed.
    */
   private final Map<TypedOperation, Integer> methodSelections = new HashMap<>();
@@ -31,8 +31,8 @@ public class Bloodhound {
   private final Map<TypedOperation, Integer> methodSuccCalls = new HashMap<>();
 
   /**
-   * Simple list of operations, identical to ForwardGenerator's operation list. Needed for getting
-   * weighted member.
+   * List of operations, identical to ForwardGenerator's operation list. Needed for getting weighted
+   * member.
    */
   private final ArrayListSimpleList<TypedOperation> operationSimpleList =
       new ArrayListSimpleList<>();
@@ -50,15 +50,12 @@ public class Bloodhound {
   private int stepNum = 0;
 
   /**
-   * Copy the provided list of operations into bloodhound's simple list.
+   * Make Bloodhound's internal list, {@code operationSimpleList}, be a copy of the given list.
    *
    * @param operations list of operations to copy.
    */
   public void setOperations(List<TypedOperation> operations) {
-    // Clear out the simple list of operations.
     operationSimpleList.theList.clear();
-
-    // Copy every operation into our simple list.
     for (TypedOperation operation : operations) {
       operationSimpleList.add(operation);
     }
