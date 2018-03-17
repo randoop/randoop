@@ -53,27 +53,18 @@ public class FibHeap {
    * '1'. Returns "null" if the argument is null.
    */
   private static String nodeFingerprint(Node n) {
-    String res = "";
     if (n == null) {
-      res += "null";
+      return "null";
     } else {
-      Node temp;
-      temp = n.child;
-      res += asBinary(temp == null);
-      temp = n.parent;
-      res += asBinary(temp == null);
-      temp = n.right;
-      res += asBinary(temp == n);
-      temp = n.left;
-      res += asBinary(temp == n);
-      int deg = n.degree;
-      res += asBinary(deg == 0);
+      return asBinary(n.child == null)
+          + asBinary(n.parent == null)
+          + asBinary(n.right == n)
+          + asBinary(n.left == n)
+          + asBinary(n.degree == 0);
     }
-    return res;
   }
 
   private static int gen_native(int br, Node n, Node m) {
-
     String res = br + ",";
     //        For Basic Block Coverage
     //        START comment here
