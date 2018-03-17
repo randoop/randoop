@@ -31,6 +31,12 @@ public class FibHeap {
   //   @NotPartOfState
   private Vector<Node> cachedNodes = new Vector<>();
 
+  /**
+   * Gives information similar to branch coverage. Each element is created by {@link #gen}. Each
+   * element is a string of the form branchNumber + "," + node1 + node2 + extra, where branchNumber
+   * is a branch output in the program and nodeN is a brief string fingerprint of the node; see
+   * {@link #nodeFingerprint}.
+   */
   public static Set<String> branchFingerprints = new HashSet<>();
 
   // private static Set abs_states = new HashSet();
@@ -99,6 +105,15 @@ public class FibHeap {
     return 0;
   }
 
+  /**
+   * This method constructs a string representation of its three arguments and inserts that in the
+   * {@link #branchFingerprints} set; see it for documentation of the output of this method.
+   *
+   * <p>In this file, gen() is called as the first statement, on both branches of every conditional.
+   * Therefore, at the end of execution, {@link #branchFingerprints} contains very fine-grained
+   * information about branch coverege: for each branch, each time it was executed, the relevant
+   * node(s).
+   */
   private static void gen(int br, Node n, Node m) { //SPECIFY
     int c = gen_native(br, n, m); //SPECIFY
     if (c != 0) outputTestSequence(c);
