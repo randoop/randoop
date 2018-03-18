@@ -9,19 +9,19 @@ import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 
 /**
- * Implements the Bloodhound component, as described by the authors of the Guided Random
- * Testing (GRT) paper. This implementation uses the same formula that is defined in the GRT
- * paper to compute a weight for each method. More specifically, Bloodhound computes a weight
- * for each method under test by taking a weighted combination of the uncovered branch ratio
- * and the ratio between the number of times the method has been invoked and the maximum number of
- * times any method under test has been invoked. However, some hyper-parameters and edge cases
- * were left unspecified in the GRT paper.
+ * Implements the Bloodhound component, as described by the authors of the Guided Random Testing
+ * (GRT) paper. This implementation uses the same formula that is defined in the GRT paper to
+ * compute a weight for each method. More specifically, Bloodhound computes a weight for each method
+ * under test by taking a weighted combination of the uncovered branch ratio and the ratio between
+ * the number of times the method has been invoked and the maximum number of times any method under
+ * test has been invoked. However, some hyper-parameters and edge cases were left unspecified in the
+ * GRT paper.
  *
- * We have chosen our own values for the following unspecified aspects:
- * 1) alpha - parameter to balance branch coverage and number of invocations when computing weight.
- * 2) p - parameter for decreasing weights of methods between updates to coverage information.
- * 3) Interval for recomputing branch coverage information.
- * 4) Default weight for cases where a method has zero branches or computed weight is zero.
+ * <p>We have chosen our own values for the following unspecified aspects: 1) alpha - parameter to
+ * balance branch coverage and number of invocations when computing weight. 2) p - parameter for
+ * decreasing weights of methods between updates to coverage information. 3) Interval for
+ * recomputing branch coverage information. 4) Default weight for cases where a method has zero
+ * branches or computed weight is zero.
  */
 public class Bloodhound implements TypedOperationSelector {
   /**
@@ -31,20 +31,21 @@ public class Bloodhound implements TypedOperationSelector {
   private final Map<TypedOperation, Double> methodWeights = new HashMap<>();
 
   /**
-   * Map of methods under test to the number of times they have been selected by the {@link ForwardGenerator}
-   * to extend an existing sequence to construct a new and unique sequence. This map is cleared every time
-   * branch coverage is recomputed.
+   * Map of methods under test to the number of times they have been selected by the {@link
+   * ForwardGenerator} to extend an existing sequence to construct a new and unique sequence. This
+   * map is cleared every time branch coverage is recomputed.
    */
   private final Map<TypedOperation, Integer> methodSelections = new HashMap<>();
 
   /**
-   * Map of methods under test to the number of times they have been successfully invoked. We define,
-   * for a method under test, the number of times that is has been invoked as the number of times it is
-   * chosen by the {@link ForwardGenerator} to extend an existing sequence to construct a new and unique sequence.
-   * This definition is the same as that of {@code methodSelections} except that we do not clear this map
-   * every time we recompute branch coverage. Thus, the value that each method maps to will always be
-   * non-decreasing throughout the duration of one run of Randoop.
-   * The GRT paper does not state its definition of the "number of invocations" of a method under test.
+   * Map of methods under test to the number of times they have been successfully invoked. We
+   * define, for a method under test, the number of times that is has been invoked as the number of
+   * times it is chosen by the {@link ForwardGenerator} to extend an existing sequence to construct
+   * a new and unique sequence. This definition is the same as that of {@code methodSelections}
+   * except that we do not clear this map every time we recompute branch coverage. Thus, the value
+   * that each method maps to will always be non-decreasing throughout the duration of one run of
+   * Randoop. The GRT paper does not state its definition of the "number of invocations" of a method
+   * under test.
    */
   private final Map<TypedOperation, Integer> methodSuccCalls = new HashMap<>();
 
@@ -60,9 +61,7 @@ public class Bloodhound implements TypedOperationSelector {
   /** Hyper-parameter for decreasing weights of methods between updates to coverage information. */
   private final double p = 0.5;
 
-  /**
-   * Hyper-parameter for determining when to recompute branch coverage.
-   */
+  /** Hyper-parameter for determining when to recompute branch coverage. */
   private final int branchCoverageInterval = 100;
 
   /** Maximum number of successful calls to any method under test. */
@@ -72,8 +71,9 @@ public class Bloodhound implements TypedOperationSelector {
   private int stepNum = 0;
 
   /**
-   * Construct a new instance of Bloodhound and copy the contents of the input list
-   * into Bloodhound's internal list.
+   * Construct a new instance of Bloodhound and copy the contents of the input list into
+   * Bloodhound's internal list.
+   *
    * @param operations list of operations to copy.
    */
   public Bloodhound(List<TypedOperation> operations) {
@@ -82,8 +82,8 @@ public class Bloodhound implements TypedOperationSelector {
 
   /**
    * The branch coverage information for all methods under test is updated at regular intervals.
-   * Specifically, at every x'th call of this method, branch coverage is collected, where x is equal to
-   * {@code branchCoverageInterval}.
+   * Specifically, at every x'th call of this method, branch coverage is collected, where x is equal
+   * to {@code branchCoverageInterval}.
    */
   private void updateBranchCoverageAtInterval() {
     stepNum += 1;
@@ -98,11 +98,11 @@ public class Bloodhound implements TypedOperationSelector {
   }
 
   /**
-   * Recompute weights for all methods under test. Each method under test is
-   * assigned a weight based on a weighted combination of the number of branches uncovered and the
-   * ratio between the number of times this method has been invoked and the maximum number of times
-   * any method under test has been invoked. The weighting scheme is based on the scheme described
-   * by the authors of the Guided Random Testing (GRT) paper.
+   * Recompute weights for all methods under test. Each method under test is assigned a weight based
+   * on a weighted combination of the number of branches uncovered and the ratio between the number
+   * of times this method has been invoked and the maximum number of times any method under test has
+   * been invoked. The weighting scheme is based on the scheme described by the authors of the
+   * Guided Random Testing (GRT) paper.
    */
   private void updateWeightsForOperations() {
     // The number of methods under test, corresponds to |M| in the GRT paper.
@@ -163,9 +163,9 @@ public class Bloodhound implements TypedOperationSelector {
   }
 
   /**
-   * First, update the weights of all methods under test.
-   * Retrieve the next method for constructing a new sequence while also
-   * considering each method's weights. Update the number of times the method has been selected.
+   * First, update the weights of all methods under test. Retrieve the next method for constructing
+   * a new sequence while also considering each method's weights. Update the number of times the
+   * method has been selected.
    *
    * @return the chosen {@code TypedOperation} for the new sequence
    */

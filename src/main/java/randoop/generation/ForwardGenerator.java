@@ -69,9 +69,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
-  /**
-   * Selects the next method to use for creating new and unique sequences.
-   */
+  /** Selects the next method to use for creating new and unique sequences. */
   private final TypedOperationSelector operationSelector;
 
   /** Bloodhound instance for updating and computing weights for all methods under test. */

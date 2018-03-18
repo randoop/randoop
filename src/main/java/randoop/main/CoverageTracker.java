@@ -124,10 +124,10 @@ public class CoverageTracker {
   }
 
   /**
-   * Collect coverage information for all methods under test. At this point, coverage
-   * data has already been generated as Randoop has been constructing and executing its
-   * test sequences. Coverage data is now collected and summarized. The {@code coverageDetailsMap}
-   * is updated to contain the updated coverage information of each method branch.
+   * Collect coverage information for all methods under test. At this point, coverage data has
+   * already been generated as Randoop has been constructing and executing its test sequences.
+   * Coverage data is now collected and summarized. The {@code coverageDetailsMap} is updated to
+   * contain the updated coverage information of each method branch.
    */
   public void collect() {
     // Collect coverage information.
