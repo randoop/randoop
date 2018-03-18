@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import randoop.main.CoverageTracker;
 import randoop.operation.TypedOperation;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
 
 /**
  * Implements the Bloodhound component, largely as described by the authors of the Guided Random
@@ -22,7 +22,7 @@ public class Bloodhound {
   private final Map<TypedOperation, Double> methodWeights = new HashMap<>();
 
   /**
-   * Map of methods under test to the number of times they have been selected for the new sequence.
+   * Map of methods under test to the number of times they have been selected for a new sequence.
    * Cleared every time coverage is recomputed.
    */
   private final Map<TypedOperation, Integer> methodSelections = new HashMap<>();
@@ -31,11 +31,10 @@ public class Bloodhound {
   private final Map<TypedOperation, Integer> methodSuccCalls = new HashMap<>();
 
   /**
-   * Simple list of operations, identical to ForwardGenerator's operation list. Needed for getting
-   * weighted member.
+   * List of operations, identical to ForwardGenerator's operation list. Needed for getting weighted
+   * member.
    */
-  private final ArrayListSimpleList<TypedOperation> operationSimpleList =
-      new ArrayListSimpleList<>();
+  private SimpleArrayList<TypedOperation> operationSimpleList = new SimpleArrayList<>();
 
   /** Hyper-parameter for balancing branch coverage and number of time a method was chosen. */
   private final double alpha = 0.7;
@@ -50,18 +49,12 @@ public class Bloodhound {
   private int stepNum = 0;
 
   /**
-   * Copy the provided list of operations into bloodhound's simple list.
+   * Make Bloodhound's internal list, {@code operationSimpleList}, be a copy of the given list.
    *
    * @param operations list of operations to copy.
    */
   public void setOperations(List<TypedOperation> operations) {
-    // Clear out the simple list of operations.
-    operationSimpleList.theList.clear();
-
-    // Copy every operation into our simple list.
-    for (TypedOperation operation : operations) {
-      operationSimpleList.add(operation);
-    }
+    operationSimpleList = new SimpleArrayList<TypedOperation>(operations);
   }
 
   /**
@@ -114,11 +107,11 @@ public class Bloodhound {
 
         // If this method has no uncovered branches, or it's been invoked the current maximum number
         // of times, use the default weight and skip this step.
-        if (covDet.getUncoveredBranches() != 0 && numSuccessfulInvocation != maxSuccessfulCalls) {
+        if (covDet.uncoveredBranches != 0 && numSuccessfulInvocation != maxSuccessfulCalls) {
           // Uncovered branch ratio of this method. Corresponds to uncovRatio(m) in the GRT paper.
           double uncoveredRatio = 0.5;
-          if (covDet.getNumBranches() != 0) {
-            uncoveredRatio = (double) covDet.getUncoveredBranches() / covDet.getNumBranches();
+          if (covDet.numBranches != 0) {
+            uncoveredRatio = (double) covDet.uncoveredBranches / covDet.numBranches;
           }
 
           // Call ratio of this method. Corresponds to succ(m) / maxSucc(M) in the GRT paper.
@@ -152,7 +145,7 @@ public class Bloodhound {
    * Retrieve the next method for constructing a new sequence while also considering each method's
    * weights. Update the number of times the method has been selected.
    *
-   * @return the chosen {@code TypedOperation} for the new sequence.
+   * @return the chosen {@code TypedOperation} for the new sequence
    */
   public TypedOperation getNextOperation() {
     TypedOperation operation = Randomness.randomMemberWeighted(operationSimpleList, methodWeights);

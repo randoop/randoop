@@ -29,10 +29,13 @@ public class CoverageTracker {
   private final Instrumenter instrumenter;
   private final RuntimeData data;
 
-  // Map from method name to coverage details.
+  /** Map from method name to coverage details. */
   private final Map<String, CoverageDetails> coverageDetailsMap = new HashMap<>();
 
-  // Map for all classes that are instrumented through the {@code CoverageTracker} class.
+  /**
+   * Map from fully-qualified class name to instrumented version, for all classes that are
+   * instrumented through the {@code CoverageTracker} class.
+   */
   private final Map<String, Class<?>> instrumentedClasses = new HashMap<>();
 
   /**
@@ -40,27 +43,12 @@ public class CoverageTracker {
    * number of uncovered branches.
    */
   public static class CoverageDetails {
-    private int numBranches;
-    private int uncoveredBranches;
-
-    private void setNumBranches(int numBranches) {
-      this.numBranches = numBranches;
-    }
-
-    private void setUncoveredBranches(int uncoveredBranches) {
-      this.uncoveredBranches = uncoveredBranches;
-    }
-
-    public int getNumBranches() {
-      return numBranches;
-    }
-
-    public int getUncoveredBranches() {
-      return uncoveredBranches;
-    }
+    /** Total number of branches. */
+    public int numBranches;
+    /** Number of uncovered branches. */
+    public int uncoveredBranches;
   }
 
-  /** Initializes the coverage tracker. */
   private CoverageTracker() {
     instrumenter = new Instrumenter(runtime);
 
@@ -73,11 +61,11 @@ public class CoverageTracker {
   }
 
   /**
-   * Instruments and loads into memory, each class that is under test.
+   * Instruments and loads into memory, each of the given classes.
    *
-   * @param classNames {@code Set} containing the names of the classes under test.
+   * @param classNames fully-qualified names of classes
    */
-  public void instrumentAndLoadAllClasses(Set<String> classNames) {
+  public void instrumentAndLoad(Set<String> classNames) {
     if (classNames == null) {
       return;
     }
@@ -111,8 +99,8 @@ public class CoverageTracker {
    * Returns the instrumented version of the class.
    *
    * @param className name of the class
-   * @return {@Code Class} object that has been instrumented for coverage data collection. null if
-   *     class with target name cannot be found.
+   * @return {@Code Class} object that has been instrumented for coverage data collection. Returns
+   *     null if class with target name cannot be found.
    */
   public Class<?> getInstrumentedClass(String className) {
     if (className == null || className.isEmpty()) {
@@ -158,21 +146,21 @@ public class CoverageTracker {
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
       for (final IMethodCoverage cm : cc.getMethods()) {
         String methodName = cc.getName() + "." + cm.getName();
-//        System.out.println(methodName);
-//        System.out.println("Total branches: " + cm.getBranchCounter().getTotalCount());
-//        System.out.println("Missed count: " + cm.getBranchCounter().getMissedCount());
+        //        System.out.println(methodName);
+        //        System.out.println("Total branches: " + cm.getBranchCounter().getTotalCount());
+        //        System.out.println("Missed count: " + cm.getBranchCounter().getMissedCount());
 
         CoverageDetails methodDetails = coverageDetailsMap.get(methodName);
         if (methodDetails == null) {
           methodDetails = new CoverageDetails();
         }
-        methodDetails.setNumBranches(cm.getBranchCounter().getTotalCount());
-        methodDetails.setUncoveredBranches(cm.getBranchCounter().getMissedCount());
+        methodDetails.numBranches = cm.getBranchCounter().getTotalCount();
+        methodDetails.uncoveredBranches = cm.getBranchCounter().getMissedCount();
 
         coverageDetailsMap.put(methodName, methodDetails);
       }
     }
-//    System.out.println("---------------------------");
+    //    System.out.println("---------------------------");
   }
 
   /** Clean up the coverage tracker instance. */
@@ -184,7 +172,7 @@ public class CoverageTracker {
    * Returns the coverage details associated with the input method.
    *
    * @param methodName name of the method to examine.
-   * @return Coverage details associated with the method.
+   * @return coverage details associated with the method
    */
   public CoverageDetails getDetailsForMethod(String methodName) {
     return this.coverageDetailsMap.get(methodName);

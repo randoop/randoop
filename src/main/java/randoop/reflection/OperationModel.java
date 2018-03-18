@@ -468,7 +468,7 @@ public class OperationModel {
     }
 
     // Need to load in instrumented versions of all classes under test first.
-    CoverageTracker.instance.instrumentAndLoadAllClasses(classnames);
+    CoverageTracker.instance.instrumentAndLoad(classnames);
 
     // Collect classes under test
     Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once

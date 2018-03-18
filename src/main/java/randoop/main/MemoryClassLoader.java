@@ -5,10 +5,10 @@ import java.util.Map;
 
 /** A class loader that loads classes from in-memory data. */
 public class MemoryClassLoader extends ClassLoader {
-  // Map from class name to the byte representation of the class.
+  /** Map from fully-qualified class name to the byte representation of the class. */
   private final Map<String, byte[]> definitions = new HashMap<>();
 
-  // Map from class name to class object.
+  /** Map from fully-qualified class name to class object. */
   private final Map<String, Class<?>> loadedClasses = new HashMap<>();
 
   /**
@@ -26,7 +26,7 @@ public class MemoryClassLoader extends ClassLoader {
    *
    * @param name name of the class that is being loaded.
    * @param resolve if true, resolve the class.
-   * @return the resulting {@code Class<?>} object.
+   * @return the resulting {@code Class<?>} object
    * @throws ClassNotFoundException if class with name is not found.
    */
   @Override
