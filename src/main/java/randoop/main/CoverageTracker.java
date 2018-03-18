@@ -57,6 +57,7 @@ public class CoverageTracker {
       runtime.startup(data);
     } catch (Exception e) {
       e.printStackTrace();
+      System.exit(1);
     }
   }
 
@@ -122,7 +123,12 @@ public class CoverageTracker {
     return instrumentedClass;
   }
 
-  /** Collect coverage information for all methods under test. Updates the coverageDetailsMap. */
+  /**
+   * Collect coverage information for all methods under test. At this point, coverage
+   * data has already been generated as Randoop has been constructing and executing its
+   * test sequences. Coverage data is now collected and summarized. The {@code coverageDetailsMap}
+   * is updated to contain the updated coverage information of each method branch.
+   */
   public void collect() {
     // Collect coverage information.
     data.collect(executionData, sessionInfos, false);

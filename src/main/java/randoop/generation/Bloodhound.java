@@ -9,12 +9,21 @@ import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 
 /**
- * Implements the Bloodhound component, largely as described by the authors of the Guided Random
- * Testing paper. Bloodhound computes a weight for each method under test by taking a weighted
- * combination of the uncovered branch ratio and the ratio between the number of times the method
- * has been invoked and the number of times any method under test has been invoked.
+ * Implements the Bloodhound component, as described by the authors of the Guided Random
+ * Testing (GRT) paper. This implementation uses the same formula that is defined in the GRT
+ * paper to compute a weight for each method. More specifically, Bloodhound computes a weight
+ * for each method under test by taking a weighted combination of the uncovered branch ratio
+ * and the ratio between the number of times the method has been invoked and the maximum number of
+ * times any method under test has been invoked. However, some hyper-parameters and edge cases
+ * were left unspecified in the GRT paper.
+ *
+ * We have chosen our own values for the following unspecified aspects:
+ * 1) alpha - parameter to balance branch coverage and number of invocations when computing weight.
+ * 2) p - parameter for decreasing weights of methods between updates to coverage information.
+ * 3) Interval for recomputing branch coverage information.
+ * 4) Default weight for cases where a method has zero branches or computed weight is zero.
  */
-public class Bloodhound {
+public class Bloodhound implements TypedOperationSelector {
   /**
    * Map of methods under test to their weights. These weights are dynamic and depend on branch
    * coverage.
@@ -22,25 +31,39 @@ public class Bloodhound {
   private final Map<TypedOperation, Double> methodWeights = new HashMap<>();
 
   /**
-   * Map of methods under test to the number of times they have been selected for a new sequence.
-   * Cleared every time coverage is recomputed.
+   * Map of methods under test to the number of times they have been selected by the {@link ForwardGenerator}
+   * to extend an existing sequence to construct a new and unique sequence. This map is cleared every time
+   * branch coverage is recomputed.
    */
   private final Map<TypedOperation, Integer> methodSelections = new HashMap<>();
 
-  /** Map of methods under test to the number of times they have been successfully invoked. */
+  /**
+   * Map of methods under test to the number of times they have been successfully invoked. We define,
+   * for a method under test, the number of times that is has been invoked as the number of times it is
+   * chosen by the {@link ForwardGenerator} to extend an existing sequence to construct a new and unique sequence.
+   * This definition is the same as that of {@code methodSelections} except that we do not clear this map
+   * every time we recompute branch coverage. Thus, the value that each method maps to will always be
+   * non-decreasing throughout the duration of one run of Randoop.
+   * The GRT paper does not state its definition of the "number of invocations" of a method under test.
+   */
   private final Map<TypedOperation, Integer> methodSuccCalls = new HashMap<>();
 
   /**
    * List of operations, identical to ForwardGenerator's operation list. Needed for getting weighted
-   * member.
+   * member when using {@link Randomness}.
    */
   private SimpleArrayList<TypedOperation> operationSimpleList = new SimpleArrayList<>();
 
   /** Hyper-parameter for balancing branch coverage and number of time a method was chosen. */
   private final double alpha = 0.7;
 
-  /** Hyper-parameter for decreasing weights. */
+  /** Hyper-parameter for decreasing weights of methods between updates to coverage information. */
   private final double p = 0.5;
+
+  /**
+   * Hyper-parameter for determining when to recompute branch coverage.
+   */
+  private final int branchCoverageInterval = 100;
 
   /** Maximum number of successful calls to any method under test. */
   private int maxSuccessfulCalls = 0;
@@ -49,39 +72,39 @@ public class Bloodhound {
   private int stepNum = 0;
 
   /**
-   * Make Bloodhound's internal list, {@code operationSimpleList}, be a copy of the given list.
-   *
+   * Construct a new instance of Bloodhound and copy the contents of the input list
+   * into Bloodhound's internal list.
    * @param operations list of operations to copy.
    */
-  public void setOperations(List<TypedOperation> operations) {
-    operationSimpleList = new SimpleArrayList<TypedOperation>(operations);
+  public Bloodhound(List<TypedOperation> operations) {
+    this.operationSimpleList = new SimpleArrayList<>(operations);
   }
 
   /**
-   * Recompute weights for all methods under test at regular intervals. Each method under test is
-   * assigned a weight based on a weighted combination of the number of branches uncovered and the
-   * ratio between the number of times this method has been invoked and the maximum number of times
-   * any method under test has been invoked. The weighting scheme is based on the scheme described
-   * by the authors of the Guided Random Testing (GRT) paper. We have chosen our own reasonable
-   * values for all parameters that were left unspecified by the authors of GRT.
-   *
-   * @param interval interval at which to recompute weights
+   * The branch coverage information for all methods under test is updated at regular intervals.
+   * Specifically, at every x'th call of this method, branch coverage is collected, where x is equal to
+   * {@code branchCoverageInterval}.
    */
-  public void processWeightsForOperations(int interval) {
+  private void updateBranchCoverageAtInterval() {
     stepNum += 1;
 
     // After the specified interval, recompute the current coverage information.
-    if (stepNum % interval == 0) {
+    if (stepNum % branchCoverageInterval == 0) {
       methodSelections.clear();
 
       // Collect coverage information of all methods under test.
       CoverageTracker.instance.collect();
-
-      //      for (TypedOperation to : methodWeights.keySet()) {
-      //        System.out.println(to + " " + methodWeights.get(to));
-      //      }
     }
+  }
 
+  /**
+   * Recompute weights for all methods under test. Each method under test is
+   * assigned a weight based on a weighted combination of the number of branches uncovered and the
+   * ratio between the number of times this method has been invoked and the maximum number of times
+   * any method under test has been invoked. The weighting scheme is based on the scheme described
+   * by the authors of the Guided Random Testing (GRT) paper.
+   */
+  private void updateWeightsForOperations() {
     // The number of methods under test, corresponds to |M| in the GRT paper.
     int numOperations = this.operationSimpleList.size();
 
@@ -89,9 +112,7 @@ public class Bloodhound {
     double weight = 1.0 / numOperations;
 
     // Recompute weights for all operations.
-    for (int i = 0; i < operationSimpleList.size(); i++) {
-      TypedOperation operation = operationSimpleList.get(i);
-
+    for (TypedOperation operation : operationSimpleList) {
       CoverageTracker.CoverageDetails covDet =
           CoverageTracker.instance.getDetailsForMethod(operation.getName());
 
@@ -126,7 +147,7 @@ public class Bloodhound {
           // Corresponds to the k variable in the GRT paper.
           Integer numSelectionsOfMethod = methodSelections.get(operation);
           if (numSelectionsOfMethod != null) {
-            // Corresponds to the case where k >= 1.
+            // Corresponds to the case where k >= 1 in the GRT paper.
             double val1 =
                 (-3.0 / Math.log(1 - p))
                     * (Math.pow(p, numSelectionsOfMethod) / numSelectionsOfMethod);
@@ -142,12 +163,18 @@ public class Bloodhound {
   }
 
   /**
-   * Retrieve the next method for constructing a new sequence while also considering each method's
-   * weights. Update the number of times the method has been selected.
+   * First, update the weights of all methods under test.
+   * Retrieve the next method for constructing a new sequence while also
+   * considering each method's weights. Update the number of times the method has been selected.
    *
    * @return the chosen {@code TypedOperation} for the new sequence
    */
-  public TypedOperation getNextOperation() {
+  @Override
+  public TypedOperation selectNextOperation() {
+    // Collect branch coverage and recompute weights for methods under test.
+    updateBranchCoverageAtInterval();
+    updateWeightsForOperations();
+
     TypedOperation operation = Randomness.randomMemberWeighted(operationSimpleList, methodWeights);
 
     // Update the number of times this method was selected for a new sequence.

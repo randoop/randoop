@@ -467,7 +467,7 @@ public class OperationModel {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
 
-    // Need to load in instrumented versions of all classes under test first.
+    // Load in instrumented versions of all classes under test first.
     CoverageTracker.instance.instrumentAndLoad(classnames);
 
     // Collect classes under test

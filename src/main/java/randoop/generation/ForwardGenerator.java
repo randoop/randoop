@@ -69,8 +69,13 @@ public class ForwardGenerator extends AbstractGenerator {
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
-  /** Bloodhound instance for updating and computing method weights. */
-  private final Bloodhound bloodhound = new Bloodhound();
+  /**
+   * Selects the next method to use for creating new and unique sequences.
+   */
+  private final TypedOperationSelector operationSelector;
+
+  /** Bloodhound instance for updating and computing weights for all methods under test. */
+  private final Bloodhound bloodhound;
 
   public ForwardGenerator(
       List<TypedOperation> operations,
@@ -96,8 +101,15 @@ public class ForwardGenerator extends AbstractGenerator {
 
     initializeRuntimePrimitivesSeen();
 
-    // Copy all operations into bloodhound's list of operations.
-    bloodhound.setOperations(operations);
+    // Construct an instance of bloodhound and copy all operations into bloodhound's list of operations.
+    this.bloodhound = new Bloodhound(operations);
+
+    // If bloodhound is enabled, select the next operation while considering the methods' weights.
+    if (GenInputsAbstract.enable_bloodhound) {
+      this.operationSelector = this.bloodhound;
+    } else {
+      this.operationSelector = new UniformRandomMethodSelection(operations);
+    }
   }
 
   /**
@@ -280,17 +292,8 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
-    // Select a StatementInfo
-    TypedOperation operation;
-
-    // If bloodhound is enabled, choose the next operation while considering the methods' weights.
-    if (GenInputsAbstract.enable_bloodhound) {
-      // Recompute the weights for all methods under tests at regular intervals.
-      bloodhound.processWeightsForOperations(100);
-      operation = bloodhound.getNextOperation();
-    } else {
-      operation = Randomness.randomMember(this.operations);
-    }
+    // Select the next operation to use in constructing a new and unique sequence.
+    TypedOperation operation = operationSelector.selectNextOperation();
 
     Log.logLine("Selected operation: " + operation.toString());
 
