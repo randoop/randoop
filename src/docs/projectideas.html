@@ -183,10 +183,11 @@ Randoop can do better.  Here is one idea; other approaches are possible.</p>
 
 <p>
 Randoop could determine what fields a method will read, and then chose an
-object for which those fields have been recently side-effected.
-As an example, when obtaining a <code>Point</code> to pass to the getX() method, a <code>Point</code>
-produced by the <code>setX()</code> or <code>move()</code> method is more interesting than one
-produced by the <code>setY()</code> method.</p>
+object for which those fields have been recently side-effected.  As an
+example, when obtaining a <code>Point</code> to pass to
+the <code>getX()</code> method, a <code>Point</code> produced by
+the <code>setX()</code> or <code>move()</code> method is more interesting
+than one produced by the <code>setY()</code> method.</p>
 
 <p>As another example, Randoop could choose objects that are most likely to
 achieve additional coverage in the called method, perhaps because the
@@ -196,8 +197,10 @@ values will cause particular branches to be taken.</p>
 <h2 id="known-bad-arguments">Avoid known bad arguments</h2>
 
 <p>
-Sometimes Randoop creates tests that do not terminate or that take a long time to execute.
-For example, Randoop once tried to create a <a href="https://github.com/randoop/randoop/issues/315">test that executed an enormously large exponentiation</a>:
+Sometimes Randoop creates tests that do not terminate or that take a long
+time to execute.  For example, Randoop once tried to create
+a <a href="https://github.com/randoop/randoop/issues/315">test that
+executed an enormously large exponentiation</a>:
 </p>
 
 <pre><code>
@@ -803,7 +806,7 @@ started with Randoop development and make a contribution.
 </body>
 </html>
 
-<!--  LocalWords:  assertTrue someObject itsField observerMethod ABB T1
+<!--  LocalWords:  assertTrue someObject itsField observerMethod ABB T1 m1
  -->
-<!--  LocalWords:  Palulu
+<!--  LocalWords:  Palulu GRT GRT's m2 t1 t2 pre plugin
  -->
