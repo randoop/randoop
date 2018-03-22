@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>PostConditionCheck (randoop 3.1.5 API)</title>
+<title>PostConditionCheck (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="PostConditionCheck (randoop 3.1.5 API)";
+            parent.document.title="PostConditionCheck (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.test.PostConditionCheck</li>
@@ -113,7 +113,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">PostConditionCheck</span>
-extends java.lang.Object
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
 implements <a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></pre>
 <div class="block">Represents the observed failure of a post-condition.</div>
 </li>
@@ -141,8 +141,8 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private <a href="../../randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#postcondition">postcondition</a></span></code>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition">ExecutableBooleanExpression</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#postConditions">postConditions</a></span></code>
 <div class="block">The post-condition</div>
 </td>
 </tr>
@@ -161,8 +161,8 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#PostConditionCheck-randoop.condition.Condition-java.util.ArrayList-">PostConditionCheck</a></span>(<a href="../../randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a>&nbsp;postcondition,
-                  java.util.ArrayList&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVariables)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#PostConditionCheck-java.util.List-java.util.List-">PostConditionCheck</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition">ExecutableBooleanExpression</a>&gt;&nbsp;postConditions,
+                  <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVariables)</code>
 <div class="block">Creates a <a href="../../randoop/test/PostConditionCheck.html" title="class in randoop.test"><code>PostConditionCheck</code></a></div>
 </td>
 </tr>
@@ -183,41 +183,41 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#evaluate-randoop.sequence.Execution-">evaluate</a></span>(<a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</code>
-<div class="block">Doesn't actually evaluate <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence"><code>Execution</code></a> object.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#equals-java.lang.Object-">equals</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;object)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#getID--">getID</a></span>()</code>
-<div class="block">Returns a unique string identifier for the check.</div>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition">ExecutableBooleanExpression</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#getPostConditions--">getPostConditions</a></span>()</code>
+<div class="block">Get the list of <a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition"><code>ExecutableBooleanExpression</code></a> objects for this <a href="../../randoop/test/PostConditionCheck.html" title="class in randoop.test"><code>PostConditionCheck</code></a>.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#getValue--">getValue</a></span>()</code>
-<div class="block">Returns a short string that can be used to uniquely identify this check.</div>
-</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#toCodeStringPostStatement--">toCodeStringPostStatement</a></span>()</code>
 <div class="block">Returns a string of Java source code to be emitted after a statement containing this check.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#toCodeStringPreStatement--">toCodeStringPreStatement</a></span>()</code>
 <div class="block">Returns a string of Java source code to be emitted before a statement containing this check.</div>
 </td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -233,13 +233,13 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="postcondition">
+<a name="postConditions">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>postcondition</h4>
-<pre>private final&nbsp;<a href="../../randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a> postcondition</pre>
+<h4>postConditions</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition">ExecutableBooleanExpression</a>&gt; postConditions</pre>
 <div class="block">The post-condition</div>
 </li>
 </ul>
@@ -261,18 +261,18 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="PostConditionCheck-randoop.condition.Condition-java.util.ArrayList-">
+<a name="PostConditionCheck-java.util.List-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>PostConditionCheck</h4>
-<pre>public&nbsp;PostConditionCheck(<a href="../../randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a>&nbsp;postcondition,
-                          java.util.ArrayList&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVariables)</pre>
+<pre>public&nbsp;PostConditionCheck(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition">ExecutableBooleanExpression</a>&gt;&nbsp;postConditions,
+                          <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVariables)</pre>
 <div class="block">Creates a <a href="../../randoop/test/PostConditionCheck.html" title="class in randoop.test"><code>PostConditionCheck</code></a></div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>postcondition</code> - the post-condition for this check</dd>
+<dd><code>postConditions</code> - the post-condition for this check</dd>
 <dd><code>inputVariables</code> - the input variables for this condition check</dd>
 </dl>
 </li>
@@ -285,13 +285,52 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="equals-java.lang.Object-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>equals</h4>
+<pre>public&nbsp;boolean&nbsp;equals(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;object)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="hashCode--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hashCode</h4>
+<pre>public&nbsp;int&nbsp;hashCode()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="toString--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="toCodeStringPreStatement--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>toCodeStringPreStatement</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toCodeStringPreStatement()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toCodeStringPreStatement()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#toCodeStringPreStatement--">Check</a></code></span></div>
 <div class="block">Returns a string of Java source code to be emitted before a statement containing this check.</div>
 <dl>
@@ -308,7 +347,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <ul class="blockList">
 <li class="blockList">
 <h4>toCodeStringPostStatement</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toCodeStringPostStatement()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toCodeStringPostStatement()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#toCodeStringPostStatement--">Check</a></code></span></div>
 <div class="block">Returns a string of Java source code to be emitted after a statement containing this check.</div>
 <dl>
@@ -319,60 +358,17 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 </dl>
 </li>
 </ul>
-<a name="getValue--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getValue</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getValue()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#getValue--">Check</a></code></span></div>
-<div class="block">Returns a short string that can be used to uniquely identify this check.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/Check.html#getValue--">getValue</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a string "value" for this check</dd>
-</dl>
-</li>
-</ul>
-<a name="getID--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getID</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getID()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#getID--">Check</a></code></span></div>
-<div class="block">Returns a unique string identifier for the check. Two checks are the same if these identifiers
- match. The value is NOT included. Used to match up checks between the same sequence run at
- different times. Note that because of changes in the environment (e.g., static variables), two
- executions of the same sequence may have different checks (because the existence of some checks
- depends on the value of variables)</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/Check.html#getID--">getID</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a unique string identifier for this check</dd>
-</dl>
-</li>
-</ul>
-<a name="evaluate-randoop.sequence.Execution-">
+<a name="getPostConditions--">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>evaluate</h4>
-<pre>public&nbsp;boolean&nbsp;evaluate(<a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</pre>
-<div class="block">Doesn't actually evaluate <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence"><code>Execution</code></a> object. This check exists because the
- post-condition failed, so returns false.</div>
+<h4>getPostConditions</h4>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition">ExecutableBooleanExpression</a>&gt;&nbsp;getPostConditions()</pre>
+<div class="block">Get the list of <a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition"><code>ExecutableBooleanExpression</code></a> objects for this <a href="../../randoop/test/PostConditionCheck.html" title="class in randoop.test"><code>PostConditionCheck</code></a>.</div>
 <dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/Check.html#evaluate-randoop.sequence.Execution-">evaluate</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>execution</code> - the execution of sequence on which to test this check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>false</dd>
+<dd>the <a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition"><code>ExecutableBooleanExpression</code></a> list for this check</dd>
 </dl>
 </li>
 </ul>

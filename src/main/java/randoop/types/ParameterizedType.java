@@ -3,7 +3,7 @@ package randoop.types;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 
 /**
  * Represents a parameterized type. A <i>parameterized type</i> is a type {@code C<T1,...,Tk>} where
@@ -82,11 +82,11 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   @Override
   public String getName() {
-    return super.getName() + "<" + UtilMDE.join(this.getTypeArguments(), ",") + ">";
+    return super.getName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
   }
 
   @Override
   public String getUnqualifiedName() {
-    return this.getSimpleName() + "<" + UtilMDE.join(this.getTypeArguments(), ",") + ">";
+    return this.getSimpleName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
   }
 }

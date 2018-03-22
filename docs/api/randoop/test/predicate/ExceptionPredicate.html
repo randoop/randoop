@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExceptionPredicate (randoop 3.1.5 API)</title>
+<title>ExceptionPredicate (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExceptionPredicate (randoop 3.1.5 API)";
+            parent.document.title="ExceptionPredicate (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -106,7 +106,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public interface <span class="typeNameLabel">ExceptionPredicate</span></pre>
 <div class="block">An <code>ExceptionPredicate</code> is a test on an exception primarily used to check whether the
- exception is classified as expected. Used in <a href="../../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test"><code>TestCheckGenerator</code></a>
+ exception is classified as expected. Used in <a href="../../../randoop/test/TestCheckGenerator.html" title="class in randoop.test"><code>TestCheckGenerator</code></a>
  implementations to decide whether an exception matches criteria of that check generator.</div>
 </li>
 </ul>
@@ -129,7 +129,7 @@ var activeTableTab = "activeTableTab";
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/test/predicate/ExceptionPredicate.html#test-randoop.ExceptionalExecution-randoop.sequence.ExecutableSequence-">test</a></span>(<a href="../../../randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a>&nbsp;exec,
-    <a href="../../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
+    <a href="../../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
 <div class="block">Check whether the <code>ExceptionalExecution</code> of the <code>ExecutableSequence</code> satisfies the
  criterion of the predicate.</div>
 </td>
@@ -156,13 +156,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>test</h4>
 <pre>boolean&nbsp;test(<a href="../../../randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a>&nbsp;exec,
-             <a href="../../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
+             <a href="../../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
 <div class="block">Check whether the <code>ExceptionalExecution</code> of the <code>ExecutableSequence</code> satisfies the
  criterion of the predicate.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>exec</code> - the exceptional execution wrapping an exception</dd>
-<dd><code>s</code> - the sequence where exception was thrown</dd>
+<dd><code>eseq</code> - the sequence where exception was thrown</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if exception satisfies the predicate, and false otherwise</dd>
 </dl>

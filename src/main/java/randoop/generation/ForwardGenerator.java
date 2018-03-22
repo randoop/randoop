@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import plume.Pair;
 import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.Globals;
@@ -29,11 +28,11 @@ import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /** Randoop's forward, component-based generator. */
@@ -566,8 +565,7 @@ public class ForwardGenerator extends AbstractGenerator {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
-          candidateVars.add(
-              new ArrayListSimpleList<>(new ArrayList<>(typesToVars.getValues(match))));
+          candidateVars.add(new SimpleArrayList<Integer>(typesToVars.getValues(match)));
         }
 
         // If any type-compatible variables found, pick one at random as the
@@ -625,7 +623,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
         Log.logLine("Collection creation heuristic: will create helper of type " + classType);
-        ArrayListSimpleList<Sequence> l2 = new ArrayListSimpleList<>();
+        SimpleArrayList<Sequence> l2 = new SimpleArrayList<>();
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
         if (creationSequence != null) {
@@ -669,9 +667,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // At this point, we have a list of candidate sequences and need to select a
       // randomly-chosen sequence from the list.
-      Pair<Variable, Sequence> varAndSeq = randomVariable(candidates, inputType, isReceiver);
-      Variable randomVariable = varAndSeq.a;
-      Sequence chosenSeq = varAndSeq.b;
+      VarAndSeq varAndSeq = randomVariable(candidates, inputType, isReceiver);
+      Variable randomVariable = varAndSeq.var;
+      Sequence chosenSeq = varAndSeq.seq;
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {
@@ -696,8 +694,18 @@ public class ForwardGenerator extends AbstractGenerator {
     return new InputsAndSuccessFlag(true, sequences, variables);
   }
 
-  Pair<Variable, Sequence> randomVariable(
-      SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
+  // A pair of a variable and a sequence
+  private static class VarAndSeq {
+    final Variable var;
+    final Sequence seq;
+
+    VarAndSeq(Variable var, Sequence seq) {
+      this.var = var;
+      this.seq = seq;
+    }
+  }
+
+  VarAndSeq randomVariable(SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
 
       Sequence chosenSeq;
@@ -746,16 +754,16 @@ public class ForwardGenerator extends AbstractGenerator {
         //     "Selected null or primitive value as the receiver for a method call");
       }
 
-      return new Pair<>(randomVariable, chosenSeq);
+      return new VarAndSeq(randomVariable, chosenSeq);
     }
     // Can't get here unless isReceiver is true.  TODO: fix design so this cannot happen.
     assert isReceiver;
     // Try every element of the list, in order.
-    List<Pair<Variable, Sequence>> validResults = new ArrayList<>();
+    List<VarAndSeq> validResults = new ArrayList<>();
     for (int i = 0; i < candidates.size(); i++) {
       Sequence s = candidates.get(i);
       Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);
-      validResults.add(new Pair<>(randomVariable, s));
+      validResults.add(new VarAndSeq(randomVariable, s));
     }
     if (validResults.size() == 0) {
       throw new BugInRandoopException(

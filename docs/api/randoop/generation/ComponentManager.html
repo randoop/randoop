@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ComponentManager (randoop 3.1.5 API)</title>
+<title>ComponentManager (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ComponentManager (randoop 3.1.5 API)";
+            parent.document.title="ComponentManager (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/generation/EqualsMethodMatcher.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/DefaultOperationHistoryLogger.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/generation/ComponentManager.html" target="_top">Frames</a></li>
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.generation.ComponentManager</li>
@@ -109,7 +109,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">ComponentManager</span>
-extends java.lang.Object</pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Stores and provides means to access the component sequences generated during a run of Randoop.
  "Component sequences" are sequences that Randoop uses to create larger sequences.
 
@@ -159,7 +159,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#gralSeeds">gralSeeds</a></span></code>
 <div class="block">The subset of the sequences that were given pre-generation to the component manager (via its
  constructor).</div>
@@ -173,7 +173,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#sequenceTypes">sequenceTypes</a></span></code>&nbsp;</td>
 </tr>
 </table>
@@ -196,7 +196,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#ComponentManager-java.util.Collection-">ComponentManager</a></span>(java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;generalSeeds)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#ComponentManager-java.util.Collection-">ComponentManager</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;generalSeeds)</code>
 <div class="block">Create a component manager, initially populated with the given sequences, which are considered
  seed sequences.</div>
 </td>
@@ -232,7 +232,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#addPackageLevelLiteral-java.lang.Package-randoop.sequence.Sequence-">addPackageLevelLiteral</a></span>(java.lang.Package&nbsp;pkg,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#addPackageLevelLiteral-java.lang.Package-randoop.sequence.Sequence-">addPackageLevelLiteral</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Package.html?is-external=true" title="class or interface in java.lang">Package</a>&nbsp;pkg,
                       <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;seq)</code>
 <div class="block">Add a sequence representing a literal value that can be used when testing classes in the given
  package.</div>
@@ -245,11 +245,11 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>(package private) java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
+<td class="colFirst"><code>(package private) <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#getAllGeneratedSequences--">getAllGeneratedSequences</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code>(package private) java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
+<td class="colFirst"><code>(package private) <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#getAllPrimitiveSequences--">getAllPrimitiveSequences</a></span>()</code>
 <div class="block">Returns all sequences that represent primitive values (e.g.</div>
 </td>
@@ -262,8 +262,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>(package private) <a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#getSequencesForType-randoop.operation.TypedOperation-int-">getSequencesForType</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-                   int&nbsp;i)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#getSequencesForType-randoop.operation.TypedOperation-int-boolean-">getSequencesForType</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
+                   int&nbsp;i,
+                   boolean&nbsp;onlyReceivers)</code>
 <div class="block">Returns component sequences that create values of the type required by the i-th input value of
  the given statement.</div>
 </td>
@@ -287,8 +288,8 @@ extends java.lang.Object</pre>
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -320,7 +321,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>gralSeeds</h4>
-<pre>private final&nbsp;java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt; gralSeeds</pre>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt; gralSeeds</pre>
 <div class="block">The subset of the sequences that were given pre-generation to the component manager (via its
  constructor).</div>
 </li>
@@ -333,7 +334,10 @@ extends java.lang.Object</pre>
 <h4>classLiterals</h4>
 <pre>private&nbsp;<a href="../../randoop/sequence/ClassLiterals.html" title="class in randoop.sequence">ClassLiterals</a> classLiterals</pre>
 <div class="block">A set of additional components representing literals that should only be used as input to
- specific classes.</div>
+ specific classes.
+
+ <p>Null if class literals are not used or none were found. At most one of classLiterals and
+ packageliterals is non-null.</div>
 </li>
 </ul>
 <a name="packageLiterals">
@@ -344,7 +348,10 @@ extends java.lang.Object</pre>
 <h4>packageLiterals</h4>
 <pre>private&nbsp;<a href="../../randoop/sequence/PackageLiterals.html" title="class in randoop.sequence">PackageLiterals</a> packageLiterals</pre>
 <div class="block">A set of additional components representing literals that should only be used as input to
- specific packages.</div>
+ specific packages.
+
+ <p>Null if package literals are not used or none were found. At most one of classLiterals and
+ packageliterals is non-null.</div>
 </li>
 </ul>
 <a name="sequenceTypes">
@@ -353,7 +360,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>sequenceTypes</h4>
-<pre>private&nbsp;java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; sequenceTypes</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; sequenceTypes</pre>
 </li>
 </ul>
 </li>
@@ -380,7 +387,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ComponentManager</h4>
-<pre>public&nbsp;ComponentManager(java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;generalSeeds)</pre>
+<pre>public&nbsp;ComponentManager(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;generalSeeds)</pre>
 <div class="block">Create a component manager, initially populated with the given sequences, which are considered
  seed sequences.</div>
 <dl>
@@ -435,7 +442,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addPackageLevelLiteral</h4>
-<pre>public&nbsp;void&nbsp;addPackageLevelLiteral(java.lang.Package&nbsp;pkg,
+<pre>public&nbsp;void&nbsp;addPackageLevelLiteral(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Package.html?is-external=true" title="class or interface in java.lang">Package</a>&nbsp;pkg,
                                    <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;seq)</pre>
 <div class="block">Add a sequence representing a literal value that can be used when testing classes in the given
  package.</div>
@@ -476,7 +483,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getAllGeneratedSequences</h4>
-<pre>java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getAllGeneratedSequences()</pre>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getAllGeneratedSequences()</pre>
 </li>
 </ul>
 <a name="getSequencesForType-randoop.types.Type-">
@@ -498,21 +505,23 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="getSequencesForType-randoop.operation.TypedOperation-int-">
+<a name="getSequencesForType-randoop.operation.TypedOperation-int-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSequencesForType</h4>
 <pre><a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getSequencesForType(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-                                         int&nbsp;i)</pre>
+                                         int&nbsp;i,
+                                         boolean&nbsp;onlyReceivers)</pre>
 <div class="block">Returns component sequences that create values of the type required by the i-th input value of
- the given statement. Any applicable class- or package-level literals, those are added to the
- collection as well.</div>
+ the given statement. Also includes any applicable class- or package-level literals.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>operation</code> - the statement</dd>
 <dd><code>i</code> - the input value index of statement</dd>
+<dd><code>onlyReceivers</code> - if true, only return sequences that are appropriate to use as a method
+     call receiver</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the sequences that create values of the given type</dd>
 </dl>
@@ -524,7 +533,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getAllPrimitiveSequences</h4>
-<pre>java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getAllPrimitiveSequences()</pre>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getAllPrimitiveSequences()</pre>
 <div class="block">Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
  "int var0 = 1"), including general components, class literals and package literals.</div>
 <dl>
@@ -579,7 +588,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/generation/EqualsMethodMatcher.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/DefaultOperationHistoryLogger.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/generation/ComponentManager.html" target="_top">Frames</a></li>

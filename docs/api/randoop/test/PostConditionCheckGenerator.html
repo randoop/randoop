@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>PostConditionCheckGenerator (randoop 3.1.5 API)</title>
+<title>PostConditionCheckGenerator (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="PostConditionCheckGenerator (randoop 3.1.5 API)";
+            parent.document.title="PostConditionCheckGenerator (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/test/PostConditionCheck.html" title="class in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/test/RegressionCaptureVisitor.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/RegressionCaptureGenerator.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/test/PostConditionCheckGenerator.html" target="_top">Frames</a></li>
@@ -96,26 +96,26 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>
+<ul class="inheritance">
+<li><a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">randoop.test.TestCheckGenerator</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.test.PostConditionCheckGenerator</li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>All Implemented Interfaces:</dt>
-<dd><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">PostConditionCheckGenerator</span>
-extends java.lang.Object
-implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></pre>
-<div class="block">Checks the given post-condition</div>
+extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">TestCheckGenerator</a></pre>
+<div class="block">Checks the given post-conditions after the last statement of a sequence.</div>
 </li>
 </ul>
 </div>
@@ -135,9 +135,9 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private <a href="../../randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheckGenerator.html#postcondition">postcondition</a></span></code>
-<div class="block">the post-condition</div>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition">ExecutableBooleanExpression</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheckGenerator.html#postConditions">postConditions</a></span></code>
+<div class="block">the post-conditions</div>
 </td>
 </tr>
 </table>
@@ -155,8 +155,8 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheckGenerator.html#PostConditionCheckGenerator-randoop.condition.Condition-">PostConditionCheckGenerator</a></span>(<a href="../../randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a>&nbsp;postcondition)</code>
-<div class="block">Create a <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test"><code>TestCheckGenerator</code></a> to test the given post-condition.</div>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheckGenerator.html#PostConditionCheckGenerator-java.util.List-">PostConditionCheckGenerator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition">ExecutableBooleanExpression</a>&gt;&nbsp;postConditions)</code>
+<div class="block">Create a <a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test"><code>TestCheckGenerator</code></a> to test the given post-condition.</div>
 </td>
 </tr>
 </table>
@@ -175,23 +175,29 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>private java.lang.Object[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheckGenerator.html#addNullReceiver-java.lang.Object:A-">addNullReceiver</a></span>(java.lang.Object[]&nbsp;values)</code>&nbsp;</td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheckGenerator.html#addNullReceiver-java.lang.Object:A-">addNullReceiver</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]&nbsp;values)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
-<div class="block">Tests the post-condition against the values in the given <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>, and if the
- condition is not satisfied returns a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>.</div>
+<td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;?&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheckGenerator.html#generateTestChecks-randoop.sequence.ExecutableSequence-">generateTestChecks</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
+<div class="block">Tests all of the the post-conditions against the values in the given <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>, and if the condition is not satisfied returns a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>.</div>
 </td>
 </tr>
 </table>
 <ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.randoop.test.TestCheckGenerator">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;randoop.test.<a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">TestCheckGenerator</a></h3>
+<code><a href="../../randoop/test/TestCheckGenerator.html#hasGenerator-java.lang.Class-">hasGenerator</a></code></li>
+</ul>
+<ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -207,14 +213,14 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="postcondition">
+<a name="postConditions">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>postcondition</h4>
-<pre>private final&nbsp;<a href="../../randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a> postcondition</pre>
-<div class="block">the post-condition</div>
+<h4>postConditions</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition">ExecutableBooleanExpression</a>&gt; postConditions</pre>
+<div class="block">the post-conditions</div>
 </li>
 </ul>
 </li>
@@ -225,17 +231,17 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="PostConditionCheckGenerator-randoop.condition.Condition-">
+<a name="PostConditionCheckGenerator-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>PostConditionCheckGenerator</h4>
-<pre>public&nbsp;PostConditionCheckGenerator(<a href="../../randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a>&nbsp;postcondition)</pre>
-<div class="block">Create a <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test"><code>TestCheckGenerator</code></a> to test the given post-condition.</div>
+<pre>public&nbsp;PostConditionCheckGenerator(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition">ExecutableBooleanExpression</a>&gt;&nbsp;postConditions)</pre>
+<div class="block">Create a <a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test"><code>TestCheckGenerator</code></a> to test the given post-condition.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>postcondition</code> - the post-condition to be tested in generated <a href="../../randoop/test/TestChecks.html" title="interface in randoop.test"><code>TestChecks</code></a></dd>
+<dd><code>postConditions</code> - the post-condition to be tested in generated <a href="../../randoop/test/TestChecks.html" title="interface in randoop.test"><code>TestChecks</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -247,23 +253,22 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="visit-randoop.sequence.ExecutableSequence-">
+<a name="generateTestChecks-randoop.sequence.ExecutableSequence-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>visit</h4>
-<pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;visit(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
-<div class="block">Tests the post-condition against the values in the given <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>, and if the
- condition is not satisfied returns a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>.
+<h4>generateTestChecks</h4>
+<pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;?&gt;&nbsp;generateTestChecks(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
+<div class="block">Tests all of the the post-conditions against the values in the given <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>, and if the condition is not satisfied returns a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>.
 
  <p>Note that the operation input values passed to the post-condition are the values
  post-execution.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/test/TestCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></code></dd>
+<dd><code><a href="../../randoop/test/TestCheckGenerator.html#generateTestChecks-randoop.sequence.ExecutableSequence-">generateTestChecks</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">TestCheckGenerator</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>s</code> - the sequence for which checks are generated</dd>
+<dd><code>eseq</code> - the sequence for which checks are generated</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a> with a <a href="../../randoop/test/PostConditionCheck.html" title="class in randoop.test"><code>PostConditionCheck</code></a> if the
      post-condition fails on the sequence, an <code>null</code> otherwise</dd>
@@ -276,7 +281,7 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <ul class="blockListLast">
 <li class="blockList">
 <h4>addNullReceiver</h4>
-<pre>private&nbsp;java.lang.Object[]&nbsp;addNullReceiver(java.lang.Object[]&nbsp;values)</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]&nbsp;addNullReceiver(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]&nbsp;values)</pre>
 </li>
 </ul>
 </li>
@@ -307,7 +312,7 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/test/PostConditionCheck.html" title="class in randoop.test"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/test/RegressionCaptureVisitor.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/RegressionCaptureGenerator.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/test/PostConditionCheckGenerator.html" target="_top">Frames</a></li>

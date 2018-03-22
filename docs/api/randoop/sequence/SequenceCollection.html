@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceCollection (randoop 3.1.5 API)</title>
+<title>SequenceCollection (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceCollection (randoop 3.1.5 API)";
+            parent.document.title="SequenceCollection (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.sequence.SequenceCollection</li>
@@ -109,7 +109,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">SequenceCollection</span>
-extends java.lang.Object</pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">A collection of sequences that makes its efficient to ask for all the sequences that create a
  value of a given type.
 
@@ -117,8 +117,7 @@ extends java.lang.Object</pre>
 
  <p>When creating new sequences, Randoop often needs to search for all the previously-generated
  sequences that create one or more values of a given type. Since this set can contain thousands of
- sequences, finding these sequences can can be time-consuming and a bottleneck in generation (as
- we discovered during profiling).
+ sequences. Profiling showed that finding these sequences was a bottleneck in generation.
 
  <p>This class makes the above search faster by maintaining two data structures:
 
@@ -130,9 +129,8 @@ extends java.lang.Object</pre>
        relationships among the types in the set.
  </ul>
 
- To find all the sequences that create values of a given type, Randoop first uses the <code>
- SubTypeSet</code> to find the set <code>S</code> of feasible subtypes in set of sequences, and
- returns the range of <code>S</code> in the sequence map.</div>
+ To find all the sequences that create values of a given type, Randoop first uses the <code>SubTypeSet</code> to find the set <code>S</code> of feasible subtypes in set of sequences, and returns the
+ range of <code>S</code> in the sequence map.</div>
 </li>
 </ul>
 </div>
@@ -153,14 +151,16 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#sequenceCount">sequenceCount</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#sequenceCount">sequenceCount</a></span></code>
+<div class="block">Number of sequences in the collection: sum of sizes of all values in sequenceMap.</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private java.util.Map&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/util/ArrayListSimpleList.html" title="class in randoop.util">ArrayListSimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/util/ArrayListSimpleList.html" title="class in randoop.util">ArrayListSimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#sequenceMap">sequenceMap</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#sequenceTypes">sequenceTypes</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -187,7 +187,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#SequenceCollection-java.util.Collection-">SequenceCollection</a></span>(java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;initialSequences)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#SequenceCollection-java.util.Collection-">SequenceCollection</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;initialSequences)</code>
 <div class="block">Create a new collection and adds the given initial sequences.</div>
 </td>
 </tr>
@@ -214,7 +214,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#addAll-java.util.Collection-">addAll</a></span>(java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;col)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#addAll-java.util.Collection-">addAll</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;col)</code>
 <div class="block">All all sequences to this collection.</div>
 </td>
 </tr>
@@ -235,15 +235,16 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code>java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#getAllSequences--">getAllSequences</a></span>()</code>
 <div class="block">Returns the set of all sequences in this collection.</div>
 </td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#getSequencesForType-randoop.types.Type-boolean-">getSequencesForType</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
-                   boolean&nbsp;exactMatch)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#getSequencesForType-randoop.types.Type-boolean-boolean-">getSequencesForType</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
+                   boolean&nbsp;exactMatch,
+                   boolean&nbsp;onlyReceivers)</code>
 <div class="block">Searches through the set of active sequences to find all sequences whose types match with the
  parameter type.</div>
 </td>
@@ -268,8 +269,8 @@ extends java.lang.Object</pre>
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -291,7 +292,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>sequenceMap</h4>
-<pre>private&nbsp;java.util.Map&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/util/ArrayListSimpleList.html" title="class in randoop.util">ArrayListSimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&gt; sequenceMap</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/util/ArrayListSimpleList.html" title="class in randoop.util">ArrayListSimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&gt; sequenceMap</pre>
 </li>
 </ul>
 <a name="typeSet">
@@ -309,7 +310,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>sequenceTypes</h4>
-<pre>private&nbsp;java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; sequenceTypes</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; sequenceTypes</pre>
 </li>
 </ul>
 <a name="sequenceCount">
@@ -319,6 +320,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>sequenceCount</h4>
 <pre>private&nbsp;int sequenceCount</pre>
+<div class="block">Number of sequences in the collection: sum of sizes of all values in sequenceMap.</div>
 </li>
 </ul>
 </li>
@@ -345,7 +347,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SequenceCollection</h4>
-<pre>public&nbsp;SequenceCollection(java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;initialSequences)</pre>
+<pre>public&nbsp;SequenceCollection(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;initialSequences)</pre>
 <div class="block">Create a new collection and adds the given initial sequences.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -395,7 +397,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addAll</h4>
-<pre>public&nbsp;void&nbsp;addAll(java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;col)</pre>
+<pre>public&nbsp;void&nbsp;addAll(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;col)</pre>
 <div class="block">All all sequences to this collection.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -429,7 +431,16 @@ extends java.lang.Object</pre>
  sequence is seen as creating a useful value at index i. More precisely, the method/constructor
  at that index is said to produce a useful value (and if the user later queries for all
  sequences that create a T, the sequence will be in the collection returned by the query). How a
- value is deemed useful or not is left up to the client.</div>
+ value is deemed useful or not is left up to the client.
+
+ <p>Note that this takes into consideration only the assigned value for each statement. If a
+ statement might side-effect some variable, then that variable is considered as an output from
+ its own statement, not the one that side-effects it.
+
+ <p>(An alternative would be to only use outputs from the last statement, and include its inputs
+ as well. That alternative is not implemented. It would probably be faster, but it would not
+ handle the case of a method side-effecting a variable that that was not explicitly passed to
+ it. Is that case important?</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>sequence</code> - the sequence to add to this collection</dd>
@@ -452,20 +463,23 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="getSequencesForType-randoop.types.Type-boolean-">
+<a name="getSequencesForType-randoop.types.Type-boolean-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSequencesForType</h4>
 <pre>public&nbsp;<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getSequencesForType(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
-                                                boolean&nbsp;exactMatch)</pre>
+                                                boolean&nbsp;exactMatch,
+                                                boolean&nbsp;onlyReceivers)</pre>
 <div class="block">Searches through the set of active sequences to find all sequences whose types match with the
  parameter type.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the type desired for the sequences being sought</dd>
 <dd><code>exactMatch</code> - the flag to indicate whether an exact type match is required</dd>
+<dd><code>onlyReceivers</code> - if true, only return sequences that are appropriate to use as a method
+     call receiver</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>list of sequence objects that are of type 'type' and abide by the constraints defined
      by nullOk</dd>
@@ -478,7 +492,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getAllSequences</h4>
-<pre>public&nbsp;java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getAllSequences()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getAllSequences()</pre>
 <div class="block">Returns the set of all sequences in this collection.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>

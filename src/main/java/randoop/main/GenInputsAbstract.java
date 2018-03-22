@@ -12,7 +12,7 @@ import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
 import org.plumelib.options.Unpublicized;
-import plume.EntryReader;
+import org.plumelib.util.EntryReader;
 import randoop.Globals;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
@@ -62,7 +62,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // Javadoc is pasted into the manual, but not in Javadoc proper.
   /**
    * A file containing a list of methods and constructors to test, each given as a <a
-   * href="#fully-qualified-signature">fully-qualified signature</a> on a separate line.
+   * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+   * signature</a> on a separate line.
    *
    * <p>These methods augment any methods from classes given by the {@code --testclass} or {@code
    * --classlist} options.
@@ -78,9 +79,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * not prevent indirect calls to such methods from other, allowed methods.
    *
    * <p>Randoop will not directly call a method whose <a
-   * href="#fully-qualified-signature">fully-qualified signature</a> matches the regular expression,
-   * or a method inherited from a superclass or interface whose signature matches the regular
-   * expression.
+   * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+   * signature</a> matches the regular expression, or a method inherited from a superclass or
+   * interface whose signature matches the regular expression.
    *
    * <p>If the regular expression contains anchors "{@code ^}" and "{@code $}", they refer to the
    * beginning and the end of the signature string.
@@ -705,20 +706,19 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file to which to log lots of information. If not specified, no logging is done. Enabling the
    * logs slows down Randoop.
    */
-  @Option("<filename> Name of a file to which to log lots of information")
+  @Option("<filename> Log lots of information to this file")
   public static FileWriter log = null;
 
   /**
-   * A destination to which to log selections; helps find sources of non-determinism. Either the
-   * name of a file or a hyphen ("-") indicating that standard output should be used. If not
-   * specified, no logging is done.
+   * A file to which to log selections; helps find sources of non-determinism. If not specified, no
+   * logging is done.
    */
-  @Option("Log destination for logging each random selection. Should be a file or stdout \"-\".")
-  public static String selection_log = null;
+  @Option("<filename> Log each random selection to this file")
+  public static FileWriter selection_log = null;
 
   /** A file to which to log the operation usage history. */
-  @Option("Log destination for operation usage counts. Should be a file or stdout \"-\".")
-  public static String operation_history_log = null;
+  @Option("<filename> Log operation usage counts to this file")
+  public static FileWriter operation_history_log = null;
 
   @Option("Display source if a generated test contains a compilation error.")
   public static boolean print_file_system_state = false;

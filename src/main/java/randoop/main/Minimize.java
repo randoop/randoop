@@ -31,11 +31,11 @@ import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,13 +55,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
-import plume.TimeLimitProcess;
 import randoop.Globals;
 import randoop.output.ClassRenamingVisitor;
 import randoop.output.ClassTypeNameSimplifyVisitor;
@@ -1003,71 +1006,62 @@ public class Minimize extends CommandHandler {
    * @return an {@code Outputs} object containing the standard and error output
    */
   private static Outputs runProcess(String command, File executionDir, int timeoutLimit) {
-    Process process;
-
     if (executionDir != null && executionDir.toString().isEmpty()) {
       // Execute command in the default directory.
       executionDir = null;
     }
 
-    try {
-      process = Runtime.getRuntime().exec(command, null, executionDir);
-    } catch (IOException e) {
-      return new Outputs("", "I/O error occurred when running process.", 1);
+    String[] args = command.split(" ");
+    CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
+    cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
+
+    DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
+    DefaultExecutor executor = new DefaultExecutor();
+    if (executionDir != null) {
+      executor.setWorkingDirectory(executionDir);
     }
 
-    final TimeLimitProcess timeLimitProcess = new TimeLimitProcess(process, timeoutLimit * 1000);
+    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000);
+    executor.setWatchdog(watchdog);
 
-    Callable<String> stdCallable =
-        new Callable<String>() {
-          @Override
-          public String call() throws Exception {
-            try {
-              return IOUtils.toString(timeLimitProcess.getInputStream(), Charset.defaultCharset());
-            } catch (IOException e) {
-              // Error reading from process's input stream.
-              return "Error reading from process's input stream.";
-            }
-          }
-        };
+    final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+    final ByteArrayOutputStream errStream = new ByteArrayOutputStream();
+    PumpStreamHandler streamHandler = new PumpStreamHandler(outStream, errStream);
+    executor.setStreamHandler(streamHandler);
 
-    Callable<String> errCallable =
-        new Callable<String>() {
-          @Override
-          public String call() throws Exception {
-            try {
-              return IOUtils.toString(timeLimitProcess.getErrorStream(), Charset.defaultCharset());
-            } catch (IOException e) {
-              // Error reading from process's error stream.
-              return "Error reading from process's error stream.";
-            }
-          }
-        };
+    try {
+      executor.execute(cmdLine, resultHandler);
+    } catch (IOException e) {
+      return new Outputs("", "Exception starting process", 1);
+    }
 
-    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(2);
-    Future<String> stdOutput = fixedThreadPool.submit(stdCallable);
-    Future<String> errOutput = fixedThreadPool.submit(errCallable);
-    fixedThreadPool.shutdown();
+    int exitValue = -1;
+    try {
+      resultHandler.waitFor();
+      exitValue = resultHandler.getExitValue();
+    } catch (InterruptedException e) {
+      if (!watchdog.killedProcess()) {
+        return new Outputs("", "Process was interrupted while waiting.", 1);
+      }
+    }
+    boolean timedOut = executor.isFailure(exitValue) && watchdog.killedProcess();
 
     String stdOutputString;
     String errOutputString;
-    int exitValue;
 
-    // Wait for the TimeLimitProcess to finish.
     try {
-      timeLimitProcess.waitFor();
-      stdOutputString = stdOutput.get();
-      errOutputString = errOutput.get();
-      exitValue = timeLimitProcess.exitValue();
-    } catch (InterruptedException e) {
-      return new Outputs("", "Process was interrupted while waiting.", 1);
-    } catch (ExecutionException e) {
-      return new Outputs("", "A computation in the process threw an exception.", 1);
-    } finally {
-      timeLimitProcess.destroy();
+      stdOutputString = outStream.toString();
+    } catch (RuntimeException e) {
+      return new Outputs("", "Exception getting process standard output", 1);
     }
 
-    if (timeLimitProcess.timed_out()) {
+    try {
+      errOutputString = errStream.toString();
+    } catch (RuntimeException e) {
+      return new Outputs("", "Exception getting process error output", 1);
+    }
+
+    if (timedOut) {
       return new Outputs("", "Process timed out after " + timeoutLimit + " seconds.", 1);
     }
 

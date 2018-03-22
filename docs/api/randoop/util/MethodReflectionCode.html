@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>MethodReflectionCode (randoop 3.1.5 API)</title>
+<title>MethodReflectionCode (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="MethodReflectionCode (randoop 3.1.5 API)";
+            parent.document.title="MethodReflectionCode (randoop 4.0.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
+var methods = {"i0":10,"i1":10,"i2":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -96,7 +96,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
 <li><a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">randoop.util.ReflectionCode</a></li>
@@ -115,8 +115,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public final class <span class="typeNameLabel">MethodReflectionCode</span>
 extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a></pre>
-<div class="block">This is used to wrap a method together with its parameters, ready for execution. Can be run only
- once.</div>
+<div class="block">Wraps a method together with its arguments, ready for execution. Can be run only once.</div>
 </li>
 </ul>
 </div>
@@ -134,7 +133,7 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <!--   -->
 </a>
 <h3>Nested classes/interfaces inherited from class&nbsp;randoop.util.<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a></h3>
-<code><a href="../../randoop/util/ReflectionCode.NotCaughtIllegalStateException.html" title="class in randoop.util">ReflectionCode.NotCaughtIllegalStateException</a></code></li>
+<code><a href="../../randoop/util/ReflectionCode.ReflectionCodeException.html" title="class in randoop.util">ReflectionCode.ReflectionCodeException</a></code></li>
 </ul>
 </li>
 </ul>
@@ -151,26 +150,27 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.lang.Throwable</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#exceptionThrown">exceptionThrown</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>private java.lang.Object[]</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#inputs">inputs</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>private java.lang.reflect.Method</code></td>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#method">method</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>private java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#receiver">receiver</a></span></code>&nbsp;</td>
-</tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#retval">retval</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#receiver">receiver</a></span></code>
+<div class="block">May be null.</div>
+</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.randoop.util.ReflectionCode">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;randoop.util.<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a></h3>
+<code><a href="../../randoop/util/ReflectionCode.html#exceptionThrown">exceptionThrown</a>, <a href="../../randoop/util/ReflectionCode.html#retval">retval</a></code></li>
+</ul>
 </li>
 </ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -185,9 +185,9 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#MethodReflectionCode-java.lang.reflect.Method-java.lang.Object-java.lang.Object:A-">MethodReflectionCode</a></span>(java.lang.reflect.Method&nbsp;method,
-                    java.lang.Object&nbsp;receiver,
-                    java.lang.Object[]&nbsp;inputs)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#MethodReflectionCode-java.lang.reflect.Method-java.lang.Object-java.lang.Object:A-">MethodReflectionCode</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&nbsp;method,
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;receiver,
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]&nbsp;inputs)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -205,37 +205,17 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>java.lang.Throwable</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#getExceptionThrown--">getExceptionThrown</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.lang.Object[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#getInputs--">getInputs</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>java.lang.reflect.Method</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#getMethod--">getMethod</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#getReceiver--">getReceiver</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#getReturnVariable--">getReturnVariable</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#isInstanceMethod--">isInstanceMethod</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#runReflectionCodeRaw--">runReflectionCodeRaw</a></span>()</code>
-<div class="block">Executed the reflection code.</div>
+<div class="block">Execute the reflection code.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
@@ -244,14 +224,14 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.util.<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a></h3>
-<code><a href="../../randoop/util/ReflectionCode.html#hasRunAlready--">hasRunAlready</a>, <a href="../../randoop/util/ReflectionCode.html#runReflectionCode--">runReflectionCode</a>, <a href="../../randoop/util/ReflectionCode.html#setRunAlready--">setRunAlready</a></code></li>
+<code><a href="../../randoop/util/ReflectionCode.html#getExceptionThrown--">getExceptionThrown</a>, <a href="../../randoop/util/ReflectionCode.html#getReturnValue--">getReturnValue</a>, <a href="../../randoop/util/ReflectionCode.html#hasRun--">hasRun</a>, <a href="../../randoop/util/ReflectionCode.html#hasStarted--">hasStarted</a>, <a href="../../randoop/util/ReflectionCode.html#runReflectionCode--">runReflectionCode</a>, <a href="../../randoop/util/ReflectionCode.html#setHasRun--">setHasRun</a>, <a href="../../randoop/util/ReflectionCode.html#setHasStarted--">setHasStarted</a>, <a href="../../randoop/util/ReflectionCode.html#status--">status</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -273,7 +253,7 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>method</h4>
-<pre>private final&nbsp;java.lang.reflect.Method method</pre>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a> method</pre>
 </li>
 </ul>
 <a name="receiver">
@@ -282,34 +262,17 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>receiver</h4>
-<pre>private final&nbsp;java.lang.Object receiver</pre>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a> receiver</pre>
+<div class="block">May be null.</div>
 </li>
 </ul>
 <a name="inputs">
 <!--   -->
 </a>
-<ul class="blockList">
-<li class="blockList">
-<h4>inputs</h4>
-<pre>private final&nbsp;java.lang.Object[] inputs</pre>
-</li>
-</ul>
-<a name="retval">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>retval</h4>
-<pre>private&nbsp;java.lang.Object retval</pre>
-</li>
-</ul>
-<a name="exceptionThrown">
-<!--   -->
-</a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>exceptionThrown</h4>
-<pre>private&nbsp;java.lang.Throwable exceptionThrown</pre>
+<h4>inputs</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[] inputs</pre>
 </li>
 </ul>
 </li>
@@ -326,9 +289,9 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <ul class="blockListLast">
 <li class="blockList">
 <h4>MethodReflectionCode</h4>
-<pre>public&nbsp;MethodReflectionCode(java.lang.reflect.Method&nbsp;method,
-                            java.lang.Object&nbsp;receiver,
-                            java.lang.Object[]&nbsp;inputs)</pre>
+<pre>public&nbsp;MethodReflectionCode(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&nbsp;method,
+                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;receiver,
+                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]&nbsp;inputs)</pre>
 </li>
 </ul>
 </li>
@@ -339,27 +302,6 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="runReflectionCodeRaw--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>runReflectionCodeRaw</h4>
-<pre>public&nbsp;void&nbsp;runReflectionCodeRaw()
-                          throws java.lang.IllegalAccessException,
-                                 java.lang.reflect.InvocationTargetException</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/util/ReflectionCode.html#runReflectionCodeRaw--">ReflectionCode</a></code></span></div>
-<div class="block">Executed the reflection code. All internal exceptions must be thrown as
- NotCaughtIllegalStateException because everything else is caught.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/util/ReflectionCode.html#runReflectionCodeRaw--">runReflectionCodeRaw</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalAccessException</code> - if executed code involves inaccessible method</dd>
-<dd><code>java.lang.reflect.InvocationTargetException</code> - if executed code throws an exception</dd>
-</dl>
-</li>
-</ul>
 <a name="isInstanceMethod--">
 <!--   -->
 </a>
@@ -369,57 +311,20 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <pre>private&nbsp;boolean&nbsp;isInstanceMethod()</pre>
 </li>
 </ul>
-<a name="getReturnVariable--">
+<a name="runReflectionCodeRaw--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getReturnVariable</h4>
-<pre>public&nbsp;java.lang.Object&nbsp;getReturnVariable()</pre>
+<h4>runReflectionCodeRaw</h4>
+<pre>public&nbsp;void&nbsp;runReflectionCodeRaw()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/util/ReflectionCode.html#runReflectionCodeRaw--">ReflectionCode</a></code></span></div>
+<div class="block">Execute the reflection code. All Randoop implementation errors must be thrown as
+ ReflectionCodeException because everything else is caught.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/util/ReflectionCode.html#getReturnVariable--">getReturnVariable</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a></code></dd>
+<dd><code><a href="../../randoop/util/ReflectionCode.html#runReflectionCodeRaw--">runReflectionCodeRaw</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a></code></dd>
 </dl>
-</li>
-</ul>
-<a name="getExceptionThrown--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getExceptionThrown</h4>
-<pre>public&nbsp;java.lang.Throwable&nbsp;getExceptionThrown()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/util/ReflectionCode.html#getExceptionThrown--">getExceptionThrown</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="getMethod--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getMethod</h4>
-<pre>public&nbsp;java.lang.reflect.Method&nbsp;getMethod()</pre>
-</li>
-</ul>
-<a name="getReceiver--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getReceiver</h4>
-<pre>public&nbsp;java.lang.Object&nbsp;getReceiver()</pre>
-</li>
-</ul>
-<a name="getInputs--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getInputs</h4>
-<pre>public&nbsp;java.lang.Object[]&nbsp;getInputs()</pre>
 </li>
 </ul>
 <a name="toString--">
@@ -428,10 +333,10 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <ul class="blockListLast">
 <li class="blockList">
 <h4>toString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
 </dl>
 </li>
 </ul>

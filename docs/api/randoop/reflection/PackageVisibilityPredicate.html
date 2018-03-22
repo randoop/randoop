@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>PackageVisibilityPredicate (randoop 3.1.5 API)</title>
+<title>PackageVisibilityPredicate (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="PackageVisibilityPredicate (randoop 3.1.5 API)";
+            parent.document.title="PackageVisibilityPredicate (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/reflection/OperationModel.html" title="class in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/reflection/PublicVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/reflection/PackageVisibilityPredicate.html" target="_top">Frames</a></li>
@@ -73,7 +73,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.randoop.reflection.VisibilityPredicate">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -96,25 +96,25 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>
+<ul class="inheritance">
+<li><a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">randoop.reflection.VisibilityPredicate</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.reflection.PackageVisibilityPredicate</li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>All Implemented Interfaces:</dt>
-<dd><a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">PackageVisibilityPredicate</span>
-extends java.lang.Object
-implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></pre>
+extends <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></pre>
 <div class="block">A predicate that tests for visibility of a class, method, constructor, or field relative to a
  particular package. A top-level class is accessible from the package if it is public, or if it is
  package-private in the given package. Otherwise, an element is accessible from the package if it
@@ -129,6 +129,21 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.randoop.reflection.VisibilityPredicate">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;randoop.reflection.<a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></h3>
+<code><a href="../../randoop/reflection/VisibilityPredicate.NotPrivateVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.NotPrivateVisibilityPredicate</a>, <a href="../../randoop/reflection/VisibilityPredicate.PackageVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.PackageVisibilityPredicate</a>, <a href="../../randoop/reflection/VisibilityPredicate.PublicVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.PublicVisibilityPredicate</a></code></li>
+</ul>
+</li>
+</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
@@ -142,12 +157,19 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.lang.String</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#packageName">packageName</a></span></code>
 <div class="block">The package name from which to test visibility of elements.</div>
 </td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.randoop.reflection.VisibilityPredicate">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;randoop.reflection.<a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></h3>
+<code><a href="../../randoop/reflection/VisibilityPredicate.html#IS_NOT_PRIVATE">IS_NOT_PRIVATE</a>, <a href="../../randoop/reflection/VisibilityPredicate.html#IS_PUBLIC">IS_PUBLIC</a></code></li>
+</ul>
 </li>
 </ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -162,7 +184,7 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#PackageVisibilityPredicate-java.lang.String-">PackageVisibilityPredicate</a></span>(java.lang.String&nbsp;packageName)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#PackageVisibilityPredicate-java.lang.String-">PackageVisibilityPredicate</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName)</code>
 <div class="block">Create a predicate that tests visibility.</div>
 </td>
 </tr>
@@ -183,33 +205,33 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#isVisible-java.lang.Class-">isVisible</a></span>(java.lang.Class&lt;?&gt;&nbsp;c)</code>
-<div class="block">Determines whether a <code>Class</code> object is considered visible.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#isVisible-java.lang.Class-">isVisible</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;c)</code>
+<div class="block">Determines whether a <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang"><code>Class</code></a> object is considered visible.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#isVisible-java.lang.reflect.Constructor-">isVisible</a></span>(java.lang.reflect.Constructor&lt;?&gt;&nbsp;c)</code>
-<div class="block">Determines whether a <code>Constructor</code> object is considered visible.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#isVisible-java.lang.reflect.Constructor-">isVisible</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect">Constructor</a>&lt;?&gt;&nbsp;c)</code>
+<div class="block">Determines whether a <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect"><code>Constructor</code></a> object is considered visible.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#isVisible-java.lang.reflect.Field-">isVisible</a></span>(java.lang.reflect.Field&nbsp;f)</code>
-<div class="block">Determines whether a <code>Field</code> object is considered visible.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#isVisible-java.lang.reflect.Field-">isVisible</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect">Field</a>&nbsp;f)</code>
+<div class="block">Determines whether a <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect"><code>Field</code></a> object is considered visible.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#isVisible-int-java.lang.Package-">isVisible</a></span>(int&nbsp;mods,
-         java.lang.Package&nbsp;otherPackage)</code>
+         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Package.html?is-external=true" title="class or interface in java.lang">Package</a>&nbsp;otherPackage)</code>
 <div class="block">Test accessibility as indicated by the modifier bit string and/or package.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#isVisible-java.lang.reflect.Method-">isVisible</a></span>(java.lang.reflect.Method&nbsp;m)</code>
-<div class="block">Determines whether a <code>Method</code> object is considered visible.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#isVisible-java.lang.reflect.Method-">isVisible</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&nbsp;m)</code>
+<div class="block">Determines whether a <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect"><code>Method</code></a> object is considered visible.</div>
 </td>
 </tr>
 </table>
@@ -217,8 +239,8 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -240,7 +262,7 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <ul class="blockListLast">
 <li class="blockList">
 <h4>packageName</h4>
-<pre>private final&nbsp;java.lang.String packageName</pre>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> packageName</pre>
 <div class="block">The package name from which to test visibility of elements.</div>
 </li>
 </ul>
@@ -258,7 +280,7 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <ul class="blockListLast">
 <li class="blockList">
 <h4>PackageVisibilityPredicate</h4>
-<pre>public&nbsp;PackageVisibilityPredicate(java.lang.String&nbsp;packageName)</pre>
+<pre>public&nbsp;PackageVisibilityPredicate(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName)</pre>
 <div class="block">Create a predicate that tests visibility. Class members must either be public, or accessible
  relative to the given package <code>packageName</code>.</div>
 <dl>
@@ -281,11 +303,11 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <ul class="blockList">
 <li class="blockList">
 <h4>isVisible</h4>
-<pre>public&nbsp;boolean&nbsp;isVisible(java.lang.Class&lt;?&gt;&nbsp;c)</pre>
-<div class="block">Determines whether a <code>Class</code> object is considered visible.</div>
+<pre>public&nbsp;boolean&nbsp;isVisible(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;c)</pre>
+<div class="block">Determines whether a <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang"><code>Class</code></a> object is considered visible.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/reflection/VisibilityPredicate.html#isVisible-java.lang.Class-">isVisible</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></code></dd>
+<dd><code><a href="../../randoop/reflection/VisibilityPredicate.html#isVisible-java.lang.Class-">isVisible</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>c</code> - the class object to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -299,11 +321,11 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <ul class="blockList">
 <li class="blockList">
 <h4>isVisible</h4>
-<pre>public&nbsp;boolean&nbsp;isVisible(java.lang.reflect.Method&nbsp;m)</pre>
-<div class="block">Determines whether a <code>Method</code> object is considered visible.</div>
+<pre>public&nbsp;boolean&nbsp;isVisible(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&nbsp;m)</pre>
+<div class="block">Determines whether a <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect"><code>Method</code></a> object is considered visible.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/reflection/VisibilityPredicate.html#isVisible-java.lang.reflect.Method-">isVisible</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></code></dd>
+<dd><code><a href="../../randoop/reflection/VisibilityPredicate.html#isVisible-java.lang.reflect.Method-">isVisible</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>m</code> - the Method object to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -318,11 +340,11 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <ul class="blockList">
 <li class="blockList">
 <h4>isVisible</h4>
-<pre>public&nbsp;boolean&nbsp;isVisible(java.lang.reflect.Constructor&lt;?&gt;&nbsp;c)</pre>
-<div class="block">Determines whether a <code>Constructor</code> object is considered visible.</div>
+<pre>public&nbsp;boolean&nbsp;isVisible(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect">Constructor</a>&lt;?&gt;&nbsp;c)</pre>
+<div class="block">Determines whether a <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect"><code>Constructor</code></a> object is considered visible.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/reflection/VisibilityPredicate.html#isVisible-java.lang.reflect.Constructor-">isVisible</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></code></dd>
+<dd><code><a href="../../randoop/reflection/VisibilityPredicate.html#isVisible-java.lang.reflect.Constructor-">isVisible</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>c</code> - the constructor object to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -337,11 +359,11 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <ul class="blockList">
 <li class="blockList">
 <h4>isVisible</h4>
-<pre>public&nbsp;boolean&nbsp;isVisible(java.lang.reflect.Field&nbsp;f)</pre>
-<div class="block">Determines whether a <code>Field</code> object is considered visible.</div>
+<pre>public&nbsp;boolean&nbsp;isVisible(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect">Field</a>&nbsp;f)</pre>
+<div class="block">Determines whether a <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect"><code>Field</code></a> object is considered visible.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/reflection/VisibilityPredicate.html#isVisible-java.lang.reflect.Field-">isVisible</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></code></dd>
+<dd><code><a href="../../randoop/reflection/VisibilityPredicate.html#isVisible-java.lang.reflect.Field-">isVisible</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>f</code> - the field object to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -357,7 +379,7 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <li class="blockList">
 <h4>isVisible</h4>
 <pre>private&nbsp;boolean&nbsp;isVisible(int&nbsp;mods,
-                          java.lang.Package&nbsp;otherPackage)</pre>
+                          <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Package.html?is-external=true" title="class or interface in java.lang">Package</a>&nbsp;otherPackage)</pre>
 <div class="block">Test accessibility as indicated by the modifier bit string and/or package.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -397,7 +419,7 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/reflection/OperationModel.html" title="class in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/reflection/PublicVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/reflection/PackageVisibilityPredicate.html" target="_top">Frames</a></li>
@@ -421,7 +443,7 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.randoop.reflection.VisibilityPredicate">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

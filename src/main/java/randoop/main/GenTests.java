@@ -9,6 +9,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -30,9 +31,8 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
-import plume.EntryReader;
-import plume.SimpleLog;
-import plume.UtilMDE;
+import org.plumelib.util.EntryReader;
+import org.plumelib.util.UtilPlume;
 import randoop.BugInRandoopException;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
@@ -150,8 +150,6 @@ public class GenTests extends GenInputsAbstract {
             + "This means that two runs of Randoop may generate the same tests. "
             + "To get variation across runs, use the --randomseed option.");
   }
-
-  public static SimpleLog progress = new SimpleLog(true);
 
   private static Options options =
       new Options(
@@ -376,7 +374,9 @@ public class GenTests extends GenInputsAbstract {
 
     /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
     operationModel.log();
-    TestUtils.setOperationLog(GenInputsAbstract.operation_history_log, explorer);
+    if (GenInputsAbstract.operation_history_log != null) {
+      TestUtils.setOperationLog(new PrintWriter(GenInputsAbstract.operation_history_log), explorer);
+    }
     TestUtils.setSelectionLog(GenInputsAbstract.selection_log);
 
     // These two debugging lines make runNoOutputTest() fail:
@@ -553,7 +553,7 @@ public class GenTests extends GenInputsAbstract {
       }
       abspaths[i] = abs;
     }
-    return UtilMDE.join(abspaths, File.pathSeparator);
+    return UtilPlume.join(abspaths, File.pathSeparator);
   }
 
   /**
@@ -886,7 +886,7 @@ public class GenTests extends GenInputsAbstract {
    * @param visibility the visibility predicate
    * @param contracts the contract checks
    * @param observerMap the map from types to observer methods
-   * @return the {@code TestCheckGenerator} that reflects command line arguments.
+   * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
@@ -948,7 +948,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     try {
-      return UtilMDE.fileLines(filename);
+      return UtilPlume.fileLines(filename);
     } catch (IOException e) {
       System.err.println("Unable to read " + filename);
       System.exit(1);

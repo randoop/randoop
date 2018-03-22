@@ -1,15 +1,17 @@
 package randoop.main;
 
-import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.fail;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import plume.TimeLimitProcess;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.PumpStreamHandler;
 
 /**
  * Class to hold the return status from running a command assuming that it is run in a process where
@@ -39,7 +41,7 @@ class ProcessStatus {
     this.outputLines = outputLines;
   }
 
-  String lineSep = System.getProperty("line.separator");
+  static final String lineSep = System.getProperty("line.separator");
 
   /** Outputs a verbose representation of this. */
   public String dump() {
@@ -64,7 +66,7 @@ class ProcessStatus {
    * @return the exit status and combined standard stream output
    */
   static ProcessStatus runCommand(List<String> command) {
-    // The Plume class used here expects a time limit, but setting tight timeout limits
+    // Setting tight timeout limits
     // for individual tests has caused headaches when tests are run on Travis CI.
     // 15 minutes is longer than all tests currently take, even for a slow Travis run.
     long timeout = 15 * 60 * 1000; // use 15 minutes for timeout
@@ -72,40 +74,51 @@ class ProcessStatus {
     ProcessBuilder randoopBuilder = new ProcessBuilder(command);
     randoopBuilder.redirectErrorStream(true); // join standard output error & standard error streams
 
-    TimeLimitProcess p = null;
+    String[] args = command.toArray(new String[0]);
+    CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
+    cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
+
+    DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
+    DefaultExecutor executor = new DefaultExecutor();
+    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+    executor.setWatchdog(watchdog);
+
+    final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+    PumpStreamHandler streamHandler =
+        new PumpStreamHandler(outStream); // send both stderr and stdout
+    executor.setStreamHandler(streamHandler);
 
     try {
-      p = new TimeLimitProcess(randoopBuilder.start(), timeout, true);
+      executor.execute(cmdLine, resultHandler);
     } catch (IOException e) {
       fail("Exception starting process: " + e);
     }
 
     int exitValue = -1;
     try {
-      exitValue = p.waitFor();
+      resultHandler.waitFor();
+      exitValue = resultHandler.getExitValue();
     } catch (InterruptedException e) {
       fail("Exception running process: " + e);
     }
+    boolean timedOut = executor.isFailure(exitValue) && watchdog.killedProcess();
 
     List<String> outputLines = new ArrayList<>();
-    try (BufferedReader rdr =
-        new BufferedReader(new InputStreamReader(p.getInputStream(), UTF_8))) {
-      String line = rdr.readLine();
-      while (line != null) {
-        outputLines.add(line);
-        line = rdr.readLine();
+    try {
+      String buf = outStream.toString();
+      // Don't create a list with a single, empty element.
+      if (buf.length() > 0) {
+        outputLines = Arrays.asList(buf.split(lineSep));
       }
-    } catch (UnsupportedEncodingException e) {
-      fail("unsupported encoding " + e);
-    } catch (IOException e) {
-      fail("Exception getting output " + e);
+    } catch (RuntimeException e) {
+      fail("Exception getting output " + e); // do we need to ignore this?
     }
 
-    if (p.timed_out()) {
+    if (timedOut) {
       for (String line : outputLines) {
         System.out.println(line);
       }
-      assert !p.timed_out() : "Process timed out after " + p.timeout_msecs() + " msecs";
+      assert !timedOut : "Process timed out after " + timeout + " msecs";
     }
     return new ProcessStatus(command, exitValue, outputLines);
   }

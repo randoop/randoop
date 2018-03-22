@@ -279,7 +279,7 @@ public class ExecutableSequence {
       for (int i = 0; i < this.sequence.size(); i++) {
 
         // Collect the input values to i-th statement.
-        Object[] inputValues = getRuntimeInputs(executionResults.theList, sequence.getInputs(i));
+        Object[] inputValues = getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {
           // This is the last statement in the sequence.
@@ -297,7 +297,7 @@ public class ExecutableSequence {
         }
 
         visitor.visitBeforeStatement(this, i);
-        executeStatement(sequence, executionResults.theList, i, inputValues);
+        executeStatement(sequence, executionResults.outcomes, i, inputValues);
 
         // make sure statement executed
         ExecutionOutcome statementResult = getResult(i);
@@ -339,7 +339,7 @@ public class ExecutableSequence {
   }
 
   public Object[] getRuntimeInputs(List<Variable> inputs) {
-    return getRuntimeInputs(executionResults.theList, inputs);
+    return getRuntimeInputs(executionResults.outcomes, inputs);
   }
 
   private Object[] getRuntimeInputs(List<ExecutionOutcome> outcome, List<Variable> inputs) {
@@ -361,7 +361,7 @@ public class ExecutableSequence {
    * @return array of values corresponding to variables
    */
   public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
-    return getRuntimeValuesForVars(vars, execution.theList);
+    return getRuntimeValuesForVars(vars, execution.outcomes);
   }
 
   private static Object[] getRuntimeValuesForVars(

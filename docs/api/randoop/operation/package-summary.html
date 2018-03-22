@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.operation (randoop 3.1.5 API)</title>
+<title>randoop.operation (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.operation (randoop 3.1.5 API)";
+            parent.document.title="randoop.operation (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -122,7 +122,7 @@
 <td class="colFirst"><a href="../../randoop/operation/ConstructorCall.html" title="class in randoop.operation">ConstructorCall</a></td>
 <td class="colLast">
 <div class="block">ConstructorCall is an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> that represents a call to a constructor, and holds a
- reference to a reflective <code>Constructor</code> object.</div>
+ reference to a reflective <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect"><code>Constructor</code></a> object.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -168,13 +168,13 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/operation/OperationParser.html" title="class in randoop.operation">OperationParser</a></td>
 <td class="colLast">
-<div class="block">Method <a href="../../randoop/operation/OperationParser.html#parse-java.lang.String-"><code>OperationParser.parse(java.lang.String)</code></a> parses a string representing a <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>.</div>
+<div class="block">Parser for text serialization (string representation) of <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>s.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/operation/ReflectionArrayCreation.html" title="class in randoop.operation">ReflectionArrayCreation</a></td>
 <td class="colLast">
-<div class="block">Represents an array creation using reflection, and corresponds to the code <code>(List&lt;String&gt;[])(Array.newInstance(componentType, length));</code></div>
+<div class="block">Represents an array creation using reflection, and corresponds to the code <code>(List&lt;String&gt;[])(Array.newInstance(componentType, length)); </code></div>
 </td>
 </tr>
 <tr class="altColor">
@@ -187,7 +187,7 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a></td>
 <td class="colLast">
-<div class="block">Represents a type decoration for an operation that has a declaring class.</div>
+<div class="block">Represents a TypedOperation and its declaring class.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -207,7 +207,8 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation">TypedTermOperation</a></td>
 <td class="colLast">
-<div class="block">Represents operations that have no declaring class.</div>
+<div class="block">Represents operations that have no declaring class, such as cast or array
+ creation/access/assignment.</div>
 </td>
 </tr>
 <tr class="rowColor">

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceJavaFileObject (randoop 3.1.5 API)</title>
+<title>SequenceJavaFileObject (randoop 4.0.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceJavaFileObject (randoop 3.1.5 API)";
+            parent.document.title="SequenceJavaFileObject (randoop 4.0.0 API)";
         }
     }
     catch(err) {
@@ -96,10 +96,10 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li>javax.tools.SimpleJavaFileObject</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true" title="class or interface in javax.tools">javax.tools.SimpleJavaFileObject</a></li>
 <li>
 <ul class="inheritance">
 <li>randoop.compile.SequenceJavaFileObject</li>
@@ -113,13 +113,15 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>javax.tools.FileObject, javax.tools.JavaFileObject</dd>
+<dd><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/FileObject.html?is-external=true" title="class or interface in javax.tools">FileObject</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaFileObject.html?is-external=true" title="class or interface in javax.tools">JavaFileObject</a></dd>
 </dl>
 <hr>
 <br>
 <pre>class <span class="typeNameLabel">SequenceJavaFileObject</span>
-extends javax.tools.SimpleJavaFileObject</pre>
-<div class="block">based on <code>javaxtools.compiler.JavaFileObjectImple</code> from <a
+extends <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true" title="class or interface in javax.tools">SimpleJavaFileObject</a></pre>
+<div class="block">A <code>JavaFileObject</code> for source code in memory.
+
+ <p>based on <code>javaxtools.compiler.JavaFileObjectImple</code> from <a
  href="https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
  with javax.tools</a>.</div>
 </li>
@@ -138,8 +140,8 @@ extends javax.tools.SimpleJavaFileObject</pre>
 <li class="blockList"><a name="nested.classes.inherited.from.class.javax.tools.JavaFileObject">
 <!--   -->
 </a>
-<h3>Nested classes/interfaces inherited from interface&nbsp;javax.tools.JavaFileObject</h3>
-<code>javax.tools.JavaFileObject.Kind</code></li>
+<h3>Nested classes/interfaces inherited from interface&nbsp;javax.tools.<a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaFileObject.html?is-external=true" title="class or interface in javax.tools">JavaFileObject</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaFileObject.Kind.html?is-external=true" title="class or interface in javax.tools">JavaFileObject.Kind</a></code></li>
 </ul>
 </li>
 </ul>
@@ -156,20 +158,24 @@ extends javax.tools.SimpleJavaFileObject</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.io.ByteArrayOutputStream</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#byteCode">byteCode</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/io/ByteArrayOutputStream.html?is-external=true" title="class or interface in java.io">ByteArrayOutputStream</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#byteStream">byteStream</a></span></code>
+<div class="block">The stream for reading the source code</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#source">source</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#source">source</a></span></code>
+<div class="block">The source code text.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.javax.tools.SimpleJavaFileObject">
 <!--   -->
 </a>
-<h3>Fields inherited from class&nbsp;javax.tools.SimpleJavaFileObject</h3>
-<code>kind, uri</code></li>
+<h3>Fields inherited from class&nbsp;javax.tools.<a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true" title="class or interface in javax.tools">SimpleJavaFileObject</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#kind" title="class or interface in javax.tools">kind</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#uri" title="class or interface in javax.tools">uri</a></code></li>
 </ul>
 </li>
 </ul>
@@ -185,12 +191,16 @@ extends javax.tools.SimpleJavaFileObject</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#SequenceJavaFileObject-java.lang.String-javax.tools.JavaFileObject.Kind-">SequenceJavaFileObject</a></span>(java.lang.String&nbsp;classFileName,
-                      javax.tools.JavaFileObject.Kind&nbsp;kind)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#SequenceJavaFileObject-java.lang.String-javax.tools.JavaFileObject.Kind-">SequenceJavaFileObject</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classFileName,
+                      <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaFileObject.Kind.html?is-external=true" title="class or interface in javax.tools">JavaFileObject.Kind</a>&nbsp;kind)</code>
+<div class="block">Creates a <a href="../../randoop/compile/SequenceJavaFileObject.html" title="class in randoop.compile"><code>SequenceJavaFileObject</code></a> for the given class name and kind.</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#SequenceJavaFileObject-java.lang.String-java.lang.String-">SequenceJavaFileObject</a></span>(java.lang.String&nbsp;classFileName,
-                      java.lang.String&nbsp;sequenceClass)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#SequenceJavaFileObject-java.lang.String-java.lang.String-">SequenceJavaFileObject</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classFileName,
+                      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;sequenceClass)</code>
+<div class="block">Creates a <a href="../../randoop/compile/SequenceJavaFileObject.html" title="class in randoop.compile"><code>SequenceJavaFileObject</code></a> with the given name and class source.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -209,18 +219,20 @@ extends javax.tools.SimpleJavaFileObject</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>(package private) byte[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#getByteCode--">getByteCode</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#getByteCode--">getByteCode</a></span>()</code>
+<div class="block">Returns the byte stream as a byte array.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.lang.CharSequence</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/CharSequence.html?is-external=true" title="class or interface in java.lang">CharSequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#getCharContent-boolean-">getCharContent</a></span>(boolean&nbsp;ignoreEncodingErrors)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>java.io.InputStream</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#openInputStream--">openInputStream</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.io.OutputStream</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io">OutputStream</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceJavaFileObject.html#openOutputStream--">openOutputStream</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
@@ -228,15 +240,15 @@ extends javax.tools.SimpleJavaFileObject</pre>
 <li class="blockList"><a name="methods.inherited.from.class.javax.tools.SimpleJavaFileObject">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;javax.tools.SimpleJavaFileObject</h3>
-<code>delete, getAccessLevel, getKind, getLastModified, getName, getNestingKind, isNameCompatible, openReader, openWriter, toString, toUri</code></li>
+<h3>Methods inherited from class&nbsp;javax.tools.<a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true" title="class or interface in javax.tools">SimpleJavaFileObject</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#delete--" title="class or interface in javax.tools">delete</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#getAccessLevel--" title="class or interface in javax.tools">getAccessLevel</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#getKind--" title="class or interface in javax.tools">getKind</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#getLastModified--" title="class or interface in javax.tools">getLastModified</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#getName--" title="class or interface in javax.tools">getName</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#getNestingKind--" title="class or interface in javax.tools">getNestingKind</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#isNameCompatible-java.lang.String-javax.tools.JavaFileObject.Kind-" title="class or interface in javax.tools">isNameCompatible</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#openReader-boolean-" title="class or interface in javax.tools">openReader</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#openWriter--" title="class or interface in javax.tools">openWriter</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#toString--" title="class or interface in javax.tools">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#toUri--" title="class or interface in javax.tools">toUri</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -258,16 +270,18 @@ extends javax.tools.SimpleJavaFileObject</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>source</h4>
-<pre>private final&nbsp;java.lang.String source</pre>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> source</pre>
+<div class="block">The source code text.</div>
 </li>
 </ul>
-<a name="byteCode">
+<a name="byteStream">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>byteCode</h4>
-<pre>private&nbsp;java.io.ByteArrayOutputStream byteCode</pre>
+<h4>byteStream</h4>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/ByteArrayOutputStream.html?is-external=true" title="class or interface in java.io">ByteArrayOutputStream</a> byteStream</pre>
+<div class="block">The stream for reading the source code</div>
 </li>
 </ul>
 </li>
@@ -284,8 +298,14 @@ extends javax.tools.SimpleJavaFileObject</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>SequenceJavaFileObject</h4>
-<pre>SequenceJavaFileObject(java.lang.String&nbsp;classFileName,
-                       javax.tools.JavaFileObject.Kind&nbsp;kind)</pre>
+<pre>SequenceJavaFileObject(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classFileName,
+                       <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaFileObject.Kind.html?is-external=true" title="class or interface in javax.tools">JavaFileObject.Kind</a>&nbsp;kind)</pre>
+<div class="block">Creates a <a href="../../randoop/compile/SequenceJavaFileObject.html" title="class in randoop.compile"><code>SequenceJavaFileObject</code></a> for the given class name and kind.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>classFileName</code> - the name of the class</dd>
+<dd><code>kind</code> - either <code>SOURCE</code> or <code>CLASS</code></dd>
+</dl>
 </li>
 </ul>
 <a name="SequenceJavaFileObject-java.lang.String-java.lang.String-">
@@ -294,8 +314,14 @@ extends javax.tools.SimpleJavaFileObject</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SequenceJavaFileObject</h4>
-<pre>SequenceJavaFileObject(java.lang.String&nbsp;classFileName,
-                       java.lang.String&nbsp;sequenceClass)</pre>
+<pre>SequenceJavaFileObject(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classFileName,
+                       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;sequenceClass)</pre>
+<div class="block">Creates a <a href="../../randoop/compile/SequenceJavaFileObject.html" title="class in randoop.compile"><code>SequenceJavaFileObject</code></a> with the given name and class source.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>classFileName</code> - the name of the class</dd>
+<dd><code>sequenceClass</code> - the class source</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -312,15 +338,15 @@ extends javax.tools.SimpleJavaFileObject</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getCharContent</h4>
-<pre>public&nbsp;java.lang.CharSequence&nbsp;getCharContent(boolean&nbsp;ignoreEncodingErrors)
-                                      throws java.lang.UnsupportedOperationException</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/CharSequence.html?is-external=true" title="class or interface in java.lang">CharSequence</a>&nbsp;getCharContent(boolean&nbsp;ignoreEncodingErrors)
+                            throws <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/UnsupportedOperationException.html?is-external=true" title="class or interface in java.lang">UnsupportedOperationException</a></pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>getCharContent</code>&nbsp;in interface&nbsp;<code>javax.tools.FileObject</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/FileObject.html?is-external=true#getCharContent-boolean-" title="class or interface in javax.tools">getCharContent</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/FileObject.html?is-external=true" title="class or interface in javax.tools">FileObject</a></code></dd>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>getCharContent</code>&nbsp;in class&nbsp;<code>javax.tools.SimpleJavaFileObject</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#getCharContent-boolean-" title="class or interface in javax.tools">getCharContent</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true" title="class or interface in javax.tools">SimpleJavaFileObject</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.UnsupportedOperationException</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/UnsupportedOperationException.html?is-external=true" title="class or interface in java.lang">UnsupportedOperationException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -330,12 +356,12 @@ extends javax.tools.SimpleJavaFileObject</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>openInputStream</h4>
-<pre>public&nbsp;java.io.InputStream&nbsp;openInputStream()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;openInputStream()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>openInputStream</code>&nbsp;in interface&nbsp;<code>javax.tools.FileObject</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/FileObject.html?is-external=true#openInputStream--" title="class or interface in javax.tools">openInputStream</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/FileObject.html?is-external=true" title="class or interface in javax.tools">FileObject</a></code></dd>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>openInputStream</code>&nbsp;in class&nbsp;<code>javax.tools.SimpleJavaFileObject</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#openInputStream--" title="class or interface in javax.tools">openInputStream</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true" title="class or interface in javax.tools">SimpleJavaFileObject</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -345,12 +371,12 @@ extends javax.tools.SimpleJavaFileObject</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>openOutputStream</h4>
-<pre>public&nbsp;java.io.OutputStream&nbsp;openOutputStream()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io">OutputStream</a>&nbsp;openOutputStream()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>openOutputStream</code>&nbsp;in interface&nbsp;<code>javax.tools.FileObject</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/FileObject.html?is-external=true#openOutputStream--" title="class or interface in javax.tools">openOutputStream</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/FileObject.html?is-external=true" title="class or interface in javax.tools">FileObject</a></code></dd>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>openOutputStream</code>&nbsp;in class&nbsp;<code>javax.tools.SimpleJavaFileObject</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true#openOutputStream--" title="class or interface in javax.tools">openOutputStream</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/SimpleJavaFileObject.html?is-external=true" title="class or interface in javax.tools">SimpleJavaFileObject</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -361,6 +387,11 @@ extends javax.tools.SimpleJavaFileObject</pre>
 <li class="blockList">
 <h4>getByteCode</h4>
 <pre>byte[]&nbsp;getByteCode()</pre>
+<div class="block">Returns the byte stream as a byte array.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the byte array for the byte stream</dd>
+</dl>
 </li>
 </ul>
 </li>

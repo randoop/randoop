@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 
 /**
  * Reads a list of records from a text file, where a record is partially specified by the client of
@@ -27,11 +27,12 @@ import plume.UtilMDE;
  */
 public class RecordListReader {
 
-  // startMarker is "START <recordType>"
-  // endMarker is "END <recordType>"
-  private final String startMarker, endMarker;
+  /** startMarker is "START <recordType>" */
+  private final String startMarker;
+  /** endMarker is "END <recordType>" */
+  private final String endMarker;
 
-  // The object in charge of doing whatever is to be done with the record.
+  /** The object in charge of doing whatever is to be done with the record. */
   private final RecordProcessor processor;
 
   public RecordListReader(String recordType, RecordProcessor proc) {
@@ -52,7 +53,7 @@ public class RecordListReader {
 
     BufferedReader reader;
     try {
-      reader = UtilMDE.bufferedFileReader(inFile);
+      reader = UtilPlume.bufferedFileReader(inFile);
     } catch (IOException e) {
       throw new Error(e);
     }
@@ -67,7 +68,7 @@ public class RecordListReader {
 
     BufferedReader reader;
     try {
-      reader = UtilMDE.bufferedFileReader(inFile);
+      reader = UtilPlume.bufferedFileReader(inFile);
     } catch (IOException e) {
       throw new Error(e);
     }
