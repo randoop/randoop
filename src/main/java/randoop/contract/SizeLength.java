@@ -13,6 +13,10 @@ public final class SizeLength extends ObjectContract {
 
   private SizeLength() {}
 
+  public static SizeLength getInstance() {
+    return instance;
+  }
+
   @Override
   public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
