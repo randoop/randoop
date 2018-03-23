@@ -176,6 +176,10 @@ occasions when they fail and reveal a bug or a regression failure.
 <h1 id="getting_randoop">Installing Randoop</h1>
 
 <p>
+Randoop runs on a Java 7 or Java 8 JVM.
+</p>
+
+<p>
   Download and unzip the file
   <a href="https://github.com/randoop/randoop/releases/download/v4.0.0/randoop-4.0.0.zip"><code>randoop-4.0.0.zip</code></a>.
 <!-- from the
@@ -2206,11 +2210,13 @@ See the Java Tutorial on
 Cannot find the Java compiler. Check that classpath includes tools.jar
 </pre>
 <p>
-  then you have installed Java incorrectly.
+  then there is a problem with your Java installation.
   You perhaps have the JRE on your path before the JDK.
   Ensure that <code>JAVA_HOME</code> appears at the <em>front</em> of your path.
   If you run the Windows operating system, see the
   <a href="https://douglascayers.com/2015/05/30/how-to-set-custom-java-path-after-installing-jdk-8/">instructions for setting a custom Java path after installing JDK 8</a>.
+  Another possible cause of the ploblem is using Java 9; Randoop currently
+  only runs under a Java 7 or Java 8 JVM.
 </p>
 
 

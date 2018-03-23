@@ -27,9 +27,9 @@ import org.plumelib.util.UtilPlume;
  */
 public class RecordListReader {
 
-  /** startMarker is "START <recordType>" */
+  /** startMarker is "START <em>recordType</em>" */
   private final String startMarker;
-  /** endMarker is "END <recordType>" */
+  /** endMarker is "END <em>recordType</em>" */
   private final String endMarker;
 
   /** The object in charge of doing whatever is to be done with the record. */
