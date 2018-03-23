@@ -467,13 +467,20 @@ public class OperationModel {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
 
-    // Load in instrumented versions of all classes under test first.
-    CoverageTracker.instance.instrumentAndLoad(classnames);
+    if (GenInputsAbstract.enable_bloodhound) {
+      // Load in instrumented versions of all classes under test first.
+      CoverageTracker.instance.instrumentAndLoad(classnames);
+    }
 
     // Collect classes under test
     Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
     for (String classname : classnames) {
-      Class<?> c = CoverageTracker.instance.getInstrumentedClass(classname);
+      Class<?> c;
+      if (GenInputsAbstract.enable_bloodhound) {
+        c = CoverageTracker.instance.getInstrumentedClass(classname);
+      } else {
+        c = getClass(classname, errorHandler);
+      }
 
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null && !visitedClasses.contains(c)) {
@@ -507,7 +514,12 @@ public class OperationModel {
     // Collect covered classes
     for (String classname : coveredClassesGoalNames) {
       if (!classnames.contains(classname)) {
-        Class<?> c = CoverageTracker.instance.getInstrumentedClass(classname);
+        Class<?> c;
+        if (GenInputsAbstract.enable_bloodhound) {
+          c = CoverageTracker.instance.getInstrumentedClass(classname);
+        } else {
+          c = getClass(classname, errorHandler);
+        }
         if (c != null) {
           if (!visibility.isVisible(c)) {
             System.out.println(
