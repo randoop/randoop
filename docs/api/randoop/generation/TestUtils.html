@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TestUtils (randoop 4.0.0 API)</title>
+<title>TestUtils (randoop 4.0.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TestUtils (randoop 4.0.0 API)";
+            parent.document.title="TestUtils (randoop 4.0.1 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -181,33 +181,47 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/TestUtils.html#setOperationLog-java.io.PrintWriter-randoop.generation.AbstractGenerator-">setOperationLog</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintWriter.html?is-external=true" title="class or interface in java.io">PrintWriter</a>&nbsp;pw,
+               <a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a>&nbsp;generator)</code>
+<div class="block">If the PrintWriter is non-null, sets the operation history logger for the generator using the
+ file.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/TestUtils.html#setOperationLog-java.lang.String-randoop.generation.AbstractGenerator-">setOperationLog</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;file,
                <a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a>&nbsp;generator)</code>
 <div class="block">If the file is non-null, sets the operation history logger for the generator using the file.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/TestUtils.html#setRandoopLog--">setRandoopLog</a></span>()</code>
 <div class="block">Uses the system property <code>randoop.log</code> to set <a href="../../randoop/main/GenInputsAbstract.html#log"><code>GenInputsAbstract.log</code></a>.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/TestUtils.html#setRandoopLog-java.lang.String-">setRandoopLog</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;file)</code>
 <div class="block">Uses the argument to set <a href="../../randoop/main/GenInputsAbstract.html#log"><code>GenInputsAbstract.log</code></a>.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/TestUtils.html#setSelectionLog--">setSelectionLog</a></span>()</code>
-<div class="block">Uses the system property <code>randoop.selection.log</code> to set <a href="../../randoop/util/Randomness.html#selectionLog"><code>Randomness.selectionLog</code></a>.</div>
-</td>
-</tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/TestUtils.html#setSelectionLog--">setSelectionLog</a></span>()</code>
+<div class="block">Uses the system property <code>randoop.selection.log</code> to set <a href="../../randoop/main/GenInputsAbstract.html#selection_log"><code>GenInputsAbstract.selection_log</code></a>.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/TestUtils.html#setSelectionLog-java.io.FileWriter-">setSelectionLog</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a>&nbsp;fw)</code>
+<div class="block">Uses the argument to set <a href="../../randoop/main/GenInputsAbstract.html#selection_log"><code>GenInputsAbstract.selection_log</code></a>.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/TestUtils.html#setSelectionLog-java.lang.String-">setSelectionLog</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;file)</code>
-<div class="block">Uses the argument to set <a href="../../randoop/util/Randomness.html#selectionLog"><code>Randomness.selectionLog</code></a>.</div>
+<div class="block">Uses the argument to set <a href="../../randoop/main/GenInputsAbstract.html#selection_log"><code>GenInputsAbstract.selection_log</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -311,7 +325,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>setSelectionLog</h4>
 <pre>public static&nbsp;void&nbsp;setSelectionLog()</pre>
-<div class="block">Uses the system property <code>randoop.selection.log</code> to set <a href="../../randoop/util/Randomness.html#selectionLog"><code>Randomness.selectionLog</code></a>.</div>
+<div class="block">Uses the system property <code>randoop.selection.log</code> to set <a href="../../randoop/main/GenInputsAbstract.html#selection_log"><code>GenInputsAbstract.selection_log</code></a>.</div>
 </li>
 </ul>
 <a name="setSelectionLog-java.lang.String-">
@@ -321,10 +335,24 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>setSelectionLog</h4>
 <pre>public static&nbsp;void&nbsp;setSelectionLog(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;file)</pre>
-<div class="block">Uses the argument to set <a href="../../randoop/util/Randomness.html#selectionLog"><code>Randomness.selectionLog</code></a>.</div>
+<div class="block">Uses the argument to set <a href="../../randoop/main/GenInputsAbstract.html#selection_log"><code>GenInputsAbstract.selection_log</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>file</code> - the file to write the log to; does nothing if file is null</dd>
+</dl>
+</li>
+</ul>
+<a name="setSelectionLog-java.io.FileWriter-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setSelectionLog</h4>
+<pre>public static&nbsp;void&nbsp;setSelectionLog(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a>&nbsp;fw)</pre>
+<div class="block">Uses the argument to set <a href="../../randoop/main/GenInputsAbstract.html#selection_log"><code>GenInputsAbstract.selection_log</code></a>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>fw</code> - the FileWriter to write the log to; does nothing if fw is null</dd>
 </dl>
 </li>
 </ul>
@@ -346,7 +374,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a name="setOperationLog-java.lang.String-randoop.generation.AbstractGenerator-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setOperationLog</h4>
 <pre>public static&nbsp;void&nbsp;setOperationLog(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;file,
@@ -355,6 +383,23 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>file</code> - the file to write the log to; does nothing if file is null</dd>
+<dd><code>generator</code> - the generator for which logger is to be set</dd>
+</dl>
+</li>
+</ul>
+<a name="setOperationLog-java.io.PrintWriter-randoop.generation.AbstractGenerator-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setOperationLog</h4>
+<pre>public static&nbsp;void&nbsp;setOperationLog(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintWriter.html?is-external=true" title="class or interface in java.io">PrintWriter</a>&nbsp;pw,
+                                   <a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a>&nbsp;generator)</pre>
+<div class="block">If the PrintWriter is non-null, sets the operation history logger for the generator using the
+ file.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>pw</code> - the PrintWriter to write the log to; does nothing if pw is null</dd>
 <dd><code>generator</code> - the generator for which logger is to be set</dd>
 </dl>
 </li>
