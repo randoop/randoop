@@ -289,7 +289,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.0.0.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.0.1.jar</code></pre>
 
 
 
@@ -350,7 +350,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.0.0.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.0.1.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -706,8 +706,8 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>4.0.0</em>
-NEWVERSION=<em>4.0.1</em></pre>
+OLDVERSION=<em>4.0.1</em>
+NEWVERSION=<em>4.0.2</em></pre>
       These are used for working with git.
     </li>
     <li>Update the version number and date in these files:
@@ -721,8 +721,8 @@ src/main/java/randoop/Globals.java
 This <em>might</em> work to automate the number (not the date), only for files in <code>src/</code> (double-check it!):
 <pre>
   cd src
-  'preplace '4\.0\.1' '4.0.2'
-  'preplace '4\.0\.0' '4.0.1'
+  preplace '4\.0\.1' '4.0.2'
+  preplace '4\.0\.0' '4.0.2'
 </pre>
     </li>
     <li>Add an exception for the Randoop zip file
@@ -757,7 +757,7 @@ This <em>might</em> work to automate the number (not the date), only for files i
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Tags", click "add release notes" for the new tag,
-    name it "Randoop version <em>4.0.1</em>", use the changelog entry as the
+    name it "Randoop version <em>4.0.2</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
     jar files from <code>build/libs</code>,
     upload the zip file from <code>build/distributions</code>
@@ -775,9 +775,9 @@ This <em>might</em> work to automate the number (not the date), only for files i
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
-    Subject: Randoop version <em>4.0.1</em>
+    Subject: Randoop version <em>4.0.2</em>
     <br/>
-    Randoop <em>4.0.1</em> has been released and is available at
+    Randoop <em>4.0.2</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
