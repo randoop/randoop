@@ -685,15 +685,25 @@ task described below.
   there are no changes needed:
 </p>
 <ol>
+  <li>Ensure that your clone is up to date:
+    <pre>git pull</pre>
+  </li>
+  <li>Compile, test, and build documentation.
+    If there is any filure, fix them and start over.
+    <pre>./gradlew clean build</pre>
+  </li>
+  <li>Compile, test, and build documentation.
+    If there is any filure, fix them and start over.
+    <pre>./gradlew clean build javadoc validateAPI manual valdateSite</pre>
+  </li>
+  <li>Double-check that the changelog <code>src/docs/CHANGES.txt</code>
+    contains all user-visible changes in
+    <pre>git log v$OLDVERSION..</pre>
+    Have a colleague review the changelog entry.
+  </li>
   <li>Commit any changes; push any unpushed
     commits.  Find out if any exist by running:
     <pre>git status && git log --branches --not --remotes</pre>
-  </li>
-  <li>Compile and test.  If any tests fail, fix them and start over.
-    <pre>./gradlew clean build</pre>
-  </li>
-  <li>Ensure that the Javadoc compiles correctly and the manual is up to date:
-    <pre>./gradlew javadoc validateAPI manual valdateSite</pre>
   </li>
 </ol>
 <p>
@@ -722,7 +732,7 @@ This <em>might</em> work to automate the number (not the date), only for files i
 <pre>
   cd src
   preplace '4\.0\.1' '4.0.2'
-  preplace '4\.0\.0' '4.0.2'
+  preplace '4\.0\.0' '4.0.1'
 </pre>
     </li>
     <li>Add an exception for the Randoop zip file
@@ -730,12 +740,6 @@ This <em>might</em> work to automate the number (not the date), only for files i
       for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.
     </li>
   </ol>
-</li>
-<li>Double-check that the changelog <code>src/docs/CHANGES.txt</code> is up-to-date
-  by running a command
-  <pre>git log v$OLDVERSION..</pre>
-  and ensuring that no user-visible changes have been missed.
-  Have a colleague review the changelog entry.
 </li>
 <li>Create the distribution files, commit, make a tag, and push.  This takes
   a while because it runs all the tests.  It also updates the project site in
