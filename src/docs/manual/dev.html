@@ -284,27 +284,6 @@ given here, see the Gradle
 </p>
 
 <p>
-Otherwise, to run Randoop, your classpath must include either the Randoop class files or
-the Randoop jar file, and also must include <code>lib/plume.jar</code>.
-After the build, the classpath should include either of the following
-</p>
-<ul>
-  <li>
-<code>
-&lt;randoop-path&gt;/build/libs/randoop-4.0.0.jar:&lt;randoop-path&gt;/lib/plume.jar
-</code>
-</li>
-<li>
-<code>
-&lt;randoop-path&gt;/build/build/classes/main:&lt;randoop-path&gt;/lib/plume.jar
-</code> </li>
-</ul>
-<p>
-On the classpath, put classes under test before
-<code>plume.jar</code>, in case of a conflict.
-</p>
-
-<p>
 The jar files for Java agents are located in
 the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.

@@ -53,5 +53,4 @@ shadowJar {
   relocate 'org.slf4j', 'coveredclass.org.slf4j'
   relocate 'org.tigris.subversion', 'coveredclass.org.tigris.subversion'
   relocate 'org.tmatesoft', 'coveredclass.org.tmatesoft'
-  relocate 'plume', 'coveredclass.plume'
 }
