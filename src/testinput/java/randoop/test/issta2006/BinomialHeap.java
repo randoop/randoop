@@ -127,37 +127,29 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
 
   //private native boolean checkAbstractState(int which);
 
-  public static Set<String> tests = new HashSet<>();
+  public static Set<String> branchFingerprints = new HashSet<>();
 
   // private static Set abs_states = new HashSet();
 
   public static int counter = 0;
 
+  private static String nodeFingerprint(BinomialHeapNode n) {
+    String res = "";
+    if (n == null) {
+      res += "null";
+    } else {
+      res += (n.child == null) ? "C-" : "C+";
+      res += (n.sibling == null) ? "S-" : "S+";
+      res += (n.parent == null) ? "P-" : "P+";
+    }
+    return res;
+  }
+
   private static int gen_native(int br, BinomialHeapNode n1, BinomialHeapNode n2) {
     String res = br + ",";
     // For Basic Block Coverage
-    BinomialHeapNode temp, temp2;
-    if (n1 == null) {
-      res += "null";
-    } else {
-      temp = n1.child;
-      res += (temp == null) ? "C-" : "C+";
-      temp = n1.sibling;
-      res += (temp == null) ? "S-" : "S+";
-      temp = n1.parent;
-      res += (temp == null) ? "P-" : "P+";
-    }
-
-    if (n2 == null) {
-      res += "null";
-    } else {
-      temp = n2.child;
-      res += (temp == null) ? "C-" : "C+";
-      temp = n2.sibling;
-      res += (temp == null) ? "S-" : "S+";
-      temp = n2.parent;
-      res += (temp == null) ? "P-" : "P+";
-    }
+    res += nodeFingerprint(n1);
+    res += nodeFingerprint(n2);
     if (n1 != null && n2 != null) {
       // commented out because of symbolic version
       //         temp = env.getIntField(n1,null,"key");
@@ -172,12 +164,12 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
       if (itemp > itemp2) res += ">";
     }
     //END comment here
-    if (!tests.contains(res)) {
-      tests.add(res);
+    if (!branchFingerprints.contains(res)) {
+      branchFingerprints.add(res);
       // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
-      System.out.println("Test case number " + tests.size() + " for '" + res + "': ");
-      counter = tests.size();
-      return tests.size();
+      System.out.println("Test case number " + branchFingerprints.size() + " for '" + res + "': ");
+      counter = branchFingerprints.size();
+      return branchFingerprints.size();
     }
     return 0;
   }

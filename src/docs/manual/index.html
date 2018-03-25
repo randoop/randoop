@@ -24,7 +24,10 @@ The Randoop homepage is
 <ul>
   <li><a href="#Introduction">Introduction</a></li>
   <li><a href="#getting_randoop">Installing Randoop</a></li>
-  <li><a href="#running_randoop">Running Randoop</a></li>
+  <li><a href="#running_randoop">Running Randoop</a>
+    <ul>
+      <li><a href="#maven-plugin">Maven plugin</a></li>
+    </ul></li>
   <li><a href="#generating_tests">Generating tests</a>
     <ul>
       <li><a href="#example_collections">Example: Generating tests for <code>java.util.Collections</code></a></li>
@@ -36,8 +39,8 @@ The Randoop homepage is
           <li><a href="#regression_test_failures">Regression test failures</a></li>
         </ul></li>
       <li><a href="#generation_stages">Stages of test generation, and limiting test generation</a></li>
-      <li><a href="#minimize">Minimizing a failing JUnit test suite</a></li>
     </ul></li>
+  <li><a href="#minimize">Minimizing a failing JUnit test suite</a></li>
   <li><a href="#customize">Customizing Randoop's behavior to your application</a>
     <ul>
       <li><a href="#command-line-options">Command-line options</a></li>
@@ -87,11 +90,6 @@ The Randoop homepage is
   <li><a href="#credits">Credits</a></li>
 </ul>
 <!-- end toc -->
-
-<p>
-There is a <a href="http://search.maven.org/#search%7Cga%7C1%7Crandoop">Maven plug-in</a> with source at
-<a href="https://bitbucket.org/javydreamercsw/randoop-maven-plugin/">https://bitbucket.org/javydreamercsw/randoop-maven-plugin/</a>.
-</p>
 
 <p>
 <a href="https://github.com/abb-iss/Randoop.NET">Randoop.NET</a> is a version of Randoop that works with Microsoft's .NET platform, such as the C# programming language.
@@ -178,6 +176,10 @@ occasions when they fail and reveal a bug or a regression failure.
 <h1 id="getting_randoop">Installing Randoop</h1>
 
 <p>
+Randoop runs on a Java 7 or Java 8 JVM.
+</p>
+
+<p>
   Download and unzip the file
   <a href="https://github.com/randoop/randoop/releases/download/v4.0.0/randoop-4.0.0.zip"><code>randoop-4.0.0.zip</code></a>.
 <!-- from the
@@ -262,6 +264,23 @@ You don't need the <code>-classpath</code> argument if you add
 <code>$(RANDOOP_JAR)</code> to your classpath.
 </p>
 
+
+<h2 id="maven-plugin">Maven plugin</h2>
+
+<p>
+Marian Zaplatynski created
+a <a href="https://github.com/zaplatynski/randoop-maven-plugin">Maven
+plugin for using Randoop</a>.  It enables you to generate and execute tests
+for a program that uses the Maven build system.
+</p>
+
+<!-- As of 3/17/2018, this was last updated in December 2012 -->
+<!--
+<p>
+There is a <a href="http://search.maven.org/#search%7Cga%7C1%7Crandoop">Maven plug-in</a> in the Central Repository with source (but no documentation) at
+<a href="https://bitbucket.org/javydreamercsw/randoop-maven-plugin/">https://bitbucket.org/javydreamercsw/randoop-maven-plugin/</a>.
+</p>
+-->
 
 
 <h1 id="generating_tests">Generating tests</h1>
@@ -738,7 +757,7 @@ for threading</a> for additional per-test time limits.
 </p>
 
 
-<h2 id="minimize">Minimizing a failing JUnit test suite</h2>
+<h1 id="minimize">Minimizing a failing JUnit test suite</h1>
 
 <p>
 Randoop includes a minimizer that, given a failing JUnit test suite file,
@@ -2191,11 +2210,13 @@ See the Java Tutorial on
 Cannot find the Java compiler. Check that classpath includes tools.jar
 </pre>
 <p>
-  then you have installed Java incorrectly.
+  then there is a problem with your Java installation.
   You perhaps have the JRE on your path before the JDK.
   Ensure that <code>JAVA_HOME</code> appears at the <em>front</em> of your path.
   If you run the Windows operating system, see the
   <a href="https://douglascayers.com/2015/05/30/how-to-set-custom-java-path-after-installing-jdk-8/">instructions for setting a custom Java path after installing JDK 8</a>.
+  Another possible cause of the ploblem is using Java 9; Randoop currently
+  only runs under a Java 7 or Java 8 JVM.
 </p>
 
 
@@ -2304,11 +2325,16 @@ Two possible reasons for a long-running test are:
 <h3 id="nontermination">Randoop does not terminate</h3>
 
 <p>
-If Randoop does not terminate, that might be because Randoop is creating
+When Randoop does not terminate, that is usually because Randoop is creating
 tests that do not terminate (or that execute for a very long time).
-Here are three ways to deal with the problem.
 </p>
 <ul>
+  <li>
+    Determine the test that is currently executing.  Use
+    the <a href="#option:usethreads"><code>--log=filename</code></a>
+    command-line option, and the currently-executing test should be at the
+    end of the file.
+  </li>
   <li>
     Determine which calls are executing by examining the stack trace.
     Use the <a
@@ -2329,12 +2355,11 @@ Here are three ways to deal with the problem.
     which any directly-called method takes
     <a href="#option:usethreads"><code>too long</code></a> to run.
   </li>
-  <li>
-    If you suspect the problem may be a bug in Randoop, use the
-    <code>--log=filename</code> command-line option, and either examine the
-    log or send it to the Randoop developers for diagnosis.
-  </li>
 </ul>
+
+<p>
+If you cannot fix the problem that causes the long execution, you might want to <a href="option:omitmethods">exclude the method</a> from testing.
+</p>
 
 
 <h3 id="different-output">Randoop produces different output on different runs</h3>

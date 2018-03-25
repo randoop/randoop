@@ -251,9 +251,9 @@ blowsUp0 =  cons : misc.BlowsUp.<init>() :
 EXPECTED_CODE
 misc.BlowsUp blowsUp0 = new misc.BlowsUp();
 // Checks the contract:  blowsUp0.equals(blowsUp0)
-org.junit.Assert.assertTrue("Contract failed: blowsUp0.equals(blowsUp0)", blowsUp0.equals(blowsUp0));
+org.junit.Assert.assertTrue("Equality is not reflexive: blowsUp0.equals(blowsUp0)", blowsUp0.equals(blowsUp0));
 // Checks the contract:  !blowsUp0.equals(null)
-org.junit.Assert.assertTrue("Contract failed: !blowsUp0.equals(null)", !blowsUp0.equals(null));
+org.junit.Assert.assertTrue("Value is null: !blowsUp0.equals(null)", !blowsUp0.equals(null));
 
 
 END TEST

@@ -14,7 +14,7 @@ import randoop.BugInRandoopException;
  * List.addAll(..) operations can be very expensive, because it happened in a hot spot (method
  * SequenceCollection.getSequencesThatYield).
  */
-public class ListOfLists<T> extends SimpleList<T> implements Serializable {
+public class ListOfLists<T> implements SimpleList<T>, Serializable {
 
   private static final long serialVersionUID = -3307714585442970263L;
 
@@ -58,21 +58,16 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see randoop.util.SimpleList#size()
-   */
   @Override
   public int size() {
     return this.totalelements;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see randoop.util.SimpleList#get(int)
-   */
+  @Override
+  public boolean isEmpty() {
+    return this.totalelements == 0;
+  }
+
   @Override
   public T get(int index) {
     if (index < 0 || index > this.totalelements - 1) {
@@ -96,6 +91,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     int previousListSize = 0;
     for (int i = 0; i < this.cumulativeSize.length; i++) {
       if (index < this.cumulativeSize[i]) {
+        // Recurse.
         return lists.get(i).getSublist(index - previousListSize);
       }
       previousListSize = cumulativeSize[i];
