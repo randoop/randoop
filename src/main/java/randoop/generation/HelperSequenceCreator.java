@@ -27,8 +27,8 @@ import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 class HelperSequenceCreator {
@@ -53,7 +53,7 @@ class HelperSequenceCreator {
     final int MAX_LENGTH = 7;
 
     if (!collectionType.isArray()) {
-      return new ArrayListSimpleList<>();
+      return new SimpleArrayList<>();
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
@@ -80,7 +80,7 @@ class HelperSequenceCreator {
     if (candidates.isEmpty()) {
       // No sequences that produce appropriate component values found,
       // if null allowed, create an array containing null, otherwise create empty array
-      ArrayListSimpleList<Sequence> seqList = new ArrayListSimpleList<>();
+      SimpleArrayList<Sequence> seqList = new SimpleArrayList<>();
       if (!GenInputsAbstract.forbid_null) {
         if (!Randomness.weightedCoinFlip(0.5)) {
           seqList.add(
@@ -97,7 +97,7 @@ class HelperSequenceCreator {
     Sequence elementSequence = createElementSequence(candidates, length, componentType);
     Sequence s = createAnArray(elementSequence, componentType, length);
     assert s != null;
-    ArrayListSimpleList<Sequence> l = new ArrayListSimpleList<>();
+    SimpleArrayList<Sequence> l = new SimpleArrayList<>();
     l.add(s);
     return l;
   }

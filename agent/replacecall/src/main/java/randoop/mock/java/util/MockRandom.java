@@ -29,7 +29,7 @@ public class MockRandom {
    * in the map, a new instance of Random(0) is created, added to the map and returned.
    *
    * @param random instance to map from.
-   * @return instance of Random(0) mapped from random.
+   * @return instance of Random(0) mapped from random
    */
   private static Random getDelegate(Random random) {
     Random delegate = delegateMap.get(random);
