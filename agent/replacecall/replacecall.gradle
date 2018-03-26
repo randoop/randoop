@@ -7,9 +7,6 @@ plugins {
 description = "replacecall agent"
 
 dependencies {
-  // use plume.jar from parent project
-  compile project(path: ':', configuration: 'plume' )
-
   // Keep these in sync with ../../build.gradle
   implementation 'org.plumelib:bcel-util:0.0.4'
   implementation 'org.plumelib:options:0.3.1'
@@ -61,5 +58,4 @@ shadowJar {
   relocate 'org.slf4j', 'replacecall.org.slf4j'
   relocate 'org.tigris.subversion', 'replacecall.org.tigris.subversion'
   relocate 'org.tmatesoft', 'replacecall.org.tmatesoft'
-  relocate 'plume', 'replacecall.plume'
 }

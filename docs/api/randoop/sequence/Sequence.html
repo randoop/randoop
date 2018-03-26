@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Sequence (randoop 4.0.0 API)</title>
+<title>Sequence (randoop 4.0.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Sequence (randoop 4.0.0 API)";
+            parent.document.title="Sequence (randoop 4.0.1 API)";
         }
     }
     catch(err) {
@@ -206,7 +206,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#savedNetSize">savedNetSize</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;</code></td>
+<td class="colFirst"><code><a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#statements">statements</a></span></code>
 <div class="block">The list of statements.</div>
 </td>
@@ -234,13 +234,13 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#Sequence-randoop.util.SimpleList-">Sequence</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#Sequence-randoop.util.SimpleList-">Sequence</a></span>(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</code>
 <div class="block">Create a sequence with the given statements.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private </code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#Sequence-randoop.util.SimpleList-int-int-">Sequence</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#Sequence-randoop.util.SimpleList-int-int-">Sequence</a></span>(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements,
         int&nbsp;hashCode,
         int&nbsp;netSize)</code>
 <div class="block">Create a sequence that has the given statements and hashCode (hashCode is for optimization).</div>
@@ -308,7 +308,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>private static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#computeHashcode-randoop.util.SimpleList-">computeHashcode</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#computeHashcode-randoop.util.SimpleList-">computeHashcode</a></span>(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</code>
 <div class="block">The hashcode of a sequence is the sum of each statement's hashcode.</div>
 </td>
 </tr>
@@ -320,7 +320,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>private static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#computeNetSize-randoop.util.SimpleList-">computeNetSize</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#computeNetSize-randoop.util.SimpleList-">computeNetSize</a></span>(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</code>
 <div class="block">Counts the number of statements in a list that are not initializations with a primitive type.</div>
 </td>
 </tr>
@@ -440,7 +440,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </td>
 </tr>
 <tr id="i29" class="rowColor">
-<td class="colFirst"><code>private <a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;</code></td>
+<td class="colFirst"><code>private <a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getStatementsWithInputs--">getStatementsWithInputs</a></span>()</code>
 <div class="block">An list of all the statements in this sequence.</div>
 </td>
@@ -454,8 +454,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <tr id="i31" class="rowColor">
 <td class="colFirst"><code>(package private) <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getSubsequence-int-">getSubsequence</a></span>(int&nbsp;index)</code>
-<div class="block">Using compositional structure of this sequence, return the subsequence of this sequence that
- contains the statement at the given index.</div>
+<div class="block">Return a subsequence of this sequence that contains the statement at the given index.</div>
 </td>
 </tr>
 <tr id="i32" class="altColor">
@@ -639,7 +638,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <ul class="blockList">
 <li class="blockList">
 <h4>statements</h4>
-<pre>public final&nbsp;<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt; statements</pre>
+<pre>public final&nbsp;<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt; statements</pre>
 <div class="block">The list of statements.</div>
 </li>
 </ul>
@@ -746,7 +745,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <ul class="blockList">
 <li class="blockList">
 <h4>Sequence</h4>
-<pre>private&nbsp;Sequence(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements,
+<pre>private&nbsp;Sequence(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements,
                  int&nbsp;hashCode,
                  int&nbsp;netSize)</pre>
 <div class="block">Create a sequence that has the given statements and hashCode (hashCode is for optimization).
@@ -766,7 +765,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Sequence</h4>
-<pre>public&nbsp;Sequence(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</pre>
+<pre>public&nbsp;Sequence(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</pre>
 <div class="block">Create a sequence with the given statements.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -1214,7 +1213,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <ul class="blockList">
 <li class="blockList">
 <h4>computeHashcode</h4>
-<pre>private static&nbsp;int&nbsp;computeHashcode(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</pre>
+<pre>private static&nbsp;int&nbsp;computeHashcode(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</pre>
 <div class="block">The hashcode of a sequence is the sum of each statement's hashcode. This seems good enough, and
  it makes computing hashCode of a concatenation of sequences faster (it's just the addition of
  each sequence's' hashCode). Otherwise, hashCode computation used to be a hotspot.</div>
@@ -1232,7 +1231,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <ul class="blockList">
 <li class="blockList">
 <h4>computeNetSize</h4>
-<pre>private static&nbsp;int&nbsp;computeNetSize(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</pre>
+<pre>private static&nbsp;int&nbsp;computeNetSize(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</pre>
 <div class="block">Counts the number of statements in a list that are not initializations with a primitive type.
  For instance <code>int var7 = 0</code>.</div>
 <dl>
@@ -1323,7 +1322,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <ul class="blockList">
 <li class="blockList">
 <h4>getStatementsWithInputs</h4>
-<pre>private&nbsp;<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;getStatementsWithInputs()</pre>
+<pre>private&nbsp;<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;getStatementsWithInputs()</pre>
 <div class="block">An list of all the statements in this sequence.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -1626,8 +1625,11 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>getSubsequence</h4>
 <pre><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;getSubsequence(int&nbsp;index)</pre>
-<div class="block">Using compositional structure of this sequence, return the subsequence of this sequence that
- contains the statement at the given index.</div>
+<div class="block">Return a subsequence of this sequence that contains the statement at the given index. It does
+ not necessarily contain the first element of this sequence.
+
+ <p>The result depends on the compositional structure of this sequence. The implementation
+ avoids allocating new objects.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>index</code> - the statement position in this sequence</dd>

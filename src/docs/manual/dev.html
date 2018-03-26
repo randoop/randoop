@@ -284,33 +284,12 @@ given here, see the Gradle
 </p>
 
 <p>
-Otherwise, to run Randoop, your classpath must include either the Randoop class files or
-the Randoop jar file, and also must include <code>lib/plume.jar</code>.
-After the build, the classpath should include either of the following
-</p>
-<ul>
-  <li>
-<code>
-&lt;randoop-path&gt;/build/libs/randoop-4.0.0.jar:&lt;randoop-path&gt;/lib/plume.jar
-</code>
-</li>
-<li>
-<code>
-&lt;randoop-path&gt;/build/build/classes/main:&lt;randoop-path&gt;/lib/plume.jar
-</code> </li>
-</ul>
-<p>
-On the classpath, put classes under test before
-<code>plume.jar</code>, in case of a conflict.
-</p>
-
-<p>
 The jar files for Java agents are located in
 the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.0.0.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.0.1.jar</code></pre>
 
 
 
@@ -371,7 +350,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.0.0.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.0.1.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -706,19 +685,25 @@ task described below.
   there are no changes needed:
 </p>
 <ol>
-  <li>
-    Be sure that
-    <a href="#maintaininglibraries">libraries are up-to-date</a>.
+  <li>Ensure that your clone is up to date:
+    <pre>git pull</pre>
+  </li>
+  <li>Compile, test, and build documentation.
+    If there is any filure, fix them and start over.
+    <pre>./gradlew clean build</pre>
+  </li>
+  <li>Compile, test, and build documentation.
+    If there is any filure, fix them and start over.
+    <pre>./gradlew clean build javadoc validateAPI manual valdateSite</pre>
+  </li>
+  <li>Double-check that the changelog <code>src/docs/CHANGES.txt</code>
+    contains all user-visible changes in
+    <pre>git log v$OLDVERSION..</pre>
+    Have a colleague review the changelog entry.
   </li>
   <li>Commit any changes; push any unpushed
     commits.  Find out if any exist by running:
     <pre>git status && git log --branches --not --remotes</pre>
-  </li>
-  <li>Compile and test.  If any tests fail, fix them and start over.
-    <pre>./gradlew clean build</pre>
-  </li>
-  <li>Ensure that the Javadoc compiles correctly and the manual is up to date:
-    <pre>./gradlew javadoc validateAPI manual valdateSite</pre>
   </li>
 </ol>
 <p>
@@ -731,8 +716,8 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>4.0.0</em>
-NEWVERSION=<em>4.0.1</em></pre>
+OLDVERSION=<em>4.0.1</em>
+NEWVERSION=<em>4.0.2</em></pre>
       These are used for working with git.
     </li>
     <li>Update the version number and date in these files:
@@ -743,11 +728,12 @@ src/docs/manual/dev.html
 src/docs/manual/index.html
 src/main/java/randoop/Globals.java
 </pre>
-This <em>might</em> work to automate the number (not the date), only for files in <code>src/</code> (double-check it!):
+This updates the number (not the date), only for files in <code>src/</code> (undo undesirable change to src/docs/CHANGES.txt):
 <pre>
   cd src
-  'preplace '4\.0\.1' '4.0.2'
-  'preplace '4\.0\.0' '4.0.1'
+  preplace '4\.0\.1' '4.0.2'
+  preplace '4\.0\.0' '4.0.1'
+  cd ..
 </pre>
     </li>
     <li>Add an exception for the Randoop zip file
@@ -755,12 +741,6 @@ This <em>might</em> work to automate the number (not the date), only for files i
       for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.
     </li>
   </ol>
-</li>
-<li>Double-check that the changelog <code>src/docs/CHANGES.txt</code> is up-to-date
-  by running a command
-  <pre>git log v$OLDVERSION..</pre>
-  and ensuring that no user-visible changes have been missed.
-  Have a colleague review the changelog entry.
 </li>
 <li>Create the distribution files, commit, make a tag, and push.  This takes
   a while because it runs all the tests.  It also updates the project site in
@@ -782,10 +762,11 @@ This <em>might</em> work to automate the number (not the date), only for files i
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Tags", click "add release notes" for the new tag,
-    name it "Randoop version <em>4.0.1</em>", use the changelog entry as the
+    name it "Randoop version <em>4.0.2</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
-    jar files from <code>build/libs</code>,
-    upload the zip file from <code>build/distributions</code>
+    jar files from <code>build/libs</code> and the zip file from
+    <code>build/distributions</code> (it doesn't matter what order you upload
+    them in; they will be listed alphabetically on the release webpage)
     and, finally, click "publish release".
   </li>
   <li>
@@ -800,9 +781,9 @@ This <em>might</em> work to automate the number (not the date), only for files i
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
-    Subject: Randoop version <em>4.0.1</em>
+    Subject: Randoop version <em>4.0.2</em>
     <br/>
-    Randoop <em>4.0.1</em> has been released and is available at
+    Randoop <em>4.0.2</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
