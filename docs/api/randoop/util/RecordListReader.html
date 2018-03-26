@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RecordListReader (randoop 4.0.0 API)</title>
+<title>RecordListReader (randoop 4.0.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RecordListReader (randoop 4.0.0 API)";
+            parent.document.title="RecordListReader (randoop 4.0.1 API)";
         }
     }
     catch(err) {
@@ -145,15 +145,21 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RecordListReader.html#endMarker">endMarker</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RecordListReader.html#endMarker">endMarker</a></span></code>
+<div class="block">endMarker is "END <em>recordType</em>"</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/util/RecordProcessor.html" title="interface in randoop.util">RecordProcessor</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RecordListReader.html#processor">processor</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RecordListReader.html#processor">processor</a></span></code>
+<div class="block">The object in charge of doing whatever is to be done with the record.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RecordListReader.html#startMarker">startMarker</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/RecordListReader.html#startMarker">startMarker</a></span></code>
+<div class="block">startMarker is "START <em>recordType</em>"</div>
+</td>
 </tr>
 </table>
 </li>
@@ -237,6 +243,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>startMarker</h4>
 <pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> startMarker</pre>
+<div class="block">startMarker is "START <em>recordType</em>"</div>
 </li>
 </ul>
 <a name="endMarker">
@@ -246,6 +253,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>endMarker</h4>
 <pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> endMarker</pre>
+<div class="block">endMarker is "END <em>recordType</em>"</div>
 </li>
 </ul>
 <a name="processor">
@@ -255,6 +263,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>processor</h4>
 <pre>private final&nbsp;<a href="../../randoop/util/RecordProcessor.html" title="interface in randoop.util">RecordProcessor</a> processor</pre>
+<div class="block">The object in charge of doing whatever is to be done with the record.</div>
 </li>
 </ul>
 </li>
