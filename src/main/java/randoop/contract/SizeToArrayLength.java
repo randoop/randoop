@@ -7,13 +7,13 @@ import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/** The contract: {@code l.toArray().length == l.size()} for all Collections l. */
-public final class SizeLength extends ObjectContract {
-  private static final SizeLength instance = new SizeLength();
+/** The contract: {@code c.toArray().length == c.size()} for all Collections c. */
+public final class SizeToArrayLength extends ObjectContract {
+  private static final SizeToArrayLength instance = new SizeToArrayLength();
 
-  private SizeLength() {}
+  private SizeToArrayLength() {}
 
-  public static SizeLength getInstance() {
+  public static SizeToArrayLength getInstance() {
     return instance;
   }
 
@@ -48,7 +48,7 @@ public final class SizeLength extends ObjectContract {
 
   @Override
   public String get_observer_str() {
-    return "SizeLength";
+    return "SizeToArrayLength";
   }
 
   @Override

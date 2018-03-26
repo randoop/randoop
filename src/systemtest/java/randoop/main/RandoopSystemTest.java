@@ -1206,6 +1206,35 @@ public class RandoopSystemTest {
     generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
+  /** This test tests the contract collection.toArray().length == collection.size() */
+  @Test
+  public void runBadCollectionSizeTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("bad-collection-size");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("collections.BadCollection");
+    options.setOption("generated_limit", "10");
+    options.setOption("output_limit", "10");
+
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            "collections.BadCollection.add(java.lang.Object) exclude",
+            "collections.BadCollection.addAll(java.util.Collection) exclude",
+            "collections.BadCollection.clear() exclude",
+            "collections.BadCollection.contains(java.lang.Object) exclude",
+            "collections.BadCollection.containsAll(java.util.Collection) exclude",
+            "collections.BadCollection.isEmpty() exclude",
+            "collections.BadCollection.iterator() exclude",
+            "collections.BadCollection.remove(java.lang.Object) exclude",
+            "collections.BadCollection.removeAll(java.util.Collection) exclude",
+            "collections.BadCollection.retainAll(java.util.Collection) exclude",
+            "collections.BadCollection.toArray(java.lang.Object[]) exclude");
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.DONT_CARE, ExpectedTests.SOME, coverageChecker);
+  }
+
   /* Test based on classes from the olajgo library. Has an instantiation error for
       <N> randoop.types.CompoundFunction<N>.<init> : () -> randoop.types.CompoundFunction<N>
       and generates no sequences
