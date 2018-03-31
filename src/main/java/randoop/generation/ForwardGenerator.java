@@ -72,9 +72,6 @@ public class ForwardGenerator extends AbstractGenerator {
   /** Selects the next method to use for creating new and unique sequences. */
   private final TypedOperationSelector operationSelector;
 
-  /** Bloodhound instance for updating and computing weights for all methods under test. */
-  private final Bloodhound bloodhound;
-
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
@@ -99,12 +96,10 @@ public class ForwardGenerator extends AbstractGenerator {
 
     initializeRuntimePrimitivesSeen();
 
-    // Construct an instance of bloodhound and copy all operations into bloodhound's list of operations.
-    this.bloodhound = new Bloodhound(operations);
-
     // If bloodhound is enabled, select the next operation while considering the methods' weights.
     if (GenInputsAbstract.enable_bloodhound) {
-      this.operationSelector = this.bloodhound;
+      // Construct an instance of bloodhound and copy all operations into bloodhound's list of operations.
+      this.operationSelector = new Bloodhound(operations);
     } else {
       this.operationSelector = new UniformRandomMethodSelection(operations);
     }

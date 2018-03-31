@@ -40,13 +40,7 @@ import randoop.MethodReplacements;
 import randoop.condition.RandoopConditionError;
 import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
-import randoop.generation.AbstractGenerator;
-import randoop.generation.ComponentManager;
-import randoop.generation.ForwardGenerator;
-import randoop.generation.RandoopGenerationError;
-import randoop.generation.RandoopListenerManager;
-import randoop.generation.SeedSequences;
-import randoop.generation.TestUtils;
+import randoop.generation.*;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
@@ -268,6 +262,9 @@ public class GenTests extends GenInputsAbstract {
       System.out.println("Error in conditions: " + e.getMessage());
       System.exit(1);
     }
+
+    // Copy the names of all the classes under test into the coverage tracker.
+    CoverageTracker.instance.setClassesUnderTest(classnames);
 
     OperationModel operationModel = null;
     try {

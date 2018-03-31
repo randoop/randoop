@@ -1,8 +1,9 @@
-package randoop.main;
+package randoop.generation;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.jacoco.core.analysis.*;
@@ -18,10 +19,10 @@ import org.jacoco.core.runtime.RuntimeData;
  * http://www.jacoco.org/jacoco/trunk/doc/examples/java/CoreTutorial.java
  */
 public class CoverageTracker {
-  public static final CoverageTracker instance = new CoverageTracker();
+  public static CoverageTracker instance = new CoverageTracker();
 
   private final IRuntime runtime = new LoggerRuntime();
-  private final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
+  private final MemoryClassLoader memoryClassLoader;
 
   private final ExecutionDataStore executionData = new ExecutionDataStore();
   private final SessionInfoStore sessionInfos = new SessionInfoStore();
@@ -38,6 +39,9 @@ public class CoverageTracker {
    */
   private final Map<String, Class<?>> instrumentedClasses = new HashMap<>();
 
+  /** Set of names of all the classes under test */
+  private Set<String> classesUnderTest = new HashSet<>();
+
   /**
    * Coverage details related to a single method under test. Tracks total number of branches and
    * number of uncovered branches.
@@ -50,11 +54,12 @@ public class CoverageTracker {
   }
 
   private CoverageTracker() {
-    instrumenter = new Instrumenter(runtime);
+    this.memoryClassLoader = new MemoryClassLoader(this);
+    this.instrumenter = new Instrumenter(runtime);
+    this.data = new RuntimeData();
 
-    data = new RuntimeData();
     try {
-      runtime.startup(data);
+      this.runtime.startup(data);
     } catch (Exception e) {
       e.printStackTrace();
       System.exit(1);
@@ -62,38 +67,60 @@ public class CoverageTracker {
   }
 
   /**
-   * Instruments and loads into memory, each of the given classes.
+   * Copy the set of names of classes under test.
    *
-   * @param classNames fully-qualified names of classes
+   * @param classesUnderTest names of all the classes under test.
    */
-  public void instrumentAndLoad(Set<String> classNames) {
-    if (classNames == null) {
-      return;
-    }
+  public void setClassesUnderTest(Set<String> classesUnderTest) {
+    this.classesUnderTest = new HashSet<>(classesUnderTest);
+  }
 
-    // Instrument and load into memory, each class that is under test.
-    for (String className : classNames) {
-      final byte[] instrumented;
+  /**
+   * Attempts to instrument a class and return the byte array representation.
+   *
+   * @param className name of the class to instrument.
+   * @return the instrumented bytes of the class, null if instrumentation failed.
+   */
+  public byte[] instrumentClass(String className) {
+    // Only instrument classes under test and their nested classes.
+    if (!classesUnderTest.contains(className)) {
+      boolean isNestedClass = false;
 
-      final String resource = '/' + className.replace('.', '/') + ".class";
-      InputStream original = getClass().getResourceAsStream(resource);
-
-      if (original == null) {
-        System.err.println("No resource with name: " + resource + " found!");
-        continue;
+      // Determine if this class is a nested class, in which case, the name of some
+      // existing class under test would be the prefix of this class's name.
+      for (String classUnderTest : classesUnderTest) {
+        if (className.startsWith(classUnderTest)) {
+          isNestedClass = true;
+          break;
+        }
       }
 
-      try {
-        // Instrument the class to prepare for coverage collection later.
-        instrumented = instrumenter.instrument(original, className);
-        original.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-        continue;
+      // If it's not explicitly a class under test, or a nested class of one, don't instrument the class.
+      // Examples include java.lang classes.
+      if (!isNestedClass) {
+        return null;
       }
-
-      memoryClassLoader.addDefinition(className, instrumented);
     }
+
+    final byte[] instrumented;
+    final String resource = '/' + className.replace('.', '/') + ".class";
+    InputStream original = getClass().getResourceAsStream(resource);
+
+    if (original == null) {
+      System.err.println("No resource with name: " + resource + " found!");
+      return null;
+    }
+
+    try {
+      // Instrument the class to prepare for coverage collection later.
+      instrumented = instrumenter.instrument(original, className);
+      original.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
+
+    return instrumented;
   }
 
   /**
@@ -152,9 +179,8 @@ public class CoverageTracker {
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
       for (final IMethodCoverage cm : cc.getMethods()) {
         String methodName = cc.getName() + "." + cm.getName();
-        //        System.out.println(methodName);
-        //        System.out.println("Total branches: " + cm.getBranchCounter().getTotalCount());
-        //        System.out.println("Missed count: " + cm.getBranchCounter().getMissedCount());
+
+        System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
 
         CoverageDetails methodDetails = coverageDetailsMap.get(methodName);
         if (methodDetails == null) {
@@ -166,7 +192,7 @@ public class CoverageTracker {
         coverageDetailsMap.put(methodName, methodDetails);
       }
     }
-    //    System.out.println("---------------------------");
+    System.out.println("---------------------------");
   }
 
   /** Clean up the coverage tracker instance. */

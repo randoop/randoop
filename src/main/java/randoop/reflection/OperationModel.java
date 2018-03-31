@@ -36,8 +36,8 @@ import randoop.contract.EqualsToNullRetFalse;
 import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
+import randoop.generation.CoverageTracker;
 import randoop.main.ClassNameErrorHandler;
-import randoop.main.CoverageTracker;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
@@ -467,11 +467,6 @@ public class OperationModel {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
     }
 
-    if (GenInputsAbstract.enable_bloodhound) {
-      // Load in instrumented versions of all classes under test first.
-      CoverageTracker.instance.instrumentAndLoad(classnames);
-    }
-
     // Collect classes under test
     Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
     for (String classname : classnames) {
@@ -504,6 +499,7 @@ public class OperationModel {
           }
         } else {
           mgr.apply(c);
+
           if (coveredClassesGoalNames.contains(classname)) {
             coveredClassesGoal.add(c);
           }

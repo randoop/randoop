@@ -3,7 +3,6 @@ package randoop.generation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import randoop.main.CoverageTracker;
 import randoop.operation.TypedOperation;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
@@ -62,7 +61,7 @@ public class Bloodhound implements TypedOperationSelector {
   private final double p = 0.5;
 
   /** Hyper-parameter for determining when to recompute branch coverage. */
-  private final int branchCoverageInterval = 100;
+  private final int branchCoverageInterval = 50;
 
   /** Maximum number of successful calls to any method under test. */
   private int maxSuccessfulCalls = 0;

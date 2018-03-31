@@ -1,24 +1,18 @@
-package randoop.main;
+package randoop.generation;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /** A class loader that loads classes from in-memory data. */
 public class MemoryClassLoader extends ClassLoader {
-  /** Map from fully-qualified class name to the byte representation of the class. */
-  private final Map<String, byte[]> definitions = new HashMap<>();
-
   /** Map from fully-qualified class name to class object. */
   private final Map<String, Class<?>> loadedClasses = new HashMap<>();
 
-  /**
-   * Add a in-memory representation of a class.
-   *
-   * @param name name of the class
-   * @param bytes class definition
-   */
-  public void addDefinition(final String name, final byte[] bytes) {
-    definitions.put(name, bytes);
+  /** Coverage tracker for instrumenting classes. */
+  private final CoverageTracker coverageTracker;
+
+  public MemoryClassLoader(CoverageTracker coverageTracker) {
+    this.coverageTracker = coverageTracker;
   }
 
   /**
@@ -37,7 +31,8 @@ public class MemoryClassLoader extends ClassLoader {
       return loadedClass;
     }
 
-    final byte[] bytes = definitions.get(name);
+    // Attempt to instrument the class identified by the class name.
+    final byte[] bytes = coverageTracker.instrumentClass(name);
     if (bytes != null) {
       loadedClass = defineClass(name, bytes, 0, bytes.length);
     } else {
@@ -45,7 +40,6 @@ public class MemoryClassLoader extends ClassLoader {
     }
 
     loadedClasses.put(name, loadedClass);
-
     return loadedClass;
   }
 }
