@@ -52,7 +52,7 @@ public class Bloodhound implements TypedOperationSelector {
    * List of operations, identical to ForwardGenerator's operation list. Needed for getting weighted
    * member when using {@link Randomness}.
    */
-  private SimpleArrayList<TypedOperation> operationSimpleList = new SimpleArrayList<>();
+  private final SimpleArrayList<TypedOperation> operationSimpleList;
 
   /** Hyper-parameter for balancing branch coverage and number of time a method was chosen. */
   private final double alpha = 0.7;
@@ -61,7 +61,7 @@ public class Bloodhound implements TypedOperationSelector {
   private final double p = 0.5;
 
   /** Hyper-parameter for determining when to recompute branch coverage. */
-  private final int branchCoverageInterval = 50;
+  private final int branchCoverageInterval = 100;
 
   /** Maximum number of successful calls to any method under test. */
   private int maxSuccessfulCalls = 0;

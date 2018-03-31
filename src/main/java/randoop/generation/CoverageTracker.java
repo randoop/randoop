@@ -33,12 +33,6 @@ public class CoverageTracker {
   /** Map from method name to coverage details. */
   private final Map<String, CoverageDetails> coverageDetailsMap = new HashMap<>();
 
-  /**
-   * Map from fully-qualified class name to instrumented version, for all classes that are
-   * instrumented through the {@code CoverageTracker} class.
-   */
-  private final Map<String, Class<?>> instrumentedClasses = new HashMap<>();
-
   /** Set of names of all the classes under test */
   private Set<String> classesUnderTest = new HashSet<>();
 
@@ -127,7 +121,7 @@ public class CoverageTracker {
    * Returns the instrumented version of the class.
    *
    * @param className name of the class
-   * @return {@Code Class} object that has been instrumented for coverage data collection. Returns
+   * @return {@code Class} object that has been instrumented for coverage data collection. Returns
    *     null if class with target name cannot be found.
    */
   public Class<?> getInstrumentedClass(String className) {
@@ -135,15 +129,9 @@ public class CoverageTracker {
       return null;
     }
 
-    // Check our cache first, to see if this class has already been loaded.
-    Class<?> instrumentedClass = instrumentedClasses.get(className);
-    if (instrumentedClass != null) {
-      return instrumentedClass;
-    }
-
+    Class<?> instrumentedClass = null;
     try {
       instrumentedClass = memoryClassLoader.loadClass(className);
-      instrumentedClasses.put(className, instrumentedClass);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
@@ -164,7 +152,7 @@ public class CoverageTracker {
     Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 
     // Analyze the coverage of each of the tracked classes.
-    for (String className : instrumentedClasses.keySet()) {
+    for (String className : classesUnderTest) {
       String resource = '/' + className.replace('.', '/') + ".class";
       InputStream original = getClass().getResourceAsStream(resource);
       try {

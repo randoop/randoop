@@ -94,7 +94,6 @@ public class ReflectionManager {
    * @param c the class
    */
   public void apply(ClassVisitor visitor, Class<?> c) {
-    System.out.println(c.toString());
     if (predicate.isVisible(c)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Applying visitors to class " + c.getName());

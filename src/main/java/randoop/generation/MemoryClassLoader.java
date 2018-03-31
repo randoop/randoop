@@ -16,7 +16,7 @@ public class MemoryClassLoader extends ClassLoader {
   }
 
   /**
-   * Loads the class with the given name into this ClassLoader.
+   * Instruments and loads the class with the given name into this {@code ClassLoader}.
    *
    * @param name name of the class that is being loaded.
    * @param resolve if true, resolve the class.
@@ -26,6 +26,7 @@ public class MemoryClassLoader extends ClassLoader {
   @Override
   protected Class<?> loadClass(final String name, final boolean resolve)
       throws ClassNotFoundException {
+    // Check class cache first.
     Class<?> loadedClass = loadedClasses.get(name);
     if (loadedClass != null) {
       return loadedClass;
