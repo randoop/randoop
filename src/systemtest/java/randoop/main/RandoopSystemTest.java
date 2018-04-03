@@ -208,7 +208,7 @@ public class RandoopSystemTest {
             "java2.util2.TreeSet.first() ignore",
             "java2.util2.TreeSet.last() ignore",
             "java2.util2.TreeSet.readObject(java.io.ObjectInputStream) exclude",
-            "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) exclude",
+            "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore",
             "java2.util2.TreeSet.tailSet(java.lang.Object) ignore",
             "java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
@@ -265,6 +265,7 @@ public class RandoopSystemTest {
             "java2.util2.TreeSet.last() ignore",
             "java2.util2.TreeSet.readObject(java.io.ObjectInputStream) exclude",
             "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) exclude",
+            "java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore",
             "java2.util2.TreeSet.tailSet(java.lang.Object) ignore",
             "java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
@@ -318,11 +319,13 @@ public class RandoopSystemTest {
             "java2.util2.Arrays.med3(int[], int, int, int) exclude",
             "java2.util2.Arrays.med3(long[], int, int, int) exclude",
             "java2.util2.Arrays.med3(short[], int, int, int) exclude",
+            "java2.util2.Arrays.sort(byte[], int, int) ignore",
             "java2.util2.Arrays.sort(char[], int, int) ignore",
             "java2.util2.Arrays.sort(java.lang.Object[], int, int, java2.util2.Comparator) ignore",
             "java2.util2.Arrays.swap(char[], int, int) ignore",
             "java2.util2.Arrays.swap(int[], int, int) ignore",
             "java2.util2.Arrays.swap(java.lang.Object[], int, int) exclude",
+            "java2.util2.Arrays.swap(long[], int, int) ignore",
             "java2.util2.Arrays.vecswap(byte[], int, int, int) exclude",
             "java2.util2.Arrays.vecswap(char[], int, int, int) exclude",
             "java2.util2.Arrays.vecswap(double[], int, int, int) exclude",
@@ -345,6 +348,7 @@ public class RandoopSystemTest {
             "java2.util2.Hashtable.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.LinkedHashMap.newValueIterator() ignore",
             "java2.util2.LinkedList.readObject(java.io.ObjectInputStream) exclude",
+            "java2.util2.LinkedList.remove(int) ignore",
             "java2.util2.LinkedList.set(int, java.lang.Object) ignore",
             "java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
             "java2.util2.Observable.clearChanged() exclude",
