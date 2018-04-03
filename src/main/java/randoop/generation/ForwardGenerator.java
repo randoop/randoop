@@ -245,9 +245,9 @@ public class ForwardGenerator extends AbstractGenerator {
     double execTime = (GenInputsAbstract.deterministic ? 1.0 : eSeq.exectime);
     double execCount = sequenceExecutionCount.get(eSeq.sequence);
     double dynamicWeight = 1.0 / (execTime * execCount * Math.sqrt(eSeq.sequence.size()));
-    Randomness.selectionLog.log(
-        "processWeights(%s): exectime %s, execution count %s, eSeq.sequence.size() %s%n",
-        eSeq, execTime, execCount, eSeq.sequence.size());
+    //    Randomness.selectionLog.log(
+    //        "processWeights(%s): exectime %s, execution count %s, eSeq.sequence.size() %s%n",
+    //        eSeq, execTime, execCount, eSeq.sequence.size());
 
     // class literals weights, only if this sequence is a class literal
     double literalWeight;
@@ -260,9 +260,9 @@ public class ForwardGenerator extends AbstractGenerator {
     double weight = defaultWeight * dynamicWeight * literalWeight;
     assert weight >= 0;
 
-    Randomness.selectionLog.log(
-        "processWeights(%s): weight %s, defaultWeight %s, dynamicWeight %s, literalWeight %s%n",
-        eSeq, weight, defaultWeight, dynamicWeight, literalWeight);
+    //    Randomness.selectionLog.log(
+    //        "processWeights(%s): weight %s, defaultWeight %s, dynamicWeight %s, literalWeight %s%n",
+    //        eSeq, weight, defaultWeight, dynamicWeight, literalWeight);
 
     weightMap.put(eSeq.sequence, weight); // update the final weight for this sequence
   }
