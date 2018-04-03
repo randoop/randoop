@@ -71,7 +71,7 @@ public final class Randomness {
   /**
    * Call this before every use of Randomness.random.
    *
-   * @param caller the name of the method that called Randomness.random.
+   * @param caller the name of the method that called Randomness.random
    */
   private static void incrementCallsToRandom(String caller) {
     totalCallsToRandom++;
