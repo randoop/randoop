@@ -335,7 +335,7 @@ public class JUnitCreator {
    * Creates the JUnit4 suite class for the tests in this object as a {@code String}.
    *
    * @param suiteClassName the name of the suite class created
-   * @param testClassNames the set of names of the test classes in the suite
+   * @param testClassNames the names of the test classes in the suite
    * @return the {@code String} with the declaration for the suite class
    */
   public String createTestSuite(String suiteClassName, Set<String> testClassNames) {
@@ -377,7 +377,7 @@ public class JUnitCreator {
    * Create non-reflective test driver as a main class.
    *
    * @param driverName the name for the driver class
-   * @param testClassNames the set of names of the test classes in the suite
+   * @param testClassNames the names of the test classes in the suite
    * @return the test driver class as a {@code String}
    */
   public String createTestDriver(String driverName, Set<String> testClassNames) {

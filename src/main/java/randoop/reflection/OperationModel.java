@@ -499,7 +499,6 @@ public class OperationModel {
           }
         } else {
           mgr.apply(c);
-
           if (coveredClassesGoalNames.contains(classname)) {
             coveredClassesGoal.add(c);
           }
