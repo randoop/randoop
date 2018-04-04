@@ -8,21 +8,20 @@ import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 
 /**
- * Implements the Bloodhound component, as described by the authors of the Guided Random Testing
- * (GRT) paper. This implementation uses the same formula that is defined in the GRT paper to
- * compute a weight for each method. More specifically, Bloodhound computes a weight for each method
- * under test by taking a weighted combination of the uncovered branch ratio and the ratio between
- * the number of times the method has been invoked and the maximum number of times any method under
- * test has been invoked. However, some hyper-parameters and edge cases were left unspecified in the
- * GRT paper.
+ * Implements the Bloodhound component, as described by the Guided Random Testing (GRT) paper.
+ * Bloodhound computes a weight for each method under test by taking a weighted combination of the
+ * uncovered branch ratio and the ratio between the number of times the method has been invoked and
+ * the maximum number of times any method under test has been invoked.
  *
- * <p>We have chosen our own values for the following unspecified aspects: 1) alpha - parameter to
- * balance branch coverage and number of invocations when computing weight. 2) p - parameter for
- * decreasing weights of methods between updates to coverage information. 3) Interval for
- * recomputing branch coverage information. 4) Default weight for cases where a method has zero
- * branches or computed weight is zero.
+ * <p>However, some hyper-parameters and edge cases were left unspecified in the GRT paper. We have
+ * chosen our own values for the following unspecified aspects: 1) alpha - parameter to balance
+ * branch coverage and number of invocations when computing weight. 2) p - parameter for decreasing
+ * weights of methods between updates to coverage information. 3) Interval for recomputing branch
+ * coverage information. 4) Default weight for cases where a method has zero branches or computed
+ * weight is zero.
  */
 public class Bloodhound implements TypedOperationSelector {
+
   /**
    * Map of methods under test to their weights. These weights are dynamic and depend on branch
    * coverage.
@@ -54,7 +53,7 @@ public class Bloodhound implements TypedOperationSelector {
    */
   private final SimpleArrayList<TypedOperation> operationSimpleList;
 
-  /** Hyper-parameter for balancing branch coverage and number of time a method was chosen. */
+  /** Hyper-parameter for balancing branch coverage and number of times a method was chosen. */
   private final double alpha = 0.7;
 
   /** Hyper-parameter for decreasing weights of methods between updates to coverage information. */
@@ -63,15 +62,14 @@ public class Bloodhound implements TypedOperationSelector {
   /** Hyper-parameter for determining when to recompute branch coverage. */
   private final int branchCoverageInterval = 100;
 
-  /** Maximum number of successful calls to any method under test. */
+  /** Maximum number of successful calls so far to any method under test. */
   private int maxSuccessfulCalls = 0;
 
   /** Step number used to determine when to recompute method weights. */
   private int stepNum = 0;
 
   /**
-   * Construct a new instance of Bloodhound and copy the contents of the input list into
-   * Bloodhound's internal list.
+   * Construct a new instance of Bloodhound, which will choose from among the given operations.
    *
    * @param operations list of operations to copy.
    */
@@ -80,18 +78,13 @@ public class Bloodhound implements TypedOperationSelector {
   }
 
   /**
-   * The branch coverage information for all methods under test is updated at regular intervals.
-   * Specifically, at every x'th call of this method, branch coverage is collected, where x is equal
-   * to {@code branchCoverageInterval}.
+   * The branch coverage information for all methods under test is updated at every {@code
+   * branchCoverageInterval}'th call of this method.
    */
-  private void updateBranchCoverageAtInterval() {
+  private void updateBranchCoverageMaybe() {
     stepNum += 1;
-
-    // After the specified interval, recompute the current coverage information.
     if (stepNum % branchCoverageInterval == 0) {
       methodSelections.clear();
-
-      // Collect coverage information of all methods under test.
       CoverageTracker.instance.collect();
     }
   }
@@ -100,14 +93,15 @@ public class Bloodhound implements TypedOperationSelector {
    * Recompute weights for all methods under test. Each method under test is assigned a weight based
    * on a weighted combination of the number of branches uncovered and the ratio between the number
    * of times this method has been invoked and the maximum number of times any method under test has
-   * been invoked. The weighting scheme is based on the scheme described by the authors of the
-   * Guided Random Testing (GRT) paper.
+   * been invoked. The weighting scheme is based on Bloodhound in the Guided Random Testing (GRT)
+   * paper.
    */
   private void updateWeightsForOperations() {
     // The number of methods under test, corresponds to |M| in the GRT paper.
     int numOperations = this.operationSimpleList.size();
 
-    // Default weight is uniform probability.
+    // Default weight is uniform probability.  If is used if no coverage details are available.
+    // This is the case for classes like java.lang.Object (not explicitly under test).
     double weight = 1.0 / numOperations;
 
     // Recompute weights for all operations.
@@ -115,9 +109,8 @@ public class Bloodhound implements TypedOperationSelector {
       CoverageTracker.CoverageDetails covDet =
           CoverageTracker.instance.getDetailsForMethod(operation.getName());
 
-      // Use default weight if no coverage details are available.
-      // This is the case for classes like java.lang.Object (not explicitly under test).
       if (covDet != null) {
+        // Coverage details are available.
 
         // The number of successful invocations of this method. Corresponds to succ(m).
         Integer numSuccessfulInvocation = methodSuccCalls.get(operation);
@@ -125,8 +118,8 @@ public class Bloodhound implements TypedOperationSelector {
           numSuccessfulInvocation = 0;
         }
 
-        // If this method has no uncovered branches, or it's been invoked the current maximum number
-        // of times, use the default weight and skip this step.
+        // If this method has no uncovered branches, or it is the most-invoked method,
+        // use the default weight and skip this step.
         if (covDet.uncoveredBranches != 0 && numSuccessfulInvocation != maxSuccessfulCalls) {
           // Uncovered branch ratio of this method. Corresponds to uncovRatio(m) in the GRT paper.
           double uncoveredRatio = 0.5;
@@ -169,9 +162,9 @@ public class Bloodhound implements TypedOperationSelector {
    * @return the chosen {@code TypedOperation} for the new sequence
    */
   @Override
-  public TypedOperation selectNextOperation() {
+  public TypedOperation selectOperation() {
     // Collect branch coverage and recompute weights for methods under test.
-    updateBranchCoverageAtInterval();
+    updateBranchCoverageMaybe();
     updateWeightsForOperations();
 
     TypedOperation operation = Randomness.randomMemberWeighted(operationSimpleList, methodWeights);

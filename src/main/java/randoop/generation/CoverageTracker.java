@@ -33,7 +33,7 @@ public class CoverageTracker {
   /** Map from method name to coverage details. */
   private final Map<String, CoverageDetails> coverageDetailsMap = new HashMap<>();
 
-  /** Set of names of all the classes under test */
+  /** Names of all the classes under test */
   private Set<String> classesUnderTest = new HashSet<>();
 
   /**
@@ -61,9 +61,9 @@ public class CoverageTracker {
   }
 
   /**
-   * Copy the set of names of classes under test.
+   * Set which classes are under test.
    *
-   * @param classesUnderTest names of all the classes under test.
+   * @param classesUnderTest names of all the classes under test
    */
   public void setClassesUnderTest(Set<String> classesUnderTest) {
     this.classesUnderTest = new HashSet<>(classesUnderTest);

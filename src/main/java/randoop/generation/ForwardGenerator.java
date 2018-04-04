@@ -96,9 +96,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     initializeRuntimePrimitivesSeen();
 
-    // If bloodhound is enabled, select the next operation while considering the methods' weights.
     if (GenInputsAbstract.enable_bloodhound) {
-      // Construct an instance of bloodhound and copy all operations into bloodhound's list of operations.
+      // If Bloodhound is enabled, select the next operation while considering the methods' weights.
       this.operationSelector = new Bloodhound(operations);
     } else {
       this.operationSelector = new UniformRandomMethodSelection(operations);
@@ -286,7 +285,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // Select the next operation to use in constructing a new and unique sequence.
-    TypedOperation operation = operationSelector.selectNextOperation();
+    TypedOperation operation = operationSelector.selectOperation();
 
     Log.logLine("Selected operation: " + operation.toString());
 

@@ -4,7 +4,7 @@ import java.util.List;
 import randoop.operation.TypedOperation;
 import randoop.util.Randomness;
 
-/** This class selects the next method with uniform, random probability. */
+/** This class selects a method with uniform probability. */
 public class UniformRandomMethodSelection implements TypedOperationSelector {
   private final List<TypedOperation> operations;
 
@@ -18,12 +18,12 @@ public class UniformRandomMethodSelection implements TypedOperationSelector {
   }
 
   /**
-   * Selects the next operation with uniform, random probability.
+   * Selects an operation with uniform probability.
    *
    * @return a random operation.
    */
   @Override
-  public TypedOperation selectNextOperation() {
+  public TypedOperation selectOperation() {
     return Randomness.randomMember(this.operations);
   }
 }
