@@ -6,11 +6,7 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Pattern;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -123,7 +119,7 @@ public class ICSE07ContainersTest {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
-    final int goalBranches = 96;
+    final int goalBranches = 21;
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(FibHeap.class);
@@ -155,7 +151,7 @@ public class ICSE07ContainersTest {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
-    final int goalBranches = 54;
+    final int goalBranches = 14;
     GenInputsAbstract.null_ratio = 0.5;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinTree.class);
@@ -184,7 +180,7 @@ public class ICSE07ContainersTest {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
-    final int goalBranches = 106;
+    final int goalBranches = 37;
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(TreeMap.class);
@@ -215,7 +211,7 @@ public class ICSE07ContainersTest {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
-    final int goalBranches = 101;
+    final int goalBranches = 17;
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinomialHeap.class);
@@ -236,6 +232,9 @@ public class ICSE07ContainersTest {
     List<Pattern> omitPatterns = new ArrayList<>();
     omitPatterns.add(Pattern.compile("findMinimum\\(\\)"));
     runRandoop("BinomialHeap", classList, omitPatterns, stopper, excludeNames);
+
+    Set<String> strings = new TreeSet<>(randoop.test.issta2006.BinomialHeap.branchFingerprints);
+    System.out.println(strings);
     assertEquals(goalBranches, randoop.test.issta2006.BinomialHeap.branchFingerprints.size());
   }
 }

@@ -146,8 +146,9 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
   }
 
   private static int gen_native(int br, BinomialHeapNode n1, BinomialHeapNode n2) {
-    String res = br + ",";
+     String res = br + ",";
     // For Basic Block Coverage
+    /*
     res += nodeFingerprint(n1);
     res += nodeFingerprint(n2);
     if (n1 != null && n2 != null) {
@@ -162,7 +163,7 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
       if (itemp < itemp2) res += "<";
       if (itemp == itemp2) res += "=";
       if (itemp > itemp2) res += ">";
-    }
+    }*/
     //END comment here
     if (!branchFingerprints.contains(res)) {
       branchFingerprints.add(res);
