@@ -31,7 +31,7 @@ public class CoverageTracker {
   private final RuntimeData data;
 
   /** Map from method name to coverage details. */
-  private final Map<String, CoverageDetails> coverageDetailsMap = new HashMap<>();
+  private final Map<String, BranchCoverage> coverageDetailsMap = new HashMap<>();
 
   /** Names of all the classes under test */
   private Set<String> classesUnderTest = new HashSet<>();
@@ -40,7 +40,7 @@ public class CoverageTracker {
    * Coverage details related to a single method under test. Tracks total number of branches and
    * number of uncovered branches.
    */
-  public static class CoverageDetails {
+  public static class BranchCoverage {
     /** Total number of branches. */
     public int numBranches;
     /** Number of uncovered branches. */
@@ -77,23 +77,8 @@ public class CoverageTracker {
    */
   public byte[] instrumentClass(String className) {
     // Only instrument classes under test and their nested classes.
-    if (!classesUnderTest.contains(className)) {
-      boolean isNestedClass = false;
-
-      // Determine if this class is a nested class, in which case, the name of some
-      // existing class under test would be the prefix of this class's name.
-      for (String classUnderTest : classesUnderTest) {
-        if (className.startsWith(classUnderTest)) {
-          isNestedClass = true;
-          break;
-        }
-      }
-
-      // If it's not explicitly a class under test, or a nested class of one, don't instrument the class.
-      // Examples include java.lang classes.
-      if (!isNestedClass) {
-        return null;
-      }
+    if (!classesUnderTest.contains(className) && !isNestedClass(className)) {
+      return null;
     }
 
     final byte[] instrumented;
@@ -101,8 +86,7 @@ public class CoverageTracker {
     InputStream original = getClass().getResourceAsStream(resource);
 
     if (original == null) {
-      System.err.println("No resource with name: " + resource + " found!");
-      return null;
+      throw new Error("No resource with name: " + resource + " found by CoverageTracker!");
     }
 
     try {
@@ -118,6 +102,24 @@ public class CoverageTracker {
   }
 
   /**
+   * Determine if a class with the given name is a nested class based on the names of the other
+   * classes under test.
+   * @param className the name of the class to check
+   * @return true if the name corresponds to that of a nested class, false otherwise.
+   */
+  private boolean isNestedClass(String className) {
+    // Determine if this class is a nested class, in which case, the name of some
+    // existing class under test would be the prefix of this class's name.
+    for (String classUnderTest : classesUnderTest) {
+      if (className.startsWith(classUnderTest + "$")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Returns the instrumented version of the class.
    *
    * @param className name of the class
@@ -125,7 +127,7 @@ public class CoverageTracker {
    *     null if class with target name cannot be found.
    */
   public Class<?> getInstrumentedClass(String className) {
-    if (className == null || className.isEmpty()) {
+    if (className == null) {
       return null;
     }
 
@@ -159,7 +161,7 @@ public class CoverageTracker {
         analyzer.analyzeClass(original, className);
         original.close();
       } catch (IOException e) {
-        e.printStackTrace();
+        throw new Error(e);
       }
     }
 
@@ -170,9 +172,9 @@ public class CoverageTracker {
 
         System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
 
-        CoverageDetails methodDetails = coverageDetailsMap.get(methodName);
+        BranchCoverage methodDetails = coverageDetailsMap.get(methodName);
         if (methodDetails == null) {
-          methodDetails = new CoverageDetails();
+          methodDetails = new BranchCoverage();
         }
         methodDetails.numBranches = cm.getBranchCounter().getTotalCount();
         methodDetails.uncoveredBranches = cm.getBranchCounter().getMissedCount();
@@ -194,7 +196,7 @@ public class CoverageTracker {
    * @param methodName name of the method to examine.
    * @return coverage details associated with the method
    */
-  public CoverageDetails getDetailsForMethod(String methodName) {
+  public BranchCoverage getDetailsForMethod(String methodName) {
     return this.coverageDetailsMap.get(methodName);
   }
 }

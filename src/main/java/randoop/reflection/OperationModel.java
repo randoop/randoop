@@ -470,13 +470,7 @@ public class OperationModel {
     // Collect classes under test
     Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
     for (String classname : classnames) {
-      Class<?> c;
-      if (GenInputsAbstract.enable_bloodhound) {
-        c = CoverageTracker.instance.getInstrumentedClass(classname);
-      } else {
-        c = getClass(classname, errorHandler);
-      }
-
+      Class<?> c = getClass(classname, errorHandler);
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null && !visitedClasses.contains(c)) {
         visitedClasses.add(c);
@@ -509,12 +503,7 @@ public class OperationModel {
     // Collect covered classes
     for (String classname : coveredClassesGoalNames) {
       if (!classnames.contains(classname)) {
-        Class<?> c;
-        if (GenInputsAbstract.enable_bloodhound) {
-          c = CoverageTracker.instance.getInstrumentedClass(classname);
-        } else {
-          c = getClass(classname, errorHandler);
-        }
+        Class<?> c = getClass(classname, errorHandler);
         if (c != null) {
           if (!visibility.isVisible(c)) {
             System.out.println(
@@ -531,6 +520,10 @@ public class OperationModel {
 
   /* May return null if errorHandler just warns on bad names. */
   private static Class<?> getClass(String classname, ClassNameErrorHandler errorHandler) {
+    if (GenInputsAbstract.enable_bloodhound) {
+      return CoverageTracker.instance.getInstrumentedClass(classname);
+    }
+
     try {
       return TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException e) {

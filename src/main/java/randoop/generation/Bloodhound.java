@@ -36,7 +36,7 @@ public class Bloodhound implements TypedOperationSelector {
   private final Map<TypedOperation, Integer> methodSelections = new HashMap<>();
 
   /**
-   * Map of methods under test to the number of times they have been successfully invoked. We
+   * Map of methods under test to the number of times they have been invoked. We
    * define, for a method under test, the number of times that is has been invoked as the number of
    * times it is chosen by the {@link ForwardGenerator} to extend an existing sequence to construct
    * a new and unique sequence. This definition is the same as that of {@code methodSelections}
@@ -48,15 +48,18 @@ public class Bloodhound implements TypedOperationSelector {
   private final Map<TypedOperation, Integer> methodSuccCalls = new HashMap<>();
 
   /**
-   * List of operations, identical to ForwardGenerator's operation list. Needed for getting weighted
-   * member when using {@link Randomness}.
+   * List of operations, identical to ForwardGenerator's operation list. This is used by {@link Randomness}
+   * to randomly select an element from this weighted distribution of {@code TypedOperation}s.
    */
   private final SimpleArrayList<TypedOperation> operationSimpleList;
 
   /** Hyper-parameter for balancing branch coverage and number of times a method was chosen. */
   private final double alpha = 0.7;
 
-  /** Hyper-parameter for decreasing weights of methods between updates to coverage information. */
+  /**
+   * Hyper-parameter for decreasing weights of methods between updates to coverage information.
+   * The GRT paper also names this parameter 'p'.
+   */
   private final double p = 0.5;
 
   /** Hyper-parameter for determining when to recompute branch coverage. */
@@ -65,7 +68,12 @@ public class Bloodhound implements TypedOperationSelector {
   /** Maximum number of successful calls so far to any method under test. */
   private int maxSuccessfulCalls = 0;
 
-  /** Step number used to determine when to recompute method weights. */
+  /**
+   * Step number used to determine when to recompute method weights.
+   * A step occurs every time {@link ForwardGenerator} selects a new operation to
+   * construct a new and unique sequence. Thus, {@code stepNum} will be equal to the
+   * number of times {@code step()} has been invoked in {@link ForwardGenerator}.
+   */
   private int stepNum = 0;
 
   /**
@@ -106,7 +114,7 @@ public class Bloodhound implements TypedOperationSelector {
 
     // Recompute weights for all operations.
     for (TypedOperation operation : operationSimpleList) {
-      CoverageTracker.CoverageDetails covDet =
+      CoverageTracker.BranchCoverage covDet =
           CoverageTracker.instance.getDetailsForMethod(operation.getName());
 
       if (covDet != null) {
@@ -169,10 +177,10 @@ public class Bloodhound implements TypedOperationSelector {
 
     TypedOperation operation = Randomness.randomMemberWeighted(operationSimpleList, methodWeights);
 
-    // Update the number of times this method was selected for a new sequence.
+    // Update the number of times this method was invoked in our methodSelections map.
     incrementInMap(methodSelections, operation);
 
-    // Update the number of times this method was successfully invoked.
+    // Update the number of times this method was invoked in our numSuccessfulInvocations map.
     int numSuccessfulInvocations = incrementInMap(methodSuccCalls, operation);
     maxSuccessfulCalls = Math.max(maxSuccessfulCalls, numSuccessfulInvocations);
 
