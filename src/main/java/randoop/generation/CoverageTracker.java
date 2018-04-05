@@ -104,6 +104,7 @@ public class CoverageTracker {
   /**
    * Determine if a class with the given name is a nested class based on the names of the other
    * classes under test.
+   *
    * @param className the name of the class to check
    * @return true if the name corresponds to that of a nested class, false otherwise.
    */

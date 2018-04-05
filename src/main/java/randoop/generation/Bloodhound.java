@@ -36,20 +36,20 @@ public class Bloodhound implements TypedOperationSelector {
   private final Map<TypedOperation, Integer> methodSelections = new HashMap<>();
 
   /**
-   * Map of methods under test to the number of times they have been invoked. We
-   * define, for a method under test, the number of times that is has been invoked as the number of
-   * times it is chosen by the {@link ForwardGenerator} to extend an existing sequence to construct
-   * a new and unique sequence. This definition is the same as that of {@code methodSelections}
-   * except that we do not clear this map every time we recompute branch coverage. Thus, the value
-   * that each method maps to will always be non-decreasing throughout the duration of one run of
-   * Randoop. The GRT paper does not state its definition of the "number of invocations" of a method
-   * under test.
+   * Map of methods under test to the number of times they have been invoked. We define, for a
+   * method under test, the number of times that is has been invoked as the number of times it is
+   * chosen by the {@link ForwardGenerator} to extend an existing sequence to construct a new and
+   * unique sequence. This definition is the same as that of {@code methodSelections} except that we
+   * do not clear this map every time we recompute branch coverage. Thus, the value that each method
+   * maps to will always be non-decreasing throughout the duration of one run of Randoop. The GRT
+   * paper does not state its definition of the "number of invocations" of a method under test.
    */
   private final Map<TypedOperation, Integer> methodSuccCalls = new HashMap<>();
 
   /**
-   * List of operations, identical to ForwardGenerator's operation list. This is used by {@link Randomness}
-   * to randomly select an element from this weighted distribution of {@code TypedOperation}s.
+   * List of operations, identical to ForwardGenerator's operation list. This is used by {@link
+   * Randomness} to randomly select an element from this weighted distribution of {@code
+   * TypedOperation}s.
    */
   private final SimpleArrayList<TypedOperation> operationSimpleList;
 
@@ -57,8 +57,8 @@ public class Bloodhound implements TypedOperationSelector {
   private final double alpha = 0.7;
 
   /**
-   * Hyper-parameter for decreasing weights of methods between updates to coverage information.
-   * The GRT paper also names this parameter 'p'.
+   * Hyper-parameter for decreasing weights of methods between updates to coverage information. The
+   * GRT paper also names this parameter 'p'.
    */
   private final double p = 0.5;
 
@@ -69,10 +69,10 @@ public class Bloodhound implements TypedOperationSelector {
   private int maxSuccessfulCalls = 0;
 
   /**
-   * Step number used to determine when to recompute method weights.
-   * A step occurs every time {@link ForwardGenerator} selects a new operation to
-   * construct a new and unique sequence. Thus, {@code stepNum} will be equal to the
-   * number of times {@code step()} has been invoked in {@link ForwardGenerator}.
+   * Step number used to determine when to recompute method weights. A step occurs every time {@link
+   * ForwardGenerator} selects a new operation to construct a new and unique sequence. Thus, {@code
+   * stepNum} will be equal to the number of times {@code step()} has been invoked in {@link
+   * ForwardGenerator}.
    */
   private int stepNum = 0;
 
