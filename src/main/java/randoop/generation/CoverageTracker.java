@@ -171,7 +171,7 @@ public class CoverageTracker {
       for (final IMethodCoverage cm : cc.getMethods()) {
         String methodName = cc.getName() + "." + cm.getName();
 
-        System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
+        // System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
 
         BranchCoverage methodDetails = coverageDetailsMap.get(methodName);
         if (methodDetails == null) {
@@ -183,7 +183,7 @@ public class CoverageTracker {
         coverageDetailsMap.put(methodName, methodDetails);
       }
     }
-    System.out.println("---------------------------");
+    // System.out.println("---------------------------");
   }
 
   /** Clean up the coverage tracker instance. */

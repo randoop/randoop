@@ -147,7 +147,7 @@ public class ICSE07ContainersTest {
         Pattern.compile(
             "decreaseKey|delete\\(randoop.test.issta2006.Node\\)|empty\\(\\)|insert\\(randoop.test.issta2006.Node\\)|min\\(\\)|size\\(\\)|union"));
     runRandoop("FibHeap", classList, omitPatterns, stopper, excludeNames);
-    assertEquals(goalBranches, FibHeap.branchFingerprints.size());
+    assertTrue(goalBranches <= FibHeap.branchFingerprints.size());
   }
 
   @Test
@@ -176,7 +176,7 @@ public class ICSE07ContainersTest {
     List<Pattern> omitPatterns = new ArrayList<>();
     omitPatterns.add(Pattern.compile("find\\(int\\)|gen_native"));
     runRandoop("BinTree", classList, omitPatterns, stopper, excludeNames);
-    assertEquals(goalBranches, BinTree.branchFingerprints.size());
+    assertTrue(goalBranches <= BinTree.branchFingerprints.size());
   }
 
   @Test
@@ -207,7 +207,7 @@ public class ICSE07ContainersTest {
         Pattern.compile(
             "toString\\(\\)|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"));
     runRandoop("TreeMap", classList, omitPatterns, stopper, excludeNames);
-    assertEquals(goalBranches, TreeMap.branchFingerprints.size());
+    assertTrue(goalBranches <= TreeMap.branchFingerprints.size());
   }
 
   @Test
@@ -236,6 +236,6 @@ public class ICSE07ContainersTest {
     List<Pattern> omitPatterns = new ArrayList<>();
     omitPatterns.add(Pattern.compile("findMinimum\\(\\)"));
     runRandoop("BinomialHeap", classList, omitPatterns, stopper, excludeNames);
-    assertEquals(goalBranches, randoop.test.issta2006.BinomialHeap.branchFingerprints.size());
+    assertTrue(goalBranches <= randoop.test.issta2006.BinomialHeap.branchFingerprints.size());
   }
 }
