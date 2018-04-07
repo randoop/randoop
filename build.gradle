@@ -206,10 +206,12 @@ tasks.verifyGoogleJavaFormat {
   exclude 'src/testinput'
 }
 
-// should verifyGoogleJavaFormat before compiling
-tasks.withType(JavaCompile) {
-  dependsOn 'googleJavaFormat' // task name conflicts with plugin name
-}
+// This is annoying to happen on every build:  it may delete import statements
+// if there are certain types of syntax errors in the source code.
+// // should verifyGoogleJavaFormat before compiling
+// tasks.withType(JavaCompile) {
+//   dependsOn 'googleJavaFormat' // task name conflicts with plugin name
+// }
 
 /*
  * Configuration for compilation.

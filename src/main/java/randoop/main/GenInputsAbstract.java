@@ -517,7 +517,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
-  /** Enable bloodhound to prioritize methods with lower branch coverage. */
+  /**
+   * Enable the "bloodhound" technique from the GRT paper, which prioritizes methods with lower
+   * branch coverage.
+   */
   @Unpublicized
   @Option("Enable bloodhound to prioritize methods with lower branch coverage.")
   public static boolean enable_bloodhound = true;

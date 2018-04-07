@@ -69,7 +69,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
-  /** Selects the next method to use for creating new and unique sequences. */
+  /** Selects the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
 
   public ForwardGenerator(
@@ -284,7 +284,7 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
-    // Select the next operation to use in constructing a new and unique sequence.
+    // Select the next operation to use in constructing a new sequence.
     TypedOperation operation = operationSelector.selectOperation();
 
     Log.logLine("Selected operation: " + operation.toString());
