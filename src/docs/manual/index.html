@@ -227,17 +227,6 @@ Randoop supports three commands:
 </p>
 
 <ul>
-<li> <b>help</b> prints out a usage message.
-For details, see <a href="#getting_help">Getting Help</a>.
-Example uses:
-
-<pre class="code">
-java -classpath $(RANDOOP_JAR) randoop.main.Main help
-java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
-java -classpath $(RANDOOP_JAR) randoop.main.Main help minimize
-</pre>
-</li>
-
 <li> <b>gentests</b> generates unit tests. For details,
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
@@ -252,6 +241,17 @@ Example use:
 
 <pre class="code">
 java -cp $(RANDOOP_JAR) randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=<em>myclasspath</em>
+</pre>
+</li>
+
+<li> <b>help</b> prints out a usage message.
+For details, see <a href="#getting_help">Getting Help</a>.
+Example uses:
+
+<pre class="code">
+java -classpath $(RANDOOP_JAR) randoop.main.Main help
+java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
+java -classpath $(RANDOOP_JAR) randoop.main.Main help minimize
 </pre>
 </li>
 
