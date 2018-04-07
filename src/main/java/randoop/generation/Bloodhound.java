@@ -14,11 +14,15 @@ import randoop.util.SimpleArrayList;
  * the maximum number of times any method under test has been invoked.
  *
  * <p>However, some hyper-parameters and edge cases were left unspecified in the GRT paper. We have
- * chosen our own values for the following unspecified aspects: 1) alpha - parameter to balance
- * branch coverage and number of invocations when computing weight. 2) p - parameter for decreasing
- * weights of methods between updates to coverage information. 3) Interval for recomputing branch
- * coverage information. 4) Default weight for cases where a method has zero branches or computed
- * weight is zero.
+ * chosen our own values for the following unspecified hyper-parameters:
+ *
+ * <ul>
+ *   <li>alpha - parameter to balance branch coverage and number of invocations when computing
+ *       weight.
+ *   <li>p - parameter for decreasing weights of methods between updates to coverage information.
+ *   <li>Interval for recomputing branch coverage information.
+ *   <li>Default weight for cases where a method has zero branches or computed weight is zero.
+ * </ul>
  */
 public class Bloodhound implements TypedOperationSelector {
 
@@ -29,50 +33,46 @@ public class Bloodhound implements TypedOperationSelector {
   private final Map<TypedOperation, Double> methodWeights = new HashMap<>();
 
   /**
-   * Map of methods under test to the number of times they have been selected by the {@link
-   * ForwardGenerator} to extend an existing sequence to construct a new and unique sequence. This
-   * map is cleared every time branch coverage is recomputed.
+   * Map of methods under test to the number of times they have been recently selected by the {@link
+   * ForwardGenerator} to construct a new sequence. This map is cleared every time branch coverage
+   * is recomputed.
    */
   private final Map<TypedOperation, Integer> methodSelections = new HashMap<>();
 
   /**
-   * Map of methods under test to the number of times they have been invoked. We define, for a
-   * method under test, the number of times that is has been invoked as the number of times it is
-   * chosen by the {@link ForwardGenerator} to extend an existing sequence to construct a new and
-   * unique sequence. This definition is the same as that of {@code methodSelections} except that we
-   * do not clear this map every time we recompute branch coverage. Thus, the value that each method
-   * maps to will always be non-decreasing throughout the duration of one run of Randoop. The GRT
-   * paper does not state its definition of the "number of invocations" of a method under test.
+   * Map of methods under test to the number of times they have ever been selected by the {@link
+   * ForwardGenerator} to extend an existing sequence to construct a new sequence. This definition
+   * is the same as that of {@code methodSelections} except that we do not clear this map every time
+   * we recompute branch coverage. Thus, the integer value for a given method is non-decreasing
+   * during a run of Randoop. The GRT paper does not state its definition of the "number of
+   * invocations" of a method under test.
    */
-  private final Map<TypedOperation, Integer> methodSuccCalls = new HashMap<>();
+  private final Map<TypedOperation, Integer> methodSuccessfulCalls = new HashMap<>();
 
-  /**
-   * List of operations, identical to ForwardGenerator's operation list. This is used by {@link
-   * Randomness} to randomly select an element from this weighted distribution of {@code
-   * TypedOperation}s.
-   */
+  /** List of operations, identical to ForwardGenerator's operation list. */
   private final SimpleArrayList<TypedOperation> operationSimpleList;
 
-  /** Hyper-parameter for balancing branch coverage and number of times a method was chosen. */
+  /**
+   * Hyper-parameter for balancing branch coverage and number of times a method was chosen. The name
+   * alpha is from the GRT paper.
+   */
   private final double alpha = 0.7;
 
   /**
    * Hyper-parameter for decreasing weights of methods between updates to coverage information. The
-   * GRT paper also names this parameter 'p'.
+   * name p is from the GRT paper.
    */
   private final double p = 0.5;
 
-  /** Hyper-parameter for determining when to recompute branch coverage. */
+  /** How often to recompute branch coverage, in steps. */
   private final int branchCoverageInterval = 100;
 
   /** Maximum number of successful calls so far to any method under test. */
   private int maxSuccessfulCalls = 0;
 
   /**
-   * Step number used to determine when to recompute method weights. A step occurs every time {@link
-   * ForwardGenerator} selects a new operation to construct a new and unique sequence. Thus, {@code
-   * stepNum} will be equal to the number of times {@code step()} has been invoked in {@link
-   * ForwardGenerator}.
+   * The number of times {@code step()} has been invoked in {@link ForwardGenerator} to construct a
+   * new sequence.
    */
   private int stepNum = 0;
 
@@ -121,28 +121,33 @@ public class Bloodhound implements TypedOperationSelector {
         // Coverage details are available.
 
         // The number of successful invocations of this method. Corresponds to succ(m).
-        Integer numSuccessfulInvocation = methodSuccCalls.get(operation);
-        if (numSuccessfulInvocation == null) {
-          numSuccessfulInvocation = 0;
+        Integer numSuccessfulInvocations = methodSuccessfulCalls.get(operation);
+        if (numSuccessfulInvocations == null) {
+          numSuccessfulInvocations = 0;
         }
 
         // If this method has no uncovered branches, or it is the most-invoked method,
         // use the default weight and skip this step.
-        if (covDet.uncoveredBranches != 0 && numSuccessfulInvocation != maxSuccessfulCalls) {
-          // Uncovered branch ratio of this method. Corresponds to uncovRatio(m) in the GRT paper.
-          double uncoveredRatio = 0.5;
-          if (covDet.numBranches != 0) {
-            uncoveredRatio = (double) covDet.uncoveredBranches / covDet.numBranches;
+        if (covDet.uncoveredBranches != 0 && numSuccessfulInvocations != maxSuccessfulCalls) {
+          // Uncovered branch ratio of this method. The name uncovRatio(m) is from the GRT paper.
+          double uncovRatio;
+          if (covDet.totalBranches == 0) {
+            uncovRatio = 0.5;
+          } else {
+            uncovRatio = (double) covDet.uncoveredBranches / covDet.totalBranches;
           }
 
           // Call ratio of this method. Corresponds to succ(m) / maxSucc(M) in the GRT paper.
-          double callRatio = 0.5;
-          if (maxSuccessfulCalls != 0) {
-            callRatio = numSuccessfulInvocation.doubleValue() / maxSuccessfulCalls;
+          double callRatio;
+
+          if (maxSuccessfulCalls == 0) {
+            callRatio = 0.5;
+          } else {
+            callRatio = numSuccessfulInvocations.doubleValue() / maxSuccessfulCalls;
           }
 
           // Corresponds to w(m, 0) in the GRT paper.
-          weight = alpha * uncoveredRatio + (1 - alpha) * (1 - callRatio);
+          weight = alpha * uncovRatio + (1 - alpha) * (1 - callRatio);
 
           // Corresponds to the k variable in the GRT paper.
           Integer numSelectionsOfMethod = methodSelections.get(operation);
@@ -157,7 +162,6 @@ public class Bloodhound implements TypedOperationSelector {
         }
       }
 
-      // Assign the weight to the operation in the methods' weight map.
       methodWeights.put(operation, weight);
     }
   }
@@ -177,11 +181,10 @@ public class Bloodhound implements TypedOperationSelector {
 
     TypedOperation operation = Randomness.randomMemberWeighted(operationSimpleList, methodWeights);
 
-    // Update the number of times this method was invoked in our methodSelections map.
+    // Update the number of times this method was invoked.
     incrementInMap(methodSelections, operation);
+    int numSuccessfulInvocations = incrementInMap(methodSuccessfulCalls, operation);
 
-    // Update the number of times this method was invoked in our numSuccessfulInvocations map.
-    int numSuccessfulInvocations = incrementInMap(methodSuccCalls, operation);
     maxSuccessfulCalls = Math.max(maxSuccessfulCalls, numSuccessfulInvocations);
 
     return operation;

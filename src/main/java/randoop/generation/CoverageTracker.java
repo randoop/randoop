@@ -42,7 +42,7 @@ public class CoverageTracker {
    */
   public static class BranchCoverage {
     /** Total number of branches. */
-    public int numBranches;
+    public int totalBranches;
     /** Number of uncovered branches. */
     public int uncoveredBranches;
   }
@@ -102,21 +102,17 @@ public class CoverageTracker {
   }
 
   /**
-   * Determine if a class with the given name is a nested class based on the names of the other
-   * classes under test.
+   * Determine if the given class is a nested class of a class under test.
    *
    * @param className the name of the class to check
-   * @return true if the name corresponds to that of a nested class, false otherwise.
+   * @return true iff the given class is a nested class of a class under test
    */
   private boolean isNestedClass(String className) {
-    // Determine if this class is a nested class, in which case, the name of some
-    // existing class under test would be the prefix of this class's name.
     for (String classUnderTest : classesUnderTest) {
       if (className.startsWith(classUnderTest + "$")) {
         return true;
       }
     }
-
     return false;
   }
 
@@ -177,7 +173,7 @@ public class CoverageTracker {
         if (methodDetails == null) {
           methodDetails = new BranchCoverage();
         }
-        methodDetails.numBranches = cm.getBranchCounter().getTotalCount();
+        methodDetails.totalBranches = cm.getBranchCounter().getTotalCount();
         methodDetails.uncoveredBranches = cm.getBranchCounter().getMissedCount();
 
         coverageDetailsMap.put(methodName, methodDetails);

@@ -24,10 +24,10 @@ public class TestCoverageInfo {
     }
   }
 
-  public TestCoverageInfo(int numBranches, Map<String, Set<Integer>> map) {
-    if (numBranches < 0) throw new IllegalArgumentException();
-    branchTrue = new int[numBranches];
-    branchFalse = new int[numBranches];
+  public TestCoverageInfo(int totalBranches, Map<String, Set<Integer>> map) {
+    if (totalBranches < 0) throw new IllegalArgumentException();
+    branchTrue = new int[totalBranches];
+    branchFalse = new int[totalBranches];
     methodToIndices = Collections.unmodifiableMap(map);
   }
 
