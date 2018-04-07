@@ -36,7 +36,7 @@ import org.junit.Test;
 public class SequenceCompilerTest {
 
   @Test
-  public void compilableTest() {
+  public void compilableTest() throws ClassNotFoundException {
 
     SequenceClassLoader classLoader = new SequenceClassLoader(getClass().getClassLoader());
     SequenceCompiler compiler = getSequenceCompiler(classLoader);
@@ -52,9 +52,7 @@ public class SequenceCompilerTest {
       if (e.getCause() != null) System.out.print(": " + e.getCause().getMessage());
       System.out.println();
       printDiagnostics(System.out, e.getDiagnostics().getDiagnostics());
-      fail("compilation failed");
-    } catch (ClassNotFoundException e) {
-      fail("couldn't load class");
+      throw new AssertionError("compilation failed", e);
     }
 
     try {

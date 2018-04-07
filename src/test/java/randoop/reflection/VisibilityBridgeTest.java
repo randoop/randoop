@@ -2,7 +2,6 @@ package randoop.reflection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Method;
@@ -83,21 +82,17 @@ public class VisibilityBridgeTest {
    * bridge, which looks like an "inherited" public method of package private class.
    */
   @Test
-  public void testVisibilityBridge() {
+  public void testVisibilityBridge() throws ClassNotFoundException {
     Class<?> sub = PackageSubclass.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(sub);
 
     // should only inherit public non-synthetic methods of package private superclass
     List<FormalMethod> include = new ArrayList<>();
-    try {
-      Class<?> sup = Class.forName("randoop.reflection.visibilitytest.PackagePrivateBase");
-      for (Method m : sup.getDeclaredMethods()) {
-        if (Modifier.isPublic(m.getModifiers()) && !m.isBridge() && !m.isSynthetic()) {
-          include.add(new FormalMethod(m, declaringType));
-        }
+    Class<?> sup = Class.forName("randoop.reflection.visibilitytest.PackagePrivateBase");
+    for (Method m : sup.getDeclaredMethods()) {
+      if (Modifier.isPublic(m.getModifiers()) && !m.isBridge() && !m.isSynthetic()) {
+        include.add(new FormalMethod(m, declaringType));
       }
-    } catch (ClassNotFoundException e) {
-      fail("test failed because unable to find base class");
     }
 
     Set<TypedOperation> actualOps = getConcreteOperations(sub);

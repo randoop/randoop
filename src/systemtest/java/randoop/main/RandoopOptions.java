@@ -241,7 +241,7 @@ class RandoopOptions {
   /**
    * Returns the set of input class names in this options set.
    *
-   * @return the set of names of input classes in this options set
+   * @return the names of input classes in this options set
    */
   Set<String> getClassnames() {
     return classnames;

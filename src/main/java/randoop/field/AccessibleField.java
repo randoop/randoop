@@ -152,7 +152,7 @@ public class AccessibleField {
   /**
    * satisfies checks whether the enclosed {@link Field} object satisfies the given predicate.
    *
-   * @param reflectionPredicate the {@link ReflectionPredicate} to check this.field against.
+   * @param reflectionPredicate the {@link ReflectionPredicate} to check this.field against
    * @return true if this.field satisfies predicate.canUse(field)
    */
   public boolean satisfies(ReflectionPredicate reflectionPredicate) {

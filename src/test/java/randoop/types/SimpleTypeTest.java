@@ -3,7 +3,6 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -137,17 +136,13 @@ public class SimpleTypeTest {
    * expect.
    */
   @Test
-  public void testNames() {
+  public void testNames() throws ClassNotFoundException {
     Type t = new NonParameterizedType(String.class);
     assertEquals("name should match", "java.lang.String", t.getName());
     t = new NonParameterizedType(randoop.types.test.Subclass.class);
     assertEquals("name should match", "randoop.types.test.Subclass", t.getName());
-    try {
-      t = Type.forName("randoop.types.test.Subclass$Innerclass");
-      assertEquals("name should match", "randoop.types.test.Subclass.Innerclass", t.getName());
-    } catch (ClassNotFoundException e) {
-      fail("did not find inner class");
-    }
+    t = Type.forName("randoop.types.test.Subclass$Innerclass");
+    assertEquals("name should match", "randoop.types.test.Subclass.Innerclass", t.getName());
   }
 
   /**
