@@ -2,7 +2,6 @@ package randoop.types;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -18,18 +17,14 @@ import org.junit.Test;
 public class JDKTypesTest {
 
   @Test
-  public void collectionsMapTest() {
+  public void collectionsMapTest() throws IllegalAccessException {
 
     // Load class types from fields in JDKTypes
     Set<GenericClassType> collectionTypes = new LinkedHashSet<>();
     for (Field f : JDKTypes.class.getDeclaredFields()) {
-      try {
-        if (!f.getName().equals("$jacocoData")
-            && Modifier.isFinal(Modifier.fieldModifiers() & f.getModifiers())) {
-          collectionTypes.add((GenericClassType) f.get(null));
-        }
-      } catch (IllegalAccessException e) {
-        fail("could not access field: " + f.getName());
+      if (!f.getName().equals("$jacocoData")
+          && Modifier.isFinal(Modifier.fieldModifiers() & f.getModifiers())) {
+        collectionTypes.add((GenericClassType) f.get(null));
       }
     }
 
