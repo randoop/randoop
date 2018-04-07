@@ -17,8 +17,7 @@ public class GenericTypesTest {
   @Test
   public void testVariableParameters() {
     Class<?> c1 = Variable1.class;
-    GenericClassType a1;
-    a1 = GenericClassType.forClass(c1);
+    GenericClassType a1 = GenericClassType.forClass(c1);
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
         "the parameter has bound Object",
@@ -31,8 +30,7 @@ public class GenericTypesTest {
     assertTrue("String satisfies bound", b1.isUpperBound(JavaTypes.STRING_TYPE, subst));
 
     Class<?> c2 = Variable2.class;
-    GenericClassType a2;
-    a2 = GenericClassType.forClass(c2);
+    GenericClassType a2 = GenericClassType.forClass(c2);
     assertEquals("has two bounds", 2, a2.getTypeParameters().size());
     for (TypeVariable o : a2.getTypeParameters()) {
       assertEquals(
@@ -46,8 +44,7 @@ public class GenericTypesTest {
   public void testConcreteBounds() {
 
     Class<?> c1 = Class1.class;
-    GenericClassType a1;
-    a1 = GenericClassType.forClass(c1);
+    GenericClassType a1 = GenericClassType.forClass(c1);
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
         "the bound is Number",
