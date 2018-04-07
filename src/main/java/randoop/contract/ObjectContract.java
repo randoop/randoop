@@ -54,16 +54,14 @@ public abstract class ObjectContract {
   public abstract TypeTuple getInputTypes();
 
   /**
-   * Evaluates the contract on the given values.
+   * Evaluates the contract on the given values. Returns {@code false} if the contract was violated.
+   * Returns {@code true} if the contract was satisfied or was not applicable.
    *
    * <p>When calling this method during execution of a test, Randoop guarantees that {@code objects}
    * does not contain any {@code null} objects, and that {@code objects.length == getArity()}.
    *
-   * <p>This method should return {@code true} if the contract was satisfied and {@code false} if it
-   * was violated.
-   *
    * @param objects the actual parameters to this contract
-   * @return true if this contract evaluates to true for the given values, and false otherwise
+   * @return false if the contract is violated, true otherwise
    * @throws Throwable if an exception is thrown in evaluation
    */
   public abstract boolean evaluate(Object... objects) throws Throwable;
