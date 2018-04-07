@@ -91,7 +91,7 @@ public class GenericTypesTest {
   }
 
   @Test
-  public void testParameterizedBounds() {
+  public void testParameterizedBounds() throws IllegalArgumentException {
     // being lazy, rather than building substitution, use instantiate
 
     Class<?> c1 = Parameterized1.class;
@@ -148,19 +148,11 @@ public class GenericTypesTest {
     ReferenceType pt4 = ReferenceType.forClass(Variable1Ext3.class);
     ReferenceType pt5 = ReferenceType.forClass(Variable1Ext4.class);
 
-    try {
-      Type it3 = a3.instantiate(pt4, pt5);
-      assertTrue("should have instantiated OK", it3 != null);
-    } catch (IllegalArgumentException e) {
-      fail("should not have gotten exception");
-    }
+    Type it3 = a3.instantiate(pt4, pt5);
+    assertTrue("should have instantiated OK", it3 != null);
 
-    try {
-      Type it4 = a3.instantiate(pt5, pt4);
-      assertTrue("should have instantiated OK", it4 != null);
-    } catch (IllegalArgumentException e) {
-      fail("should not have gotten exception");
-    }
+    Type it4 = a3.instantiate(pt5, pt4);
+    assertTrue("should have instantiated OK", it4 != null);
 
     try {
       @SuppressWarnings("unused")
