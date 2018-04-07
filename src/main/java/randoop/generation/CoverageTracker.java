@@ -72,8 +72,8 @@ public class CoverageTracker {
   /**
    * Attempts to instrument a class and return the byte array representation.
    *
-   * @param className name of the class to instrument.
-   * @return the instrumented bytes of the class, null if instrumentation failed.
+   * @param className name of the class to instrument
+   * @return the instrumented bytes of the class, null if instrumentation failed
    */
   public byte[] instrumentClass(String className) {
     // Only instrument classes under test and their nested classes.
@@ -191,7 +191,7 @@ public class CoverageTracker {
   /**
    * Returns the coverage details associated with the input method.
    *
-   * @param methodName name of the method to examine.
+   * @param methodName name of the method to examine
    * @return coverage details associated with the method
    */
   public CoverageDetails getDetailsForMethod(String methodName) {

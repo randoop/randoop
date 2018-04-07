@@ -71,7 +71,7 @@ public class Bloodhound implements TypedOperationSelector {
   /**
    * Construct a new instance of Bloodhound, which will choose from among the given operations.
    *
-   * @param operations list of operations to copy.
+   * @param operations list of operations to copy
    */
   public Bloodhound(List<TypedOperation> operations) {
     this.operationSimpleList = new SimpleArrayList<>(operations);

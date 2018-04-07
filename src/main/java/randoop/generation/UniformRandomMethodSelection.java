@@ -11,7 +11,7 @@ public class UniformRandomMethodSelection implements TypedOperationSelector {
   /**
    * Saves a reference to the list of methods under test.
    *
-   * @param operations methods under test.
+   * @param operations methods under test
    */
   public UniformRandomMethodSelection(List<TypedOperation> operations) {
     this.operations = operations;
@@ -20,7 +20,7 @@ public class UniformRandomMethodSelection implements TypedOperationSelector {
   /**
    * Selects an operation with uniform probability.
    *
-   * @return a random operation.
+   * @return a random operation
    */
   @Override
   public TypedOperation selectOperation() {

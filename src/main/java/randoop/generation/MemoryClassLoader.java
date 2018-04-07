@@ -18,10 +18,10 @@ public class MemoryClassLoader extends ClassLoader {
   /**
    * Instruments and loads the class with the given name into this {@code ClassLoader}.
    *
-   * @param name name of the class that is being loaded.
-   * @param resolve if true, resolve the class.
+   * @param name name of the class that is being loaded
+   * @param resolve if true, resolve the class
    * @return the resulting {@code Class<?>} object
-   * @throws ClassNotFoundException if class with name is not found.
+   * @throws ClassNotFoundException if class with name is not found
    */
   @Override
   protected Class<?> loadClass(final String name, final boolean resolve)
