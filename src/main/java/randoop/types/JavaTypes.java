@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,6 +47,10 @@ public class JavaTypes {
 
   /** The {@code java.lang.String} type. */
   public static final ClassOrInterfaceType STRING_TYPE = new NonParameterizedType(String.class);
+
+  /** The {@code java.util.Collection} type. */
+  public static final ClassOrInterfaceType COLLECTION_TYPE =
+      new NonParameterizedType(Collection.class);
 
   /** The {@code java.lang.Cloneable} type. */
   public static final ReferenceType CLONEABLE_TYPE = new NonParameterizedType(Cloneable.class);

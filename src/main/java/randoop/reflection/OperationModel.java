@@ -35,6 +35,7 @@ import randoop.contract.EqualsSymmetric;
 import randoop.contract.EqualsToNullRetFalse;
 import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
+import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
 import randoop.generation.CoverageTracker;
 import randoop.main.ClassNameErrorHandler;
@@ -109,6 +110,7 @@ public class OperationModel {
     contracts.add(CompareToEquals.getInstance()); // arity=2
     contracts.add(CompareToSubs.getInstance()); // arity=3
     contracts.add(CompareToTransitive.getInstance()); // arity=3
+    contracts.add(SizeToArrayLength.getInstance()); // arity=1
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
