@@ -1,5 +1,6 @@
 package randoop.reflection;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class OmitMethodsPredicate {
    * @return true if the signature matches an omit pattern, and false otherwise
    */
   private boolean shouldOmitExact(TypedClassOperation operation) {
-    Log.logLine("shouldOmitExact: testing " + operation);
+    Log.logLine("shouldOmitExact(" + operation + ")");
 
     // Nothing to do if there are no patterns.
     if (omitPatterns.isEmpty()) {
@@ -114,16 +115,30 @@ public class OmitMethodsPredicate {
       }
 
       // Try to get the method for type
-      Method method;
+      boolean exists;
       try {
-        method =
+        Method method =
             type.getRuntimeClass().getMethod(signature.getName(), signature.getParameterTypes());
+        exists = true;
       } catch (NoSuchMethodException e) {
-        method = null;
+        exists = false;
+        Log.logLine("no method for " + signature);
+      }
+      Log.logLine(
+          "comparing: " + signature.getName() + " " + type.getRuntimeClass().getSimpleName());
+      if (!exists && signature.getName().equals(type.getRuntimeClass().getSimpleName())) {
+        try {
+          Constructor<?> constructor =
+              type.getRuntimeClass().getConstructor(signature.getParameterTypes());
+          exists = true;
+        } catch (NoSuchMethodException e) {
+          // nothing to do
+          Log.logLine("no constructor for " + signature);
+        }
       }
 
       // If type has the method
-      if (method != null) {
+      if (exists) {
         // Create the operation and test whether it is matched by an omit pattern
         TypedClassOperation superTypeOperation = operation.getOperationForType(type);
         if (shouldOmitExact(superTypeOperation)) {
