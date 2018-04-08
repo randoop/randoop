@@ -54,6 +54,8 @@ public class OmitMethodsPredicate {
    * @return true if the signature matches an omit pattern, and false otherwise
    */
   private boolean shouldOmitExact(TypedClassOperation operation) {
+    Log.logLine("shouldOmitExact: testing " + operation);
+
     // Nothing to do if there are no patterns.
     if (omitPatterns.isEmpty()) {
       return false;
@@ -67,6 +69,8 @@ public class OmitMethodsPredicate {
 
     for (Pattern pattern : omitPatterns) {
       boolean result = pattern.matcher(signature).find();
+      Log.logLine("shouldOmitExact(" + operation + ") with regex " + pattern + " => " + result);
+
       if (Log.isLoggingOn()) {
         Log.logLine(
             String.format(
@@ -88,6 +92,8 @@ public class OmitMethodsPredicate {
    *     an omit pattern, false otherwise
    */
   boolean shouldOmit(final TypedClassOperation operation) {
+    Log.logLine("shouldOmit: testing " + operation);
+
     // Done if there are no patterns
     if (omitPatterns.isEmpty()) {
       return false;

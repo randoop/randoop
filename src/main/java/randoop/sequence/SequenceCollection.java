@@ -173,7 +173,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Add an entry from the given type to the sequence to the map.
+   * Add the entry (type, sequeence) to sequenceMap.
    *
    * @param sequence the sequence
    * @param type the {@link Type}
@@ -184,7 +184,8 @@ public class SequenceCollection {
       set = new SimpleArrayList<>();
       this.sequenceMap.put(type, set);
     }
-    if (Log.isLoggingOn()) Log.logLine("Adding sequence of type " + type);
+    if (Log.isLoggingOn())
+      Log.logLine("Adding sequence of type " + type + " of length " + sequence.size());
     boolean added = set.add(sequence);
     assert added;
     sequenceCount++;
@@ -239,7 +240,7 @@ public class SequenceCollection {
     }
     SimpleList<Sequence> selector = new ListOfLists<>(resultList);
     if (Log.isLoggingOn()) {
-      Log.logLine("getSequencesForType: returning " + selector.size() + " sequences.");
+      Log.logLine("getSequencesForType(" + type + ") => " + selector.size() + " sequences.");
     }
     return selector;
   }
