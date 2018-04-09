@@ -227,17 +227,6 @@ Randoop supports three commands:
 </p>
 
 <ul>
-<li> <b>help</b> prints out a usage message.
-For details, see <a href="#getting_help">Getting Help</a>.
-Example uses:
-
-<pre class="code">
-java -classpath $(RANDOOP_JAR) randoop.main.Main help
-java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
-java -classpath $(RANDOOP_JAR) randoop.main.Main help minimize
-</pre>
-</li>
-
 <li> <b>gentests</b> generates unit tests. For details,
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
@@ -255,13 +244,22 @@ java -cp $(RANDOOP_JAR) randoop.main.Main minimize --suitepath=ErrorTest0.java -
 </pre>
 </li>
 
+<li> <b>help</b> prints out a usage message.
+For details, see <a href="#getting_help">Getting Help</a>.
+Example uses:
+
+<pre class="code">
+java -classpath $(RANDOOP_JAR) randoop.main.Main help
+java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
+java -classpath $(RANDOOP_JAR) randoop.main.Main help minimize
+</pre>
+</li>
+
 </ul>
 
 <p>
 (On Windows, adjust the classpath, such as using semicolon instead of colon
 as the separator.)
-You don't need the <code>-classpath</code> argument if you add
-<code>$(RANDOOP_JAR)</code> to your classpath.
 </p>
 
 
@@ -2040,7 +2038,7 @@ argument.
 
 <p>
 The program under test is nondeterministic.  This can cause Randoop to
-produce different tests on different runs, but more seriously, it can cause
+produce different tests on different runs.  More seriously, this can cause
 Randoop to produce <a href="#flaky-tests">flaky tests</a> that sometimes
 pass and sometimes fail.
 </p>
@@ -2215,7 +2213,7 @@ Cannot find the Java compiler. Check that classpath includes tools.jar
   Ensure that <code>JAVA_HOME</code> appears at the <em>front</em> of your path.
   If you run the Windows operating system, see the
   <a href="https://douglascayers.com/2015/05/30/how-to-set-custom-java-path-after-installing-jdk-8/">instructions for setting a custom Java path after installing JDK 8</a>.
-  Another possible cause of the ploblem is using Java 9; Randoop currently
+  Another possible cause of the problem is using Java 9; Randoop currently
   only runs under a Java 7 or Java 8 JVM.
 </p>
 
@@ -2232,12 +2230,15 @@ No class found for type name "example.ExampleClass"
   then the classes under test are not in the classpath.
   The most likely case is that you have not included the path to these classes.
   Otherwise, the classpath is not given properly.
-  In particular, if you are running Randoop on Windows, parts of the classpath should be
+</p>
+
+<p>
+  If you are running Randoop on Windows, parts of the classpath should be
   separated by a semi-colon ";" instead of the colon ":" shown in the examples
   in this document.
   See the Java Tutorial on
   <a href="https://docs.oracle.com/javase/tutorial/essential/environment/paths.html">paths and classpaths</a>
-  for platform specific information on paths.
+  for platform-specific information on paths.
 </p>
 
 
@@ -2327,6 +2328,7 @@ Two possible reasons for a long-running test are:
 <p>
 When Randoop does not terminate, that is usually because Randoop is creating
 tests that do not terminate (or that execute for a very long time).
+Here are three things you can do.
 </p>
 <ul>
   <li>
@@ -2538,7 +2540,7 @@ please let us know so we can correct the oversight.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls
+<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls pre test1 o1 t1 s1 ErrorTest0 Zaplatynski test10 var0 var1 var2 c' s2 a1 Xing
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->

@@ -340,13 +340,13 @@ public class ForwardGenerator extends AbstractGenerator {
     Sequence concatSeq = Sequence.concatenate(sequences.sequences);
 
     // Figure out input variables.
-    List<Variable> inputs = new ArrayList<>();
+    List<Variable> inputVars = new ArrayList<>();
     for (Integer oneinput : sequences.indices) {
       Variable v = concatSeq.getVariable(oneinput);
-      inputs.add(v);
+      inputVars.add(v);
     }
 
-    Sequence newSequence = concatSeq.extend(operation, inputs);
+    Sequence newSequence = concatSeq.extend(operation, inputVars);
 
     // With .5 probability, do a primitive value heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
@@ -491,19 +491,21 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
-  // This method is responsible for doing two things:
-  //
-  // 1. Selecting at random a collection of sequences that can be used to
-  // create input values for the given statement, and
-  //
-  // 2. Selecting at random valid indices to the above sequence specifying
-  // the values to be used as input to the statement.
-  //
-  // The selected sequences and indices are wrapped in an InputsAndSuccessFlag
-  // object and returned. If an appropriate collection of sequences and indices
-  // was not found (e.g. because there are no sequences in the componentManager
-  // that create values of some type required by the statement), the success
-  // flag of the returned object is false.
+  /**
+   * This method is responsible for doing two things:
+   *
+   * <ol>
+   *   <li>Selecting at random a collection of sequences that can be used to create input values for
+   *       the given statement, and
+   *   <li>Selecting at random valid indices to the above sequence specifying the values to be used
+   *       as input to the statement.
+   * </ol>
+   *
+   * <p>The selected sequences and indices are wrapped in an InputsAndSuccessFlag object and
+   * returned. If an appropriate collection of sequences and indices was not found (e.g. because
+   * there are no sequences in the componentManager that create values of some type required by the
+   * statement), the success flag of the returned object is false.
+   */
   @SuppressWarnings("unchecked")
   private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
 
@@ -625,6 +627,7 @@ public class ForwardGenerator extends AbstractGenerator {
         SimpleList<Sequence> l2 =
             HelperSequenceCreator.createArraySequence(componentManager, inputType);
         candidates = new ListOfLists<>(l1, l2);
+        Log.logLine("Array creation heuristic: " + candidates.size() + " candidates");
 
       } else if (inputType.isParameterized()
           && ((InstantiatedType) inputType)

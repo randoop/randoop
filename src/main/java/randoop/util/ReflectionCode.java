@@ -139,6 +139,10 @@ public abstract class ReflectionCode {
       super(msg);
     }
 
+    ReflectionCodeException(String msg, Throwable cause) {
+      super(msg, cause);
+    }
+
     ReflectionCodeException(Throwable cause) {
       super(cause);
     }
