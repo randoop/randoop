@@ -2,6 +2,11 @@ Version 4.0.2, released ??, 2018
 
 Adds the contract c.toArray().length == c.size() for Collections c.
 
+Make --omitmethods work for constructors as well as methods.
+
+Minor documentation improvements.
+
+
 Version 4.0.1, released March 25, 2018
 
 This release makes minor documentation fixes.  Two examples are:
