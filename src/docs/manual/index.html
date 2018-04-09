@@ -2038,7 +2038,7 @@ argument.
 
 <p>
 The program under test is nondeterministic.  This can cause Randoop to
-produce different tests on different runs, but more seriously, it can cause
+produce different tests on different runs.  More seriously, this can cause
 Randoop to produce <a href="#flaky-tests">flaky tests</a> that sometimes
 pass and sometimes fail.
 </p>
@@ -2230,12 +2230,15 @@ No class found for type name "example.ExampleClass"
   then the classes under test are not in the classpath.
   The most likely case is that you have not included the path to these classes.
   Otherwise, the classpath is not given properly.
-  In particular, if you are running Randoop on Windows, parts of the classpath should be
+</p>
+
+<p>
+  If you are running Randoop on Windows, parts of the classpath should be
   separated by a semi-colon ";" instead of the colon ":" shown in the examples
   in this document.
   See the Java Tutorial on
   <a href="https://docs.oracle.com/javase/tutorial/essential/environment/paths.html">paths and classpaths</a>
-  for platform specific information on paths.
+  for platform-specific information on paths.
 </p>
 
 
@@ -2325,6 +2328,7 @@ Two possible reasons for a long-running test are:
 <p>
 When Randoop does not terminate, that is usually because Randoop is creating
 tests that do not terminate (or that execute for a very long time).
+Here are three things you can do.
 </p>
 <ul>
   <li>
