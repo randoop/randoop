@@ -749,7 +749,29 @@ double-check all changes.
   ./gradlew clean buildRelease
   git add -A .
   git commit . -m "Update version to $NEWVERSION"
-  git push
+  git push</pre>
+  </li>
+  <li>
+    Check that there are no broken links on the published website:
+    <pre>./gradlew checklink</pre>
+    This command creates file <code>checklink-log.txt</code>.
+    <ul>
+      <li>If the only error is that the <code>randoop-4.0.2.zip</code>
+        file does not exist yet, then run: <pre>rm -f checklink-log.txt</pre>
+      </li>
+      <li>
+        If there are any other errors, then fix them by updating URLs in
+        Randoop or by suppressing a warning in
+        file <code>checklink-args.txt</code>, which was mentioned above.
+        If you made any changes to Randoop, then commit and push the
+        changes, then start over at the <code>./gradlew clean
+        buildRelease</code> step.
+      </li>
+    </ul>
+  </li>
+  <li>
+    Tag the release.
+<pre>
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
   git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
@@ -768,16 +790,6 @@ double-check all changes.
     <code>build/distributions</code> (it doesn't matter what order you upload
     them in; they will be listed alphabetically on the release webpage)
     and, finally, click "publish release".
-  </li>
-  <li>
-    Check that there are no broken links on the published website:
-    <pre>./gradlew checklink</pre>
-    Any output is written to a file <pre>checklink-log.txt</pre>
-    If there are any errors,
-    verify that each link on the site is actually broken,
-    and if so, fix the link, and rerun <pre>./gradlew buildRelease</pre>
-    and commit and push those changes.
-    If the check succeeds, run: <pre>rm -f checklink-log.txt</pre>
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
