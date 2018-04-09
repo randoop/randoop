@@ -523,7 +523,7 @@ public class OperationModel {
   /* May return null if errorHandler just warns on bad names. */
   private static Class<?> getClass(String classname, ClassNameErrorHandler errorHandler) {
     if (GenInputsAbstract.enable_bloodhound) {
-      return CoverageTracker.instance.getInstrumentedClass(classname);
+      return CoverageTracker.instance.instrumentAndLoadClass(classname);
     }
 
     try {

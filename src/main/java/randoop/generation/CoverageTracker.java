@@ -22,7 +22,7 @@ public class CoverageTracker {
   public static CoverageTracker instance = new CoverageTracker();
 
   private final IRuntime runtime = new LoggerRuntime();
-  private final MemoryClassLoader memoryClassLoader;
+  private final InstrumentingClassLoader instrumentingClassLoader;
 
   private final ExecutionDataStore executionData = new ExecutionDataStore();
   private final SessionInfoStore sessionInfos = new SessionInfoStore();
@@ -48,7 +48,7 @@ public class CoverageTracker {
   }
 
   private CoverageTracker() {
-    this.memoryClassLoader = new MemoryClassLoader(this);
+    this.instrumentingClassLoader = new InstrumentingClassLoader(this);
     this.instrumenter = new Instrumenter(runtime);
     this.data = new RuntimeData();
 
@@ -82,7 +82,7 @@ public class CoverageTracker {
     }
 
     final byte[] instrumented;
-    final String resource = '/' + className.replace('.', '/') + ".class";
+    final String resource = getResourceFromClassName(className);
     InputStream original = getClass().getResourceAsStream(resource);
 
     if (original == null) {
@@ -90,11 +90,12 @@ public class CoverageTracker {
     }
 
     try {
-      // Instrument the class to prepare for coverage collection later.
+      // Instrument the class so that branch coverage data can be obtained.
       instrumented = instrumenter.instrument(original, className);
       original.close();
     } catch (IOException e) {
       e.printStackTrace();
+      System.exit(1);
       return null;
     }
 
@@ -117,22 +118,19 @@ public class CoverageTracker {
   }
 
   /**
-   * Returns the instrumented version of the class.
+   * Instruments and then loads the class with the given class name.
    *
    * @param className name of the class
    * @return {@code Class} object that has been instrumented for coverage data collection. Returns
    *     null if class with target name cannot be found.
    */
-  public Class<?> getInstrumentedClass(String className) {
-    if (className == null) {
-      return null;
-    }
-
+  public Class<?> instrumentAndLoadClass(String className) {
     Class<?> instrumentedClass = null;
     try {
-      instrumentedClass = memoryClassLoader.loadClass(className);
+      instrumentedClass = instrumentingClassLoader.loadClass(className);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
+      System.exit(1);
     }
     return instrumentedClass;
   }
@@ -152,7 +150,7 @@ public class CoverageTracker {
 
     // Analyze the coverage of each of the tracked classes.
     for (String className : classesUnderTest) {
-      String resource = '/' + className.replace('.', '/') + ".class";
+      String resource = getResourceFromClassName(className);
       InputStream original = getClass().getResourceAsStream(resource);
       try {
         analyzer.analyzeClass(original, className);
@@ -180,6 +178,16 @@ public class CoverageTracker {
       }
     }
     // System.out.println("---------------------------");
+  }
+
+  /**
+   * Construct the absolute resource name of a class given a class name.
+   *
+   * @param className name of class
+   * @return absolute resource name of the class
+   */
+  private String getResourceFromClassName(String className) {
+    return '/' + className.replace('.', '/') + ".class";
   }
 
   /** Clean up the coverage tracker instance. */

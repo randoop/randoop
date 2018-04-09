@@ -526,7 +526,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Unpublicized
   @Option("Enable bloodhound to prioritize methods with lower branch coverage.")
-  public static boolean enable_bloodhound = true;
+  public static boolean enable_bloodhound = false;
 
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
