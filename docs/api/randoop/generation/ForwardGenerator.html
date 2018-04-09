@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ForwardGenerator (randoop 4.0.1 API)</title>
+<title>ForwardGenerator (randoop 4.0.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ForwardGenerator (randoop 4.0.1 API)";
+            parent.document.title="ForwardGenerator (randoop 4.0.2 API)";
         }
     }
     catch(err) {
@@ -304,7 +304,15 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/generation/InputsAndSuccessFlag.html" title="class in randoop.generation">InputsAndSuccessFlag</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#selectInputs-randoop.operation.TypedOperation-">selectInputs</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#selectInputs-randoop.operation.TypedOperation-">selectInputs</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation)</code>
+<div class="block">This method is responsible for doing two things:
+
+ 
+   Selecting at random a collection of sequences that can be used to create input values for
+       the given statement, and
+   Selecting at random valid indices to the above sequence specifying the values to be used
+       as input to the statement.</div>
+</td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></code></td>
@@ -591,6 +599,19 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <li class="blockList">
 <h4>selectInputs</h4>
 <pre>private&nbsp;<a href="../../randoop/generation/InputsAndSuccessFlag.html" title="class in randoop.generation">InputsAndSuccessFlag</a>&nbsp;selectInputs(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation)</pre>
+<div class="block">This method is responsible for doing two things:
+
+ <ol>
+   <li>Selecting at random a collection of sequences that can be used to create input values for
+       the given statement, and
+   <li>Selecting at random valid indices to the above sequence specifying the values to be used
+       as input to the statement.
+ </ol>
+
+ <p>The selected sequences and indices are wrapped in an InputsAndSuccessFlag object and
+ returned. If an appropriate collection of sequences and indices was not found (e.g. because
+ there are no sequences in the componentManager that create values of some type required by the
+ statement), the success flag of the returned object is false.</div>
 </li>
 </ul>
 <a name="randomVariable-randoop.util.SimpleList-randoop.types.Type-boolean-">

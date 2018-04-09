@@ -289,7 +289,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.0.1.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.0.2.jar</code></pre>
 
 
 
@@ -350,7 +350,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.0.1.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.0.2.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -712,8 +712,8 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>4.0.1</em>
-NEWVERSION=<em>4.0.2</em></pre>
+OLDVERSION=<em>4.0.2</em>
+NEWVERSION=<em>4.0.3</em></pre>
       These are used for working with git.
     </li>
     <li>Update the version number and date in these files:
@@ -724,11 +724,15 @@ src/docs/manual/dev.html
 src/docs/manual/index.html
 src/main/java/randoop/Globals.java
 </pre>
-This updates the number (not the date), only for files in <code>src/</code> (undo undesirable change to src/docs/CHANGES.txt):
+This does part of the work:  it updates the number, only for files in <code>src/</code>.<br/>
+You still need to manually update the date in <code>src/docs/CHANGES.txt</code>,
+undo undesirable change to src/docs/CHANGES.txt, and
+double-check all changes.
 <pre>
+  preplace '4\.0\.2' '4.0.3' build.gradle
   cd src
+  preplace '4\.0\.2' '4.0.3'
   preplace '4\.0\.1' '4.0.2'
-  preplace '4\.0\.0' '4.0.1'
   cd ..
 </pre>
     </li>

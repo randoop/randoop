@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>GenInputsAbstract (randoop 4.0.1 API)</title>
+<title>GenInputsAbstract (randoop 4.0.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="GenInputsAbstract (randoop 4.0.1 API)";
+            parent.document.title="GenInputsAbstract (randoop 4.0.2 API)";
         }
     }
     catch(err) {
@@ -1162,7 +1162,10 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  is nondeterministic: it may generate different test suites on different runs.
 
  <p>The default value is appropriate for generating tests for a single class in the context of a
- larger program, but is too small to be effective for generating tests for an entire program.</div>
+ larger program, but is too small to be effective for generating tests for an entire program.
+
+ <p>Randoop may run for longer than this because of long-running tests. The elapsed time is
+ checked after each test, not during its execution.</div>
 </li>
 </ul>
 <a name="LIMIT_DEFAULT">
