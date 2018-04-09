@@ -818,7 +818,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
 <!-- start options doc (DO NOT EDIT BY HAND) -->
 <ul>
-  <li id="optiongroup:Code-under-test:--which-members-may-be-used-by-a-test">Code under test:  which members may be used by a test
+  <li id="optiongroup:Code-under-test:--which-classes-and-members-may-be-used-by-a-test">Code under test:  which classes and members may be used by a test
       <ul>
             <li id="option:testclass"><b>--testclass=</b><i>string</i> <code>[+]</code>.
              The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
@@ -1050,7 +1050,10 @@ Randoop about your application, and that is how we recommend using Randoop.
  is nondeterministic: it may generate different test suites on different runs.
 
  <p>The default value is appropriate for generating tests for a single class in the context of a
- larger program, but is too small to be effective for generating tests for an entire program. [default 100]
+ larger program, but is too small to be effective for generating tests for an entire program.
+
+ <p>Randoop may run for longer than this because of long-running tests. The elapsed time is
+ checked after each test, not during its execution. [default 100]
             <li id="option:attempted-limit"><b>--attempted-limit=</b><i>int</i>.
              Maximum number of attempts to generate a test method candidate. [default 100000000]
             <li id="option:generated-limit"><b>--generated-limit=</b><i>int</i>.
