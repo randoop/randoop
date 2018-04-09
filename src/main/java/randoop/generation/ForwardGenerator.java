@@ -495,6 +495,9 @@ public class ForwardGenerator extends AbstractGenerator {
    * returned. If an appropriate collection of sequences and indices was not found (e.g. because
    * there are no sequences in the componentManager that create values of some type required by the
    * statement), the success flag of the returned object is false.
+   *
+   * @param operation the statement to analyze
+   * @return the selected sequences and indices
    */
   @SuppressWarnings("unchecked")
   private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
