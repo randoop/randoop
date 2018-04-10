@@ -15,8 +15,12 @@ import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
 
 /**
- * Tracks the coverage of each method under test. Largely based on
- * http://www.jacoco.org/jacoco/trunk/doc/examples/java/CoreTutorial.java
+ * Tracks the branch coverage of each method under test. Specifically, for each method under test,
+ * this class records the total number of branches and the number of branches that have not been
+ * covered in generated tests. Branch coverage information for each method is periodically updated
+ * when existing coverage data, produced by Jacoco, is summarized by this class.
+ *
+ * <p>Largely based on http://www.jacoco.org/jacoco/trunk/doc/examples/java/CoreTutorial.java
  */
 public class CoverageTracker {
   public static CoverageTracker instance = new CoverageTracker();
@@ -30,20 +34,18 @@ public class CoverageTracker {
   private final Instrumenter instrumenter;
   private final RuntimeData data;
 
-  /** Map from method name to coverage details. */
+  /** Map from method name to branch coverage details. */
   private final Map<String, BranchCoverage> coverageDetailsMap = new HashMap<>();
 
   /** Names of all the classes under test */
   private Set<String> classesUnderTest = new HashSet<>();
 
   /**
-   * Coverage details related to a single method under test. Tracks total number of branches and
-   * number of uncovered branches.
+   * Coverage details related to a single method under test. Records total number of branches and
+   * number of uncovered branches of a method.
    */
   public static class BranchCoverage {
-    /** Total number of branches. */
     public int totalBranches;
-    /** Number of uncovered branches. */
     public int uncoveredBranches;
   }
 
@@ -61,7 +63,7 @@ public class CoverageTracker {
   }
 
   /**
-   * Set which classes are under test.
+   * Create a copy of the set of names of classes that are under test.
    *
    * @param classesUnderTest names of all the classes under test
    */
@@ -86,7 +88,8 @@ public class CoverageTracker {
     InputStream original = getClass().getResourceAsStream(resource);
 
     if (original == null) {
-      throw new Error("No resource with name: " + resource + " found by CoverageTracker!");
+      System.err.println("No resource with name: " + resource + " found by CoverageTracker!");
+      System.exit(1);
     }
 
     try {
@@ -136,12 +139,12 @@ public class CoverageTracker {
   }
 
   /**
-   * Collect coverage information for all methods under test. At this point, coverage data has
+   * Summarizes coverage information for all methods under test. At this point, coverage data has
    * already been generated as Randoop has been constructing and executing its test sequences.
    * Coverage data is now collected and summarized. The {@code coverageDetailsMap} is updated to
    * contain the updated coverage information of each method branch.
    */
-  public void collect() {
+  public void summarizeCoverageInformation() {
     // Collect coverage information.
     data.collect(executionData, sessionInfos, false);
 

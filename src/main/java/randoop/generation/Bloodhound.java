@@ -93,7 +93,7 @@ public class Bloodhound implements TypedOperationSelector {
     stepNum += 1;
     if (stepNum % branchCoverageInterval == 0) {
       methodSelections.clear();
-      CoverageTracker.instance.collect();
+      CoverageTracker.instance.summarizeCoverageInformation();
     }
   }
 
