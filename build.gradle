@@ -48,7 +48,7 @@ allprojects {
   }
 
   /* Randoop version number - added to generated jar files */
-  version = '4.0.2'
+  version = '4.0.3'
 }
 
 /******

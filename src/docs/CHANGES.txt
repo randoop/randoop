@@ -1,3 +1,8 @@
+Version 4.0.3, released April 10, 2018
+
+Fixed a bug caused by order of execution of variable initializers.
+
+
 Version 4.0.2, released April 8, 2018
 
 Adds the contract c.toArray().length == c.size() for Collections c.
