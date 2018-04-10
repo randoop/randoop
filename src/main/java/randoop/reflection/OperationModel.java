@@ -295,15 +295,15 @@ public class OperationModel {
   }
 
   /**
-   * Gets observer methods from the set of signatures.
+   * Given a set of signatures, returns the operations for them.
    *
-   * @param observerSignatures the set of method signatures
-   * @return the map to observer methods from their declaring class type
+   * @param observerSignatures the set of method signatures; typically comes from the {@code
+   *     --observers} command-line option
+   * @return a map from each class type to the set of observer methods in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
   public MultiMap<Type, TypedOperation> getObservers(Set<String> observerSignatures)
       throws OperationParseException {
-    // Populate observer_map from observers file.
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     for (String sig : observerSignatures) {
       TypedClassOperation operation = MethodCall.parse(sig);

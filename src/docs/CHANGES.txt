@@ -1,4 +1,4 @@
-Version 4.0.2, released ??, 2018
+Version 4.0.2, released April 8, 2018
 
 Adds the contract c.toArray().length == c.size() for Collections c.
 

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ObjectContract (randoop 4.0.1 API)</title>
+<title>ObjectContract (randoop 4.0.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ObjectContract (randoop 4.0.1 API)";
+            parent.document.title="ObjectContract (randoop 4.0.2 API)";
         }
     }
     catch(err) {
@@ -108,7 +108,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../randoop/contract/CheckRepContract.html" title="class in randoop.contract">CheckRepContract</a>, <a href="../../randoop/contract/CompareToAntiSymmetric.html" title="class in randoop.contract">CompareToAntiSymmetric</a>, <a href="../../randoop/contract/CompareToEquals.html" title="class in randoop.contract">CompareToEquals</a>, <a href="../../randoop/contract/CompareToReflexive.html" title="class in randoop.contract">CompareToReflexive</a>, <a href="../../randoop/contract/CompareToReturnsNormally.html" title="class in randoop.contract">CompareToReturnsNormally</a>, <a href="../../randoop/contract/CompareToSubs.html" title="class in randoop.contract">CompareToSubs</a>, <a href="../../randoop/contract/CompareToTransitive.html" title="class in randoop.contract">CompareToTransitive</a>, <a href="../../randoop/contract/EnumValue.html" title="class in randoop.contract">EnumValue</a>, <a href="../../randoop/contract/EqualsHashcode.html" title="class in randoop.contract">EqualsHashcode</a>, <a href="../../randoop/contract/EqualsReflexive.html" title="class in randoop.contract">EqualsReflexive</a>, <a href="../../randoop/contract/EqualsReturnsNormally.html" title="class in randoop.contract">EqualsReturnsNormally</a>, <a href="../../randoop/contract/EqualsSymmetric.html" title="class in randoop.contract">EqualsSymmetric</a>, <a href="../../randoop/contract/EqualsToNullRetFalse.html" title="class in randoop.contract">EqualsToNullRetFalse</a>, <a href="../../randoop/contract/EqualsTransitive.html" title="class in randoop.contract">EqualsTransitive</a>, <a href="../../randoop/contract/HashCodeReturnsNormally.html" title="class in randoop.contract">HashCodeReturnsNormally</a>, <a href="../../randoop/contract/IsNotNull.html" title="class in randoop.contract">IsNotNull</a>, <a href="../../randoop/contract/IsNull.html" title="class in randoop.contract">IsNull</a>, <a href="../../randoop/contract/ObserverEqValue.html" title="class in randoop.contract">ObserverEqValue</a>, <a href="../../randoop/contract/PrimValue.html" title="class in randoop.contract">PrimValue</a>, <a href="../../randoop/contract/ToStringReturnsNormally.html" title="class in randoop.contract">ToStringReturnsNormally</a></dd>
+<dd><a href="../../randoop/contract/CheckRepContract.html" title="class in randoop.contract">CheckRepContract</a>, <a href="../../randoop/contract/CompareToAntiSymmetric.html" title="class in randoop.contract">CompareToAntiSymmetric</a>, <a href="../../randoop/contract/CompareToEquals.html" title="class in randoop.contract">CompareToEquals</a>, <a href="../../randoop/contract/CompareToReflexive.html" title="class in randoop.contract">CompareToReflexive</a>, <a href="../../randoop/contract/CompareToReturnsNormally.html" title="class in randoop.contract">CompareToReturnsNormally</a>, <a href="../../randoop/contract/CompareToSubs.html" title="class in randoop.contract">CompareToSubs</a>, <a href="../../randoop/contract/CompareToTransitive.html" title="class in randoop.contract">CompareToTransitive</a>, <a href="../../randoop/contract/EnumValue.html" title="class in randoop.contract">EnumValue</a>, <a href="../../randoop/contract/EqualsHashcode.html" title="class in randoop.contract">EqualsHashcode</a>, <a href="../../randoop/contract/EqualsReflexive.html" title="class in randoop.contract">EqualsReflexive</a>, <a href="../../randoop/contract/EqualsReturnsNormally.html" title="class in randoop.contract">EqualsReturnsNormally</a>, <a href="../../randoop/contract/EqualsSymmetric.html" title="class in randoop.contract">EqualsSymmetric</a>, <a href="../../randoop/contract/EqualsToNullRetFalse.html" title="class in randoop.contract">EqualsToNullRetFalse</a>, <a href="../../randoop/contract/EqualsTransitive.html" title="class in randoop.contract">EqualsTransitive</a>, <a href="../../randoop/contract/HashCodeReturnsNormally.html" title="class in randoop.contract">HashCodeReturnsNormally</a>, <a href="../../randoop/contract/IsNotNull.html" title="class in randoop.contract">IsNotNull</a>, <a href="../../randoop/contract/IsNull.html" title="class in randoop.contract">IsNull</a>, <a href="../../randoop/contract/ObserverEqValue.html" title="class in randoop.contract">ObserverEqValue</a>, <a href="../../randoop/contract/PrimValue.html" title="class in randoop.contract">PrimValue</a>, <a href="../../randoop/contract/SizeToArrayLength.html" title="class in randoop.contract">SizeToArrayLength</a>, <a href="../../randoop/contract/ToStringReturnsNormally.html" title="class in randoop.contract">ToStringReturnsNormally</a></dd>
 </dl>
 <hr>
 <br>
@@ -295,18 +295,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>evaluate</h4>
 <pre>public abstract&nbsp;boolean&nbsp;evaluate(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>...&nbsp;objects)
                           throws <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a></pre>
-<div class="block">Evaluates the contract on the given values.
+<div class="block">Evaluates the contract on the given values. Returns <code>false</code> if the contract was violated.
+ Returns <code>true</code> if the contract was satisfied or was not applicable.
 
  <p>When calling this method during execution of a test, Randoop guarantees that <code>objects</code>
- does not contain any <code>null</code> objects, and that <code>objects.length == getArity()</code>.
-
- <p>This method should return <code>true</code> if the contract was satisfied and <code>false</code> if it
- was violated.</div>
+ does not contain any <code>null</code> objects, and that <code>objects.length == getArity()</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>objects</code> - the actual parameters to this contract</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if this contract evaluates to true for the given values, and false otherwise</dd>
+<dd>false if the contract is violated, true otherwise</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a></code> - if an exception is thrown in evaluation</dd>
 </dl>
