@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ForwardGenerator (randoop 4.0.2 API)</title>
+<title>ForwardGenerator (randoop 4.0.3 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ForwardGenerator (randoop 4.0.2 API)";
+            parent.document.title="ForwardGenerator (randoop 4.0.3 API)";
         }
     }
     catch(err) {
@@ -178,7 +178,9 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#observers">observers</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#observers">observers</a></span></code>
+<div class="block">The side-effect-free obzerver methods.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&gt;</code></td>
@@ -373,6 +375,7 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <li class="blockList">
 <h4>observers</h4>
 <pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt; observers</pre>
+<div class="block">The side-effect-free obzerver methods.</div>
 </li>
 </ul>
 <a name="subsumed_sequences">
@@ -612,6 +615,12 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
  returned. If an appropriate collection of sequences and indices was not found (e.g. because
  there are no sequences in the componentManager that create values of some type required by the
  statement), the success flag of the returned object is false.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>operation</code> - the statement to analyze</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the selected sequences and indices</dd>
+</dl>
 </li>
 </ul>
 <a name="randomVariable-randoop.util.SimpleList-randoop.types.Type-boolean-">
