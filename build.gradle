@@ -130,7 +130,7 @@ configurations {
 
 dependencies {
   // Keep these in sync with agent/replacecall/replacecall.gradle
-  implementation 'org.plumelib:bcel-util:0.0.4'
+  implementation 'org.plumelib:bcel-util:0.0.6'
   implementation 'org.plumelib:options:0.3.1'
   implementation 'org.plumelib:plume-util:0.0.1'
 
