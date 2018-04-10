@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A class loader that instruments each class that is loaded for the purpose of collecting
- * branch coverage data. The class keeps a cache of the loaded classes and ensures that
- * each class is defined at most once.
+ * A class loader that instruments each class that is loaded for the purpose of collecting branch
+ * coverage data. The class keeps a cache of the loaded classes and ensures that each class is
+ * defined at most once.
  */
 public class InstrumentingClassLoader extends ClassLoader {
   /** Map from fully-qualified class name to class object. */
