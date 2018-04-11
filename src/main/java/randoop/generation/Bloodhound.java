@@ -40,12 +40,12 @@ public class Bloodhound implements TypedOperationSelector {
   private final Map<TypedOperation, Integer> currMethodSelectionCounts = new HashMap<>();
 
   /**
-   * Map of methods under test to the total number of times they have ever been selected by the {@link
-   * ForwardGenerator} to extend an existing sequence to construct a new sequence. This definition
-   * is the same as that of {@code currMethodSelectionCounts} except that we do not clear this map every time
-   * we recompute branch coverage. Thus, the integer value for a given method is non-decreasing
-   * during a run of Randoop. The GRT paper does not state its definition of the "number of
-   * invocations" of a method under test.
+   * Map of methods under test to the total number of times they have ever been selected by the
+   * {@link ForwardGenerator} to extend an existing sequence to construct a new sequence. This
+   * definition is the same as that of {@code currMethodSelectionCounts} except that we do not clear
+   * this map every time we recompute branch coverage. Thus, the integer value for a given method is
+   * non-decreasing during a run of Randoop. The GRT paper does not state its definition of the
+   * "number of invocations" of a method under test.
    */
   private final Map<TypedOperation, Integer> methodSelectionTotals = new HashMap<>();
 
@@ -104,9 +104,7 @@ public class Bloodhound implements TypedOperationSelector {
     }
   }
 
-  /**
-   * Computes and updates weights in our method weights map for all methods under test.
-   */
+  /** Computes and updates weights in our method weights map for all methods under test. */
   private void updateWeightsForAllOperations() {
     for (TypedOperation operation : operationSimpleList) {
       updateWeightForOperation(operation);
@@ -114,9 +112,9 @@ public class Bloodhound implements TypedOperationSelector {
   }
 
   /**
-   * Recompute weights for a method under test. A method under test is assigned a weight based
-   * on a weighted combination of the number of branches uncovered and the ratio between the number
-   * of times this method has been selected and the maximum number of times any method under test has
+   * Recompute weights for a method under test. A method under test is assigned a weight based on a
+   * weighted combination of the number of branches uncovered and the ratio between the number of
+   * times this method has been selected and the maximum number of times any method under test has
    * been selected. The weighting scheme is based on Bloodhound in the Guided Random Testing (GRT)
    * paper.
    *
@@ -131,7 +129,7 @@ public class Bloodhound implements TypedOperationSelector {
     double weight = 1.0 / numOperations;
 
     CoverageTracker.BranchCoverage covDet =
-            CoverageTracker.instance.getDetailsForMethod(operation.getName());
+        CoverageTracker.instance.getDetailsForMethod(operation.getName());
 
     // Check that branch coverage details are available for this method.
     if (covDet != null) {
@@ -169,8 +167,8 @@ public class Bloodhound implements TypedOperationSelector {
         if (numSelectionsOfMethod != null) {
           // Corresponds to the case where k >= 1 in the GRT paper.
           double val1 =
-                  (-3.0 / Math.log(1 - p))
-                          * (Math.pow(p, numSelectionsOfMethod) / numSelectionsOfMethod);
+              (-3.0 / Math.log(1 - p))
+                  * (Math.pow(p, numSelectionsOfMethod) / numSelectionsOfMethod);
           double val2 = 1.0 / Math.log(numOperations + 3);
           weight *= Math.max(val1, val2);
         }
@@ -179,7 +177,6 @@ public class Bloodhound implements TypedOperationSelector {
 
     methodWeights.put(operation, weight);
   }
-
 
   /**
    * First, update the weights of all methods under test. Retrieve the next method for constructing
@@ -193,7 +190,8 @@ public class Bloodhound implements TypedOperationSelector {
     // Collect branch coverage and recompute weights for methods under test.
     updateBranchCoverageMaybe();
 
-    TypedOperation selectedOperation = Randomness.randomMemberWeighted(operationSimpleList, methodWeights);
+    TypedOperation selectedOperation =
+        Randomness.randomMemberWeighted(operationSimpleList, methodWeights);
     // Update the number of times this method was selected.
     incrementInMap(currMethodSelectionCounts, selectedOperation);
     int numSuccessfulInvocations = incrementInMap(methodSelectionTotals, selectedOperation);
