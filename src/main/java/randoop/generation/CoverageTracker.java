@@ -151,7 +151,8 @@ public class CoverageTracker {
     CoverageBuilder coverageBuilder = new CoverageBuilder();
     Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 
-    // Analyze the coverage of each of the tracked classes.
+    // For each class that is under test, summarize the branch coverage information
+    // produced by Jacoco and update the coverageBuilder to store this information.
     for (String className : classesUnderTest) {
       String resource = getResourceFromClassName(className);
       InputStream original = getClass().getResourceAsStream(resource);
@@ -163,7 +164,8 @@ public class CoverageTracker {
       }
     }
 
-    // Collect the branch coverage information.
+    // For each method under test, retrieve its branch coverage information from the coverageBuilder
+    // and update the corresponding {@code BranchCoverage} object to store this information.
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
       for (final IMethodCoverage cm : cc.getMethods()) {
         String methodName = cc.getName() + "." + cm.getName();
