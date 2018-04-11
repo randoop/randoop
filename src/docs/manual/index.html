@@ -758,17 +758,38 @@ for threading</a> for additional per-test time limits.
 <h1 id="minimize">Minimizing a failing JUnit test suite</h1>
 
 <p>
-Randoop includes a minimizer that, given a failing JUnit test suite file,
-produces a smaller one that fails in the same way as the original, having the
-same failing assertions with the same stack trace. Minimized test suites usually
-contain test cases that are easier to understand and debug.
-The minimizer can be used with any JUnit test suite:  it can
-minimize failing tests that Randoop did not create.
+Minimized test cases are usually easier to diagnose.
+Randoop includes a minimizer that, given a JUnit test suite,
+minimizes each failing test case.
+Each minimized test fails in the same way as the original, having the
+same failing assertions with the same stack trace.
+The minimizer works by removing and simplifying methods and statements in its
+input file, without changing the test suite's failure behavior.
 </p>
 
 <p>
-The minimizer works by removing and simplifying methods and statements in its
-input file, without changing the test suite's failure behavior.
+  There are two ways to use the minimizer:
+</p>
+<ul>
+  <li>
+    Supply <a href="#option:minimize-error-test"><code>--minimize-error-test</code></a>,
+    and Randoop minimizes each error-revealing test before outputting it.
+  </li>
+  <li>
+    Use Randoop's <code>minimize</code> command.
+    The minimizer can be used with any JUnit test suite:  it can
+    minimize failing tests that Randoop did not create.
+  </li>
+</ul>
+
+<p>
+  For both ways to use the minimizer, see the documentation for the
+  <a href="#optiongroup:Test-case-minimization-options">command-line
+  options for failing test suite minimization</a>.
+</p>
+
+<p>
+  The rest of this section discusses Randoop's <code>minimize</code> command.
 </p>
 
 <p>
@@ -781,27 +802,23 @@ java -cp randoop-all-4.0.3.jar randoop.main.Main minimize \
 </pre>
 
 <p>
-In the example above, the output file produced by the minimizer would be named
-<code>ErrorTest1Minimized.java</code> and the main class would be named
-<code>ErrorTest1Minimized</code>. In general, the minimizer will produce a Java file
-named <code><em>InputTestSuite</em>Minimized.java</code> where
-<code><em>InputTestSuite</em>.java</code> is the name of the file being minimized. The main
-class within the Java file will be named <code>InputTestSuiteMinimized</code>.
+The minimizer produces a Java file
+named <code><em>InputTestSuite</em>Minimized.java</code>
+where <code><em>InputTestSuite</em>.java</code> is the file
+being minimized.
+<!-- True, but not worth belaboring:
+The main class is named <code>InputTestSuiteMinimized</code>.
+-->
 </p>
 
 <p>
-It is desirable for the minimizer to retain both the original error-revealing test suite and
-the minimized test suite. This is because the minimizer may simplify a test suite in such a
-way that important information is lost. For example, when a test case fails due to a
-<code>NullPointerException</code>, the minimizer can replace the right hand side of an
-expression with the value <code>null</code>. This is sometimes an oversimplification.
-
+  The minimizer creates a new output file, rather than modifying the
+  original test suite in place, because sometimes the minimization loses
+  important information. For example, when a test case fails due to a
+  <code>NullPointerException</code>, the minimizer might replace the right
+  hand side of an expression with the value <code>null</code>.
 </p>
 
-<p>
-  See the documentation for the
-  <a href="#optiongroup:Test-case-minimization-options">command-line options for failing test suite minimization</a>.
-</p>
 
 
 <h1 id="customize">Customizing Randoop's behavior to your application</h1>
@@ -917,9 +934,11 @@ Randoop about your application, and that is how we recommend using Randoop.
  class, directly or indirectly (the constructor or method might not appear in the source code of
  the test). Included classes may be abstract.
             <li id="option:minimize-error-test"><b>--minimize-error-test=</b><i>boolean</i>.
-             Flag indicating whether or not to automatically minimize error-revealing tests. Both original
- and minimized versions of each test class will be output. Setting this option may cause long
- Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests. [default false]
+             If true, Randoop outputs both original error-revealing tests and a minimized version. Setting
+ this option may cause long Randoop run times if Randoop outputs and minimizes more than about
+ 100 error-revealing tests; consider using <a href="#option:stop-on-error-test"><code>
+ --stop-on-error-test=true</code></a>. Also see the <a
+ href="#optiongroup:Test-case-minimization-options">test case minimization options</a>. [default false]
       </ul>
   <li id="optiongroup:Test-classification">Test classification
       <ul>
