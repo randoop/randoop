@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OperationHistoryLogger (randoop 4.0.0 API)</title>
+<title>OperationHistoryLogger (randoop 4.0.3 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OperationHistoryLogger (randoop 4.0.0 API)";
+            parent.document.title="OperationHistoryLogger (randoop 4.0.3 API)";
         }
     }
     catch(err) {
@@ -136,15 +136,15 @@ implements <a href="../../randoop/generation/OperationHistoryLogInterface.html" 
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private plume.SimpleLog</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/OperationHistoryLogger.html#logger">logger</a></span></code>
-<div class="block">The <code>PrintWriter</code> for outputting the operation history as a table</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/generation/OperationOutcome.html" title="enum in randoop.generation">OperationOutcome</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/OperationHistoryLogger.html#operationMap">operationMap</a></span></code>
 <div class="block">A sparse representation for the operation-outcome table</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintWriter.html?is-external=true" title="class or interface in java.io">PrintWriter</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/OperationHistoryLogger.html#writer">writer</a></span></code>
+<div class="block">The <code>PrintWriter</code> for outputting the operation history as a table</div>
 </td>
 </tr>
 </table>
@@ -162,7 +162,7 @@ implements <a href="../../randoop/generation/OperationHistoryLogInterface.html" 
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/generation/OperationHistoryLogger.html#OperationHistoryLogger-plume.SimpleLog-">OperationHistoryLogger</a></span>(plume.SimpleLog&nbsp;logger)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/generation/OperationHistoryLogger.html#OperationHistoryLogger-java.io.PrintWriter-">OperationHistoryLogger</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintWriter.html?is-external=true" title="class or interface in java.io">PrintWriter</a>&nbsp;writer)</code>
 <div class="block">Creates an <a href="../../randoop/generation/OperationHistoryLogger.html" title="class in randoop.generation"><code>OperationHistoryLogger</code></a> that will write to the given <code>PrintWriter</code>.</div>
 </td>
 </tr>
@@ -233,13 +233,13 @@ implements <a href="../../randoop/generation/OperationHistoryLogInterface.html" 
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="logger">
+<a name="writer">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>logger</h4>
-<pre>private final&nbsp;plume.SimpleLog logger</pre>
+<h4>writer</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintWriter.html?is-external=true" title="class or interface in java.io">PrintWriter</a> writer</pre>
 <div class="block">The <code>PrintWriter</code> for outputting the operation history as a table</div>
 </li>
 </ul>
@@ -261,17 +261,17 @@ implements <a href="../../randoop/generation/OperationHistoryLogInterface.html" 
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="OperationHistoryLogger-plume.SimpleLog-">
+<a name="OperationHistoryLogger-java.io.PrintWriter-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>OperationHistoryLogger</h4>
-<pre>public&nbsp;OperationHistoryLogger(plume.SimpleLog&nbsp;logger)</pre>
+<pre>public&nbsp;OperationHistoryLogger(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintWriter.html?is-external=true" title="class or interface in java.io">PrintWriter</a>&nbsp;writer)</pre>
 <div class="block">Creates an <a href="../../randoop/generation/OperationHistoryLogger.html" title="class in randoop.generation"><code>OperationHistoryLogger</code></a> that will write to the given <code>PrintWriter</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>logger</code> - the <code>PrintWriter</code> for writing the table from the created operation history</dd>
+<dd><code>writer</code> - the <code>PrintWriter</code> for writing the table from the created operation history</dd>
 </dl>
 </li>
 </ul>

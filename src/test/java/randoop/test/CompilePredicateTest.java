@@ -4,7 +4,6 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
@@ -18,7 +17,7 @@ import randoop.output.JUnitCreator;
 public class CompilePredicateTest {
 
   @Test
-  public void uncompilablePredicateTest() {
+  public void uncompilablePredicateTest() throws ParseException, UnsupportedEncodingException {
     String failedCode =
         "import org.junit.FixMethodOrder;\n"
             + "import org.junit.Test;\n"
@@ -101,13 +100,7 @@ public class CompilePredicateTest {
             + "    }\n"
             + "}";
     CompilationUnit source = null;
-    try {
-      source = JavaParser.parse(new ByteArrayInputStream(failedCode.getBytes(UTF_8)));
-    } catch (ParseException e) {
-      fail("code did not parse");
-    } catch (UnsupportedEncodingException e) {
-      fail("unsupported encoding");
-    }
+    source = JavaParser.parse(new ByteArrayInputStream(failedCode.getBytes(UTF_8)));
     assertNotNull(source);
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator(null, null, null, null, null);
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
@@ -116,7 +109,7 @@ public class CompilePredicateTest {
   }
 
   @Test
-  public void compilablePredicateTest() {
+  public void compilablePredicateTest() throws ParseException, UnsupportedEncodingException {
     String compilableCode =
         "package foo.bar;\n"
             + "\n"
@@ -142,13 +135,7 @@ public class CompilePredicateTest {
             + "    }\n"
             + "}";
     CompilationUnit source = null;
-    try {
-      source = JavaParser.parse(new ByteArrayInputStream(compilableCode.getBytes(UTF_8)));
-    } catch (ParseException e) {
-      fail("code did not parse");
-    } catch (UnsupportedEncodingException e) {
-      fail("unsupported encoding");
-    }
+    source = JavaParser.parse(new ByteArrayInputStream(compilableCode.getBytes(UTF_8)));
     assertNotNull(source);
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator("foo.bar", null, null, null, null);
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);

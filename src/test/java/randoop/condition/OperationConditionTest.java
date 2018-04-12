@@ -3,7 +3,6 @@ package randoop.condition;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
@@ -40,20 +39,15 @@ import randoop.util.MultiMap;
 
 public class OperationConditionTest {
   @Test
-  public void conditionTest() {
+  public void conditionTest() throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
     Method method = null;
-    try {
-      method = c.getDeclaredMethod("category", int.class);
-    } catch (NoSuchMethodException e) {
-      fail("couldn't load method");
-    }
+    method = c.getDeclaredMethod("category", int.class);
     ExecutableSpecification execSpec = getMethodSpecification(method);
 
     ClassWithConditions receiver = new ClassWithConditions(5);
 
-    Object[] preValues;
-    preValues = new Object[] {receiver, -1};
+    Object[] preValues = new Object[] {receiver, -1};
     ExpectedOutcomeTable table = execSpec.checkPrestate(preValues);
     assertTrue("should fail param condition", table.isInvalidCall());
 
@@ -103,9 +97,8 @@ public class OperationConditionTest {
   }
 
   @Test
-  public void constructorSequenceTest() {
-    ExecutableSequence es;
-    es = createConstructorSequence(-1);
+  public void constructorSequenceTest() throws NoSuchMethodException {
+    ExecutableSequence es = createConstructorSequence(-1);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertTrue("should be invalid sequence", es.hasInvalidBehavior());
 
@@ -115,9 +108,8 @@ public class OperationConditionTest {
   }
 
   @Test
-  public void methodSequenceTest() {
-    ExecutableSequence es;
-    es = createCategorySequence(-1);
+  public void methodSequenceTest() throws NoSuchMethodException {
+    ExecutableSequence es = createCategorySequence(-1);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertTrue("should be invalid sequence", es.hasInvalidBehavior());
 
@@ -196,21 +188,17 @@ public class OperationConditionTest {
   }
 
   @Test
-  public void testMultipleThrows() {
+  public void testMultipleThrows() throws NoSuchMethodException {
     ExecutableSequence es = createBadnessSequence();
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertFalse("should be valid sequence", es.hasInvalidBehavior());
     assertFalse("should not have failures", es.hasFailure());
   }
 
-  private ExecutableSequence createConstructorSequence(int initValue) {
+  private ExecutableSequence createConstructorSequence(int initValue) throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
     Constructor<?> reflectionConstructor = null;
-    try {
-      reflectionConstructor = c.getConstructor(int.class);
-    } catch (NoSuchMethodException e) {
-      fail("could not load constructor");
-    }
+    reflectionConstructor = c.getConstructor(int.class);
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
     constructorOp.addExecutableSpecification(getConstructorConditions(reflectionConstructor));
     Sequence sequence = new Sequence();
@@ -221,21 +209,13 @@ public class OperationConditionTest {
     return new ExecutableSequence(sequence);
   }
 
-  private ExecutableSequence createCategorySequence(int value) {
+  private ExecutableSequence createCategorySequence(int value) throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
     Constructor<?> reflectionConstructor = null;
-    try {
-      reflectionConstructor = c.getConstructor(int.class);
-    } catch (NoSuchMethodException e) {
-      fail("could not load constructor");
-    }
+    reflectionConstructor = c.getConstructor(int.class);
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
     Method method = null;
-    try {
-      method = c.getDeclaredMethod("category", int.class);
-    } catch (NoSuchMethodException e) {
-      fail("couldn't load method");
-    }
+    method = c.getDeclaredMethod("category", int.class);
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
     methodOp.addExecutableSpecification(getMethodSpecification(method));
 
@@ -251,14 +231,10 @@ public class OperationConditionTest {
     return new ExecutableSequence(sequence);
   }
 
-  private ExecutableSequence createBadnessSequence() {
+  private ExecutableSequence createBadnessSequence() throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
     Method method = null;
-    try {
-      method = c.getDeclaredMethod("badness", ClassWithConditions.Range.class, int.class);
-    } catch (NoSuchMethodException e) {
-      fail("could not load method");
-    }
+    method = c.getDeclaredMethod("badness", ClassWithConditions.Range.class, int.class);
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
     methodOp.addExecutableSpecification(getBadnessConditions(method));
 

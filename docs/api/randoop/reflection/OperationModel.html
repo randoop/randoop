@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OperationModel (randoop 4.0.0 API)</title>
+<title>OperationModel (randoop 4.0.3 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OperationModel (randoop 4.0.0 API)";
+            parent.document.title="OperationModel (randoop 4.0.3 API)";
         }
     }
     catch(err) {
@@ -363,7 +363,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i17" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getObservers-java.util.Set-">getObservers</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;observerSignatures)</code>
-<div class="block">Gets observer methods from the set of signatures.</div>
+<div class="block">Given a set of signatures, returns the operations for them.</div>
 </td>
 </tr>
 <tr id="i18" class="altColor">
@@ -657,12 +657,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>getObservers</h4>
 <pre>public&nbsp;<a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;getObservers(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;observerSignatures)
                                            throws <a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></pre>
-<div class="block">Gets observer methods from the set of signatures.</div>
+<div class="block">Given a set of signatures, returns the operations for them.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>observerSignatures</code> - the set of method signatures</dd>
+<dd><code>observerSignatures</code> - the set of method signatures; typically comes from the <code>--observers</code> command-line option</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the map to observer methods from their declaring class type</dd>
+<dd>a map from each class type to the set of observer methods in it</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></code> - if a method signature cannot be parsed</dd>
 </dl>

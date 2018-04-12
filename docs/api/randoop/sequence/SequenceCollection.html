@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceCollection (randoop 4.0.0 API)</title>
+<title>SequenceCollection (randoop 4.0.3 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceCollection (randoop 4.0.0 API)";
+            parent.document.title="SequenceCollection (randoop 4.0.3 API)";
         }
     }
     catch(err) {
@@ -156,7 +156,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/util/ArrayListSimpleList.html" title="class in randoop.util">ArrayListSimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&gt;</code></td>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/util/SimpleArrayList.html" title="class in randoop.util">SimpleArrayList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#sequenceMap">sequenceMap</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
@@ -241,7 +241,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr id="i6" class="altColor">
-<td class="colFirst"><code><a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
+<td class="colFirst"><code><a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#getSequencesForType-randoop.types.Type-boolean-boolean-">getSequencesForType</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
                    boolean&nbsp;exactMatch,
                    boolean&nbsp;onlyReceivers)</code>
@@ -261,7 +261,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#updateCompatibleMap-randoop.sequence.Sequence-randoop.types.Type-">updateCompatibleMap</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;sequence,
                    <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</code>
-<div class="block">Add an entry from the given type to the sequence to the map.</div>
+<div class="block">Add the entry (type, sequeence) to sequenceMap.</div>
 </td>
 </tr>
 </table>
@@ -292,7 +292,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>sequenceMap</h4>
-<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/util/ArrayListSimpleList.html" title="class in randoop.util">ArrayListSimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&gt; sequenceMap</pre>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/util/SimpleArrayList.html" title="class in randoop.util">SimpleArrayList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&gt; sequenceMap</pre>
 </li>
 </ul>
 <a name="typeSet">
@@ -455,7 +455,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>updateCompatibleMap</h4>
 <pre>private&nbsp;void&nbsp;updateCompatibleMap(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;sequence,
                                  <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</pre>
-<div class="block">Add an entry from the given type to the sequence to the map.</div>
+<div class="block">Add the entry (type, sequeence) to sequenceMap.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>sequence</code> - the sequence</dd>
@@ -469,7 +469,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>getSequencesForType</h4>
-<pre>public&nbsp;<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getSequencesForType(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
+<pre>public&nbsp;<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getSequencesForType(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
                                                 boolean&nbsp;exactMatch,
                                                 boolean&nbsp;onlyReceivers)</pre>
 <div class="block">Searches through the set of active sequences to find all sequences whose types match with the

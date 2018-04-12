@@ -28,7 +28,7 @@ public class MockRandom {
    * Returns the instance of Random(0) associated with the parameter {@code random}. If none exists
    * in the map, a new instance of Random(0) is created, added to the map and returned.
    *
-   * @param random instance to map from.
+   * @param random instance to map from
    * @return instance of Random(0) mapped from random
    */
   private static Random getDelegate(Random random) {

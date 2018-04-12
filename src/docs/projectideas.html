@@ -183,10 +183,11 @@ Randoop can do better.  Here is one idea; other approaches are possible.</p>
 
 <p>
 Randoop could determine what fields a method will read, and then chose an
-object for which those fields have been recently side-effected.
-As an example, when obtaining a <code>Point</code> to pass to the getX() method, a <code>Point</code>
-produced by the <code>setX()</code> or <code>move()</code> method is more interesting than one
-produced by the <code>setY()</code> method.</p>
+object for which those fields have been recently side-effected.  As an
+example, when obtaining a <code>Point</code> to pass to
+the <code>getX()</code> method, a <code>Point</code> produced by
+the <code>setX()</code> or <code>move()</code> method is more interesting
+than one produced by the <code>setY()</code> method.</p>
 
 <p>As another example, Randoop could choose objects that are most likely to
 achieve additional coverage in the called method, perhaps because the
@@ -196,8 +197,10 @@ values will cause particular branches to be taken.</p>
 <h2 id="known-bad-arguments">Avoid known bad arguments</h2>
 
 <p>
-Sometimes Randoop creates tests that do not terminate or that take a long time to execute.
-For example, Randoop once tried to create a <a href="https://github.com/randoop/randoop/issues/315">test that executed an enormously large exponentiation</a>:
+Sometimes Randoop creates tests that do not terminate or that take a long
+time to execute.  For example, Randoop once tried to create
+a <a href="https://github.com/randoop/randoop/issues/315">test that
+executed an enormously large exponentiation</a>:
 </p>
 
 <pre><code>
@@ -448,7 +451,8 @@ problem for Randoop; effort would probably be better invested elsewhere.
 <h2 id="side-effect-analysis">Side effect analysis</h2>
 
 <p>
-  Enhance Randoop to utilize a side effect analysis that indicates which
+  Randoop's <a href="https://randoop.github.io/randoop/manual/index.html#option:observers"><code>--observers</code></a>
+  command-line argument informs Randoop which
   methods are pure (perform no side effects).
   Here are two distinct benefits:
 </p>
@@ -470,11 +474,18 @@ than after
   x = foo();
   y = bar(x);
 </pre>
-and Randoop will try to test the <code>x</code> values produced by both
-sequences.  By ignoring the <code>x</code> value produced by the second
-sequence, Randoop could spend half as long to produce equally good tests.
-Also, Randoop's tests would be easier to understand because they would be
-shorter and would not contain mysterious, useless calls to pure methods.
+Randoop will treat the <code>x</code> values produced by the
+sequences as different, and will use both in longer tests.
+By ignoring the <code>x</code> value produced by the second
+sequence, Randoop can spend half as long to produce equally good tests.
+Also, Randoop's tests are easier to understand because they are
+and do not contain mysterious, useless calls to pure methods.
+
+  <p>
+    This is implemented in part, but needs additional testing and
+    validation.
+  </p>
+
 </li>
 
 <li>
@@ -486,20 +497,18 @@ shorter and would not contain mysterious, useless calls to pure methods.
   the objects that the test creates.  For instance, Randoop might output
   <pre>  assertTrue(someObject.itsField == 22);</pre>
 
-  In addition to reading fields of an object, Randoop could invoke observer
-  methods.  For instance, it could output
+  In addition to reading fields of an object, Randoop should invoke observer
+  methods.  For instance, it should output
   <pre>  assertTrue(someObject.observerMethod() == 22);</pre>
 
-  This is only possible for pure methods &mdash methods that have no side
+  This is only possible for pure methods &mdash; methods that have no side
   effect and return the same value every time they are called on the same
-  arguments.  If Randoop is told which methods are pure, it can use them as
-  observers and can generate much richer and more sensitive assertions in
-  its regression tests.
+  arguments.
 </li>
 </ol>
 
 <p>
-The goal of this project is to enable Randoop to utilize pure methods for
+The goal of this project is to improve how Randoop utilizes pure methods for
 both of the purposes outlined above.
 </p>
 
@@ -520,11 +529,12 @@ compelling.
     create a new one.
   </li>
   <li>
-    As a start, make Randoop support manually-written null and reference immutability annotations
+    Make Randoop support manually-written null and reference immutability
+    annotations.
+    For example, Randoop should read the Checker Framework's annotated JDK.
     This could both cut down the search space and possibly allow more
     actual errors to be found (such as null dereference errors when nulls
-    are allowed).  It would indicate whether the rest of the project is
-    worth pursing.
+    are allowed).
   </li>
 </ul>
 
@@ -803,7 +813,7 @@ started with Randoop development and make a contribution.
 </body>
 </html>
 
-<!--  LocalWords:  assertTrue someObject itsField observerMethod ABB T1
+<!--  LocalWords:  assertTrue someObject itsField observerMethod ABB T1 m1
  -->
-<!--  LocalWords:  Palulu
+<!--  LocalWords:  Palulu GRT GRT's m2 t1 t2 pre plugin
  -->

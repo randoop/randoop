@@ -40,7 +40,7 @@ public class TreeMap {
     String res = br + ",";
     //For Basic Block Coverage
     //START comment here
-
+    /*
     if (e == null) {
       res += "entry=null";
     } else {
@@ -56,7 +56,7 @@ public class TreeMap {
     }
     //For Basic Block Coverage
     //END comment here
-
+    */
     if (!branchFingerprints.contains(res)) {
       branchFingerprints.add(res);
       // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));

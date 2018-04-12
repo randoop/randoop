@@ -68,7 +68,7 @@ public class FibHeap {
     String res = br + ",";
     //        For Basic Block Coverage
     //        START comment here
-
+    /*
     res += nodeFingerprint(n);
     res += nodeFingerprint(m);
     if (n != null && m != null) {
@@ -79,7 +79,7 @@ public class FibHeap {
     }
     //For Basic Block Coverage
     //END comment here
-
+    */
     if (!branchFingerprints.contains(res)) {
       branchFingerprints.add(res);
       // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));

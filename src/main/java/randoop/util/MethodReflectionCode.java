@@ -1,5 +1,7 @@
 package randoop.util;
 
+import static randoop.Globals.lineSep;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -37,9 +39,14 @@ public final class MethodReflectionCode extends ReflectionCode {
   @SuppressWarnings("Finally")
   @Override
   public void runReflectionCodeRaw() {
+    Log.logLine("runReflectionCodeRaw: " + method);
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
-
+      try {
+        Log.logLine("runReflectionCodeRaw(" + method + ") => " + retval);
+      } catch (OutOfMemoryError e) {
+        Log.logLine("runReflectionCodeRaw(" + method + ") => [value too large to print]");
+      }
       if (receiver == null && isInstanceMethod()) {
         throw new ReflectionCodeException(
             "receiver was null - expected NPE from call to: " + method);
@@ -51,7 +58,17 @@ public final class MethodReflectionCode extends ReflectionCode {
       this.exceptionThrown = e.getCause();
     } catch (Throwable e) {
       // Any other exception indicates Randoop should not have called the method
-      throw new ReflectionCodeException(e);
+      String message =
+          String.format(
+              "error invoking %s on %d arguments:",
+              method, (receiver == null ? 0 : 1) + inputs.length);
+      if (receiver != null) {
+        message += lineSep + "  " + receiver;
+      }
+      for (Object input : inputs) {
+        message += lineSep + "  " + input;
+      }
+      throw new ReflectionCodeException(message, e);
     }
   }
 

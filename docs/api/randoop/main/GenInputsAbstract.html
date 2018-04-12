@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>GenInputsAbstract (randoop 4.0.0 API)</title>
+<title>GenInputsAbstract (randoop 4.0.3 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="GenInputsAbstract (randoop 4.0.0 API)";
+            parent.document.title="GenInputsAbstract (randoop 4.0.3 API)";
         }
     }
     catch(err) {
@@ -385,7 +385,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#methodlist">methodlist</a></span></code>
 <div class="block">A file containing a list of methods and constructors to test, each given as a <a
- href="#fully-qualified-signature">fully-qualified signature</a> on a separate line.</div>
+ href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+ signature</a> on a separate line.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -488,7 +489,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#operation_history_log">operation_history_log</a></span></code>
 <div class="block">A file to which to log the operation usage history.</div>
 </td>
@@ -548,9 +549,9 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#selection_log">selection_log</a></span></code>
-<div class="block">A destination to which to log selections; helps find sources of non-determinism.</div>
+<div class="block">A file to which to log selections; helps find sources of non-determinism.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -769,7 +770,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <h4>methodlist</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a> methodlist</pre>
 <div class="block">A file containing a list of methods and constructors to test, each given as a <a
- href="#fully-qualified-signature">fully-qualified signature</a> on a separate line.
+ href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+ signature</a> on a separate line.
 
  <p>These methods augment any methods from classes given by the <code>--testclass</code> or <code>--classlist</code> options.
 
@@ -788,9 +790,9 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  not prevent indirect calls to such methods from other, allowed methods.
 
  <p>Randoop will not directly call a method whose <a
- href="#fully-qualified-signature">fully-qualified signature</a> matches the regular expression,
- or a method inherited from a superclass or interface whose signature matches the regular
- expression.
+ href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+ signature</a> matches the regular expression, or a method inherited from a superclass or
+ interface whose signature matches the regular expression.
 
  <p>If the regular expression contains anchors "<code>^</code>" and "<code>$</code>", they refer to the
  beginning and the end of the signature string.</div>
@@ -1160,7 +1162,10 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  is nondeterministic: it may generate different test suites on different runs.
 
  <p>The default value is appropriate for generating tests for a single class in the context of a
- larger program, but is too small to be effective for generating tests for an entire program.</div>
+ larger program, but is too small to be effective for generating tests for an entire program.
+
+ <p>Randoop may run for longer than this because of long-running tests. The elapsed time is
+ checked after each test, not during its execution.</div>
 </li>
 </ul>
 <a name="LIMIT_DEFAULT">
@@ -1590,10 +1595,9 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>selection_log</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> selection_log</pre>
-<div class="block">A destination to which to log selections; helps find sources of non-determinism. Either the
- name of a file or a hyphen ("-") indicating that standard output should be used. If not
- specified, no logging is done.</div>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a> selection_log</pre>
+<div class="block">A file to which to log selections; helps find sources of non-determinism. If not specified, no
+ logging is done.</div>
 </li>
 </ul>
 <a name="operation_history_log">
@@ -1602,7 +1606,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>operation_history_log</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> operation_history_log</pre>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a> operation_history_log</pre>
 <div class="block">A file to which to log the operation usage history.</div>
 </li>
 </ul>

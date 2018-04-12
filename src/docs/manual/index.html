@@ -14,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 4.0.0, released February 28, 2018.
+This is the manual for Randoop version 4.0.3, released March 25, 2018.
 The Randoop homepage is
 <a href="https://randoop.github.io/randoop/">https://randoop.github.io/randoop/</a>.
 </p>
@@ -39,8 +39,8 @@ The Randoop homepage is
           <li><a href="#regression_test_failures">Regression test failures</a></li>
         </ul></li>
       <li><a href="#generation_stages">Stages of test generation, and limiting test generation</a></li>
-      <li><a href="#minimize">Minimizing a failing JUnit test suite</a></li>
     </ul></li>
+  <li><a href="#minimize">Minimizing a failing JUnit test suite</a></li>
   <li><a href="#customize">Customizing Randoop's behavior to your application</a>
     <ul>
       <li><a href="#command-line-options">Command-line options</a></li>
@@ -176,23 +176,27 @@ occasions when they fail and reveal a bug or a regression failure.
 <h1 id="getting_randoop">Installing Randoop</h1>
 
 <p>
+Randoop runs on a Java 7 or Java 8 JVM.
+</p>
+
+<p>
   Download and unzip the file
-  <a href="https://github.com/randoop/randoop/releases/download/v4.0.0/randoop-4.0.0.zip"><code>randoop-4.0.0.zip</code></a>.
+  <a href="https://github.com/randoop/randoop/releases/download/v4.0.3/randoop-4.0.3.zip"><code>randoop-4.0.3.zip</code></a>.
 <!-- from the
   <a href="https://github.com/randoop/randoop/releases/latest">latest
     release</a>.
 -->
 <!--
   This zip archive contains the Randoop jar file
-  <code>randoop-all-4.0.0.jar</code>, the Java agent jar files
-  (<code>covered-class-4.0.0.jar</code> and
-   <code>replacecall-4.0.0.jar</code>),
+  <code>randoop-all-4.0.3.jar</code>, the Java agent jar files
+  (<code>covered-class-4.0.3.jar</code> and
+   <code>replacecall-4.0.3.jar</code>),
   and this documentation.
 -->
   This manual uses <code>$(RANDOOP_PATH)</code> to refer to
   the path of the unzipped archive,
   and <code>$(RANDOOP_JAR)</code> to refer to
-  the location of <code>randoop-all-4.0.0.jar</code>
+  the location of <code>randoop-all-4.0.3.jar</code>
   within the unzipped archive.  You may set environment variables accordingly,
   but that is not required.
 </p>
@@ -223,17 +227,6 @@ Randoop supports three commands:
 </p>
 
 <ul>
-<li> <b>help</b> prints out a usage message.
-For details, see <a href="#getting_help">Getting Help</a>.
-Example uses:
-
-<pre class="code">
-java -classpath $(RANDOOP_JAR) randoop.main.Main help
-java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
-java -classpath $(RANDOOP_JAR) randoop.main.Main help minimize
-</pre>
-</li>
-
 <li> <b>gentests</b> generates unit tests. For details,
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
@@ -251,13 +244,22 @@ java -cp $(RANDOOP_JAR) randoop.main.Main minimize --suitepath=ErrorTest0.java -
 </pre>
 </li>
 
+<li> <b>help</b> prints out a usage message.
+For details, see <a href="#getting_help">Getting Help</a>.
+Example uses:
+
+<pre class="code">
+java -classpath $(RANDOOP_JAR) randoop.main.Main help
+java -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
+java -classpath $(RANDOOP_JAR) randoop.main.Main help minimize
+</pre>
+</li>
+
 </ul>
 
 <p>
 (On Windows, adjust the classpath, such as using semicolon instead of colon
 as the separator.)
-You don't need the <code>-classpath</code> argument if you add
-<code>$(RANDOOP_JAR)</code> to your classpath.
 </p>
 
 
@@ -361,7 +363,7 @@ RegressionTest will pass.
 </p>
 
 <pre class="code">
-java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.0.0.jar \
+java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.0.3.jar \
   randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
 </pre>
 
@@ -721,7 +723,7 @@ Here is how Randoop attempts to generate a test:
   </li>
   <li>
     the number of attempts to generate a sequence reaches the step limit
-    (<a href="#option:attemted-limit"><code>--attempted-limit</code></a>), or
+    (<a href="#option:attempted-limit"><code>--attempted-limit</code></a>), or
   </li>
   <li>
     the number of generated sequences reaches the input limit
@@ -753,7 +755,7 @@ for threading</a> for additional per-test time limits.
 </p>
 
 
-<h2 id="minimize">Minimizing a failing JUnit test suite</h2>
+<h1 id="minimize">Minimizing a failing JUnit test suite</h1>
 
 <p>
 Randoop includes a minimizer that, given a failing JUnit test suite file,
@@ -774,7 +776,7 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -cp randoop-all-4.0.0.jar randoop.main.Main minimize \
+java -cp randoop-all-4.0.3.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
@@ -816,7 +818,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
 <!-- start options doc (DO NOT EDIT BY HAND) -->
 <ul>
-  <li id="optiongroup:Code-under-test:--which-members-may-be-used-by-a-test">Code under test:  which members may be used by a test
+  <li id="optiongroup:Code-under-test:--which-classes-and-members-may-be-used-by-a-test">Code under test:  which classes and members may be used by a test
       <ul>
             <li id="option:testclass"><b>--testclass=</b><i>string</i> <code>[+]</code>.
              The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
@@ -1048,7 +1050,10 @@ Randoop about your application, and that is how we recommend using Randoop.
  is nondeterministic: it may generate different test suites on different runs.
 
  <p>The default value is appropriate for generating tests for a single class in the context of a
- larger program, but is too small to be effective for generating tests for an entire program. [default 100]
+ larger program, but is too small to be effective for generating tests for an entire program.
+
+ <p>Randoop may run for longer than this because of long-running tests. The elapsed time is
+ checked after each test, not during its execution. [default 100]
             <li id="option:attempted-limit"><b>--attempted-limit=</b><i>int</i>.
              Maximum number of attempts to generate a test method candidate. [default 100000000]
             <li id="option:generated-limit"><b>--generated-limit=</b><i>int</i>.
@@ -1303,13 +1308,13 @@ To use it:
 <ul>
   <li>When running Randoop, pass the following command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.0.0.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.0.0.jar
+-Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.0.3.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar
 </pre>
   </li>
-  <li>When running the generated tests, add the file <code>replacecall-4.0.0.jar</code> to the boot class path,
+  <li>When running the generated tests, add the file <code>replacecall-4.0.3.jar</code> to the boot class path,
     and pass the same command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.0.0.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.0.0.jar
+-Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.0.3.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar
 </pre>
 </li>
 </ul>
@@ -1358,7 +1363,7 @@ and run the agent with the <code>--dont-transform</code> command-line option
 and the filename as its argument:
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.0.0.jar=--dont-transform=gradle-exclusions.txt
+-javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar=--dont-transform=gradle-exclusions.txt
 </pre>
 
 <p>
@@ -1373,7 +1378,7 @@ For a different environment, you can determine what classes are being affected b
   <code>--debug</code> flag
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.0.0.jar=--debug
+-javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar=--debug
 </pre>
 <p>
 and looking in the file <code>transform-log.txt</code> to see which methods are being transformed.
@@ -1401,7 +1406,7 @@ and you will specify the replacements in a replacement file (<a href="https://gi
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.0.0.jar=--replacement-file=replacement-file.txt
+-javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar=--replacement-file=replacement-file.txt
 </pre>
 
 <p>
@@ -1850,17 +1855,17 @@ exception escaping the method as the rep invariant being violated.
   For the <code>--require-covered-classes</code> option to work, the classes
   must be instrumented so Randoop can determine when they are covered.  To
   instrument classes for this filter, also use
-  the <code>covered-class-4.0.0.jar</code> by giving the following command-line
+  the <code>covered-class-4.0.3.jar</code> by giving the following command-line
   option for java
 </p>
 <pre><code>
--javaagent:$(RANDOOP_PATH)/covered-class-4.0.0.jar
+-javaagent:$(RANDOOP_PATH)/covered-class-4.0.3.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   (The instrumentation is not done on any JDK or JUnit classes.)
-  (The <code>covered-class-4.0.0.jar</code> file can be found in the
+  (The <code>covered-class-4.0.3.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
 </p>
@@ -2042,7 +2047,7 @@ argument.
 
 <p>
 The program under test is nondeterministic.  This can cause Randoop to
-produce different tests on different runs, but more seriously, it can cause
+produce different tests on different runs.  More seriously, this can cause
 Randoop to produce <a href="#flaky-tests">flaky tests</a> that sometimes
 pass and sometimes fail.
 </p>
@@ -2212,11 +2217,13 @@ See the Java Tutorial on
 Cannot find the Java compiler. Check that classpath includes tools.jar
 </pre>
 <p>
-  then you have installed Java incorrectly.
+  then there is a problem with your Java installation.
   You perhaps have the JRE on your path before the JDK.
   Ensure that <code>JAVA_HOME</code> appears at the <em>front</em> of your path.
   If you run the Windows operating system, see the
   <a href="https://douglascayers.com/2015/05/30/how-to-set-custom-java-path-after-installing-jdk-8/">instructions for setting a custom Java path after installing JDK 8</a>.
+  Another possible cause of the problem is using Java 9; Randoop currently
+  only runs under a Java 7 or Java 8 JVM.
 </p>
 
 
@@ -2232,12 +2239,15 @@ No class found for type name "example.ExampleClass"
   then the classes under test are not in the classpath.
   The most likely case is that you have not included the path to these classes.
   Otherwise, the classpath is not given properly.
-  In particular, if you are running Randoop on Windows, parts of the classpath should be
+</p>
+
+<p>
+  If you are running Randoop on Windows, parts of the classpath should be
   separated by a semi-colon ";" instead of the colon ":" shown in the examples
   in this document.
   See the Java Tutorial on
   <a href="https://docs.oracle.com/javase/tutorial/essential/environment/paths.html">paths and classpaths</a>
-  for platform specific information on paths.
+  for platform-specific information on paths.
 </p>
 
 
@@ -2327,6 +2337,7 @@ Two possible reasons for a long-running test are:
 <p>
 When Randoop does not terminate, that is usually because Randoop is creating
 tests that do not terminate (or that execute for a very long time).
+Here are three things you can do.
 </p>
 <ul>
   <li>
@@ -2358,7 +2369,8 @@ tests that do not terminate (or that execute for a very long time).
 </ul>
 
 <p>
-If you cannot fix the problem that causes the long execution, you might want to <a href="option:omitmethods">exclude the method</a> from testing.
+If you cannot fix the problem that causes the long execution, you might
+want to <a href="#option:omitmethods">exclude the method</a> from testing.
 </p>
 
 
@@ -2515,6 +2527,7 @@ Ben Keller,
 Carlos Pacheco,
 Jeff Perkins,
 Mark Roberts,
+Casey Xing,
 Sai Zhang.
 </p>
 
@@ -2536,7 +2549,7 @@ please let us know so we can correct the oversight.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls
+<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls pre test1 o1 t1 s1 ErrorTest0 Zaplatynski test10 var0 var1 var2 c' s2 a1 Xing
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->

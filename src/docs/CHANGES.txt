@@ -1,3 +1,26 @@
+Version 4.0.3, released April 10, 2018
+
+Fixed a bug caused by order of execution of variable initializers.
+
+
+Version 4.0.2, released April 8, 2018
+
+Adds the contract c.toArray().length == c.size() for Collections c.
+
+Make --omitmethods work for constructors as well as methods.
+
+Minor documentation improvements.
+
+
+Version 4.0.1, released March 25, 2018
+
+This release makes minor documentation fixes.  Two examples are:
+ * The manual provides a link to a newer Maven plug-in.
+ * The documentation of the test minimizer is more prominent.
+
+There are also code cleanups and minor bug fixes.
+
+
 Version 4.0.0, released February 28, 2018
 
 Many improvements to the manual, including improved instructions about

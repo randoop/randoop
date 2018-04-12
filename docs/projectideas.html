@@ -19,6 +19,8 @@
           <li><a href="#mimic-real-call-sequences">Mimic real call sequences</a></li>
         </ul></li>
       <li><a href="#better-choice-of-arguments">Better choice of arguments</a></li>
+      <li><a href="#known-bad-arguments">Avoid known bad arguments</a></li>
+      <li><a href="#Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</a></li>
       <li><a href="#creating-independent-tests">Creating independent tests</a>
         <ul>
           <li><a href="#Approach_1:_Undo_state_changes">Approach 1: Undo state changes</a></li>
@@ -181,14 +183,86 @@ Randoop can do better.  Here is one idea; other approaches are possible.</p>
 
 <p>
 Randoop could determine what fields a method will read, and then chose an
-object for which those fields have been recently side-effected.
-As an example, when obtaining a <code>Point</code> to pass to the getX() method, a <code>Point</code>
-produced by the <code>setX()</code> or <code>move()</code> method is more interesting than one
-produced by the <code>setY()</code> method.</p>
+object for which those fields have been recently side-effected.  As an
+example, when obtaining a <code>Point</code> to pass to
+the <code>getX()</code> method, a <code>Point</code> produced by
+the <code>setX()</code> or <code>move()</code> method is more interesting
+than one produced by the <code>setY()</code> method.</p>
 
 <p>As another example, Randoop could choose objects that are most likely to
 achieve additional coverage in the called method, perhaps because the
 values will cause particular branches to be taken.</p>
+
+
+<h2 id="known-bad-arguments">Avoid known bad arguments</h2>
+
+<p>
+Sometimes Randoop creates tests that do not terminate or that take a long
+time to execute.  For example, Randoop once tried to create
+a <a href="https://github.com/randoop/randoop/issues/315">test that
+executed an enormously large exponentiation</a>:
+</p>
+
+<pre><code>
+bigFraction3 = -104 / 5
+bigInteger25 = 1561321067192303346130420089702102441699871430851380131368332415577876285112504379523988395794851806993803452448222179606997671319406528676747268949561732973027887
+bigFraction3.pow(bigInteger25);
+</code></pre>
+
+<p>
+Such a call will not terminate in a reasonable amount of time.
+</p>
+
+<p>
+To detect infinitely-looping tests, Randoop can run with
+the <code>--usethreads</code> command-line option.  However, that reduces
+performance.
+</p>
+
+<p>
+When a programmer can characterize which inputs to a method are reasonable,
+it would be nice for Randoop to avoid creating such tests.
+</p>
+
+
+<h2 id="Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</h2>
+
+<p>
+<a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT (Guided
+Random Testing)</a> is a variant of the Randoop test generator that adds some
+features to Randoop.  In a recent competition among testing tools, GRT won.
+</p>
+
+<p>
+Programmers who want to use GRT are out of luck, because GRT's source code isn't
+available.  Furthermore, some of the features that GRT claims were already part
+of Randoop, which casts doubt on the experimental methodology.  It is certain
+that some of GRT's ideas are good ones, but we don't know which ones.
+</p>
+
+<p>
+GRT's techniques are
+</p>
+
+<dl>
+<dt>Constant mining (static)</dt>
+<dd>Extract constants from the program under test for both global usage (seed the main object pool) and for local usage as inputs for specific methods.</dd>
+<dt>Impurity (static + dynamic)</dt>
+<dd>Perform static purity analysis for all methods under test. At run-time, fuzz selected input from the object pool based on a Gaussian distribution
+and purity results.</dd>
+<dt>Elephant brain (dynamic)</dt>
+<dd>Manage method sequences (to create inputs) in the object pool with the exact types obtained at run-time.</dd>
+<dt>Detective (static + dynamic)</dt>
+<dd>Analyze the method input and return type dependency statically, and construct missing input data on demand at run-time.</dd>
+<dt>Orienteering (dynamic)</dt>
+<dd>Favor method sequences that require lower cost to execute, which accelerates testing for other components.</dd>
+<dt>Bloodhound (dynamic)</dt>
+<dd>Guide method selection and sequence generation by coverage information at run-time.</dd>
+</dl>
+
+<p>
+The goal of this project is to re-implement some or all the GRT techniques in the open-source <a href="https://randoop.github.io/randoop/">Randoop</a> implementation, and then to evaluate the benefits of each one.
+</p>
 
 
 <h2 id="creating-independent-tests">Creating independent tests</h2>
@@ -377,7 +451,8 @@ problem for Randoop; effort would probably be better invested elsewhere.
 <h2 id="side-effect-analysis">Side effect analysis</h2>
 
 <p>
-  Enhance Randoop to utilize a side effect analysis that indicates which
+  Randoop's <a href="https://randoop.github.io/randoop/manual/index.html#option:observers"><code>--observers</code></a>
+  command-line argument informs Randoop which
   methods are pure (perform no side effects).
   Here are two distinct benefits:
 </p>
@@ -399,11 +474,18 @@ than after
   x = foo();
   y = bar(x);
 </pre>
-and Randoop will try to test the <code>x</code> values produced by both
-sequences.  By ignoring the <code>x</code> value produced by the second
-sequence, Randoop could spend half as long to produce equally good tests.
-Also, Randoop's tests would be easier to understand because they would be
-shorter and would not contain mysterious, useless calls to pure methods.
+Randoop will treat the <code>x</code> values produced by the
+sequences as different, and will use both in longer tests.
+By ignoring the <code>x</code> value produced by the second
+sequence, Randoop can spend half as long to produce equally good tests.
+Also, Randoop's tests are easier to understand because they are
+and do not contain mysterious, useless calls to pure methods.
+
+  <p>
+    This is implemented in part, but needs additional testing and
+    validation.
+  </p>
+
 </li>
 
 <li>
@@ -415,20 +497,18 @@ shorter and would not contain mysterious, useless calls to pure methods.
   the objects that the test creates.  For instance, Randoop might output
   <pre>  assertTrue(someObject.itsField == 22);</pre>
 
-  In addition to reading fields of an object, Randoop could invoke observer
-  methods.  For instance, it could output
+  In addition to reading fields of an object, Randoop should invoke observer
+  methods.  For instance, it should output
   <pre>  assertTrue(someObject.observerMethod() == 22);</pre>
 
-  This is only possible for pure methods &mdash methods that have no side
+  This is only possible for pure methods &mdash; methods that have no side
   effect and return the same value every time they are called on the same
-  arguments.  If Randoop is told which methods are pure, it can use them as
-  observers and can generate much richer and more sensitive assertions in
-  its regression tests.
+  arguments.
 </li>
 </ol>
 
 <p>
-The goal of this project is to enable Randoop to utilize pure methods for
+The goal of this project is to improve how Randoop utilizes pure methods for
 both of the purposes outlined above.
 </p>
 
@@ -449,11 +529,12 @@ compelling.
     create a new one.
   </li>
   <li>
-    As a start, make Randoop support manually-written null and reference immutability annotations
+    Make Randoop support manually-written null and reference immutability
+    annotations.
+    For example, Randoop should read the Checker Framework's annotated JDK.
     This could both cut down the search space and possibly allow more
     actual errors to be found (such as null dereference errors when nulls
-    are allowed).  It would indicate whether the rest of the project is
-    worth pursing.
+    are allowed).
   </li>
 </ul>
 
@@ -732,7 +813,7 @@ started with Randoop development and make a contribution.
 </body>
 </html>
 
-<!--  LocalWords:  assertTrue someObject itsField observerMethod ABB T1
+<!--  LocalWords:  assertTrue someObject itsField observerMethod ABB T1 m1
  -->
-<!--  LocalWords:  Palulu
+<!--  LocalWords:  Palulu GRT GRT's m2 t1 t2 pre plugin
  -->

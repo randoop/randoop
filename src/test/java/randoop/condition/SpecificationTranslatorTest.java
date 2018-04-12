@@ -109,7 +109,7 @@ public class SpecificationTranslatorTest {
     try {
       method = c.getDeclaredMethod("append", char.class);
     } catch (NoSuchMethodException e) {
-      fail("could not load PrintWriter.append(char)");
+      throw new AssertionError("could not load PrintWriter.append(char)", e);
     }
     return method;
   }
@@ -144,7 +144,7 @@ public class SpecificationTranslatorTest {
     try {
       constructor = c.getDeclaredConstructor(String.class);
     } catch (NoSuchMethodException e) {
-      fail("could not load constructor");
+      throw new AssertionError("could not load constructor", e);
     }
     return TypedOperation.forConstructor(constructor);
   }
@@ -207,9 +207,9 @@ public class SpecificationTranslatorTest {
       specificationList.addAll(
           (List<OperationSpecification>) gson.fromJson(reader, typeToken.getType()));
     } catch (FileNotFoundException e) {
-      fail("could not find spec file");
+      throw new AssertionError("could not find spec file", e);
     } catch (IOException e) {
-      fail("exception while loading spec file");
+      throw new AssertionError("exception while loading spec file", e);
     }
     assertThat("spec file has 8 specs", specificationList.size(), is(equalTo(8)));
     assertThat(
