@@ -42,7 +42,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * of the tests (set with {@code --junit-package-name}).
    */
   ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Code under test:  which members may be used by a test")
+  @OptionGroup("Code under test:  which classes and members may be used by a test")
   @Option("The fully-qualified name of a class under test")
   public static List<String> testclass = new ArrayList<>();
 
@@ -381,6 +381,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>The default value is appropriate for generating tests for a single class in the context of a
    * larger program, but is too small to be effective for generating tests for an entire program.
+   *
+   * <p>Randoop may run for longer than this because of long-running tests. The elapsed time is
+   * checked after each test, not during its execution.
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Limiting test generation")

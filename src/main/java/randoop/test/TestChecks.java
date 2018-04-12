@@ -64,7 +64,7 @@ public interface TestChecks<T extends TestChecks<T>> {
   /**
    * Returns the intersection of checks in this set and another set.
    *
-   * @param other the {@code TestChecks} to compare with.
+   * @param other the {@code TestChecks} to compare with
    * @return the checks common to this set of checks and those in {@code other}
    */
   T commonChecks(T other);

@@ -232,6 +232,7 @@ public class CoveredClassTest {
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.observers, "observer", "//.*", null);
 
+    // Maps each class type to the observer methods in it.
     MultiMap<Type, TypedOperation> observerMap;
     try {
       observerMap = operationModel.getObservers(observerSignatures);

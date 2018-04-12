@@ -37,6 +37,7 @@ import randoop.contract.EqualsSymmetric;
 import randoop.contract.EqualsToNullRetFalse;
 import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
+import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
@@ -118,6 +119,7 @@ public class OperationModel {
     contracts.add(CompareToEquals.getInstance()); // arity=2
     contracts.add(CompareToSubs.getInstance()); // arity=3
     contracts.add(CompareToTransitive.getInstance()); // arity=3
+    contracts.add(SizeToArrayLength.getInstance()); // arity=1
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
@@ -308,15 +310,15 @@ public class OperationModel {
   }
 
   /**
-   * Gets observer methods from the set of signatures.
+   * Given a set of signatures, returns the operations for them.
    *
-   * @param observerSignatures the set of method signatures
-   * @return the map to observer methods from their declaring class type
+   * @param observerSignatures the set of method signatures; typically comes from the {@code
+   *     --observers} command-line option
+   * @return a map from each class type to the set of observer methods in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
   public MultiMap<Type, TypedOperation> getObservers(Set<String> observerSignatures)
       throws OperationParseException {
-    // Populate observer_map from observers file.
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     for (String sig : observerSignatures) {
       TypedClassOperation operation = MethodCall.parse(sig);

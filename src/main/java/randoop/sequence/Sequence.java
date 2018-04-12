@@ -865,7 +865,7 @@ public final class Sequence implements WeightedElement {
    * Appends the statement at the given index to the {@code StringBuilder}.
    *
    * @param b the {@link StringBuilder} to which the code is appended
-   * @param index the position of the statement to print in this {@code Sequence}.
+   * @param index the position of the statement to print in this {@code Sequence}
    */
   public void appendCode(StringBuilder b, int index) {
     // Get strings representing the inputs to this statement.

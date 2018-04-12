@@ -12,6 +12,7 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.util.Log;
 import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
@@ -150,6 +151,8 @@ public final class MethodCall extends CallableOperation {
   @Override
   public ExecutionOutcome execute(Object[] input, PrintStream out) {
 
+    Log.logLine("MethodCall.execute: this = " + this);
+
     Object receiver = null;
     int paramsLength = input.length;
     int paramsStartIndex = 0;
@@ -162,6 +165,7 @@ public final class MethodCall extends CallableOperation {
     Object[] params = new Object[paramsLength];
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
+      Log.logLine("  Param " + i + " = " + params[i]);
     }
 
     MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);

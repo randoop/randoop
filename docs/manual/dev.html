@@ -29,7 +29,7 @@
     </ul></li>
   <li><a href="#testing-randoop">Testing Randoop</a>
     <ul>
-      <li><a href="#coverage-tests">Checking Randop code coverage</a></li>
+      <li><a href="#coverage-tests">Checking Randoop code coverage</a></li>
       <li><a href="#travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</a></li>
       <li><a href="#addtests">Adding tests</a>
         <ul>
@@ -154,7 +154,7 @@ you will never run a task that calls html5validator.
 <table style="border:0;">
   <tr>
     <td><code>./gradlew jar</code></td>
-    <td>to build the Randoop jar files</td>
+    <td>to build the main Randoop jar file (but not agent or fat jar files)</td>
   </tr>
   <tr>
     <td><code>./gradlew assemble</code></td>
@@ -230,7 +230,7 @@ For instance, the command
 </code></pre>
 
 <p>
-can be used to restore the files before they have been commited.
+can be used to restore the files before they have been committed.
 </p>
 
 
@@ -289,7 +289,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.0.1.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.0.3.jar</code></pre>
 
 
 
@@ -350,12 +350,12 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.0.1.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.0.3.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
 
-<h2 id="coverage-tests">Checking Randop code coverage</h2>
+<h2 id="coverage-tests">Checking Randoop code coverage</h2>
 
 <p>
   Before making a release, and to evaluate the effect of changes to Randoop, you should compute coverage of Randoop-generated tests for 4 codebases.
@@ -689,12 +689,8 @@ task described below.
     <pre>git pull</pre>
   </li>
   <li>Compile, test, and build documentation.
-    If there is any filure, fix them and start over.
-    <pre>./gradlew clean build</pre>
-  </li>
-  <li>Compile, test, and build documentation.
-    If there is any filure, fix them and start over.
-    <pre>./gradlew clean build javadoc validateAPI manual valdateSite</pre>
+    If there is any failure, fix them and start over.
+    <pre>./gradlew clean build javadoc validateAPI manual validateSite</pre>
   </li>
   <li>Double-check that the changelog <code>src/docs/CHANGES.txt</code>
     contains all user-visible changes in
@@ -716,8 +712,8 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>4.0.1</em>
-NEWVERSION=<em>4.0.2</em></pre>
+OLDVERSION=<em>4.0.3</em>
+NEWVERSION=<em>4.0.3</em></pre>
       These are used for working with git.
     </li>
     <li>Update the version number and date in these files:
@@ -728,11 +724,15 @@ src/docs/manual/dev.html
 src/docs/manual/index.html
 src/main/java/randoop/Globals.java
 </pre>
-This <em>might</em> work to automate the number (not the date), only for files in <code>src/</code> (double-check it!):
+This does part of the work:  it updates the number, only for files in <code>src/</code>.<br/>
+You still need to manually update the date in <code>src/docs/CHANGES.txt</code>,
+undo undesirable change to src/docs/CHANGES.txt, and
+double-check all changes.
 <pre>
+  preplace '4\.0\.2' '4.0.3' build.gradle
   cd src
-  preplace '4\.0\.1' '4.0.2'
-  preplace '4\.0\.0' '4.0.1'
+  preplace '4\.0\.2' '4.0.3'
+  preplace '4\.0\.1' '4.0.3'
   cd ..
 </pre>
     </li>
@@ -749,7 +749,29 @@ This <em>might</em> work to automate the number (not the date), only for files i
   ./gradlew clean buildRelease
   git add -A .
   git commit . -m "Update version to $NEWVERSION"
-  git push
+  git push</pre>
+  </li>
+  <li>
+    Check that there are no broken links on the published website:
+    <pre>./gradlew checklink</pre>
+    This command creates file <code>checklink-log.txt</code>.
+    <ul>
+      <li>If the only error is that the <code>randoop-4.0.3.zip</code>
+        file does not exist yet, then run: <pre>rm -f checklink-log.txt</pre>
+      </li>
+      <li>
+        If there are any other errors, then fix them by updating URLs in
+        Randoop or by suppressing a warning in
+        file <code>checklink-args.txt</code>, which was mentioned above.
+        If you made any changes to Randoop, then commit and push the
+        changes, then start over at the <code>./gradlew clean
+        buildRelease</code> step.
+      </li>
+    </ul>
+  </li>
+  <li>
+    Tag the release.
+<pre>
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
   git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
@@ -762,27 +784,18 @@ This <em>might</em> work to automate the number (not the date), only for files i
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Tags", click "add release notes" for the new tag,
-    name it "Randoop version <em>4.0.2</em>", use the changelog entry as the
+    name it "Randoop version <em>4.0.3</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
-    jar files from <code>build/libs</code>,
-    upload the zip file from <code>build/distributions</code>
+    jar files from <code>build/libs</code> and the zip file from
+    <code>build/distributions</code> (it doesn't matter what order you upload
+    them in; they will be listed alphabetically on the release webpage)
     and, finally, click "publish release".
-  </li>
-  <li>
-    Check that there are no broken links on the published website:
-    <pre>./gradlew checklink</pre>
-    Any output is written to a file <pre>checklink-log.txt</pre>
-    If there are any errors,
-    verify that each link on the site is actually broken,
-    and if so, fix the link, and rerun <pre>./gradlew buildRelease</pre>
-    and commit and push those changes.
-    If the check succeeds, run: <pre>rm -f checklink-log.txt</pre>
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
-    Subject: Randoop version <em>4.0.2</em>
+    Subject: Randoop version <em>4.0.3</em>
     <br/>
-    Randoop <em>4.0.2</em> has been released and is available at
+    Randoop <em>4.0.3</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
@@ -1351,7 +1364,7 @@ in <a href="../api/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam plugin agentTest gradle taskName RandoopSystemTest plugins gitignore randoop changelog RandoopGradle goJF verGJF cd OLDVERSION NEWVERSION unpushed mv subprojects src agenttest  testinput systemtest FieldGetter FieldSetter PublicField init var1 var2 var3 var4 var5 resultAt3 assertTrue o2 testInput str FieldGet FieldSet AccessibleField NonreceiverTerm ArrayCreation InstantiatedType linkedListType ConcreteTypes ReferenceType substLL getTypeSubstitution TypedOperation forConstructor createPrimitiveInitialization forMethod treeSetType substTS gradlew subproject validateManual TODO checklink txt boolean wildcards wcTS substWC syncA substA implementors IndexOutOfBoundsException deterministically
+<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam plugin agentTest gradle taskName RandoopSystemTest plugins gitignore randoop changelog RandoopGradle goJF verGJF cd OLDVERSION NEWVERSION unpushed mv subprojects src agenttest  testinput systemtest FieldGetter FieldSetter PublicField init var1 var2 var3 var4 var5 resultAt3 assertTrue o2 testInput str FieldGet FieldSet AccessibleField NonreceiverTerm ArrayCreation InstantiatedType linkedListType ConcreteTypes ReferenceType substLL getTypeSubstitution TypedOperation forConstructor createPrimitiveInitialization forMethod treeSetType substTS gradlew subproject validateManual TODO checklink txt boolean wildcards wcTS substWC syncA substA implementors IndexOutOfBoundsException deterministically sudo qqy jdk perl html5validator sourceset cp sourcepath ErrorTest suitepath ErrorTest0 suiteclasspath Defects4j md Pascali mdernst ubuntu jdk8 BRANCHNAME javadoc validateAPI valdateSite preplace buildRelease applyCaptureConversion forArgs getTypeParameters
  -->
 <!--  LocalWords:  google JDK's testAdd LinkedList addFirst TreeSet MethodCall th
  -->

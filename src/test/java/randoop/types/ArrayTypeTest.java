@@ -3,7 +3,6 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -61,48 +60,32 @@ public class ArrayTypeTest {
   }
 
   @Test
-  public void testConstructionFromHarvest() {
+  public void testConstructionFromHarvest() throws NoSuchMethodException {
     Class<?> c = ArrayHarvest.class;
 
     Method m = null;
     java.lang.reflect.Type t;
     Type rt;
 
-    try {
-      m = c.getDeclaredMethod("genericArrayArg1");
-    } catch (Exception e) {
-      fail("could not get method");
-    }
+    m = c.getDeclaredMethod("genericArrayArg1");
     t = m.getGenericReturnType();
     rt = Type.forType(t);
     assertTrue("should be generic: " + rt, rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
 
-    try {
-      m = c.getDeclaredMethod("genericArrayArg2");
-    } catch (Exception e) {
-      fail("could not get method");
-    }
+    m = c.getDeclaredMethod("genericArrayArg2");
     t = m.getGenericReturnType();
     rt = Type.forType(t);
     assertTrue("should be generic: " + rt, rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
 
-    try {
-      m = c.getDeclaredMethod("concreteArrayArg1");
-    } catch (Exception e) {
-      fail("could not get method");
-    }
+    m = c.getDeclaredMethod("concreteArrayArg1");
     t = m.getGenericReturnType();
     rt = Type.forType(t);
     assertTrue("should not be generic: " + rt, !rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
 
-    try {
-      m = c.getDeclaredMethod("concreteArrayArg2");
-    } catch (Exception e) {
-      fail("could not get method");
-    }
+    m = c.getDeclaredMethod("concreteArrayArg2");
     t = m.getGenericReturnType();
     rt = Type.forType(t);
     assertTrue("should be generic: " + rt, !rt.isGeneric());

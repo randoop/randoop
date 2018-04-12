@@ -17,8 +17,7 @@ public class GenericTypesTest {
   @Test
   public void testVariableParameters() {
     Class<?> c1 = Variable1.class;
-    GenericClassType a1;
-    a1 = GenericClassType.forClass(c1);
+    GenericClassType a1 = GenericClassType.forClass(c1);
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
         "the parameter has bound Object",
@@ -31,8 +30,7 @@ public class GenericTypesTest {
     assertTrue("String satisfies bound", b1.isUpperBound(JavaTypes.STRING_TYPE, subst));
 
     Class<?> c2 = Variable2.class;
-    GenericClassType a2;
-    a2 = GenericClassType.forClass(c2);
+    GenericClassType a2 = GenericClassType.forClass(c2);
     assertEquals("has two bounds", 2, a2.getTypeParameters().size());
     for (TypeVariable o : a2.getTypeParameters()) {
       assertEquals(
@@ -46,8 +44,7 @@ public class GenericTypesTest {
   public void testConcreteBounds() {
 
     Class<?> c1 = Class1.class;
-    GenericClassType a1;
-    a1 = GenericClassType.forClass(c1);
+    GenericClassType a1 = GenericClassType.forClass(c1);
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
         "the bound is Number",
@@ -91,7 +88,7 @@ public class GenericTypesTest {
   }
 
   @Test
-  public void testParameterizedBounds() {
+  public void testParameterizedBounds() throws IllegalArgumentException {
     // being lazy, rather than building substitution, use instantiate
 
     Class<?> c1 = Parameterized1.class;
@@ -148,19 +145,11 @@ public class GenericTypesTest {
     ReferenceType pt4 = ReferenceType.forClass(Variable1Ext3.class);
     ReferenceType pt5 = ReferenceType.forClass(Variable1Ext4.class);
 
-    try {
-      Type it3 = a3.instantiate(pt4, pt5);
-      assertTrue("should have instantiated OK", it3 != null);
-    } catch (IllegalArgumentException e) {
-      fail("should not have gotten exception");
-    }
+    Type it3 = a3.instantiate(pt4, pt5);
+    assertTrue("should have instantiated OK", it3 != null);
 
-    try {
-      Type it4 = a3.instantiate(pt5, pt4);
-      assertTrue("should have instantiated OK", it4 != null);
-    } catch (IllegalArgumentException e) {
-      fail("should not have gotten exception");
-    }
+    Type it4 = a3.instantiate(pt5, pt4);
+    assertTrue("should have instantiated OK", it4 != null);
 
     try {
       @SuppressWarnings("unused")
