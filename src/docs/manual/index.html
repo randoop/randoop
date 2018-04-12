@@ -1387,14 +1387,14 @@ The package name is used to match the prefix of the fully-qualified classname.
 </p>
 
 <p>
-For a different environment, you can determine what classes are being affected by running the agent with the
-  <code>--debug</code> flag
+For diagnostic output (such as to see what classes are being transformed),
+run the agent with the <code>--debug</code> flag
 </p>
 <pre>
 -javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar=--debug
 </pre>
 <p>
-and looking in the file <code>transform-log.txt</code> to see which methods are being transformed.
+which produes the file <code>transform-log.txt</code>.
 </p>
 
 <p>
