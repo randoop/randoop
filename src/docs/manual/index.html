@@ -1436,6 +1436,28 @@ An example mock class is
 </p>
 
 <p>
+You may also supply a replacement for a constructor, also know as an
+<code>&lt;init&gt;</code> method.
+The replacement method must be static and non-private and should have the same
+argument definitions as the original.  However, the return type will differ.
+The original has a return type of <code>void</code>, the replacement will have a
+return type of the class of the constructor.  Here is a replacement file example:
+</p>
+<pre>
+java.util.Random.&lt;init&gt;() randoop.mock.java.util.RandomReplace.randomWithSeedZero()
+</pre>
+<p>
+Note that the return type is implicit and not shown in the replacement file, however
+it must be explicit in the mock replacement code:
+</p>
+<pre>
+// Used to replace calls to the constructor Random().
+public static java.util.Random randomWithSeedZero() {
+    return new java.util.Random(0);
+}
+</pre>
+
+<p>
 To simplify your replacement file and keep your mock classes organized, it
 is recommended that you choose a package prefix and keep the package
 structure of the original classes.
@@ -1453,17 +1475,9 @@ the <code>randoop.mock</code> prefix for your own mock classes.
 </p>
 
 <p>
-Keep the following in mind when defining replacements:
+Please keep in mind that when you define a replacement for a method that returns a value,
+it can change the behavior of client code.
 </p>
-<ul>
-  <li>
-    Only methods may be replaced. <!-- TODO: does this mean not constructors? -->
-  </li>
-  <li>
-    If you define a replacement for a method that returns a value,
-    it can change the behavior of client code.
-  </li>
-</ul>
 
 
 <h4 id="replacecall-replacement-implementation">Implementing replacement classes</h4>
