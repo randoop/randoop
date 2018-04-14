@@ -99,7 +99,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (GenInputsAbstract.enable_bloodhound) {
       // If Bloodhound is enabled, select the next operation while considering the methods' weights.
-      this.operationSelector = new Bloodhound(operations);
+      this.operationSelector = Bloodhound.instance;
     } else {
       this.operationSelector = new UniformRandomMethodSelection(operations);
     }

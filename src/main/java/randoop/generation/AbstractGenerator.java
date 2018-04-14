@@ -321,12 +321,19 @@ public abstract class AbstractGenerator {
       if (outputTest.test(eSeq)) {
         if (eSeq.hasInvalidBehavior()) {
           invalidSequenceCount++;
-        } else if (eSeq.hasFailure()) {
-          operationHistory.add(eSeq.getOperation(), OperationOutcome.ERROR_SEQUENCE);
-          num_failing_sequences++;
-          outErrorSeqs.add(eSeq);
         } else {
-          outRegressionSeqs.add(eSeq);
+          if (eSeq.hasFailure()) {
+            operationHistory.add(eSeq.getOperation(), OperationOutcome.ERROR_SEQUENCE);
+            num_failing_sequences++;
+            outErrorSeqs.add(eSeq);
+          } else {
+            outRegressionSeqs.add(eSeq);
+          }
+
+          if (GenInputsAbstract.enable_bloodhound) {
+            TypedOperation lastOperation = eSeq.sequence.getOperation();
+            Bloodhound.instance.incrementSuccessfulInvocationCountForOperation(lastOperation);
+          }
         }
       }
 
