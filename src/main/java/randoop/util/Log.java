@@ -38,6 +38,17 @@ public final class Log {
   /**
    * Log to GenInputsAbstract.log, if that is non-null.
    *
+   * <p>It is better to use {@link #logPrintf} than to call {@code logLine} with a concatenation. In
+   * other words:
+   *
+   * <pre>{@code
+   * logLine("arg1=" + arg1);      // BAD
+   * logPrintf("arg1=%s%n", arg1); // GOOD
+   * }</pre>
+   *
+   * The reason is that if {@code arg1.toString()} fails, {@code #logPrintf} can catch that
+   * exception, but the exception would occur before {@code logLine} is entered.
+   *
    * @param s the string to output (followed by a newline)
    */
   public static void logLine(String s) {
@@ -65,8 +76,17 @@ public final class Log {
       return;
     }
 
+    String msg;
     try {
-      GenInputsAbstract.log.write(String.format(fmt, args));
+      msg = String.format(fmt, args);
+    } catch (Throwable t) {
+      logLine("A user-defined toString() method failed.");
+      logStackTrace(t);
+      return;
+    }
+
+    try {
+      GenInputsAbstract.log.write(msg);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
       throw new BugInRandoopException("Exception while writing to log", e);
