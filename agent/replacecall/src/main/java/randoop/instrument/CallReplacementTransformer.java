@@ -37,19 +37,19 @@ public class CallReplacementTransformer extends InstructionListUtils
   /** Debug information about which classes are transformed and why */
   private static SimpleLog debug_transform =
       new SimpleLog(
-          //ReplaceCallAgent.debugPath + File.separator + "transform-log.txt", ReplaceCallAgent.debug);
+          //ReplaceCallAgent.debugPath + File.separator + "replacecall-transform-log.txt", ReplaceCallAgent.debug);
           false);
 
   /** Debug information for instrumentation. */
   private static SimpleLog debug_instrument_inst =
       new SimpleLog(
-          //ReplaceCallAgent.debugPath + File.separator + "instrument-log.txt", ReplaceCallAgent.debug);
+          //ReplaceCallAgent.debugPath + File.separator + "replacecall-instrument-log.txt", ReplaceCallAgent.debug);
           false);
 
   /** Debug information on method mapping. */
   private static SimpleLog debug_map =
       new SimpleLog(
-          //ReplaceCallAgent.debugPath + File.separator + "method_mapping.txt", ReplaceCallAgent.debug);
+          //ReplaceCallAgent.debugPath + File.separator + "replacecall-method_mapping.txt", ReplaceCallAgent.debug);
           false);
 
   /** Map from a method to its replacement. */

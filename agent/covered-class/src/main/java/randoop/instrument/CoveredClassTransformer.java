@@ -60,9 +60,8 @@ public class CoveredClassTransformer implements ClassFileTransformer {
 
     String qualifiedName = className.replace('/', '.');
 
-    // don't transform rt.jar classes
-    // list derived from jdk1.8.0_71
-    // include org.junit because tests were not running
+    // For performance reasons, don't transform rt.jar classes except
+    // java.awt and javax.swing.  (List derived from jdk1.8.0_71.)
     if (qualifiedName.startsWith("java.") // start of rt.jar name prefixes
         || qualifiedName.startsWith("javax.")
         || qualifiedName.startsWith("jdk.")
@@ -83,7 +82,8 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     // run environment classes
     if (qualifiedName.startsWith("org.junit.")
         || qualifiedName.startsWith("org.hamcrest.")
-        || qualifiedName.startsWith("org.gradle.")) {
+        || qualifiedName.startsWith("org.gradle.")
+        || qualifiedName.startsWith("worker.org.gradle.")) {
       return null;
     }
 
