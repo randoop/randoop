@@ -3,15 +3,19 @@ package randoop.generation;
 import java.util.HashMap;
 import java.util.Map;
 
-/** A class loader that loads classes from in-memory data. */
-public class MemoryClassLoader extends ClassLoader {
+/**
+ * A class loader that instruments each class that is loaded for the purpose of collecting branch
+ * coverage data. The class keeps a cache of the loaded classes and ensures that each class is
+ * defined at most once.
+ */
+public class InstrumentingClassLoader extends ClassLoader {
   /** Map from fully-qualified class name to class object. */
   private final Map<String, Class<?>> loadedClasses = new HashMap<>();
 
   /** Coverage tracker for instrumenting classes. */
   private final CoverageTracker coverageTracker;
 
-  public MemoryClassLoader(CoverageTracker coverageTracker) {
+  public InstrumentingClassLoader(CoverageTracker coverageTracker) {
     this.coverageTracker = coverageTracker;
   }
 
@@ -26,7 +30,7 @@ public class MemoryClassLoader extends ClassLoader {
   @Override
   protected Class<?> loadClass(final String name, final boolean resolve)
       throws ClassNotFoundException {
-    // Check class cache first.
+    // Check class cache first to avoid defining a class more than once.
     Class<?> loadedClass = loadedClasses.get(name);
     if (loadedClass != null) {
       return loadedClass;
@@ -35,6 +39,7 @@ public class MemoryClassLoader extends ClassLoader {
     // Attempt to instrument the class identified by the class name.
     final byte[] bytes = coverageTracker.instrumentClass(name);
     if (bytes != null) {
+      // Use the instrumented bytes to define the class.
       loadedClass = defineClass(name, bytes, 0, bytes.length);
     } else {
       loadedClass = super.loadClass(name, resolve);

@@ -15,14 +15,18 @@ import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
 
 /**
- * Tracks the coverage of each method under test. Largely based on
- * http://www.jacoco.org/jacoco/trunk/doc/examples/java/CoreTutorial.java
+ * Tracks the branch coverage of each method under test. Specifically, for each method under test,
+ * this class records the total number of branches and the number of branches that have not been
+ * covered in generated tests. Branch coverage information for each method is periodically updated
+ * when existing coverage data, produced by Jacoco, is summarized by this class.
+ *
+ * <p>Largely based on http://www.jacoco.org/jacoco/trunk/doc/examples/java/CoreTutorial.java
  */
 public class CoverageTracker {
   public static CoverageTracker instance = new CoverageTracker();
 
   private final IRuntime runtime = new LoggerRuntime();
-  private final MemoryClassLoader memoryClassLoader;
+  private final InstrumentingClassLoader instrumentingClassLoader;
 
   private final ExecutionDataStore executionData = new ExecutionDataStore();
   private final SessionInfoStore sessionInfos = new SessionInfoStore();
@@ -30,25 +34,23 @@ public class CoverageTracker {
   private final Instrumenter instrumenter;
   private final RuntimeData data;
 
-  /** Map from method name to coverage details. */
+  /** Map from method name to branch coverage details. */
   private final Map<String, BranchCoverage> coverageDetailsMap = new HashMap<>();
 
   /** Names of all the classes under test */
   private Set<String> classesUnderTest = new HashSet<>();
 
   /**
-   * Coverage details related to a single method under test. Tracks total number of branches and
-   * number of uncovered branches.
+   * Coverage details related to a single method under test. Records total number of branches and
+   * number of uncovered branches of a method.
    */
   public static class BranchCoverage {
-    /** Total number of branches. */
     public int totalBranches;
-    /** Number of uncovered branches. */
     public int uncoveredBranches;
   }
 
   private CoverageTracker() {
-    this.memoryClassLoader = new MemoryClassLoader(this);
+    this.instrumentingClassLoader = new InstrumentingClassLoader(this);
     this.instrumenter = new Instrumenter(runtime);
     this.data = new RuntimeData();
 
@@ -61,7 +63,7 @@ public class CoverageTracker {
   }
 
   /**
-   * Set which classes are under test.
+   * Create a copy of the set of names of classes that are under test.
    *
    * @param classesUnderTest names of all the classes under test
    */
@@ -82,19 +84,21 @@ public class CoverageTracker {
     }
 
     final byte[] instrumented;
-    final String resource = '/' + className.replace('.', '/') + ".class";
+    final String resource = getResourceFromClassName(className);
     InputStream original = getClass().getResourceAsStream(resource);
 
     if (original == null) {
-      throw new Error("No resource with name: " + resource + " found by CoverageTracker!");
+      System.err.println("No resource with name: " + resource + " found by CoverageTracker!");
+      System.exit(1);
     }
 
     try {
-      // Instrument the class to prepare for coverage collection later.
+      // Instrument the class so that branch coverage data can be obtained.
       instrumented = instrumenter.instrument(original, className);
       original.close();
     } catch (IOException e) {
       e.printStackTrace();
+      System.exit(1);
       return null;
     }
 
@@ -117,42 +121,40 @@ public class CoverageTracker {
   }
 
   /**
-   * Returns the instrumented version of the class.
+   * Instruments and then loads the class with the given class name.
    *
    * @param className name of the class
    * @return {@code Class} object that has been instrumented for coverage data collection. Returns
    *     null if class with target name cannot be found.
    */
-  public Class<?> getInstrumentedClass(String className) {
-    if (className == null) {
-      return null;
-    }
-
+  public Class<?> instrumentAndLoadClass(String className) {
     Class<?> instrumentedClass = null;
     try {
-      instrumentedClass = memoryClassLoader.loadClass(className);
+      instrumentedClass = instrumentingClassLoader.loadClass(className);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
+      System.exit(1);
     }
     return instrumentedClass;
   }
 
   /**
-   * Collect coverage information for all methods under test. At this point, coverage data has
+   * Summarizes coverage information for all methods under test. At this point, coverage data has
    * already been generated as Randoop has been constructing and executing its test sequences.
    * Coverage data is now collected and summarized. The {@code coverageDetailsMap} is updated to
    * contain the updated coverage information of each method branch.
    */
-  public void collect() {
+  public void summarizeCoverageInformation() {
     // Collect coverage information.
     data.collect(executionData, sessionInfos, false);
 
     CoverageBuilder coverageBuilder = new CoverageBuilder();
     Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 
-    // Analyze the coverage of each of the tracked classes.
+    // For each class that is under test, summarize the branch coverage information
+    // produced by Jacoco and update the coverageBuilder to store this information.
     for (String className : classesUnderTest) {
-      String resource = '/' + className.replace('.', '/') + ".class";
+      String resource = getResourceFromClassName(className);
       InputStream original = getClass().getResourceAsStream(resource);
       try {
         analyzer.analyzeClass(original, className);
@@ -162,7 +164,8 @@ public class CoverageTracker {
       }
     }
 
-    // Collect the branch coverage information.
+    // For each method under test, retrieve its branch coverage information from the coverageBuilder
+    // and update the corresponding {@code BranchCoverage} object to store this information.
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
       for (final IMethodCoverage cm : cc.getMethods()) {
         String methodName = cc.getName() + "." + cm.getName();
@@ -180,6 +183,16 @@ public class CoverageTracker {
       }
     }
     // System.out.println("---------------------------");
+  }
+
+  /**
+   * Construct the absolute resource name of a class given a class name.
+   *
+   * @param className name of class
+   * @return absolute resource name of the class
+   */
+  private String getResourceFromClassName(String className) {
+    return '/' + className.replace('.', '/') + ".class";
   }
 
   /** Clean up the coverage tracker instance. */

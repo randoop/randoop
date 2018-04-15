@@ -42,7 +42,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * of the tests (set with {@code --junit-package-name}).
    */
   ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Code under test:  which members may be used by a test")
+  @OptionGroup("Code under test:  which classes and members may be used by a test")
   @Option("The fully-qualified name of a class under test")
   public static List<String> testclass = new ArrayList<>();
 
@@ -226,9 +226,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File require_covered_classes = null;
 
   /**
-   * Flag indicating whether or not to automatically minimize error-revealing tests. Both original
-   * and minimized versions of each test class will be output. Setting this option may cause long
-   * Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests.
+   * If true, Randoop outputs both original error-revealing tests and a minimized version. Setting
+   * this option may cause long Randoop run times if Randoop outputs and minimizes more than about
+   * 100 error-revealing tests; consider using <a href="#option:stop-on-error-test"><code>
+   * --stop-on-error-test=true</code></a>. Also see the <a
+   * href="#optiongroup:Test-case-minimization-options">test case minimization options</a>.
    */
   // Omit this to keep the documentation short:
   // Regardless of this option's setting, minimization is enabled when
@@ -381,6 +383,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>The default value is appropriate for generating tests for a single class in the context of a
    * larger program, but is too small to be effective for generating tests for an entire program.
+   *
+   * <p>Randoop may run for longer than this because of long-running tests. The elapsed time is
+   * checked after each test, not during its execution.
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Limiting test generation")
@@ -451,7 +456,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Do not generate tests with more than this many statements")
   public static int maxsize = 100;
 
-  /** Stop generation once an error-revealing test has been generated. */
+  /** Stop generation as soon as one error-revealing test has been generated. */
   @Option("Stop after generating any error-revealing test")
   public static boolean stop_on_error_test = false;
 

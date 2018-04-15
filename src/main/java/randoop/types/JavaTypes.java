@@ -39,6 +39,14 @@ public class JavaTypes {
   /** The {@code java.lang.Object} type. */
   public static final ClassOrInterfaceType OBJECT_TYPE = new NonParameterizedType(Object.class);
 
+  // This is used in CLASS_TYPE, so put it before CLASS_TYPE.
+  // To ensure order, could put all initialization in a static initializer block.
+  /**
+   * The Null type is the lower bound of reference types and is only used in {@link
+   * randoop.types.CaptureTypeVariable}
+   */
+  public static final ReferenceType NULL_TYPE = NullReferenceType.getNullType();
+
   /** The {@code java.lang.Class<?>} type. */
   public static final GenericClassType CLASS_TYPE = new GenericClassType(Class.class);
 
@@ -58,12 +66,6 @@ public class JavaTypes {
   /** The {@code java.lang Serializable} type. */
   public static final ReferenceType SERIALIZABLE_TYPE =
       new NonParameterizedType(Serializable.class);
-
-  /**
-   * The Null type is the lower bound of reference types and is only used in {@link
-   * randoop.types.CaptureTypeVariable}
-   */
-  public static final ReferenceType NULL_TYPE = NullReferenceType.getNullType();
 
   /** The void {@link VoidType} */
   public static final VoidType VOID_TYPE = VoidType.getVoidType();

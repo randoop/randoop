@@ -47,8 +47,7 @@ public class OperationConditionTest {
 
     ClassWithConditions receiver = new ClassWithConditions(5);
 
-    Object[] preValues;
-    preValues = new Object[] {receiver, -1};
+    Object[] preValues = new Object[] {receiver, -1};
     ExpectedOutcomeTable table = execSpec.checkPrestate(preValues);
     assertTrue("should fail param condition", table.isInvalidCall());
 
@@ -99,8 +98,7 @@ public class OperationConditionTest {
 
   @Test
   public void constructorSequenceTest() throws NoSuchMethodException {
-    ExecutableSequence es;
-    es = createConstructorSequence(-1);
+    ExecutableSequence es = createConstructorSequence(-1);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertTrue("should be invalid sequence", es.hasInvalidBehavior());
 
@@ -111,8 +109,7 @@ public class OperationConditionTest {
 
   @Test
   public void methodSequenceTest() throws NoSuchMethodException {
-    ExecutableSequence es;
-    es = createCategorySequence(-1);
+    ExecutableSequence es = createCategorySequence(-1);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertTrue("should be invalid sequence", es.hasInvalidBehavior());
 
