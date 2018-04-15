@@ -1422,6 +1422,14 @@ and you will specify the replacements in a replacement file (<a href="https://gi
 </p>
 
 <p>
+Each line of a replacement file is whitespace-separated package names
+(replace all calls in all methods of all classes in the package and its
+subpackages), or whitespace-separated class names (replace all methods in
+the class), or whitespace-separated method signatures without return
+types (replace the first method by the second).
+</p>
+
+<p>
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
