@@ -49,7 +49,7 @@ The Randoop homepage is
           <li><a href="#replacecall-load-exclusions">Replacement exclusions</a></li>
           <li><a href="#replacecall-replacement-definition">Defining replacements</a>
             <ul>
-              <li><a href="#replacecall-replacement-implementation">Implementing replacement classes</a></li>
+              <li><a href="#replacecall-replacement-implementation">Tips about implementing replacement classes</a></li>
             </ul></li>
         </ul></li>
       <li><a href="#specifying-behavior">Specifying expected code behavior (pre- and post-conditions)</a>
@@ -1315,7 +1315,7 @@ The code under test might make calls to methods that you do not want executed.
 <p>
 It is not enough to use <a href="#option:omitmethods"><code>--omitmethods</code></a> to
 prevent direct calls to these methods, because the methods may still be called indirectly.
-To prevent all calls to these methods, use the <code>replacecall</code> agent.
+To prevent all calls to these methods (including direct calls), use the <code>replacecall</code> agent.
 </p>
 
 <p>
@@ -1338,25 +1338,8 @@ To use it:
 </ul>
 
 <p>
-By default, the agent makes the following replacements:
-</p>
-<ul>
-  <li>
-    A call to <code>System.exit()</code> is replaced by a call to a method that
-    throws a Randoop-specific exception that Randoop includes in the generated tests.
-  </li>
-  <li>
-    A call to certain methods of AWT and Swing classes is replaced by a call to
-    an implementation that is designed to avoid hanging both during test generation
-    by Randoop and during execution of the generated tests.
-  </li>
-</ul>
-<p>
-In addition, Randoop treats replaced methods as if the methods were given as arguments
-to <a href="#option:omitmethods"><code>--omitmethods</code></a>.
-This prevents Randoop from creating tests with direct calls to them.
-</p>
-
+Randoop uses a <a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/resources/default-replacements.txt">
+default set of replacements</a>.
 
 
 <h3 id="replacecall-load-exclusions">Replacement exclusions</h3>
@@ -1383,15 +1366,14 @@ The replacecall agent never modifies
 
 <p>
 You can exclude additional packages from being transformed.
-Create an exclusion file <code>replacecall-exclusions.txt</code>
+Create an exclusion file <code>replacecall-exclusions.txt</code> containing, for example:
 </p>
 <pre>
 mypackage.mysubpackage.
 org.something.library.
 </pre>
 <p>
-and run the agent with the <code>--dont-transform</code> command-line option
-and the filename as its argument:
+and run the agent with the <code>--dont-transform=<em>filename</em></code> command-line option:
 </p>
 <pre>
 -javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar=--dont-transform=replacecall-exclusions.txt
@@ -1422,6 +1404,14 @@ and you will specify the replacements in a replacement file (<a href="https://gi
 </p>
 
 <p>
+Each line of a replacement file is whitespace-separated package names
+(replace all calls in all methods of all classes in the package and its
+subpackages), or whitespace-separated class names (replace all methods in
+the class), or whitespace-separated method signatures without return
+types (replace the first method by the second).
+</p>
+
+<p>
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
@@ -1430,44 +1420,37 @@ Give the replacement file to the replacecall agent using the <code>--replacement
 
 <p>
 A replacement method must be static and non-private.
-If the original method is static, the replacement method should have the
-identical signature.
-If the original method is non-static, then the replacement method should 
-have an additional first parameter whose type should be the containing
+</p>
+<ul>
+  <li>If the original method is static, the replacement method should have the
+    identical signature.</li>
+  <li>If the original method is non-static, then the replacement method should 
+have an additional first parameter whose type is the containing
 class of the original method.
 For instance, a call to <code>java.awt.Component.show()</code> would be replaced
 by a call to a method with the signature <code>show(java.awt.Component)</code>.
 An example mock class is 
-<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java"><code>randoop.mock.java.awt.Component</code></a>.
-</p>
+<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java"><code>randoop.mock.java.awt.Component</code></a>.</li>
+  <li>If the original method is a constructor (an
+<code>&lt;init&gt;</code> method), 
+then the replacement method should have the same
+parameter types, and its return type is the class that contains the
+constructor.
+</ul>
 
 <p>
-You may also supply a replacement for a constructor, also know as an
-<code>&lt;init&gt;</code> method.
-The replacement method must be static and non-private and should have the same
-argument definitions as the original.  However, the return type will differ.
-The original has a return type of <code>void</code>, the replacement will have a
-return type of the class of the constructor.  Here is a replacement file example:
+Please keep in mind that when you define a replacement,
+it can change the behavior of client code.
 </p>
-<pre>
-java.util.Random.&lt;init&gt;() randoop.mock.java.util.RandomReplace.randomWithSeedZero()
-</pre>
-<p>
-Note that the return type is implicit and not shown in the replacement file, however
-it must be explicit in the mock replacement code:
-</p>
-<pre>
-// Used to replace calls to the constructor Random().
-public static java.util.Random randomWithSeedZero() {
-    return new java.util.Random(0);
-}
-</pre>
+
+
+<h4 id="replacecall-replacement-implementation">Tips about implementing replacement classes</h4>
 
 <p>
-To simplify your replacement file and keep your mock classes organized, it
-is recommended that you choose a package prefix and keep the package
+To simplify your replacement file and keep your mock classes organized, 
+you should choose a package prefix and keep the package
 structure of the original classes.
-The example file uses <code>randoop.mock</code> as the prefix, so the
+Randoop's default replacements file uses <code>randoop.mock</code> as the prefix, so the
 fully-qualified name of the <code>JOptionPane</code> mock class
 is <code>randoop.mock.javax.swing.JOptionPane</code>.  (You may need
 to <a href="#replacecall-load-exclusions">exclude</a> this package if any
@@ -1475,26 +1458,19 @@ of the replacement methods use otherwise replaced methods.)
 </p>
 
 <p>
-Randoop comes with default replacements, which are in sub-packages
+Randoop's default replacements are in sub-packages
 of <code>randoop.mock</code>.  You should not use
 the <code>randoop.mock</code> prefix for your own mock classes.
 </p>
 
 <p>
-Please keep in mind that when you define a replacement for a method that returns a value,
-it can change the behavior of client code.
-</p>
-
-
-<h4 id="replacecall-replacement-implementation">Implementing replacement classes</h4>
-
-<p>
-Sometimes, a replacement for an instance method needs to use a different
-object than the receiver (it might have the same or a different type than
-the receiver).  In this case, your replacement class should maintain a map
-from instances of the original receiver to instances that will be used in
-the replacement.  An example appears in {@code
-randoop.mock.java.util.MockRandom}.
+Sometimes, a replacement for an instance method needs to access an object that
+is different than the receiver (for example, it might have the same or a
+different type than
+the receiver).  One way to manage this is for your replacement class to
+maintain a map
+from instances of the original receiver type to instances that will be used in
+the replacement method implementations.
 </p>
 
 
@@ -2582,7 +2558,7 @@ please let us know so we can correct the oversight.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls pre test1 o1 t1 s1 ErrorTest0 Zaplatynski test10 var0 var1 var2 c' s2 a1 Xing
+<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls pre test1 o1 t1 s1 ErrorTest0 Zaplatynski test10 var0 var1 var2 c' s2 a1 Xing InputTestSuiteMinimized mypackage mysubpackage
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->
