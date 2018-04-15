@@ -107,11 +107,11 @@ public class Bloodhound implements TypedOperationSelector {
     // Collect branch coverage and recompute weights for methods under test.
     updateBranchCoverageMaybe();
 
-    // Make a random, weight choice for the next method and update its selection count.
+    // Make a random, weighted choice for the next method
     TypedOperation operation = Randomness.randomMemberWeighted(operationSimpleList, methodWeights);
-    incrementInMap(methodSelectionCounts, operation);
 
-    // Only update the weight of the method that was chosen for this step.
+    // Update its selection count and its weight.
+    incrementInMap(methodSelectionCounts, operation);
     updateWeightForOperation(operation);
 
     return operation;
