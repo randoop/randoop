@@ -8,8 +8,10 @@ import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 
 /**
- * Implements the Bloodhound component, as described by the Guided Random Testing (GRT) paper.
- * Bloodhound computes a weight for each method under test by taking a weighted combination of the
+ * Implements the Bloodhound component, as described by the paper "GRT:
+ * Program-Analysis-Guided Random Testing" (Ma et. al, ASE 2015).
+ *
+ * <p>Bloodhound computes a weight for each method under test by taking a weighted combination of the
  * uncovered branch ratio and the ratio between the number of times the method has been invoked and
  * the maximum number of times any method under test has been invoked.
  *
