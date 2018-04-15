@@ -45,6 +45,8 @@ public class CallReplacementTransformer extends InstructionListUtils
           //ReplaceCallAgent.debugPath + File.separator + "method_mapping.txt", ReplaceCallAgent.debug);
           false);
 
+  // debug_instrument field is defined in InstructionListUtils.
+
   /** Map from a method to its replacement. */
   private final ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap;
 
