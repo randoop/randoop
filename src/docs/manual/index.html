@@ -1305,9 +1305,14 @@ Java raw types, without spaces.
 <h2 id="replacecall">Avoiding calls to specific methods</h2>
 
 <p>
-The code under test can make calls to methods that you do not want executed.
-One is <code>System.exit</code>, which will terminate Randoop if called during test generation.
-Others, such as the <code>JOptionPane.showConfirmDialog</code> methods, open a modal dialog box requiring user interaction, which interferes with automated testing.
+The code under test might make calls to methods that you do not want executed.
+</p>
+<ul>
+  <li><code>System.exit</code> will terminate Randoop if called during test generation.</li>
+  <li><code>JOptionPane.showConfirmDialog</code> opens a modal dialog box requiring user interaction, which interferes with automated testing.</li>
+  <li>The no-argument <code>Random()</code> constructor uses a randomly-chosen seed, so tests might behave differently on each execution.</li>
+</ul>
+<p>
 It is not enough to use <a href="#option:omitmethods"><code>--omitmethods</code></a> to
 prevent direct calls to these methods, because the methods may still be called indirectly.
 To prevent all calls to these methods, use the <code>replacecall</code> agent.
@@ -1357,26 +1362,39 @@ This prevents Randoop from creating tests with direct calls to them.
 <h3 id="replacecall-load-exclusions">Replacement exclusions</h3>
 
 <p>
-There are some classes to which the replacecall agent should not be applied.
+There are some classes that the replacecall agent should not transform.
+Suppose you are using Gradle to run Randoop or the generated tests.
+Randoop's replacement of <code>System.exit</code>
+will affect the behavior of the build.
 </p>
 
 <p>
-If you are using the agent in a build environment such as Ant, Maven, or
-Gradle, it is necessary to exclude the build environment classes.
-For instance, when running the agent on generated tests in a Gradle project using the Java plugin, the replacement of <code>System.exit</code>
-will affect the behavior of the build, and we should exclude the Gradle packages from being transformed.
-To exclude these packages, place the package names in an exclusion file <code>gradle-exclusions.txt</code>
+The replacecall agent never modifies
+</p>
+<ul>
+  <li>Randoop, including the agent</li>
+  <li>JUnit and Hamcrest</li>
+  <li>Gradle</li>
+  <li>Classes in <code>rt.jar</code>, except in packages <code>java.awt</code> and <code>javax.swing</code></li>
+</ul>
+<p>
+(The exact rules appear in the Randoop source code in class <code>CoveredClassTransformer</code>.)
+</p>
+
+<p>
+You can exclude additional packages from being transformed.
+Create an exclusion file <code>replacecall-exclusions.txt</code>
 </p>
 <pre>
-org.gradle.
-worker.org.gradle.
+mypackage.mysubpackage.
+org.something.library.
 </pre>
 <p>
 and run the agent with the <code>--dont-transform</code> command-line option
 and the filename as its argument:
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar=--dont-transform=gradle-exclusions.txt
+-javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar=--dont-transform=replacecall-exclusions.txt
 </pre>
 
 <p>
@@ -1393,18 +1411,6 @@ run the agent with the <code>--debug</code> flag
 <pre>
 -javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar=--debug
 </pre>
-<p>
-which produes the file <code>transform-log.txt</code>.
-</p>
-
-<p>
-By default, the agent does not modify Randoop, the agent itself, or
-JUnit classes.
-So, by default, the agent will not make replacements in Randoop and Randoop
-Java agent classes, classes in certain subpackages of <code>com.sun.tools</code> and <code>com.sun.source</code>, or in JUnit or Hamcrest classes.
-Also, to improve performance, the agent does not make replacements in boot-loaded classes
-with the exception of packages in <code>java.awt</code> and <code>javax.swing</code>.
-</p>
 
 
 
@@ -1419,7 +1425,7 @@ and you will specify the replacements in a replacement file (<a href="https://gi
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar=--replacement-file=replacement-file.txt
+-javaagent:$(RANDOOP_PATH)/replacecall-4.0.3.jar=--replacement-file=replacecall-replacements.txt
 </pre>
 
 <p>
@@ -2522,8 +2528,8 @@ tests</a>.
       <a href="https://github.com/randoop/randoop">GitHub version control repository</a>),</li>
     <li>the exact commands you ran (please use the <code>-ea</code> option to
        <code>java</code> when running Randoop, which makes diagnosis easier),</li>
-    <li>the exact and complete output of the commands, and</li>
-    <li>all the files that are necessary to run those commands.</li>
+    <li>the complete output of the commands, and</li>
+    <li>all the files that are necessary to run the commands.</li>
   </ul>
 
 <p>

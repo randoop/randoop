@@ -8,7 +8,7 @@ java.awt randoop.mock.java.awt
 javax.swing randoop.mock.javax.swing
 
 // Replacements for java.util.Random.
-// Try to make Random more deterministic by always using a random seed of 0.
+// Make Random deterministic by always using a random seed of 0.
 java.util.Random.<init>() randoop.mock.java.util.RandomReplace.randomWithSeedZero()
 java.util.Random.<init>(long) randoop.mock.java.util.RandomReplace.randomWithSeedZero(long)
 java.util.Random.setSeed(long) randoop.mock.java.util.RandomReplace.setSeedZero(java.util.Random, long)
