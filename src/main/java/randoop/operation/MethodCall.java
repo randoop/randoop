@@ -165,7 +165,7 @@ public final class MethodCall extends CallableOperation {
     Object[] params = new Object[paramsLength];
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
-      Log.logLine("  Param " + i + " = " + params[i]);
+      Log.logPrintf("  Param %d = %s%n", i, params[i]);
     }
 
     MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
