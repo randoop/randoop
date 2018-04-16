@@ -410,7 +410,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public boolean isSubtypeOf(Type otherType) {
     if (debug) {
-      System.out.printf("isSubtypeOf(%s, %s)%n", this, otherType);
+      System.out.printf(
+          "isSubtypeOf(%s, %s) [%s, %s]%n", this, otherType, this.getClass(), otherType.getClass());
     }
 
     // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
@@ -435,7 +436,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (otherType.isInterface()) {
       for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
         if (debug) {
-          System.out.printf("  iface: %s%n", iface);
+          System.out.printf("  iface: %s [%s]%n", iface, iface.getClass());
         }
 
         if (iface.equals(otherType)) {

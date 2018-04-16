@@ -157,11 +157,12 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   // TODO: poor name
   private void checkSubTypes(TypedClassOperation operation) {
-    if (!classType.isSubtypeOf(operation.getDeclaringType())) {
+    ClassOrInterfaceType declaringType = operation.getDeclaringType();
+    if (!classType.isSubtypeOf(declaringType)) {
       throw new BugInRandoopException(
           String.format(
-              "Incompatible receiver type for operation %s: %s is not a subtype of %s",
-              operation, classType, operation.getDeclaringType()));
+              "Incompatible receiver type for operation %s: %s [%s] is not a subtype of %s [%s]",
+              operation, classType, classType.getClass(), declaringType, declaringType.getClass()));
     }
   }
 
