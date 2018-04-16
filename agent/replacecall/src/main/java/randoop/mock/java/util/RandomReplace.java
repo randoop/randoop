@@ -2,8 +2,6 @@ package randoop.mock.java.util;
 
 public class RandomReplace {
 
-  // I believe that mock classes should never be instantiated.
-  // This should be checked, and then probably documented in the Randoop manual.
   private RandomReplace() {
     throw new Error("Do not instantiate");
   }
