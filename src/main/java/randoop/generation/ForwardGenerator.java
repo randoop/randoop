@@ -275,7 +275,7 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
-    // Select a StatementInfo
+    // Select the next operation to use in constructing a new sequence.
     TypedOperation operation = Randomness.randomMember(this.operations);
     Log.logLine("Selected operation: " + operation.toString());
 
