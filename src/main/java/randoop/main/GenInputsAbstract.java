@@ -369,7 +369,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   /**
-   * File containing side-effect-free observer methods. Specifying observers has two benefits: it
+   * File containing side-effect-free observer methods, each given as a <a
+   * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+   * signature</a> on a separate line. Specifying observers has two benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
    */
   @OptionGroup("Observer methods")
