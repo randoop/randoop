@@ -9,7 +9,8 @@ import randoop.util.SimpleArrayList;
 
 /**
  * Implements the Bloodhound component, as described by the paper "GRT:
- * Program-Analysis-Guided Random Testing" (Ma et. al, ASE 2015).
+ * Program-Analysis-Guided Random Testing" by Ma et. al (appears in ASE 2015):
+ * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
  *
  * <p>Bloodhound computes a weight for each method under test by taking a weighted combination of the
  * uncovered branch ratio and the ratio between the number of times the method has been successfully
