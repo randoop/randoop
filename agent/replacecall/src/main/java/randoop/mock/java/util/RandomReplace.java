@@ -12,14 +12,4 @@ public class RandomReplace {
   public static java.util.Random randomWithSeedZero() {
     return new java.util.Random(0);
   }
-
-  // Used to replace calls to the constructor Random(long seed).
-  public static java.util.Random randomWithSeedZero(long seed) {
-    return new java.util.Random(0);
-  }
-
-  // Used to replace calls to the method setSeed(long seed).
-  public static void setSeedZero(java.util.Random random, long seed) {
-    random.setSeed(0);
-  }
 }
