@@ -204,7 +204,7 @@ public final class Randomness {
                 + weight);
       }
       if (weight <= 0) {
-        System.out.println("Bad weights:");
+        System.out.println("Invalid weight " + weight + "; all weights:");
         for (T to : weights.keySet()) {
           System.out.println("  " + to + "    " + weights.get(to));
         }
