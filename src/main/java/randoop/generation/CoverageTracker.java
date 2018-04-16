@@ -121,21 +121,20 @@ public class CoverageTracker {
   }
 
   /**
-   * Instruments and then loads the class with the given class name.
+   * Instruments and then loads the class with the given name.
    *
    * @param className name of the class
    * @return {@code Class} object that has been instrumented for coverage data collection. Returns
    *     null if class with target name cannot be found.
    */
   public Class<?> instrumentAndLoadClass(String className) {
-    Class<?> instrumentedClass = null;
     try {
-      instrumentedClass = instrumentingClassLoader.loadClass(className);
+      return instrumentingClassLoader.loadClass(className);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
       System.exit(1);
+      throw new Error("This can't happen.");
     }
-    return instrumentedClass;
   }
 
   /**
