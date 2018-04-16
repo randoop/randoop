@@ -364,7 +364,7 @@ public class CallReplacementTransformer extends InstructionListUtils
     //      invokespecial {name of object}.<init>
     //
     // The object created by the new instruction has not been initialized
-    // until ithe constructor completes.  If we simply replace the constructor
+    // until the constructor completes.  If we simply replace the constructor
     // call with a call to a replacement method, the JVM will fault on the
     // uninitialized object reference.  So we must delete the new and dup
     // instructions and have the replacement constructor supply a new object
