@@ -12,8 +12,8 @@ import org.apache.bcel.Const;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
-import org.apache.bcel.generic.ClassGen;
 import org.apache.bcel.generic.CPInstruction;
+import org.apache.bcel.generic.ClassGen;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionFactory;
 import org.apache.bcel.generic.InstructionHandle;
@@ -400,9 +400,9 @@ public class CallReplacementTransformer extends InstructionListUtils
           String new_class = (((CPInstruction) tih.getInstruction()).getType(pool)).toString();
           //System.out.printf("new type: %s, invoke type: %s%n", new_class, invoke_class);
           if (!new_class.equals(invoke_class)) {
-              // keep looking for matching NEW
-              tih = tih.getPrev();
-              continue;
+            // keep looking for matching NEW
+            tih = tih.getPrev();
+            continue;
           }
           delete_instructions(mg, tih, tih.getNext());
           new_dup_removed = true;
