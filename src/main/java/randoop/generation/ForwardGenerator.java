@@ -287,7 +287,6 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Select the next operation to use in constructing a new sequence.
     TypedOperation operation = operationSelector.selectOperation();
-
     Log.logLine("Selected operation: " + operation.toString());
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
