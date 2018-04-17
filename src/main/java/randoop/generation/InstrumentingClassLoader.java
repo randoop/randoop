@@ -38,6 +38,10 @@ public class InstrumentingClassLoader extends ClassLoader {
 
     // Attempt to instrument the class identified by the class name.
     final byte[] bytes = coverageTracker.instrumentClass(name);
+
+    // Check if the returned byte array is null. The byte array will be null for a class that
+    // is not either explicitly under test or is not a nested class of a class that is
+    // explicitly under test.
     if (bytes != null) {
       // Use the instrumented bytes to define the class.
       loadedClass = defineClass(name, bytes, 0, bytes.length);

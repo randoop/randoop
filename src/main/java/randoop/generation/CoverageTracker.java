@@ -41,12 +41,12 @@ public class CoverageTracker {
   private Set<String> classesUnderTest = new HashSet<>();
 
   /**
-   * Coverage details related to a single method under test. Records total number of branches and
-   * number of uncovered branches of a method.
+   * Coverage details related to a single method under test. Records "uncovRatio" which is the ratio
+   * of uncovered branches to total branches. In cases where total branches is zero, the ratio will
+   * be zero.
    */
   public static class BranchCoverage {
-    public int totalBranches;
-    public int uncoveredBranches;
+    public double uncovRatio;
   }
 
   private CoverageTracker() {
@@ -175,8 +175,11 @@ public class CoverageTracker {
         if (methodDetails == null) {
           methodDetails = new BranchCoverage();
         }
-        methodDetails.totalBranches = cm.getBranchCounter().getTotalCount();
-        methodDetails.uncoveredBranches = cm.getBranchCounter().getMissedCount();
+
+        // In cases where a method's total branches is zero, the missed ratio is NaN, and
+        // the resulting uncovRatio is set to zero.
+        double uncovRatio = cm.getBranchCounter().getMissedRatio();
+        methodDetails.uncovRatio = Double.isNaN(uncovRatio) ? 0 : uncovRatio;
 
         coverageDetailsMap.put(methodName, methodDetails);
       }
