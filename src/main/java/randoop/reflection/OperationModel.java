@@ -307,9 +307,7 @@ public class OperationModel {
     for (String sig : observerSignatures) {
       TypedClassOperation operation = MethodCall.parse(sig);
       Type outputType = operation.getOutputType();
-      if (outputType.isPrimitive() || outputType.isString() || outputType.isEnum()) {
-        observerMap.add(operation.getDeclaringType(), operation);
-      }
+      observerMap.add(operation.getDeclaringType(), operation);
     }
     return observerMap;
   }
