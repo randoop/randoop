@@ -31,6 +31,10 @@ import randoop.util.SimpleArrayList;
  * </ul>
  */
 public class Bloodhound implements TypedOperationSelector {
+
+  /** Coverage tracker used to get branch coverage information. */
+  private final CoverageTracker coverageTracker;
+
   /**
    * Map of methods under test to their weights. These weights are dynamic and depend on branch
    * coverage.
@@ -69,11 +73,14 @@ public class Bloodhound implements TypedOperationSelector {
    */
   private final double p = 0.5;
 
-  /** How often to recompute branch coverage, in steps. */
+  /** How often to recompute branch coverage, in the number of successful invocations of
+   * all the methods under test. */
   private final int branchCoverageInterval = 100;
 
-  /** Coverage tracker used to get branch coverage information. */
-  private final CoverageTracker coverageTracker;
+  /**
+   * The total number of successful invocations of all the methods under test.
+   */
+  private int numSuccessfulInvocationsOfAMethodUnderTest = 0;
 
   /**
    * Maximum number of times any method under test has been successfully invoked. This value is
@@ -81,8 +88,6 @@ public class Bloodhound implements TypedOperationSelector {
    * weight.
    */
   private int maxSuccM = 1;
-
-  private int numSteps = 0;
 
   /**
    * Initialize Bloodhound by making a copy of the list of methods under test and assigning each
@@ -129,8 +134,7 @@ public class Bloodhound implements TypedOperationSelector {
    * recomputed when branch information is re-summarized.
    */
   private void updateBranchCoverageMaybe() {
-    numSteps += 1;
-    if (numSteps % branchCoverageInterval == 0) { //TODO: successful invocation instead of steps?
+    if (numSuccessfulInvocationsOfAMethodUnderTest % branchCoverageInterval == 0) {
       methodSelectionCounts.clear();
       coverageTracker.summarizeCoverageInformation();
       updateWeightsForAllOperations();
@@ -201,6 +205,7 @@ public class Bloodhound implements TypedOperationSelector {
    * @param operation the method under test that was successfully invoked
    */
   public void incrementSuccessfulInvocationCountForOperation(TypedOperation operation) {
+    numSuccessfulInvocationsOfAMethodUnderTest += 1;
     int numSuccessfulInvocations = incrementInMap(methodInvocationCounts, operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
   }
