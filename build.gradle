@@ -49,6 +49,18 @@ allprojects {
 
   /* Randoop version number - added to generated jar files */
   version = '4.0.3'
+
+  configurations {
+    // A collection of all plumelib dependencies required, so that all
+    // sub-projects use the same versions.
+    plumelib
+  }
+
+  dependencies {
+    plumelib 'org.plumelib:bcel-util:0.0.8'
+    plumelib 'org.plumelib:options:0.3.1'
+    plumelib 'org.plumelib:plume-util:0.0.1'
+  }
 }
 
 /******
@@ -129,10 +141,7 @@ configurations {
 }
 
 dependencies {
-  // Keep these in sync with agent/replacecall/replacecall.gradle
-  implementation 'org.plumelib:bcel-util:0.0.8'
-  implementation 'org.plumelib:options:0.3.1'
-  implementation 'org.plumelib:plume-util:0.0.1'
+  implementation configurations.plumelib
 
   implementation 'org.apache.commons:commons-exec:1.3'
   implementation group: 'commons-io', name: 'commons-io', version: '2.4'
@@ -251,8 +260,9 @@ tasks.withType(JavaCompile).each { t ->
     if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
       t.toolChain ErrorProneToolChain.create(project)
       t.options.compilerArgs += [
-        // undocumented, and suggestion seems bad
-        '-Xep:NamedParameters:OFF',
+        // Maybe NamedParameters is no longer supported?
+        // // undocumented, and suggestion seems bad
+	// '-Xep:NamedParameters:OFF',
  	// Is always a false positive in my experience.
 	'-Xep:StringSplitter:OFF'
         // TODO: uncomment once we run the Interning Checker on Randoop

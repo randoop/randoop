@@ -1,3 +1,8 @@
+Version 4.0.4, released ??, 2018
+
+Randoop's replacecalls agent can now replace constructors.
+
+
 Version 4.0.3, released April 10, 2018
 
 Fixed a bug caused by order of execution of variable initializers.

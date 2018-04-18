@@ -7,10 +7,7 @@ plugins {
 description = "replacecall agent"
 
 dependencies {
-  // Keep these in sync with ../../build.gradle
-  implementation 'org.plumelib:bcel-util:0.0.6'
-  implementation 'org.plumelib:options:0.3.1'
-  implementation 'org.plumelib:plume-util:0.0.1'
+  implementation configurations.plumelib
 
   testCompile group: 'junit', name: 'junit', version: '4.+'
   testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
