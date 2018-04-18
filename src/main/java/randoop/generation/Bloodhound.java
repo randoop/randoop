@@ -73,13 +73,13 @@ public class Bloodhound implements TypedOperationSelector {
    */
   private final double p = 0.5;
 
-  /** How often to recompute branch coverage, in the number of successful invocations of
-   * all the methods under test. */
+  /**
+   * How often to recompute branch coverage, in the number of successful invocations of all the
+   * methods under test.
+   */
   private final int branchCoverageInterval = 100;
 
-  /**
-   * The total number of successful invocations of all the methods under test.
-   */
+  /** The total number of successful invocations of all the methods under test. */
   private int numSuccessfulInvocationsOfAMethodUnderTest = 0;
 
   /**
