@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.jacoco.core.analysis.*;
+import org.jacoco.core.analysis.Analyzer;
+import org.jacoco.core.analysis.CoverageBuilder;
+import org.jacoco.core.analysis.IClassCoverage;
+import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.instr.Instrumenter;
@@ -23,8 +26,6 @@ import org.jacoco.core.runtime.RuntimeData;
  * <p>Largely based on http://www.jacoco.org/jacoco/trunk/doc/examples/java/CoreTutorial.java
  */
 public class CoverageTracker {
-  public static CoverageTracker instance = new CoverageTracker();
-
   private final IRuntime runtime = new LoggerRuntime();
   private final InstrumentingClassLoader instrumentingClassLoader;
 
@@ -49,7 +50,14 @@ public class CoverageTracker {
     public double uncovRatio;
   }
 
-  private CoverageTracker() {
+  /**
+   * Initialize the coverage tracker and also create a copy of the set of names of classes that are
+   * under test.
+   *
+   * @param classesUnderTest names of all the classes under test
+   */
+  public CoverageTracker(Set<String> classesUnderTest) {
+    this.classesUnderTest = new HashSet<>(classesUnderTest);
     this.instrumentingClassLoader = new InstrumentingClassLoader(this);
     this.instrumenter = new Instrumenter(runtime);
     this.data = new RuntimeData();
@@ -60,15 +68,6 @@ public class CoverageTracker {
       e.printStackTrace();
       System.exit(1);
     }
-  }
-
-  /**
-   * Create a copy of the set of names of classes that are under test.
-   *
-   * @param classesUnderTest names of all the classes under test
-   */
-  public void setClassesUnderTest(Set<String> classesUnderTest) {
-    this.classesUnderTest = new HashSet<>(classesUnderTest);
   }
 
   /**

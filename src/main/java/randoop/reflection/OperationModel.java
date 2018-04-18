@@ -91,6 +91,9 @@ public class OperationModel {
   /** For debugging only */
   private List<Pattern> omitMethods;
 
+  /** Coverage tracker used to instrument and load classes under test. */
+  private static CoverageTracker coverageTracker;
+
   /** Create an empty model of test context. */
   private OperationModel() {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
@@ -247,6 +250,15 @@ public class OperationModel {
         errorHandler,
         literalsFileList,
         null);
+  }
+
+  /**
+   * Set the coverage tracker that is used for instrumenting classes under test.
+   *
+   * @param coverageTracker the coverage tracking instance
+   */
+  public static void setCoverageTracker(CoverageTracker coverageTracker) {
+    OperationModel.coverageTracker = coverageTracker;
   }
 
   /**
@@ -524,7 +536,7 @@ public class OperationModel {
   private static Class<?> getClass(String classname, ClassNameErrorHandler errorHandler) {
     // If bloodhound is enabled, return an instrumented version of the class.
     if (GenInputsAbstract.enable_bloodhound) {
-      return CoverageTracker.instance.instrumentAndLoadClass(classname);
+      return coverageTracker.instrumentAndLoadClass(classname);
     }
 
     try {

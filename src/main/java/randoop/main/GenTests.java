@@ -263,10 +263,10 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    if (GenInputsAbstract.enable_bloodhound) {
-      // Copy the names of all the classes under test into the coverage tracker.
-      CoverageTracker.instance.setClassesUnderTest(classnames);
-    }
+    // Initialize a coverage tracker instance that will be used by the {@link OperationModel} to
+    // instrument and load classes if bloodhound is enabled.
+    CoverageTracker coverageTracker = new CoverageTracker(classnames);
+    OperationModel.setCoverageTracker(coverageTracker);
 
     OperationModel operationModel = null;
     try {
@@ -369,7 +369,13 @@ public class GenTests extends GenInputsAbstract {
      */
     AbstractGenerator explorer =
         new ForwardGenerator(
-            operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
+            operations,
+            observers,
+            new GenInputsAbstract.Limits(),
+            componentMgr,
+            null,
+            listenerMgr,
+            coverageTracker);
 
     /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
     operationModel.log();
@@ -530,7 +536,7 @@ public class GenTests extends GenInputsAbstract {
     explorer.getOperationHistory().outputTable();
 
     // Shut down coverage tracking object.
-    CoverageTracker.instance.finish();
+    coverageTracker.finish();
 
     return true;
   }

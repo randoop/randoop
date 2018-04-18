@@ -72,6 +72,9 @@ public class Bloodhound implements TypedOperationSelector {
   /** How often to recompute branch coverage, in steps. */
   private final int branchCoverageInterval = 100;
 
+  /** Coverage tracker used to get branch coverage information. */
+  private final CoverageTracker coverageTracker;
+
   /**
    * Maximum number of times any method under test has been successfully invoked. This value is
    * initialized to 1 because it is used as the denominator of a division in computing a method's
@@ -87,8 +90,9 @@ public class Bloodhound implements TypedOperationSelector {
    *
    * @param operations list of operations to copy
    */
-  public Bloodhound(List<TypedOperation> operations) {
+  public Bloodhound(List<TypedOperation> operations, CoverageTracker coverageTracker) {
     this.operationSimpleList = new SimpleArrayList<>(operations);
+    this.coverageTracker = coverageTracker;
     // Compute an initial weight for all methods under test. The weights will initially all be uniform.
     updateWeightsForAllOperations();
   }
@@ -126,9 +130,9 @@ public class Bloodhound implements TypedOperationSelector {
    */
   private void updateBranchCoverageMaybe() {
     numSteps += 1;
-    if (numSteps % branchCoverageInterval == 0) { //TODO: successful invocation instead of steps.
+    if (numSteps % branchCoverageInterval == 0) { //TODO: successful invocation instead of steps?
       methodSelectionCounts.clear();
-      CoverageTracker.instance.summarizeCoverageInformation();
+      coverageTracker.summarizeCoverageInformation();
       updateWeightsForAllOperations();
     }
   }
@@ -158,7 +162,7 @@ public class Bloodhound implements TypedOperationSelector {
     double weight = 1.0 / numOperations;
 
     CoverageTracker.BranchCoverage covDet =
-        CoverageTracker.instance.getDetailsForMethod(operation.getName());
+        coverageTracker.getDetailsForMethod(operation.getName());
 
     // Check that branch coverage details are available for this method.
     if (covDet != null) {
