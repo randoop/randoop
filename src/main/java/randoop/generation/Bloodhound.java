@@ -22,16 +22,15 @@ import randoop.util.SimpleArrayList;
  * chosen our own values for the following unspecified hyper-parameters:
  *
  * <ul>
- *   <li>alpha - parameter to balance branch coverage and number of invocations when computing
- *       weight.
- *   <li>p - parameter for decreasing weights of methods between updates to coverage information.
- *   <li>branchCoverageInterval - interval for recomputing branch coverage information.
+ *   <li>{@code alpha} - parameter to balance branch coverage and number of invocations when
+ *       computing weight.
+ *   <li>{@code p} - parameter for decreasing weights of methods between updates to coverage
+ *       information.
+ *   <li>{@code branchCoverageInterval} - interval for recomputing branch coverage information.
  *   <li>Default weight for cases where a method has zero branches or computed weight is zero.
  * </ul>
  */
 public class Bloodhound implements TypedOperationSelector {
-  public static final Bloodhound instance = new Bloodhound();
-
   /**
    * Map of methods under test to their weights. These weights are dynamic and depend on branch
    * coverage.
@@ -52,8 +51,11 @@ public class Bloodhound implements TypedOperationSelector {
    */
   private final Map<TypedOperation, Integer> methodInvocationCounts = new HashMap<>();
 
-  /** List of operations, identical to ForwardGenerator's operation list. */
-  private SimpleArrayList<TypedOperation> operationSimpleList;
+  /*
+   * List of operations, identical to {@link ForwardGenerator}'s operation list. Used for making
+   * random, weighted selections for a method under test.
+   */
+  private final SimpleArrayList<TypedOperation> operationSimpleList;
 
   /**
    * Hyper-parameter for balancing branch coverage and number of times a method was chosen. The name
@@ -79,16 +81,14 @@ public class Bloodhound implements TypedOperationSelector {
 
   private int numSteps = 0;
 
-  private Bloodhound() {}
-
   /**
    * Initialize Bloodhound by making a copy of the list of methods under test and assigning each
    * method to have the same weight.
    *
    * @param operations list of operations to copy
    */
-  public void initBloodhound(List<TypedOperation> operations) {
-    operationSimpleList = new SimpleArrayList<>(operations);
+  public Bloodhound(List<TypedOperation> operations) {
+    this.operationSimpleList = new SimpleArrayList<>(operations);
     // Compute an initial weight for all methods under test. The weights will initially all be uniform.
     updateWeightsForAllOperations();
   }
@@ -168,26 +168,21 @@ public class Bloodhound implements TypedOperationSelector {
         succM = 0;
       }
 
-      // Uncovered branch ratio of this method. The name uncovRatio(m) is from the GRT paper.
-      double uncovRatio = covDet.uncovRatio;
-
-      // Call ratio of this method. Corresponds to succ(m) / maxSucc(M) in the GRT paper.
-      double callRatio = succM.doubleValue() / maxSuccM;
-
       // Corresponds to w(m, 0) in the GRT paper.
-      double weightM0 = alpha * uncovRatio + (1.0 - alpha) * (1.0 - callRatio);
+      double wM0 =
+          alpha * covDet.uncovRatio + (1.0 - alpha) * (1.0 - (succM.doubleValue() / maxSuccM));
 
       // Check that the computed weight is not zero.
-      if (weightM0 != 0) {
-        weight = weightM0;
+      if (wM0 != 0) {
+        weight = wM0;
 
         // k, in the GRT paper, is defined as the number of times this method was selected since
         // the last update of branch coverage. It is reset to zero every time branch coverage is recomputed.
         Integer k = methodSelectionCounts.get(operation);
         if (k != null) {
           // Corresponds to the case where k >= 1 in the GRT paper.
-          double val1 = (-3.0 / Math.log(1 - p)) * (Math.pow(p, k) / k);
-          double val2 = 1.0 / Math.log(numOperations + 3);
+          double val1 = (-3.0 / Math.log(1.0 - p)) * (Math.pow(p, k) / k);
+          double val2 = 1.0 / Math.log(numOperations + 3.0);
           weight *= Math.max(val1, val2);
         }
       }

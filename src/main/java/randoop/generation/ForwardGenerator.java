@@ -99,9 +99,23 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (GenInputsAbstract.enable_bloodhound) {
       // If Bloodhound is enabled, select the next operation while considering the methods' weights.
-      this.operationSelector = Bloodhound.instance;
+      this.operationSelector = new Bloodhound(operations);
     } else {
       this.operationSelector = new UniformRandomMethodSelection(operations);
+    }
+  }
+
+  /**
+   * If bloodhound is enabled, increment the number of times the method under test was successfully
+   * invoked.
+   *
+   * @param typedOperation the method under test that was used to create a new and unique test
+   */
+  @Override
+  public void onTypedOperationResultedInRegressionTest(TypedOperation typedOperation) {
+    if (GenInputsAbstract.enable_bloodhound) {
+      ((Bloodhound) operationSelector)
+          .incrementSuccessfulInvocationCountForOperation(typedOperation);
     }
   }
 

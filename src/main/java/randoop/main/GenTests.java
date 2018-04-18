@@ -318,11 +318,6 @@ public class GenTests extends GenInputsAbstract {
 
     List<TypedOperation> operations = operationModel.getOperations();
 
-    if (GenInputsAbstract.enable_bloodhound) {
-      // Copy the list of methods under test into Bloodhound's internal list.
-      Bloodhound.instance.initBloodhound(operations);
-    }
-
     /*
      * Stop if there is only 1 operation. This will be Object().
      */
