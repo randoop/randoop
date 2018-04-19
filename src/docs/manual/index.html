@@ -67,8 +67,8 @@ The Randoop homepage is
       <li><a href="#primitives">Specifying additional primitive values</a></li>
       <li><a href="#nondeterminism">Nondeterminism</a>
         <ul>
+          <li><a href="#nondeterminism-command-line-arguments">Timeouts and other command-line arguments enable nondeterminism</a></li>
           <li><a href="#nondeterminism-changed-program">Changes to the program or its environment</a></li>
-          <li><a href="#nondeterminism-command-line-arguments">Command-line arguments enable nondeterminism</a></li>
           <li><a href="#nondeterminism-in-program-under-test">Nondeterministic program under test</a></li>
         </ul></li>
     </ul></li>
@@ -231,7 +231,7 @@ Randoop supports three commands:
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
 <pre class="code">
-java -Xmx3000m -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --time-limit=60
+java -Xmx3000m -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --output-limit=100
 </pre>
 </li>
 
@@ -711,7 +711,7 @@ Here is how Randoop attempts to generate a test:
   </li>
 </ol>
 
-<p>
+<p id="limiting_test_generation">
   The user can provide limits on any part of the test generation process, or on
   Randoop's run time.  Test generation stops when any of the following occurs
   (this is controlled by method <code>AbstractGenerator.shouldStop</code>):
@@ -1990,8 +1990,8 @@ classes under test
 <h2 id="nondeterminism">Nondeterminism</h2>
 
 <p>
-Randoop is deterministic:  if you run Randoop twice, Randoop should output the
-same test suite.
+Randoop is deterministic:  if you run Randoop twice, Randoop outputs the
+same tests in the same order.
 </p>
 
 <p>
@@ -2004,10 +2004,36 @@ and correct the problem.
 </p>
 
 <p>
-If you <em>want</em> Randoop to produce different test suites, supply
+If you <em>want</em> Randoop to produce different test suites,
+run Randoop twice supplying
 different values for the
 <a href="#option:randomseed"><code>--randomseed</code></a> command-line argument.
 </p>
+
+
+<h3 id="nondeterminism-command-line-arguments">Timeouts and other command-line arguments enable nondeterminism</h3>
+
+<p>
+  By default, Randoop runs until a timeout.  Due to other
+  processes running on your computer, Randoop may
+  generate more or fewer tests in a given time period.
+  To make Randoop deterministic, don't use the
+  <a href="#option:time-limit"><code>--time-limit</code></a> command-line
+  option (<code>--time-limit=100</code> is the default if run Randoop with
+  no command-line arguments).  Instead, use
+  a <a href="#optiongroup:Which-tests-to-output">different command-line
+  argument</a> to <a href="#limiting_test_generation">limit test
+  generation</a>.
+</p>
+
+<p>
+There are other command-line arguments that instruct Randoop to behave
+nondeterministically, for example by specifying a timeout.  To forbid use
+of such options, pass
+the <a href="#option:randomseed"><code>--deterministic</code></a>
+command-line argument.
+</p>
+
 
 
 <h3 id="nondeterminism-changed-program">Changes to the program or its environment</h3>
@@ -2040,16 +2066,6 @@ There can be implementation changes even within a single JDK major version,
 such as two different versions of JDK 8.  These differences can lead to
 different Randoop outputs, or to tests that passed on one JDK
 implementation but fail on another.
-</p>
-
-
-<h3 id="nondeterminism-command-line-arguments">Command-line arguments enable nondeterminism</h3>
-
-<p>
-You instructed Randoop to behave nondeterministically,
-for example by specifying a timeout.  To forbid use of such options, pass
-the <a href="#option:randomseed"><code>--deterministic</code></a> command-line
-argument.
 </p>
 
 
