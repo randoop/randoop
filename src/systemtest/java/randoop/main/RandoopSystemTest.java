@@ -250,7 +250,7 @@ public class RandoopSystemTest {
             "java2.util2.Collections.get(java2.util2.ListIterator, int) exclude",
             "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object) exclude",
             "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator) exclude",
-            "java2.util2.Collections.rotate2(java2.util2.List, int) exclude",
+            "java2.util2.Collections.rotate2(java2.util2.List, int) ignore",
             "java2.util2.Collections.swap(java.lang.Object[], int, int) exclude",
             "java2.util2.Collections.swap(java2.util2.List, int, int) ignore",
             "java2.util2.Collections.synchronizedCollection(java2.util2.Collection, java.lang.Object) exclude",
@@ -425,6 +425,7 @@ public class RandoopSystemTest {
             "examples.Buggy.StackOverflowError() ignore",
             "examples.Buggy.hashCode() ignore",
             "examples.Buggy.toString() ignore",
+            "examples.Buggy.Buggy5.getOne()",
 
             /* don't care about hashCode for compareTo input classes */
             "examples.Buggy.BuggyCompareToAntiSymmetric.hashCode() ignore",
