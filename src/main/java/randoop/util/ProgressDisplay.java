@@ -72,12 +72,15 @@ public class ProgressDisplay extends Thread {
 
   @Override
   public void run() {
+    long progressInterval = GenInputsAbstract.progressintervalmillis;
     while (true) {
       if (shouldStop) {
         clear();
         return;
       }
-      displayWithTime();
+      if (progressInterval > 0) {
+        displayWithTime();
+      }
       if (listenerMgr != null) {
         listenerMgr.progressThreadUpdateNotify();
       }
@@ -98,7 +101,7 @@ public class ProgressDisplay extends Thread {
       }
 
       try {
-        sleep(GenInputsAbstract.progressintervalmillis);
+        sleep(progressInterval > 0 ? progressInterval : 1000);
       } catch (InterruptedException e) {
         // hmm
       }
