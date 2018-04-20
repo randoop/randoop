@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -177,18 +178,22 @@ public final class Randomness {
    *
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights; uses the intrinsic weight if the element
-   *     is not a key in the map
+   *     is not a key in the map. Each element's weight must be non-negative. An element with a
+   *     weight of zero will never be selected.
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
   public static <T extends WeightedElement> T randomMemberWeighted(
       SimpleList<T> list, Map<T, Double> weights) {
 
+    // Subset of elements from the input list whose weights are nonzero. The selected element
+    // will be chosen from this list.
+    List<T> listOfElementsWithNonZeroWeights = new ArrayList<>();
+
     double totalWeight = 0.0;
     // The ith element is the cumulative weight of all elements preceding the ith (that is,
-    // exclusive rather than inclusive).  The last (i+1)th element is the weight of all elements.
-    double[] cumulativeWeights = new double[list.size() + 1];
-    cumulativeWeights[0] = 0.0;
+    // exclusive rather than inclusive). The last (i+1)th element is the weight of all elements.
+    List<Double> cumulativeWeights = new ArrayList<>();
     for (int i = 0; i < list.size(); i++) {
       T elt = list.get(i);
       Double weightOrNull = weights.get(elt);
@@ -203,17 +208,23 @@ public final class Randomness {
                 + "; using intrinsic weight "
                 + weight);
       }
-      if (weight <= 0) {
+
+      // If the weight is negative, output the weights and throw an error.
+      if (weight < 0) {
         System.out.println("Invalid weight " + weight + "; all weights:");
         for (T to : weights.keySet()) {
           System.out.println("  " + to + "    " + weights.get(to));
         }
-        throw new BugInRandoopException("Weight should be positive: " + weight);
+        throw new BugInRandoopException("Weight should be non-negative: " + weight);
       }
-      cumulativeWeights[i] = totalWeight;
-      totalWeight += weight;
+
+      if (weight != 0) {
+        cumulativeWeights.add(totalWeight);
+        listOfElementsWithNonZeroWeights.add(elt);
+        totalWeight += weight;
+      }
     }
-    cumulativeWeights[list.size()] = totalWeight;
+    cumulativeWeights.add(totalWeight);
 
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom("randomMemberWeighted(SimpleList, Map)");
@@ -237,7 +248,7 @@ public final class Randomness {
               "%n << %s%n    (class %s),%n    %s%n    (class %s, size %s)>>",
               list, list.getClass(), weights, weights.getClass(), weights.size()));
     }
-    return list.get(index);
+    return listOfElementsWithNonZeroWeights.get(index);
   }
 
   /**
@@ -251,12 +262,12 @@ public final class Randomness {
    * @param point the value used to find the index within the cumulative weight distribution
    * @return the index corresponding to point's location in the cumulative weight distribution
    */
-  private static int binarySearchForIndex(double[] cumulativeWeights, double point) {
+  private static int binarySearchForIndex(List<Double> cumulativeWeights, double point) {
     int low = 0;
-    int high = cumulativeWeights.length;
+    int high = cumulativeWeights.size();
     int mid = (low + high) / 2;
-    while (!(cumulativeWeights[mid] < point && point <= cumulativeWeights[mid + 1])) {
-      if (cumulativeWeights[mid] < point) {
+    while (!(cumulativeWeights.get(mid) < point && point <= cumulativeWeights.get(mid + 1))) {
+      if (cumulativeWeights.get(mid) < point) {
         low = mid;
       } else {
         high = mid;

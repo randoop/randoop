@@ -158,42 +158,31 @@ public class Bloodhound implements TypedOperationSelector {
    * @param operation method to compute weight for
    */
   private void updateWeightForOperation(TypedOperation operation) {
-    // The number of methods under test, corresponds to |M| in the GRT paper.
-    int numOperations = this.operationSimpleList.size();
-
-    // Default weight is uniform probability.  It is used if no coverage details are available.
-    // This is the case for classes like {@code java.lang.Object} which is not explicitly under test.
-    double weight = 1.0 / numOperations;
-
     CoverageTracker.BranchCoverage covDet =
         coverageTracker.getDetailsForMethod(operation.getName());
 
-    // Check that branch coverage details are available for this method.
-    if (covDet != null) {
-      // The number of successful invocations of this method. Corresponds to succ(m).
-      Integer succM = methodInvocationCounts.get(operation);
-      if (succM == null) {
-        succM = 0;
-      }
+    // Corresponds to uncovRatio(m) in the GRT paper. Default to zero for methods with no coverage information.
+    // This is the case for a method that belongs to a class that is, not explicitly under test and is not
+    // a nested class of one that is. For instance, {@code java.lang.Object}.
+    double uncovRatio = covDet != null ? covDet.uncovRatio : 0;
 
-      // Corresponds to w(m, 0) in the GRT paper.
-      double wM0 =
-          alpha * covDet.uncovRatio + (1.0 - alpha) * (1.0 - (succM.doubleValue() / maxSuccM));
+    // The number of successful invocations of this method. Corresponds to succ(m).
+    Integer succM = methodInvocationCounts.get(operation);
+    if (succM == null) {
+      succM = 0;
+    }
 
-      // Check that the computed weight is not zero.
-      if (wM0 != 0) {
-        weight = wM0;
+    // Corresponds to w(m, 0) in the GRT paper.
+    double weight = alpha * uncovRatio + (1.0 - alpha) * (1.0 - (succM.doubleValue() / maxSuccM));
 
-        // k, in the GRT paper, is defined as the number of times this method was selected since
-        // the last update of branch coverage. It is reset to zero every time branch coverage is recomputed.
-        Integer k = methodSelectionCounts.get(operation);
-        if (k != null) {
-          // Corresponds to the case where k >= 1 in the GRT paper.
-          double val1 = (-3.0 / Math.log(1.0 - p)) * (Math.pow(p, k) / k);
-          double val2 = 1.0 / Math.log(numOperations + 3.0);
-          weight *= Math.max(val1, val2);
-        }
-      }
+    // k, in the GRT paper, is defined as the number of times this method was selected since
+    // the last update of branch coverage. It is reset to zero every time branch coverage is recomputed.
+    Integer k = methodSelectionCounts.get(operation);
+    if (k != null) {
+      // Corresponds to the case where k >= 1 in the GRT paper.
+      double val1 = (-3.0 / Math.log(1.0 - p)) * (Math.pow(p, k) / k);
+      double val2 = 1.0 / Math.log(operationSimpleList.size() + 3.0);
+      weight *= Math.max(val1, val2);
     }
 
     methodWeights.put(operation, weight);
