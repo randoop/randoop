@@ -8,10 +8,13 @@ public class RandoopListenerManager {
 
   private List<IEventListener> listeners;
 
+  /** Create a new RandoopListenerManager with no listeners. */
   public RandoopListenerManager() {
     listeners = new ArrayList<>();
   }
 
+  // As of April 2018, this method is never called in Randoop, so the
+  // RandoopListenerManager class does nothing in practice.
   public void addListener(IEventListener listener) {
     if (listener == null) {
       throw new IllegalArgumentException("listener is null");

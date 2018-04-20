@@ -91,11 +91,14 @@ class CoverageChecker {
    */
   void methods(String... methodSpecs) {
     for (String s : methodSpecs) {
-      int spacepos = s.lastIndexOf(" ");
-      if (spacepos == -1) {
+      if (! (s.endsWith(" exclude")
+             || s.endsWith(" ignore")
+             || s.endsWith(" include"))) {
         // Not BugInRandoopException because that isn't available here.
-        throw new Error("Bad method spec: " + s);
+        throw new Error("Bad method spec, lacks action at end (exclude, ignore, or include): " + s);
       }
+
+      int spacepos = s.lastIndexOf(" ");
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
       switch (action) {
