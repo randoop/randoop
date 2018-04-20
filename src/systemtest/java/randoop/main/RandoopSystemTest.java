@@ -425,7 +425,7 @@ public class RandoopSystemTest {
             "examples.Buggy.StackOverflowError() ignore",
             "examples.Buggy.hashCode() ignore",
             "examples.Buggy.toString() ignore",
-            "examples.Buggy.Buggy5.getOne()",
+            "examples.Buggy.Buggy5.getOne() ignore",
 
             /* don't care about hashCode for compareTo input classes */
             "examples.Buggy.BuggyCompareToAntiSymmetric.hashCode() ignore",
