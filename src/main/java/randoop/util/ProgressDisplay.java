@@ -93,7 +93,7 @@ public class ProgressDisplay extends Thread {
         if (now - lastStepTime > exit_if_no_steps_after_milliseconds) {
           // TODO: The stack trace of this thread is not interesting.
           // This should print the stack trace of the thread that is running a test.
-          printStackTraceAndExit();
+          exitDueToNoSteps();
         }
       }
 
@@ -105,11 +105,12 @@ public class ProgressDisplay extends Thread {
     }
   }
 
+  /** Exit due to too much time without taking a step. */
   // Ideally, on timeout we would terminate step() without shutting down the entire Randoop process.
   // That is not possible in general, unless the test is running in its own thread.
   // Thread.interrupt() just sets the thread's interrupt status.
   // So, tell the user to fix the problem or to run with --usethreads.
-  private void printStackTraceAndExit() {
+  private void exitDueToNoSteps() {
     System.out.println();
     System.out.println();
     System.out.printf(
