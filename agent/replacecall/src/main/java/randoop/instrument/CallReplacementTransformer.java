@@ -5,9 +5,9 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.nio.file.Path;
 import java.security.ProtectionDomain;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
@@ -49,7 +49,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   // debug_instrument field is defined in InstructionListUtils.
 
   /** Map from a method to its replacement. */
-  private final ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap;
+  private final HashMap<MethodSignature, MethodSignature> replacementMap;
 
   /** The list of package prefixes (package name + ".") to exclude from transformation. */
   private final Set<String> excludedPackagePrefixes;
@@ -58,15 +58,12 @@ public class CallReplacementTransformer extends InstructionListUtils
    * Create a {@link CallReplacementTransformer} that transforms method calls in classes other than
    * those named in the given exclusion set.
    *
-   * <p>The transformer can be run by multiple threads, so the replacement maps use concurrent
-   * implementations.
-   *
-   * @param replacementMap the concurrent hash map with method replacements
+   * @param replacementMap the hash map with method replacements
    * @param excludedPackagePrefixes the period-terminated prefixes for packages from which classes
    *     should not be transformed
    */
   CallReplacementTransformer(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      HashMap<MethodSignature, MethodSignature> replacementMap,
       Set<String> excludedPackagePrefixes) {
     this.replacementMap = replacementMap;
     this.excludedPackagePrefixes = excludedPackagePrefixes;

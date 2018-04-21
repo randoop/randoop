@@ -12,10 +12,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.EntryReader;
@@ -139,8 +139,7 @@ public class ReplaceCallAgent {
        * The agent is called when classes are loaded. If Randoop is using threads, this can result
        * in multiple threads accessing the map to apply replacements.
        */
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap =
-          new ConcurrentHashMap<>();
+      HashMap<MethodSignature, MethodSignature> replacementMap;
 
       // Read the default replacement file
       String replacementPath = "/default-replacements.txt";

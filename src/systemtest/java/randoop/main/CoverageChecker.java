@@ -91,9 +91,7 @@ class CoverageChecker {
    */
   void methods(String... methodSpecs) {
     for (String s : methodSpecs) {
-      if (! (s.endsWith(" exclude")
-             || s.endsWith(" ignore")
-             || s.endsWith(" include"))) {
+      if (!(s.endsWith(" exclude") || s.endsWith(" ignore") || s.endsWith(" include"))) {
         // Not BugInRandoopException because that isn't available here.
         throw new Error("Bad method spec, lacks action at end (exclude, ignore, or include): " + s);
       }
