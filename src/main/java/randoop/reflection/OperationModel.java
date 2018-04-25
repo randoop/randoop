@@ -137,7 +137,7 @@ public class OperationModel {
   public static OperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      List<Pattern> omitmethods,
+      List<Pattern> omitMethods,
       Set<String> classnames,
       Set<String> coveredClassesGoalNames,
       Set<String> methodSignatures,
@@ -149,7 +149,7 @@ public class OperationModel {
     OperationModel model = new OperationModel();
 
     // for debugging only
-    model.omitMethods = omitmethods;
+    model.omitMethods = omitMethods;
 
     model.addClassTypes(
         visibility,
@@ -159,7 +159,7 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    OmitMethodsPredicate omitPredicate = new OmitMethodsPredicate(omitmethods);
+    OmitMethodsPredicate omitPredicate = new OmitMethodsPredicate(omitMethods);
 
     model.addOperationsFromClasses(
         model.classTypes, visibility, reflectionPredicate, omitPredicate, operationCollection);
@@ -216,7 +216,7 @@ public class OperationModel {
    *     members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
-   * @param omitmethods the patterns for operations that should be omitted
+   * @param omitMethods the patterns for operations that should be omitted
    * @param classnames the names of classes under test
    * @param coveredClassnames the names of classes to be tested by covered class heuristic
    * @param methodSignatures the signatures of methods to be added to the model
@@ -229,7 +229,7 @@ public class OperationModel {
   public static OperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      List<Pattern> omitmethods,
+      List<Pattern> omitMethods,
       Set<String> classnames,
       Set<String> coveredClassnames,
       Set<String> methodSignatures,
@@ -239,7 +239,7 @@ public class OperationModel {
     return createModel(
         visibility,
         reflectionPredicate,
-        omitmethods,
+        omitMethods,
         classnames,
         coveredClassnames,
         methodSignatures,
