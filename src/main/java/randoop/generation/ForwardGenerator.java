@@ -227,8 +227,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Statement stmt = stmts.statements.get(i);
       if (stmt.isMethodCall() && observers.contains(stmt.getOperation())) {
         List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
-        int receiver = inputVars.get(0);
-        seq.sequence.clearActiveFlag(receiver);
+        seq.sequence.clearAllActiveFlags();
       }
 
       // If its runtime value is a primitive value, clear its active flag,
