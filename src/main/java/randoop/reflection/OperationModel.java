@@ -122,7 +122,7 @@ public class OperationModel {
    *     members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
-   * @param omitmethods the patterns for operations that should be omitted
+   * @param omitMethods the patterns for operations that should be omitted
    * @param classnames the names of classes under test
    * @param coveredClassesGoalNames the coverage goal: the names of classes to be tested by the
    *     covered class heuristic

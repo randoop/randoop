@@ -75,15 +75,9 @@ public final class Randomness {
    */
   private static void incrementCallsToRandom(String caller) {
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) {
-      Log.logLine(
-          "randoop.util.Randomness called by "
-              + caller
-              + ": "
-              + totalCallsToRandom
-              + " calls to Random so far, seed = "
-              + getSeed());
-    }
+    Log.logPrintf(
+        "randoop.util.Randomness called by %s: %d calls to Random so far, seed = %d%n",
+        caller, totalCallsToRandom, getSeed());
   }
 
   /**
@@ -197,11 +191,8 @@ public final class Randomness {
         weight = weightOrNull;
       } else {
         weight = elt.getWeight();
-        Log.logLine(
-            "randoop.util.Randomness: weights map does not contain an entry for "
-                + elt
-                + "; using intrinsic weight "
-                + weight);
+        Log.logPrintf(
+            "randoop.util.Randomness: key %s not found; using intrinsic weight %d%n", elt, weight);
       }
       if (weight <= 0) {
         throw new BugInRandoopException("Weight should be positive: " + weight);

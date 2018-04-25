@@ -111,13 +111,13 @@ public abstract class ObjectContract {
 
     if (Log.isLoggingOn()) {
       // Commented out because it makes the logs too big.  Uncomment when debugging this code.
-      // Log.logLine("Executed contract " + this.getClass());
-      // Log.logLine("  values (length %d) =%n", values.length);
+      // Log.logPrintf("Executed contract %s%n", this.getClass());
+      // Log.logPrintf("  values (length %d) =%n", values.length);
       // for (Object value : values) {
-      //   Log.logLine(
+      //   Log.logPrintf(
       //       "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
       // }
-      // Log.logLine("  Contract outcome = " + outcome);
+      // Log.logPrintf("  Contract outcome = %s%n", outcome);
     }
 
     if (outcome instanceof NormalExecution) {
@@ -129,12 +129,9 @@ public abstract class ObjectContract {
       }
     } else if (outcome instanceof ExceptionalExecution) {
       Throwable e = ((ExceptionalExecution) outcome).getException();
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            String.format(
-                "checkContract(): Contract %s threw exception of class %s with message %s",
-                this, e.getClass(), e.getMessage()));
-      }
+      Log.logPrintf(
+          "checkContract(): Contract %s threw exception of class %s with message %s%n",
+          this, e.getClass(), e.getMessage());
       if (e instanceof BugInRandoopException) {
         throw (BugInRandoopException) e;
       }
@@ -145,9 +142,7 @@ public abstract class ObjectContract {
 
       BehaviorType eseqBehavior = ExceptionBehaviorClassifier.classify(e, eseq);
 
-      if (Log.isLoggingOn()) {
-        Log.logLine("  ExceptionBehaviorClassifier.classify(e, eseq) => " + eseqBehavior);
-      }
+      Log.logPrintf("  ExceptionBehaviorClassifier.classify(e, eseq) => %s%n", eseqBehavior);
 
       if (eseqBehavior == BehaviorType.EXPECTED) {
         eseqBehavior = BehaviorType.INVALID;
@@ -204,11 +199,11 @@ public abstract class ObjectContract {
       // Note: the following alternative to the above line slightly improves coverage
       // varArray[i] = Randomness.randomMember(eseq.getVariables(values[i]));
 
-      //   Log.logLine(
+      //   Log.logPrintf(
       //       "values[%d] = %s @%s%n",
       //       i, toStringHandleExceptions(values[i]), System.identityHashCode(values[i]));
-      //   Log.logLine("  candidate variables = %s%n", variables);
-      //   Log.logLine(
+      //   Log.logPrintf("  candidate variables = %s%n", variables);
+      //   Log.logPrintf(
       //       "  varArray[%d] = %s @%s%n", i, varArray[i], System.identityHashCode(varArray[i]));
     }
 

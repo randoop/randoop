@@ -445,7 +445,7 @@ public class GenTests extends GenInputsAbstract {
     // operationModel.dumpModel(System.out);
     // System.out.println("isLoggingOn = " + Log.isLoggingOn());
     if (Log.isLoggingOn()) {
-      Log.logLine("Initial sequences (seeds):");
+      Log.logPrintf("Initial sequences (seeds):%n");
       componentMgr.log();
     }
 
@@ -747,19 +747,19 @@ public class GenTests extends GenInputsAbstract {
                 + "This can happen when Randoop is run on methods that side-effect global state.%n"
                 + "See the \"Randoop stopped because of a flaky test\" section of the user manual.%n");
     if (GenInputsAbstract.log == null) {
-      msg += "For more details, rerun with logging turned on with --log=FILENAME.%n";
+      msg += "For more details, rerun with logging turned on with --log=FILENAME.";
     } else {
-      msg += "For more details, see the log at " + GenInputsAbstract.log + "%n";
+      msg += "For more details, see the log at " + GenInputsAbstract.log;
     }
-    System.out.printf(msg);
+    System.out.println(msg);
 
     if (Log.isLoggingOn()) {
       Sequence subsequence = e.getSubsequence();
-      Log.log(msg);
-      Log.log(String.format("%nException:%n  %s%n", e.getError()));
-      Log.log(String.format("Statement:%n  %s%n", e.getStatement()));
-      Log.log(String.format("Full sequence:%n%s%n", e.getSequence()));
-      Log.log(String.format("Input subsequence:%n%s%n", subsequence.toCodeString()));
+      Log.logPrintf("%s%n", msg);
+      Log.logPrintf("Exception:%n  %s%n", e.getError());
+      Log.logPrintf("Statement:%n  %s%n", e.getStatement());
+      Log.logPrintf("Full sequence:%n%s%n", e.getSequence());
+      Log.logPrintf("Input subsequence:%n%s%n", subsequence.toCodeString());
 
       /*
        * Get the set of operations executed since the first execution of the flaky subsequence
@@ -783,9 +783,9 @@ public class GenTests extends GenInputsAbstract {
       }
 
       if (!executedOperationTrace.isEmpty()) {
-        Log.logLine("Operations performed since subsequence first executed:");
+        Log.logPrintf("Operations performed since subsequence first executed:%n");
         for (String opName : executedOperationTrace) {
-          Log.logLine(opName);
+          Log.logPrintf("%s%n", opName);
         }
       } else {
         System.err.printf(

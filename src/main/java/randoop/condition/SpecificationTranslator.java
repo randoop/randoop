@@ -307,9 +307,7 @@ public class SpecificationTranslator {
                 + throwsCondition
                 + ". Cannot find exception type: "
                 + e.getMessage();
-        if (Log.isLoggingOn()) {
-          Log.logLine(msg);
-        }
+        Log.logPrintf("%s%n", msg);
         if (GenInputsAbstract.ignore_condition_compilation_error) {
           continue;
         } else {

@@ -55,7 +55,7 @@ public class OmitMethodsPredicate {
    * @return true if the signature matches an omit pattern, and false otherwise
    */
   private boolean shouldOmitExact(TypedClassOperation operation) {
-    Log.logLine("shouldOmitExact(" + operation + ")");
+    Log.logPrintf("shouldOmitExact(%s)%n", operation);
 
     // Nothing to do if there are no patterns.
     if (omitPatterns.isEmpty()) {
@@ -70,13 +70,9 @@ public class OmitMethodsPredicate {
 
     for (Pattern pattern : omitPatterns) {
       boolean result = pattern.matcher(signature).find();
-      Log.logLine("shouldOmitExact(" + operation + ") with regex " + pattern + " => " + result);
+      Log.logPrintf("shouldOmitExact(%s) with regex %s => %s%n", operation, pattern, result);
 
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            String.format(
-                "Comparing '%s' against pattern '%s' = %b%n", signature, pattern, result));
-      }
+      Log.logPrintf("Comparing '%s' against pattern '%s' = %b%n", signature, pattern, result);
       if (result) {
         return true;
       }
@@ -93,7 +89,7 @@ public class OmitMethodsPredicate {
    *     an omit pattern, false otherwise
    */
   boolean shouldOmit(final TypedClassOperation operation) {
-    Log.logLine("shouldOmit: testing " + operation);
+    Log.logPrintf("shouldOmit: testing %s%n", operation);
 
     // Done if there are no patterns
     if (omitPatterns.isEmpty()) {
@@ -122,10 +118,10 @@ public class OmitMethodsPredicate {
         exists = true;
       } catch (NoSuchMethodException e) {
         exists = false;
-        Log.logLine("no method for " + signature);
+        Log.logPrintf("no method for %s%n", signature);
       }
-      Log.logLine(
-          "comparing: " + signature.getName() + " " + type.getRuntimeClass().getSimpleName());
+      Log.logPrintf(
+          "comparing: %s %s%n", signature.getName(), type.getRuntimeClass().getSimpleName());
       if (!exists && signature.getName().equals(type.getRuntimeClass().getSimpleName())) {
         try {
           Constructor<?> constructor =
@@ -133,7 +129,7 @@ public class OmitMethodsPredicate {
           exists = true;
         } catch (NoSuchMethodException e) {
           // nothing to do
-          Log.logLine("no constructor for " + signature);
+          Log.logPrintf("no constructor for %s%n", signature);
         }
       }
 
