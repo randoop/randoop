@@ -225,7 +225,9 @@ public class ForwardGenerator extends AbstractGenerator {
       // that produces the value.)
       Sequence stmts = seq.sequence;
       Statement stmt = stmts.statements.get(i);
-      if (stmt.isMethodCall() && observers.contains(stmt.getOperation())) {
+      boolean isObserver = stmt.isMethodCall() && observers.contains(stmt.getOperation());
+      Log.logPrintf("isObserver => %s for %s%n", isObserver, stmt);
+      if (isObserver) {
         List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
         int receiver = inputVars.get(0);
         seq.sequence.clearActiveFlag(receiver);
