@@ -342,8 +342,8 @@ public abstract class AbstractGenerator {
         System.out.printf("allSequences.size() = %d%n", numGeneratedSequences());
       }
 
-      Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());
-      Log.logLine("allSequences.size()=" + numGeneratedSequences());
+      Log.logPrintf("Sequence after execution: %s%n", Globals.lineSep + eSeq.toString());
+      Log.logPrintf("allSequences.size()=%s%n", numGeneratedSequences());
     }
 
     if (GenInputsAbstract.progressdisplay && progressDisplay != null) {

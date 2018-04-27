@@ -151,7 +151,7 @@ public final class MethodCall extends CallableOperation {
   @Override
   public ExecutionOutcome execute(Object[] input, PrintStream out) {
 
-    Log.logLine("MethodCall.execute: this = " + this);
+    Log.logPrintf("MethodCall.execute: this = %s%n", this);
 
     Object receiver = null;
     int paramsLength = input.length;

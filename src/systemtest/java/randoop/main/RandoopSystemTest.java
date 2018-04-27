@@ -1738,6 +1738,7 @@ public class RandoopSystemTest {
             }
           } catch (IOException e) {
             // The user can do nothing about this, and the test failure is more important.
+            System.out.println("Ignoring error:");
             e.printStackTrace();
           }
           fail(message.toString());

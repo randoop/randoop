@@ -218,12 +218,8 @@ public class ProgressDisplay extends Thread {
     }
     // System.out.println (status);
 
-    // if (Log.loggingOn) {
-    // Log.log("Free memory: "
-    // + java.lang.Runtime.getRuntime().freeMemory());
-    // Log.log("Used memory: "
-    // + (java.lang.Runtime.getRuntime().totalMemory() - java.lang.Runtime
-    // .getRuntime().freeMemory()));
-    // }
+    // Log.logPrintf("Free memory: %s%n", Runtime.getRuntime().freeMemory());
+    // Log.logPrintf("Used memory: %s%n",
+    //    Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
   }
 }
