@@ -5,9 +5,11 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.nio.file.Path;
 import java.security.ProtectionDomain;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
@@ -20,6 +22,7 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.MethodGen;
+import org.apache.bcel.generic.NEW;
 import org.apache.bcel.generic.Type;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.bcelutil.InstructionListUtils;
@@ -49,7 +52,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   // debug_instrument field is defined in InstructionListUtils.
 
   /** Map from a method to its replacement. */
-  private final ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap;
+  private final HashMap<MethodSignature, MethodSignature> replacementMap;
 
   /** The list of package prefixes (package name + ".") to exclude from transformation. */
   private final Set<String> excludedPackagePrefixes;
@@ -58,15 +61,12 @@ public class CallReplacementTransformer extends InstructionListUtils
    * Create a {@link CallReplacementTransformer} that transforms method calls in classes other than
    * those named in the given exclusion set.
    *
-   * <p>The transformer can be run by multiple threads, so the replacement maps use concurrent
-   * implementations.
-   *
-   * @param replacementMap the concurrent hash map with method replacements
+   * @param replacementMap the hash map with method replacements
    * @param excludedPackagePrefixes the period-terminated prefixes for packages from which classes
    *     should not be transformed
    */
   CallReplacementTransformer(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      HashMap<MethodSignature, MethodSignature> replacementMap,
       Set<String> excludedPackagePrefixes) {
     this.replacementMap = replacementMap;
     this.excludedPackagePrefixes = excludedPackagePrefixes;
@@ -192,6 +192,18 @@ public class CallReplacementTransformer extends InstructionListUtils
     return false;
   }
 
+  private static class NewInstInfo {
+    InstructionHandle new_inst;
+    String new_class;
+
+    public NewInstInfo(InstructionHandle new_inst, String new_class) {
+      this.new_inst = new_inst;
+      this.new_class = new_class;
+    }
+  }
+
+  private Deque<NewInstInfo> new_inst_stack = new ArrayDeque<NewInstInfo>();
+
   /**
    * Processes each method in the given class replacing any specified calls. The replacements are
    * static methods.
@@ -213,6 +225,7 @@ public class CallReplacementTransformer extends InstructionListUtils
         // The class data in StackMapUtils is not thread safe,
         // allow only one method at a time to be instrumented.
         synchronized (this) {
+          new_inst_stack.clear();
           pool = cg.getConstantPool();
           MethodGen mg = new MethodGen(method, cg.getClassName(), pool);
 
@@ -332,6 +345,14 @@ public class CallReplacementTransformer extends InstructionListUtils
       throws IllegalClassFormatException {
 
     Instruction inst = ih.getInstruction();
+    if ((inst instanceof NEW)) {
+      // save info on stack
+      String new_class = (((CPInstruction) ih.getInstruction()).getType(pool)).toString();
+      new_inst_stack.push(new NewInstInfo(ih, new_class));
+      // but no replacement instruction
+      return null;
+    }
+
     if (!(inst instanceof InvokeInstruction)) {
       return null;
     }
@@ -352,6 +373,25 @@ public class CallReplacementTransformer extends InstructionListUtils
 
     if (newSig == null) {
       debug_transform.log("%s.%s: No replacement for %s%n", class_name, method_name, origSig);
+      // if this is an invoke of an <init> method, we need to pop the top entry of the new_inst_stack
+      if (invoke_method.equals("<init>")) {
+        if (method_name.equals("<init>")) {
+          if (invoke_class.equals(class_name)) {
+            // There is no matching NEW for a call to this().<init>.
+            return null;
+          }
+          if (invoke_class.equals(super_class_name)) {
+            // There is no matching NEW for a call to super().<init>.
+            return null;
+          }
+        }
+        NewInstInfo top = new_inst_stack.pop();
+        if (!invoke_class.equals(top.new_class)) {
+          throw new IllegalClassFormatException(
+              "Type of NEW object and <init> method do not match.");
+        }
+      }
+      // no replacement instruction
       return null;
     }
 
@@ -370,9 +410,12 @@ public class CallReplacementTransformer extends InstructionListUtils
     // instructions and have the replacement constructor supply a new object
     // reference.
     //
-    // The following code searches backwards from the invokespecial in the
-    // instruction list until it finds a new/dup pair and then deletes them.
-    // It is a fatal error if they cannot be located.
+    // The following code first checks to see if the user code is calling either
+    // this().<init> or super().<init>.  If so, there is no matching new/dup
+    // pair and we will not modify the instruction.  Otherwise, we pop the top
+    // entry off the new_inst_stack, verify the class types match, and use the
+    // instruction handle to delete the new/dup pair.
+    // It is a fatal error if the class types do not match.
 
     boolean new_dup_removed = false;
     if (invoke_method.equals("<init>")) {
@@ -388,31 +431,19 @@ public class CallReplacementTransformer extends InstructionListUtils
           return null;
         }
       }
-      // need to search backwards and delete "new", "dup" instruction pair
-      InstructionHandle tih = ih.getPrev();
-      while (tih != null) {
-        if (tih.getInstruction().getOpcode() == Const.NEW) {
-          if (tih.getNext().getInstruction().getOpcode() != Const.DUP) {
-            // oops; we expect NEW to be immediatly followed by DUP
-            break;
-          }
-          // get the object type of the NEW
-          String new_class = (((CPInstruction) tih.getInstruction()).getType(pool)).toString();
-          //System.out.printf("new type: %s, invoke type: %s%n", new_class, invoke_class);
-          if (!new_class.equals(invoke_class)) {
-            // keep looking for matching NEW
-            tih = tih.getPrev();
-            continue;
-          }
-          delete_instructions(mg, tih, tih.getNext());
-          new_dup_removed = true;
-          break;
-        }
-        tih = tih.getPrev();
+
+      // get the matching new instruction information
+      NewInstInfo top = new_inst_stack.pop();
+      if (!invoke_class.equals(top.new_class)) {
+        throw new IllegalClassFormatException("Type of NEW object and <init> method do not match.");
       }
-      if (!new_dup_removed) {
+      // verify the next instruction after the new is a dup
+      if (top.new_inst.getNext().getInstruction().getOpcode() != Const.DUP) {
+        // oops; we expect NEW to be immediatly followed by DUP
         throw new IllegalClassFormatException("Unable to find NEW DUP pair.");
       }
+      delete_instructions(mg, top.new_inst, top.new_inst.getNext());
+      new_dup_removed = true;
     }
 
     debug_transform.log(

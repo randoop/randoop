@@ -24,7 +24,7 @@ public class FieldAccessTypeNameSimplifyVisitor extends VoidVisitorAdapter<Class
         n.setScope(JavaParser.parseExpression(type.getName()));
       } catch (ParseException e) {
         // Error parsing type name.
-        e.printStackTrace();
+        throw new Error(e);
       }
     }
   }

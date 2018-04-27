@@ -23,7 +23,7 @@ public final class MethodReflectionCode extends ReflectionCode {
 
     if (!this.method.isAccessible()) {
       this.method.setAccessible(true);
-      Log.logLine("not accessible: " + this.method);
+      Log.logPrintf("not accessible: %s%n", this.method);
       // TODO something is bizarre - it seems that a public method can be
       // not-accessible sometimes. RatNum(int,int)
       // TODO you cannot just throw the exception below - because no sequences
@@ -39,13 +39,13 @@ public final class MethodReflectionCode extends ReflectionCode {
   @SuppressWarnings("Finally")
   @Override
   public void runReflectionCodeRaw() {
-    Log.logLine("runReflectionCodeRaw: " + method);
+    Log.logPrintf("runReflectionCodeRaw: %s%n", method);
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
       try {
-        Log.logLine("runReflectionCodeRaw(" + method + ") => " + retval);
+        Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, retval);
       } catch (OutOfMemoryError e) {
-        Log.logLine("runReflectionCodeRaw(" + method + ") => [value too large to print]");
+        Log.logPrintf("runReflectionCodeRaw(%s) => [value too large to print]%n", method);
       }
       if (receiver == null && isInstanceMethod()) {
         throw new ReflectionCodeException(

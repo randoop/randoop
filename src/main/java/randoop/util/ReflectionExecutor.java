@@ -137,12 +137,9 @@ public final class ReflectionExecutor {
       runnerThread.join(call_timeout);
 
       if (!runnerThread.runFinished) {
-        if (Log.isLoggingOn()) {
-          Log.log("Exceeded timeout: aborting execution of call:");
-          Log.log("  " + runnerThread.getCode());
-          // TODO: is it possible to give the test being executed?
-          // (Maybe not here, but it has been previously logged.)
-        }
+        Log.logPrintf("Exceeded timeout: aborting execution of call: %s%n", runnerThread.getCode());
+        // TODO: is it possible to log the test being executed?
+        // (Maybe not here, but it has been previously logged.)
 
         // We use this deprecated method because it's the only way to
         // stop a thread no matter what it's doing.

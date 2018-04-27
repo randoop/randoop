@@ -129,11 +129,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               // unreadable and/or non-compilable due to Java
               // restrictions on String constants.
               if (!Value.stringLengthOK(str)) {
-                if (Log.isLoggingOn()) {
-                  Log.logLine(
-                      "Ignoring a string that exceeds the maximum length of "
-                          + GenInputsAbstract.string_maxlen);
-                }
+                Log.logPrintf(
+                    "Ignoring a string that exceeds the maximum length of %d%n",
+                    GenInputsAbstract.string_maxlen);
                 continue;
               }
             }
@@ -214,9 +212,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 ObjectContract observerEqValue = new ObserverEqValue(m, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
 
-                if (Log.isLoggingOn()) {
-                  Log.logLine(String.format("Adding observer %s%n", observerCheck));
-                }
+                Log.logPrintf("Adding observer %s%n", observerCheck);
 
                 checks.add(observerCheck);
               }
