@@ -11,9 +11,9 @@ import randoop.CheckRep;
 import randoop.util.Log;
 
 /**
- * Default implementations of methods that indicate whether a class, method, constructor, or field
- * should be used in Randoop's exploration. Returns true for public members, with some exceptions
- * (see {@link #doNotUseSpecialCase} method).
+ * Default implementations of methods that indicate what is "under test": whether a class, method,
+ * constructor, or field should be used in Randoop's exploration. Returns true for public members,
+ * with some exceptions (see {@link #doNotUseSpecialCase} method).
  *
  * <p>If a method has the {@code @CheckRep} annotation, returns false (the method will be used as a
  * contract checker, not as a method under test).
@@ -88,6 +88,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
+    // Always consider Object.getClass to be under test (even if not specified by user).
     // This is a special case handled here to avoid printing the reason for exclusion.
     // Most Object methods are excluded. Allow getClass. Equals is used in contracts.
     // The rest are problematic (toString), involve threads, waiting, or are somehow problematic.
