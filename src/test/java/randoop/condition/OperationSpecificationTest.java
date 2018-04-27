@@ -37,7 +37,7 @@ import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 
-public class OperationConditionTest {
+public class OperationSpecificationTest {
   @Test
   public void conditionTest() throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
