@@ -98,13 +98,12 @@ public class Bloodhound implements TypedOperationSelector {
   public Bloodhound(List<TypedOperation> operations, CoverageTracker coverageTracker) {
     this.operationSimpleList = new SimpleArrayList<>(operations);
     this.coverageTracker = coverageTracker;
-    // Compute an initial weight for all methods under test. The weights will initially all be uniform.
-    // Initialize the uncovered ratio value of all methods under test to some value (we've chosen 1 here).
-    // This is to satisfy the assertion in updateWeightForOperation which expects only two methods belonging
-    // to the class Object to not have coverage details.
-    for (TypedOperation operation : operations) {
-      methodWeights.put(operation, 1.0);
-    }
+    // Compute an initial weight for all methods under test. We also initialize the uncovered ratio
+    // value of all methods under test by updating branch coverage information. This is to satisfy
+    // the assertion in updateWeightForOperation which expects only two methods belonging to the
+    // class Object to not have coverage details. The weights for all methods may not be uniform
+    // in cases where we have methods with "zero" branches and methods with non-"zero" branches.
+    updateBranchCoverageMaybe();
     updateWeightsForAllOperations();
   }
 
