@@ -957,15 +957,15 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Returns the list of JDK specification files from the {@code conditions/jdk} resources directory
-   * in the Randoop jar file.
+   * Returns the list of JDK specification files from the {@code specifications/jdk} resources
+   * directory in the Randoop jar file.
    *
    * @throws BugInRandoopException if there is an error locating the specification files
    * @return the list of JDK specification files
    */
   private Collection<? extends File> getJDKSpecificationFiles() {
     List<File> fileList = new ArrayList<>();
-    final String specificationDirectory = "/conditions/jdk/";
+    final String specificationDirectory = "/specifications/jdk/";
     Path directoryPath = getResourceDirectoryPath(specificationDirectory);
 
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(directoryPath, "json")) {

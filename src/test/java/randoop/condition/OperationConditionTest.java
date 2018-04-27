@@ -259,7 +259,7 @@ public class OperationConditionTest {
    *
    * @return the {@link ExecutableSpecification} object for {@link
    *     ClassWithConditions#category(int)}
-   * @param method the method for which to get conditions
+   * @param method the method for which to get the specification
    */
   private ExecutableSpecification getMethodSpecification(Method method) {
     List<String> paramNames = new ArrayList<>();
