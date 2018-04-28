@@ -1029,27 +1029,10 @@ Randoop about your application, and that is how we recommend using Randoop.
 </ul>
 
             <li id="option:specifications"><b>--specifications=</b><i>filename</i> <code>[+]</code>.
-             Read JSON condition file to use specifications to control how tests are generated and
- classified.
-
- <ul>
-   <li>
-       <p>Param-conditions are pre-conditions on method/constructor calls. Test sequences where
-       the condition fails are classified as <code>BehaviorType.INVALID</code>.
-   <li>
-       <p>Return-conditions are post-conditions on method/constructor calls, consisting of a
-       guard and a property. If the inputs to the call satisfy the guard but the property fails,
-       then the sequence is classified as <code>BehaviorType.ERROR</code>.
-   <li>Throws-conditions are post-conditions on expected exceptions. If the inputs to the call
-       satisfy the condition, then: when the exception is thrown the sequence is <code>BehaviorType.EXPECTED</code>, but, if it is not, the sequence is classified as <code>BehaviorType.ERROR</code>. If the throws-condition is not satisfied by the input, then ordinary
-       classification is applied.
- </ul>
+             Read file of specifications; see manual section "Specifying expected code behavior".
             <li id="option:use-jdk-specifications"><b>--use-jdk-specifications=</b><i>boolean</i>.
-             Use the internal specifications for JDK classes to control how tests are generated and
- classified.
-
- <p>These specifications are applied to the methods of classes that inherit from them. See
- <code>.specifications</code> for details on classification using specifications. [default true]
+             Use built-in specifications for JDK classes and for classes that inherit from them, as if they
+ had been supplied using the <code>--specifications</code> command-line argument. [default true]
             <li id="option:ignore-condition-compilation-error"><b>--ignore-condition-compilation-error=</b><i>boolean</i>.
              Make Randoop proceed, instead of failing, if the Java condition text of a specification cannot
  be compiled. [default false]
