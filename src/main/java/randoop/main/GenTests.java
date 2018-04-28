@@ -37,7 +37,7 @@ import randoop.BugInRandoopException;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
-import randoop.condition.RandoopConditionError;
+import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
@@ -264,8 +264,8 @@ public class GenTests extends GenInputsAbstract {
     SpecificationCollection operationSpecifications = null;
     try {
       operationSpecifications = SpecificationCollection.create(GenInputsAbstract.specifications);
-    } catch (RandoopConditionError e) {
-      System.out.println("Error in conditions: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      System.out.println("Error in specifications: " + e.getMessage());
       System.exit(1);
     }
 
@@ -311,7 +311,7 @@ public class GenTests extends GenInputsAbstract {
         System.out.println("Correct your classpath or the class name and re-run Randoop.");
       }
       System.exit(1);
-    } catch (RandoopConditionError e) {
+    } catch (RandoopSpecificationError e) {
       System.out.printf("Error: %s%n", e.getMessage());
       System.exit(1);
     }
@@ -462,7 +462,7 @@ public class GenTests extends GenInputsAbstract {
     } catch (RandoopGenerationError e) {
       throw new BugInRandoopException(
           "Error in generation with operation " + e.getInstantiatedOperation(), e);
-    } catch (RandoopConditionError e) {
+    } catch (RandoopSpecificationError e) {
       throw new BugInRandoopException("Error during generation: " + e.getMessage(), e);
     } catch (SequenceExecutionException e) {
       throw new BugInRandoopException("Error executing generated sequence", e);
@@ -957,15 +957,15 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Returns the list of JDK specification files from the {@code conditions/jdk} resources directory
-   * in the Randoop jar file.
+   * Returns the list of JDK specification files from the {@code specifications/jdk} resources
+   * directory in the Randoop jar file.
    *
    * @throws BugInRandoopException if there is an error locating the specification files
    * @return the list of JDK specification files
    */
   private Collection<? extends File> getJDKSpecificationFiles() {
     List<File> fileList = new ArrayList<>();
-    final String specificationDirectory = "/conditions/jdk/";
+    final String specificationDirectory = "/specifications/jdk/";
     Path directoryPath = getResourceDirectoryPath(specificationDirectory);
 
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(directoryPath, "json")) {

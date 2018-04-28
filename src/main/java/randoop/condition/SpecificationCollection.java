@@ -106,7 +106,7 @@ public class SpecificationCollection {
             throw new Error("operation is null for specification " + specification);
           }
           if (specification.getIdentifiers().hasDuplicatedName()) {
-            throw new RandoopConditionError(
+            throw new RandoopSpecificationError(
                 "Duplicate name in specification: " + specification.getOperation());
           }
 
@@ -117,7 +117,7 @@ public class SpecificationCollection {
             signatureToMethods.add(signature, (Method) accessibleObject);
           }
         }
-      } catch (RandoopConditionError e) {
+      } catch (RandoopSpecificationError e) {
         e.setFile(specificationFile);
         throw e;
       }
@@ -190,7 +190,8 @@ public class SpecificationCollection {
           return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
         }
       } catch (Throwable e) {
-        throw new RandoopConditionError("Could not load specification operation: " + operation, e);
+        throw new RandoopSpecificationError(
+            "Could not load specification operation: " + operation, e);
       }
     }
     return null;
@@ -219,12 +220,13 @@ public class SpecificationCollection {
       }
       return specificationList;
     } catch (IOException e) {
-      throw new RandoopConditionError("Unable to read specification file " + specificationFile, e);
-    } catch (RandoopConditionError e) {
+      throw new RandoopSpecificationError(
+          "Unable to read specification file " + specificationFile, e);
+    } catch (RandoopSpecificationError e) {
       e.setFile(specificationFile);
       throw e;
     } catch (Throwable e) {
-      throw new RandoopConditionError("Bad specification file " + specificationFile, e);
+      throw new RandoopSpecificationError("Bad specification file " + specificationFile, e);
     }
   }
 
