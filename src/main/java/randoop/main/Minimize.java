@@ -302,7 +302,7 @@ public class Minimize extends CommandHandler {
     Path minimizedFile = Paths.get(minimizedFileName);
 
     // Rename the overall class to [original class name][suffix].
-    String origClassName = FilenameUtils.removeExtension(file.toString());
+    String origClassName = FilenameUtils.getBaseName(file.toString());
     new ClassRenamingVisitor().visit(compilationUnit, new String[] {origClassName, SUFFIX});
 
     // Write the compilation unit to the minimized file.
@@ -954,7 +954,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Fully-qualified classname.
-    String fqClassName = FilenameUtils.removeExtension(file.toString());
+    String fqClassName = FilenameUtils.getBaseName(file.toString());
     if (packageName != null) {
       fqClassName = packageName + "." + fqClassName;
     }
