@@ -58,7 +58,7 @@ allprojects {
 
   dependencies {
     plumelib 'org.plumelib:bcel-util:0.0.8'
-    plumelib 'org.plumelib:options:0.3.1'
+    plumelib 'org.plumelib:options:0.3.3'
     plumelib 'org.plumelib:plume-util:0.0.1'
   }
 }
@@ -591,7 +591,7 @@ task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']
 
 /********************* Building manual *******************/
 /*
- * The "manual" gradle target create the contents of the manual directory
+ * The "manual" gradle target creates the contents of the manual directory
  * within src/, which will eventually be moved to project docs directory.
  *
  * Has structure:
