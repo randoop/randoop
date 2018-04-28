@@ -5,6 +5,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import org.junit.Rule;
 import org.junit.Test;
@@ -77,7 +79,7 @@ public class ReplacementFileTest {
     HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
     assertThat("mock package has 75 methods", map.size(), is(equalTo(75)));
 
-    File defaultFile = Paths.get("build/resources/main/default-replacements.txt");
+    Path defaultFile = Paths.get("build/resources/main/default-replacements.txt");
     HashMap<MethodSignature, MethodSignature> defaultMap =
         ReplacementFileReader.readReplacements(defaultFile);
     assertThat("default file loads 75 methods", map.size(), is(equalTo(75)));
