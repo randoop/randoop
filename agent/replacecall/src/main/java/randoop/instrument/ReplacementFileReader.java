@@ -1,7 +1,5 @@
 package randoop.instrument;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Method;
@@ -10,8 +8,10 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
@@ -78,9 +78,11 @@ public class ReplacementFileReader {
    * @throws IOException if there is an error reading the file
    * @see #readReplacements(Reader, String)
    */
-  static HashMap<MethodSignature, MethodSignature> readReplacements(File replacementFile)
+  static HashMap<MethodSignature, MethodSignature> readReplacements(Path replacementFile)
       throws IOException, ReplacementFileException {
-    return readReplacements(new FileReader(replacementFile), replacementFile.getName());
+    return readReplacements(
+        Files.newBufferedReader(replacementFile, StandardCharsets.UTF_8),
+        replacementFile.toString());
   }
 
   /**
@@ -346,30 +348,30 @@ public class ReplacementFileReader {
     String javaHome = System.getProperty("java.home");
 
     // Explore the whole classpath to ensure all replacements are found.
-    for (String pathString : bootclasspath.split(File.pathSeparator)) {
+    for (String pathString : bootclasspath.split(java.io.File.pathSeparator)) {
       // Replacements won't be found in java.home.
       if (pathString.startsWith(javaHome)) {
         continue;
       }
-      File file = new File(pathString);
-      if (!file.exists()) {
+      Path file = Paths.get(pathString);
+      if (!Files.exists(file)) {
         continue;
       }
-      if (file.isDirectory()) {
-        Path path = file.toPath();
-        Path replacementPath = path.resolve(replacementPackage.replace('.', File.separatorChar));
+      if (Files.isDirectory(file)) {
+        Path path = file;
+        Path replacementPath =
+            path.resolve(replacementPackage.replace('.', java.io.File.separatorChar));
         if (Files.exists(replacementPath) && Files.isDirectory(replacementPath)) {
           addReplacementsForPackage(
-              replacementMap, originalPackage, replacementPackage, replacementPath.toFile());
+              replacementMap, originalPackage, replacementPackage, replacementPath);
         }
       } else { // or a jar file
         try {
-          JarFile jarFile = new JarFile(file);
+          JarFile jarFile = new JarFile(file.toFile());
           addReplacementsFromAllClassesOfPackage(
               replacementMap, originalPackage, replacementPackage, jarFile);
         } catch (IOException e) {
-          throw new ReplacementException(
-              "Error reading jar file from boot classpath: " + file.getName(), e);
+          throw new ReplacementException("Error reading jar file from boot classpath: " + file, e);
         }
       }
     }
@@ -415,8 +417,8 @@ public class ReplacementFileReader {
           // The subclass for directories is an internal Java class and its use results in compiler warnings.
           // It seems to work to assume that connection is a directory, and let an exception occur
           // if it is not.
-          File path = new File(URLDecoder.decode(url.getPath(), "UTF-8"));
-          if (path.exists() && path.isDirectory()) {
+          Path path = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
+          if (Files.exists(path) && Files.isDirectory(path)) {
             addReplacementsForPackage(replacementMap, originalPackage, replacementPackage, path);
             found = true;
           }
@@ -455,18 +457,18 @@ public class ReplacementFileReader {
       HashMap<MethodSignature, MethodSignature> replacementMap,
       String originalPackage,
       String replacementPackage,
-      File replacementDirectory)
+      Path replacementDirectory)
       throws ReplacementException, ClassNotFoundException {
 
-    for (String filename : replacementDirectory.list()) {
+    for (String filename : replacementDirectory.toFile().list()) {
       if (filename.endsWith(".class")) {
         final String classname = filename.substring(0, filename.length() - 6);
         final String originalClassname = originalPackage + "." + classname;
         final String replacementClassname = replacementPackage + "." + classname;
         addReplacementsForClass(replacementMap, originalClassname, replacementClassname);
       } else {
-        File subdirectory = new File(replacementDirectory, filename);
-        if (subdirectory.exists() && subdirectory.isDirectory()) {
+        Path subdirectory = new java.io.File(replacementDirectory.toFile(), filename).toPath();
+        if (Files.exists(subdirectory) && Files.isDirectory(subdirectory)) {
           addReplacementsForPackage(
               replacementMap,
               originalPackage + filename,

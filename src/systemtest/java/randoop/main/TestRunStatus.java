@@ -1,6 +1,5 @@
 package randoop.main;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -93,7 +92,7 @@ class TestRunStatus {
     System.out.format("JUnit command:%n%s%n", command);
     ProcessStatus status = ProcessStatus.runCommand(command);
 
-    File classesDirectory = testEnvironment.getTestInputClassDir().toFile();
+    Path classesDirectory = testEnvironment.getTestInputClassDir();
     MethodCoverageMap coverageMap = MethodCoverageMap.collectCoverage(execFile, classesDirectory);
 
     return getTestRunStatus(status, coverageMap);

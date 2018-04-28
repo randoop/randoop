@@ -6,7 +6,6 @@ import static randoop.main.GenInputsAbstract.FlakyTestAction;
 import static randoop.reflection.SignatureParser.DOT_DELIMITED_IDS;
 import static randoop.reflection.SignatureParser.ID_STRING;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -79,7 +78,7 @@ public class FailingTestFilter implements CodeWriter {
    * TestEnvironment}.
    */
   @Override
-  public File writeClassCode(String packageName, String classname, String classSource)
+  public Path writeClassCode(String packageName, String classname, String classSource)
       throws RandoopOutputException {
     assert !Objects.equals(packageName, "");
 
@@ -108,7 +107,7 @@ public class FailingTestFilter implements CodeWriter {
 
         Status status;
         try {
-          status = testEnvironment.runTest(qualifiedClassname, workingDirectory.toFile());
+          status = testEnvironment.runTest(qualifiedClassname, workingDirectory);
         } catch (CommandException e) {
           throw new BugInRandoopException("Error filtering regression tests", e);
         }
@@ -129,7 +128,7 @@ public class FailingTestFilter implements CodeWriter {
   }
 
   @Override
-  public File writeUnmodifiedClassCode(String packageName, String classname, String javaCode)
+  public Path writeUnmodifiedClassCode(String packageName, String classname, String javaCode)
       throws RandoopOutputException {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
@@ -439,12 +438,12 @@ public class FailingTestFilter implements CodeWriter {
    * @return the name of the file
    * @throws FileCompiler.FileCompilerException if the file does not compile
    */
-  private File compileTestClass(
+  private Path compileTestClass(
       String packageName, String classname, String classSource, Path destinationDir)
       throws FileCompiler.FileCompilerException {
     // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
     // which will compile from source, once it is able to write the class file to disk.
-    File sourceFile;
+    Path sourceFile;
     try {
       sourceFile = javaFileWriter.writeClassCode(packageName, classname, classSource);
     } catch (RandoopOutputException e) {
