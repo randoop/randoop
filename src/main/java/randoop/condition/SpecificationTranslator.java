@@ -245,7 +245,7 @@ public class SpecificationTranslator {
     for (Precondition precondition : preconditions) {
       try {
         guardExpressions.add(create(precondition.getGuard()));
-      } catch (RandoopConditionError e) {
+      } catch (RandoopSpecificationError e) {
         if (GenInputsAbstract.ignore_condition_compilation_error) {
           System.out.println("Warning: discarded uncompilable guard expression: " + e.getMessage());
         } else {
@@ -272,7 +272,7 @@ public class SpecificationTranslator {
         ExecutableBooleanExpression guard = create(postcondition.getGuard());
         ExecutableBooleanExpression property = create(postcondition.getProperty());
         returnConditions.add(new GuardPropertyPair(guard, property));
-      } catch (RandoopConditionError e) {
+      } catch (RandoopSpecificationError e) {
         if (GenInputsAbstract.ignore_condition_compilation_error) {
           System.out.println(
               "Warning: discarding uncompilable poststate expression: " + e.getMessage());
@@ -311,7 +311,7 @@ public class SpecificationTranslator {
         if (GenInputsAbstract.ignore_condition_compilation_error) {
           continue;
         } else {
-          throw new RandoopConditionError(msg);
+          throw new RandoopSpecificationError(msg);
         }
       }
       try {
@@ -319,7 +319,7 @@ public class SpecificationTranslator {
         ThrowsClause throwsClause =
             new ThrowsClause(exceptionType, throwsCondition.getDescription());
         throwsPairs.add(new GuardThrowsPair(guard, throwsClause));
-      } catch (RandoopConditionError e) {
+      } catch (RandoopSpecificationError e) {
         if (GenInputsAbstract.ignore_condition_compilation_error) {
           System.out.println(
               "Warning: discarding uncompilable throws-expression: " + e.getMessage());

@@ -322,34 +322,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType sof_exception = BehaviorType.INVALID;
 
   ///////////////////////////////////////////////////////////////////
-  /**
-   * Read JSON condition file to use specifications to control how tests are generated and
-   * classified.
-   *
-   * <ul>
-   *   <li>
-   *       <p>Param-conditions are pre-conditions on method/constructor calls. Test sequences where
-   *       the condition fails are classified as {@link BehaviorType#INVALID}.
-   *   <li>
-   *       <p>Return-conditions are post-conditions on method/constructor calls, consisting of a
-   *       guard and a property. If the inputs to the call satisfy the guard but the property fails,
-   *       then the sequence is classified as {@link BehaviorType#ERROR}.
-   *   <li>Throws-conditions are post-conditions on expected exceptions. If the inputs to the call
-   *       satisfy the condition, then: when the exception is thrown the sequence is {@link
-   *       BehaviorType#EXPECTED}, but, if it is not, the sequence is classified as {@link
-   *       BehaviorType#ERROR}. If the throws-condition is not satisfied by the input, then ordinary
-   *       classification is applied.
-   * </ul>
-   */
+  /** Read file of specifications; see manual section "Specifying expected code behavior". */
   @Option("JSON specifications for methods/constructors")
   public static List<File> specifications = null;
 
   /**
-   * Use the internal specifications for JDK classes to control how tests are generated and
-   * classified.
-   *
-   * <p>These specifications are applied to the methods of classes that inherit from them. See
-   * {@link #specifications} for details on classification using specifications.
+   * Use built-in specifications for JDK classes and for classes that inherit from them, as if they
+   * had been supplied using the {@code --specifications} command-line argument.
    */
   @Option("Use specifications for JDK classes to classify behaviors for methods/constructors")
   public static boolean use_jdk_specifications = true;
