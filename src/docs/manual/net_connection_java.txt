@@ -1,4 +1,4 @@
-// This class is the source code whose conditions appear in the JSON file
+// This class is the source code whose specifications appear in the JSON file
 // net_connection_spec.json.
 
 package net;

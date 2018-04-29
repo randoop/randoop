@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -1274,7 +1273,7 @@ public class RandoopSystemTest {
   public void runDirectSwingTest() {
     String classpath =
         systemTestEnvironmentManager.classpath
-            + File.pathSeparator
+            + java.io.File.pathSeparator
             + systemTestEnvironmentManager.replacecallAgentPath;
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment(
@@ -1472,7 +1471,7 @@ public class RandoopSystemTest {
   public void runIndirectSwingTest() {
     String classpath =
         systemTestEnvironmentManager.classpath
-            + File.pathSeparator
+            + java.io.File.pathSeparator
             + systemTestEnvironmentManager.replacecallAgentPath;
 
     SystemTestEnvironment testEnvironment =
@@ -1510,7 +1509,7 @@ public class RandoopSystemTest {
   public void runSystemExitTest() {
     String classpath =
         systemTestEnvironmentManager.classpath
-            + File.pathSeparator
+            + java.io.File.pathSeparator
             + systemTestEnvironmentManager.replacecallAgentPath;
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment(
@@ -1534,7 +1533,7 @@ public class RandoopSystemTest {
   public void runNoReplacementsTest() {
     String classpath =
         systemTestEnvironmentManager.classpath
-            + File.pathSeparator
+            + java.io.File.pathSeparator
             + systemTestEnvironmentManager.replacecallAgentPath;
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment(
@@ -1738,6 +1737,7 @@ public class RandoopSystemTest {
             }
           } catch (IOException e) {
             // The user can do nothing about this, and the test failure is more important.
+            System.out.println("Ignoring error:");
             e.printStackTrace();
           }
           fail(message.toString());
