@@ -22,7 +22,7 @@ public class InstrumentingClassLoader extends ClassLoader {
   /**
    * Instruments and loads the class with the given name into this {@code ClassLoader}.
    *
-   * @param name name of the class that is being loaded
+   * @param name fully-qualified name of the class that is being loaded
    * @param resolve if true, resolve the class
    * @return the resulting {@code Class<?>} object
    * @throws ClassNotFoundException if class with name is not found
@@ -39,9 +39,8 @@ public class InstrumentingClassLoader extends ClassLoader {
     // Attempt to instrument the class identified by the class name.
     final byte[] bytes = coverageTracker.instrumentClass(name);
 
-    // Check if the returned byte array is null. The byte array will be null for a class that
-    // is not either explicitly under test or is not a nested class of a class that is
-    // explicitly under test.
+    // The byte array is null for a class that is not under test and is not a nested class of a
+    // class that is under test.
     if (bytes != null) {
       // Use the instrumented bytes to define the class.
       loadedClass = defineClass(name, bytes, 0, bytes.length);

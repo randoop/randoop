@@ -270,7 +270,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     // Initialize a coverage tracker instance that will be used by the {@link OperationModel} to
-    // instrument and load classes if bloodhound is enabled.
+    // instrument and load classes if Bloodhound is enabled.
     CoverageTracker coverageTracker = new CoverageTracker(classnames);
     OperationModel.setCoverageTracker(coverageTracker);
 

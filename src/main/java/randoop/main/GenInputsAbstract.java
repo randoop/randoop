@@ -504,11 +504,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Enable the "bloodhound" technique from the GRT paper, which prioritizes methods with lower
+   * Enable the "Bloodhound" technique from the GRT paper, which prioritizes methods with lower
    * branch coverage.
    */
   @Unpublicized
-  @Option("Enable bloodhound to prioritize methods with lower branch coverage.")
+  @Option("Prioritize methods with lower branch coverage.")
   public static boolean enable_bloodhound = false;
 
   // Implementation note: when checking whether a String S exceeds the given

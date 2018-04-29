@@ -152,7 +152,7 @@ dependencies {
   /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files. */
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
 
-  /* Jacoco Core 0.7.9, used for coverage analysis of classes and methods under test. */
+  /* Jacoco measures coverage of classes and methods under test. */
   implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.9'
 
   /* sourceSet test uses JUnit and some use testInput source set */

@@ -117,17 +117,13 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * If bloodhound is enabled, increment the number of times the method under test was successfully
+   * If Bloodhound is enabled, increment the number of times the method under test was successfully
    * invoked.
    *
-   * @param typedOperation the method under test that was used to create a new and unique test
+   * @param typedOperation the method under test that was used to create a new test
    */
   @Override
-  public void onTypedOperationResultedInRegressionTest(TypedOperation typedOperation) {
-    if (typedOperation == null) {
-      return;
-    }
-
+  public void newRegressionTestHook(TypedOperation typedOperation) {
     if (GenInputsAbstract.enable_bloodhound) {
       ((Bloodhound) operationSelector)
           .incrementSuccessfulInvocationCountForOperation(typedOperation);
