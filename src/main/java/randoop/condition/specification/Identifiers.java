@@ -100,15 +100,25 @@ public class Identifiers {
   }
 
   /**
-   * Indicates whether any identifier names occur more than once in this {@link Identifiers}.
+   * Returns an identifier name that occurs more than once in this {@link Identifiers}, or null if
+   * there are no duplicate names.
    *
-   * @return true if a name occurs more than once, false otherwise
+   * @return a name occurs more than once, or null if there are no duplicate names
    */
-  public boolean hasDuplicatedName() {
-    Set<String> names = new HashSet<>(parameters);
-    names.add(receiverName);
-    names.add(returnName);
-    return names.size() != parameters.size() + 2;
+  public String duplicateName() {
+    Set<String> names = new HashSet<>();
+    for (String name : parameters) {
+      if (!names.add(name)) {
+        return name;
+      }
+    }
+    if (!names.add(receiverName)) {
+      return receiverName;
+    }
+    if (!names.add(returnName)) {
+      return returnName;
+    }
+    return null;
   }
 
   @Override

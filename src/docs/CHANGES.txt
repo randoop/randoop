@@ -2,6 +2,8 @@ Version 4.0.4, released ??, 2018
 
 Randoop's replacecalls agent can now replace constructors.
 
+The --specifications command-line argument can now be a .zip file.
+
 
 Version 4.0.3, released April 10, 2018
 
