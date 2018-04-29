@@ -1,12 +1,12 @@
 package randoop.output;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import randoop.main.Minimize;
 
 /**
  * A {@link CodeWriter} that, for an error-revealing test class, writes both the original and
- * minimized class. Minimizes the methods of the test class using {@link Minimize#mainMinimize(File,
+ * minimized class. Minimizes the methods of the test class using {@link Minimize#mainMinimize(Path,
  * String, int, boolean)}.
  */
 public class MinimizerWriter implements CodeWriter {
@@ -29,11 +29,11 @@ public class MinimizerWriter implements CodeWriter {
    * <p>Writes both the original class and the minimized class. Returns the original class.
    */
   @Override
-  public File writeClassCode(String packageName, String classname, String classCode)
+  public Path writeClassCode(String packageName, String classname, String classCode)
       throws RandoopOutputException {
 
     // Write the original class.
-    File testFile = javaFileWriter.writeClassCode(packageName, classname, classCode);
+    Path testFile = javaFileWriter.writeClassCode(packageName, classname, classCode);
 
     // Minimize the error-revealing test that has been output.
     try {
@@ -47,7 +47,7 @@ public class MinimizerWriter implements CodeWriter {
   }
 
   @Override
-  public File writeUnmodifiedClassCode(String packageName, String classname, String classCode)
+  public Path writeUnmodifiedClassCode(String packageName, String classname, String classCode)
       throws RandoopOutputException {
     return javaFileWriter.writeClassCode(packageName, classname, classCode);
   }

@@ -153,7 +153,7 @@ class RandoopRunStatus {
   }
 
   /**
-   * Collects the list of {@code File} objects for the files in the given directory that have the
+   * Collects the list of {@code Path} objects for the files in the given directory that have the
    * extension. If the directory contains any files that do not begin with one of the given
    * basenames, then fails the calling test.
    *

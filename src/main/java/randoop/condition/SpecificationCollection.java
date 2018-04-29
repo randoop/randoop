@@ -6,18 +6,28 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
@@ -56,8 +66,8 @@ public class SpecificationCollection {
   /**
    * Creates a {@link SpecificationCollection} for the given specification map.
    *
-   * <p>This constructor is used internally. It is only accessible to allow testing. Clients should
-   * use {@link #create(List)} instead.
+   * <p>This constructor is used internally. It is only accessible (package-protected) to allow
+   * testing. Clients should use {@link #create(List)} instead.
    *
    * @param specificationMap the map from method or constructor to {@link OperationSpecification}
    * @param signatureToMethods the multimap from a signature to methods with with the signature
@@ -80,17 +90,17 @@ public class SpecificationCollection {
   /**
    * Creates a {@link SpecificationCollection} from the list of JSON specification files.
    *
-   * @param specificationFiles the files of serialized specifications
+   * @param specificationFiles files containing serialized specifications
    * @return the {@link SpecificationCollection} built from the serialized {@link
    *     OperationSpecification} objects, or null if the argument is null
    */
-  public static SpecificationCollection create(List<File> specificationFiles) {
+  public static SpecificationCollection create(List<Path> specificationFiles) {
     if (specificationFiles == null) {
       return null;
     }
     MultiMap<OperationSignature, Method> signatureToMethods = new MultiMap<>();
     Map<AccessibleObject, OperationSpecification> specificationMap = new LinkedHashMap<>();
-    for (File specificationFile : specificationFiles) {
+    for (Path specificationFile : specificationFiles) {
 
       /*
        * Read the specifications from the file
@@ -202,23 +212,52 @@ public class SpecificationCollection {
   private static TypeToken<List<OperationSpecification>> LIST_OF_OS_TYPE_TOKEN =
       (new TypeToken<List<OperationSpecification>>() {});
 
+  public static void main(String[] args) throws IOException {
+    ZipFile zipFile = new ZipFile("C:/test.zip");
+
+    Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+    while (entries.hasMoreElements()) {
+      ZipEntry entry = entries.nextElement();
+      InputStream stream = zipFile.getInputStream(entry);
+    }
+  }
+
   /**
    * Reads a list of {@link OperationSpecification} objects from the given file.
    *
-   * @param specificationFile the JSON file ofON {@link OperationSpecification} objects
-   * @return the list of {@link OperationSpecification} object from the file
+   * @param specificationFile the JSON file of {@link OperationSpecification} objects
+   * @return the list of {@link OperationSpecification} objects generated from the file
    */
   @SuppressWarnings("unchecked")
-  private static List<OperationSpecification> readSpecificationFile(File specificationFile) {
+  private static List<OperationSpecification> readSpecificationFile(Path specificationFile) {
+    List<OperationSpecification> specificationList = new ArrayList<>();
+    readSpecificationFile(specificationFile, specificationList);
+    return specificationList;
+  }
+
+  /**
+   * Reads a list of {@link OperationSpecification} objects from the given file, and appends them to
+   * the given list
+   *
+   * @param specificationFile the JSON file of {@link OperationSpecification} objects
+   * @param specificationList the list of {@link OperationSpecification} objects; will be
+   *     side-effected by adding those read from the file
+   */
+  @SuppressWarnings("unchecked")
+  private static void readSpecificationFile(
+      Path specificationFile, List<OperationSpecification> specificationList) {
+    if (specificationFile.endsWith(".zip") || specificationFile.endsWith(".ZIP")) {
+      readSpecificationZipFile(specificationFile, specificationList);
+      return;
+    }
 
     try {
-      List<OperationSpecification> specificationList = new ArrayList<>();
       Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-      try (BufferedReader reader = Files.newBufferedReader(specificationFile.toPath(), UTF_8)) {
+      try (BufferedReader reader = Files.newBufferedReader(specificationFile, UTF_8)) {
         specificationList.addAll(
             (List<OperationSpecification>) gson.fromJson(reader, LIST_OF_OS_TYPE_TOKEN.getType()));
       }
-      return specificationList;
     } catch (IOException e) {
       throw new RandoopSpecificationError(
           "Unable to read specification file " + specificationFile, e);
@@ -227,6 +266,31 @@ public class SpecificationCollection {
       throw e;
     } catch (Throwable e) {
       throw new RandoopSpecificationError("Bad specification file " + specificationFile, e);
+    }
+  }
+
+  private static void readSpecificationZipFile(
+      Path specificationZipFile, final List<OperationSpecification> specificationList) {
+    Map<String, ?> myEmptyMap = Collections.emptyMap();
+    FileSystem zipFS;
+    try {
+      zipFS = FileSystems.newFileSystem(specificationZipFile.toUri(), myEmptyMap);
+      for (Path root : zipFS.getRootDirectories()) {
+        Files.walkFileTree(
+            root,
+            new SimpleFileVisitor<Path>() {
+              @Override
+              public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                  throws IOException {
+                // You can do anything you want with the path here
+                readSpecificationFile(file, specificationList);
+                return FileVisitResult.CONTINUE;
+              }
+            });
+      }
+    } catch (IOException e) {
+      throw new RandoopSpecificationError(
+          "Unable to read specification file " + specificationZipFile, e);
     }
   }
 

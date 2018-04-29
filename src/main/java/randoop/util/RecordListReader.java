@@ -1,8 +1,8 @@
 package randoop.util;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import org.plumelib.util.UtilPlume;
@@ -61,14 +61,14 @@ public class RecordListReader {
     parse(reader);
   }
 
-  public void parse(File inFile) {
+  public void parse(Path inFile) {
     if (inFile == null) {
       throw new IllegalArgumentException("Null input file");
     }
 
     BufferedReader reader;
     try {
-      reader = UtilPlume.bufferedFileReader(inFile);
+      reader = UtilPlume.bufferedFileReader(inFile.toFile());
     } catch (IOException e) {
       throw new Error(e);
     }

@@ -72,8 +72,8 @@ public class FileCompiler {
    * @param destinationDir the destination directory for class files
    * @throws FileCompilerException if the compilation fails
    */
-  public void compile(File sourceFile, Path destinationDir) throws FileCompilerException {
-    compile(Collections.singletonList(sourceFile), destinationDir);
+  public void compile(Path sourceFile, Path destinationDir) throws FileCompilerException {
+    compile(Collections.singletonList(sourceFile.toFile()), destinationDir);
   }
 
   /** Exception for errors during compilation using {@link FileCompiler}. */
