@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -101,36 +102,7 @@ public class SpecificationCollection {
     MultiMap<OperationSignature, Method> signatureToMethods = new MultiMap<>();
     Map<AccessibleObject, OperationSpecification> specificationMap = new LinkedHashMap<>();
     for (Path specificationFile : specificationFiles) {
-
-      /*
-       * Read the specifications from the file
-       */
-      List<OperationSpecification> specificationList = readSpecificationFile(specificationFile);
-
-      try {
-        for (OperationSpecification specification : specificationList) {
-          OperationSignature operation = specification.getOperation();
-
-          // Check for bad input
-          if (operation == null) {
-            throw new Error("operation is null for specification " + specification);
-          }
-          if (specification.getIdentifiers().hasDuplicatedName()) {
-            throw new RandoopSpecificationError(
-                "Duplicate name in specification: " + specification.getOperation());
-          }
-
-          AccessibleObject accessibleObject = getAccessibleObject(operation);
-          specificationMap.put(accessibleObject, specification);
-          if (accessibleObject instanceof Method) {
-            OperationSignature signature = OperationSignature.of(accessibleObject);
-            signatureToMethods.add(signature, (Method) accessibleObject);
-          }
-        }
-      } catch (RandoopSpecificationError e) {
-        e.setFile(specificationFile);
-        throw e;
-      }
+      readSpecificationFile(specificationFile, specificationMap, signatureToMethods);
     }
     Map<AccessibleObject, Set<Method>> overridden = buildOverridingMap(signatureToMethods);
     return new SpecificationCollection(specificationMap, signatureToMethods, overridden);
@@ -224,39 +196,47 @@ public class SpecificationCollection {
   }
 
   /**
-   * Reads a list of {@link OperationSpecification} objects from the given file.
+   * Reads {@link OperationSpecification} objects from the given file, and adds them to the other
+   * two arguments, which are modified by side effect.
    *
    * @param specificationFile the JSON file of {@link OperationSpecification} objects
-   * @return the list of {@link OperationSpecification} objects generated from the file
-   */
-  @SuppressWarnings("unchecked")
-  private static List<OperationSpecification> readSpecificationFile(Path specificationFile) {
-    List<OperationSpecification> specificationList = new ArrayList<>();
-    readSpecificationFile(specificationFile, specificationList);
-    return specificationList;
-  }
-
-  /**
-   * Reads a list of {@link OperationSpecification} objects from the given file, and appends them to
-   * the given list
-   *
-   * @param specificationFile the JSON file of {@link OperationSpecification} objects
-   * @param specificationList the list of {@link OperationSpecification} objects; will be
-   *     side-effected by adding those read from the file
+   * @param specificationMap side-effected by this method
+   * @param signatureToMethods side-effected by this method
    */
   @SuppressWarnings("unchecked")
   private static void readSpecificationFile(
-      Path specificationFile, List<OperationSpecification> specificationList) {
-    if (specificationFile.endsWith(".zip") || specificationFile.endsWith(".ZIP")) {
-      readSpecificationZipFile(specificationFile, specificationList);
+      Path specificationFile,
+      Map<AccessibleObject, OperationSpecification> specificationMap,
+      MultiMap<OperationSignature, Method> signatureToMethods) {
+    if (specificationFile.toString().toLowerCase().endsWith(".zip")) {
+      readSpecificationZipFile(specificationFile, specificationMap, signatureToMethods);
       return;
     }
 
-    try {
-      Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-      try (BufferedReader reader = Files.newBufferedReader(specificationFile, UTF_8)) {
-        specificationList.addAll(
-            (List<OperationSpecification>) gson.fromJson(reader, LIST_OF_OS_TYPE_TOKEN.getType()));
+    Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+    try (BufferedReader reader = Files.newBufferedReader(specificationFile, UTF_8)) {
+      List<OperationSpecification> specificationList =
+          gson.fromJson(reader, LIST_OF_OS_TYPE_TOKEN.getType());
+
+      for (OperationSpecification specification : specificationList) {
+        OperationSignature operation = specification.getOperation();
+
+        // Check for bad input
+        if (operation == null) {
+          throw new Error("operation is null for specification " + specification);
+        }
+        String duplicateName = specification.getIdentifiers().duplicateName();
+        if (duplicateName != null) {
+          throw new RandoopSpecificationError(
+              "Duplicate name \"" + duplicateName + "\" in specification: " + specification);
+        }
+
+        AccessibleObject accessibleObject = getAccessibleObject(operation);
+        specificationMap.put(accessibleObject, specification);
+        if (accessibleObject instanceof Method) {
+          OperationSignature signature = OperationSignature.of(accessibleObject);
+          signatureToMethods.add(signature, (Method) accessibleObject);
+        }
       }
     } catch (IOException e) {
       throw new RandoopSpecificationError(
@@ -265,16 +245,29 @@ public class SpecificationCollection {
       e.setFile(specificationFile);
       throw e;
     } catch (Throwable e) {
+      e.printStackTrace();
       throw new RandoopSpecificationError("Bad specification file " + specificationFile, e);
     }
   }
 
+  /**
+   * Reads {@link OperationSpecification} objects from all the subfiles of the given zip file, and
+   * adds them to the other two arguments, which are modified by side effect.
+   *
+   * @param specificationZipFile a zip file containing files that contain {@link
+   *     OperationSpecification} objects
+   * @param specificationMap side-effected by this method
+   * @param signatureToMethods side-effected by this method
+   */
   private static void readSpecificationZipFile(
-      Path specificationZipFile, final List<OperationSpecification> specificationList) {
+      Path specificationZipFile,
+      final Map<AccessibleObject, OperationSpecification> specificationMap,
+      final MultiMap<OperationSignature, Method> signatureToMethods) {
     Map<String, ?> myEmptyMap = Collections.emptyMap();
     FileSystem zipFS;
     try {
-      zipFS = FileSystems.newFileSystem(specificationZipFile.toUri(), myEmptyMap);
+      URI uri = URI.create("jar:" + specificationZipFile.toUri().toString());
+      zipFS = FileSystems.newFileSystem(uri, myEmptyMap);
       for (Path root : zipFS.getRootDirectories()) {
         Files.walkFileTree(
             root,
@@ -283,8 +276,17 @@ public class SpecificationCollection {
               public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
                   throws IOException {
                 // You can do anything you want with the path here
-                readSpecificationFile(file, specificationList);
+                readSpecificationFile(file, specificationMap, signatureToMethods);
                 return FileVisitResult.CONTINUE;
+              }
+
+              @Override
+              public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                  throws IOException {
+                if (dir.endsWith("__MACOSX")) {
+                  return FileVisitResult.SKIP_SUBTREE;
+                }
+                return super.preVisitDirectory(dir, attrs);
               }
             });
       }
