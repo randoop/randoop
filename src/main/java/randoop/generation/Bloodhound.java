@@ -98,7 +98,12 @@ public class Bloodhound implements TypedOperationSelector {
   public Bloodhound(List<TypedOperation> operations, CoverageTracker coverageTracker) {
     this.operationSimpleList = new SimpleArrayList<>(operations);
     this.coverageTracker = coverageTracker;
-    // Compute an initial weight for all methods under test. The weights will initially all be uniform.
+    // Compute an initial weight for all methods under test. We also initialize the uncovered ratio
+    // value of all methods under test by updating branch coverage information. This is to satisfy
+    // the assertion in updateWeightForOperation which expects only two methods belonging to the
+    // class Object to not have coverage details. The weights for all methods may not be uniform
+    // in cases where we have methods with "zero" branches and methods with non-"zero" branches.
+    updateBranchCoverageMaybe();
     updateWeightsForAllOperations();
   }
 
@@ -161,10 +166,18 @@ public class Bloodhound implements TypedOperationSelector {
     CoverageTracker.BranchCoverage covDet =
         coverageTracker.getDetailsForMethod(operation.getName());
 
-    // Corresponds to uncovRatio(m) in the GRT paper. Default to zero for methods with no coverage information.
-    // This is the case for a method that belongs to a class that is, not explicitly under test and is not
-    // a nested class of one that is. For instance, {@code java.lang.Object}.
-    double uncovRatio = covDet != null ? covDet.uncovRatio : 0;
+    // Corresponds to uncovRatio(m) in the GRT paper.
+    double uncovRatio;
+    if (covDet != null) {
+      uncovRatio = covDet.uncovRatio;
+    } else {
+      // Default to zero for methods with no coverage information.
+      // This is the case for Object.<init> and Object.getClass which are included
+      // by Randoop by default.
+      assert operation.getName().equals("java.lang.Object.<init>")
+          || operation.getName().equals("java.lang.Object.getClass");
+      uncovRatio = 0;
+    }
 
     // The number of successful invocations of this method. Corresponds to succ(m).
     Integer succM = methodInvocationCounts.get(operation);

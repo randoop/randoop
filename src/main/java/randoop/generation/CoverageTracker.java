@@ -43,8 +43,8 @@ public class CoverageTracker {
 
   /**
    * Coverage details related to a single method under test. Records "uncovRatio" which is the ratio
-   * of uncovered branches to total branches. In cases where total branches is zero, the ratio will
-   * be zero.
+   * of uncovered branches to total branches. In cases where total branches is zero, the uncovered
+   * ratio will be zero.
    */
   public static class BranchCoverage {
     public double uncovRatio;
