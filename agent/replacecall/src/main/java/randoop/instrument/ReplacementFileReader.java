@@ -536,7 +536,7 @@ public class ReplacementFileReader {
 
   /**
    * Exception to represent an error discovered while reading a replacement file. Used to represent
-   * errors within the reader methods where file name and line details are not available. Repackaged
+   * errors within the reader methods where file name and line number are not available. Repackaged
    * as a {@link ReplacementFileException} in {@link ReplacementFileReader#readReplacements(Reader,
    * String)}.
    */
