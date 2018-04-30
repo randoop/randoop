@@ -44,7 +44,9 @@ public class CoverageTracker {
   /**
    * Branch coverage for a single method under test. Records "uncovRatio" which is the ratio of
    * uncovered branches to total branches. In cases where total branches is zero, the uncovered
-   * ratio will be zero.
+   * ratio will be zero. A method with only straight-line code that will always be executed entirely
+   * as a sequence, with no possibility of an exception or early return, will have zero "total
+   * branches".
    */
   public static class BranchCoverage {
     public double uncovRatio;
