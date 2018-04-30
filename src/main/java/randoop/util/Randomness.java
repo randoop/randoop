@@ -203,7 +203,8 @@ public final class Randomness {
    *
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights; uses the intrinsic weight if the element
-   *     is not a key in the map
+   *     is not a key in the map. Each element's weight must be non-negative. An element with a
+   *     weight of zero will never be selected.
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
@@ -229,7 +230,8 @@ public final class Randomness {
    *
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights; uses the intrinsic weight if the element
-   *     is not a key in the map
+   *     is not a key in the map. Each element's weight must be non-negative. An element with a
+   *     weight of zero will never be selected.
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
