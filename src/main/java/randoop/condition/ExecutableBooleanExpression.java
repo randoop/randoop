@@ -137,7 +137,10 @@ public class ExecutableBooleanExpression {
       // To allow users to write "x.f == 22" instead of the wordier "x != null && x.f == 22",
       // treat this as false if --ignore-condition-exception=true was supplied.
       String message =
-          "Failure executing expression method: " + expressionMethod + ": " + e.getCause();
+          String.format(
+              "Failure executing expression method.%n"
+                  + "  contractSource = %s%n  comment = %s%n  expressionMethod = %s%n  cause = %s",
+              contractSource, comment, expressionMethod, e.getCause());
       RandoopSpecificationError error = new RandoopSpecificationError(message, e);
       if (GenInputsAbstract.ignore_condition_exception) {
         System.out.println("Proceeding despite the below problem ...");
