@@ -1,8 +1,8 @@
 package randoop.main;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -56,7 +56,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --junit-package-name}).
    */
   @Option("File that lists classes under test")
-  public static File classlist = null;
+  public static Path classlist = null;
 
   // A relative URL like <a href="#specifying-methods"> works when this
   // Javadoc is pasted into the manual, but not in Javadoc proper.
@@ -72,7 +72,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * file</a>.
    */
   @Option("File that lists methods under test")
-  public static File methodlist = null;
+  public static Path methodlist = null;
 
   /**
    * A regex that indicates methods that should not be called directly in generated tests. This does
@@ -95,7 +95,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --omitmethods}, and the default omissions.
    */
   @Option("File containing regular expressions for methods to omit")
-  public static File omitmethods_file = null;
+  public static Path omitmethods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
@@ -117,7 +117,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * accessible field is used unless it is omitted by this or the {@code --omit-field} option.
    */
   @Option("File containing field names to omit from generated tests")
-  public static File omit_field_list = null;
+  public static Path omit_field_list = null;
 
   /**
    * Restrict tests to only include public members of classes. Ordinarily, the setting of {@code
@@ -223,7 +223,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * the test). Included classes may be abstract.
    */
   @Option("File containing class names that tests must cover")
-  public static File require_covered_classes = null;
+  public static Path require_covered_classes = null;
 
   /**
    * If true, Randoop outputs both original error-revealing tests and a minimized version. Setting
@@ -322,34 +322,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType sof_exception = BehaviorType.INVALID;
 
   ///////////////////////////////////////////////////////////////////
-  /**
-   * Read JSON condition file to use specifications to control how tests are generated and
-   * classified.
-   *
-   * <ul>
-   *   <li>
-   *       <p>Param-conditions are pre-conditions on method/constructor calls. Test sequences where
-   *       the condition fails are classified as {@link BehaviorType#INVALID}.
-   *   <li>
-   *       <p>Return-conditions are post-conditions on method/constructor calls, consisting of a
-   *       guard and a property. If the inputs to the call satisfy the guard but the property fails,
-   *       then the sequence is classified as {@link BehaviorType#ERROR}.
-   *   <li>Throws-conditions are post-conditions on expected exceptions. If the inputs to the call
-   *       satisfy the condition, then: when the exception is thrown the sequence is {@link
-   *       BehaviorType#EXPECTED}, but, if it is not, the sequence is classified as {@link
-   *       BehaviorType#ERROR}. If the throws-condition is not satisfied by the input, then ordinary
-   *       classification is applied.
-   * </ul>
-   */
+  /** Read file of specifications; see manual section "Specifying expected code behavior". */
   @Option("JSON specifications for methods/constructors")
-  public static List<File> specifications = null;
+  public static List<Path> specifications = null;
 
   /**
-   * Use the internal specifications for JDK classes to control how tests are generated and
-   * classified.
-   *
-   * <p>These specifications are applied to the methods of classes that inherit from them. See
-   * {@link #specifications} for details on classification using specifications.
+   * Use built-in specifications for JDK classes and for classes that inherit from them, as if they
+   * had been supplied using the {@code --specifications} command-line argument.
    */
   @Option("Use specifications for JDK classes to classify behaviors for methods/constructors")
   public static boolean use_jdk_specifications = true;
@@ -377,7 +356,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @OptionGroup("Observer methods")
   @Option("File containing observer functions")
   // This file is used to populate RegressionCaptureGenerator.observer_map
-  public static File observers = null;
+  public static Path observers = null;
 
   /**
    * Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop
@@ -824,16 +803,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return classnames;
   }
 
-  public static Set<String> getStringSetFromFile(File listFile, String fileDescription) {
+  public static Set<String> getStringSetFromFile(Path listFile, String fileDescription) {
     return getStringSetFromFile(listFile, fileDescription, "^#.*", null);
   }
 
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
-      File listFile, String fileDescription, String commentRegex, String includeRegex) {
+      Path listFile, String fileDescription, String commentRegex, String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
-      try (EntryReader er = new EntryReader(listFile, commentRegex, includeRegex)) {
+      try (EntryReader er = new EntryReader(listFile.toFile(), commentRegex, includeRegex)) {
         for (String line : er) {
           String trimmed = line.trim();
           if (!trimmed.isEmpty()) {

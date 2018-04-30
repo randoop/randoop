@@ -37,7 +37,7 @@ import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 
-public class OperationConditionTest {
+public class OperationSpecificationTest {
   @Test
   public void conditionTest() throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
@@ -259,7 +259,7 @@ public class OperationConditionTest {
    *
    * @return the {@link ExecutableSpecification} object for {@link
    *     ClassWithConditions#category(int)}
-   * @param method the method for which to get conditions
+   * @param method the method for which to get the specification
    */
   private ExecutableSpecification getMethodSpecification(Method method) {
     List<String> paramNames = new ArrayList<>();

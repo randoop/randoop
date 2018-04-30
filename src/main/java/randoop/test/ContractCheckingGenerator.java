@@ -161,9 +161,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
                 + contract.getArity();
         if (typesMatch(contract.getInputTypes(), tuple)) {
           // Commented out because it makes the logs too big.  Uncomment when debugging this code.
-          // if (Log.isLoggingOn()) {
-          //   Log.logLine("Checking contract " + contract.getClass());
-          // }
+          // Log.logPrintf("Checking contract %s%n", contract.getClass());
           Check check = contract.checkContract(eseq, values);
           if (check != null) {
             return check;

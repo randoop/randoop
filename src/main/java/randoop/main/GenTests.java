@@ -7,7 +7,6 @@ import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_INVALID;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -37,7 +36,7 @@ import randoop.BugInRandoopException;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
-import randoop.condition.RandoopConditionError;
+import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
@@ -264,8 +263,8 @@ public class GenTests extends GenInputsAbstract {
     SpecificationCollection operationSpecifications = null;
     try {
       operationSpecifications = SpecificationCollection.create(GenInputsAbstract.specifications);
-    } catch (RandoopConditionError e) {
-      System.out.println("Error in conditions: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      System.out.println("Error in specifications: " + e.getMessage());
       System.exit(1);
     }
 
@@ -294,16 +293,16 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("Error: %s%n", e.getMessage());
       if (e.getMessage().startsWith("No class with name \"")) {
         System.out.println("More specifically, none of the following files could be found:");
-        StringTokenizer tokenizer = new StringTokenizer(classpath, File.pathSeparator);
+        StringTokenizer tokenizer = new StringTokenizer(classpath, java.io.File.pathSeparator);
         while (tokenizer.hasMoreTokens()) {
           String classPathElt = tokenizer.nextToken();
           if (classPathElt.endsWith(".jar")) {
             String classFileName = e.className.replace(".", "/") + ".class";
             System.out.println("  " + classFileName + " in " + classPathElt);
           } else {
-            String classFileName = e.className.replace(".", File.separator) + ".class";
-            if (!classPathElt.endsWith(File.separator)) {
-              classPathElt += File.separator;
+            String classFileName = e.className.replace(".", java.io.File.separator) + ".class";
+            if (!classPathElt.endsWith(java.io.File.separator)) {
+              classPathElt += java.io.File.separator;
             }
             System.out.println("  " + classPathElt + classFileName);
           }
@@ -311,7 +310,7 @@ public class GenTests extends GenInputsAbstract {
         System.out.println("Correct your classpath or the class name and re-run Randoop.");
       }
       System.exit(1);
-    } catch (RandoopConditionError e) {
+    } catch (RandoopSpecificationError e) {
       System.out.printf("Error: %s%n", e.getMessage());
       System.exit(1);
     }
@@ -445,7 +444,7 @@ public class GenTests extends GenInputsAbstract {
     // operationModel.dumpModel(System.out);
     // System.out.println("isLoggingOn = " + Log.isLoggingOn());
     if (Log.isLoggingOn()) {
-      Log.logLine("Initial sequences (seeds):");
+      Log.logPrintf("Initial sequences (seeds):%n");
       componentMgr.log();
     }
 
@@ -462,7 +461,7 @@ public class GenTests extends GenInputsAbstract {
     } catch (RandoopGenerationError e) {
       throw new BugInRandoopException(
           "Error in generation with operation " + e.getInstantiatedOperation(), e);
-    } catch (RandoopConditionError e) {
+    } catch (RandoopSpecificationError e) {
       throw new BugInRandoopException("Error during generation: " + e.getMessage(), e);
     } catch (SequenceExecutionException e) {
       throw new BugInRandoopException("Error executing generated sequence", e);
@@ -540,7 +539,7 @@ public class GenTests extends GenInputsAbstract {
    * @return a version of classpath with relative paths replaced by absolute paths
    */
   private String convertClasspathToAbsolute(String classpath) {
-    String[] relpaths = classpath.split(File.pathSeparator);
+    String[] relpaths = classpath.split(java.io.File.pathSeparator);
     int length = relpaths.length;
     String[] abspaths = new String[length];
     for (int i = 0; i < length; i++) {
@@ -549,11 +548,11 @@ public class GenTests extends GenInputsAbstract {
       if (rel.equals("")) {
         abs = rel;
       } else {
-        abs = new File(rel).getAbsolutePath();
+        abs = Paths.get(rel).toAbsolutePath().toString();
       }
       abspaths[i] = abs;
     }
-    return UtilPlume.join(abspaths, File.pathSeparator);
+    return UtilPlume.join(abspaths, java.io.File.pathSeparator);
   }
 
   /**
@@ -588,7 +587,7 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("Writing JUnit tests...%n");
     }
     try {
-      List<File> testFiles = new ArrayList<>();
+      List<Path> testFiles = new ArrayList<>();
 
       // Create and write test classes.
       LinkedHashMap<String, CompilationUnit> testMap =
@@ -616,8 +615,8 @@ public class GenTests extends GenInputsAbstract {
               GenInputsAbstract.junit_package_name, driverName, classSource));
       if (GenInputsAbstract.progressdisplay) {
         System.out.println();
-        for (File f : testFiles) {
-          System.out.printf("Created file %s%n", f.getAbsolutePath());
+        for (Path f : testFiles) {
+          System.out.printf("Created file %s%n", f.toAbsolutePath());
         }
       }
     } catch (RandoopOutputException e) {
@@ -674,11 +673,11 @@ public class GenTests extends GenInputsAbstract {
    * @param file the file to read from, may be null
    * @return contents of the file, as a set of Patterns
    */
-  private List<Pattern> readOmitMethods(File file) {
+  private List<Pattern> readOmitMethods(Path file) {
     List<Pattern> result = new ArrayList<>();
     // Read method omissions from user-provided file
     if (file != null) {
-      try (EntryReader er = new EntryReader(file, "^#.*", null)) {
+      try (EntryReader er = new EntryReader(file.toFile(), "^#.*", null)) {
         for (String line : er) {
           String trimmed = line.trim();
           if (!trimmed.isEmpty()) {
@@ -747,19 +746,19 @@ public class GenTests extends GenInputsAbstract {
                 + "This can happen when Randoop is run on methods that side-effect global state.%n"
                 + "See the \"Randoop stopped because of a flaky test\" section of the user manual.%n");
     if (GenInputsAbstract.log == null) {
-      msg += "For more details, rerun with logging turned on with --log=FILENAME.%n";
+      msg += "For more details, rerun with logging turned on with --log=FILENAME.";
     } else {
-      msg += "For more details, see the log at " + GenInputsAbstract.log + "%n";
+      msg += "For more details, see the log at " + GenInputsAbstract.log;
     }
-    System.out.printf(msg);
+    System.out.println(msg);
 
     if (Log.isLoggingOn()) {
       Sequence subsequence = e.getSubsequence();
-      Log.log(msg);
-      Log.log(String.format("%nException:%n  %s%n", e.getError()));
-      Log.log(String.format("Statement:%n  %s%n", e.getStatement()));
-      Log.log(String.format("Full sequence:%n%s%n", e.getSequence()));
-      Log.log(String.format("Input subsequence:%n%s%n", subsequence.toCodeString()));
+      Log.logPrintf("%s%n", msg);
+      Log.logPrintf("Exception:%n  %s%n", e.getError());
+      Log.logPrintf("Statement:%n  %s%n", e.getStatement());
+      Log.logPrintf("Full sequence:%n%s%n", e.getSequence());
+      Log.logPrintf("Input subsequence:%n%s%n", subsequence.toCodeString());
 
       /*
        * Get the set of operations executed since the first execution of the flaky subsequence
@@ -783,9 +782,9 @@ public class GenTests extends GenInputsAbstract {
       }
 
       if (!executedOperationTrace.isEmpty()) {
-        Log.logLine("Operations performed since subsequence first executed:");
+        Log.logPrintf("Operations performed since subsequence first executed:%n");
         for (String opName : executedOperationTrace) {
-          Log.logLine(opName);
+          Log.logPrintf("%s%n", opName);
         }
       } else {
         System.err.printf(
@@ -957,20 +956,20 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Returns the list of JDK specification files from the {@code conditions/jdk} resources directory
-   * in the Randoop jar file.
+   * Returns the list of JDK specification files from the {@code specifications/jdk} resources
+   * directory in the Randoop jar file.
    *
    * @throws BugInRandoopException if there is an error locating the specification files
    * @return the list of JDK specification files
    */
-  private Collection<? extends File> getJDKSpecificationFiles() {
-    List<File> fileList = new ArrayList<>();
-    final String specificationDirectory = "/conditions/jdk/";
+  private Collection<? extends Path> getJDKSpecificationFiles() {
+    List<Path> fileList = new ArrayList<>();
+    final String specificationDirectory = "/specifications/jdk/";
     Path directoryPath = getResourceDirectoryPath(specificationDirectory);
 
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(directoryPath, "json")) {
       for (Path entry : stream) {
-        fileList.add(entry.toFile());
+        fileList.add(entry);
       }
     } catch (IOException e) {
       throw new BugInRandoopException("Error reading JDK specification directory", e);

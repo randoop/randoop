@@ -40,7 +40,7 @@ public class ConditionMethodTest {
 
   @Test
   public void testWrongIdentifier() {
-    thrown.expect(RandoopConditionError.class);
+    thrown.expect(RandoopSpecificationError.class);
     RawSignature signature =
         new RawSignature(null, "WrongIdentifierCondition", "test", new Class<?>[] {String.class});
     ExecutableBooleanExpression simple =
@@ -50,7 +50,7 @@ public class ConditionMethodTest {
 
   @Test
   public void testWrongType() {
-    thrown.expect(RandoopConditionError.class);
+    thrown.expect(RandoopSpecificationError.class);
     RawSignature signature =
         new RawSignature(null, "WrongTypeCondition", "test", new Class<?>[] {String.class});
     ExecutableBooleanExpression simple =

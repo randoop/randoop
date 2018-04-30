@@ -1,8 +1,8 @@
 package randoop.main;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -46,7 +46,7 @@ class MethodCoverageMap {
    * @return the method coverage map for
    * @throws IOException if unable to load the exec file
    */
-  static MethodCoverageMap collectCoverage(String execFile, File classesDirectory)
+  static MethodCoverageMap collectCoverage(String execFile, Path classesDirectory)
       throws IOException {
     MethodCoverageMap coverageMap = new MethodCoverageMap();
     FileInputStream in = new FileInputStream(execFile);
@@ -58,7 +58,7 @@ class MethodCoverageMap {
     CoverageBuilder coverageBuilder = new CoverageBuilder();
     Analyzer analyzer = new Analyzer(dataStore, coverageBuilder);
 
-    analyzer.analyzeAll(classesDirectory);
+    analyzer.analyzeAll(classesDirectory.toFile());
     JavaNames names = new JavaNames();
     for (IClassCoverage classCoverage : coverageBuilder.getClasses()) {
       if (classCoverage.getMethodCounter().getCoveredCount() > 0) {

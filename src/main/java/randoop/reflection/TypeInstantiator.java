@@ -72,9 +72,7 @@ public class TypeInstantiator {
 
     // if necessary, do capture conversion first
     if (operation != null && operation.hasWildcardTypes()) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Applying capture conversion to " + operation);
-      }
+      Log.logPrintf("Applying capture conversion to %s%n", operation);
       operation = operation.applyCaptureConversion();
     }
     if (operation != null) {
@@ -166,9 +164,7 @@ public class TypeInstantiator {
       if (!instantiatingType.isGeneric()) {
         return substitution;
       } else {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Didn't find types to satisfy bounds on generic type: " + declaringType);
-        }
+        Log.logPrintf("Didn't find types to satisfy bounds on generic type: %s%n", declaringType);
         return null;
       }
     }
@@ -420,9 +416,7 @@ public class TypeInstantiator {
     for (TypeVariable typeArgument : parameters) {
       List<ReferenceType> candidates = selectCandidates(typeArgument);
       if (candidates.isEmpty()) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("No candidate types for " + typeArgument);
-        }
+        Log.logPrintf("No candidate types for %s%n", typeArgument);
         return null;
       }
       selectedTypes.add(Randomness.randomMember(candidates));
@@ -476,9 +470,7 @@ public class TypeInstantiator {
     for (TypeVariable typeArgument : parameters) {
       List<ReferenceType> candidates = selectCandidates(typeArgument);
       if (candidates.isEmpty()) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("No candidate types for " + typeArgument);
-        }
+        Log.logPrintf("No candidate types for %s%n", typeArgument);
         return new ArrayList<>();
       }
       candidateTypes.add(candidates);

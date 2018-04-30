@@ -2,8 +2,9 @@ package randoop.main.minimizer;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import randoop.main.Minimize;
@@ -47,16 +48,16 @@ public class MinimizerTests {
     String expectedFilePath = inputFilePath + ".expected";
 
     // Obtain file object references.
-    File inputFile = new File(inputFilePath);
-    File outputFile = new File(outputFilePath);
-    File expectedFile = new File(expectedFilePath);
+    Path inputFile = Paths.get(inputFilePath);
+    Path outputFile = Paths.get(outputFilePath);
+    Path expectedFile = Paths.get(expectedFilePath);
 
     String classPath = null;
     if (dependencies != null) {
       classPath = "";
       for (String s : dependencies) {
-        File file = new File(s);
-        classPath += (pathSeparator + file.getAbsolutePath());
+        Path file = Paths.get(s);
+        classPath += (pathSeparator + file.toAbsolutePath().toString());
       }
     }
 
@@ -64,11 +65,11 @@ public class MinimizerTests {
     Minimize.mainMinimize(inputFile, classPath, timeoutLimit, verboseOutput);
 
     // Compare obtained and expected output.
-    if (!FileUtils.contentEqualsIgnoreEOL(outputFile, expectedFile, null)) {
+    if (!FileUtils.contentEqualsIgnoreEOL(outputFile.toFile(), expectedFile.toFile(), null)) {
       System.out.println("expectedFile:");
-      System.out.println(FileUtils.readFileToString(expectedFile, (String) null));
+      System.out.println(FileUtils.readFileToString(expectedFile.toFile(), (String) null));
       System.out.println("outputFile:");
-      System.out.println(FileUtils.readFileToString(outputFile, (String) null));
+      System.out.println(FileUtils.readFileToString(outputFile.toFile(), (String) null));
       assertTrue(false);
     }
   }
@@ -151,7 +152,7 @@ public class MinimizerTests {
     String timeout = "30";
 
     // Obtain file object references.
-    File inputFile = new File(inputFilePath);
+    Path inputFile = Paths.get(inputFilePath);
 
     // Classpath obtained by adding the necessary components together.
     String classPath = null;
