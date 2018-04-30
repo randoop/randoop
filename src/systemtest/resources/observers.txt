@@ -1,0 +1,2 @@
+observers.Box.getA()
+observers.Box.getB()
