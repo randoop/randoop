@@ -134,13 +134,13 @@ public class Bloodhound implements TypedOperationSelector {
 
   /**
    * At every {@code branchCoverageInterval}'th call of this method, the branch coverage information
-   * for all methods under test is re-summarized and weights for all methods under test are
+   * for all methods under test is updated and weights for all methods under test are
    * recomputed.
    */
   private void updateBranchCoverageMaybe() {
     if (totalSuccessfulInvocations % branchCoverageInterval == 0) {
       methodSelectionCounts.clear();
-      coverageTracker.summarizeCoverageInformation();
+      coverageTracker.updateBranchCoverageMap();
       updateWeightsForAllOperations();
     }
   }

@@ -144,12 +144,12 @@ public class CoverageTracker {
   }
 
   /**
-   * Summarizes coverage information for all methods under test. At this point, Jacoco has already
+   * Updates branch coverage information for all methods under test. At this point, Jacoco has already
    * generated coverage data while Randoop has been constructing and executing its test sequences.
-   * Coverage data is now collected and summarized. The {@code branchCoverageMap} is updated to
+   * Coverage data is now collected and the {@code branchCoverageMap} is updated to
    * contain the updated coverage information of each method branch.
    */
-  public void summarizeCoverageInformation() {
+  public void updateBranchCoverageMap() {
     // Collect coverage information.
     data.collect(executionData, sessionInfos, false);
 
