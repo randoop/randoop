@@ -4,7 +4,8 @@ import java.nio.file.Path;
 
 /**
  * Indicates a problem creating {@link ExecutableBooleanExpression} (usually a syntax error in the
- * condition text) or an exception thrown when evaluating it.
+ * condition text) or an exception thrown when evaluating it. This is a user error, not a bug in
+ * Randoop.
  */
 public class RandoopSpecificationError extends Error {
 

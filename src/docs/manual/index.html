@@ -1037,7 +1037,8 @@ Randoop about your application, and that is how we recommend using Randoop.
              Make Randoop proceed, instead of failing, if the Java condition text of a specification cannot
  be compiled. [default false]
             <li id="option:ignore-condition-exception"><b>--ignore-condition-exception=</b><i>boolean</i>.
-             Make Randoop proceed, instead of failing, if a specification's execution throws an exception. [default false]
+             Make Randoop treat a specification whose execution throws an exception as returning <code>false</code>. If true, Randoop treats <code>x.f == 22</code> equivalently to the wordier <code>x != null
+ &amp;&amp; x.f == 22</code>. If false, Randoop halts when a specification throws an exception. [default false]
       </ul>
   <li id="optiongroup:Observer-methods">Observer methods
       <ul>

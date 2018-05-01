@@ -134,21 +134,20 @@ public class ExecutableBooleanExpression {
       throw new RandoopSpecificationError("Failure executing expression method", e);
     } catch (InvocationTargetException e) {
       // Evaluation of the expression threw an exception.
-      // To allow users to write "x.f == 22" instead of the wordier "x != null && x.f == 22",
-      // treat this as false if --ignore-condition-exception=true was supplied.
-      String message =
+      String messageDetails =
           String.format(
-              "Failure executing expression method.%n"
-                  + "  contractSource = %s%n  comment = %s%n  expressionMethod = %s%n  cause = %s",
-              contractSource, comment, expressionMethod, e.getCause());
-      RandoopSpecificationError error = new RandoopSpecificationError(message, e);
+              "  contractSource = %s%n  comment = %s%n  cause = %s",
+              contractSource, comment, e.getCause());
       if (GenInputsAbstract.ignore_condition_exception) {
-        System.out.println("Proceeding despite the below problem ...");
-        error.printStackTrace();
-        System.out.println("... proceeding despite the above problem.");
+        System.out.printf(
+            "Failure executing expression method; fix the specification.%n" + messageDetails);
         return false;
       } else {
-        throw error;
+        throw new RandoopSpecificationError(
+            String.format(
+                    "Failure executing expression method.%n"
+                        + "Fix the specification or pass --ignore-condition-exception=true .%n")
+                + messageDetails);
       }
     }
   }
