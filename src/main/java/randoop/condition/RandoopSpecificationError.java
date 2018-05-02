@@ -1,16 +1,17 @@
 package randoop.condition;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Indicates a problem creating {@link ExecutableBooleanExpression} (usually a syntax error in the
- * condition text) or an exception thrown when evaluating it.
+ * condition text) or an exception thrown when evaluating it. This is a user error, not a bug in
+ * Randoop.
  */
 public class RandoopSpecificationError extends Error {
 
   private static final long serialVersionUID = 3517219213949862963L;
 
-  File file = null;
+  Path file = null;
 
   String thisMessage = null;
 
@@ -38,7 +39,7 @@ public class RandoopSpecificationError extends Error {
    *
    * @param file the file
    */
-  public void setFile(File file) {
+  public void setFile(Path file) {
     this.file = file;
   }
 

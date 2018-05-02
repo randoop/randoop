@@ -2,7 +2,6 @@ package randoop.execution;
 
 import static randoop.execution.RunCommand.CommandException;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -76,7 +75,7 @@ public class TestEnvironment {
    * @return the {@link RunCommand.Status} object for the execution of the test class
    * @throws CommandException if there is an error running the test command
    */
-  public RunCommand.Status runTest(String testClassName, File workingDirectory)
+  public RunCommand.Status runTest(String testClassName, Path workingDirectory)
       throws CommandException {
     List<String> command = commandPrefix();
     command.add(testClassName);
@@ -105,7 +104,7 @@ public class TestEnvironment {
     }
 
     command.add("-classpath");
-    command.add("." + File.pathSeparator + testClasspath);
+    command.add("." + java.io.File.pathSeparator + testClasspath);
     command.add("org.junit.runner.JUnitCore");
 
     return command;

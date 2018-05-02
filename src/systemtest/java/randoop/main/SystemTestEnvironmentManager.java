@@ -2,7 +2,6 @@ package randoop.main;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -84,7 +83,7 @@ class SystemTestEnvironmentManager {
     assert randoopJarPath != null;
 
     return new SystemTestEnvironmentManager(
-        classpath + File.pathSeparator + randoopJarPath,
+        classpath + java.io.File.pathSeparator + randoopJarPath,
         workingDir,
         testInputClassDir,
         jacocoAgentPath,
