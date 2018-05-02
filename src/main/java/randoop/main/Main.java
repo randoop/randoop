@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import randoop.BugInRandoopException;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.AbstractGenerator;
 
 /**
@@ -76,6 +77,14 @@ public class Main {
       }
       System.out.println(
           "To get help on this command, invoke Randoop with arguments: help " + handler.fcommand);
+      System.exit(1);
+
+    } catch (RandoopSpecificationError e) {
+
+      System.out.println();
+      if (e.getMessage() != null) {
+        System.out.println(e.getMessage());
+      }
       System.exit(1);
 
     } catch (BugInRandoopException e) {

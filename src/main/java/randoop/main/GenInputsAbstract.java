@@ -337,13 +337,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Make Randoop proceed, instead of failing, if the Java condition text of a specification cannot
    * be compiled.
    */
-  @Option("Terminate Randoop if specification condition is uncompilable or throws an exception")
+  @Option("Terminate Randoop if specification condition is uncompilable")
   public static boolean ignore_condition_compilation_error = false;
 
   /**
-   * Make Randoop proceed, instead of failing, if a specification's execution throws an exception.
+   * Make Randoop treat a specification whose execution throws an exception as returning {@code
+   * false}. If true, Randoop treats {@code x.f == 22} equivalently to the wordier {@code x != null
+   * && x.f == 22}. If false, Randoop halts when a specification throws an exception.
    */
-  @Option("Terminate Randoop if specification condition is uncompilable or throws an exception")
+  @Option("Terminate Randoop if specification condition throws an exception")
   public static boolean ignore_condition_exception = false;
 
   ///////////////////////////////////////////////////////////////////
