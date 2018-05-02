@@ -166,28 +166,28 @@ public class Minimize extends CommandHandler {
     try {
       String[] nonargs = foptions.parse(args);
       if (nonargs.length > 0) {
-        throw new Options.ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
+        throw new RandoopCommandError("Unrecognized arguments: " + Arrays.toString(nonargs));
       }
     } catch (Options.ArgException ae) {
-      throw new RandoopUsageError(ae.getMessage());
+      throw new RandoopCommandError(ae.getMessage());
     }
 
     if (Minimize.suitepath == null) {
-      throw new RandoopUsageError("Use --suitepath to specify a file to be minimized.");
+      throw new RandoopCommandError("Use --suitepath to specify a file to be minimized.");
     }
 
     // Check that the input file is a Java file.
     if (!FilenameUtils.getExtension(Minimize.suitepath).equals("java")) {
-      throw new RandoopUsageError("The input file must be a Java file: " + Minimize.suitepath);
+      throw new RandoopCommandError("The input file must be a Java file: " + Minimize.suitepath);
     }
 
     if (Minimize.testsuitetimeout <= 0) {
-      throw new RandoopUsageError(
+      throw new RandoopCommandError(
           "Timout must be positive, was given as " + Minimize.testsuitetimeout + ".");
     }
 
     if (Minimize.minimizetimeout <= 0) {
-      throw new RandoopUsageError(
+      throw new RandoopCommandError(
           "Minimizer timout must be positive, was given as " + Minimize.minimizetimeout + ".");
     }
 
