@@ -144,9 +144,9 @@ public class CoverageTracker {
   }
 
   /**
-   * Updates branch coverage information for all methods under test. At this point, Jacoco has already
-   * generated coverage data while Randoop has been constructing and executing its test sequences.
-   * Coverage data is now collected and the {@code branchCoverageMap} is updated to
+   * Updates branch coverage information for all methods under test. At this point, Jacoco has
+   * already generated coverage data while Randoop has been constructing and executing its test
+   * sequences. Coverage data is now collected and the {@code branchCoverageMap} is updated to
    * contain the updated coverage information of each method branch.
    */
   public void updateBranchCoverageMap() {

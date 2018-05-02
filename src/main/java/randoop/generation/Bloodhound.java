@@ -134,8 +134,7 @@ public class Bloodhound implements TypedOperationSelector {
 
   /**
    * At every {@code branchCoverageInterval}'th call of this method, the branch coverage information
-   * for all methods under test is updated and weights for all methods under test are
-   * recomputed.
+   * for all methods under test is updated and weights for all methods under test are recomputed.
    */
   private void updateBranchCoverageMaybe() {
     if (totalSuccessfulInvocations % branchCoverageInterval == 0) {
