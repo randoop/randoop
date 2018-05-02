@@ -168,7 +168,7 @@ public final class Randomness {
     double currentPoint = 0;
     for (int i = 0; i < list.size(); i++) {
       currentPoint += list.get(i).getWeight();
-      if (currentPoint >= chosenPoint) {
+      if (currentPoint > chosenPoint) {
         logSelection(i, "randomMemberWeighted", list);
         return list.get(i);
       }
@@ -252,7 +252,7 @@ public final class Randomness {
     double currentPoint = 0;
     for (int i = 0; i < list.size(); i++) {
       currentPoint += getWeight(list.get(i), weights);
-      if (currentPoint >= chosenPoint) {
+      if (currentPoint > chosenPoint) {
         logSelection(i, "randomMemberWeighted", list);
         return list.get(i);
       }
