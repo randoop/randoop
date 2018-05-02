@@ -32,7 +32,11 @@ import randoop.util.SimpleArrayList;
  */
 public class Bloodhound implements TypedOperationSelector {
 
-  /** Coverage tracker used to get branch coverage information. */
+  /**
+   * Coverage tracker used to get branch coverage information of methods under test. This coverage
+   * tracker references the same instance as that in {@link randoop.reflection.OperationModel},
+   * however, there it is used only instrument and load class that are under test.
+   */
   private final CoverageTracker coverageTracker;
 
   /**
@@ -90,6 +94,12 @@ public class Bloodhound implements TypedOperationSelector {
   private int maxSuccM = 1;
 
   /**
+   * The total weight of all the methods that are under test. This is used by {@link Randomness} to
+   * randomly select an element from a list of weighted elements.
+   */
+  private double totalWeightOfMethodsUnderTest = 0;
+
+  /**
    * Initialize Bloodhound.
    *
    * @param operations list of operations under test
@@ -144,11 +154,16 @@ public class Bloodhound implements TypedOperationSelector {
     }
   }
 
-  /** Computes and updates weights in {@code methodWeights} map for all methods under test. */
+  /**
+   * Computes and updates weights in {@code methodWeights} map for all methods under test.
+   * Recomputes the {@code totalWeightOfMethodsUnderTest}.
+   */
   private void updateWeightsForAllOperations() {
+    double totalWeight = 0;
     for (TypedOperation operation : operationSimpleList) {
-      updateWeightForOperation(operation);
+      totalWeight += updateWeightForOperation(operation);
     }
+    totalWeightOfMethodsUnderTest = totalWeight;
   }
 
   /**
@@ -159,8 +174,9 @@ public class Bloodhound implements TypedOperationSelector {
    * Random Testing (GRT) paper.
    *
    * @param operation method to compute weight for
+   * @return the updated weight for the given operation
    */
-  private void updateWeightForOperation(TypedOperation operation) {
+  private double updateWeightForOperation(TypedOperation operation) {
     CoverageTracker.BranchCoverage covDet =
         coverageTracker.getBranchCoverageForMethod(operation.getName());
 
@@ -201,7 +217,19 @@ public class Bloodhound implements TypedOperationSelector {
       wmk = Math.max(val1, val2) * wm0;
     }
 
+    // Retrieve the weight from the methodWeights map if it exists. Otherwise, default to zero.
+    Double existingWeight = methodWeights.get(operation);
+    if (existingWeight == null) {
+      existingWeight = 0.0;
+    }
+
     methodWeights.put(operation, wmk);
+
+    // Update the contribution of this method to the total weight of all methods under test.
+    totalWeightOfMethodsUnderTest -= existingWeight;
+    totalWeightOfMethodsUnderTest += wmk;
+
+    return wmk;
   }
 
   /**

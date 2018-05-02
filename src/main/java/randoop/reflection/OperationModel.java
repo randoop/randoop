@@ -91,7 +91,11 @@ public class OperationModel {
   /** For debugging only */
   private List<Pattern> omitMethods;
 
-  /** Coverage tracker used to instrument and load classes under test. */
+  /**
+   * Coverage tracker is used to instrument and load classes under test. This coverage tracker
+   * references the same instance as that in {@link randoop.generation.Bloodhound}, however, there
+   * it is used only to collect branch coverage information of methods under test.
+   */
   private static CoverageTracker coverageTracker;
 
   /** Create an empty model of test context. */
