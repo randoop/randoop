@@ -1,9 +1,6 @@
 package randoop.main;
 
-/**
- * Indicates a user error in invoking Randoop. Randoop prints the message and also prints how to get
- * help.
- */
+/** Indicates a user error in invoking Randoop. */
 public class RandoopUsageError extends RuntimeException {
 
   private static final long serialVersionUID = 1L;

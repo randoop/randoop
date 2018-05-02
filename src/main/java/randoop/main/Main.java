@@ -66,7 +66,7 @@ public class Main {
       success = handler.handle(args2);
 
       if (!success) {
-        System.err.println("The command you issued returned a failing status flag.");
+        System.err.println("The Randoop command " + handler.fcommand + " failed.");
       }
 
     } catch (RandoopUsageError e) {
@@ -75,8 +75,10 @@ public class Main {
       if (e.getMessage() != null) {
         System.out.println(e.getMessage());
       }
-      System.out.println(
-          "To get help on this command, invoke Randoop with arguments: help " + handler.fcommand);
+      if (e instanceof RandoopCommandError) {
+        System.out.println(
+            "To get help on this command, invoke Randoop with arguments: help " + handler.fcommand);
+      }
       System.exit(1);
 
     } catch (RandoopSpecificationError e) {

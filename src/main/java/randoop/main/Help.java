@@ -67,9 +67,10 @@ public class Help extends CommandHandler {
 
       if (args.length != 1) {
         throw new RandoopUsageError(
-            "The `help' command must be followed by"
-                + " exactly one argument: the command that you"
-                + " want help on.");
+            String.format(
+                "The `help' command must be followed by exactly one argument:%n"
+                    + "the command that you want help on.%n"
+                    + "For a list of commands, invoke Randoop with argument: help"));
       }
 
       String command = args[0];
