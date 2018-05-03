@@ -1,8 +1,6 @@
 package randoop.generation;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import randoop.operation.TypedOperation;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
@@ -107,6 +105,7 @@ public class Bloodhound implements TypedOperationSelector {
   public Bloodhound(List<TypedOperation> operations, CoverageTracker coverageTracker) {
     this.operationSimpleList = new SimpleArrayList<>(operations);
     this.coverageTracker = coverageTracker;
+
     // Compute an initial weight for all methods under test. We also initialize the uncovered ratio
     // value of all methods under test by updating branch coverage information. The weights for all
     // methods may not be uniform in cases where we have methods with "zero" branches and methods
@@ -177,8 +176,11 @@ public class Bloodhound implements TypedOperationSelector {
    * @return the updated weight for the given operation
    */
   private double updateWeightForOperation(TypedOperation operation) {
-    CoverageTracker.BranchCoverage covDet =
-        coverageTracker.getBranchCoverageForMethod(operation.getName());
+    // Method names have their type arguments removed. This is because Jacoco does not
+    // include type arguments when naming a method.
+    String methodName = operation.getName().replaceAll("<.*>\\.", ".");
+
+    CoverageTracker.BranchCoverage covDet = coverageTracker.getBranchCoverageForMethod(methodName);
 
     // Corresponds to uncovRatio(m) in the GRT paper.
     double uncovRatio;
@@ -186,8 +188,11 @@ public class Bloodhound implements TypedOperationSelector {
       uncovRatio = covDet.uncovRatio;
     } else {
       // Default to zero for methods with no coverage information.
-      // This is the case for Object.<init> and Object.getClass which Randoop always includes
-      // as methods under test.
+      // This is the case for the following methods under test:
+      // Object.<init> and Object.getClass which Randoop always includes as methods under test
+      // Classes that are external, java.lang, classes from external jars.
+      // Getters and Setters for public member variables that are automatically synthesized
+      // Abstract method declarations
       uncovRatio = 0;
     }
 

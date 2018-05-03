@@ -85,6 +85,10 @@ public class CoverageTracker {
       return null;
     }
 
+    // Add nested classes in to the classes under test so that we can
+    // later collect their branch coverage information.
+    classesUnderTest.add(className);
+
     final byte[] instrumented;
     final String resource = getResourceFromClassName(className);
     InputStream original = getClass().getResourceAsStream(resource);
@@ -111,7 +115,7 @@ public class CoverageTracker {
    * Return true if the given class should be instrumented.
    *
    * @param className the name of the class to check
-   * @return true iff the given class is a clall under test or a nested class of a class under test
+   * @return true iff the given class is a class under test or a nested class of a class under test
    */
   private boolean shouldBeInstrumented(String className) {
     if (classesUnderTest.contains(className)) {
@@ -174,6 +178,12 @@ public class CoverageTracker {
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
       for (final IMethodCoverage cm : cc.getMethods()) {
         String methodName = cc.getName() + "." + cm.getName();
+        // Randoop defines method names with only periods delimiters.
+        // Thus, for the method names produced by Jacoco we replace
+        // forward slashes that are used to delimit packages
+        // and $ that are used to delimit nested classes.
+        methodName = methodName.replaceAll("/", ".");
+        methodName = methodName.replaceAll("\\$", ".");
 
         // System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
 
@@ -189,7 +199,7 @@ public class CoverageTracker {
         methodCoverage.uncovRatio = Double.isNaN(uncovRatio) ? 0 : uncovRatio;
       }
     }
-    // System.out.println("---------------------------");
+    // System.out.println("--------------------------- ");
   }
 
   /**
