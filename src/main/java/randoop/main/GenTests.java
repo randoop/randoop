@@ -269,8 +269,10 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    // Initialize a coverage tracker instance that will be used by the {@link OperationModel} to
-    // instrument and load classes if Bloodhound is enabled.
+    // Initialize a coverage tracker instance that is used by the {@link OperationModel} to
+    // instrument and load classes if Bloodhound is enabled. Additionally, this coverage tracker
+    // instance is used to collect branch coverage information for methods under test by
+    // {@link Bloodhound} is Bloodhound is enabled.
     CoverageTracker coverageTracker = new CoverageTracker(classnames);
     OperationModel.setCoverageTracker(coverageTracker);
 

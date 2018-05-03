@@ -23,7 +23,9 @@ public class InstrumentingClassLoader extends ClassLoader {
    * Instruments and loads the class with the given name into this {@code ClassLoader}. The
    * documentation for ClassLoader suggests that we override findClass rather than loadClass.
    * However, if we override findClass, the parent ClassLoader will first load the un-instrumented
-   * version of the class under test, preventing us from instrumenting the specified class.
+   * version of the class under test, preventing us from instrumenting the specified class. Resolve
+   * will be false for all calls to this method since the only source that invokes this method is
+   * {@link CoverageTracker} which calls loadClass without the resolve flag.
    *
    * @param name fully-qualified name of the class that is being loaded
    * @param resolve if true, resolve the class
