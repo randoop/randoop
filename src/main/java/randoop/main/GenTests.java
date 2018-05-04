@@ -461,8 +461,6 @@ public class GenTests extends GenInputsAbstract {
     } catch (RandoopGenerationError e) {
       throw new BugInRandoopException(
           "Error in generation with operation " + e.getInstantiatedOperation(), e);
-    } catch (RandoopSpecificationError e) {
-      throw new BugInRandoopException("Error during generation: " + e.getMessage(), e);
     } catch (SequenceExecutionException e) {
       throw new BugInRandoopException("Error executing generated sequence", e);
     } catch (RandoopLoggingError e) {

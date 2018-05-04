@@ -337,13 +337,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Make Randoop proceed, instead of failing, if the Java condition text of a specification cannot
    * be compiled.
    */
-  @Option("Terminate Randoop if specification condition is uncompilable or throws an exception")
+  @Option("Terminate Randoop if specification condition is uncompilable")
   public static boolean ignore_condition_compilation_error = false;
 
   /**
-   * Make Randoop proceed, instead of failing, if a specification's execution throws an exception.
+   * Make Randoop treat a specification whose execution throws an exception as returning {@code
+   * false}. If true, Randoop treats {@code x.f == 22} equivalently to the wordier {@code x != null
+   * && x.f == 22}. If false, Randoop halts when a specification throws an exception.
    */
-  @Option("Terminate Randoop if specification condition is uncompilable or throws an exception")
+  @Option("Terminate Randoop if specification condition throws an exception")
   public static boolean ignore_condition_exception = false;
 
   ///////////////////////////////////////////////////////////////////
@@ -736,30 +738,30 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public void checkOptionsValid() {
 
     if (alias_ratio < 0 || alias_ratio > 1) {
-      throw new RuntimeException("--alias-ratio must be between 0 and 1, inclusive.");
+      throw new RandoopUsageError("--alias-ratio must be between 0 and 1, inclusive.");
     }
 
     if (null_ratio < 0 || null_ratio > 1) {
-      throw new RuntimeException("--null-ratio must be between 0 and 1, inclusive.");
+      throw new RandoopUsageError("--null-ratio must be between 0 and 1, inclusive.");
     }
 
     if (maxsize <= 0) {
-      throw new RuntimeException(
+      throw new RandoopUsageError(
           "Maximum sequence size --maxsize must be greater than zero but was " + maxsize);
     }
 
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
-      throw new RuntimeException(
-          "Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
+      throw new RandoopUsageError(
+          "Invalid parameter combination: specified a class literal file and --use-class-literals=NONE");
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {
-      throw new RuntimeException(
+      throw new RandoopUsageError(
           "Invalid parameter combination: --deterministic with --usethreads");
     }
 
     if (deterministic && time_limit != 0) {
-      throw new RuntimeException(
+      throw new RandoopUsageError(
           "Invalid parameter combination: --deterministic without --time-limit=0");
     }
 
@@ -768,14 +770,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
         // User didn't supply --progressintervalmillis_default; set it to -1 to suppress output
         progressintervalmillis = -1;
       } else {
-        throw new RuntimeException(
+        throw new RandoopUsageError(
             "Invalid parameter combination: --deterministic with --progressintervalmillis");
       }
     }
 
     if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_DEFAULT
         && !ReflectionExecutor.usethreads) {
-      throw new RuntimeException(
+      throw new RandoopUsageError(
           "Invalid parameter combination: --call-timeout without --usethreads");
     }
 
@@ -783,14 +785,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
         && attempted_limit >= LIMIT_DEFAULT
         && generated_limit >= LIMIT_DEFAULT
         && output_limit >= LIMIT_DEFAULT) {
-      throw new RuntimeException(
+      throw new RandoopUsageError(
           String.format(
               "Unlikely parameter combination: --time-limit=%s --attempted-limit=%s --generated-limit=%s --output-limit=%s",
               time_limit, attempted_limit, generated_limit, output_limit));
     }
 
     if (classlist == null && methodlist == null && testclass.isEmpty()) {
-      throw new RuntimeException(
+      throw new RandoopUsageError(
           "You must specify some classes or methods to test."
               + Globals.lineSep
               + "Use the --classlist, --testclass, or --methodlist options.");
