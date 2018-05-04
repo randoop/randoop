@@ -1,6 +1,9 @@
 package randoop.generation;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
+import randoop.operation.MethodCall;
 import randoop.operation.TypedOperation;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
@@ -190,10 +193,27 @@ public class Bloodhound implements TypedOperationSelector {
     } else {
       // Default to zero for methods with no coverage information.
       // This is the case for the following methods under test:
-      // Object.<init> and Object.getClass which Randoop always includes as methods under test
-      // Classes that are from the JDK or external, java.lang, classes from external jars.
-      // Getters and Setters for public member variables that are automatically synthesized
-      // Abstract method declarations
+      // - Object.<init> and Object.getClass which Randoop always includes as methods under test.
+      // - Classes that are from the JDK or external, java.lang, classes from external jars.
+      // - Getters and Setters for public member variables that are automatically synthesized.
+      // - Abstract method declarations.
+
+      String operationName = operation.getName();
+
+      // Check if method is an abstract method.
+      boolean isAbstractMethod = false;
+      if (operation.getOperation() instanceof MethodCall) {
+        Method method = ((MethodCall) operation.getOperation()).getMethod();
+        isAbstractMethod = Modifier.isAbstract(method.getModifiers());
+      }
+
+      assert isAbstractMethod
+          || operationName.contains("<get>")
+          || operationName.contains("<set>")
+          || operationName.startsWith("java.")
+          || operationName.startsWith("javax.")
+          || operationName.equals("java.lang.Object.<init>")
+          || operationName.equals("java.lang.Object.getClass");
       uncovRatio = 0;
     }
 
