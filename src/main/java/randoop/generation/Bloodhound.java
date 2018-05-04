@@ -132,7 +132,8 @@ public class Bloodhound implements TypedOperationSelector {
 
     // Make a random, weighted choice for the next method.
     TypedOperation selectedOperation =
-        Randomness.randomMemberWeighted(operationSimpleList, methodWeights, totalWeightOfMethodsUnderTest);
+        Randomness.randomMemberWeighted(
+            operationSimpleList, methodWeights, totalWeightOfMethodsUnderTest);
 
     // Update the selected method's selection count and recompute its weight.
     incrementInMap(methodSelectionCounts, selectedOperation);
