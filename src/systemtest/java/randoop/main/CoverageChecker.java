@@ -85,7 +85,7 @@ class CoverageChecker {
    * Add method names to be excluded, ignored, or included (included has no effect).
    *
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
-   * "include". For example: "java2.util2.ArrayList.readObject(java.io.ObjectInputStream) exclude"
+   * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
    *
    * <p>This format is intended to make it easy to sort the arguments.
    */

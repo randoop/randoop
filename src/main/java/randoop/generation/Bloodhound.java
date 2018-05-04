@@ -190,7 +190,7 @@ public class Bloodhound implements TypedOperationSelector {
       // Default to zero for methods with no coverage information.
       // This is the case for the following methods under test:
       // Object.<init> and Object.getClass which Randoop always includes as methods under test
-      // Classes that are external, java.lang, classes from external jars.
+      // Classes that are from the JDK or external, java.lang, classes from external jars.
       // Getters and Setters for public member variables that are automatically synthesized
       // Abstract method declarations
       uncovRatio = 0;
