@@ -211,13 +211,13 @@ public class FailingTestFilter implements CodeWriter {
             "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n",
             "sourceFile", destinationDir);
     if (GenInputsAbstract.print_file_system_state) {
-      message = message.concat(String.format("Source file:%n%s%n", classSource));
+      message += String.format("Source file:%n%s%n", classSource);
     } else {
-      message =
-          message.concat(
-              "(You may use the --print-file-system-state option to dump a copy of the source file.)\n");
+      message +=
+          String.format(
+              "Use --print-file-system-state to print the file with the compilation error.%n");
     }
-    message = message.concat(String.format("Diagnostics:%n%s%n", diagnostics));
+    message += String.format("Diagnostics:%n%s%n", diagnostics);
     throw new BugInRandoopException(message, e);
   }
 
@@ -290,18 +290,18 @@ public class FailingTestFilter implements CodeWriter {
 
       if (GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT) {
         String message =
-            "A test code assertion failed during flaky-test filtering. Most likely,%n"
-                + "you ran Randoop on a program with nondeterministic behavior. See the%n"
-                + "Randoop manual's discussion of nondeterminism for ways to handle this.%n"
-                + String.format(
-                    "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
-                    classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]);
+            String.format(
+                "A test code assertion failed during flaky-test filtering. Most likely,%n"
+                    + "you ran Randoop on a program with nondeterministic behavior. See section%n"
+                    + "\"Nondeterminism\" in the Randoop manual for ways to diagnose and handle this.%n"
+                    + "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
+                classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]);
         if (GenInputsAbstract.print_file_system_state) {
-          message = message.concat(String.format("Source file:%n%s%n", javaCode));
+          message += String.format("Source file:%n%s%n", javaCode);
         } else {
-          message =
+          message +=
               String.format(
-                  "(You may use the --print-file-system-state option to dump a copy of the source file.)%n");
+                  "Use --print-file-system-state to print the full file with the flaky test.%n");
         }
         throw new RandoopUsageError(message);
       }

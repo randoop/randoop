@@ -163,8 +163,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>Setting this option to {@code DISCARD} or {@code OUTPUT} should be considered a last resort.
    * Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
-   * and a better solution is not to call Randoop on such methods; see the discussion of
-   * nondeterminism in the Randoop manual.
+   * and a better solution is not to call Randoop on such methods; see section "Nondeterminism" in
+   * the Randoop manual.
    */
   @Option("What to do if a flaky test is generated")
   public static FlakyTestAction flaky_test_behavior = FlakyTestAction.HALT;

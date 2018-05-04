@@ -91,7 +91,10 @@ public abstract class AbstractGenerator {
    */
   public RandoopListenerManager listenerMgr;
 
-  /** Updates the progress display message printed to the console. */
+  /**
+   * Updates the progress display message printed to the console. Null if
+   * GenInputsAbstrect.progressdisplay is false.
+   */
   private ProgressDisplay progressDisplay;
 
   /**
@@ -307,8 +310,9 @@ public abstract class AbstractGenerator {
         listenerMgr.generationStepPost(eSeq);
       }
 
-      if ((GenInputsAbstract.progressintervalsteps != -1)
-          && (num_steps % GenInputsAbstract.progressintervalsteps == 0)) {
+      if (GenInputsAbstract.progressdisplay
+          && GenInputsAbstract.progressintervalsteps != -1
+          && num_steps % GenInputsAbstract.progressintervalsteps == 0) {
         progressDisplay.displayWithoutTime();
       }
 
