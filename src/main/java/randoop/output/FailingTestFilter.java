@@ -301,9 +301,15 @@ public class FailingTestFilter implements CodeWriter {
           message.append(String.format("Source file:%n%s%n", javaCode));
         } else {
           // TODO: print the whole method.
-          int fromLine = Math.max(0, lineNumber - 11);
-          int toLine = Math.min(lineNumber + 10, javaCodeLines.length);
-          message.append(String.format("Context:%n"));
+          int fromLine = lineNumber - 1;
+          while (fromLine > 0 && !javaCodeLines[fromLine].contains("@Test")) {
+            fromLine--;
+          }
+          int toLine = lineNumber;
+          while (toLine < javaCodeLines.length - 1 && !javaCodeLines[fromLine].contains("@Test")) {
+            toLine++;
+          }
+          message.append(String.format("Containing method:%n"));
           for (int i = fromLine; i < toLine; i++) {
             message.append(String.format("%s%n", javaCodeLines[i]));
           }
