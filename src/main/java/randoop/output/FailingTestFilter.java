@@ -210,12 +210,12 @@ public class FailingTestFilter implements CodeWriter {
         String.format(
             "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n",
             "sourceFile", destinationDir);
-    if (GenInputsAbstract.print_file_system_state) {
+    if (GenInputsAbstract.print_erroneous_file) {
       message += String.format("Source file:%n%s%n", classSource);
     } else {
       message +=
           String.format(
-              "Use --print-file-system-state to print the file with the compilation error.%n");
+              "Use --print-erroneous-file to print the file with the compilation error.%n");
     }
     message += String.format("Diagnostics:%n%s%n", diagnostics);
     throw new BugInRandoopException(message, e);
@@ -289,21 +289,28 @@ public class FailingTestFilter implements CodeWriter {
       }
 
       if (GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT) {
-        String message =
+        StringBuilder message = new StringBuilder();
+        message.append(
             String.format(
                 "A test code assertion failed during flaky-test filtering. Most likely,%n"
                     + "you ran Randoop on a program with nondeterministic behavior. See section%n"
                     + "\"Nondeterminism\" in the Randoop manual for ways to diagnose and handle this.%n"
                     + "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
-                classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]);
-        if (GenInputsAbstract.print_file_system_state) {
-          message += String.format("Source file:%n%s%n", javaCode);
+                classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]));
+        if (GenInputsAbstract.print_erroneous_file) {
+          message.append(String.format("Source file:%n%s%n", javaCode));
         } else {
-          message +=
-              String.format(
-                  "Use --print-file-system-state to print the full file with the flaky test.%n");
+          // TODO: print the whole method.
+          int fromLine = Math.max(0, lineNumber - 11);
+          int toLine = Math.min(lineNumber + 10, javaCodeLines.length);
+          message.append(String.format("Context:%n"));
+          for (int i = fromLine; i < toLine; i++) {
+            message.append(String.format("%s%n", javaCodeLines[i]));
+          }
+          message.append(
+              String.format("Use --print-erroneous-file to print the file with the flaky test.%n"));
         }
-        throw new RandoopUsageError(message);
+        throw new RandoopUsageError(message.toString());
       }
 
       javaCodeLines[lineNumber - 1] = flakyLineReplacement(javaCodeLines[lineNumber - 1]);
