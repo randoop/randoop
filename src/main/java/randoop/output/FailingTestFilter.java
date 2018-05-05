@@ -300,7 +300,6 @@ public class FailingTestFilter implements CodeWriter {
         if (GenInputsAbstract.print_erroneous_file) {
           message.append(String.format("Source file:%n%s%n", javaCode));
         } else {
-          // TODO: print the whole method.
           int fromLine = lineNumber - 1;
           while (fromLine > 0 && !javaCodeLines[fromLine].contains("@Test")) {
             fromLine--;
