@@ -297,24 +297,26 @@ public class FailingTestFilter implements CodeWriter {
                     + "\"Nondeterminism\" in the Randoop manual for ways to diagnose and handle this.%n"
                     + "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
                 classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]));
+
+        int fromLine = lineNumber - 1;
+        while (fromLine > 0 && !javaCodeLines[fromLine].contains("@Test")) {
+          fromLine--;
+        }
+        int toLine = lineNumber;
+        while (toLine < javaCodeLines.length - 1 && !javaCodeLines[fromLine].contains("@Test")) {
+          toLine++;
+        }
+        message.append(String.format("Containing method:%n"));
+        for (int i = fromLine; i < toLine; i++) {
+          message.append(String.format("%s%n", javaCodeLines[i]));
+        }
+
         if (GenInputsAbstract.print_erroneous_file) {
-          message.append(String.format("Source file:%n%s%n", javaCode));
+          message.append(String.format("Full source file:%n%s%n", javaCode));
         } else {
-          // TODO: print the whole method.
-          int fromLine = lineNumber - 1;
-          while (fromLine > 0 && !javaCodeLines[fromLine].contains("@Test")) {
-            fromLine--;
-          }
-          int toLine = lineNumber;
-          while (toLine < javaCodeLines.length - 1 && !javaCodeLines[fromLine].contains("@Test")) {
-            toLine++;
-          }
-          message.append(String.format("Containing method:%n"));
-          for (int i = fromLine; i < toLine; i++) {
-            message.append(String.format("%s%n", javaCodeLines[i]));
-          }
           message.append(
-              String.format("Use --print-erroneous-file to print the file with the flaky test.%n"));
+              String.format(
+                  "Use --print-erroneous-file to print the full file with the flaky test.%n"));
         }
         throw new RandoopUsageError(message.toString());
       }
