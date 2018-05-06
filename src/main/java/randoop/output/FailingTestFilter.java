@@ -282,7 +282,7 @@ public class FailingTestFilter implements CodeWriter {
       if (lineNumber < 1 || lineNumber > javaCodeLines.length) {
         throw new BugInRandoopException(
             String.format(
-                "Line number %d read from JUnit out of range [1,%d]: %s",
+                "Line number %d read from JUnit is out of range [1,%d]: %s",
                 lineNumber, javaCodeLines.length, failureLineMatch.line));
       }
 
