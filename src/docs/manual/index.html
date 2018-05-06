@@ -52,7 +52,7 @@ The Randoop homepage is
               <li><a href="#replacecall-replacement-implementation">Tips about implementing replacement classes</a></li>
             </ul></li>
         </ul></li>
-      <li><a href="#specifying-behavior">Specifying expected code behavior (pre- and post-conditions)</a>
+      <li><a href="#specifying-behavior">Specifying expected code behavior</a>
         <ul>
           <li><a href="#spec-json-method-specifications">Method specifications</a>
             <ul>
@@ -498,8 +498,8 @@ You can customize how exceptions are considered by
 
 <p>
 You can also provide specifications of your code to further help
-Randoop classify tests; see the <a href="#checkrep">checkRep
-mechanism</a>.
+Randoop classify tests; see section
+<a href="#specifying-behavior">"Specifying expected code behavior"</a>.
 </p>
 
 
@@ -893,8 +893,8 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>Setting this option to <code>DISCARD</code> or <code>OUTPUT</code> should be considered a last resort.
  Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
- and a better solution is not to call Randoop on such methods; see the discussion of
- nondeterminism in the Randoop manual. [default HALT]
+ and a better solution is not to call Randoop on such methods; see section "Nondeterminism" in
+ the Randoop manual. [default HALT]
 <ul>
   <li><b>HALT</b> Randoop halts with a diagnostic message.
   <li><b>DISCARD</b> Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
@@ -1037,7 +1037,8 @@ Randoop about your application, and that is how we recommend using Randoop.
              Make Randoop proceed, instead of failing, if the Java condition text of a specification cannot
  be compiled. [default false]
             <li id="option:ignore-condition-exception"><b>--ignore-condition-exception=</b><i>boolean</i>.
-             Make Randoop proceed, instead of failing, if a specification's execution throws an exception. [default false]
+             Make Randoop treat a specification whose execution throws an exception as returning <code>false</code>. If true, Randoop treats <code>x.f == 22</code> equivalently to the wordier <code>x != null
+ &amp;&amp; x.f == 22</code>. If false, Randoop halts when a specification throws an exception. [default false]
       </ul>
   <li id="optiongroup:Observer-methods">Observer methods
       <ul>
@@ -1229,7 +1230,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  logging is done.
             <li id="option:operation-history-log"><b>--operation-history-log=</b><i>filename</i>.
              A file to which to log the operation usage history.
-            <li id="option:print-file-system-state"><b>--print-file-system-state=</b><i>boolean</i>.
+            <li id="option:print-erroneous-file"><b>--print-erroneous-file=</b><i>boolean</i>.
              Display source if a generated test contains a compilation error. [default false]
       </ul>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
@@ -1460,7 +1461,7 @@ the replacement method implementations.
 </p>
 
 
-<h2 id="specifying-behavior">Specifying expected code behavior (pre- and post-conditions)</h2>
+<h2 id="specifying-behavior">Specifying expected code behavior</h2>
 
 <p>
 You can provide a specification of the expected behavior of code.  Randoop will

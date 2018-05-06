@@ -146,13 +146,29 @@ public final class Randomness {
       totalWeight += weight;
     }
 
+    return randomMemberWeighted(list, totalWeight);
+  }
+
+  /**
+   * Randomly selects an element from a weighted distribution of elements.
+   *
+   * <p>Efficiency note: iterates through the entire list twice (once to compute interval length,
+   * once to select element).
+   *
+   * @param <T> the type of elements of the list
+   * @param list the list from which to choose an element
+   * @param totalWeight the total weight of the elements of the list
+   * @return a member of {@code list}, chosen according to the weights
+   */
+  public static <T extends WeightedElement> T randomMemberWeighted(
+      SimpleList<T> list, double totalWeight) {
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom("randomMemberWeighted(SimpleList)");
     double chosenPoint = Randomness.random.nextDouble() * totalWeight;
     double currentPoint = 0;
     for (int i = 0; i < list.size(); i++) {
       currentPoint += list.get(i).getWeight();
-      if (currentPoint >= chosenPoint) {
+      if (currentPoint > chosenPoint) {
         logSelection(i, "randomMemberWeighted", list);
         return list.get(i);
       }
@@ -161,17 +177,34 @@ public final class Randomness {
   }
 
   /**
+   * Return weight from weights map, or intrinsic weight if elt is not a key for weights.
+   *
+   * @param <T> type of elt
+   * @param elt item to get the weight of
+   * @param weights mapping from T to weights
+   * @return weight of elt
+   */
+  private static <T extends WeightedElement> double getWeight(T elt, Map<T, Double> weights) {
+    Double weightOrNull = weights.get(elt);
+    double weight;
+    if (weightOrNull != null) {
+      weight = weightOrNull;
+    } else {
+      weight = elt.getWeight();
+      Log.logPrintf(
+          "randoop.util.Randomness: key %s not found; using intrinsic weight %d%n", elt, weight);
+    }
+    return weight;
+  }
+
+  /**
    * Randomly selects an element from a weighted distribution of elements. These weights are with
    * respect to each other. They are not normalized (they might add up to any value).
    *
-   * <p>Iterates through the entire list once, then does a binary search to select the element.
-   *
-   * <p>Used internally when the {@code --weighted-constants} and/or {@code --weighted-sequences}
-   * options are used.
-   *
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights; uses the intrinsic weight if the element
-   *     is not a key in the map
+   *     is not a key in the map. Each element's weight must be non-negative. An element with a
+   *     weight of zero will never be selected.
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
@@ -179,52 +212,53 @@ public final class Randomness {
       SimpleList<T> list, Map<T, Double> weights) {
 
     double totalWeight = 0.0;
-    // The ith element is the cumulative weight of all elements preceding the ith (that is,
-    // exclusive rather than inclusive).  The last (i+1)th element is the weight of all elements.
-    double[] cumulativeWeights = new double[list.size() + 1];
-    cumulativeWeights[0] = 0.0;
     for (int i = 0; i < list.size(); i++) {
       T elt = list.get(i);
-      Double weightOrNull = weights.get(elt);
-      double weight;
-      if (weightOrNull != null) {
-        weight = weightOrNull;
-      } else {
-        weight = elt.getWeight();
-        Log.logPrintf(
-            "randoop.util.Randomness: key %s not found; using intrinsic weight %d%n", elt, weight);
-      }
-      if (weight <= 0) {
+      double weight = getWeight(elt, weights);
+      if (weight < 0) {
         throw new BugInRandoopException("Weight should be positive: " + weight);
       }
-      cumulativeWeights[i] = totalWeight;
       totalWeight += weight;
     }
-    cumulativeWeights[list.size()] = totalWeight;
+
+    return randomMemberWeighted(list, weights, totalWeight);
+  }
+
+  /**
+   * Randomly selects an element from a weighted distribution of elements. These weights are with
+   * respect to each other. They are not normalized (they might add up to any value).
+   *
+   * @param <T> the type of the elements in the list
+   * @param list the list of elements to select from
+   * @param weights the map of elements to their weights; uses the intrinsic weight if the element
+   *     is not a key in the map. Each element's weight must be non-negative. An element with a
+   *     weight of zero will never be selected.
+   * @param totalWeight the total weight of the elements of the list
+   * @return a randomly selected element from {@code list}
+   */
+  public static <T extends WeightedElement> T randomMemberWeighted(
+      SimpleList<T> list, Map<T, Double> weights, double totalWeight) {
 
     // Select a random point in interval and find its corresponding element.
-    incrementCallsToRandom("randomMemberWeighted(SimpleList, Map)");
+    incrementCallsToRandom("randomMemberWeighted(SimpleList)");
     double chosenPoint = Randomness.random.nextDouble() * totalWeight;
     if (GenInputsAbstract.selection_log != null) {
       try {
-        GenInputsAbstract.selection_log.write(
-            String.format(
-                "chosenPoint = %s, cumulativeWeights = %s%n", chosenPoint, cumulativeWeights));
+        GenInputsAbstract.selection_log.write(String.format("chosenPoint = %s%n", chosenPoint));
       } catch (IOException e) {
         throw new Error("Problem writing to selection-log", e);
       }
     }
 
-    int index = binarySearchForIndex(cumulativeWeights, chosenPoint);
-    if (GenInputsAbstract.selection_log != null) { // body is expensive
-      logSelection(
-          index,
-          "randomMemberWeighted(List,Map)",
-          String.format(
-              "%n << %s%n    (class %s),%n    %s%n    (class %s, size %s)>>",
-              list, list.getClass(), weights, weights.getClass(), weights.size()));
+    double currentPoint = 0;
+    for (int i = 0; i < list.size(); i++) {
+      currentPoint += getWeight(list.get(i), weights);
+      if (currentPoint > chosenPoint) {
+        logSelection(i, "randomMemberWeighted", list);
+        return list.get(i);
+      }
     }
-    return list.get(index);
+    throw new BugInRandoopException("Unable to select random member");
   }
 
   /**
@@ -293,10 +327,17 @@ public final class Randomness {
    * @return true or false, with the given probabilities
    */
   public static boolean randomBoolFromDistribution(double falseProb, double trueProb) {
-    if (trueProb < 0 || falseProb > 1) {
-      throw new IllegalArgumentException("arg must be between 0 and 1.");
+    if (falseProb < 0) {
+      throw new IllegalArgumentException("falseProb is " + falseProb + ", must be non-negative");
     }
-    double falseProbNormalized = falseProb / (falseProb + trueProb);
+    if (trueProb < 0) {
+      throw new IllegalArgumentException("trueProb is " + trueProb + ", must be non-negative");
+    }
+    double totalProb = falseProb + trueProb;
+    if (totalProb == 0) {
+      throw new IllegalArgumentException("falseProb and trueProb are both 0");
+    }
+    double falseProbNormalized = falseProb / totalProb;
     incrementCallsToRandom("randomBoolFromDistribution");
     boolean result = Randomness.random.nextDouble() >= falseProbNormalized;
     logSelection(result, "randomBoolFromDistribution", falseProb + ", " + trueProb);
