@@ -1,8 +1,10 @@
 Version 4.0.4, released ??, 2018
 
-Randoop's replacecalls agent can now replace constructors.
+Command-line argument changes:
+ * the --specifications command-line argument can now be a .zip file
+ * renamed --print-file-system-state to --print-erroneous-file
 
-The --specifications command-line argument can now be a .zip file.
+Randoop's replacecalls agent can now replace constructors.
 
 
 Version 4.0.3, released April 10, 2018
