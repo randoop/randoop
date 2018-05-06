@@ -58,6 +58,7 @@ class RandoopOptions {
     options.setFlag("deterministic");
     options.setOption("time_limit", "0");
     options.unsetFlag("minimize-error-test");
+    options.setFlag("print-erroneous-file");
 
     // Use value from environment variable if command-line argument was not set
     String selectionLog = System.getProperty("randoop.selection.log");

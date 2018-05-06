@@ -228,11 +228,12 @@ public final class Randomness {
    * Randomly selects an element from a weighted distribution of elements. These weights are with
    * respect to each other. They are not normalized (they might add up to any value).
    *
+   * @param <T> the type of the elements in the list
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights; uses the intrinsic weight if the element
    *     is not a key in the map. Each element's weight must be non-negative. An element with a
    *     weight of zero will never be selected.
-   * @param <T> the type of the elements in the list
+   * @param totalWeight the total weight of the elements of the list
    * @return a randomly selected element from {@code list}
    */
   public static <T extends WeightedElement> T randomMemberWeighted(
