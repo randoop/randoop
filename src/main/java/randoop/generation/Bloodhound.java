@@ -3,8 +3,7 @@ package randoop.generation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import randoop.operation.MethodCall;
-import randoop.operation.TypedOperation;
+import randoop.operation.*;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 
@@ -198,19 +197,25 @@ public class Bloodhound implements TypedOperationSelector {
       // - Classes that are from the JDK or external, java.lang, classes from external jars.
       // - Getters and Setters for public member variables that are automatically synthesized.
       // - Abstract method declarations.
+      // - Enum constants.
 
       String operationName = operation.getName();
+      CallableOperation callableOperation = operation.getOperation();
 
-      // Check if method is an abstract method.
       boolean isAbstractMethod = false;
-      if (operation.getOperation() instanceof MethodCall) {
-        Method method = ((MethodCall) operation.getOperation()).getMethod();
+      boolean isGetterMethod = callableOperation instanceof FieldGet;
+      boolean isSetterMethod = callableOperation instanceof FieldSet;
+      boolean isEnumConstant = callableOperation instanceof EnumConstant;
+
+      if (callableOperation instanceof MethodCall) {
+        Method method = ((MethodCall) callableOperation).getMethod();
         isAbstractMethod = Modifier.isAbstract(method.getModifiers());
       }
 
       assert isAbstractMethod
-          || operationName.contains("<get>")
-          || operationName.contains("<set>")
+          || isGetterMethod
+          || isSetterMethod
+          || isEnumConstant
           || operationName.startsWith("java.")
           || operationName.startsWith("javax.")
           || operationName.equals("java.lang.Object.<init>")
