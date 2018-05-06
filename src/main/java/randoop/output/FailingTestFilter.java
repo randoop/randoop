@@ -277,15 +277,13 @@ public class FailingTestFilter implements CodeWriter {
                   qualifiedClassname, methodName, classname));
 
       Match failureLineMatch = readUntilMatch(lineIterator, linePattern);
+      // lineNumber is 1-based, not 0-based
       int lineNumber = Integer.parseInt(failureLineMatch.group);
       if (lineNumber < 1 || lineNumber > javaCodeLines.length) {
         throw new BugInRandoopException(
-            "Line number "
-                + lineNumber
-                + " read from JUnit out of range [1,"
-                + (javaCodeLines.length + 1)
-                + "]: "
-                + failureLineMatch.line);
+            String.format(
+                "Line number %d read from JUnit out of range [1,%d]: %s",
+                lineNumber, javaCodeLines.length, failureLineMatch.line));
       }
 
       if (GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT) {
@@ -298,12 +296,13 @@ public class FailingTestFilter implements CodeWriter {
                     + "Class: %s, Method: %s, Line number: %d, Source line:%n%s%n",
                 classname, methodName, lineNumber, javaCodeLines[lineNumber - 1]));
 
+        // fromLine and toLine are 0-based.
         int fromLine = lineNumber - 1;
         while (fromLine > 0 && !javaCodeLines[fromLine].contains("@Test")) {
           fromLine--;
         }
         int toLine = lineNumber;
-        while (toLine < javaCodeLines.length - 1 && !javaCodeLines[fromLine].contains("@Test")) {
+        while (toLine < javaCodeLines.length && !javaCodeLines[toLine].contains("@Test")) {
           toLine++;
         }
         message.append(String.format("Containing method:%n"));
