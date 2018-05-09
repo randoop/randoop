@@ -365,7 +365,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     int numClasses = operationModel.getClassTypes().size();
-    Map<Sequence, Integer> literalsTermFrequency = operationModel.getLiteralsTermFrequency();
+    Map<Sequence, Integer> literalsTermFrequency = operationModel.getLiteralTermFrequency();
 
     /*
      * Create the generator for this session.

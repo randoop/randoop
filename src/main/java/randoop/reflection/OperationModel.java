@@ -86,7 +86,7 @@ public class OperationModel {
    * under test. Note that this is the raw frequency, just the number of times they occur within all
    * classes under test.
    */
-  private Map<Sequence, Integer> literalsTermFrequency;
+  private Map<Sequence, Integer> literalTermFrequency;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -123,7 +123,7 @@ public class OperationModel {
 
     coveredClassesGoal = new LinkedHashSet<>();
     operations = new TreeSet<>();
-    literalsTermFrequency = new HashMap<>();
+    literalTermFrequency = new HashMap<>();
   }
 
   /**
@@ -453,13 +453,13 @@ public class OperationModel {
 
   /**
    * The map of literals to their term frequency: tf(t,d), where t is a literal and d is all classes
-   * under test. Note that this is the raw frequency, just the number of times they occur within all
-   * classes under test.
+   * under test. This is the "raw frequency" or the number of times they occur within all classes
+   * under test.
    *
    * @return map of literals to their term frequency: tf(t,d)
    */
-  public Map<Sequence, Integer> getLiteralsTermFrequency() {
-    return literalsTermFrequency;
+  public Map<Sequence, Integer> getLiteralTermFrequency() {
+    return literalTermFrequency;
   }
 
   /**
@@ -492,7 +492,7 @@ public class OperationModel {
 
     // Supply the term frequency map to obtain the tf-idf weight for extracted literals.
     if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.literalsTermFrequency));
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.literalTermFrequency));
     }
 
     // Collect classes under test

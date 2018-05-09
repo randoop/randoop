@@ -144,8 +144,8 @@ public class ICSE07ContainersTest {
             "decreaseKey|delete\\(randoop.test.issta2006.Node\\)|empty\\(\\)|insert\\(randoop.test.issta2006.Node\\)|min\\(\\)|size\\(\\)|union"));
     runRandoop("FibHeap", classList, omitPatterns, stopper, excludeNames);
 
-      Set<String> sortedSet = new TreeSet<>(FibHeap.branchFingerprints);
-      System.out.println(sortedSet);
+    Set<String> sortedSet = new TreeSet<>(FibHeap.branchFingerprints);
+    System.out.println(sortedSet);
     assertTrue(goalBranches <= FibHeap.branchFingerprints.size());
   }
 
@@ -176,8 +176,8 @@ public class ICSE07ContainersTest {
     omitPatterns.add(Pattern.compile("find\\(int\\)|gen_native"));
     runRandoop("BinTree", classList, omitPatterns, stopper, excludeNames);
 
-      Set<String> sortedSet = new TreeSet<>(BinTree.branchFingerprints);
-      System.out.println(sortedSet);
+    Set<String> sortedSet = new TreeSet<>(BinTree.branchFingerprints);
+    System.out.println(sortedSet);
     assertTrue(goalBranches <= BinTree.branchFingerprints.size());
   }
 
@@ -210,8 +210,8 @@ public class ICSE07ContainersTest {
             "toString\\(\\)|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"));
     runRandoop("TreeMap", classList, omitPatterns, stopper, excludeNames);
 
-      Set<String> sortedSet = new TreeSet<>(TreeMap.branchFingerprints);
-      System.out.println(sortedSet);
+    Set<String> sortedSet = new TreeSet<>(TreeMap.branchFingerprints);
+    System.out.println(sortedSet);
     assertTrue(goalBranches <= TreeMap.branchFingerprints.size());
   }
 

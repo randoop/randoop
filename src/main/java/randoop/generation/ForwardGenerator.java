@@ -41,6 +41,7 @@ import randoop.util.SimpleList;
  * Randoop's forward, component-based generator.
  *
  * <p>For weighted random selection of an input sequence, there are two weighting schemes:
+ *
  * <ul>
  *   <li>Static weighting scheme applicable to only extracted literals
  *   <li>Default static weighting scheme from {@link Sequence}, applicable to all sequences
@@ -48,15 +49,10 @@ import randoop.util.SimpleList;
  */
 public class ForwardGenerator extends AbstractGenerator {
   /**
-   * Map of extracted literal sequences to their static weights. Note that these weights are never
-   * changed once initialized.
+   * Map of extracted literal sequences to their static weights. These weights are never changed
+   * once initialized.
    */
-  private final Map<Sequence, Double> literalWeights = new HashMap<>();
-
-  /**
-   * Map from a sequences to its combined weight. Accounts for the three weighting schemes for each sequence.
-   */
-  private final Map<Sequence, Double> weightMap = new HashMap<>();
+  private final Map<Sequence, Double> literalWeightMap = new HashMap<>();
 
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
@@ -129,7 +125,7 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
-    initializeLiteralWeightsMap(numClasses, literalTermFrequencies);
+    initializeLiteralWeightMap(numClasses, literalTermFrequencies);
   }
 
   /**
@@ -150,17 +146,20 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /**
    * Compute weights for the literals.
+   *
    * @param numClasses number of classes under tests
-   * @param literalTermFrequencies a map from a literal to the number of times it appears in any class under test
+   * @param literalTermFrequencies a map from a literal to the number of times it appears in any
+   *     class under test
    */
-  private void initializeLiteralWeightsMap(int numClasses, Map<Sequence, Integer> literalTermFrequencies) {
+  private void initializeLiteralWeightMap(
+      int numClasses, Map<Sequence, Integer> literalTermFrequencies) {
     if (literalTermFrequencies != null) {
       for (Sequence sequence : componentManager.getSequenceFrequency().keySet()) {
         Integer documentFrequency = componentManager.getSequenceFrequency().get(sequence);
         double tfIdf =
-                literalTermFrequencies.get(sequence)
-                        * Math.log((numClasses + 1.0) / ((numClasses + 1.0) - documentFrequency));
-        literalWeights.put(sequence, tfIdf);
+            literalTermFrequencies.get(sequence)
+                * Math.log((numClasses + 1.0) / ((numClasses + 1.0) - documentFrequency));
+        literalWeightMap.put(sequence, tfIdf);
       }
     }
   }
@@ -193,8 +192,6 @@ public class ForwardGenerator extends AbstractGenerator {
 
     startTime = System.nanoTime(); // reset start time.
 
-    processWeights(eSeq);
-
     determineActiveIndices(eSeq);
 
     if (eSeq.sequence.hasActiveFlags()) {
@@ -206,21 +203,6 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.gentime = gentime1 + gentime2;
 
     return eSeq;
-  }
-
-  /**
-   * Updates eSeq's weight, which is a combination of the extracted literals static weighting scheme
-   * and {@link Sequence}'s default static weighting scheme.
-   * @param eSeq the recently executed sequence which needs a weight update
-   */
-  private void processWeights(ExecutableSequence eSeq) {
-    // Class literals weights, only if this sequence is a class literal.
-    Double literalWeight = literalWeights.get(eSeq.sequence);
-    if (literalWeight == null) {
-      literalWeight = 1.0;
-    }
-    double weight = eSeq.sequence.getWeight() * literalWeight;
-    weightMap.put(eSeq.sequence, weight);
   }
 
   @Override
@@ -787,8 +769,10 @@ public class ForwardGenerator extends AbstractGenerator {
       Sequence chosenSeq;
       if (GenInputsAbstract.small_tests) {
         chosenSeq = Randomness.randomMemberWeighted(candidates);
+      } else if (GenInputsAbstract.enable_constant_mining) {
+        chosenSeq = Randomness.randomMemberWeighted(candidates, literalWeightMap);
       } else {
-        chosenSeq = Randomness.randomMemberWeighted(candidates, weightMap);
+        chosenSeq = Randomness.randomMember(candidates);
       }
 
       Log.logPrintf("chosenSeq: %s%n", chosenSeq);
