@@ -48,7 +48,7 @@ public class ComponentManager {
    * test. Used for the static weighting scheme of extracted class-level literals, which is used in
    * the weighted sequence selection.
    */
-  private Map<Sequence, Integer> literalFrequency;
+  private final Map<Sequence, Integer> sequenceFrequency = new LinkedHashMap<>();
 
   /** The principal set of sequences used to create other, larger sequences by the generator. */
   // Is never null. Contains both general components
@@ -82,8 +82,6 @@ public class ComponentManager {
    */
   private PackageLiterals packageLiterals = null;
 
-  private Set<Type> sequenceTypes;
-
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
@@ -102,7 +100,6 @@ public class ComponentManager {
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
-    literalFrequency = new LinkedHashMap<>();
   }
 
   /**
@@ -150,11 +147,11 @@ public class ComponentManager {
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
-    if (literalFrequency.containsKey(sequence)) {
-      literalFrequency.put(sequence, literalFrequency.get(sequence) + 1);
-    } else {
-      literalFrequency.put(sequence, 1);
+    Integer frequency = sequenceFrequency.get(sequence);
+    if (frequency == null) {
+      frequency = 0;
     }
+    sequenceFrequency.put(sequence, frequency + 1);
   }
 
   /**
@@ -165,8 +162,8 @@ public class ComponentManager {
   }
 
   /** @return the mapping of sequences to their frequency */
-  public Map<Sequence, Integer> getLiteralFrequency() {
-    return literalFrequency;
+  public Map<Sequence, Integer> getSequenceFrequency() {
+    return sequenceFrequency;
   }
 
   /*
@@ -238,13 +235,9 @@ public class ComponentManager {
             literals = (literals == null) ? sl : new ListOfLists<>(literals, sl);
           }
         }
-      } else if (Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
-        if (declaringCls != null) {
-          if (classLiterals != null) {
-            SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
-            return sl;
-          }
-        }
+      } else if (classLiterals != null && Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
+        // Return only the component sequences that are class-level extracted literals.
+        return classLiterals.getSequences(declaringCls, neededType);
       }
     }
 
@@ -252,8 +245,6 @@ public class ComponentManager {
     if (literals != null) {
       if (result == null) {
         result = literals;
-      } else if (literals == null) {
-        // nothing to do
       } else {
         result = new ListOfLists<>(result, literals);
       }

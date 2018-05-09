@@ -490,7 +490,7 @@ public class OperationModel {
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
 
-    // We supply the term frequency map to obtain the tf-idf weight for extracted literals
+    // Supply the term frequency map to obtain the tf-idf weight for extracted literals.
     if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.literalsTermFrequency));
     }

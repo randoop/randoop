@@ -364,7 +364,7 @@ public class GenTests extends GenInputsAbstract {
       observers.addAll(observerMap.getValues(keyType));
     }
 
-    int num_classes = operationModel.getClassTypes().size();
+    int numClasses = operationModel.getClassTypes().size();
     Map<Sequence, Integer> literalsTermFrequency = operationModel.getLiteralsTermFrequency();
 
     /*
@@ -378,7 +378,7 @@ public class GenTests extends GenInputsAbstract {
             componentMgr,
             null, // TODO: is this the right stopper?
             listenerMgr,
-            num_classes,
+            numClasses,
             literalsTermFrequency);
 
     /* log setup. TODO: handle environment variables like other methods in TestUtils do. */

@@ -40,33 +40,23 @@ import randoop.util.SimpleList;
 /**
  * Randoop's forward, component-based generator.
  *
- * <p>For weighted random selection of an input sequence, there are three weighting schemes:
- *
+ * <p>For weighted random selection of an input sequence, there are two weighting schemes:
  * <ul>
- *   <li>Dynamic weighting scheme applicable to all sequences
  *   <li>Static weighting scheme applicable to only extracted literals
  *   <li>Default static weighting scheme from {@link Sequence}, applicable to all sequences
  * </ul>
  */
 public class ForwardGenerator extends AbstractGenerator {
-
-  /**
-   * Map from a sequences to its combined weight. Accounts for the three weighting schemes for each
-   * sequence.
-   */
-  private final Map<Sequence, Double> weightMap = new HashMap<>();
-
-  /**
-   * Map of sequences to the number of times they've been executed. Used with the dynamic weighting
-   * scheme.
-   */
-  private final Map<Sequence, Integer> sequenceExecutionCount = new HashMap<>();
-
   /**
    * Map of extracted literal sequences to their static weights. Note that these weights are never
    * changed once initialized.
    */
   private final Map<Sequence, Double> literalWeights = new HashMap<>();
+
+  /**
+   * Map from a sequences to its combined weight. Accounts for the three weighting schemes for each sequence.
+   */
+  private final Map<Sequence, Double> weightMap = new HashMap<>();
 
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
@@ -131,7 +121,7 @@ public class ForwardGenerator extends AbstractGenerator {
       IStopper stopper,
       RandoopListenerManager listenerManager,
       int numClasses,
-      Map<Sequence, Integer> literalsTermFrequencies) {
+      Map<Sequence, Integer> literalTermFrequencies) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
@@ -139,24 +129,7 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
-
-    if (literalsTermFrequencies != null) {
-      // calculate weighting schemes for extracted literals
-      int totalNumLiterals = 0;
-      for (Sequence s : literalsTermFrequencies.keySet()) {
-        totalNumLiterals += literalsTermFrequencies.get(s);
-      }
-      for (Map.Entry<Sequence, Integer> m : componentManager.getLiteralFrequency().entrySet()) {
-
-        // Note that this is adjusting the tf(t,d) by normalizing it across the sum of all
-        // sequences' tf(t,d).  TODO: explore performance with unnormalized tf(t,d), as well as
-        // inter-weight tuning.
-        double weight =
-            ((double) literalsTermFrequencies.get(m.getKey()) / totalNumLiterals)
-                * Math.log((double) (numClasses + 1) / ((numClasses + 1) - m.getValue()));
-        literalWeights.put(m.getKey(), weight);
-      }
-    }
+    initializeLiteralWeightsMap(numClasses, literalTermFrequencies);
   }
 
   /**
@@ -172,6 +145,23 @@ public class ForwardGenerator extends AbstractGenerator {
       NormalExecution e = (NormalExecution) es.getResult(0);
       Object runtimeValue = e.getRuntimeValue();
       runtimePrimitivesSeen.add(runtimeValue);
+    }
+  }
+
+  /**
+   * Compute weights for the literals.
+   * @param numClasses number of classes under tests
+   * @param literalTermFrequencies a map from a literal to the number of times it appears in any class under test
+   */
+  private void initializeLiteralWeightsMap(int numClasses, Map<Sequence, Integer> literalTermFrequencies) {
+    if (literalTermFrequencies != null) {
+      for (Sequence sequence : componentManager.getSequenceFrequency().keySet()) {
+        Integer documentFrequency = componentManager.getSequenceFrequency().get(sequence);
+        double tfIdf =
+                literalTermFrequencies.get(sequence)
+                        * Math.log((numClasses + 1.0) / ((numClasses + 1.0) - documentFrequency));
+        literalWeights.put(sequence, tfIdf);
+      }
     }
   }
 
@@ -219,53 +209,18 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Updates eSeq's combined weight, which is a combination of the dynamic weighting scheme,
-   * extracted literals static weighting scheme, and {@link Sequence}'s default static weighting
-   * scheme.
-   *
+   * Updates eSeq's weight, which is a combination of the extracted literals static weighting scheme
+   * and {@link Sequence}'s default static weighting scheme.
    * @param eSeq the recently executed sequence which needs a weight update
    */
   private void processWeights(ExecutableSequence eSeq) {
-
-    assert eSeq.sequence != null;
-
-    double defaultWeight = eSeq.sequence.getWeight();
-
-    // TODO: explore fine-tuning of weight interactions. Specifically, magnitudes between
-    // literalsWeight and dynamicWeight are drastic.  This affects the selection in the global pool,
-    // where there can be some sequences with only literalsWeight weights, which are extremely
-    // small.
-
-    // update # times a sequence has been executed
-    if (sequenceExecutionCount.containsKey(eSeq.sequence)) {
-      sequenceExecutionCount.put(eSeq.sequence, sequenceExecutionCount.get(eSeq.sequence) + 1);
-    } else {
-      sequenceExecutionCount.put(eSeq.sequence, 1);
-    }
-
-    double execTime = (GenInputsAbstract.deterministic ? 1.0 : eSeq.exectime);
-    double execCount = sequenceExecutionCount.get(eSeq.sequence);
-    double dynamicWeight = 1.0 / (execTime * execCount * Math.sqrt(eSeq.sequence.size()));
-    //    Randomness.selectionLog.log(
-    //        "processWeights(%s): exectime %s, execution count %s, eSeq.sequence.size() %s%n",
-    //        eSeq, execTime, execCount, eSeq.sequence.size());
-
-    // class literals weights, only if this sequence is a class literal
-    double literalWeight;
-    if (literalWeights.containsKey(eSeq.sequence)) {
-      literalWeight = literalWeights.get(eSeq.sequence);
-    } else {
+    // Class literals weights, only if this sequence is a class literal.
+    Double literalWeight = literalWeights.get(eSeq.sequence);
+    if (literalWeight == null) {
       literalWeight = 1.0;
     }
-
-    double weight = defaultWeight * dynamicWeight * literalWeight;
-    assert weight >= 0;
-
-    //    Randomness.selectionLog.log(
-    //        "processWeights(%s): weight %s, defaultWeight %s, dynamicWeight %s, literalWeight %s%n",
-    //        eSeq, weight, defaultWeight, dynamicWeight, literalWeight);
-
-    weightMap.put(eSeq.sequence, weight); // update the final weight for this sequence
+    double weight = eSeq.sequence.getWeight() * literalWeight;
+    weightMap.put(eSeq.sequence, weight);
   }
 
   @Override

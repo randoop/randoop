@@ -52,11 +52,12 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
                     TypedOperation.createNonreceiverInitialization(term),
                     new ArrayList<Variable>());
         literalMap.add(constantType, seq);
-        if (literalsTermFrequency.containsKey(seq)) {
-          literalsTermFrequency.put(seq, literalsTermFrequency.get(seq) + 1);
-        } else {
-          literalsTermFrequency.put(seq, 1);
+        // Increment the count of this sequence in the literalsTermFrequency map.
+        Integer frequency = literalsTermFrequency.get(seq);
+        if (frequency == null) {
+          frequency = 0;
         }
+        literalsTermFrequency.put(seq, frequency + 1);
       }
     }
   }

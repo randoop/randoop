@@ -515,6 +515,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("What probability to select only extracted literals")
   public static double p_const = .01;
 
+  @Unpublicized
+  @Option("Use values that are extracted from classes under test")
+  public static boolean enable_constant_mining = false;
+
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
   // the length of the string that will atually be printed out as code.

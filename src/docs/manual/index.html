@@ -1129,11 +1129,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  at most once as an argument in a method call. A ratio of 1 tries to maximize the number of
  times values are used as inputs to parameters within a test. [default 0.0]
             <li id="option:small-tests"><b>--small-tests=</b><i>boolean</i>.
-             Favor shorter sequences when assembling new sequences out of old ones. Randoop already favors
- shorter sequences by default while striving for higher coverage, but this option may be
- beneficial in some cases.
+            Favor shorter sequences when assembling new sequences out of old ones.
 
- <p>Randoop generates new tests by combining old previously-generated tests. If this option is
+        <p>Randoop generates new tests by combining old previously-generated tests. If this option is
  given, tests with fewer calls are given greater weight during its random selection. This has
  the overall effect of producing smaller JUnit tests. [default false]
             <li id="option:clear"><b>--clear=</b><i>int</i>.
