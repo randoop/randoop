@@ -7,7 +7,7 @@ import static randoop.main.GenInputsAbstract.methodlist;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -66,7 +66,7 @@ public class CoveredClassTest {
   public void testNoFilter() {
     System.out.println("no filter");
 
-    GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
+    GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = null;
     GenInputsAbstract.require_covered_classes = null;
     // setup classes
@@ -106,7 +106,7 @@ public class CoveredClassTest {
   @Test
   public void testNameFilter() {
     System.out.println("name filter");
-    GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
+    GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); // null;
     GenInputsAbstract.require_covered_classes =
         null; // "tests/instrument/testcase/coveredclasses.txt";
@@ -147,9 +147,9 @@ public class CoveredClassTest {
   @Test
   public void testCoverageFilter() {
     System.out.println("coverage filter");
-    GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
+    GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = null;
-    GenInputsAbstract.require_covered_classes = new File("instrument/testcase/coveredclasses.txt");
+    GenInputsAbstract.require_covered_classes = Paths.get("instrument/testcase/coveredclasses.txt");
     // setup classes
 
     ForwardGenerator testGenerator = getGeneratorForTest();

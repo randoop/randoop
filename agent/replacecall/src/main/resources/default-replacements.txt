@@ -7,9 +7,6 @@ java.lang randoop.mock.java.lang
 java.awt randoop.mock.java.awt
 javax.swing randoop.mock.javax.swing
 
-// Replacements to instance method calls of java.util.Random.
-java.util.Random randoop.mock.java.util.MockRandom
-// Currently, the replacecalls agent cannot replace constructors.
-// This can be reinstated, and the replacements for all the methods of
-// Random removed, when replacecalls can handle constructors.
-// java.util.Random.<init>() randoop.mock.java.util.RandomReplace.randomWithSeedZero()
+// Replacements for java.util.Random.
+// Make Random deterministic by using a random seed of 0 if no seed was supplied.
+java.util.Random.<init>() randoop.mock.java.util.RandomReplace.randomWithSeedZero()

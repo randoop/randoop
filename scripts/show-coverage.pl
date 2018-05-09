@@ -108,17 +108,23 @@ my $filename = 'build/reports/jacoco/test/jacocoTestReport.xml';
         print "name    covered   lines    coverage", "\n";
 
         my $element;
+        my $name;
+        my @output;
+        my $index = 0;
         for my $i (0 .. $#xml_lines) {
             $element = $xml_lines[$i];
             if (substr($element, 0, length("package")) eq "package") {
                 @fields = split(/"/, $element);
-                print $fields[1];
+                $name = $fields[1];
             } elsif (substr($element, 0, length("/package")) eq "/package") {
                 @fields = split(/"/, $xml_lines[$i-4]);
                 $tot_exec = $fields[5];
                 $tot_line = $fields[3] + $tot_exec;
-                printf(" %d %d %.2f\n", $tot_exec, $tot_line, $tot_exec/$tot_line);
+                $output[$index++] = sprintf("%s: %d %d %.2f\n", $name, $tot_exec, $tot_line, $tot_exec/$tot_line);
             }
+        }
+        foreach (sort(@output)) {
+            print $_
         }
     }
 

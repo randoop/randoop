@@ -20,9 +20,20 @@ public final class Log {
   /**
    * Log to GenInputsAbstract.log, if that is non-null.
    *
+   * <p>This is private because it is better to use {@link #logPrintf} than to call {@code log} with
+   * a concatenation. In other words:
+   *
+   * <pre>{@code
+   * log("arg1=" + arg1);      // BAD
+   * logPrintf("arg1=%s", arg1); // GOOD
+   * }</pre>
+   *
+   * The reason is that if {@code arg1.toString()} fails, {@code #logPrintf} can catch that
+   * exception, but the exception would occur before {@code logLine} is entered.
+   *
    * @param s the string to output
    */
-  public static void log(String s) {
+  private static void log(String s) {
     if (!isLoggingOn()) {
       return;
     }
@@ -38,13 +49,20 @@ public final class Log {
   /**
    * Log to GenInputsAbstract.log, if that is non-null.
    *
+   * <p>This is private because it is better to use {@link #logPrintf} than to call {@code logLine}
+   * with a concatenation. In other words:
+   *
+   * <pre>{@code
+   * logLine("arg1=" + arg1);      // BAD
+   * logPrintf("arg1=%s%n", arg1); // GOOD
+   * }</pre>
+   *
+   * The reason is that if {@code arg1.toString()} fails, {@code #logPrintf} can catch that
+   * exception, but the exception would occur before {@code logLine} is entered.
+   *
    * @param s the string to output (followed by a newline)
    */
-  public static void logLine(String s) {
-    if (!isLoggingOn()) {
-      return;
-    }
-
+  private static void logLine(String s) {
     try {
       GenInputsAbstract.log.write(s);
       GenInputsAbstract.log.write(Globals.lineSep);
@@ -65,8 +83,17 @@ public final class Log {
       return;
     }
 
+    String msg;
     try {
-      GenInputsAbstract.log.write(String.format(fmt, args));
+      msg = String.format(fmt, args);
+    } catch (Throwable t) {
+      logPrintf("A user-defined toString() method failed.%n");
+      logStackTrace(t);
+      return;
+    }
+
+    try {
+      GenInputsAbstract.log.write(msg);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
       throw new BugInRandoopException("Exception while writing to log", e);

@@ -1,21 +1,20 @@
 package randoop.instrument;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.instrument.Instrumentation;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.EntryReader;
@@ -64,12 +63,12 @@ public class ReplaceCallAgent {
   /** The file from which to read the user replacements for replacing calls. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing methods whose calls to replace by substitute methods")
-  public static File replacement_file = null;
+  public static Path replacement_file = null;
 
   /** Exclude transformation of classes in the the listed packages. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing packages whose classes should not be transformed")
-  public static File dont_transform = null;
+  public static Path dont_transform = null;
 
   /**
    * Entry point of the replacecall Java agent. Initializes the {@link CallReplacementTransformer}
@@ -125,22 +124,23 @@ public class ReplaceCallAgent {
       if (dont_transform != null) {
         try {
           excludedPackagePrefixes.addAll(
-              loadExclusions(new FileReader(dont_transform), dont_transform.getName()));
+              loadExclusions(
+                  Files.newBufferedReader(dont_transform, StandardCharsets.UTF_8),
+                  dont_transform.toString()));
         } catch (IOException e) {
           System.err.format(
               "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
           System.exit(1); // Exit on user input error. (Throwing exception would halt JVM.)
         }
         // Get path for exclusions file to use in argument string given to Randoop
-        exclusionFilePath = dont_transform.toPath();
+        exclusionFilePath = dont_transform;
       }
 
       /*
        * The agent is called when classes are loaded. If Randoop is using threads, this can result
        * in multiple threads accessing the map to apply replacements.
        */
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap =
-          new ConcurrentHashMap<>();
+      HashMap<MethodSignature, MethodSignature> replacementMap;
 
       // Read the default replacement file
       String replacementPath = "/default-replacements.txt";
@@ -168,7 +168,7 @@ public class ReplaceCallAgent {
           System.exit(1);
         }
         // Get path for replacement file to use in argument string given to Randoop.
-        replacementFilePath = replacement_file.toPath();
+        replacementFilePath = replacement_file;
       }
 
       /*
@@ -242,7 +242,7 @@ public class ReplaceCallAgent {
    */
   private static String getAgentPath() throws BugInAgentException {
     String bootclasspath = System.getProperty("sun.boot.class.path");
-    String[] paths = bootclasspath.split(File.pathSeparator);
+    String[] paths = bootclasspath.split(java.io.File.pathSeparator);
     for (String path : paths) {
       if (path.contains(AGENT_NAME)) {
         return path;

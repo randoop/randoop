@@ -1,6 +1,6 @@
 package randoop.runtime;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,13 +9,13 @@ public class ErrorRevealed implements IMessage {
 
   public final String testCode;
   public final String description;
-  public final File junitFile;
+  public final Path junitFile;
 
   // Unmodifiable collection.
   public final List<String> failingClassNames;
 
   public ErrorRevealed(
-      String testCode, String description, List<String> failingClassNames, File junitFile) {
+      String testCode, String description, List<String> failingClassNames, Path junitFile) {
     this.testCode = testCode;
     this.description = description;
     this.failingClassNames = Collections.unmodifiableList(new ArrayList<>(failingClassNames));

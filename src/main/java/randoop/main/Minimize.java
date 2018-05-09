@@ -32,11 +32,12 @@ import com.github.javaparser.ast.type.Type;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -165,33 +166,33 @@ public class Minimize extends CommandHandler {
     try {
       String[] nonargs = foptions.parse(args);
       if (nonargs.length > 0) {
-        throw new Options.ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
+        throw new RandoopCommandError("Unrecognized arguments: " + Arrays.toString(nonargs));
       }
     } catch (Options.ArgException ae) {
-      throw new RandoopUsageError(ae.getMessage());
+      throw new RandoopCommandError(ae.getMessage());
     }
 
     if (Minimize.suitepath == null) {
-      throw new RandoopUsageError("Use --suitepath to specify a file to be minimized.");
+      throw new RandoopCommandError("Use --suitepath to specify a file to be minimized.");
     }
 
     // Check that the input file is a Java file.
     if (!FilenameUtils.getExtension(Minimize.suitepath).equals("java")) {
-      throw new RandoopUsageError("The input file must be a Java file: " + Minimize.suitepath);
+      throw new RandoopCommandError("The input file must be a Java file: " + Minimize.suitepath);
     }
 
     if (Minimize.testsuitetimeout <= 0) {
-      throw new RandoopUsageError(
+      throw new RandoopCommandError(
           "Timout must be positive, was given as " + Minimize.testsuitetimeout + ".");
     }
 
     if (Minimize.minimizetimeout <= 0) {
-      throw new RandoopUsageError(
+      throw new RandoopCommandError(
           "Minimizer timout must be positive, was given as " + Minimize.minimizetimeout + ".");
     }
 
     // File object pointing to the file to be minimized.
-    final File originalFile = new File(suitepath);
+    final Path originalFile = Paths.get(suitepath);
 
     ExecutorService executor = Executors.newFixedThreadPool(1);
     Future<Boolean> future =
@@ -258,8 +259,8 @@ public class Minimize extends CommandHandler {
    * @throws IOException if write to file fails
    */
   public static boolean mainMinimize(
-      File file, String classPath, int timeoutLimit, boolean verboseOutput) throws IOException {
-    System.out.println("Minimizing: " + file.getName() + ".");
+      Path file, String classPath, int timeoutLimit, boolean verboseOutput) throws IOException {
+    System.out.println("Minimizing: " + file + ".");
 
     if (verboseOutput) {
       System.out.println("Reading and parsing file.");
@@ -267,7 +268,7 @@ public class Minimize extends CommandHandler {
 
     // Read and parse input Java file.
     CompilationUnit compilationUnit;
-    try (FileInputStream inputStream = new FileInputStream(file)) {
+    try (FileInputStream inputStream = new FileInputStream(file.toFile())) {
       compilationUnit = JavaParser.parse(inputStream);
     } catch (ParseException e) {
       System.err.println("Error parsing Java file: " + file);
@@ -295,13 +296,13 @@ public class Minimize extends CommandHandler {
 
     // Create a new file; the file and the class within will have
     // "Minimized" postpended.
-    String fileNameStr = file.getAbsolutePath();
+    String fileNameStr = file.toAbsolutePath().toString();
     String minimizedFileName =
         new StringBuilder(fileNameStr).insert(fileNameStr.lastIndexOf('.'), SUFFIX).toString();
-    File minimizedFile = new File(minimizedFileName);
+    Path minimizedFile = Paths.get(minimizedFileName);
 
     // Rename the overall class to [original class name][suffix].
-    String origClassName = FilenameUtils.removeExtension(file.getName());
+    String origClassName = FilenameUtils.getBaseName(file.toString());
     new ClassRenamingVisitor().visit(compilationUnit, new String[] {origClassName, SUFFIX});
 
     // Write the compilation unit to the minimized file.
@@ -365,7 +366,7 @@ public class Minimize extends CommandHandler {
   private static void minimizeTestSuite(
       CompilationUnit compilationUnit,
       String packageName,
-      File file,
+      Path file,
       String classpath,
       Map<String, String> expectedOutput,
       int timeoutLimit,
@@ -433,7 +434,7 @@ public class Minimize extends CommandHandler {
       MethodDeclaration method,
       CompilationUnit compilationUnit,
       String packageName,
-      File file,
+      Path file,
       String classpath,
       Map<String, String> expectedOutput,
       int timeoutLimit)
@@ -813,7 +814,7 @@ public class Minimize extends CommandHandler {
   private static CompilationUnit simplifyTypeNames(
       CompilationUnit compilationUnit,
       String packageName,
-      File file,
+      Path file,
       String classpath,
       Map<String, String> expectedOutput,
       int timeoutLimit,
@@ -879,7 +880,7 @@ public class Minimize extends CommandHandler {
    *     expected output
    */
   private static boolean checkCorrectlyMinimized(
-      File file,
+      Path file,
       String classpath,
       String packageName,
       Map<String, String> expectedOutput,
@@ -907,9 +908,9 @@ public class Minimize extends CommandHandler {
    * @return exit value of compiling the Java file
    */
   private static int compileJavaFile(
-      File file, String classpath, String packageName, int timeoutLimit) {
+      Path file, String classpath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
-    File executionDir = getExecutionDirectory(file, packageName);
+    Path executionDir = getExecutionDirectory(file, packageName);
 
     // Command to compile the input Java file.
     String command = "javac -classpath " + SYSTEM_CLASS_PATH;
@@ -920,7 +921,7 @@ public class Minimize extends CommandHandler {
       command += PATH_SEPARATOR + classpath;
     }
 
-    command += " " + file.getAbsolutePath();
+    command += " " + file.toAbsolutePath().toString();
 
     // Compile specified Java file.
     return runProcess(command, executionDir, timeoutLimit).exitValue;
@@ -936,14 +937,14 @@ public class Minimize extends CommandHandler {
    * @return standard output from running the Java file
    */
   private static String runJavaFile(
-      File file, String userClassPath, String packageName, int timeoutLimit) {
+      Path file, String userClassPath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
-    File executionDir = getExecutionDirectory(file, packageName);
+    Path executionDir = getExecutionDirectory(file, packageName);
 
     // Directory path for the classpath.
     String dirPath = ".";
-    if (file.getParentFile() != null) {
-      dirPath += PATH_SEPARATOR + file.getParentFile().getPath();
+    if (file.getParent() != null) {
+      dirPath += PATH_SEPARATOR + file.getParent();
     }
 
     // Classpath for running the Java file.
@@ -953,7 +954,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Fully-qualified classname.
-    String fqClassName = FilenameUtils.removeExtension(file.getName());
+    String fqClassName = FilenameUtils.getBaseName(file.toString());
     if (packageName != null) {
       fqClassName = packageName + "." + fqClassName;
     }
@@ -965,7 +966,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Get directory to execute command in, given file path and package name. Returns a {@code File}
+   * Get directory to execute command in, given file path and package name. Returns a {@code Path}
    * pointing to the directory that the Java file should be executed in.
    *
    * <p>For the simplest case where the Java file is nested in a single package layer, i.e.
@@ -980,7 +981,7 @@ public class Minimize extends CommandHandler {
    * @param packageName package name of input Java file
    * @return the directory to execute the commands in, or null if packageName is null
    */
-  private static File getExecutionDirectory(File file, String packageName) {
+  private static Path getExecutionDirectory(Path file, String packageName) {
     if (packageName == null) {
       return null;
     }
@@ -990,7 +991,7 @@ public class Minimize extends CommandHandler {
     // layer of packaging.
     int foldersAbove = StringUtils.countMatches(packageName, ".") + 2;
     for (int i = 0; i < foldersAbove; i++) {
-      file = file.getParentFile();
+      file = file.getParent();
     }
 
     // Return the directory.
@@ -1005,7 +1006,7 @@ public class Minimize extends CommandHandler {
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return an {@code Outputs} object containing the standard and error output
    */
-  private static Outputs runProcess(String command, File executionDir, int timeoutLimit) {
+  private static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
     if (executionDir != null && executionDir.toString().isEmpty()) {
       // Execute command in the default directory.
       executionDir = null;
@@ -1018,7 +1019,7 @@ public class Minimize extends CommandHandler {
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
     DefaultExecutor executor = new DefaultExecutor();
     if (executionDir != null) {
-      executor.setWorkingDirectory(executionDir);
+      executor.setWorkingDirectory(executionDir.toFile());
     }
 
     ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000);
@@ -1137,9 +1138,9 @@ public class Minimize extends CommandHandler {
    * @param file file to write to
    * @throws IOException thrown if write to file fails
    */
-  private static void writeToFile(CompilationUnit compilationUnit, File file) throws IOException {
+  private static void writeToFile(CompilationUnit compilationUnit, Path file) throws IOException {
     // Write the compilation unit to the file.
-    try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), UTF_8)) {
+    try (BufferedWriter bw = Files.newBufferedWriter(file, UTF_8)) {
       bw.write(compilationUnit.toString());
     }
   }
@@ -1245,10 +1246,10 @@ public class Minimize extends CommandHandler {
    *     file
    * @throws IOException thrown if error reading file
    */
-  private static int getFileLength(File file) throws IOException {
+  private static int getFileLength(Path file) throws IOException {
     int lines = 0;
 
-    try (BufferedReader reader = Files.newBufferedReader(file.toPath(), UTF_8)) {
+    try (BufferedReader reader = Files.newBufferedReader(file, UTF_8)) {
       // Read and count the number of lines in the file.
       while (reader.readLine() != null) {
         lines++;
@@ -1264,14 +1265,14 @@ public class Minimize extends CommandHandler {
    * @param outputFile the source file for the class file to be removed
    * @param verboseOutput whether to print information about minimization status
    */
-  private static void cleanUp(File outputFile, boolean verboseOutput) {
+  private static void cleanUp(Path outputFile, boolean verboseOutput) {
     System.out.println("Minimizing complete.");
 
     String outputClassFileStr =
-        FilenameUtils.removeExtension(outputFile.getAbsolutePath()).concat(".class");
-    File outputClassFile = new File(outputClassFileStr);
+        FilenameUtils.removeExtension(outputFile.toAbsolutePath().toString()).concat(".class");
+    Path outputClassFile = Paths.get(outputClassFileStr);
     try {
-      boolean success = Files.deleteIfExists(outputClassFile.toPath());
+      boolean success = Files.deleteIfExists(outputClassFile);
 
       if (verboseOutput && success) {
         System.out.println("Minimizer cleanup: Removed .class file.");

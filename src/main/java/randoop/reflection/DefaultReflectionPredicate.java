@@ -11,9 +11,9 @@ import randoop.CheckRep;
 import randoop.util.Log;
 
 /**
- * Default implementations of methods that indicate whether a class, method, constructor, or field
- * should be used in Randoop's exploration. Returns true for public members, with some exceptions
- * (see {@link #doNotUseSpecialCase} method).
+ * Default implementations of methods that indicate what is "under test": whether a class, method,
+ * constructor, or field should be used in Randoop's exploration. Returns true for public members,
+ * with some exceptions (see {@link #doNotUseSpecialCase} method).
  *
  * <p>If a method has the {@code @CheckRep} annotation, returns false (the method will be used as a
  * contract checker, not as a method under test).
@@ -70,10 +70,8 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
         && paramTypes.length == 1
         && paramTypes[0].isArray()
         && paramTypes[0].getComponentType().equals(String.class)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: main method not applicable to unit testing.");
-      }
+      // Main method is not applicable to unit testing.
+      Log.logPrintf("Will not use main method: %s%n", m);
       return false;
     }
 
@@ -81,20 +79,16 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       if (discardBridge(m)) {
         return false;
       } else {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Using visibility bridge method: " + m.toString());
-        }
+        Log.logPrintf("Using visibility bridge method: %s%n", m);
       }
     }
 
     if (!m.isBridge() && m.isSynthetic()) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: it's a synthetic method");
-      }
+      Log.logPrintf("Will not use synthetic method: %s%n", m);
       return false;
     }
 
+    // Always consider Object.getClass to be under test (even if not specified by user).
     // This is a special case handled here to avoid printing the reason for exclusion.
     // Most Object methods are excluded. Allow getClass. Equals is used in contracts.
     // The rest are problematic (toString), involve threads, waiting, or are somehow problematic.
@@ -113,10 +107,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
     String reason = doNotUseSpecialCase(m);
     if (reason != null) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: " + reason);
-      }
+      Log.logPrintf("Will not use: %s%n  reason: %s%n", m, reason);
       return false;
     }
 
@@ -154,10 +145,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    */
   private boolean discardBridge(Method m) {
     if (!isVisibilityBridge(m)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: it's a bridge method");
-      }
+      Log.logPrintf("Will not use bridge method: %s%n", m);
       return true;
     } else if (m.getDeclaringClass().isAnonymousClass()
         && m.getDeclaringClass().getEnclosingClass() != null
@@ -303,23 +291,15 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     String name = f.getDeclaringClass().getName() + "." + f.getName();
 
     if (omitFields == null) { // No omitFields were given
-      if (Log.isLoggingOn()) {
-        Log.logLine(String.format("Field '%s' included, no omit-field arguments", name));
-      }
+      Log.logPrintf("Field '%s' included, no omit-field arguments%n", name);
       return true;
     }
 
     boolean result = !omitFields.contains(name);
-    if (Log.isLoggingOn()) {
-      if (result) {
-        if (Log.isLoggingOn()) {
-          Log.logLine(String.format("Field '%s' does not match omit-field, including field", name));
-        }
-      } else {
-        if (Log.isLoggingOn()) {
-          Log.logLine(String.format("Field '%s' matches omit-field, not including field", name));
-        }
-      }
+    if (result) {
+      Log.logPrintf("Field '%s' does not match omit-field, including field%n", name);
+    } else {
+      Log.logPrintf("Field '%s' matches omit-field, not including field%n", name);
     }
     return result;
   }

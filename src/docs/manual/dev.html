@@ -161,7 +161,7 @@ you will never run a task that calls html5validator.
     <td>to compile and build Randoop and fat jar files</td>
   </tr>
   <tr>
-    <td><code>./gradlew singleJar</code></td>
+    <td><code>./gradlew shadowJar</code></td>
     <td>to build the "user" jar including all library dependencies
   </tr>
   <tr>
@@ -306,6 +306,7 @@ option on the command line.
 For instance,
 </p>
 <pre><code>    ./gradlew test --tests="*GenericTypesTest"
+    # Don't include "run" in the test name.
     ./gradlew systemtest --tests="*Collection*"
 </code></pre>
 
@@ -805,7 +806,8 @@ double-check all changes.
         in files <code>init.sh</code> and <code>framework/test/README.md</code>.
       </li>
       <li>
-        MUSE.  Update the <code>integration-test2</code> repository and
+        MUSE.  Update the <code>integration-test2</code> repository
+        (the version number appears twice in the URL) and
         optionally the <code>pascali-coverage</code> repository
         (documentation only).
       </li>

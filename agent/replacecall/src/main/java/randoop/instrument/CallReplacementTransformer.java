@@ -1,18 +1,20 @@
 package randoop.instrument;
 
-//import java.io.File;
 import java.io.ByteArrayInputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.nio.file.Path;
 import java.security.ProtectionDomain;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.CPInstruction;
 import org.apache.bcel.generic.ClassGen;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionFactory;
@@ -20,6 +22,7 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.MethodGen;
+import org.apache.bcel.generic.NEW;
 import org.apache.bcel.generic.Type;
 import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.bcelutil.InstructionListUtils;
@@ -37,23 +40,19 @@ public class CallReplacementTransformer extends InstructionListUtils
   /** Debug information about which classes are transformed and why */
   private static SimpleLog debug_transform =
       new SimpleLog(
-          //ReplaceCallAgent.debugPath + File.separator + "transform-log.txt", ReplaceCallAgent.debug);
-          false);
-
-  /** Debug information for instrumentation. */
-  private static SimpleLog debug_instrument_inst =
-      new SimpleLog(
-          //ReplaceCallAgent.debugPath + File.separator + "instrument-log.txt", ReplaceCallAgent.debug);
+          //ReplaceCallAgent.debugPath + File.separator + "replacecall-transform-log.txt", ReplaceCallAgent.debug);
           false);
 
   /** Debug information on method mapping. */
   private static SimpleLog debug_map =
       new SimpleLog(
-          //ReplaceCallAgent.debugPath + File.separator + "method_mapping.txt", ReplaceCallAgent.debug);
+          //ReplaceCallAgent.debugPath + File.separator + "replacecall-method_mapping.txt", ReplaceCallAgent.debug);
           false);
 
+  // debug_instrument field is defined in InstructionListUtils.
+
   /** Map from a method to its replacement. */
-  private final ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap;
+  private final HashMap<MethodSignature, MethodSignature> replacementMap;
 
   /** The list of package prefixes (package name + ".") to exclude from transformation. */
   private final Set<String> excludedPackagePrefixes;
@@ -62,18 +61,16 @@ public class CallReplacementTransformer extends InstructionListUtils
    * Create a {@link CallReplacementTransformer} that transforms method calls in classes other than
    * those named in the given exclusion set.
    *
-   * <p>The transformer can be run by multiple threads, so the replacement maps use concurrent
-   * implementations.
-   *
-   * @param replacementMap the concurrent hash map with method replacements
+   * @param replacementMap the hash map with method replacements
    * @param excludedPackagePrefixes the period-terminated prefixes for packages from which classes
    *     should not be transformed
    */
   CallReplacementTransformer(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      HashMap<MethodSignature, MethodSignature> replacementMap,
       Set<String> excludedPackagePrefixes) {
     this.replacementMap = replacementMap;
     this.excludedPackagePrefixes = excludedPackagePrefixes;
+    //debug_instrument.enabled = ReplaceCallAgent.debug;
   }
 
   /**
@@ -107,7 +104,7 @@ public class CallReplacementTransformer extends InstructionListUtils
       return null;
     }
 
-    debug_transform.log("%ntransform: ENTER %s%n", className);
+    debug_transform.log("%ntransform class: ENTER %s%n", className);
 
     // Parse the bytes of the classfile
     JavaClass c;
@@ -195,6 +192,18 @@ public class CallReplacementTransformer extends InstructionListUtils
     return false;
   }
 
+  private static class NewInstInfo {
+    InstructionHandle new_inst;
+    String new_class;
+
+    public NewInstInfo(InstructionHandle new_inst, String new_class) {
+      this.new_inst = new_inst;
+      this.new_class = new_class;
+    }
+  }
+
+  private Deque<NewInstInfo> new_inst_stack = new ArrayDeque<NewInstInfo>();
+
   /**
    * Processes each method in the given class replacing any specified calls. The replacements are
    * static methods.
@@ -216,8 +225,11 @@ public class CallReplacementTransformer extends InstructionListUtils
         // The class data in StackMapUtils is not thread safe,
         // allow only one method at a time to be instrumented.
         synchronized (this) {
+          new_inst_stack.clear();
           pool = cg.getConstantPool();
           MethodGen mg = new MethodGen(method, cg.getClassName(), pool);
+
+          debug_transform.log("%ntransform method: ENTER %s%n", mg.getName());
 
           // Get the instruction list and skip methods with no instructions
           InstructionList il = mg.getInstructionList();
@@ -225,16 +237,16 @@ public class CallReplacementTransformer extends InstructionListUtils
             continue;
           }
 
-          debug_instrument_inst.log(
-              "%s.%s original code: %s%n%n",
-              mg.getClassName(), mg.getName(), mg.getMethod().getCode());
+          boolean save_debug = debug_instrument.enabled;
+          debug_instrument.enabled = false;
 
           // Prepare method for instrumentation.
           fetch_current_stack_map_table(mg, cg.getMajor());
           build_unitialized_NEW_map(il);
           fix_local_variable_table(mg);
+          debug_instrument.enabled = save_debug;
 
-          if (transformMethod(mg, ifact)) {
+          if (transformMethod(cg, mg, ifact)) {
             transformed = true;
           } else {
             continue;
@@ -268,7 +280,7 @@ public class CallReplacementTransformer extends InstructionListUtils
             }
           }
 
-          debug_instrument_inst.log(
+          debug_instrument.log(
               "%n%s.%s modified code: %s%n%n",
               mg.getClassName(), mg.getName(), mg.getMethod().getCode());
           cg.update();
@@ -285,40 +297,36 @@ public class CallReplacementTransformer extends InstructionListUtils
   /**
    * Transforms the specified method to replace mapped calls.
    *
+   * @param cg the class generator
    * @param mg the method generator
    * @param ifact the instrument factory for the enclosing class of this method
    * @return true if the method was modified, false otherwise
    * @throws IllegalClassFormatException if an unexpected instruction is found where an invoke is
    *     expected
    */
-  private boolean transformMethod(MethodGen mg, InstructionFactory ifact)
+  private boolean transformMethod(ClassGen cg, MethodGen mg, InstructionFactory ifact)
       throws IllegalClassFormatException {
     InstructionList il = mg.getInstructionList();
-    InstructionHandle instructionHandle = il.getStart();
+    InstructionHandle ih = il.getStart();
 
     // Have we modified this method?
     boolean transformed = false;
 
     // Loop through each instruction, making substitutions
-    while (instructionHandle != null) {
+    while (ih != null) {
 
       // The next instruction for next iteration
-      InstructionHandle nextHandle = instructionHandle.getNext();
+      InstructionHandle nextHandle = ih.getNext();
 
-      InvokeInstruction instruction = getReplacementInstruction(mg, ifact, instructionHandle);
+      InstructionList new_il = getReplacementInstruction(cg, mg, ifact, ih);
 
-      if (instruction != null) {
-        debug_instrument_inst.log(
-            "%s.%s: instrumenting instruction %s%n",
-            mg.getClassName(), mg.getName(), instructionHandle);
-        debug_instrument_inst.log(
-            " %s.%s new inst: %s%n", mg.getClassName(), mg.getName(), instruction);
-
+      if (new_il != null) {
+        debug_instrument.log("%s.%s:%n", mg.getClassName(), mg.getName());
         transformed = true;
-        instructionHandle.setInstruction(instruction);
+        replace_instructions(mg, il, ih, new_il);
       }
 
-      instructionHandle = nextHandle;
+      ih = nextHandle;
     }
     return transformed;
   }
@@ -326,18 +334,27 @@ public class CallReplacementTransformer extends InstructionListUtils
   /**
    * Returns the instruction to call a replacement method instead of the original method.
    *
+   * @param cg the BCEL representation of the class being transformed
    * @param mg the BCEL representation of the method being transformed
    * @param ifact the instrument factory for the enclosing class of this instruction
    * @param ih the handle of the instruction to replace
-   * @return the new instruction, or null if the instruction has no replacement
+   * @return replacement instruction list, or null if the instruction has no replacement
    * @throws IllegalClassFormatException if an unexpected instruction is found where an invoke is
    *     expected
    */
-  private InvokeInstruction getReplacementInstruction(
-      MethodGen mg, InstructionFactory ifact, InstructionHandle ih)
+  private InstructionList getReplacementInstruction(
+      ClassGen cg, MethodGen mg, InstructionFactory ifact, InstructionHandle ih)
       throws IllegalClassFormatException {
 
     Instruction inst = ih.getInstruction();
+    if ((inst instanceof NEW)) {
+      // save info on stack
+      String new_class = (((CPInstruction) ih.getInstruction()).getType(pool)).toString();
+      new_inst_stack.push(new NewInstInfo(ih, new_class));
+      // but no replacement instruction
+      return null;
+    }
+
     if (!(inst instanceof InvokeInstruction)) {
       return null;
     }
@@ -345,15 +362,94 @@ public class CallReplacementTransformer extends InstructionListUtils
     InvokeInstruction origInvocation = (InvokeInstruction) inst;
     MethodSignature origSig = MethodSignature.of(origInvocation, pool);
     MethodSignature newSig = replacementMap.get(origSig);
+
+    String super_class_name = cg.getSuperclassName();
+    String class_name = cg.getClassName();
+    String method_name = mg.getName();
+    String invoke_class = origSig.getClassname();
+    String invoke_method = origSig.getName();
+
+    //debug_transform.log("invoke_target: %s, invoke_class: %s, invoke_method: %s%n",
+    //    invoke_target, invoke_class, invoke_method);
+    //debug_transform.log("super: %s, host: %s.%s, target: %s%n", super_class_name, class_name, method_name, invoke_target);
+
     if (newSig == null) {
-      debug_transform.log(
-          "%s.%s: No replacement for %s%n", mg.getClassName(), mg.getName(), origSig.toString());
+      debug_transform.log("%s.%s: No replacement for %s%n", class_name, method_name, origSig);
+      // if this is an invoke of an <init> method, we need to pop the top entry of the new_inst_stack
+      if (invoke_method.equals("<init>")) {
+        if (method_name.equals("<init>")) {
+          if (invoke_class.equals(class_name)) {
+            // There is no matching NEW for a call to this().<init>.
+            return null;
+          }
+          if (invoke_class.equals(super_class_name)) {
+            // There is no matching NEW for a call to super().<init>.
+            return null;
+          }
+        }
+        NewInstInfo top = new_inst_stack.pop();
+        if (!invoke_class.equals(top.new_class)) {
+          throw new IllegalClassFormatException(
+              "Type of NEW object and <init> method do not match.");
+        }
+      }
+      // no replacement instruction
       return null;
     }
 
+    // The code generated by the Java compiler for invoking a constructor
+    // follows this general pattern:
+    //
+    //      new    <{name of object}>
+    //      dup
+    //      {code to setup any arguments to the constructor}
+    //      invokespecial {name of object}.<init>
+    //
+    // The object created by the new instruction has not been initialized
+    // until the constructor completes.  If we simply replace the constructor
+    // call with a call to a replacement method, the JVM will fault on the
+    // uninitialized object reference.  So we must delete the new and dup
+    // instructions and have the replacement constructor supply a new object
+    // reference.
+    //
+    // The following code first checks to see if the user code is calling either
+    // this().<init> or super().<init>.  If so, there is no matching new/dup
+    // pair and we will not modify the instruction.  Otherwise, we pop the top
+    // entry off the new_inst_stack, verify the class types match, and use the
+    // instruction handle to delete the new/dup pair.
+    // It is a fatal error if the class types do not match.
+
+    boolean new_dup_removed = false;
+    if (invoke_method.equals("<init>")) {
+      if (method_name.equals("<init>")) {
+        if (invoke_class.equals(class_name)) {
+          debug_transform.log(
+              "%s.%s: Do not modify call to this().<init>%n", class_name, method_name);
+          return null;
+        }
+        if (invoke_class.equals(super_class_name)) {
+          debug_transform.log(
+              "%s.%s: Do not modify call to super().<init>%n", class_name, method_name);
+          return null;
+        }
+      }
+
+      // get the matching new instruction information
+      NewInstInfo top = new_inst_stack.pop();
+      if (!invoke_class.equals(top.new_class)) {
+        throw new IllegalClassFormatException("Type of NEW object and <init> method do not match.");
+      }
+      // verify the next instruction after the new is a dup
+      if (top.new_inst.getNext().getInstruction().getOpcode() != Const.DUP) {
+        // oops; we expect NEW to be immediatly followed by DUP
+        throw new IllegalClassFormatException("Unable to find NEW DUP pair.");
+      }
+      delete_instructions(mg, top.new_inst, top.new_inst.getNext());
+      new_dup_removed = true;
+    }
+
     debug_transform.log(
-        "%s.%s: Replacing method %s with %s%n",
-        mg.getClassName(), mg.getName(), origSig.toString(), newSig);
+        "%s.%s: Replacing method %s with %s%n", class_name, method_name, origSig, newSig);
 
     InvokeInstruction newInvocation;
 
@@ -361,28 +457,35 @@ public class CallReplacementTransformer extends InstructionListUtils
       case Const.INVOKEINTERFACE:
       case Const.INVOKESPECIAL:
       case Const.INVOKEVIRTUAL:
-        // TODO: I am not confident that these always have an implicit receiver.
-        // Constructors (invokespecial) usually don't have one.
-        // Maybe interface methods can now be static too?
-        // It seems that a more correct implementation would be to check whether there is
-        // a receiver, and if so to change the signature as below.
-        /*
-         * These calls have an implicit receiver ({@code this}) argument. Since the conversion is
-         * to a static call, the receiver type is inserted at the beginning of the argument type
-         * array. This argument has already been explicitly pushed onto the stack, so modifying the
-         * call signature is enough.
-         */
         Type instanceType = origInvocation.getReferenceType(pool);
-        Type[] arguments =
-            BcelUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pool));
-        newInvocation =
-            ifact.createInvoke(
-                newSig.getClassname(),
-                newSig.getName(),
-                origInvocation.getReturnType(pool),
-                arguments,
-                Const.INVOKESTATIC);
+        if (new_dup_removed) {
+          // We are calling an <init> method replacement.  Use the same argument list as
+          // the original call, but instead of a void return, the replacement will return
+          // the object type. (As a replacement for the NEW we deleted earlier.)
+          newInvocation =
+              ifact.createInvoke(
+                  newSig.getClassname(),
+                  newSig.getName(),
+                  instanceType,
+                  origInvocation.getArgumentTypes(pool),
+                  Const.INVOKESTATIC);
+        } else {
+          // These calls have an implicit receiver ({@code this}) argument. Since the conversion is
+          // to a static call, the receiver type is inserted at the beginning of the argument type
+          // array. This argument has already been explicitly pushed onto the stack, so modifying the
+          // call signature is enough.
+          Type[] arguments =
+              BcelUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pool));
+          newInvocation =
+              ifact.createInvoke(
+                  newSig.getClassname(),
+                  newSig.getName(),
+                  origInvocation.getReturnType(pool),
+                  arguments,
+                  Const.INVOKESTATIC);
+        }
         break;
+
       case Const.INVOKESTATIC:
         newInvocation =
             ifact.createInvoke(
@@ -392,6 +495,7 @@ public class CallReplacementTransformer extends InstructionListUtils
                 origInvocation.getArgumentTypes(pool),
                 Const.INVOKESTATIC);
         break;
+
       default:
         // This should be impossible.  The only unhandled instruction type is Const.INVOKEDYNAMIC
         // which is a nameless method (lambda) and would not have a replacement.
@@ -404,7 +508,7 @@ public class CallReplacementTransformer extends InstructionListUtils
                 origInvocation, mg.getClassName(), mg.getName());
         throw new IllegalClassFormatException(msg);
     }
-    return newInvocation;
+    return build_il(newInvocation);
   }
 
   /** Dumps out {@link #replacementMap} to the debug_map logger, if that logger is enabled. */

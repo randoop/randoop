@@ -43,7 +43,7 @@ class CoverageChecker {
 
   /**
    * Create a coverage checker using the classnames from the option set. All other parts of the
-   * options are ignored.
+   * options are ignored. Assumes all declared methods of the classes under test should be covered.
    *
    * @param options the options
    */
@@ -85,17 +85,18 @@ class CoverageChecker {
    * Add method names to be excluded, ignored, or included (included has no effect).
    *
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
-   * "include". For example: "java2.util2.ArrayList.readObject(java.io.ObjectInputStream) exclude"
+   * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
    *
    * <p>This format is intended to make it easy to sort the arguments.
    */
   void methods(String... methodSpecs) {
     for (String s : methodSpecs) {
-      int spacepos = s.lastIndexOf(" ");
-      if (spacepos == -1) {
+      if (!(s.endsWith(" exclude") || s.endsWith(" ignore") || s.endsWith(" include"))) {
         // Not BugInRandoopException because that isn't available here.
-        throw new Error("Bad method spec: " + s);
+        throw new Error("Bad method spec, lacks action at end (exclude, ignore, or include): " + s);
       }
+
+      int spacepos = s.lastIndexOf(" ");
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
       switch (action) {

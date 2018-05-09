@@ -95,9 +95,7 @@ public class ReflectionManager {
    */
   public void apply(ClassVisitor visitor, Class<?> c) {
     if (predicate.isVisible(c)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Applying visitors to class " + c.getName());
-      }
+      Log.logPrintf("Applying visitors to class %s%n", c.getName());
 
       visitBefore(visitor, c); // perform any previsit steps
 
@@ -105,11 +103,9 @@ public class ReflectionManager {
         applyToEnum(visitor, c);
       } else {
 
-        if (Log.isLoggingOn()) {
-          Log.logLine("ReflectionManager.apply for class " + c);
-          Log.logLine("  getMethods => " + ClassUtil.getMethods(c).length);
-          Log.logLine("  getDeclaredMethods => " + ClassUtil.getDeclaredMethods(c).length);
-        }
+        Log.logPrintf(
+            "ReflectionManager.apply for class %s%n  getMethods => %d%n  getDeclaredMethods => %d%n",
+            c, ClassUtil.getMethods(c).length, ClassUtil.getDeclaredMethods(c).length);
         // System.out.println("ReflectionManager.apply for class " + c);
         // System.out.println("  getMethods => " + ClassUtil.getMethods(c).length);
         // System.out.println("  getDeclaredMethods => " + ClassUtil.getDeclaredMethods(c).length);
@@ -117,31 +113,23 @@ public class ReflectionManager {
         // Methods
         Set<Method> methods = new HashSet<>(); // used only for containment check
         for (Method m : ClassUtil.getMethods(c)) { // for all class methods
-          if (Log.isLoggingOn()) {
-            Log.logLine("ReflectionManager.apply considering method " + m);
-          }
+          Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
           methods.add(m); // remember to avoid duplicates
           if (isVisible(m)) { // if satisfies predicate then visit
             applyTo(visitor, m);
           }
         }
-        if (Log.isLoggingOn()) {
-          Log.logLine("ReflectionManager.apply done with getMethods for class " + c);
-        }
+        Log.logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
         // System.out.println("ReflectionManager.apply done with getMethods for class " + c);
 
         for (Method m : ClassUtil.getDeclaredMethods(c)) { // for all methods declared by c
-          if (Log.isLoggingOn()) {
-            Log.logLine("ReflectionManager.apply considering declared method " + m);
-          }
+          Log.logPrintf("ReflectionManager.apply considering declared method %s%n", m);
           // if not duplicate and satisfies predicate
           if ((!methods.contains(m)) && predicate.isVisible(m)) {
             applyTo(visitor, m);
           }
         }
-        if (Log.isLoggingOn()) {
-          Log.logLine("ReflectionManager.apply done with getDeclaredMethods for class " + c);
-        }
+        Log.logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
         // System.out.println("ReflectionManager.apply done with getDeclaredMethods for class " + c);
 
         // Constructors
@@ -242,9 +230,7 @@ public class ReflectionManager {
    * @param f the field to be visited
    */
   private void applyTo(ClassVisitor v, Field f) {
-    if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Visiting field %s", f.toGenericString()));
-    }
+    Log.logPrintf("Visiting field %s%n", f.toGenericString());
     v.visit(f);
   }
 
@@ -259,9 +245,7 @@ public class ReflectionManager {
    * @param c the member class to be visited
    */
   private void applyTo(ClassVisitor v, Class<?> c) {
-    if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Visiting member class %s", c.toString()));
-    }
+    Log.logPrintf("Visiting member class %s%n", c.toString());
     v.visit(c, this);
   }
 
@@ -272,9 +256,7 @@ public class ReflectionManager {
    * @param co the constructor to be visited
    */
   private void applyTo(ClassVisitor v, Constructor<?> co) {
-    if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Visiting constructor %s", co.toGenericString()));
-    }
+    Log.logPrintf("Visiting constructor %s%n", co.toGenericString());
     v.visit(co);
   }
 
@@ -285,9 +267,7 @@ public class ReflectionManager {
    * @param m the method to be visited
    */
   private void applyTo(ClassVisitor v, Method m) {
-    if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Visiting method %s", m.toGenericString()));
-    }
+    Log.logPrintf("Visiting method %s%n", m.toGenericString());
     v.visit(m);
   }
 
@@ -298,9 +278,7 @@ public class ReflectionManager {
    * @param e the enum value to be visited
    */
   private void applyTo(ClassVisitor v, Enum<?> e) {
-    if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Visiting enum %s", e));
-    }
+    Log.logPrintf("Visiting enum %s%n", e);
     v.visit(e);
   }
 
@@ -333,25 +311,17 @@ public class ReflectionManager {
    */
   private boolean isVisible(Method m) {
     if (!predicate.isVisible(m)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toGenericString());
-        Log.logLine("  reason: the method is not visible from test classes");
-      }
+      Log.logPrintf("Will not use non-visible method: %s%n", m.toGenericString());
       return false;
     }
     if (!isVisible(m.getGenericReturnType())) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toGenericString());
-        Log.logLine("  reason: the method's return type is not visible from test classes");
-      }
+      Log.logPrintf("Will not use method with non-visible return type: %s%n", m.toGenericString());
       return false;
     }
     for (Type p : m.getGenericParameterTypes()) {
       if (!isVisible(p)) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Will not use: " + m.toGenericString());
-          Log.logLine("  reason: the method has a parameter that is not visible from test classes");
-        }
+        Log.logPrintf(
+            "Will not use method with non-visible parameter %s: %s%n", p, m.toGenericString());
         return false;
       }
     }
@@ -366,19 +336,13 @@ public class ReflectionManager {
    */
   private boolean isVisible(Constructor<?> c) {
     if (!predicate.isVisible(c)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + c.toGenericString());
-        Log.logLine("  reason: the constructor is not visible from test classes");
-      }
+      Log.logPrintf("Will not use non-visible constructor: %s%n", c.toGenericString());
       return false;
     }
     for (Type p : c.getGenericParameterTypes()) {
       if (!isVisible(p)) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Will not use: " + c.toGenericString());
-          Log.logLine(
-              "  reason: the constructor has a parameter that is not visible from test classes");
-        }
+        Log.logPrintf(
+            "Will not use constructor with non-visible parameter %s: %s%n", p, c.toGenericString());
         return false;
       }
     }

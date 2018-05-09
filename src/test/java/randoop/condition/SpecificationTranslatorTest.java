@@ -10,13 +10,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -152,8 +153,8 @@ public class SpecificationTranslatorTest {
   @Test
   public void testSignatureFromFile() {
     String specFileName = "test/randoop/condition/java-io-PrintWriter.json";
-    File specFile = new File(specFileName);
-    List<File> specList = new ArrayList<>();
+    Path specFile = Paths.get(specFileName);
+    List<Path> specList = new ArrayList<>();
     specList.add(specFile);
     OperationSpecification specification = readSpecificationsForTest(specFile);
     Method method = getPrintWriterAppendMethod();
@@ -198,12 +199,12 @@ public class SpecificationTranslatorTest {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSpecification readSpecificationsForTest(File specFile) {
+  private OperationSpecification readSpecificationsForTest(Path specFile) {
     List<OperationSpecification> specificationList = new ArrayList<>();
     Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
     TypeToken<List<OperationSpecification>> typeToken =
         (new TypeToken<List<OperationSpecification>>() {});
-    try (BufferedReader reader = Files.newBufferedReader(specFile.toPath(), UTF_8)) {
+    try (BufferedReader reader = Files.newBufferedReader(specFile, UTF_8)) {
       specificationList.addAll(
           (List<OperationSpecification>) gson.fromJson(reader, typeToken.getType()));
     } catch (FileNotFoundException e) {

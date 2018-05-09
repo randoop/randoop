@@ -2,7 +2,6 @@ package randoop.main;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -84,7 +83,7 @@ class SystemTestEnvironmentManager {
     assert randoopJarPath != null;
 
     return new SystemTestEnvironmentManager(
-        classpath + File.pathSeparator + randoopJarPath,
+        classpath + java.io.File.pathSeparator + randoopJarPath,
         workingDir,
         testInputClassDir,
         jacocoAgentPath,
@@ -107,10 +106,10 @@ class SystemTestEnvironmentManager {
   }
 
   /**
-   * Creates the {@link SystemTestEnvironment} for a test using the given directory name. Creates a
-   * subdirectory in the {@link #systemTestWorkingDir} that contains the subdirectories for source,
-   * class and JaCoCo files using the directory names {@link #SOURCE_DIR_NAME}, {@link
-   * #CLASS_DIR_NAME}, and {@link #JACOCO_DIR_NAME}.
+   * Creates the {@link SystemTestEnvironment} for a test run in the given directory name (usually a
+   * temporary directory). Creates a subdirectory in the {@link #systemTestWorkingDir} that contains
+   * the subdirectories for source, class and JaCoCo files using the directory names {@link
+   * #SOURCE_DIR_NAME}, {@link #CLASS_DIR_NAME}, and {@link #JACOCO_DIR_NAME}.
    *
    * <p>Will fail the calling test if an {@code IOException} is thrown
    *
@@ -122,10 +121,11 @@ class SystemTestEnvironmentManager {
   }
 
   /**
-   * Creates the {@link SystemTestEnvironment} for a test using the given directory name and
-   * classpath. Creates a subdirectory in the {@link #systemTestWorkingDir} that contains the
-   * subdirectories for source, class and JaCoCo files using the directory names {@link
-   * #SOURCE_DIR_NAME}, {@link #CLASS_DIR_NAME}, and {@link #JACOCO_DIR_NAME}.
+   * Creates the {@link SystemTestEnvironment} for a test run in the given directory name (usually a
+   * temporary directory) and using the given classpath. Creates a subdirectory in the {@link
+   * #systemTestWorkingDir} that contains the subdirectories for source, class and JaCoCo files
+   * using the directory names {@link #SOURCE_DIR_NAME}, {@link #CLASS_DIR_NAME}, and {@link
+   * #JACOCO_DIR_NAME}.
    *
    * <p>Will fail calling test if an {@code IOException} is thrown
    *

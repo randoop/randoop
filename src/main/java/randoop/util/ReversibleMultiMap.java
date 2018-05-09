@@ -52,7 +52,9 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
    */
   @Override
   public void add(T1 key, T2 value) {
-    if (verbose_log && Log.isLoggingOn()) Log.logLine("ADD " + key + " ->" + value);
+    if (verbose_log) {
+      Log.logPrintf("ADD %s -> %s%n", key, value);
+    }
     add_bare(key, value);
     ops.add(new OpKeyVal(Ops.ADD, key, value));
     steps++;
@@ -81,7 +83,9 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
    */
   @Override
   public void remove(T1 key, T2 value) {
-    if (verbose_log && Log.isLoggingOn()) Log.logLine("REMOVE " + key + " ->" + value);
+    if (verbose_log) {
+      Log.logPrintf("REMOVE %s -> %s%n", key, value);
+    }
     remove_bare(key, value);
     ops.add(new OpKeyVal(Ops.REMOVE, key, value));
     steps++;
@@ -115,7 +119,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     if (marks.isEmpty()) {
       throw new IllegalArgumentException("No marks.");
     }
-    if (Log.isLoggingOn()) Log.logLine("marks: " + marks);
+    Log.logPrintf("marks: %s%n", marks);
     for (int i = 0; i < steps; i++) {
       undoLastOp();
     }
@@ -131,11 +135,11 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
     if (op == Ops.ADD) {
       // Remove the mapping.
-      if (Log.isLoggingOn()) Log.logLine("REMOVE " + key + " ->" + val);
+      Log.logPrintf("REMOVE %s%n", key + " ->" + val);
       remove_bare(key, val);
     } else if (op == Ops.REMOVE) {
       // Add the mapping.
-      if (Log.isLoggingOn()) Log.logLine("ADD " + key + " ->" + val);
+      Log.logPrintf("ADD %s -> %s%n", key, val);
       add_bare(key, val);
     } else {
       // Really, we should never get here.

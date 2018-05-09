@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 import org.junit.Test;
 import randoop.CheckRep;
 import randoop.main.GenInputsAbstract;
@@ -22,10 +22,10 @@ public class LoadingWithAnnotationTest {
   @Test
   public void test() {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
-    GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
+    GenInputsAbstract.classlist = Paths.get("randoop/instrument/testcase/allclasses.txt");
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.require_covered_classes =
-        new File("randoop/instrument/testcase/annotatedclasses.txt");
+        Paths.get("randoop/instrument/testcase/annotatedclasses.txt");
 
     Class<?> cc = null;
     try {

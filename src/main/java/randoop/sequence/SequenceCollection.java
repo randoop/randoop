@@ -77,7 +77,7 @@ public class SequenceCollection {
 
   /** Removes all sequences from this collection. */
   public void clear() {
-    if (Log.isLoggingOn()) Log.logLine("Clearing sequence collection.");
+    Log.logPrintf("Clearing sequence collection.%n");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
     sequenceCount = 0;
@@ -184,8 +184,7 @@ public class SequenceCollection {
       set = new SimpleArrayList<>();
       this.sequenceMap.put(type, set);
     }
-    if (Log.isLoggingOn())
-      Log.logLine("Adding sequence of type " + type + " of length " + sequence.size());
+    Log.logPrintf("Adding sequence of type %s of length %d%n", type, sequence.size());
     boolean added = set.add(sequence);
     assert added;
     sequenceCount++;
@@ -209,9 +208,7 @@ public class SequenceCollection {
       throw new IllegalArgumentException("type cannot be null.");
     }
 
-    if (Log.isLoggingOn()) {
-      Log.logPrintf("getSequencesForType(%s, %s, %s)%n", type, exactMatch, onlyReceivers);
-    }
+    Log.logPrintf("getSequencesForType(%s, %s, %s)%n", type, exactMatch, onlyReceivers);
 
     List<SimpleList<Sequence>> resultList = new ArrayList<>();
 
@@ -222,11 +219,9 @@ public class SequenceCollection {
       }
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
-        Log.logLine(
-            "candidate compatibleType (isNonreceiverType="
-                + compatibleType.isNonreceiverType()
-                + "): "
-                + compatibleType);
+        Log.logPrintf(
+            "candidate compatibleType (isNonreceiverType=%s): %s%n",
+            compatibleType.isNonreceiverType(), compatibleType);
         if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
           resultList.add(this.sequenceMap.get(compatibleType));
         }
@@ -234,14 +229,10 @@ public class SequenceCollection {
     }
 
     if (resultList.isEmpty()) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("getSequencesForType: found no sequences matching type " + type);
-      }
+      Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
     SimpleList<Sequence> selector = new ListOfLists<>(resultList);
-    if (Log.isLoggingOn()) {
-      Log.logLine("getSequencesForType(" + type + ") => " + selector.size() + " sequences.");
-    }
+    Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
   }
 

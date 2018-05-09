@@ -1,8 +1,8 @@
 package randoop.execution;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.exec.CommandLine;
@@ -15,7 +15,7 @@ import randoop.Globals;
 import randoop.util.Log;
 
 /**
- * Class providing the {@link #run(List, File, long)} method to run a command in a separate process
+ * Class providing the {@link #run(List, Path, long)} method to run a command in a separate process
  * with a timeout.
  */
 public class RunCommand {
@@ -31,7 +31,7 @@ public class RunCommand {
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
    */
-  static Status run(List<String> command, File workingDirectory, long timeout)
+  static Status run(List<String> command, Path workingDirectory, long timeout)
       throws CommandException {
 
     String[] args = command.toArray(new String[0]);
@@ -40,7 +40,7 @@ public class RunCommand {
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
     DefaultExecutor executor = new DefaultExecutor();
-    executor.setWorkingDirectory(workingDirectory);
+    executor.setWorkingDirectory(workingDirectory.toFile());
 
     ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
     executor.setWatchdog(watchdog);
@@ -170,7 +170,7 @@ public class RunCommand {
 
   /**
    * Exception representing an error that occured while running a process with {@link
-   * RunCommand#run(List, File, long)}.
+   * RunCommand#run(List, Path, long)}.
    */
   public static class CommandException extends Throwable {
 

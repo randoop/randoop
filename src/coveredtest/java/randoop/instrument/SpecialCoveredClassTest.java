@@ -5,9 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
-import java.io.File;
 import java.lang.ClassNotFoundException;
 import java.lang.NoSuchMethodException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -51,9 +51,9 @@ public class SpecialCoveredClassTest {
   public void abstractClassTest()
       throws ClassNotFoundException, NoSuchMethodException, SignatureParseException {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
-    GenInputsAbstract.classlist = new File("instrument/testcase/special-allclasses.txt");
+    GenInputsAbstract.classlist = Paths.get("instrument/testcase/special-allclasses.txt");
     GenInputsAbstract.require_covered_classes =
-        new File("instrument/testcase/special-coveredclasses.txt");
+        Paths.get("instrument/testcase/special-coveredclasses.txt");
     ReflectionExecutor.usethreads = false;
     GenInputsAbstract.generated_limit = 10000;
     GenInputsAbstract.output_limit = 5000;
