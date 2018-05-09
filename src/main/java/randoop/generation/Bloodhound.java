@@ -212,14 +212,14 @@ public class Bloodhound implements TypedOperationSelector {
         isAbstractMethod = Modifier.isAbstract(method.getModifiers());
       }
 
-      assert isAbstractMethod
-          || isGetterMethod
-          || isSetterMethod
-          || isEnumConstant
-          || operationName.startsWith("java.")
-          || operationName.startsWith("javax.")
-          || operationName.equals("java.lang.Object.<init>")
-          || operationName.equals("java.lang.Object.getClass");
+//      assert isAbstractMethod
+//          || isGetterMethod
+//          || isSetterMethod
+//          || isEnumConstant
+//          || operationName.startsWith("java.")
+//          || operationName.startsWith("javax.")
+//          || operationName.equals("java.lang.Object.<init>")
+//          || operationName.equals("java.lang.Object.getClass");
       uncovRatio = 0;
     }
 

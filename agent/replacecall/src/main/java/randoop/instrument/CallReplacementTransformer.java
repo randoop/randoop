@@ -41,7 +41,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   private static SimpleLog debug_transform =
       new SimpleLog(
           //ReplaceCallAgent.debugPath + File.separator + "replacecall-transform-log.txt", ReplaceCallAgent.debug);
-          false);
+          true);
 
   /** Debug information on method mapping. */
   private static SimpleLog debug_map =
