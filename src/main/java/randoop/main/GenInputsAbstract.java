@@ -717,7 +717,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FileWriter operation_history_log = null;
 
   @Option("Display source if a generated test contains a compilation error.")
-  public static boolean print_file_system_state = false;
+  public static boolean print_erroneous_file = false;
 
   /**
    * Create sequences but never execute them. Used to test performance of Randoop's sequence
