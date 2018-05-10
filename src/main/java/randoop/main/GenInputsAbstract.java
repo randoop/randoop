@@ -817,9 +817,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return getStringSetFromFile(listFile, fileDescription, "^#.*", null);
   }
 
+  /** Returns empty set if listFile is null. */
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
-      Path listFile, String fileDescription, String commentRegex, String includeRegex) {
+      /*@Nullable*/ Path listFile,
+      String fileDescription,
+      String commentRegex,
+      String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile.toFile(), commentRegex, includeRegex)) {
