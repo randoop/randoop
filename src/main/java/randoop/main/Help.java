@@ -95,7 +95,7 @@ public class Help extends CommandHandler {
   protected static void introMessage(PrintStream out) {
     out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
     out.println();
-    out.println("Randoop  is a command-line tool that creates unit tests for Java.");
+    out.println("Randoop is a command-line tool that creates unit tests for Java.");
     out.println("It accepts one of the commands listed below. For the user manual,");
     out.println("please visit https://randoop.github.io/randoop/manual/index.html");
   }
