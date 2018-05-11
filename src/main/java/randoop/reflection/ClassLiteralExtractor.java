@@ -2,7 +2,6 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -15,27 +14,14 @@ import randoop.util.MultiMap;
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
  * of each class visited, adding a sequence for each to a map associating a sequence with a type.
  *
- * <p>It also maintains a literalsTermFrequency for each literal, for use with the static weighting
- * scheme of literals.
- *
  * @see OperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
 
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
-  /**
-   * The map of literals to their term frequency: tf(t,d), where t is a literal and d is all classes
-   * under test. Note that this is the raw frequency, just the number of times they occur within all
-   * classes under test.
-   */
-  private Map<Sequence, Integer> literalsTermFrequency;
-
-  ClassLiteralExtractor(
-      MultiMap<ClassOrInterfaceType, Sequence> literalMap,
-      Map<Sequence, Integer> literalsTermFrequency) {
+  ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
     this.literalMap = literalMap;
-    this.literalsTermFrequency = literalsTermFrequency;
   }
 
   @Override
@@ -52,11 +38,6 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
                     TypedOperation.createNonreceiverInitialization(term),
                     new ArrayList<Variable>());
         literalMap.add(constantType, seq);
-        if (literalsTermFrequency.containsKey(seq)) {
-          literalsTermFrequency.put(seq, literalsTermFrequency.get(seq) + 1);
-        } else {
-          literalsTermFrequency.put(seq, 1);
-        }
       }
     }
   }

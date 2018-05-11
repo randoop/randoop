@@ -1102,18 +1102,14 @@ Randoop about your application, and that is how we recommend using Randoop.
  test.
             <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>.
              How to use literal values that are specified via the <code>--literals-file</code> command-line
- option. See: <code>ClassLiteralsMode</code>. [default CLASS_OR_ALL]
+ option. See: <code>ClassLiteralsMode</code>. [default CLASS]
 <ul>
   <li><b>NONE</b> Do not use literals specified in a literals file.
   <li><b>CLASS</b> A literal for a given class is used as input only to methods of that class.
   <li><b>PACKAGE</b> A literal is used as input to methods of any classes in the same package.
-  <li><b>CLASS_OR_ALL</b> a literal for a given class is used as input only to methods of that class with probability
- <code>--p-const</code>, otherwise each literal is used as input to any method under test
   <li><b>ALL</b> Each literal is used as input to any method under test.
 </ul>
 
-            <li id="option:p-const"><b>--p-const=</b><i>double</i>.
-             What probability to select from only extracted literal sequences during sequence selection. [default 0.01]
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
              Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
  (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
@@ -1129,10 +1125,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  at most once as an argument in a method call. A ratio of 1 tries to maximize the number of
  times values are used as inputs to parameters within a test. [default 0.0]
             <li id="option:small-tests"><b>--small-tests=</b><i>boolean</i>.
-             Favor shorter sequences when assembling new sequences out of old ones. Randoop already favors
- shorter sequences by default while striving for higher coverage, but this option may be
- beneficial in some cases.
-
+            Favor shorter sequences when assembling new sequences out of old ones. Randoop already favors
+        shorter sequences by default while striving for higher coverage, but this option may be
+        beneficial in some cases.
  <p>Randoop generates new tests by combining old previously-generated tests. If this option is
  given, tests with fewer calls are given greater weight during its random selection. This has
  the overall effect of producing smaller JUnit tests. [default false]
@@ -1236,7 +1231,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  logging is done.
             <li id="option:operation-history-log"><b>--operation-history-log=</b><i>filename</i>.
              A file to which to log the operation usage history.
-            <li id="option:print-erroneous-file"><b>--print-erroneous-file=</b><i>boolean</i>.
+            <li id="option:print-file-system-state"><b>--print-file-system-state=</b><i>boolean</i>.
              Display source if a generated test contains a compilation error. [default false]
       </ul>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
