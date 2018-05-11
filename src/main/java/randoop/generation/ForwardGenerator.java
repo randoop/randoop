@@ -40,11 +40,10 @@ import randoop.util.SimpleList;
 /**
  * Randoop's forward, component-based generator.
  *
- * <p>For weighted random selection of an input sequence, there are three weighting schemes:
+ * <p>For weighted random selection of an input sequence, there are two weighting schemes:
  *
  * <ul>
  *   <li>Dynamic weighting scheme applicable to all sequences
- *   <li>Static weighting scheme applicable to only extracted literals
  *   <li>Default static weighting scheme from {@link Sequence}, applicable to all sequences
  * </ul>
  */
@@ -60,7 +59,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * Map of sequences to the number of times they've been executed. Used with the dynamic weighting
    * scheme.
    */
-  private final Map<Sequence, Integer> sequenceExecutionCount = new HashMap<>();
+  private final Map<Sequence, SequenceExecDetails> sequenceExecutionCount = new HashMap<>();
 
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
@@ -89,27 +88,37 @@ public class ForwardGenerator extends AbstractGenerator {
 
   private final TypeInstantiator instantiator;
 
+  private class SequenceExecDetails {
+    public int numExecutions;
+    public double sumOfExecTimeAndMethodSizeProduct;
+
+    public SequenceExecDetails(int numExecutions, double sumOfExecTimeAndMethodSizeProduct) {
+      this.numExecutions = numExecutions;
+      this.sumOfExecTimeAndMethodSizeProduct = sumOfExecTimeAndMethodSizeProduct;
+    }
+  }
+
   // The set of all primitive values seen during generation and execution
   // of sequences. This set is used to tell if a new primitive value has
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   public ForwardGenerator(
-          List<TypedOperation> operations,
-          Set<TypedOperation> observers,
-          GenInputsAbstract.Limits limits,
-          ComponentManager componentManager,
-          RandoopListenerManager listenerManager) {
+      List<TypedOperation> operations,
+      Set<TypedOperation> observers,
+      GenInputsAbstract.Limits limits,
+      ComponentManager componentManager,
+      RandoopListenerManager listenerManager) {
     this(operations, observers, limits, componentManager, null, listenerManager);
   }
 
   public ForwardGenerator(
-          List<TypedOperation> operations,
-          Set<TypedOperation> observers,
-          GenInputsAbstract.Limits limits,
-          ComponentManager componentManager,
-          IStopper stopper,
-          RandoopListenerManager listenerManager) {
+      List<TypedOperation> operations,
+      Set<TypedOperation> observers,
+      GenInputsAbstract.Limits limits,
+      ComponentManager componentManager,
+      IStopper stopper,
+      RandoopListenerManager listenerManager) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
@@ -179,46 +188,25 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Updates eSeq's combined weight, which is a combination of the dynamic weighting scheme,
-   * extracted literals static weighting scheme, and {@link Sequence}'s default static weighting
-   * scheme.
+   * Updates eSeq's weight using the sequence's execution time and size.
    *
    * @param eSeq the recently executed sequence which needs a weight update
    */
   private void processWeights(ExecutableSequence eSeq) {
-
-    assert eSeq.sequence != null;
-
-    double defaultWeight = eSeq.sequence.getWeight();
-
-    // TODO: explore fine-tuning of weight interactions. Specifically, magnitudes between
-    // literalsWeight and dynamicWeight are drastic.  This affects the selection in the global pool,
-    // where there can be some sequences with only literalsWeight weights, which are extremely
-    // small.
-
-    // update # times a sequence has been executed
-    if (sequenceExecutionCount.containsKey(eSeq.sequence)) {
-      sequenceExecutionCount.put(eSeq.sequence, sequenceExecutionCount.get(eSeq.sequence) + 1);
-    } else {
-      sequenceExecutionCount.put(eSeq.sequence, 1);
+    SequenceExecDetails seqExecDets = sequenceExecutionCount.get(eSeq.sequence);
+    if (seqExecDets == null) {
+      seqExecDets = new SequenceExecDetails(0, 0);
+      sequenceExecutionCount.put(eSeq.sequence, seqExecDets);
     }
 
-    double execTime = (GenInputsAbstract.deterministic ? 1.0 : eSeq.exectime);
-    double execCount = sequenceExecutionCount.get(eSeq.sequence);
-    double dynamicWeight = 1.0 / (execTime * execCount * Math.sqrt(eSeq.sequence.size()));
-    //    Randomness.selectionLog.log(
-    //        "processWeights(%s): exectime %s, execution count %s, eSeq.sequence.size() %s%n",
-    //        eSeq, execTime, execCount, eSeq.sequence.size());
+    // Increment the number of times this sequence has been executed.
+    seqExecDets.numExecutions += 1;
+    seqExecDets.sumOfExecTimeAndMethodSizeProduct +=
+        eSeq.exectime * Math.sqrt(eSeq.sequence.methodSize());
 
-    // class literals weights, only if this sequence is a class literal
-    double weight = defaultWeight * dynamicWeight;
-    assert weight >= 0;
-
-    //    Randomness.selectionLog.log(
-    //        "processWeights(%s): weight %s, defaultWeight %s, dynamicWeight %s, literalWeight %s%n",
-    //        eSeq, weight, defaultWeight, dynamicWeight, literalWeight);
-
-    weightMap.put(eSeq.sequence, weight); // update the final weight for this sequence
+    // TODO: Originally Digdog set execTime to 1.0 if GenInputsAbstract.deterministic was true. Why?
+    double weight = 1.0 / (seqExecDets.sumOfExecTimeAndMethodSizeProduct);
+    weightMap.put(eSeq.sequence, weight);
   }
 
   @Override
@@ -785,8 +773,10 @@ public class ForwardGenerator extends AbstractGenerator {
       Sequence chosenSeq;
       if (GenInputsAbstract.small_tests) {
         chosenSeq = Randomness.randomMemberWeighted(candidates);
-      } else {
+      } else if (GenInputsAbstract.enable_orienteering) {
         chosenSeq = Randomness.randomMemberWeighted(candidates, weightMap);
+      } else {
+        chosenSeq = Randomness.randomMember(candidates);
       }
 
       Log.logPrintf("chosenSeq: %s%n", chosenSeq);

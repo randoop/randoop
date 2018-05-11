@@ -39,7 +39,7 @@ public class BinTree {
     String res = br + ",";
     //For Basic Block Coverage
     //START comment here
-    /*
+
     BTNode temp;
     if (n0 == null) {
       res += "-";
@@ -64,7 +64,7 @@ public class BinTree {
       res += (temp == null) ? "BR-" : "BR+";
     }
     //End comment here
-    */
+
     if (!branchFingerprints.contains(res)) {
       branchFingerprints.add(res);
       System.out.println("Test case number " + branchFingerprints.size() + " for '" + res + "': ");
