@@ -261,8 +261,6 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.Collections");
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
     options.setOption("operation-history-log", "-"); // log to stdout
-    options.setOption("omitmethods", "java7.util7.Collections.max"); // Instantiation issue
-    options.setOption("omitmethods", "java7.util7.Collections.min"); // Instatiation issue
     options.setOption("omitmethods", "java7.util7.LinkedList.remove"); // Flaky test issue
 
     CoverageChecker coverageChecker =
@@ -278,6 +276,7 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.subList(int, int) ignore",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore",
+            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore",
             "java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore",
             "java7.util7.Collections.get(java7.util7.ListIterator, int) exclude",
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude",
