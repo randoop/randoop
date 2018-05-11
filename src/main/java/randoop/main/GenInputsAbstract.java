@@ -517,7 +517,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   @Unpublicized
   @Option("Use values that are extracted from classes under test")
-  public static boolean enable_constant_mining = false;
+  public static boolean enable_constant_mining = true;
 
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
@@ -544,9 +544,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static double alias_ratio = 0;
 
   /**
-   * Favor shorter sequences when assembling new sequences out of old ones. Randoop already favors
-   * shorter sequences by default while striving for higher coverage, but this option may be
-   * beneficial in some cases.
+   * Favor shorter sequences when assembling new sequences out of old ones.
    *
    * <p>Randoop generates new tests by combining old previously-generated tests. If this option is
    * given, tests with fewer calls are given greater weight during its random selection. This has
