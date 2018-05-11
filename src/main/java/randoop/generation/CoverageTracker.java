@@ -27,7 +27,6 @@ import org.jacoco.core.runtime.RuntimeData;
  */
 public class CoverageTracker {
   private final IRuntime runtime = new LoggerRuntime();
-  private final InstrumentingClassLoader instrumentingClassLoader;
 
   private final ExecutionDataStore executionData = new ExecutionDataStore();
   private final SessionInfoStore sessionInfos = new SessionInfoStore();
@@ -60,7 +59,6 @@ public class CoverageTracker {
    */
   public CoverageTracker(Set<String> classesUnderTest) {
     this.classesUnderTest = new HashSet<>(classesUnderTest);
-    this.instrumentingClassLoader = new InstrumentingClassLoader(this);
     this.instrumenter = new Instrumenter(runtime);
     this.data = new RuntimeData();
 
@@ -131,23 +129,6 @@ public class CoverageTracker {
   }
 
   /**
-   * Instruments and then loads the class with the given name.
-   *
-   * @param className name of the class
-   * @return {@code Class} object that has been instrumented for coverage data collection. Returns
-   *     null if class with target name cannot be found.
-   */
-  public Class<?> instrumentAndLoadClass(String className) {
-    try {
-      return instrumentingClassLoader.loadClass(className);
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-      System.exit(1);
-      throw new Error("This can't happen.");
-    }
-  }
-
-  /**
    * Updates branch coverage information for all methods under test. At this point, Jacoco has
    * already generated coverage data while Randoop has been constructing and executing its test
    * sequences. Coverage data is now collected and the {@code branchCoverageMap} is updated to
@@ -185,7 +166,7 @@ public class CoverageTracker {
         methodName = methodName.replaceAll("/", ".");
         methodName = methodName.replaceAll("\\$", ".");
 
-        // System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
+         System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
 
         BranchCoverage methodCoverage = branchCoverageMap.get(methodName);
         if (methodCoverage == null) {
@@ -199,7 +180,7 @@ public class CoverageTracker {
         methodCoverage.uncovRatio = Double.isNaN(uncovRatio) ? 0 : uncovRatio;
       }
     }
-    // System.out.println("--------------------------- ");
+     System.out.println("--------------------------- ");
   }
 
   /**

@@ -79,7 +79,7 @@ public class ForwardGenerator extends AbstractGenerator {
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       RandoopListenerManager listenerManager) {
-    this(operations, observers, limits, componentManager, null, listenerManager, null);
+    this(operations, observers, limits, componentManager, null, listenerManager);
   }
 
   public ForwardGenerator(
@@ -89,17 +89,6 @@ public class ForwardGenerator extends AbstractGenerator {
       ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager) {
-    this(operations, observers, limits, componentManager, stopper, listenerManager, null);
-  }
-
-  public ForwardGenerator(
-      List<TypedOperation> operations,
-      Set<TypedOperation> observers,
-      GenInputsAbstract.Limits limits,
-      ComponentManager componentManager,
-      IStopper stopper,
-      RandoopListenerManager listenerManager,
-      CoverageTracker coverageTracker) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
@@ -110,7 +99,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (GenInputsAbstract.enable_bloodhound) {
       // If Bloodhound is enabled, select the next operation while considering the methods' weights.
-      this.operationSelector = new Bloodhound(operations, coverageTracker);
+      this.operationSelector = new Bloodhound(operations);
     } else {
       this.operationSelector = new UniformRandomMethodSelection(operations);
     }

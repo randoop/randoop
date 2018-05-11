@@ -3,6 +3,8 @@ package randoop.generation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+
+import randoop.main.GenInputsAbstract;
 import randoop.operation.*;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
@@ -33,9 +35,7 @@ import randoop.util.SimpleArrayList;
 public class Bloodhound implements TypedOperationSelector {
 
   /**
-   * Coverage tracker used to get branch coverage information of methods under test. This coverage
-   * tracker references the same instance as that in {@link randoop.reflection.OperationModel},
-   * however, there it is used only instrument and load class that are under test.
+   * Coverage tracker used to get branch coverage information of methods under test.
    */
   private final CoverageTracker coverageTracker;
 
@@ -103,11 +103,10 @@ public class Bloodhound implements TypedOperationSelector {
    * Initialize Bloodhound.
    *
    * @param operations list of operations under test
-   * @param coverageTracker coverage tracker
    */
-  public Bloodhound(List<TypedOperation> operations, CoverageTracker coverageTracker) {
+  public Bloodhound(List<TypedOperation> operations) {
     this.operationSimpleList = new SimpleArrayList<>(operations);
-    this.coverageTracker = coverageTracker;
+    this.coverageTracker = new CoverageTracker(GenInputsAbstract.getClassnamesFromArgs());
 
     // Compute an initial weight for all methods under test. We also initialize the uncovered ratio
     // value of all methods under test by updating branch coverage information. The weights for all
