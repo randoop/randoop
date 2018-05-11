@@ -404,7 +404,7 @@ public class OperationModel {
     try {
       out.write("Operations: " + Globals.lineSep);
       for (TypedOperation t : operations) {
-        out.write(t.toString());
+        out.write("  " + t.toString());
         out.write(Globals.lineSep);
         out.flush();
       }

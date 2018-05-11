@@ -20,6 +20,7 @@ import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.Randomness;
+import randoop.util.Log;
 import randoop.util.SimpleList;
 
 /**
@@ -280,8 +281,9 @@ public class ComponentManager {
   }
 
   public void log() {
-    for (Sequence s : gralComponents.getAllSequences()) {
-      s.log();
+    if (!Log.isLoggingOn()) {
+      return;
     }
+    gralComponents.log();
   }
 }
