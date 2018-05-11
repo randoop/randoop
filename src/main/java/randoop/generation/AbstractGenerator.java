@@ -302,7 +302,7 @@ public abstract class AbstractGenerator {
       ExecutableSequence eSeq = step();
 
       if (dump_sequences) {
-        System.out.printf("seq before run: %s%n", eSeq);
+        Log.logPrintf("seq before run: %s%n", eSeq);
       }
 
       // Notify listeners we just completed generation step.
@@ -335,12 +335,10 @@ public abstract class AbstractGenerator {
       }
 
       if (dump_sequences) {
-        System.out.printf("Sequence after execution:%n%s%n", eSeq.toString());
-        System.out.printf("allSequences.size() = %d%n", numGeneratedSequences());
+        Log.logPrintf("Sequence after execution: %s%n", Globals.lineSep + eSeq.toString());
+        Log.logPrintf("allSequences.size()=%s%n", numGeneratedSequences());
+        // componentManager.log();
       }
-
-      Log.logPrintf("Sequence after execution: %s%n", Globals.lineSep + eSeq.toString());
-      Log.logPrintf("allSequences.size()=%s%n", numGeneratedSequences());
     }
 
     if (GenInputsAbstract.progressdisplay && progressDisplay != null) {
