@@ -104,7 +104,7 @@ public class CallReplacementTransformer extends InstructionListUtils
       return null;
     }
 
-    debug_transform.log("%ntransform: ENTER %s%n", className);
+    debug_transform.log("%ntransform class: ENTER %s%n", className);
 
     // Parse the bytes of the classfile
     JavaClass c;
@@ -228,6 +228,8 @@ public class CallReplacementTransformer extends InstructionListUtils
           new_inst_stack.clear();
           pool = cg.getConstantPool();
           MethodGen mg = new MethodGen(method, cg.getClassName(), pool);
+
+          debug_transform.log("%ntransform method: ENTER %s%n", mg.getName());
 
           // Get the instruction list and skip methods with no instructions
           InstructionList il = mg.getInstructionList();

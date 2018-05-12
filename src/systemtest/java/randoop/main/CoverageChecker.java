@@ -43,7 +43,7 @@ class CoverageChecker {
 
   /**
    * Create a coverage checker using the classnames from the option set. All other parts of the
-   * options are ignored.
+   * options are ignored. Assumes all declared methods of the classes under test should be covered.
    *
    * @param options the options
    */

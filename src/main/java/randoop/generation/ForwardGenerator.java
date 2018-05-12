@@ -234,6 +234,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // If its runtime value is a primitive value, clear its active flag,
       // and if the value is new, add a sequence corresponding to that value.
+      // This yields shorter tests than using the full sequence that produced
+      // the value.
       Class<?> objectClass = runtimeValue.getClass();
       if (NonreceiverTerm.isNonreceiverType(objectClass) && !objectClass.equals(Class.class)) {
         Log.logPrintf("Making index " + i + " inactive (value is a primitive)%n");
@@ -710,7 +712,16 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   VarAndSeq randomVariable(SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
+    // Log.logPrintf("entering randomVariable(%s)%n", inputType);
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
+
+      // if (Log.isLoggingOn()) {
+      //   Log.logPrintf("randomVariable: %d candidates%n", candidates.size());
+      //   for (int j = 0; j < candidates.size(); j++) {
+      //     String candIndented = candidates.get(j).toString().trim().replace("\n", "\n            ");
+      //     Log.logPrintf("  cand #%d: %s%n", j, candIndented);
+      //   }
+      // }
 
       Sequence chosenSeq;
       if (GenInputsAbstract.small_tests) {
