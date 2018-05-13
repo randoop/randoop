@@ -1,21 +1,19 @@
 package randoop.generation;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.jacoco.agent.rt.RT;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
-import org.jacoco.core.data.ExecutionDataStore;
-import org.jacoco.core.data.SessionInfoStore;
-import org.jacoco.core.instr.Instrumenter;
-import org.jacoco.core.runtime.IRuntime;
-import org.jacoco.core.runtime.LoggerRuntime;
-import org.jacoco.core.runtime.RuntimeData;
+import org.jacoco.core.data.*;
 
 /**
  * Tracks the branch coverage of each method under test. Specifically, for each method under test,
@@ -23,16 +21,12 @@ import org.jacoco.core.runtime.RuntimeData;
  * covered in generated tests. This class periodically updates branch coverage information for each
  * method from Jacoco's data structures.
  *
- * <p>Largely based on http://www.jacoco.org/jacoco/trunk/doc/examples/java/CoreTutorial.java
  */
 public class CoverageTracker {
-  private final IRuntime runtime = new LoggerRuntime();
-
+  /**
+   * In memory store of the coverage information for all classes.
+   */
   private final ExecutionDataStore executionData = new ExecutionDataStore();
-  private final SessionInfoStore sessionInfos = new SessionInfoStore();
-
-  private final Instrumenter instrumenter;
-  private final RuntimeData data;
 
   /** Map from method name to branch coverage. */
   private final Map<String, BranchCoverage> branchCoverageMap = new HashMap<>();
@@ -59,73 +53,27 @@ public class CoverageTracker {
    */
   public CoverageTracker(Set<String> classesUnderTest) {
     this.classesUnderTest = new HashSet<>(classesUnderTest);
-    this.instrumenter = new Instrumenter(runtime);
-    this.data = new RuntimeData();
-
-    try {
-      this.runtime.startup(data);
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
-    }
   }
 
   /**
-   * Attempts to instrument a class and return the byte array representation.
-   *
-   * @param className name of the class to instrument
-   * @return the instrumented bytes of the class, or null if the class does not need to be
-   *     instrumented
+   * Retrieve execution data from the Jacoco Java agent and merge the coverage information
+   * into executionData.
    */
-  public byte[] instrumentClass(String className) {
-    // Only instrument classes under test and their nested classes.
-    if (!shouldBeInstrumented(className)) {
-      return null;
-    }
-
-    // Add nested classes in to the classes under test so that we can
-    // later collect their branch coverage information.
-    classesUnderTest.add(className);
-
-    final byte[] instrumented;
-    final String resource = getResourceFromClassName(className);
-    InputStream original = getClass().getResourceAsStream(resource);
-
-    if (original == null) {
-      System.err.println("No resource with name: " + resource + " found by CoverageTracker!");
-      System.exit(1);
-    }
-
+  private void collectCoverageInformation() {
     try {
-      // Instrument the class so that branch coverage data can be obtained.
-      instrumented = instrumenter.instrument(original, className);
-      original.close();
+      InputStream execDataStream = new ByteArrayInputStream(RT.getAgent().getExecutionData(false));
+      final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
+      reader.setExecutionDataVisitor(new IExecutionDataVisitor() {
+        @Override
+        public void visitClassExecution(final ExecutionData data) {
+          executionData.put(data);
+        }
+      });
+      reader.read();
+      execDataStream.close();
     } catch (IOException e) {
       e.printStackTrace();
-      System.exit(1);
-      throw new Error("This can't happen.");
     }
-
-    return instrumented;
-  }
-
-  /**
-   * Return true if the given class should be instrumented.
-   *
-   * @param className the name of the class to check
-   * @return true iff the given class is a class under test or a nested class of a class under test
-   */
-  private boolean shouldBeInstrumented(String className) {
-    if (classesUnderTest.contains(className)) {
-      return true;
-    }
-    int dollarPos = className.indexOf('$');
-    if (dollarPos == -1) {
-      return false;
-    }
-
-    String outerClassName = className.substring(0, dollarPos);
-    return classesUnderTest.contains(outerClassName);
   }
 
   /**
@@ -136,7 +84,7 @@ public class CoverageTracker {
    */
   public void updateBranchCoverageMap() {
     // Collect coverage information.
-    data.collect(executionData, sessionInfos, false);
+    collectCoverageInformation();
 
     CoverageBuilder coverageBuilder = new CoverageBuilder();
     Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
@@ -191,11 +139,6 @@ public class CoverageTracker {
    */
   private String getResourceFromClassName(String className) {
     return '/' + className.replace('.', '/') + ".class";
-  }
-
-  /** Clean up the coverage tracker instance. */
-  public void finish() {
-    runtime.shutdown();
   }
 
   /**
