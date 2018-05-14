@@ -40,13 +40,15 @@ public class CallReplacementTransformer extends InstructionListUtils
   /** Debug information about which classes are transformed and why */
   private static SimpleLog debug_transform =
       new SimpleLog(
-          //ReplaceCallAgent.debugPath + File.separator + "replacecall-transform-log.txt", ReplaceCallAgent.debug);
+          // ReplaceCallAgent.debugPath + File.separator + "replacecall-transform-log.txt",
+          // ReplaceCallAgent.debug);
           false);
 
   /** Debug information on method mapping. */
   private static SimpleLog debug_map =
       new SimpleLog(
-          //ReplaceCallAgent.debugPath + File.separator + "replacecall-method_mapping.txt", ReplaceCallAgent.debug);
+          // ReplaceCallAgent.debugPath + File.separator + "replacecall-method_mapping.txt",
+          // ReplaceCallAgent.debug);
           false);
 
   // debug_instrument field is defined in InstructionListUtils.
@@ -70,7 +72,7 @@ public class CallReplacementTransformer extends InstructionListUtils
       Set<String> excludedPackagePrefixes) {
     this.replacementMap = replacementMap;
     this.excludedPackagePrefixes = excludedPackagePrefixes;
-    //debug_instrument.enabled = ReplaceCallAgent.debug;
+    // debug_instrument.enabled = ReplaceCallAgent.debug;
   }
 
   /**
@@ -369,13 +371,15 @@ public class CallReplacementTransformer extends InstructionListUtils
     String invoke_class = origSig.getClassname();
     String invoke_method = origSig.getName();
 
-    //debug_transform.log("invoke_target: %s, invoke_class: %s, invoke_method: %s%n",
+    // debug_transform.log("invoke_target: %s, invoke_class: %s, invoke_method: %s%n",
     //    invoke_target, invoke_class, invoke_method);
-    //debug_transform.log("super: %s, host: %s.%s, target: %s%n", super_class_name, class_name, method_name, invoke_target);
+    // debug_transform.log("super: %s, host: %s.%s, target: %s%n", super_class_name, class_name,
+    // method_name, invoke_target);
 
     if (newSig == null) {
       debug_transform.log("%s.%s: No replacement for %s%n", class_name, method_name, origSig);
-      // if this is an invoke of an <init> method, we need to pop the top entry of the new_inst_stack
+      // if this is an invoke of an <init> method, we need to pop the top entry of the
+      // new_inst_stack
       if (invoke_method.equals("<init>")) {
         if (method_name.equals("<init>")) {
           if (invoke_class.equals(class_name)) {
@@ -472,8 +476,8 @@ public class CallReplacementTransformer extends InstructionListUtils
         } else {
           // These calls have an implicit receiver ({@code this}) argument. Since the conversion is
           // to a static call, the receiver type is inserted at the beginning of the argument type
-          // array. This argument has already been explicitly pushed onto the stack, so modifying the
-          // call signature is enough.
+          // array. This argument has already been explicitly pushed onto the stack, so modifying
+          // the call signature is enough.
           Type[] arguments =
               BcelUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pool));
           newInvocation =

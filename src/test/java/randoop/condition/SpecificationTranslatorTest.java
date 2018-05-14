@@ -39,7 +39,7 @@ import randoop.util.Util;
 
 public class SpecificationTranslatorTest {
 
-  //cases: static method, non-static method, check return, parameters, and receiver
+  // cases: static method, non-static method, check return, parameters, and receiver
 
   @Test
   public void testPrintWriterAppend() {
