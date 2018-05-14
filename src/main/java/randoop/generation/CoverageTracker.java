@@ -7,43 +7,37 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.jacoco.agent.rt.RT;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
-import org.jacoco.core.data.*;
+import org.jacoco.core.data.ExecutionData;
+import org.jacoco.core.data.ExecutionDataReader;
+import org.jacoco.core.data.ExecutionDataStore;
+import org.jacoco.core.data.IExecutionDataVisitor;
+import org.jacoco.core.data.ISessionInfoVisitor;
+import org.jacoco.core.data.SessionInfo;
+import randoop.main.GenInputsAbstract;
 
 /**
  * Tracks the branch coverage of each method under test. Specifically, for each method under test,
  * this class records the total number of branches and the number of branches that have not been
  * covered in generated tests. This class periodically updates branch coverage information for each
  * method from Jacoco's data structures.
- *
  */
 public class CoverageTracker {
-  /**
-   * In memory store of the coverage information for all classes.
-   */
+  /** In-memory store of the coverage information for all classes under test. */
   private final ExecutionDataStore executionData = new ExecutionDataStore();
 
-  /** Map from method name to branch coverage. */
-  private final Map<String, BranchCoverage> branchCoverageMap = new HashMap<>();
+  /**
+   * Map from method name to uncovered branch ratio. In cases where a method's total branches is
+   * zero, the missed ratio is NaN, and the resulting uncovRatio is set to zero.
+   */
+  private final Map<String, Double> branchCoverageMap = new HashMap<>();
 
   /** Names of all the classes under test */
-  private Set<String> classesUnderTest;
-
-  /**
-   * Branch coverage for a single method under test. Records "uncovRatio" which is the ratio of
-   * uncovered branches to total branches. In cases where total branches is zero, the uncovered
-   * ratio will be zero. A method with only straight-line code that will always be executed entirely
-   * as a sequence, with no possibility of an exception or early return, will have zero "total
-   * branches".
-   */
-  public static class BranchCoverage {
-    public double uncovRatio;
-  }
+  private final Set<String> classesUnderTest;
 
   /**
    * Initialize the coverage tracker and also create a copy of the set of names of classes that are
@@ -56,23 +50,36 @@ public class CoverageTracker {
   }
 
   /**
-   * Retrieve execution data from the Jacoco Java agent and merge the coverage information
-   * into executionData.
+   * Retrieve execution data from the Jacoco Java agent and merge the coverage information into
+   * executionData.
    */
   private void collectCoverageInformation() {
     try {
-      InputStream execDataStream = new ByteArrayInputStream(RT.getAgent().getExecutionData(false));
+      // Retrieve the execution data from the Jacoco Java agent.
+      final InputStream execDataStream =
+          new ByteArrayInputStream(RT.getAgent().getExecutionData(false));
       final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
-      reader.setExecutionDataVisitor(new IExecutionDataVisitor() {
-        @Override
-        public void visitClassExecution(final ExecutionData data) {
-          executionData.put(data);
-        }
-      });
+
+      // The reader requires a session info visitor, however we don't need any information from it.
+      reader.setSessionInfoVisitor(
+          new ISessionInfoVisitor() {
+            @Override
+            public void visitSessionInfo(final SessionInfo info) {}
+          });
+      reader.setExecutionDataVisitor(
+          new IExecutionDataVisitor() {
+            @Override
+            public void visitClassExecution(final ExecutionData data) {
+              // Add the execution data for each class into the execution data store.
+              executionData.put(data);
+            }
+          });
       reader.read();
       execDataStream.close();
     } catch (IOException e) {
+      System.err.println("Error in Coverage Tracker in collecting coverage information.");
       e.printStackTrace();
+      System.exit(1);
     }
   }
 
@@ -83,7 +90,8 @@ public class CoverageTracker {
    * contain the updated coverage information of each method branch.
    */
   public void updateBranchCoverageMap() {
-    // Collect coverage information.
+    // Collect coverage information. This updates the executionData object and gives us updated
+    // coverage information for all of the classes under test.
     collectCoverageInformation();
 
     CoverageBuilder coverageBuilder = new CoverageBuilder();
@@ -114,21 +122,21 @@ public class CoverageTracker {
         methodName = methodName.replaceAll("/", ".");
         methodName = methodName.replaceAll("\\$", ".");
 
-         System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
-
-        BranchCoverage methodCoverage = branchCoverageMap.get(methodName);
-        if (methodCoverage == null) {
-          methodCoverage = new BranchCoverage();
-          branchCoverageMap.put(methodName, methodCoverage);
+        if (GenInputsAbstract.bloodhound_logging) {
+          System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
         }
 
         // In cases where a method's total branches is zero, the missed ratio is NaN, and
         // the resulting uncovRatio is set to zero.
         double uncovRatio = cm.getBranchCounter().getMissedRatio();
-        methodCoverage.uncovRatio = Double.isNaN(uncovRatio) ? 0 : uncovRatio;
+        uncovRatio = Double.isNaN(uncovRatio) ? 0 : uncovRatio;
+        branchCoverageMap.put(methodName, uncovRatio);
       }
     }
-     System.out.println("--------------------------- ");
+
+    if (GenInputsAbstract.bloodhound_logging) {
+      System.out.println("---------------------------");
+    }
   }
 
   /**
@@ -142,12 +150,12 @@ public class CoverageTracker {
   }
 
   /**
-   * Returns the branch coverage associated with the input method.
+   * Returns the uncovered branch ratio associated with the input method.
    *
    * @param methodName name of the method to examine
-   * @return branch coverage associated with the method
+   * @return uncovered branch ratio associated with the method
    */
-  public BranchCoverage getBranchCoverageForMethod(String methodName) {
+  public Double getBranchCoverageForMethod(String methodName) {
     return this.branchCoverageMap.get(methodName);
   }
 }
