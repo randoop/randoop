@@ -28,19 +28,14 @@ Prints the manual page and exits.
 
 =head1 DESCRIPTION
 
-This perl script is intended for use by Randoop developers to display the
-Randoop code coverage results.  As part of running the Randoop test suite, the system
-uses the Jacoco tool to calculate the amount of the Randoop source code base
-that is covered by the generated tests.  The script reads a Randoop tests coverage
-file, calculates the percent coverage and displays the result.  By default, the
-script will read the file:
+This perl script is intended for use by Randoop developers to prepare the
+Randoop code coverage results for inclusion into the master results CSV file.
+By default, the script will read the file:
 
   build/reports/jacoco/test/jacocoTestReport.xml
 
 This file is generated as part of the gradlew build task. You may generate it directly
-with the gradlew jacocoTestReport task. As part of this testing process, you may
-wish to compare previous and current versions of Randoop.  To that end, the script
-will accept an alternative file as an argument.
+with the gradlew jacocoTestReport task.
 
 =cut
 
