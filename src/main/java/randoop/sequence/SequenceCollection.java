@@ -45,7 +45,7 @@ import randoop.util.SimpleList;
  */
 public class SequenceCollection {
 
-  // We make it a list to make it easier to pick out an element at random.
+  // We make the value type a list to make it easier to pick out an element at random.
   private Map<Type, SimpleArrayList<Sequence>> sequenceMap = new LinkedHashMap<>();
 
   private SubTypeSet typeSet = new SubTypeSet(false);
@@ -251,5 +251,19 @@ public class SequenceCollection {
 
   public TypeInstantiator getTypeInstantiator() {
     return new TypeInstantiator(sequenceTypes);
+  }
+
+  public void log() {
+    if (!Log.isLoggingOn()) {
+      return;
+    }
+    for (Type t : sequenceMap.keySet()) {
+      SimpleArrayList<Sequence> a = sequenceMap.get(t);
+      int asize = a.size();
+      Log.logPrintf("Type %s: %d sequences%n", t, asize);
+      for (int i = 0; i < asize; i++) {
+        Log.logPrintf("  #%d: %s%n", i, a.get(i).toString().trim().replace("\n", "\n       "));
+      }
+    }
   }
 }
