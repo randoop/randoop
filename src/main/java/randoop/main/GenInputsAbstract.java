@@ -505,6 +505,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
+  @Unpublicized
+  @Option("Bias method selection to favor sequences with lower 'cost' (execution time and size)")
+  public static boolean enable_orienteering = false;
+
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
   // the length of the string that will atually be printed out as code.
@@ -834,8 +838,4 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
     return elementSet;
   }
-
-  @Unpublicized
-  @Option("Bias method selection to favor sequences with lower 'cost' (execution time and size)")
-  public static boolean enable_orienteering = true;
 }
