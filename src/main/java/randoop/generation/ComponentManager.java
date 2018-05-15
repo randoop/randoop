@@ -19,8 +19,8 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
-import randoop.util.Randomness;
 import randoop.util.Log;
+import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
