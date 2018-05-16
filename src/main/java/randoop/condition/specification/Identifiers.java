@@ -30,7 +30,8 @@ import org.plumelib.util.UtilPlume;
  */
 public class Identifiers {
 
-  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other
+  // tools
 
   /** The receiver name. */
   private final String receiverName;

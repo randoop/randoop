@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
-import java.lang.ClassNotFoundException;
-import java.lang.NoSuchMethodException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;

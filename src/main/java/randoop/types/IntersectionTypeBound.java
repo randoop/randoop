@@ -36,7 +36,8 @@ class IntersectionTypeBound extends ParameterBound {
     this.boundList = boundList;
   }
 
-  // XXX could be relaxed: only require that the first argument be first, if it is a class (rest can be reordered)
+  // XXX could be relaxed: only require that the first argument be first, if it is a class (rest can
+  // be reordered)
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof IntersectionTypeBound)) {
