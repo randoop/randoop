@@ -37,7 +37,6 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
-import randoop.generation.CoverageTracker;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.MethodCall;
@@ -90,13 +89,6 @@ public class OperationModel {
 
   /** For debugging only */
   private List<Pattern> omitMethods;
-
-  /**
-   * Coverage tracker is used to instrument and load classes under test. This coverage tracker
-   * references the same instance as that in {@link randoop.generation.Bloodhound}, however, there
-   * it is used only to collect branch coverage information of methods under test.
-   */
-  private static CoverageTracker coverageTracker;
 
   /** Create an empty model of test context. */
   private OperationModel() {
@@ -257,15 +249,6 @@ public class OperationModel {
   }
 
   /**
-   * Set the coverage tracker that is used for instrumenting classes under test.
-   *
-   * @param coverageTracker the coverage tracking instance
-   */
-  public static void setCoverageTracker(CoverageTracker coverageTracker) {
-    OperationModel.coverageTracker = coverageTracker;
-  }
-
-  /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
    * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
    *
@@ -405,7 +388,7 @@ public class OperationModel {
     try {
       out.write("Operations: " + Globals.lineSep);
       for (TypedOperation t : operations) {
-        out.write(t.toString());
+        out.write("  " + t.toString());
         out.write(Globals.lineSep);
         out.flush();
       }
@@ -536,11 +519,6 @@ public class OperationModel {
 
   /* May return null if errorHandler just warns on bad names. */
   private static Class<?> getClass(String classname, ClassNameErrorHandler errorHandler) {
-    // If Bloodhound is enabled, return an instrumented version of the class.
-    if (GenInputsAbstract.enable_bloodhound) {
-      return coverageTracker.instrumentAndLoadClass(classname);
-    }
-
     try {
       return TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException e) {

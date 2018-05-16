@@ -513,6 +513,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Prioritize methods with lower branch coverage.")
   public static boolean enable_bloodhound = false;
 
+  /** Print to standard out, method weights and method uncovered ratios. */
+  @Unpublicized
+  @Option("Output Bloodhound related information such as method weights and coverage ratios.")
+  public static boolean bloodhound_logging = false;
+
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
   // the length of the string that will atually be printed out as code.
@@ -717,7 +722,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FileWriter operation_history_log = null;
 
   @Option("Display source if a generated test contains a compilation error.")
-  public static boolean print_file_system_state = false;
+  public static boolean print_erroneous_file = false;
 
   /**
    * Create sequences but never execute them. Used to test performance of Randoop's sequence
@@ -817,9 +822,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return getStringSetFromFile(listFile, fileDescription, "^#.*", null);
   }
 
+  /** Returns empty set if listFile is null. */
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
-      Path listFile, String fileDescription, String commentRegex, String includeRegex) {
+      /*@Nullable*/ Path listFile,
+      String fileDescription,
+      String commentRegex,
+      String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile.toFile(), commentRegex, includeRegex)) {

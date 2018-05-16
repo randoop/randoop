@@ -41,7 +41,6 @@ import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
-import randoop.generation.CoverageTracker;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
@@ -269,13 +268,6 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    // Initialize a coverage tracker instance that is used by the {@link OperationModel} to
-    // instrument and load classes if Bloodhound is enabled. Additionally, this coverage tracker
-    // instance is used to collect branch coverage information for methods under test by
-    // {@link Bloodhound} is Bloodhound is enabled.
-    CoverageTracker coverageTracker = new CoverageTracker(classnames);
-    OperationModel.setCoverageTracker(coverageTracker);
-
     OperationModel operationModel = null;
     try {
       operationModel =
@@ -377,13 +369,7 @@ public class GenTests extends GenInputsAbstract {
      */
     AbstractGenerator explorer =
         new ForwardGenerator(
-            operations,
-            observers,
-            new GenInputsAbstract.Limits(),
-            componentMgr,
-            null,
-            listenerMgr,
-            coverageTracker);
+            operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
 
     /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
     operationModel.log();
@@ -540,9 +526,6 @@ public class GenTests extends GenInputsAbstract {
     // Operation history includes counts determined by getting regression sequences from explorer,
     // so dump after all done.
     explorer.getOperationHistory().outputTable();
-
-    // Shut down coverage tracking object.
-    coverageTracker.finish();
 
     return true;
   }

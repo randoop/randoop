@@ -695,11 +695,18 @@ Here is how Randoop attempts to generate a test:
 <ol>
   <li>
     Randoop selects a method to call.  (This is called a "step".)  The
-    selected method will be the last method call in the test.  If Randoop is
-    unable to find arguments to the method call (that are different from calls
-    to the method in other tests), then Randoop starts over.  Otherwise, Randoop
+    selected method will be the last method call in the test.
+  </li>
+  <li>
+    Randoop chooses arguments to the method call, from among values that
+    have been computed by previous tests.  If Randoop cannot find values
+    that are different those in every other call to the method, then
+    Randoop starts over.  Otherwise, Randoop
     has created a test candidate -- a new, unique sequence of operations that
     ends with the selected method.
+    The candidate's code is the concatenation of the code to produce the
+    arguments (except that for primitives, just the value itself is used),
+    followed by the method call.
   </li>
   <li>
     Randoop executes the test candidate
@@ -1230,7 +1237,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  logging is done.
             <li id="option:operation-history-log"><b>--operation-history-log=</b><i>filename</i>.
              A file to which to log the operation usage history.
-            <li id="option:print-file-system-state"><b>--print-file-system-state=</b><i>boolean</i>.
+            <li id="option:print-erroneous-file"><b>--print-erroneous-file=</b><i>boolean</i>.
              Display source if a generated test contains a compilation error. [default false]
       </ul>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points

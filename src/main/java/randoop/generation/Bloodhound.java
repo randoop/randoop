@@ -2,7 +2,14 @@ package randoop.generation;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import randoop.main.GenInputsAbstract;
+import randoop.operation.CallableOperation;
+import randoop.operation.EnumConstant;
+import randoop.operation.FieldGet;
+import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedOperation;
 import randoop.util.Randomness;
@@ -33,11 +40,7 @@ import randoop.util.SimpleArrayList;
  */
 public class Bloodhound implements TypedOperationSelector {
 
-  /**
-   * Coverage tracker used to get branch coverage information of methods under test. This coverage
-   * tracker references the same instance as that in {@link randoop.reflection.OperationModel},
-   * however, there it is used only instrument and load class that are under test.
-   */
+  /** Coverage tracker used to get branch coverage information of methods under test. */
   private final CoverageTracker coverageTracker;
 
   /**
@@ -70,7 +73,7 @@ public class Bloodhound implements TypedOperationSelector {
    * Hyper-parameter for balancing branch coverage and number of times a method was chosen. The name
    * alpha is from the GRT paper.
    */
-  private final double alpha = 0.7;
+  private final double alpha = 0.5;
 
   /**
    * Hyper-parameter for decreasing weights of methods between updates to coverage information. The
@@ -104,11 +107,10 @@ public class Bloodhound implements TypedOperationSelector {
    * Initialize Bloodhound.
    *
    * @param operations list of operations under test
-   * @param coverageTracker coverage tracker
    */
-  public Bloodhound(List<TypedOperation> operations, CoverageTracker coverageTracker) {
+  public Bloodhound(List<TypedOperation> operations) {
     this.operationSimpleList = new SimpleArrayList<>(operations);
-    this.coverageTracker = coverageTracker;
+    this.coverageTracker = new CoverageTracker(GenInputsAbstract.getClassnamesFromArgs());
 
     // Compute an initial weight for all methods under test. We also initialize the uncovered ratio
     // value of all methods under test by updating branch coverage information. The weights for all
@@ -155,6 +157,17 @@ public class Bloodhound implements TypedOperationSelector {
       methodSelectionCounts.clear();
       coverageTracker.updateBranchCoverageMap();
       updateWeightsForAllOperations();
+      printMethodWeights();
+    }
+  }
+
+  private void printMethodWeights() {
+    if (GenInputsAbstract.bloodhound_logging) {
+      System.out.println("Method name: method weight");
+      for (TypedOperation typedOperation : methodWeights.keySet()) {
+        System.out.println(typedOperation.getName() + ": " + methodWeights.get(typedOperation));
+      }
+      System.out.println("--------------------------");
     }
   }
 
@@ -185,37 +198,39 @@ public class Bloodhound implements TypedOperationSelector {
     // include type arguments when naming a method.
     String methodName = operation.getName().replaceAll("<.*>\\.", ".");
 
-    CoverageTracker.BranchCoverage covDet = coverageTracker.getBranchCoverageForMethod(methodName);
-
     // Corresponds to uncovRatio(m) in the GRT paper.
-    double uncovRatio;
-    if (covDet != null) {
-      uncovRatio = covDet.uncovRatio;
-    } else {
+    Double uncovRatio = coverageTracker.getBranchCoverageForMethod(methodName);
+
+    if (uncovRatio == null) {
       // Default to zero for methods with no coverage information.
       // This is the case for the following methods under test:
       // - Object.<init> and Object.getClass which Randoop always includes as methods under test.
       // - Classes that are from the JDK or external, java.lang, classes from external jars.
       // - Getters and Setters for public member variables that are automatically synthesized.
       // - Abstract method declarations.
-
+      // - Enum constants.
       String operationName = operation.getName();
+      CallableOperation callableOperation = operation.getOperation();
 
-      // Check if method is an abstract method.
       boolean isAbstractMethod = false;
-      if (operation.getOperation() instanceof MethodCall) {
-        Method method = ((MethodCall) operation.getOperation()).getMethod();
+      boolean isGetterMethod = callableOperation instanceof FieldGet;
+      boolean isSetterMethod = callableOperation instanceof FieldSet;
+      boolean isEnumConstant = callableOperation instanceof EnumConstant;
+
+      if (callableOperation instanceof MethodCall) {
+        Method method = ((MethodCall) callableOperation).getMethod();
         isAbstractMethod = Modifier.isAbstract(method.getModifiers());
       }
 
       assert isAbstractMethod
-          || operationName.contains("<get>")
-          || operationName.contains("<set>")
+          || isGetterMethod
+          || isSetterMethod
+          || isEnumConstant
           || operationName.startsWith("java.")
           || operationName.startsWith("javax.")
           || operationName.equals("java.lang.Object.<init>")
           || operationName.equals("java.lang.Object.getClass");
-      uncovRatio = 0;
+      uncovRatio = 0.0;
     }
 
     // The number of successful invocations of this method. Corresponds to "succ(m)" in the GRT

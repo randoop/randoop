@@ -1,56 +1,43 @@
 package randoop.generation;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.jacoco.agent.rt.RT;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
+import org.jacoco.core.data.ExecutionData;
+import org.jacoco.core.data.ExecutionDataReader;
 import org.jacoco.core.data.ExecutionDataStore;
-import org.jacoco.core.data.SessionInfoStore;
-import org.jacoco.core.instr.Instrumenter;
-import org.jacoco.core.runtime.IRuntime;
-import org.jacoco.core.runtime.LoggerRuntime;
-import org.jacoco.core.runtime.RuntimeData;
+import org.jacoco.core.data.IExecutionDataVisitor;
+import org.jacoco.core.data.ISessionInfoVisitor;
+import org.jacoco.core.data.SessionInfo;
+import randoop.main.GenInputsAbstract;
 
 /**
  * Tracks the branch coverage of each method under test. Specifically, for each method under test,
  * this class records the total number of branches and the number of branches that have not been
  * covered in generated tests. This class periodically updates branch coverage information for each
  * method from Jacoco's data structures.
- *
- * <p>Largely based on http://www.jacoco.org/jacoco/trunk/doc/examples/java/CoreTutorial.java
  */
 public class CoverageTracker {
-  private final IRuntime runtime = new LoggerRuntime();
-  private final InstrumentingClassLoader instrumentingClassLoader;
-
+  /** In-memory store of the coverage information for all classes under test. */
   private final ExecutionDataStore executionData = new ExecutionDataStore();
-  private final SessionInfoStore sessionInfos = new SessionInfoStore();
-
-  private final Instrumenter instrumenter;
-  private final RuntimeData data;
-
-  /** Map from method name to branch coverage. */
-  private final Map<String, BranchCoverage> branchCoverageMap = new HashMap<>();
-
-  /** Names of all the classes under test */
-  private Set<String> classesUnderTest;
 
   /**
-   * Branch coverage for a single method under test. Records "uncovRatio" which is the ratio of
-   * uncovered branches to total branches. In cases where total branches is zero, the uncovered
-   * ratio will be zero. A method with only straight-line code that will always be executed entirely
-   * as a sequence, with no possibility of an exception or early return, will have zero "total
-   * branches".
+   * Map from method name to uncovered branch ratio. In cases where a method's total branches is
+   * zero, the missed ratio is NaN, and the resulting uncovRatio is set to zero.
    */
-  public static class BranchCoverage {
-    public double uncovRatio;
-  }
+  private final Map<String, Double> branchCoverageMap = new HashMap<>();
+
+  /** Names of all the classes under test */
+  private final Set<String> classesUnderTest;
 
   /**
    * Initialize the coverage tracker and also create a copy of the set of names of classes that are
@@ -60,90 +47,39 @@ public class CoverageTracker {
    */
   public CoverageTracker(Set<String> classesUnderTest) {
     this.classesUnderTest = new HashSet<>(classesUnderTest);
-    this.instrumentingClassLoader = new InstrumentingClassLoader(this);
-    this.instrumenter = new Instrumenter(runtime);
-    this.data = new RuntimeData();
-
-    try {
-      this.runtime.startup(data);
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
-    }
   }
 
   /**
-   * Attempts to instrument a class and return the byte array representation.
-   *
-   * @param className name of the class to instrument
-   * @return the instrumented bytes of the class, or null if the class does not need to be
-   *     instrumented
+   * Retrieve execution data from the Jacoco Java agent and merge the coverage information into
+   * executionData.
    */
-  public byte[] instrumentClass(String className) {
-    // Only instrument classes under test and their nested classes.
-    if (!shouldBeInstrumented(className)) {
-      return null;
-    }
-
-    // Add nested classes in to the classes under test so that we can
-    // later collect their branch coverage information.
-    classesUnderTest.add(className);
-
-    final byte[] instrumented;
-    final String resource = getResourceFromClassName(className);
-    InputStream original = getClass().getResourceAsStream(resource);
-
-    if (original == null) {
-      System.err.println("No resource with name: " + resource + " found by CoverageTracker!");
-      System.exit(1);
-    }
-
+  private void collectCoverageInformation() {
     try {
-      // Instrument the class so that branch coverage data can be obtained.
-      instrumented = instrumenter.instrument(original, className);
-      original.close();
+      // Retrieve the execution data from the Jacoco Java agent.
+      final InputStream execDataStream =
+          new ByteArrayInputStream(RT.getAgent().getExecutionData(false));
+      final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
+
+      // The reader requires a session info visitor, however we don't need any information from it.
+      reader.setSessionInfoVisitor(
+          new ISessionInfoVisitor() {
+            @Override
+            public void visitSessionInfo(final SessionInfo info) {}
+          });
+      reader.setExecutionDataVisitor(
+          new IExecutionDataVisitor() {
+            @Override
+            public void visitClassExecution(final ExecutionData data) {
+              // Add the execution data for each class into the execution data store.
+              executionData.put(data);
+            }
+          });
+      reader.read();
+      execDataStream.close();
     } catch (IOException e) {
+      System.err.println("Error in Coverage Tracker in collecting coverage information.");
       e.printStackTrace();
       System.exit(1);
-      throw new Error("This can't happen.");
-    }
-
-    return instrumented;
-  }
-
-  /**
-   * Return true if the given class should be instrumented.
-   *
-   * @param className the name of the class to check
-   * @return true iff the given class is a class under test or a nested class of a class under test
-   */
-  private boolean shouldBeInstrumented(String className) {
-    if (classesUnderTest.contains(className)) {
-      return true;
-    }
-    int dollarPos = className.indexOf('$');
-    if (dollarPos == -1) {
-      return false;
-    }
-
-    String outerClassName = className.substring(0, dollarPos);
-    return classesUnderTest.contains(outerClassName);
-  }
-
-  /**
-   * Instruments and then loads the class with the given name.
-   *
-   * @param className name of the class
-   * @return {@code Class} object that has been instrumented for coverage data collection. Returns
-   *     null if class with target name cannot be found.
-   */
-  public Class<?> instrumentAndLoadClass(String className) {
-    try {
-      return instrumentingClassLoader.loadClass(className);
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-      System.exit(1);
-      throw new Error("This can't happen.");
     }
   }
 
@@ -154,8 +90,9 @@ public class CoverageTracker {
    * contain the updated coverage information of each method branch.
    */
   public void updateBranchCoverageMap() {
-    // Collect coverage information.
-    data.collect(executionData, sessionInfos, false);
+    // Collect coverage information. This updates the executionData object and gives us updated
+    // coverage information for all of the classes under test.
+    collectCoverageInformation();
 
     CoverageBuilder coverageBuilder = new CoverageBuilder();
     Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
@@ -185,21 +122,21 @@ public class CoverageTracker {
         methodName = methodName.replaceAll("/", ".");
         methodName = methodName.replaceAll("\\$", ".");
 
-        // System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
-
-        BranchCoverage methodCoverage = branchCoverageMap.get(methodName);
-        if (methodCoverage == null) {
-          methodCoverage = new BranchCoverage();
-          branchCoverageMap.put(methodName, methodCoverage);
+        if (GenInputsAbstract.bloodhound_logging) {
+          System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
         }
 
         // In cases where a method's total branches is zero, the missed ratio is NaN, and
         // the resulting uncovRatio is set to zero.
         double uncovRatio = cm.getBranchCounter().getMissedRatio();
-        methodCoverage.uncovRatio = Double.isNaN(uncovRatio) ? 0 : uncovRatio;
+        uncovRatio = Double.isNaN(uncovRatio) ? 0 : uncovRatio;
+        branchCoverageMap.put(methodName, uncovRatio);
       }
     }
-    // System.out.println("--------------------------- ");
+
+    if (GenInputsAbstract.bloodhound_logging) {
+      System.out.println("---------------------------");
+    }
   }
 
   /**
@@ -212,18 +149,13 @@ public class CoverageTracker {
     return '/' + className.replace('.', '/') + ".class";
   }
 
-  /** Clean up the coverage tracker instance. */
-  public void finish() {
-    runtime.shutdown();
-  }
-
   /**
-   * Returns the branch coverage associated with the input method.
+   * Returns the uncovered branch ratio associated with the input method.
    *
    * @param methodName name of the method to examine
-   * @return branch coverage associated with the method
+   * @return uncovered branch ratio associated with the method
    */
-  public BranchCoverage getBranchCoverageForMethod(String methodName) {
+  public Double getBranchCoverageForMethod(String methodName) {
     return this.branchCoverageMap.get(methodName);
   }
 }
