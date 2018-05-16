@@ -414,7 +414,8 @@ public class ReplacementFileReader {
           addReplacementsFromAllClassesOfPackage(
               replacementMap, originalPackage, replacementPackage, jarFile);
         } else {
-          // The subclass for directories is an internal Java class and its use results in compiler warnings.
+          // The subclass for directories is an internal Java class and its use results in compiler
+          // warnings.
           // It seems to work to assume that connection is a directory, and let an exception occur
           // if it is not.
           Path path = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));

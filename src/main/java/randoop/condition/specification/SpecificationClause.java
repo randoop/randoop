@@ -11,7 +11,8 @@ import java.util.Objects;
  */
 public abstract class SpecificationClause {
 
-  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other
+  // tools
 
   /** The description of this {@link SpecificationClause}. */
   private final String description;

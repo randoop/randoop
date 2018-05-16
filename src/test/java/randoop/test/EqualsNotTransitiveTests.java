@@ -46,7 +46,8 @@ public class EqualsNotTransitiveTests extends TestCase {
   // }
 
   // EqualsNotTransitive ens= new EqualsNotTransitive();
-  // Decoration checker = ens.evaluate(new Object[]{new EqualToAnyNonString(), new EqualToEveryone(), "y"});
+  // Decoration checker = ens.evaluate(new Object[]{new EqualToAnyNonString(),
+  //                                   new EqualToEveryone(), "y"});
   // assertNotNull(checker);
   // }
 }

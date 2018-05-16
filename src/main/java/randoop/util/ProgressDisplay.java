@@ -1,6 +1,5 @@
 package randoop.util;
 
-import java.lang.InterruptedException;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;

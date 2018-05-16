@@ -200,7 +200,8 @@ public class MethodSignature {
       params[i] = typeToClass(paramTypes[i]);
     }
 
-    // Note that Method.getMethod only returns public methods, so call Method.getDeclaredMethod first
+    // Note that Method.getMethod only returns public methods, so call Method.getDeclaredMethod
+    // first
 
     // First check if the method is declared in the class
     try {

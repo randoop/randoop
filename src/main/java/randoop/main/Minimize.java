@@ -475,7 +475,8 @@ public class Minimize extends CommandHandler {
           // Use simplification of this statement and continue with next statement.
           replacementFound = true;
 
-          // Assertions are never simplified, only removed. If currStmt is an assertion, then stmt is null.
+          // Assertions are never simplified, only removed. If currStmt is an assertion, then stmt
+          // is null.
           storeValueFromAssertion(currStmt, primitiveValues, primitiveAndWrappedTypes);
           break; // break replacement loop; continue statements loop.
         } else {
@@ -487,7 +488,8 @@ public class Minimize extends CommandHandler {
       }
 
       if (!replacementFound) {
-        // No correct simplification found. Add back the original statement to the list of statements.
+        // No correct simplification found. Add back the original statement to the list of
+        // statements.
         statements.add(i, currStmt);
       }
     }

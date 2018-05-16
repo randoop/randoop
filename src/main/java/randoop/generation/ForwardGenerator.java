@@ -743,7 +743,8 @@ public class ForwardGenerator extends AbstractGenerator {
       // if (Log.isLoggingOn()) {
       //   Log.logPrintf("randomVariable: %d candidates%n", candidates.size());
       //   for (int j = 0; j < candidates.size(); j++) {
-      //     String candIndented = candidates.get(j).toString().trim().replace("\n", "\n            ");
+      //     String candIndented
+      //         = candidates.get(j).toString().trim().replace("\n", "\n            ");
       //     Log.logPrintf("  cand #%d: %s%n", j, candIndented);
       //   }
       // }

@@ -208,7 +208,6 @@ public class EnumReflectionTest {
     }
 
     Set<TypedOperation> actual = getConcreteOperations(c);
-    // TODO this should be 5, except for odd business of getting test(Object) when getting declared methods of constant class
     assertEquals("number of operations", 5, actual.size());
 
     for (TypedOperation op : actual) {

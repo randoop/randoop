@@ -25,7 +25,8 @@ import java.util.Objects;
  */
 public class ThrowsCondition extends SpecificationClause {
 
-  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other
+  // tools
 
   /** The fully-qualified name of the type of the expected exception */
   @SerializedName("exception")

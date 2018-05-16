@@ -187,7 +187,8 @@ public class FailingTestFilter implements CodeWriter {
       }
     }
 
-    // XXX For efficiency, have this method return the array and redo writeClass so that it writes from array (?).
+    // XXX For efficiency, have this method return the array and redo writeClass so that it writes
+    // from array (?).
     return UtilPlume.join(javaCodeLines, Globals.lineSep);
   }
 
@@ -323,7 +324,8 @@ public class FailingTestFilter implements CodeWriter {
       javaCodeLines[lineNumber - 1] = flakyLineReplacement(javaCodeLines[lineNumber - 1]);
     }
 
-    // XXX For efficiency, have this method return the array and redo writeClass so that it writes from array (?).
+    // XXX For efficiency, have this method return the array and redo writeClass so that it writes
+    // from array (?).
     return UtilPlume.join(javaCodeLines, Globals.lineSep);
   }
 
