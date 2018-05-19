@@ -1094,7 +1094,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("ConditionRegression");
     options.setOption("output_limit", "200");
 
-    //TODO should check for invalid test count
+    // TODO should check for invalid test count
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
@@ -1112,11 +1112,11 @@ public class RandoopSystemTest {
     options.setRegressionBasename("ConditionRegression");
     options.setOption("output_limit", "200");
 
-    //TODO should check for invalid test count
+    // TODO should check for invalid test count
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
-  //TODO need these 3 together: counts should not change when standard classification changes
+  // TODO need these 3 together: counts should not change when standard classification changes
   @Test
   public void runToradocuExampleWithInvalidExceptionsTest() {
     SystemTestEnvironment testEnvironment =
@@ -1132,7 +1132,7 @@ public class RandoopSystemTest {
     options.setOption("checked-exception", "INVALID");
     options.setOption("unchecked-exception", "INVALID");
 
-    //TODO should check for invalid test count
+    // TODO should check for invalid test count
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
@@ -1151,7 +1151,7 @@ public class RandoopSystemTest {
     options.setOption("checked-exception", "ERROR");
     options.setOption("unchecked-exception", "ERROR");
 
-    //TODO should check for invalid test count
+    // TODO should check for invalid test count
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
@@ -1518,7 +1518,9 @@ public class RandoopSystemTest {
             "components.CrayonPanel.actionPerformed(java.awt.event.ActionEvent) ignore",
             "components.CrayonPanel.buildChooser() ignore",
             "components.CrayonPanel.createCrayon(java.lang.String, javax.swing.border.Border) ignore",
-            "components.CrayonPanel.createImageIcon(java.lang.String) ignore", // inconsistent JDK7 vs 8, due to different implementations of JComponent.getAccessibleContext
+            // inconsistent JDK7 vs 8, due to different implementations of
+            // JComponent.getAccessibleContext
+            "components.CrayonPanel.createImageIcon(java.lang.String) ignore",
             "components.CrayonPanel.getDisplayName() ignore",
             "components.CrayonPanel.getLargeDisplayIcon() ignore",
             "components.CrayonPanel.getSmallDisplayIcon() ignore",

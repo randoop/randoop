@@ -130,7 +130,8 @@ public class ReflectionManager {
           }
         }
         Log.logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
-        // System.out.println("ReflectionManager.apply done with getDeclaredMethods for class " + c);
+        // System.out.println("ReflectionManager.apply done with getDeclaredMethods for class " +
+        // c);
 
         // Constructors
         for (Constructor<?> co : ClassUtil.getDeclaredConstructors(c)) {
