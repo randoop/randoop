@@ -333,7 +333,8 @@ public abstract class AbstractGenerator {
           outRegressionSeqs.add(eSeq);
 
           if (GenInputsAbstract.enable_bloodhound) {
-            // Increment the number of times this last operation was successfully invoked.
+            // Increment the number of times this last operation was successfully invoked
+            // as the final method of a new sequence.
             TypedOperation lastOperation = eSeq.sequence.getOperation();
             newRegressionTestHook(lastOperation);
           }
