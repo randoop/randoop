@@ -280,7 +280,7 @@ public final class Sequence implements WeightedElement {
    *
    * @return the number of method calls in this sequence
    */
-  public final int methodSize() {
+  public final int methodCalls() {
     int result = 0;
     for (int i = 0; i < statements.size(); i++) {
       Statement statement = statements.get(i);

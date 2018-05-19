@@ -172,7 +172,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     startTime = System.nanoTime(); // reset start time.
 
-    processWeights(eSeq);
+    setWeight(eSeq);
 
     determineActiveIndices(eSeq);
 
@@ -188,11 +188,11 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Updates eSeq's weight according to the Orienteering formula from the GRT paper.
+   * Updates eSeq's weight in weightMap according to the Orienteering formula from the GRT paper.
    *
    * @param eSeq the recently executed sequence which needs a weight update
    */
-  private void processWeights(ExecutableSequence eSeq) {
+  private void setWeight(ExecutableSequence eSeq) {
     SequenceExecDetails seqExecDets = sequenceExecutionCount.get(eSeq.sequence);
     if (seqExecDets == null) {
       seqExecDets = new SequenceExecDetails(0, 0);
@@ -202,9 +202,8 @@ public class ForwardGenerator extends AbstractGenerator {
     // Increment the number of times this sequence has been executed.
     seqExecDets.numExecutions += 1;
     seqExecDets.sumOfExecTimeAndMethodSizeProduct +=
-        eSeq.exectime * Math.sqrt(eSeq.sequence.methodSize());
+        eSeq.exectime * Math.sqrt(eSeq.sequence.methodCalls());
 
-    // TODO: Originally Digdog set execTime to 1.0 if GenInputsAbstract.deterministic was true. Why?
     double weight = 1.0 / (seqExecDets.sumOfExecTimeAndMethodSizeProduct);
     weightMap.put(eSeq.sequence, weight);
   }

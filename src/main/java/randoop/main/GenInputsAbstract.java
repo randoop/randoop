@@ -779,6 +779,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
     }
 
+    if (deterministic && enable_orienteering) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --deterministic with --enable-orienteering");
+    }
+
     if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_DEFAULT
         && !ReflectionExecutor.usethreads) {
       throw new RandoopUsageError(
