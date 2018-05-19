@@ -22,9 +22,10 @@ import randoop.util.SimpleArrayList;
  *
  * <p>Bloodhound computes a weight for each method under test by taking a weighted combination of
  * the uncovered branch ratio and the ratio between the number of times the method has been
- * successfully invoked and the maximum number of times any method under test has been successfully
- * invoked. A method is "successfully invoked" when a method under test is used to create a new
- * sequence and the sequence is kept as a regression test.
+ * successfully invoked (to be the last statement of a new regression test) and the maximum number
+ * of times any method under test has been successfully invoked. A method is "successfully invoked"
+ * when a method under test is used to create a new sequence and the sequence is kept as a
+ * regression test.
  *
  * <p>However, some hyper-parameters and edge cases were left unspecified in the GRT paper. We have
  * chosen our own values for the following unspecified hyper-parameters:
@@ -125,15 +126,13 @@ public class Bloodhound implements TypedOperationSelector {
    * sequence. A method under test is randomly selected with a weight probability.
    *
    * <p>Branch coverage information, which is used to compute weights for methods under test, is
-   * updated at every {@code branchCoverageInterval}'th call of this method. The selection count for
-   * the selected method is incremented in the {@code methodSelectionCounts} map. Finally, the
-   * weight of the selected method is recomputed.
+   * updated at every {@code branchCoverageInterval}'th call of this method.
    *
    * @return the chosen {@code TypedOperation} for the new sequence
    */
   @Override
   public TypedOperation selectOperation() {
-    // Periodically collect branch coverage and recompute weights for methods under test.
+    // Periodically collect branch coverage and recompute weights for all methods under test.
     updateBranchCoverageMaybe();
 
     // Make a random, weighted choice for the next method.
@@ -157,11 +156,12 @@ public class Bloodhound implements TypedOperationSelector {
       methodSelectionCounts.clear();
       coverageTracker.updateBranchCoverageMap();
       updateWeightsForAllOperations();
-      printMethodWeights();
+      logMethodWeights();
     }
   }
 
-  private void printMethodWeights() {
+  /** For debugging, print all method weights to standard output. */
+  private void logMethodWeights() {
     if (GenInputsAbstract.bloodhound_logging) {
       System.out.println("Method name: method weight");
       for (TypedOperation typedOperation : methodWeights.keySet()) {
@@ -173,7 +173,7 @@ public class Bloodhound implements TypedOperationSelector {
 
   /**
    * Computes and updates weights in {@code methodWeights} map for all methods under test.
-   * Recomputes the {@code totalWeightOfMethodsUnderTest}.
+   * Recomputes the {@code totalWeightOfMethodsUnderTest} to aovid problems with roundoff error.
    */
   private void updateWeightsForAllOperations() {
     double totalWeight = 0;
@@ -194,8 +194,7 @@ public class Bloodhound implements TypedOperationSelector {
    * @return the updated weight for the given operation
    */
   private double updateWeightForOperation(TypedOperation operation) {
-    // Method names have their type arguments removed. This is because Jacoco does not
-    // include type arguments when naming a method.
+    // Remove type arguments, because Jacoco does not include type arguments when naming a method.
     String methodName = operation.getName().replaceAll("<.*>\\.", ".");
 
     // Corresponds to uncovRatio(m) in the GRT paper.
@@ -205,8 +204,8 @@ public class Bloodhound implements TypedOperationSelector {
       // Default to zero for methods with no coverage information.
       // This is the case for the following methods under test:
       // - Object.<init> and Object.getClass which Randoop always includes as methods under test.
-      // - Classes that are from the JDK or external, java.lang, classes from external jars.
-      // - Getters and Setters for public member variables that are automatically synthesized.
+      // - Classes that are from the JDK (eg, java.lang) or from external jars.
+      // - Getters and setters operations for public member variables that Randoop synthesizes.
       // - Abstract method declarations.
       // - Enum constants.
       String operationName = operation.getName();
