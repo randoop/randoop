@@ -152,8 +152,8 @@ public class ExecutableSequence {
       // Only print primitive declarations if the last/only statement
       // of the sequence.  Usually, primitive values are used as arguments:
       // e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
-      if (sequence.canUseShortForm()
-          && sequence.getStatement(i).getShortForm() != null
+      if (sequence.shouldInlineLiterals()
+          && sequence.getStatement(i).getInlinedForm() != null
           && i < sequence.size() - 1) {
         continue;
       }
@@ -242,7 +242,6 @@ public class ExecutableSequence {
    *         <li>execute the i-th statement, using reflection
    *         <li>call {@code visitor.visitAfter(this, i)}
    *       </ul>
-   *
    *   <li>For the last statement, check its specifications (pre-, post-, and throws-conditions).
    *   <li>Execution stops if one of the following conditions holds:
    *       <ul>
@@ -254,7 +253,6 @@ public class ExecutableSequence {
    *         <li>After executing the i-th statement and calling the visitor's {@code visitAfter}
    *             method, a {@code ContractViolation} check is present at index i.
    *       </ul>
-   *
    * </ul>
    *
    * <p>After invoking this method, the client can query the outcome of executing each statement via
