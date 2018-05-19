@@ -32,7 +32,7 @@ public class CoverageTracker {
 
   /**
    * Map from method name to uncovered branch ratio. In cases where a method's total branches is
-   * zero, the missed ratio is NaN, and the resulting uncovRatio is set to zero.
+   * zero, the missed ratio is NaN, and this map uses zero instead.
    */
   private final Map<String, Double> branchCoverageMap = new HashMap<>();
 
@@ -40,8 +40,7 @@ public class CoverageTracker {
   private final Set<String> classesUnderTest;
 
   /**
-   * Initialize the coverage tracker and also create a copy of the set of names of classes that are
-   * under test.
+   * Initialize the coverage tracker.
    *
    * @param classesUnderTest names of all the classes under test
    */
@@ -51,7 +50,7 @@ public class CoverageTracker {
 
   /**
    * Retrieve execution data from the Jacoco Java agent and merge the coverage information into
-   * executionData.
+   * {@code executionData}.
    */
   private void collectCoverageInformation() {
     try {
@@ -114,23 +113,20 @@ public class CoverageTracker {
     // branchCoverageMap.
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
       for (final IMethodCoverage cm : cc.getMethods()) {
-        String methodName = cc.getName() + "." + cm.getName();
-        // Randoop defines method names with only periods delimiters.
-        // Thus, for the method names produced by Jacoco we replace
-        // forward slashes that are used to delimit packages
-        // and $ that are used to delimit nested classes.
-        methodName = methodName.replaceAll("/", ".");
-        methodName = methodName.replaceAll("\\$", ".");
+        String ifMethodName = cc.getName() + "." + cm.getName();
+        // Jacoco uses class names in internal form.
+        // Randoop uses fully-qualified class names, with only periods as delimiters.
+        String fqMethodName = ifMethodName.replaceAll("/", ".").replaceAll("\\$", ".");
 
         if (GenInputsAbstract.bloodhound_logging) {
-          System.out.println(methodName + " - " + cm.getBranchCounter().getMissedRatio());
+          System.out.println(fqMethodName + " - " + cm.getBranchCounter().getMissedRatio());
         }
 
-        // In cases where a method's total branches is zero, the missed ratio is NaN, and
-        // the resulting uncovRatio is set to zero.
+        // In cases where a method's total branches is zero, the missed ratio is NaN,
+        // but use zero as the uncovRatio instead.
         double uncovRatio = cm.getBranchCounter().getMissedRatio();
         uncovRatio = Double.isNaN(uncovRatio) ? 0 : uncovRatio;
-        branchCoverageMap.put(methodName, uncovRatio);
+        branchCoverageMap.put(fqMethodName, uncovRatio);
       }
     }
 
