@@ -43,8 +43,8 @@ import randoop.util.SimpleList;
  * <p>For weighted random selection of an input sequence, there are two weighting schemes:
  *
  * <ul>
- *   <li>Dynamic weighting scheme applicable to all sequences
- *   <li>Default static weighting scheme from {@link Sequence}, applicable to all sequences
+ *   <li>Dynamic weighting scheme
+ *   <li>Default static weighting scheme from {@link Sequence}
  * </ul>
  */
 public class ForwardGenerator extends AbstractGenerator {
