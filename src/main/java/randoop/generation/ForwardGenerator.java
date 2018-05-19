@@ -56,8 +56,8 @@ public class ForwardGenerator extends AbstractGenerator {
   private final Map<Sequence, Double> weightMap = new HashMap<>();
 
   /**
-   * Map of sequences to the number of times they've been executed. Used with the dynamic weighting
-   * scheme.
+   * Map from a sequence to the number of times it has been executed. Used with the dynamic
+   * weighting scheme.
    */
   private final Map<Sequence, SequenceExecDetails> sequenceExecutionCount = new HashMap<>();
 
