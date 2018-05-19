@@ -188,7 +188,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Updates eSeq's weight using the sequence's execution time and size.
+   * Updates eSeq's weight according to the Orienteering formula from the GRT paper.
    *
    * @param eSeq the recently executed sequence which needs a weight update
    */
