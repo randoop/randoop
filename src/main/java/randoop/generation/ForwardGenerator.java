@@ -88,7 +88,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   private final TypeInstantiator instantiator;
 
-  private class SequenceExecDetails {
+  private static class SequenceExecDetails {
     public int numExecutions;
     public double sumOfExecTimeAndMethodSizeProduct;
 
