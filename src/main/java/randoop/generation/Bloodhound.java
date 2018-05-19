@@ -142,7 +142,7 @@ public class Bloodhound implements TypedOperationSelector {
 
     // Update the selected method's selection count and recompute its weight.
     incrementInMap(methodSelectionCounts, selectedOperation);
-    updateWeightForOperation(selectedOperation);
+    updateWeight(selectedOperation);
 
     return selectedOperation;
   }
@@ -178,7 +178,7 @@ public class Bloodhound implements TypedOperationSelector {
   private void updateWeightsForAllOperations() {
     double totalWeight = 0;
     for (TypedOperation operation : operationSimpleList) {
-      totalWeight += updateWeightForOperation(operation);
+      totalWeight += updateWeight(operation);
     }
     totalWeightOfMethodsUnderTest = totalWeight;
   }
@@ -193,7 +193,7 @@ public class Bloodhound implements TypedOperationSelector {
    * @param operation method to compute weight for
    * @return the updated weight for the given operation
    */
-  private double updateWeightForOperation(TypedOperation operation) {
+  private double updateWeight(TypedOperation operation) {
     // Remove type arguments, because Jacoco does not include type arguments when naming a method.
     String methodName = operation.getName().replaceAll("<.*>\\.", ".");
 
@@ -276,7 +276,7 @@ public class Bloodhound implements TypedOperationSelector {
    *
    * @param operation the method under test that was successfully invoked
    */
-  public void incrementSuccessfulInvocationCountForOperation(TypedOperation operation) {
+  public void incrementSuccessfulInvocationCount(TypedOperation operation) {
     totalSuccessfulInvocations += 1;
     int numSuccessfulInvocations = incrementInMap(methodInvocationCounts, operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);

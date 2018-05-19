@@ -114,8 +114,7 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public void newRegressionTestHook(TypedOperation typedOperation) {
     if (GenInputsAbstract.enable_bloodhound) {
-      ((Bloodhound) operationSelector)
-          .incrementSuccessfulInvocationCountForOperation(typedOperation);
+      ((Bloodhound) operationSelector).incrementSuccessfulInvocationCount(typedOperation);
     }
   }
 
