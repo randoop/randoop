@@ -183,6 +183,10 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             if (observers != null) {
               for (TypedOperation m : observers) {
 
+                if (m.getInputTypes().size() != 1) {
+                  continue;
+                }
+
                 ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue}, null);
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =

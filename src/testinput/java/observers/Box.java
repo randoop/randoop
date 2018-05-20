@@ -4,7 +4,7 @@ package observers;
 public class Box {
     private int a, b;
     
-    public Box() {
+    private Box() {
         a = 2;
         b = 3;
     }
@@ -13,9 +13,13 @@ public class Box {
     public int getA() {
         return a;
     }
+
+    public static Box getNewBox() {
+        return new Box();
+    }
     
     // Marked as observer.
-    public int getB() {
-        return b;
+    public int getSum(Box other) {
+        return other.a + other.b + a + b;
     }
 }
