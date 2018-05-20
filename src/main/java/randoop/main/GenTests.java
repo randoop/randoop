@@ -355,7 +355,7 @@ public class GenTests extends GenInputsAbstract {
     try {
       observerMap = operationModel.getObservers(observerSignatures);
     } catch (OperationParseException e) {
-      System.out.printf("Error parsing observers: %s%n", e);
+      System.out.printf("Error parsing observers: %s%n", e.getMessage());
       System.exit(1);
       throw new Error("dead code");
     }

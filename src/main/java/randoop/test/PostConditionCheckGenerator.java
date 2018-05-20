@@ -56,7 +56,7 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
           failed.add(postCondition);
         }
       }
-      eseq.sequence.disableShortForm();
+      eseq.sequence.doNotInlineLiterals();
       if (failed.isEmpty()) {
         return new RegressionChecks(new PostConditionCheck(postConditions, inputs));
       } else {

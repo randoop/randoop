@@ -12,7 +12,6 @@ import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
 import randoop.output.NameGenerator;
 import randoop.sequence.ExecutableSequence;
-import randoop.util.TimeoutExceededException;
 import randoop.util.predicate.DefaultPredicate;
 
 /** {@code TestPredicate} that checks whether the given {@link ExecutableSequence} is compilable. */

@@ -245,7 +245,8 @@ public class CollectionGenerationTest {
     }
     // TODO: This is brittle because it creates a single sequence and hard-codes expectations
     // for that.  This should create a full test suite and check the types in it.
-    // assertThat("should be ten output types", outputTypeSet.size(), anyOf(is(equalTo(10)), is(equalTo(6))));
+    // assertThat("should be ten output types", outputTypeSet.size(), anyOf(is(equalTo(10)),
+    // is(equalTo(6))));
   }
 
   /*

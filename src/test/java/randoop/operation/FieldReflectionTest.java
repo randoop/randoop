@@ -48,7 +48,8 @@ public class FieldReflectionTest {
 
     final Set<TypedOperation> operations = getConcreteOperations(c);
 
-    // number of operations is twice number of fields plus constructor and getter minus one for each constant
+    // number of operations is twice number of fields plus constructor and getter minus one for each
+    // constant
     // in this case, 11
     assertEquals(
         "number of operations twice number of fields", 2 * fields.size() + 1, operations.size());
