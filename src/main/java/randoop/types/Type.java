@@ -202,6 +202,15 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
+   * Indicates whether this type is the Class type.
+   *
+   * @return true if this type is the Class type, and false otherwise
+   */
+  public boolean isClass() {
+    return this.equals(JavaTypes.CLASS_TYPE);
+  }
+
+  /**
    * Indicates whether this is an enum type.
    *
    * @return true if this is an enum type, false otherwise

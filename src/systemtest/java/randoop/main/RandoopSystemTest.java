@@ -768,7 +768,11 @@ public class RandoopSystemTest {
 
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
 
-    assertThat("should have generated only 5 tests", runStatus.regressionTestCount, is(equalTo(3)));
+    int expectedTests = 5;
+    assertThat(
+        "should have generated " + expectedTests + " tests",
+        runStatus.regressionTestCount,
+        is(equalTo(expectedTests)));
   }
 
   @Test
