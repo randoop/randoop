@@ -765,11 +765,10 @@ public class RandoopSystemTest {
     options.setOption("maxsize", "7");
     options.setOption("attempted-limit", "1000");
     options.setOption("observers", "resources/systemTest/observers.txt");
-    options.setOption("omitmethods", "getClass");
 
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
 
-    assertThat("should have generated only 3 tests", runStatus.regressionTestCount, is(equalTo(3)));
+    assertThat("should have generated only 5 tests", runStatus.regressionTestCount, is(equalTo(3)));
   }
 
   @Test

@@ -1,2 +1,3 @@
-observers.Box.getA()
-observers.Box.getSum(observers.Box)
+Box.getA()
+Box.getSum(Box)
+java.lang.Class.getClass()
