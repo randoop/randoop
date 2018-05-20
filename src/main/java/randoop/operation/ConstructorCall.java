@@ -243,7 +243,8 @@ public final class ConstructorCall extends CallableOperation {
     try {
       classType = Type.forName(classname);
     } catch (ClassNotFoundException e) {
-      String msg = "Class for constructor " + constructorString + " is not on classpath: " + e;
+      String msg =
+          "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
       throw new OperationParseException(msg);
     }
 

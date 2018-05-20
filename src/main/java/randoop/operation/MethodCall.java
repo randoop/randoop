@@ -231,7 +231,8 @@ public final class MethodCall extends CallableOperation {
     try {
       classType = Type.forName(classname);
     } catch (ClassNotFoundException e) {
-      String msg = "Class for method " + methodString + " is not on classpath: " + e;
+      String msg =
+          "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
       throw new OperationParseException(msg);
     }
 
@@ -242,11 +243,11 @@ public final class MethodCall extends CallableOperation {
       throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
     }
     Method m = null;
-    String msg = "Method " + methodString + " does not exist: ";
+    String msg = "Method " + methodString + " does not exist";
     try {
       m = classType.getRuntimeClass().getDeclaredMethod(opname, typeArguments);
     } catch (NoSuchMethodException e) {
-      msg += e;
+      msg += ": " + e;
     }
     if (m == null) {
       try {
