@@ -29,6 +29,7 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * This class consists exclusively of static methods that operate on or return
@@ -462,6 +463,7 @@ public class Collections {
      * @param  list the list to be shuffled.
      * @throws UnsupportedOperationException if the specified list or
      *         its list-iterator does not support the <tt>set</tt> operation.
+     */
     public static void shuffle(List<?> list) {
         Random rnd = r;
         if (rnd == null)
@@ -469,7 +471,6 @@ public class Collections {
         shuffle(list, rnd);
     }
     private static Random r;
-     */
 
     /**
      * Randomly permute the specified list using the specified source of
@@ -493,6 +494,7 @@ public class Collections {
      * @param  rnd the source of randomness to use to shuffle the list.
      * @throws UnsupportedOperationException if the specified list or its
      *         list-iterator does not support the <tt>set</tt> operation.
+     */
     public static void shuffle(List<?> list, Random rnd) {
         int size = list.size();
         if (size < SHUFFLE_THRESHOLD || list instanceof RandomAccess) {
@@ -513,7 +515,6 @@ public class Collections {
             }
         }
     }
-     */
 
     /**
      * Swaps the elements at the specified positions in the specified list.
@@ -590,7 +591,7 @@ public class Collections {
             throw new IndexOutOfBoundsException("Source does not fit in dest");
 
         if (srcSize < COPY_THRESHOLD ||
-            (src instanceof RandomAccess && dest instanceof RandomAccess)) {
+                (src instanceof RandomAccess && dest instanceof RandomAccess)) {
             for (int i=0; i<srcSize; i++)
                 dest.set(i, src.get(i));
         } else {
@@ -927,8 +928,8 @@ public class Collections {
         int maxCandidate = sourceSize - targetSize;
 
         if (sourceSize < INDEXOFSUBLIST_THRESHOLD ||
-            (source instanceof RandomAccess&&target instanceof RandomAccess)) {
-        nextCand:
+                (source instanceof RandomAccess&&target instanceof RandomAccess)) {
+            nextCand:
             for (int candidate = 0; candidate <= maxCandidate; candidate++) {
                 for (int i=0, j=candidate; i<targetSize; i++, j++)
                     if (!eq(target.get(i), source.get(j)))
@@ -937,7 +938,7 @@ public class Collections {
             }
         } else {  // Iterator version of above algorithm
             ListIterator<?> si = source.listIterator();
-        nextCand:
+            nextCand:
             for (int candidate = 0; candidate <= maxCandidate; candidate++) {
                 ListIterator<?> ti = target.listIterator();
                 for (int i=0; i<targetSize; i++) {
@@ -980,8 +981,8 @@ public class Collections {
         int maxCandidate = sourceSize - targetSize;
 
         if (sourceSize < INDEXOFSUBLIST_THRESHOLD ||
-            source instanceof RandomAccess) {   // Index access version
-        nextCand:
+                source instanceof RandomAccess) {   // Index access version
+            nextCand:
             for (int candidate = maxCandidate; candidate >= 0; candidate--) {
                 for (int i=0, j=candidate; i<targetSize; i++, j++)
                     if (!eq(target.get(i), source.get(j)))
@@ -992,7 +993,7 @@ public class Collections {
             if (maxCandidate < 0)
                 return -1;
             ListIterator<?> si = source.listIterator(maxCandidate);
-        nextCand:
+            nextCand:
             for (int candidate = maxCandidate; candidate >= 0; candidate--) {
                 ListIterator<?> ti = target.listIterator();
                 for (int i=0; i<targetSize; i++) {
@@ -1117,7 +1118,7 @@ public class Collections {
      * @serial include
      */
     static class UnmodifiableSet<E> extends UnmodifiableCollection<E>
-                                 implements Set<E>, Serializable {
+            implements Set<E>, Serializable {
         private static final long serialVersionUID = -9215047833775013803L;
 
         UnmodifiableSet(Set<? extends E> s)     {super(s);}
@@ -1149,8 +1150,8 @@ public class Collections {
      * @serial include
      */
     static class UnmodifiableSortedSet<E>
-                             extends UnmodifiableSet<E>
-                             implements SortedSet<E>, Serializable {
+            extends UnmodifiableSet<E>
+            implements SortedSet<E>, Serializable {
         private static final long serialVersionUID = -4929149591599911165L;
         private final SortedSet<E> ss;
 
@@ -1197,7 +1198,7 @@ public class Collections {
      * @serial include
      */
     static class UnmodifiableList<E> extends UnmodifiableCollection<E>
-                                  implements List<E> {
+            implements List<E> {
         private static final long serialVersionUID = -283967356065247728L;
         final List<? extends E> list;
 
@@ -1229,7 +1230,7 @@ public class Collections {
         public ListIterator<E> listIterator(final int index) {
             return new ListIterator<E>() {
                 private final ListIterator<? extends E> i
-                    = list.listIterator(index);
+                        = list.listIterator(index);
 
                 public boolean hasNext()     {return i.hasNext();}
                 public E next()              {return i.next();}
@@ -1277,7 +1278,7 @@ public class Collections {
      * @serial include
      */
     static class UnmodifiableRandomAccessList<E> extends UnmodifiableList<E>
-                                              implements RandomAccess
+            implements RandomAccess
     {
         UnmodifiableRandomAccessList(List<? extends E> list) {
             super(list);
@@ -1285,7 +1286,7 @@ public class Collections {
 
         public List<E> subList(int fromIndex, int toIndex) {
             return new UnmodifiableRandomAccessList<>(
-                list.subList(fromIndex, toIndex));
+                    list.subList(fromIndex, toIndex));
         }
 
         private static final long serialVersionUID = -2542308836966382001L;
@@ -1387,7 +1388,7 @@ public class Collections {
          * @serial include
          */
         static class UnmodifiableEntrySet<K,V>
-            extends UnmodifiableSet<Map.Entry<K,V>> {
+                extends UnmodifiableSet<Map.Entry<K,V>> {
             private static final long serialVersionUID = 7854390611657943733L;
 
             UnmodifiableEntrySet(Set<? extends Map.Entry<? extends K, ? extends V>> s) {
@@ -1444,7 +1445,7 @@ public class Collections {
                 if (!(o instanceof Map.Entry))
                     return false;
                 return c.contains(
-                    new UnmodifiableEntry<>((Map.Entry<?,?>) o));
+                        new UnmodifiableEntry<>((Map.Entry<?,?>) o));
             }
 
             /**
@@ -1494,7 +1495,7 @@ public class Collections {
                         return false;
                     Map.Entry t = (Map.Entry)o;
                     return eq(e.getKey(),   t.getKey()) &&
-                           eq(e.getValue(), t.getValue());
+                            eq(e.getValue(), t.getValue());
                 }
                 public String toString() {return e.toString();}
             }
@@ -1525,8 +1526,8 @@ public class Collections {
      * @serial include
      */
     static class UnmodifiableSortedMap<K,V>
-          extends UnmodifiableMap<K,V>
-          implements SortedMap<K,V>, Serializable {
+            extends UnmodifiableMap<K,V>
+            implements SortedMap<K,V>, Serializable {
         private static final long serialVersionUID = -8806743815996713206L;
 
         private final SortedMap<K, ? extends V> sm;
@@ -1698,8 +1699,8 @@ public class Collections {
      * @serial include
      */
     static class SynchronizedSet<E>
-          extends SynchronizedCollection<E>
-          implements Set<E> {
+            extends SynchronizedCollection<E>
+            implements Set<E> {
         private static final long serialVersionUID = 487447009682186044L;
 
         SynchronizedSet(Set<E> s) {
@@ -1762,8 +1763,8 @@ public class Collections {
      * @serial include
      */
     static class SynchronizedSortedSet<E>
-        extends SynchronizedSet<E>
-        implements SortedSet<E>
+            extends SynchronizedSet<E>
+            implements SortedSet<E>
     {
         private static final long serialVersionUID = 8695801310862127406L;
 
@@ -1785,7 +1786,7 @@ public class Collections {
         public SortedSet<E> subSet(E fromElement, E toElement) {
             synchronized (mutex) {
                 return new SynchronizedSortedSet<>(
-                    ss.subSet(fromElement, toElement), mutex);
+                        ss.subSet(fromElement, toElement), mutex);
             }
         }
         public SortedSet<E> headSet(E toElement) {
@@ -1795,7 +1796,7 @@ public class Collections {
         }
         public SortedSet<E> tailSet(E fromElement) {
             synchronized (mutex) {
-               return new SynchronizedSortedSet<>(ss.tailSet(fromElement),mutex);
+                return new SynchronizedSortedSet<>(ss.tailSet(fromElement),mutex);
             }
         }
 
@@ -1848,8 +1849,8 @@ public class Collections {
      * @serial include
      */
     static class SynchronizedList<E>
-        extends SynchronizedCollection<E>
-        implements List<E> {
+            extends SynchronizedCollection<E>
+            implements List<E> {
         private static final long serialVersionUID = -7754090372962971524L;
 
         final List<E> list;
@@ -1905,7 +1906,7 @@ public class Collections {
         public List<E> subList(int fromIndex, int toIndex) {
             synchronized (mutex) {
                 return new SynchronizedList<>(list.subList(fromIndex, toIndex),
-                                            mutex);
+                        mutex);
             }
         }
 
@@ -1932,8 +1933,8 @@ public class Collections {
      * @serial include
      */
     static class SynchronizedRandomAccessList<E>
-        extends SynchronizedList<E>
-        implements RandomAccess {
+            extends SynchronizedList<E>
+            implements RandomAccess {
 
         SynchronizedRandomAccessList(List<E> list) {
             super(list);
@@ -1946,7 +1947,7 @@ public class Collections {
         public List<E> subList(int fromIndex, int toIndex) {
             synchronized (mutex) {
                 return new SynchronizedRandomAccessList<>(
-                    list.subList(fromIndex, toIndex), mutex);
+                        list.subList(fromIndex, toIndex), mutex);
             }
         }
 
@@ -1998,7 +1999,7 @@ public class Collections {
      * @serial include
      */
     private static class SynchronizedMap<K,V>
-        implements Map<K,V>, Serializable {
+            implements Map<K,V>, Serializable {
         private static final long serialVersionUID = 1978198479659022715L;
 
         private final Map<K,V> m;     // Backing Map
@@ -2138,8 +2139,8 @@ public class Collections {
      * @serial include
      */
     static class SynchronizedSortedMap<K,V>
-        extends SynchronizedMap<K,V>
-        implements SortedMap<K,V>
+            extends SynchronizedMap<K,V>
+            implements SortedMap<K,V>
     {
         private static final long serialVersionUID = -8798146769416483793L;
 
@@ -2161,7 +2162,7 @@ public class Collections {
         public SortedMap<K,V> subMap(K fromKey, K toKey) {
             synchronized (mutex) {
                 return new SynchronizedSortedMap<>(
-                    sm.subMap(fromKey, toKey), mutex);
+                        sm.subMap(fromKey, toKey), mutex);
             }
         }
         public SortedMap<K,V> headMap(K toKey) {
@@ -2171,7 +2172,7 @@ public class Collections {
         }
         public SortedMap<K,V> tailMap(K fromKey) {
             synchronized (mutex) {
-               return new SynchronizedSortedMap<>(sm.tailMap(fromKey),mutex);
+                return new SynchronizedSortedMap<>(sm.tailMap(fromKey),mutex);
             }
         }
 
@@ -2271,7 +2272,7 @@ public class Collections {
 
         private String badElementMsg(Object o) {
             return "Attempt to insert " + o.getClass() +
-                " element into collection with element type " + type;
+                    " element into collection with element type " + type;
         }
 
         CheckedCollection(Collection<E> c, Class<E> type) {
@@ -2317,7 +2318,7 @@ public class Collections {
 
         private E[] zeroLengthElementArray() {
             return zeroLengthElementArray != null ? zeroLengthElementArray :
-                (zeroLengthElementArray = zeroLengthArray(type));
+                    (zeroLengthElementArray = zeroLengthArray(type));
         }
 
         @SuppressWarnings("unchecked")
@@ -2386,7 +2387,7 @@ public class Collections {
      * @serial include
      */
     static class CheckedSet<E> extends CheckedCollection<E>
-                                 implements Set<E>, Serializable
+            implements Set<E>, Serializable
     {
         private static final long serialVersionUID = 4694047833775013803L;
 
@@ -2432,7 +2433,7 @@ public class Collections {
      * @serial include
      */
     static class CheckedSortedSet<E> extends CheckedSet<E>
-        implements SortedSet<E>, Serializable
+            implements SortedSet<E>, Serializable
     {
         private static final long serialVersionUID = 1599911165492914959L;
         private final SortedSet<E> ss;
@@ -2493,8 +2494,8 @@ public class Collections {
      * @serial include
      */
     static class CheckedList<E>
-        extends CheckedCollection<E>
-        implements List<E>
+            extends CheckedCollection<E>
+            implements List<E>
     {
         private static final long serialVersionUID = 65247728283967356L;
         final List<E> list;
@@ -2559,7 +2560,7 @@ public class Collections {
      * @serial include
      */
     static class CheckedRandomAccessList<E> extends CheckedList<E>
-                                            implements RandomAccess
+            implements RandomAccess
     {
         private static final long serialVersionUID = 1638200125423088369L;
 
@@ -2569,7 +2570,7 @@ public class Collections {
 
         public List<E> subList(int fromIndex, int toIndex) {
             return new CheckedRandomAccessList<>(
-                list.subList(fromIndex, toIndex), type);
+                    list.subList(fromIndex, toIndex), type);
         }
     }
 
@@ -2618,7 +2619,7 @@ public class Collections {
      * @serial include
      */
     private static class CheckedMap<K,V>
-        implements Map<K,V>, Serializable
+            implements Map<K,V>, Serializable
     {
         private static final long serialVersionUID = 5742860141034234728L;
 
@@ -2636,12 +2637,12 @@ public class Collections {
 
         private String badKeyMsg(Object key) {
             return "Attempt to insert " + key.getClass() +
-                " key into map with key type " + keyType;
+                    " key into map with key type " + keyType;
         }
 
         private String badValueMsg(Object value) {
             return "Attempt to insert " + value.getClass() +
-                " value into map with value type " + valueType;
+                    " value into map with value type " + valueType;
         }
 
         CheckedMap(Map<K, V> m, Class<K> keyType, Class<V> valueType) {
@@ -2685,7 +2686,7 @@ public class Collections {
                 Object v = e.getValue();
                 typeCheck(k, v);
                 checked.add(
-                    new AbstractMap.SimpleImmutableEntry<>((K) k, (V) v));
+                        new AbstractMap.SimpleImmutableEntry<>((K) k, (V) v));
             }
             for (Map.Entry<K,V> e : checked)
                 m.put(e.getKey(), e.getValue());
@@ -2752,12 +2753,12 @@ public class Collections {
                  * s.toArray returns an array of something other than Object
                  */
                 Object[] dest = (CheckedEntry.class.isInstance(
-                    source.getClass().getComponentType()) ? source :
-                                 new Object[source.length]);
+                        source.getClass().getComponentType()) ? source :
+                        new Object[source.length]);
 
                 for (int i = 0; i < source.length; i++)
                     dest[i] = checkedEntry((Map.Entry<K,V>)source[i],
-                                           valueType);
+                            valueType);
                 return dest;
             }
 
@@ -2770,7 +2771,7 @@ public class Collections {
 
                 for (int i=0; i<arr.length; i++)
                     arr[i] = (T) checkedEntry((Map.Entry<K,V>)arr[i],
-                                              valueType);
+                            valueType);
                 if (arr.length > a.length)
                     return arr;
 
@@ -2791,7 +2792,7 @@ public class Collections {
                     return false;
                 Map.Entry<?,?> e = (Map.Entry<?,?>) o;
                 return s.contains(
-                    (e instanceof CheckedEntry) ? e : checkedEntry(e, valueType));
+                        (e instanceof CheckedEntry) ? e : checkedEntry(e, valueType));
             }
 
             /**
@@ -2810,7 +2811,7 @@ public class Collections {
                 if (!(o instanceof Map.Entry))
                     return false;
                 return s.remove(new AbstractMap.SimpleImmutableEntry
-                                <>((Map.Entry<?,?>)o));
+                        <>((Map.Entry<?,?>)o));
             }
 
             public boolean removeAll(Collection<?> c) {
@@ -2838,7 +2839,7 @@ public class Collections {
                     return false;
                 Set<?> that = (Set<?>) o;
                 return that.size() == s.size()
-                    && containsAll(that); // Invokes safe containsAll() above
+                        && containsAll(that); // Invokes safe containsAll() above
             }
 
             static <K,V,T> CheckedEntry<K,V,T> checkedEntry(Map.Entry<K,V> e,
@@ -2875,7 +2876,7 @@ public class Collections {
 
                 private String badValueMsg(Object value) {
                     return "Attempt to insert " + value.getClass() +
-                        " value into map with value type " + valueType;
+                            " value into map with value type " + valueType;
                 }
 
                 public boolean equals(Object o) {
@@ -2884,7 +2885,7 @@ public class Collections {
                     if (!(o instanceof Map.Entry))
                         return false;
                     return e.equals(new AbstractMap.SimpleImmutableEntry
-                                    <>((Map.Entry<?,?>)o));
+                            <>((Map.Entry<?,?>)o));
                 }
             }
         }
@@ -2934,7 +2935,7 @@ public class Collections {
      * @serial include
      */
     static class CheckedSortedMap<K,V> extends CheckedMap<K,V>
-        implements SortedMap<K,V>, Serializable
+            implements SortedMap<K,V>, Serializable
     {
         private static final long serialVersionUID = 1599671320688067438L;
 
@@ -2952,7 +2953,7 @@ public class Collections {
 
         public SortedMap<K,V> subMap(K fromKey, K toKey) {
             return checkedSortedMap(sm.subMap(fromKey, toKey),
-                                    keyType, valueType);
+                    keyType, valueType);
         }
         public SortedMap<K,V> headMap(K toKey) {
             return checkedSortedMap(sm.headMap(toKey), keyType, valueType);
@@ -2993,7 +2994,7 @@ public class Collections {
 
     private static class EmptyIterator<E> implements Iterator<E> {
         static final EmptyIterator<Object> EMPTY_ITERATOR
-            = new EmptyIterator<>();
+                = new EmptyIterator<>();
 
         public boolean hasNext() { return false; }
         public E next() { throw new NoSuchElementException(); }
@@ -3038,11 +3039,11 @@ public class Collections {
     }
 
     private static class EmptyListIterator<E>
-        extends EmptyIterator<E>
-        implements ListIterator<E>
+            extends EmptyIterator<E>
+            implements ListIterator<E>
     {
         static final EmptyListIterator<Object> EMPTY_ITERATOR
-            = new EmptyListIterator<>();
+                = new EmptyListIterator<>();
 
         public boolean hasPrevious() { return false; }
         public E previous() { throw new NoSuchElementException(); }
@@ -3078,7 +3079,7 @@ public class Collections {
 
     private static class EmptyEnumeration<E> implements Enumeration<E> {
         static final EmptyEnumeration<Object> EMPTY_ENUMERATION
-            = new EmptyEnumeration<>();
+                = new EmptyEnumeration<>();
 
         public boolean hasMoreElements() { return false; }
         public E nextElement() { throw new NoSuchElementException(); }
@@ -3117,8 +3118,8 @@ public class Collections {
      * @serial include
      */
     private static class EmptySet<E>
-        extends AbstractSet<E>
-        implements Serializable
+            extends AbstractSet<E>
+            implements Serializable
     {
         private static final long serialVersionUID = 1582296315990362920L;
 
@@ -3176,8 +3177,8 @@ public class Collections {
      * @serial include
      */
     private static class EmptyList<E>
-        extends AbstractList<E>
-        implements RandomAccess, Serializable {
+            extends AbstractList<E>
+            implements RandomAccess, Serializable {
         private static final long serialVersionUID = 8842843931221139166L;
 
         public Iterator<E> iterator() {
@@ -3250,8 +3251,8 @@ public class Collections {
      * @serial include
      */
     private static class EmptyMap<K,V>
-        extends AbstractMap<K,V>
-        implements Serializable
+            extends AbstractMap<K,V>
+            implements Serializable
     {
         private static final long serialVersionUID = 6428348081105594320L;
 
@@ -3312,8 +3313,8 @@ public class Collections {
      * @serial include
      */
     private static class SingletonSet<E>
-        extends AbstractSet<E>
-        implements Serializable
+            extends AbstractSet<E>
+            implements Serializable
     {
         private static final long serialVersionUID = 3193687207550431679L;
 
@@ -3346,8 +3347,8 @@ public class Collections {
      * @serial include
      */
     private static class SingletonList<E>
-        extends AbstractList<E>
-        implements RandomAccess, Serializable {
+            extends AbstractList<E>
+            implements RandomAccess, Serializable {
 
         private static final long serialVersionUID = 3093736618740652951L;
 
@@ -3365,7 +3366,7 @@ public class Collections {
 
         public E get(int index) {
             if (index != 0)
-              throw new IndexOutOfBoundsException("Index: "+index+", Size: 1");
+                throw new IndexOutOfBoundsException("Index: "+index+", Size: 1");
             return element;
         }
     }
@@ -3388,8 +3389,8 @@ public class Collections {
      * @serial include
      */
     private static class SingletonMap<K,V>
-          extends AbstractMap<K,V>
-          implements Serializable {
+            extends AbstractMap<K,V>
+            implements Serializable {
         private static final long serialVersionUID = -6979724477215052911L;
 
         private final K k;
@@ -3423,7 +3424,7 @@ public class Collections {
         public Set<Map.Entry<K,V>> entrySet() {
             if (entrySet==null)
                 entrySet = Collections.<Map.Entry<K,V>>singleton(
-                    new SimpleImmutableEntry<>(k, v));
+                        new SimpleImmutableEntry<>(k, v));
             return entrySet;
         }
 
@@ -3462,8 +3463,8 @@ public class Collections {
      * @serial include
      */
     private static class CopiesList<E>
-        extends AbstractList<E>
-        implements RandomAccess, Serializable
+            extends AbstractList<E>
+            implements RandomAccess, Serializable
     {
         private static final long serialVersionUID = 2739099268398711800L;
 
@@ -3495,7 +3496,7 @@ public class Collections {
         public E get(int index) {
             if (index < 0 || index >= n)
                 throw new IndexOutOfBoundsException("Index: "+index+
-                                                    ", Size: "+n);
+                        ", Size: "+n);
             return element;
         }
 
@@ -3510,7 +3511,7 @@ public class Collections {
             final int n = this.n;
             if (a.length < n) {
                 a = (T[])java.lang.reflect.Array
-                    .newInstance(a.getClass().getComponentType(), n);
+                        .newInstance(a.getClass().getComponentType(), n);
                 if (element != null)
                     Arrays.fill(a, 0, n, element);
             } else {
@@ -3528,7 +3529,7 @@ public class Collections {
                 throw new IndexOutOfBoundsException("toIndex = " + toIndex);
             if (fromIndex > toIndex)
                 throw new IllegalArgumentException("fromIndex(" + fromIndex +
-                                                   ") > toIndex(" + toIndex + ")");
+                        ") > toIndex(" + toIndex + ")");
             return new CopiesList<>(toIndex - fromIndex, element);
         }
     }
@@ -3560,12 +3561,12 @@ public class Collections {
      * @serial include
      */
     private static class ReverseComparator
-        implements Comparator<Comparable<Object>>, Serializable {
+            implements Comparator<Comparable<Object>>, Serializable {
 
         private static final long serialVersionUID = 7207038068494060240L;
 
         static final ReverseComparator REVERSE_ORDER
-            = new ReverseComparator();
+                = new ReverseComparator();
 
         public int compare(Comparable<Object> c1, Comparable<Object> c2) {
             return c2.compareTo(c1);
@@ -3604,7 +3605,7 @@ public class Collections {
      * @serial include
      */
     private static class ReverseComparator2<T> implements Comparator<T>,
-        Serializable
+            Serializable
     {
         private static final long serialVersionUID = 4374092139857L;
 
@@ -3628,8 +3629,8 @@ public class Collections {
 
         public boolean equals(Object o) {
             return (o == this) ||
-                (o instanceof ReverseComparator2 &&
-                 cmp.equals(((ReverseComparator2)o).cmp));
+                    (o instanceof ReverseComparator2 &&
+                            cmp.equals(((ReverseComparator2)o).cmp));
         }
 
         public int hashCode() {
@@ -3796,7 +3797,7 @@ public class Collections {
 
         for (Object e : iterate) {
             if (contains.contains(e)) {
-               // Found a common element. Collections are not disjoint.
+                // Found a common element. Collections are not disjoint.
                 return false;
             }
         }
@@ -3876,7 +3877,7 @@ public class Collections {
      * @serial include
      */
     private static class SetFromMap<E> extends AbstractSet<E>
-        implements Set<E>, Serializable
+            implements Set<E>, Serializable
     {
         private final Map<E, Boolean> m;  // The backing map
         private transient Set<E> s;       // Its keySet
@@ -3908,7 +3909,7 @@ public class Collections {
         private static final long serialVersionUID = 2454657854757543876L;
 
         private void readObject(java.io.ObjectInputStream stream)
-            throws IOException, ClassNotFoundException
+                throws IOException, ClassNotFoundException
         {
             stream.defaultReadObject();
             s = m.keySet();
@@ -3940,7 +3941,7 @@ public class Collections {
      * @serial include
      */
     static class AsLIFOQueue<E> extends AbstractQueue<E>
-        implements Queue<E>, Serializable {
+            implements Queue<E>, Serializable {
         private static final long serialVersionUID = 1802017725587941708L;
         private final Deque<E> q;
         AsLIFOQueue(Deque<E> q)           { this.q = q; }

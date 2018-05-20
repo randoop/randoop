@@ -332,12 +332,9 @@ public abstract class AbstractGenerator {
         } else {
           outRegressionSeqs.add(eSeq);
 
-          if (GenInputsAbstract.enable_bloodhound) {
-            // Increment the number of times this last operation was successfully invoked
-            // as the final method of a new sequence.
-            TypedOperation lastOperation = eSeq.sequence.getOperation();
-            newRegressionTestHook(lastOperation);
-          }
+          // Bloodhound uses this hook to increment the number of times the last operation
+          // of this sequence was successfully invoked as the final method of a new sequence.
+          newRegressionTestHook(eSeq.sequence);
         }
       }
 
@@ -458,10 +455,9 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Take action based on the given {@link TypedOperation} that resulted in a regression test.
+   * Take action based on the given {@link Sequence} was classified as a regression test.
    *
-   * @param typedOperation the method under test that was used to create a new test sequence that
-   *     was classified as a regression test
+   * @param sequence the new test sequence that was classified as a regression test
    */
-  public abstract void newRegressionTestHook(TypedOperation typedOperation);
+  public abstract void newRegressionTestHook(Sequence sequence);
 }

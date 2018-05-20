@@ -12,6 +12,7 @@ import randoop.operation.FieldGet;
 import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedOperation;
+import randoop.sequence.Sequence;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 
@@ -206,7 +207,7 @@ public class Bloodhound implements TypedOperationSelector {
       // - Object.<init> and Object.getClass which Randoop always includes as methods under test.
       // - Classes that are from the JDK (eg, java.lang) or from external jars.
       // - Getters and setters operations for public member variables that Randoop synthesizes.
-      // - Abstract method declarations.
+      // - Abstract method declarations and interface methods.
       // - Enum constants.
       String operationName = operation.getName();
       CallableOperation callableOperation = operation.getOperation();
@@ -280,6 +281,17 @@ public class Bloodhound implements TypedOperationSelector {
     totalSuccessfulInvocations += 1;
     int numSuccessfulInvocations = incrementInMap(methodInvocationCounts, operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
+  }
+
+  /**
+   * Increment the number of successful invocations of the last method in the newly created sequence
+   * that was classified as a regression test
+   *
+   * @param sequence newly created sequence that was classified as a regression test
+   */
+  @Override
+  public void newRegressionTestHook(Sequence sequence) {
+    incrementSuccessfulInvocationCount(sequence.getOperation());
   }
 
   /**
