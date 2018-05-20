@@ -138,7 +138,11 @@ public class Variable implements Comparable<Variable> {
     return Character.toLowerCase(className.charAt(0)) + className.substring(1);
   }
 
-  public boolean canUseShortForm() {
-    return sequence.canUseShortForm();
+  /**
+   * True if this variable's value should be inlined as a literal at call sites, rather than
+   * referencing the variable.
+   */
+  public boolean shouldInlineLiterals() {
+    return sequence.shouldInlineLiterals();
   }
 }

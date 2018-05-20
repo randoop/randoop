@@ -57,7 +57,8 @@ public final class Sequence implements WeightedElement {
    */
   private transient /*final*/ List<Type> lastStatementTypes;
 
-  private transient boolean allowShortForm;
+  /** If true, inline primitive values rather than creating and using a variable. */
+  private transient boolean shouldInlineLiterals;
 
   /**
    * The list of statement indices that as determined by construction define outputs of this
@@ -88,7 +89,7 @@ public final class Sequence implements WeightedElement {
     this.savedNetSize = netSize;
     this.computeLastStatementInfo();
     this.outputIndices = new ArrayList<>();
-    this.allowShortForm = true;
+    this.shouldInlineLiterals = true;
     this.outputIndices.add(this.statements.size() - 1);
     this.activeFlags = new BitSet(this.size());
     this.setAllActiveFlags();
@@ -365,7 +366,7 @@ public final class Sequence implements WeightedElement {
       // But do print them if they are the last statement;
       // otherwise, the sequence might print as the empty string.
       if (i != size() - 1) {
-        if (canUseShortForm() && getStatement(i).getShortForm() != null) {
+        if (shouldInlineLiterals() && getStatement(i).getInlinedForm() != null) {
           continue;
         }
       }
@@ -1162,24 +1163,24 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Indicate whether this sequence can be printed with variable values substituted for the variable
-   * in operation arguments. If true, the initialization of the variable will not be included in the
-   * sequence when dumped to a file.
+   * By default, every value used in a sequence is named as a variable. If this variable is true,
+   * then primitive literals are used inline as arguments, without an explicit variable and
+   * initialization.
    *
-   * @return true if the short form of variables can be used for this sequence, and false otherwise
+   * @return true if literals should be inlined in this sequence, and false otherwise
    */
-  boolean canUseShortForm() {
-    return allowShortForm;
+  boolean shouldInlineLiterals() {
+    return shouldInlineLiterals;
   }
 
   /**
-   * Disables the use of variable values as arguments in this sequence. This is a hack to deal with
+   * Disables inlining of variable values as arguments in this sequence. This is a hack to deal with
    * inability to determine when a variable definition is necessary because it is used more than
    * once, which is an issue because post-conditions can use variables but don't have the abilility
-   * to use the short-form.
+   * to use the inlined form.
    */
-  public void disableShortForm() {
-    allowShortForm = false;
+  public void doNotInlineLiterals() {
+    shouldInlineLiterals = false;
   }
 
   /**

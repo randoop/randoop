@@ -204,17 +204,16 @@ public final class Statement {
   }
 
   /**
-   * getShortForm constructs code expression of the operation for substitution into argument lists
-   * as opposed to using variable.
+   * Returns a printed representation of the value as a literal, rather than as a variable
+   * reference.
    *
-   * @return string containing code to access the value of the operation/term
+   * @return string containing code for a literal value
    */
   // Historical note:
   // Do not use the short output format if the value is null, because
   // the variable type may disambiguate among overloaded methods.
-  // (It would be even nicer to use the short output format unless
-  // disambiguation is truly needed.)
-  public String getShortForm() {
+  // (It would be even nicer to add a cast where the null is used.)
+  public String getInlinedForm() {
     if (isNonreceivingInitialization() && !isNullInitialization()) {
       return Value.toCodeString(operation.getValue());
     }
