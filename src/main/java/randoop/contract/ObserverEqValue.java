@@ -26,7 +26,7 @@ public final class ObserverEqValue extends ObjectContract {
   /** The observer method. */
   public TypedOperation observer;
 
-  /** The runtime value of the observer. This variable holds a primitive value or String. */
+  /** The run-time value of the observer. This variable holds a primitive value or String. */
   public Object value;
 
   @Override
@@ -53,14 +53,20 @@ public final class ObserverEqValue extends ObjectContract {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;
-    Type type = Type.forClass(this.value.getClass());
-    assert (this.value == null) || type.isBoxedPrimitive() || type.isString()
-        : "obs value/class = "
-            + this.value
-            + "/"
-            + this.value.getClass()
-            + " observer = "
-            + observer;
+    Type type = Type.forClass(value.getClass());
+    assert isLiteralValue(value)
+        : String.format(
+            "Cannot represent %s [%s] as a literal; observer = %s",
+            value, value.getClass(), observer);
+  }
+
+  /** Returns true if this value can be written as a literal in Java source code. */
+  public static boolean isLiteralValue(Object value) {
+    if (value == null) {
+      return false;
+    }
+    Type type = Type.forClass(value.getClass());
+    return type.isBoxedPrimitive() || type.isClass() || type.isString();
   }
 
   @Override
