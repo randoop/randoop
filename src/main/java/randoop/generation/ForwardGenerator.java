@@ -1,10 +1,8 @@
 package randoop.generation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
@@ -39,28 +37,8 @@ import randoop.util.SimpleList;
 
 /**
  * Randoop's forward, component-based generator.
- *
- * <p>For weighted random selection of an input sequence, there are two weighting schemes:
- *
- * <ul>
- *   <li>Dynamic weighting scheme
- *   <li>Default static weighting scheme from {@link Sequence}
- * </ul>
  */
 public class ForwardGenerator extends AbstractGenerator {
-
-  /**
-   * Map from a sequences to its combined weight. Accounts for the three weighting schemes for each
-   * sequence.
-   */
-  private final Map<Sequence, Double> weightMap = new HashMap<>();
-
-  /**
-   * Map from a sequence to the number of times it has been executed. Used with the dynamic
-   * weighting scheme.
-   */
-  private final Map<Sequence, SequenceExecDetails> sequenceExecutionCount = new HashMap<>();
-
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
    * discarded.
@@ -88,15 +66,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   private final TypeInstantiator instantiator;
 
-  private static class SequenceExecDetails {
-    public int numExecutions;
-    public double sumOfExecTimeAndMethodSizeProduct;
-
-    public SequenceExecDetails(int numExecutions, double sumOfExecTimeAndMethodSizeProduct) {
-      this.numExecutions = numExecutions;
-      this.sumOfExecTimeAndMethodSizeProduct = sumOfExecTimeAndMethodSizeProduct;
-    }
-  }
+  private final InputSequenceSelector inputSequenceSelector;
 
   // The set of all primitive values seen during generation and execution
   // of sequences. This set is used to tell if a new primitive value has
@@ -126,6 +96,14 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
+
+    if (GenInputsAbstract.small_tests) {
+      inputSequenceSelector = new SmallTestsSequenceSelection();
+    } else if (GenInputsAbstract.enable_orienteering) {
+      inputSequenceSelector = new OrienteeringSelection();
+    } else {
+      inputSequenceSelector = new UniformRandomSequenceSelection();
+    }
   }
 
   /**
@@ -172,7 +150,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     startTime = System.nanoTime(); // reset start time.
 
-    setWeight(eSeq);
+    inputSequenceSelector.computeWeightForSequence(eSeq);
 
     determineActiveIndices(eSeq);
 
@@ -185,27 +163,6 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.gentime = gentime1 + gentime2;
 
     return eSeq;
-  }
-
-  /**
-   * Updates eSeq's weight in weightMap according to the Orienteering formula from the GRT paper.
-   *
-   * @param eSeq the recently executed sequence which needs a weight update
-   */
-  private void setWeight(ExecutableSequence eSeq) {
-    SequenceExecDetails seqExecDets = sequenceExecutionCount.get(eSeq.sequence);
-    if (seqExecDets == null) {
-      seqExecDets = new SequenceExecDetails(0, 0);
-      sequenceExecutionCount.put(eSeq.sequence, seqExecDets);
-    }
-
-    // Increment the number of times this sequence has been executed.
-    seqExecDets.numExecutions += 1;
-    seqExecDets.sumOfExecTimeAndMethodSizeProduct +=
-        eSeq.exectime * Math.sqrt(eSeq.sequence.methodCalls());
-
-    double weight = 1.0 / (seqExecDets.sumOfExecTimeAndMethodSizeProduct);
-    weightMap.put(eSeq.sequence, weight);
   }
 
   @Override
@@ -781,15 +738,7 @@ public class ForwardGenerator extends AbstractGenerator {
       //   }
       // }
 
-      Sequence chosenSeq;
-      if (GenInputsAbstract.small_tests) {
-        chosenSeq = Randomness.randomMemberWeighted(candidates);
-      } else if (GenInputsAbstract.enable_orienteering) {
-        chosenSeq = Randomness.randomMemberWeighted(candidates, weightMap);
-      } else {
-        chosenSeq = Randomness.randomMember(candidates);
-      }
-
+      Sequence chosenSeq = inputSequenceSelector.selectInputSequence(candidates);
       Log.logPrintf("chosenSeq: %s%n", chosenSeq);
 
       // TODO: the last statement might not be active -- it might not create a usable variable of
