@@ -1418,15 +1418,15 @@ Give the replacement file to the replacecall agent using the <code>--replacement
 <ul>
   <li>If the original method is static, the replacement method should have the
     identical signature.</li>
-  <li>If the original method is non-static, then the replacement method should 
+  <li>If the original method is non-static, then the replacement method should
 have an additional first parameter whose type is the containing
 class of the original method.
 For instance, a call to <code>java.awt.Component.show()</code> would be replaced
 by a call to a method with the signature <code>show(java.awt.Component)</code>.
-An example mock class is 
+An example mock class is
 <a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java"><code>randoop.mock.java.awt.Component</code></a>.</li>
   <li>If the original method is a constructor (an
-<code>&lt;init&gt;</code> method), 
+<code>&lt;init&gt;</code> method),
 then the replacement method should have the same
 parameter types, and its return type is the class that contains the
 constructor.
@@ -1441,7 +1441,7 @@ it can change the behavior of client code.
 <h4 id="replacecall-replacement-implementation">Tips about implementing replacement classes</h4>
 
 <p>
-To simplify your replacement file and keep your mock classes organized, 
+To simplify your replacement file and keep your mock classes organized,
 you should choose a package prefix and keep the package
 structure of the original classes.
 Randoop's default replacements file uses <code>randoop.mock</code> as the prefix, so the
@@ -2095,28 +2095,51 @@ Here are some ways to eliminate nondeterminism in a sequential Java program:
 
 <ul>
   <li>
-    Some collections have arbitrary iteration order, such as <code>HashMap</code> and <code>HashSet</code>.
-    Either sort their results, or replace the data structures by
-    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashMap.html"><code>LinkedHashMap</code></a>
-    and
-    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashSet.html"><code>LinkedHashSet</code></a>.
+    Hashing.  Even if your code does not call <code>hashCode()</code>
+    directly, it may be nondeterministic if some <code>hashCode()</code>
+    method is deterministic.
+    <ul>
+      <li>
+	<code>Object.hashCode()</code> depends on where the object is laid
+	out in memory, which depends on the operating system and on when
+	the garbage collector runs.  Most classes
+	should <code>equals()</code> (the default is reference equality),
+	and any class that overrides <code>equals()</code> must
+	override <code>hashCode()</code>, for consistency
+	with <code>equals()</code>.
+      </li>
+      <li>
+	<code>Object.toString()</code> depends
+	on <code>Object.hashCode()</code>.  Most classes should
+	override <code>Object.toString()</code> to give more informative
+	output (and usually not to depend on the hash code).
+      </li>
+      <li>
+	<code>Arrays.deepHashCode()</code> depends on
+	on <code>Object.hashCode()</code>.
+      </li>
+      <li>
+	For deteriminism, don't instantiate the <code>Object</code> class,
+        as in <code>new Object()</code>; instead, use some class that overrides
+	<code>Object.hashCode()</code>.  For
+	example, <a href="http://plumelib.org/plume-util/api/org/plumelib/util/DeterministicObject.html">DeterministicObject</a>
+	returns a number indicating the creation order of the object.
+      </li>
+      <li>
+	Some collections have arbitrary iteration order, such
+	as <code>HashMap</code> and <code>HashSet</code>.  Either sort
+	their results, or replace the data structures by
+	<a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashMap.html"><code>LinkedHashMap</code></a>
+	and
+	<a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashSet.html"><code>LinkedHashSet</code></a>.
+      </li>
+    </ul>
   </li>
   <li>
     Some APIs produce results in arbitrary order, such
     as <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html#list--">File.list()</a>
     and <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html#listFiles--">File.listFiles()</a>.
     Sort their results before using them.
-  </li>
-  <li>
-    <code>Object.hashCode()</code> depends on where the object is laid out
-    in memory, which depends on when the garbage collector
-    runs.  <code>Object.toString()</code> depends
-    on <code>Object.hashCode()</code>.  Every class should
-    override <code>hashCode()</code>, <code>equals()</code> (for
-    consistency with <code>hashCode()</code>), and <code>toString()</code>.
-    Furthermore, don't instantiate the <code>Object</code> class, as
-    in <code>new Object()</code>; instead, use some class that overrides
-    the methods.
   </li>
   <li>
     Don't call <code>new Random()</code> without an argument.  Instead, use
@@ -2138,7 +2161,7 @@ Randoop's <a href="#replacecall">replacecall agent</a>.
 
 <li>
 Prevent Randoop from directly calling problematic methods.
-Use the <a href="#option:omitmethods"><code>--omitmethods</code></a> 
+Use the <a href="#option:omitmethods"><code>--omitmethods</code></a>
 or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>
 command-line argument.
 </li>
@@ -2409,7 +2432,7 @@ See the manual section on <a href="#nondeterminism">nondeterminism</a>.
 <p>
 A test is <i>flaky</i> if it behaves differently on different executions.
 </p>
-  
+
 <!--
 <p>
 Randoop extends previously-generated tests by adding new method calls to them.
