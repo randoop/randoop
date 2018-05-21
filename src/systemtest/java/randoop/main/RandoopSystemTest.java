@@ -242,7 +242,8 @@ public class RandoopSystemTest {
             "java7.util7.TreeSet.headSet(java.lang.Object, boolean) ignore",
             "java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) ignore",
             "java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore",
-            "java7.util7.TreeSet.tailSet(java.lang.Object, boolean) ignore"
+            "java7.util7.TreeSet.tailSet(java.lang.Object, boolean) ignore",
+            "java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore"
             // end of list (line break to permit easier sorting)
             );
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -364,7 +365,8 @@ public class RandoopSystemTest {
             "java7.util7.LinkedList.removeLastOccurrence(java.lang.Object) ignore",
             "java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore",
             "java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore",
-            "java7.util7.TreeSet.contains(java.lang.Object) ignore"
+            "java7.util7.TreeSet.contains(java.lang.Object) ignore",
+            "java7.util7.TreeSet.remove(java.lang.Object) ignore"
             // end of list (line break to permit easier sorting)
             );
 
@@ -614,7 +616,8 @@ public class RandoopSystemTest {
             "java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) ignore",
             "java7.util7.TreeMap.containsKey(java.lang.Object) ignore",
             "java7.util7.Vector.removeAll(java7.util7.Collection) ignore",
-            "java7.util7.Vector.retainAll(java7.util7.Collection) ignore"
+            "java7.util7.Vector.retainAll(java7.util7.Collection) ignore",
+            "java7.util7.Collections.shuffle(java7.util7.List, java.util.Random) ignore"
             // end of list (line break to permit easier sorting)
             );
     generateAndTest(
