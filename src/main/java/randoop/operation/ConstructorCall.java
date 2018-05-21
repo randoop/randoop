@@ -243,16 +243,22 @@ public final class ConstructorCall extends CallableOperation {
     try {
       classType = Type.forName(classname);
     } catch (ClassNotFoundException e) {
-      String msg = "Class for constructor " + constructorString + " not found: " + e;
+      String msg =
+          "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
       throw new OperationParseException(msg);
     }
 
-    Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
+    Class<?>[] typeArguments;
+    try {
+      typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
+    } catch (OperationParseException e) {
+      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
+    }
     Constructor<?> con;
     try {
       con = classType.getRuntimeClass().getDeclaredConstructor(typeArguments);
     } catch (NoSuchMethodException e) {
-      String msg = "Constructor " + constructorString + " not found: " + e;
+      String msg = "Constructor " + constructorString + " does not exist: " + e;
       throw new OperationParseException(msg);
     }
 

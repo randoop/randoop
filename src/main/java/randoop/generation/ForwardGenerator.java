@@ -242,8 +242,9 @@ public class ForwardGenerator extends AbstractGenerator {
       Log.logPrintf("isObserver => %s for %s%n", isObserver, stmt);
       if (isObserver) {
         List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
-        int receiver = inputVars.get(0);
-        seq.sequence.clearActiveFlag(receiver);
+        for (Integer inputIndex : inputVars) {
+          seq.sequence.clearActiveFlag(inputIndex);
+        }
       }
 
       // If its runtime value is a primitive value, clear its active flag,
