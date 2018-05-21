@@ -815,6 +815,30 @@ public class RandoopSystemTest {
         is(equalTo(0)));
   }
 
+  /** Runs with --observers flag and should have no observers called for side effect */
+  @Test
+  public void runSideEffectObserversTest() {
+    String directoryName = "side-effect-observers-test";
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment(directoryName);
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName(null);
+    options.setRegressionBasename("SideEffectObserver");
+    options.setErrorBasename("SideEffectObserverError");
+    options.addTestClass("observers.Box");
+    options.setOption("maxsize", "7");
+    options.setOption("attempted-limit", "1000");
+    options.setOption("observers", "resources/systemTest/observers.txt");
+
+    RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
+
+    int expectedTests = 5;
+    assertThat(
+        "should have generated " + expectedTests + " tests",
+        runStatus.regressionTestCount,
+        is(equalTo(expectedTests)));
+  }
+
   @Test
   public void runInnerClassTest() {
     SystemTestEnvironment testEnvironment =
