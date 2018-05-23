@@ -35,9 +35,7 @@ import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
-/**
- * Randoop's forward, component-based generator.
- */
+/** Randoop's forward, component-based generator. */
 public class ForwardGenerator extends AbstractGenerator {
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
@@ -101,6 +99,7 @@ public class ForwardGenerator extends AbstractGenerator {
       inputSequenceSelector = new SmallTestsSequenceSelection();
     } else if (GenInputsAbstract.enable_orienteering) {
       inputSequenceSelector = new OrienteeringSelection();
+      System.out.println("Orienteering is enabled.");
     } else {
       inputSequenceSelector = new UniformRandomSequenceSelection();
     }
@@ -150,7 +149,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     startTime = System.nanoTime(); // reset start time.
 
-    inputSequenceSelector.computeWeightForSequence(eSeq);
+    inputSequenceSelector.assignExecTimeForSequence(eSeq);
 
     determineActiveIndices(eSeq);
 

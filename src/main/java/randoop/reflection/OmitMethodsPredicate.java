@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import randoop.operation.CallableOperation;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
@@ -162,6 +161,7 @@ public class OmitMethodsPredicate {
 
   /**
    * Check if the given operation makes a call to hashcode and the class does not override hashcode.
+   *
    * @param typedClassOperation
    * @return true if the given operation calls hashcode but does not override it
    */
@@ -169,7 +169,6 @@ public class OmitMethodsPredicate {
     CallableOperation callableOperation = typedClassOperation.getOperation();
     if (callableOperation instanceof MethodCall) {
       MethodCall methodCall = (MethodCall) callableOperation;
-      
     }
     return false;
   }
