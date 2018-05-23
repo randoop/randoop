@@ -366,7 +366,8 @@ public class RandoopSystemTest {
             "java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore",
             "java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore",
             "java7.util7.TreeSet.contains(java.lang.Object) ignore",
-            "java7.util7.TreeSet.remove(java.lang.Object) ignore"
+            "java7.util7.TreeSet.remove(java.lang.Object) ignore",
+            "java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) ignore"
             // end of list (line break to permit easier sorting)
             );
 
