@@ -72,25 +72,25 @@ public class Bloodhound implements TypedOperationSelector {
   private final SimpleArrayList<TypedOperation> operationSimpleList;
 
   /**
-   * Hyper-parameter for balancing branch coverage and number of times a method was chosen. The name
-   * alpha is from the GRT paper.
+   * Parameter for balancing branch coverage and number of times a method was chosen. The name alpha
+   * is from the GRT paper.
    */
-  private final double alpha = 0.5;
+  private final double alpha = 0.9;
 
   /**
-   * Hyper-parameter for decreasing weights of methods between updates to coverage information. The
-   * name p is from the GRT paper.
+   * Parameter for decreasing weights of methods between updates to coverage information. The name p
+   * is from the GRT paper.
    */
-  private final double p = 0.5;
+  private final double p = 0.99;
 
   /**
-   * Branch coverage is recomputed after this many successful invocations (= this many new tests
-   * were generated).
+   * Time interval, in milliseconds, at which to recompute weights. The name t is from the GRT
+   * paper.
    */
-  private final int branchCoverageInterval = 100;
+  private final long t = 50000;
 
-  /** The total number of successful invocations of all the methods under test. */
-  private int totalSuccessfulInvocations = 0;
+  /** Time, in milliseconds, when branch coverage was last updated. */
+  private long lastUpdateTime = 0;
 
   /**
    * Maximum number of times any method under test has been successfully invoked. This value is
@@ -117,8 +117,7 @@ public class Bloodhound implements TypedOperationSelector {
     // Compute an initial weight for all methods under test. We also initialize the uncovered ratio
     // value of all methods under test by updating branch coverage information. The weights for all
     // methods may not be uniform in cases where we have methods with "zero" branches and methods
-    // with non-"zero" branches. This initialization also depends on totalSuccessfulInvocations being
-    // initialized to zero.
+    // with non-"zero" branches. This initialization depends on lastUpdateTime being initialized to zero.
     updateBranchCoverageMaybe();
   }
 
@@ -153,7 +152,13 @@ public class Bloodhound implements TypedOperationSelector {
    * for all methods under test is updated and weights for all methods under test are recomputed.
    */
   private void updateBranchCoverageMaybe() {
-    if (totalSuccessfulInvocations % branchCoverageInterval == 0) {
+    long currentTime = System.currentTimeMillis();
+    if (currentTime - lastUpdateTime >= t) {
+      if (GenInputsAbstract.bloodhound_logging) {
+        System.out.println("Updating branch coverage information.");
+      }
+      lastUpdateTime = currentTime;
+
       methodSelectionCounts.clear();
       coverageTracker.updateBranchCoverageMap();
       updateWeightsForAllOperations();
@@ -278,7 +283,6 @@ public class Bloodhound implements TypedOperationSelector {
    * @param operation the method under test that was successfully invoked
    */
   public void incrementSuccessfulInvocationCount(TypedOperation operation) {
-    totalSuccessfulInvocations += 1;
     int numSuccessfulInvocations = incrementInMap(methodInvocationCounts, operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
   }
