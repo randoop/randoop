@@ -80,11 +80,6 @@ public class ReplaceCallAgent {
    * @throws IOException if there is an error reading a file
    */
   public static void premain(String agentArgs, Instrumentation instrumentation) throws IOException {
-    if (verbose) {
-      System.out.format(
-          "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n", agentArgs, instrumentation);
-    }
-
     try {
       if (agentArgs != null) { // If there are any arguments, parse them
         Options options = new Options(ReplaceCallAgent.class);
@@ -93,6 +88,12 @@ public class ReplaceCallAgent {
           System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
           System.exit(1); // Exit on bad user input.
         }
+      }
+
+      if (verbose) {
+        System.out.format(
+            "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n",
+            agentArgs, instrumentation);
       }
 
       debugPath = Paths.get("").toAbsolutePath().toAbsolutePath();
