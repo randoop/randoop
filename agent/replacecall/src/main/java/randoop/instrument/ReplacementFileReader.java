@@ -24,7 +24,7 @@ import org.plumelib.util.EntryReader;
 
 /**
  * Provides the methods {@link #readReplacements(Reader, String)} and {@link
- * #readReplacements(File)} that read a replacecall agent replacement file and populate the method
+ * #readReplacements(Path)} that read a replacecall agent replacement file and populate the method
  * replacement map used by the agent. See the <a
  * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
  * documentation</a> for the file format.
@@ -414,7 +414,8 @@ public class ReplacementFileReader {
           addReplacementsFromAllClassesOfPackage(
               replacementMap, originalPackage, replacementPackage, jarFile);
         } else {
-          // The subclass for directories is an internal Java class and its use results in compiler warnings.
+          // The subclass for directories is an internal Java class and its use results in compiler
+          // warnings.
           // It seems to work to assume that connection is a directory, and let an exception occur
           // if it is not.
           Path path = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));

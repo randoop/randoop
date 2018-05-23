@@ -819,11 +819,27 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return classnames;
   }
 
+  /**
+   * Returns a set consisting of the lines of the file, except those starting with "#". Returns
+   * empty set if listFile is null.
+   *
+   * @param listFile the file containing the strings
+   * @param fileDescription string used in error messages
+   * @return the lines in the file, or null if listFile is null
+   */
   public static Set<String> getStringSetFromFile(Path listFile, String fileDescription) {
     return getStringSetFromFile(listFile, fileDescription, "^#.*", null);
   }
 
-  /** Returns empty set if listFile is null. */
+  /**
+   * Returns a set consisting of the lines of the file. Returns empty set if listFile is null.
+   *
+   * @param listFile the file containing the strings
+   * @param fileDescription string used in error messages
+   * @param commentRegex indicates which lines are comments that should be ignored
+   * @param includeRegex if this string appears in the file, then another file is recursively read
+   * @return the strings in the file, or null if listFile is null
+   */
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
       /*@Nullable*/ Path listFile,

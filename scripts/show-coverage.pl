@@ -61,13 +61,13 @@ my $help = 0;
 my $details = 0;
 my $man = 0;
 
-    # Parse options and print usage if there is a syntax error,
-    # or if usage was explicitly requested.
-    GetOptions('help|?' => \$help, details => \$details, man => \$man) or pod2usage(2);
-    pod2usage(1) if $help;
-    pod2usage(-verbose => 2) if $man;
-    # Check for too many filenames
-    pod2usage("$0: Too many files given.\n")  if (@ARGV > 1);
+# Parse options and print usage if there is a syntax error,
+# or if usage was explicitly requested.
+GetOptions('help|?' => \$help, details => \$details, man => \$man) or pod2usage(2);
+pod2usage(1) if $help;
+pod2usage(-verbose => 2) if $man;
+# Check for too many filenames
+pod2usage("$0: Too many files given.\n")  if (@ARGV > 1);
 
 my $test_count = 0;
 my $tot_line = 0;
@@ -76,69 +76,66 @@ my @xml_lines;
 my @fields;
 my $filename = 'build/reports/jacoco/test/jacocoTestReport.xml';
 
-    print(strftime("\nToday's date: %Y-%m-%d %H:%M:%S", localtime), "\n");
+print(strftime("\nToday's date: %Y-%m-%d %H:%M:%S", localtime), "\n");
 
-    if (@ARGV == 1) {
-        $filename = $ARGV[0];
-    }
+if (@ARGV == 1) {
+    $filename = $ARGV[0];
+}
 
-    open(my $fh, '<', $filename)
-      or die "Could not open file '$filename'. $!.\n";
-    printf("Processing file: %s\n", $filename);
-    print(strftime("Created: %Y-%m-%d %H:%M:%S", localtime((stat($fh))[9])), "\n");
+open(my $fh, '<', $filename)
+  or die "Could not open file '$filename'. $!.\n";
+printf("Processing file: %s\n", $filename);
+print(strftime("Created: %Y-%m-%d %H:%M:%S", localtime((stat($fh))[9])), "\n");
 
-    while (<$fh>) {
-        chomp;
-#       print $_;
-        $tot_line++;
-        @xml_lines = split /></;
-    }
+while (<$fh>) {
+    chomp;
+    $tot_line++;
+    @xml_lines = split /></;
+}
 
-    if ($tot_line != 1) {
-        die "Unrecognized format of file '$filename'";
-    }
+if ($tot_line != 1) {
+    die "Unrecognized format of file '$filename'";
+}
 
-#   printf("\nnum xml_lines %s\n", $#xml_lines);
-    if ($xml_lines[$#xml_lines] ne "/report>") {
-        die "Unrecognized format of file '$filename'";
-    }
+if ($xml_lines[$#xml_lines] ne "/report>") {
+    die "Unrecognized format of file '$filename'";
+}
 
-    if ($details) {
-        print "\nTest    Lines     Total    %", "\n";
-        print "name    covered   lines    coverage", "\n";
+if ($details) {
+    print "\nTest    Lines     Total    %", "\n";
+    print "name    covered   lines    coverage", "\n";
 
-        my $element;
-        my $name;
-        my @output;
-        my $index = 0;
-        for my $i (0 .. $#xml_lines) {
-            $element = $xml_lines[$i];
-            if (substr($element, 0, length("package")) eq "package") {
-                @fields = split(/"/, $element);
-                $name = $fields[1];
-            } elsif (substr($element, 0, length("/package")) eq "/package") {
-                @fields = split(/"/, $xml_lines[$i-4]);
-                $tot_exec = $fields[5];
-                $tot_line = $fields[3] + $tot_exec;
-                $output[$index++] = sprintf("%s: %d %d %.2f\n", $name, $tot_exec, $tot_line, $tot_exec/$tot_line);
-            }
-        }
-        foreach (sort(@output)) {
-            print $_
+    my $element;
+    my $name;
+    my @output;
+    my $index = 0;
+    for my $i (0 .. $#xml_lines) {
+        $element = $xml_lines[$i];
+        if (substr($element, 0, length("package")) eq "package") {
+            @fields = split(/"/, $element);
+            $name = $fields[1];
+        } elsif (substr($element, 0, length("/package")) eq "/package") {
+            @fields = split(/"/, $xml_lines[$i-4]);
+            $tot_exec = $fields[5];
+            $tot_line = $fields[3] + $tot_exec;
+            $output[$index++] = sprintf("%s: %d %d %.2f\n", $name, $tot_exec, $tot_line, $tot_exec/$tot_line);
         }
     }
-
-#   print $xml_lines[$#xml_lines-4], "\n";
-    @fields = split(/"/, $xml_lines[$#xml_lines-4]);
-
-    if ($fields[0] ne "counter type=" || $fields[1] ne "LINE") {
-        die "Unrecognized format of file '$filename'";
+    foreach (sort(@output)) {
+        print $_
     }
+}
 
-    $tot_exec = $fields[5];
-    $tot_line = $fields[3] + $tot_exec;
+@fields = split(/"/, $xml_lines[$#xml_lines-4]);
 
-    print "\n";
-    print "Total lines: ", $tot_line, "\n";
-    print "Lines executed: ", $tot_exec, "\n";
-    printf("Coverage: %.2f\n", $tot_exec/$tot_line);
+if ($fields[0] ne "counter type=" || $fields[1] ne "LINE") {
+    die "Unrecognized format of file '$filename'";
+}
+
+$tot_exec = $fields[5];
+$tot_line = $fields[3] + $tot_exec;
+
+print "\n";
+print "Total lines: ", $tot_line, "\n";
+print "Lines executed: ", $tot_exec, "\n";
+printf("Coverage: %.2f\n", $tot_exec/$tot_line);

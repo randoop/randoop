@@ -52,6 +52,7 @@ import java.lang.reflect.*;
  * @author John Rose
  * @since  1.2
  */
+@SuppressWarnings("sunapi")
 public class Arrays {
 
     // Suppresses default constructor, ensuring non-instantiability.

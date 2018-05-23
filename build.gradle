@@ -57,7 +57,10 @@ allprojects {
   }
 
   dependencies {
-    plumelib 'org.plumelib:bcel-util:0.0.8'
+    plumelib 'org.plumelib:bcel-util:0.0.9'
+    // To use a local version comment out line above and uncomment line below.
+    //plumelib files("${rootDir}/libs/bcel-util-all.jar")
+
     plumelib 'org.plumelib:options:0.3.3'
     plumelib 'org.plumelib:plume-util:0.0.1'
   }
@@ -195,8 +198,9 @@ dependencies {
  * Configuration for formatting
  */
 googleJavaFormat {
-  // TODO:
-  //   toolVersion '1.3'
+  // as of 5/2018, default is still 1.1
+  // versions 1.2 and higher require Java 8
+  toolVersion '1.1'
   exclude '**/CloneVisitor.java'
 }
 
@@ -227,7 +231,7 @@ compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileCoveredTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileReplacecallTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
+compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile', '-XDenableSunApiLintControl', '-Xlint:-sunapi']
 
 task compileAll() {
   dependsOn compileJava

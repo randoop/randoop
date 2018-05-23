@@ -231,17 +231,23 @@ public final class MethodCall extends CallableOperation {
     try {
       classType = Type.forName(classname);
     } catch (ClassNotFoundException e) {
-      String msg = "Class for method " + methodString + " not found: " + e;
+      String msg =
+          "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
       throw new OperationParseException(msg);
     }
 
-    Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
+    Class<?>[] typeArguments;
+    try {
+      typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
+    } catch (OperationParseException e) {
+      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
+    }
     Method m = null;
-    String msg = "Method " + methodString + " not found: ";
+    String msg = "Method " + methodString + " does not exist";
     try {
       m = classType.getRuntimeClass().getDeclaredMethod(opname, typeArguments);
     } catch (NoSuchMethodException e) {
-      msg += e;
+      msg += ": " + e;
     }
     if (m == null) {
       try {
