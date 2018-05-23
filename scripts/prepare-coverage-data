@@ -47,7 +47,6 @@ use Getopt::Long qw(GetOptions);
 use Pod::Usage qw(pod2usage);
 
 my $help = 0;
-my $details = 0;
 my $man = 0;
 
 # Parse options and print usage if there is a syntax error,
@@ -58,7 +57,6 @@ pod2usage(-verbose => 2) if $man;
 # Check for too many filenames
 pod2usage("$0: Too many files given.\n")  if (@ARGV > 1);
 
-my $test_count = 0;
 my $tot_line = 0;
 my $tot_exec = 0;
 my @xml_lines;
