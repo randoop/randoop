@@ -222,7 +222,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.synchronizedSortedMap(java7.util7.SortedMap) exclude",
             "java7.util7.Collections.synchronizedSortedSet(java7.util7.SortedSet) ignore",
             "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude",
-            "java7.util7.Collections.unmodifiableList(java7.util7.List) exclude",
+            "java7.util7.Collections.unmodifiableList(java7.util7.List) ignore",
             "java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude",
             "java7.util7.Collections.unmodifiableSet(java7.util7.Set) exclude",
             "java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude",
@@ -231,7 +231,14 @@ public class RandoopSystemTest {
             "java7.util7.TreeSet.last() ignore",
             "java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.TreeSet.tailSet(java.lang.Object) ignore",
-            "java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude"
+            "java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude",
+            "java7.util7.Collections.singletonIterator(java.lang.Object) ignore",
+            "java7.util7.TreeSet.add(java.lang.Object) ignore",
+            "java7.util7.TreeSet.headSet(java.lang.Object) ignore",
+            "java7.util7.TreeSet.headSet(java.lang.Object, boolean) ignore",
+            "java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) ignore",
+            "java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore",
+            "java7.util7.TreeSet.tailSet(java.lang.Object, boolean) ignore"
             // end of list (line break to permit easier sorting)
             );
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;

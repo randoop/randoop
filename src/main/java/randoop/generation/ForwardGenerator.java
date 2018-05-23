@@ -1,8 +1,10 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
@@ -35,8 +37,22 @@ import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
-/** Randoop's forward, component-based generator. */
+/**
+ * Randoop's forward, component-based generator.
+ *
+ * <p>For weighted random selection of an input sequence, there are two weighting schemes:
+ *
+ * <ul>
+ *   <li>Static weighting scheme applicable to only extracted literals
+ *   <li>Default static weighting scheme from {@link Sequence}, applicable to all sequences
+ * </ul>
+ */
 public class ForwardGenerator extends AbstractGenerator {
+  /**
+   * Map of extracted literal sequences to their static weights. These weights are never changed
+   * once initialized.
+   */
+  private final Map<Sequence, Double> literalWeightMap = new HashMap<>();
 
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
@@ -70,13 +86,15 @@ public class ForwardGenerator extends AbstractGenerator {
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
+  // Called if you don't want to use the static weighting scheme for extracted literals.
+  // Currently used in regression tests and for backwards compatibility.
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       RandoopListenerManager listenerManager) {
-    this(operations, observers, limits, componentManager, null, listenerManager);
+    this(operations, observers, limits, componentManager, null, listenerManager, 0, null);
   }
 
   public ForwardGenerator(
@@ -86,6 +104,20 @@ public class ForwardGenerator extends AbstractGenerator {
       ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager) {
+    this(operations, observers, limits, componentManager, stopper, listenerManager, 0, null);
+  }
+
+  // Called if you don't want to use the static weighting scheme for extracted literals.
+  // Currently used in regression tests and for backwards compatibility.
+  public ForwardGenerator(
+      List<TypedOperation> operations,
+      Set<TypedOperation> observers,
+      GenInputsAbstract.Limits limits,
+      ComponentManager componentManager,
+      IStopper stopper,
+      RandoopListenerManager listenerManager,
+      int numClasses,
+      Map<Sequence, Integer> literalTermFrequencies) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
@@ -93,6 +125,7 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
+    initializeLiteralWeightMap(numClasses, literalTermFrequencies);
   }
 
   /**
@@ -108,6 +141,26 @@ public class ForwardGenerator extends AbstractGenerator {
       NormalExecution e = (NormalExecution) es.getResult(0);
       Object runtimeValue = e.getRuntimeValue();
       runtimePrimitivesSeen.add(runtimeValue);
+    }
+  }
+
+  /**
+   * Compute weights for the literals.
+   *
+   * @param numClasses number of classes under tests
+   * @param literalTermFrequencies a map from a literal to the number of times it appears in any
+   *     class under test
+   */
+  private void initializeLiteralWeightMap(
+      int numClasses, Map<Sequence, Integer> literalTermFrequencies) {
+    if (literalTermFrequencies != null) {
+      for (Sequence sequence : componentManager.getSequenceFrequency().keySet()) {
+        Integer documentFrequency = componentManager.getSequenceFrequency().get(sequence);
+        double tfIdf =
+            literalTermFrequencies.get(sequence)
+                * Math.log((numClasses + 1.0) / ((numClasses + 1.0) - documentFrequency));
+        literalWeightMap.put(sequence, tfIdf);
+      }
     }
   }
 
@@ -729,6 +782,8 @@ public class ForwardGenerator extends AbstractGenerator {
       Sequence chosenSeq;
       if (GenInputsAbstract.small_tests) {
         chosenSeq = Randomness.randomMemberWeighted(candidates);
+      } else if (GenInputsAbstract.enable_constant_mining) {
+        chosenSeq = Randomness.randomMemberWeighted(candidates, literalWeightMap);
       } else {
         chosenSeq = Randomness.randomMember(candidates);
       }

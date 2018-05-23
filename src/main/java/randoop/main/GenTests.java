@@ -364,12 +364,22 @@ public class GenTests extends GenInputsAbstract {
       observers.addAll(observerMap.getValues(keyType));
     }
 
+    int numClasses = operationModel.getClassTypes().size();
+    Map<Sequence, Integer> literalsTermFrequency = operationModel.getLiteralTermFrequency();
+
     /*
      * Create the generator for this session.
      */
     AbstractGenerator explorer =
         new ForwardGenerator(
-            operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
+            operations,
+            observers,
+            new GenInputsAbstract.Limits(),
+            componentMgr,
+            null, // TODO: is this the right stopper?
+            listenerMgr,
+            numClasses,
+            literalsTermFrequency);
 
     /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
     operationModel.log();

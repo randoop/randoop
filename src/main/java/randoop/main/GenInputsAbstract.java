@@ -486,8 +486,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * @see ClassLiteralsMode
    */
-  @Option("How to use literal values specified via --literals-file: ALL, PACKAGE, CLASS, or NONE")
-  public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS;
+  @Option(
+      "How to use literal values specified via --literals-file: ALL, CLASS_OR_ALL, PACKAGE, CLASS, or NONE")
+  public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS_OR_ALL;
 
   /**
    * The possible values of the literals_level command-line argument.
@@ -501,9 +502,22 @@ public abstract class GenInputsAbstract extends CommandHandler {
     CLASS,
     /** A literal is used as input to methods of any classes in the same package. */
     PACKAGE,
+    /**
+     * a literal for a given class is used as input only to methods of that class with probability
+     * <code>--p-const</code>, otherwise each literal is used as input to any method under test
+     */
+    CLASS_OR_ALL,
     /** Each literal is used as input to any method under test. */
     ALL
   }
+
+  /** What probability to select from only extracted literal sequences during sequence selection. */
+  @Option("What probability to select only extracted literals")
+  public static double p_const = .01;
+
+  @Unpublicized
+  @Option("Use values that are extracted from classes under test")
+  public static boolean enable_constant_mining = true;
 
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is

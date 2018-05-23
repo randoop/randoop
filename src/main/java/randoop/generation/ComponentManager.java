@@ -2,8 +2,11 @@ package randoop.generation;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.TypeInstantiator;
@@ -17,11 +20,13 @@ import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
+import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
  * Stores and provides means to access the component sequences generated during a run of Randoop.
- * "Component sequences" are sequences that Randoop uses to create larger sequences.
+ * "Component sequences" are sequences that Randoop uses to create larger sequences. Also stores and
+ * provides means to access the frequency of extracted class literals.
  *
  * <p>This class manages different collections of component sequences:
  *
@@ -29,7 +34,6 @@ import randoop.util.SimpleList;
  *   <li>General components that can be used as input to any method in any class.
  *   <li>Class literals: components representing literal values that apply only to a specific class
  *       and should not be used as inputs to other classes.
- *   <li>Package literals: analogous to class literals but at the package level.
  * </ul>
  *
  * SEED SEQUENCES. Seed sequences are sequences that were not created during the generation process
@@ -39,6 +43,13 @@ import randoop.util.SimpleList;
  * from the collection.
  */
 public class ComponentManager {
+
+  /**
+   * This frequency represents the number of times a class-level literal occurs in all classes under
+   * test. Used for the static weighting scheme of extracted class-level literals, which is used in
+   * the weighted sequence selection.
+   */
+  private final Map<Sequence, Integer> sequenceFrequency = new LinkedHashMap<>();
 
   /** The principal set of sequences used to create other, larger sequences by the generator. */
   // Is never null. Contains both general components
@@ -71,8 +82,6 @@ public class ComponentManager {
    * packageliterals is non-null.
    */
   private PackageLiterals packageLiterals = null;
-
-  private Set<Type> sequenceTypes;
 
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
@@ -133,12 +142,17 @@ public class ComponentManager {
   }
 
   /**
-   * Add a component sequence.
+   * Add a component sequence, and update the sequence's frequency.
    *
    * @param sequence the sequence
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
+    Integer frequency = sequenceFrequency.get(sequence);
+    if (frequency == null) {
+      frequency = 0;
+    }
+    sequenceFrequency.put(sequence, frequency + 1);
   }
 
   /**
@@ -146,6 +160,11 @@ public class ComponentManager {
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
+  }
+
+  /** @return the mapping of sequences to their frequency */
+  public Map<Sequence, Integer> getSequenceFrequency() {
+    return sequenceFrequency;
   }
 
   /*
@@ -171,6 +190,10 @@ public class ComponentManager {
   /**
    * Returns component sequences that create values of the type required by the i-th input value of
    * the given statement. Also includes any applicable class- or package-level literals.
+   *
+   * <p>With probability <code>--p-const</code> (as given by the command-line option), this only
+   * returns the subset of these component sequences that are extracted literals. Otherwise, it
+   * returns all of these component sequences.
    *
    * @param operation the statement
    * @param i the input value index of statement
@@ -213,6 +236,9 @@ public class ComponentManager {
             literals = (literals == null) ? sl : new ListOfLists<>(literals, sl);
           }
         }
+      } else if (classLiterals != null && Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
+        // Return only the component sequences that are class-level extracted literals.
+        return classLiterals.getSequences(declaringCls, neededType);
       }
     }
 
@@ -220,8 +246,6 @@ public class ComponentManager {
     if (literals != null) {
       if (result == null) {
         result = literals;
-      } else if (literals == null) {
-        // nothing to do
       } else {
         result = new ListOfLists<>(result, literals);
       }
