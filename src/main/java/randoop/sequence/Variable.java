@@ -141,6 +141,8 @@ public class Variable implements Comparable<Variable> {
   /**
    * True if this variable's value should be inlined as a literal at call sites, rather than
    * referencing the variable.
+   *
+   * @return whether this variable's value should be inlined as a literal at call sites
    */
   public boolean shouldInlineLiterals() {
     return sequence.shouldInlineLiterals();
