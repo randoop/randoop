@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>GenInputsAbstract (randoop 4.0.3 API)</title>
+<title>GenInputsAbstract (randoop 4.0.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="GenInputsAbstract (randoop 4.0.3 API)";
+            parent.document.title="GenInputsAbstract (randoop 4.0.4 API)";
         }
     }
     catch(err) {
@@ -208,7 +208,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#classlist">classlist</a></span></code>
 <div class="block">File that lists classes to test.</div>
 </td>
@@ -299,7 +299,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#ignore_condition_exception">ignore_condition_exception</a></span></code>
-<div class="block">Make Randoop proceed, instead of failing, if a specification's execution throws an exception.</div>
+<div class="block">Make Randoop treat a specification whose execution throws an exception as returning <code>false</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -382,7 +382,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#methodlist">methodlist</a></span></code>
 <div class="block">A file containing a list of methods and constructors to test, each given as a <a
  href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
@@ -392,7 +392,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#minimize_error_test">minimize_error_test</a></span></code>
-<div class="block">Flag indicating whether or not to automatically minimize error-revealing tests.</div>
+<div class="block">If true, Randoop outputs both original error-revealing tests and a minimized version.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -444,9 +444,11 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#observers">observers</a></span></code>
-<div class="block">File containing side-effect-free observer methods.</div>
+<div class="block">File containing side-effect-free observer methods, each given as a <a
+ href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+ signature</a> on a separate line.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -456,7 +458,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#omit_field_list">omit_field_list</a></span></code>
 <div class="block">File that contains fully-qualified field names to be excluded from test generation.</div>
 </td>
@@ -468,7 +470,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#omitmethods_file">omitmethods_file</a></span></code>
 <div class="block">A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests.</div>
@@ -502,7 +504,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#print_file_system_state">print_file_system_state</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#print_erroneous_file">print_erroneous_file</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
@@ -543,7 +545,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#require_covered_classes">require_covered_classes</a></span></code>
 <div class="block">File containing fully-qualified names of classes that the tests must use.</div>
 </td>
@@ -573,16 +575,15 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#specifications">specifications</a></span></code>
-<div class="block">Read JSON condition file to use specifications to control how tests are generated and
- classified.</div>
+<div class="block">Read file of specifications; see manual section "Specifying expected code behavior".</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#stop_on_error_test">stop_on_error_test</a></span></code>
-<div class="block">Stop generation once an error-revealing test has been generated.</div>
+<div class="block">Stop generation as soon as one error-revealing test has been generated.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -626,8 +627,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#use_jdk_specifications">use_jdk_specifications</a></span></code>
-<div class="block">Use the internal specifications for JDK classes to control how tests are generated and
- classified.</div>
+<div class="block">Use built-in specifications for JDK classes and for classes that inherit from them, as if they
+ had been supplied using the <code>--specifications</code> command-line argument.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -696,15 +697,19 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getStringSetFromFile-java.io.File-java.lang.String-">getStringSetFromFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;listFile,
-                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fileDescription)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getStringSetFromFile-java.nio.file.Path-java.lang.String-">getStringSetFromFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;listFile,
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fileDescription)</code>
+<div class="block">Returns a set consisting of the lines of the file, except those starting with "#".</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getStringSetFromFile-java.io.File-java.lang.String-java.lang.String-java.lang.String-">getStringSetFromFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;listFile,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getStringSetFromFile-java.nio.file.Path-java.lang.String-java.lang.String-java.lang.String-">getStringSetFromFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;listFile,
                     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fileDescription,
                     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;commentRegex,
-                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;includeRegex)</code>&nbsp;</td>
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;includeRegex)</code>
+<div class="block">Returns a set consisting of the lines of the file.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -753,7 +758,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>classlist</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a> classlist</pre>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a> classlist</pre>
 <div class="block">File that lists classes to test. All of their methods are methods under test.
 
  <p>In the file, each class under test is specified by its fully-qualified name on a separate
@@ -768,7 +773,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>methodlist</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a> methodlist</pre>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a> methodlist</pre>
 <div class="block">A file containing a list of methods and constructors to test, each given as a <a
  href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
  signature</a> on a separate line.
@@ -804,7 +809,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>omitmethods_file</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a> omitmethods_file</pre>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a> omitmethods_file</pre>
 <div class="block">A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>--omitmethods</code>, and the default omissions.</div>
 </li>
@@ -838,7 +843,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>omit_field_list</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a> omit_field_list</pre>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a> omit_field_list</pre>
 <div class="block">File that contains fully-qualified field names to be excluded from test generation. An
  accessible field is used unless it is omitted by this or the <code>--omit-field</code> option.</div>
 </li>
@@ -887,8 +892,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 
  <p>Setting this option to <code>DISCARD</code> or <code>OUTPUT</code> should be considered a last resort.
  Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
- and a better solution is not to call Randoop on such methods; see the discussion of
- nondeterminism in the Randoop manual.</div>
+ and a better solution is not to call Randoop on such methods; see section "Nondeterminism" in
+ the Randoop manual.</div>
 </li>
 </ul>
 <a name="no_error_revealing_tests">
@@ -957,7 +962,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>require_covered_classes</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a> require_covered_classes</pre>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a> require_covered_classes</pre>
 <div class="block">File containing fully-qualified names of classes that the tests must use. This option only
  works if Randoop is run using the <a
  href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
@@ -974,9 +979,11 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>minimize_error_test</h4>
 <pre>public static&nbsp;boolean minimize_error_test</pre>
-<div class="block">Flag indicating whether or not to automatically minimize error-revealing tests. Both original
- and minimized versions of each test class will be output. Setting this option may cause long
- Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests.</div>
+<div class="block">If true, Randoop outputs both original error-revealing tests and a minimized version. Setting
+ this option may cause long Randoop run times if Randoop outputs and minimizes more than about
+ 100 error-revealing tests; consider using <a href="#option:stop-on-error-test"><code>
+ --stop-on-error-test=true</code></a>. Also see the <a
+ href="#optiongroup:Test-case-minimization-options">test case minimization options</a>.</div>
 </li>
 </ul>
 <a name="checked_exception">
@@ -1087,22 +1094,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>specifications</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&gt; specifications</pre>
-<div class="block">Read JSON condition file to use specifications to control how tests are generated and
- classified.
-
- <ul>
-   <li>
-       <p>Param-conditions are pre-conditions on method/constructor calls. Test sequences where
-       the condition fails are classified as <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html#INVALID"><code>GenInputsAbstract.BehaviorType.INVALID</code></a>.
-   <li>
-       <p>Return-conditions are post-conditions on method/constructor calls, consisting of a
-       guard and a property. If the inputs to the call satisfy the guard but the property fails,
-       then the sequence is classified as <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html#ERROR"><code>GenInputsAbstract.BehaviorType.ERROR</code></a>.
-   <li>Throws-conditions are post-conditions on expected exceptions. If the inputs to the call
-       satisfy the condition, then: when the exception is thrown the sequence is <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html#EXPECTED"><code>GenInputsAbstract.BehaviorType.EXPECTED</code></a>, but, if it is not, the sequence is classified as <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html#ERROR"><code>GenInputsAbstract.BehaviorType.ERROR</code></a>. If the throws-condition is not satisfied by the input, then ordinary
-       classification is applied.
- </ul></div>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt; specifications</pre>
+<div class="block">Read file of specifications; see manual section "Specifying expected code behavior".</div>
 </li>
 </ul>
 <a name="use_jdk_specifications">
@@ -1112,11 +1105,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>use_jdk_specifications</h4>
 <pre>public static&nbsp;boolean use_jdk_specifications</pre>
-<div class="block">Use the internal specifications for JDK classes to control how tests are generated and
- classified.
-
- <p>These specifications are applied to the methods of classes that inherit from them. See
- <a href="../../randoop/main/GenInputsAbstract.html#specifications"><code>specifications</code></a> for details on classification using specifications.</div>
+<div class="block">Use built-in specifications for JDK classes and for classes that inherit from them, as if they
+ had been supplied using the <code>--specifications</code> command-line argument.</div>
 </li>
 </ul>
 <a name="ignore_condition_compilation_error">
@@ -1137,7 +1127,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>ignore_condition_exception</h4>
 <pre>public static&nbsp;boolean ignore_condition_exception</pre>
-<div class="block">Make Randoop proceed, instead of failing, if a specification's execution throws an exception.</div>
+<div class="block">Make Randoop treat a specification whose execution throws an exception as returning <code>false</code>. If true, Randoop treats <code>x.f == 22</code> equivalently to the wordier <code>x != null
+ &amp;&amp; x.f == 22</code>. If false, Randoop halts when a specification throws an exception.</div>
 </li>
 </ul>
 <a name="observers">
@@ -1146,9 +1137,11 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>observers</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a> observers</pre>
-<div class="block">File containing side-effect-free observer methods. Specifying observers has two benefits: it
- makes regression tests stronger, and it helps Randoop create smaller tests.</div>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a> observers</pre>
+<div class="block">File containing side-effect-free observer methods, each given as a <a
+ href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+ signature</a> on a separate line. Specifying observers has two benefits: it makes regression
+ tests stronger, and it helps Randoop create smaller tests.</div>
 </li>
 </ul>
 <a name="time_limit">
@@ -1229,7 +1222,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>stop_on_error_test</h4>
 <pre>public static&nbsp;boolean stop_on_error_test</pre>
-<div class="block">Stop generation once an error-revealing test has been generated.</div>
+<div class="block">Stop generation as soon as one error-revealing test has been generated.</div>
 </li>
 </ul>
 <a name="null_ratio">
@@ -1610,13 +1603,13 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">A file to which to log the operation usage history.</div>
 </li>
 </ul>
-<a name="print_file_system_state">
+<a name="print_erroneous_file">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>print_file_system_state</h4>
-<pre>public static&nbsp;boolean print_file_system_state</pre>
+<h4>print_erroneous_file</h4>
+<pre>public static&nbsp;boolean print_erroneous_file</pre>
 </li>
 </ul>
 <a name="dontexecute">
@@ -1702,26 +1695,45 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getClassnamesFromArgs()</pre>
 </li>
 </ul>
-<a name="getStringSetFromFile-java.io.File-java.lang.String-">
+<a name="getStringSetFromFile-java.nio.file.Path-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getStringSetFromFile</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getStringSetFromFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;listFile,
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getStringSetFromFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;listFile,
                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fileDescription)</pre>
+<div class="block">Returns a set consisting of the lines of the file, except those starting with "#". Returns
+ empty set if listFile is null.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>listFile</code> - the file containing the strings</dd>
+<dd><code>fileDescription</code> - string used in error messages</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the lines in the file, or null if listFile is null</dd>
+</dl>
 </li>
 </ul>
-<a name="getStringSetFromFile-java.io.File-java.lang.String-java.lang.String-java.lang.String-">
+<a name="getStringSetFromFile-java.nio.file.Path-java.lang.String-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>getStringSetFromFile</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getStringSetFromFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;listFile,
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getStringSetFromFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;listFile,
                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fileDescription,
                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;commentRegex,
                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;includeRegex)</pre>
+<div class="block">Returns a set consisting of the lines of the file. Returns empty set if listFile is null.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>listFile</code> - the file containing the strings</dd>
+<dd><code>fileDescription</code> - string used in error messages</dd>
+<dd><code>commentRegex</code> - indicates which lines are comments that should be ignored</dd>
+<dd><code>includeRegex</code> - if this string appears in the file, then another file is recursively read</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the strings in the file, or null if listFile is null</dd>
+</dl>
 </li>
 </ul>
 </li>
