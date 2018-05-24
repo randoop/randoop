@@ -1,3 +1,20 @@
+Version 4.0.4, released May 23, 2018
+
+Command-line argument changes:
+ * the --specifications command-line argument can now be a .zip file
+ * renamed --print-file-system-state to --print-erroneous-file
+
+Randoop's replacecalls agent can now replace constructors.
+
+More methods are now permitted as observers.
+
+Improved diagnostics when user supplies incorrect input to Randoop.
+
+Bug fixes.
+
+Improvements to documentation.
+
+
 Version 4.0.3, released April 10, 2018
 
 Fixed a bug caused by order of execution of variable initializers.

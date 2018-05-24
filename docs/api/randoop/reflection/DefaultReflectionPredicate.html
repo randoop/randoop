@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>DefaultReflectionPredicate (randoop 4.0.3 API)</title>
+<title>DefaultReflectionPredicate (randoop 4.0.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="DefaultReflectionPredicate (randoop 4.0.3 API)";
+            parent.document.title="DefaultReflectionPredicate (randoop 4.0.4 API)";
         }
     }
     catch(err) {
@@ -115,9 +115,9 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">DefaultReflectionPredicate</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
 implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a></pre>
-<div class="block">Default implementations of methods that indicate whether a class, method, constructor, or field
- should be used in Randoop's exploration. Returns true for public members, with some exceptions
- (see <a href="../../randoop/reflection/DefaultReflectionPredicate.html#doNotUseSpecialCase-java.lang.reflect.Method-"><code>doNotUseSpecialCase(java.lang.reflect.Method)</code></a> method).
+<div class="block">Default implementations of methods that indicate what is "under test": whether a class, method,
+ constructor, or field should be used in Randoop's exploration. Returns true for public members,
+ with some exceptions (see <a href="../../randoop/reflection/DefaultReflectionPredicate.html#doNotUseSpecialCase-java.lang.reflect.Method-"><code>doNotUseSpecialCase(java.lang.reflect.Method)</code></a> method).
 
  <p>If a method has the <code>@CheckRep</code> annotation, returns false (the method will be used as a
  contract checker, not as a method under test).</div>

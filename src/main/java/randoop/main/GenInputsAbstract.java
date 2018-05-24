@@ -228,9 +228,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * If true, Randoop outputs both original error-revealing tests and a minimized version. Setting
    * this option may cause long Randoop run times if Randoop outputs and minimizes more than about
-   * 100 error-revealing tests; consider using <a href="#option:stop-on-error-test"><code>
+   * 100 error-revealing tests; consider using <a
+   * href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test"><code>
    * --stop-on-error-test=true</code></a>. Also see the <a
-   * href="#optiongroup:Test-case-minimization-options">test case minimization options</a>.
+   * href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization-options">test
+   * case minimization options</a>.
    */
   // Omit this to keep the documentation short:
   // Regardless of this option's setting, minimization is enabled when
@@ -818,11 +820,27 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return classnames;
   }
 
+  /**
+   * Returns a set consisting of the lines of the file, except those starting with "#". Returns
+   * empty set if listFile is null.
+   *
+   * @param listFile the file containing the strings
+   * @param fileDescription string used in error messages
+   * @return the lines in the file, or null if listFile is null
+   */
   public static Set<String> getStringSetFromFile(Path listFile, String fileDescription) {
     return getStringSetFromFile(listFile, fileDescription, "^#.*", null);
   }
 
-  /** Returns empty set if listFile is null. */
+  /**
+   * Returns a set consisting of the lines of the file. Returns empty set if listFile is null.
+   *
+   * @param listFile the file containing the strings
+   * @param fileDescription string used in error messages
+   * @param commentRegex indicates which lines are comments that should be ignored
+   * @param includeRegex if this string appears in the file, then another file is recursively read
+   * @return the strings in the file, or null if listFile is null
+   */
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
       /*@Nullable*/ Path listFile,

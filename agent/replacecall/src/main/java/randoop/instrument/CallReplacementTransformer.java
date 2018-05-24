@@ -219,6 +219,7 @@ public class CallReplacementTransformer extends InstructionListUtils
     // Have we modified this class?
     boolean transformed = false;
     InstructionFactory ifact = new InstructionFactory(cg);
+    boolean save_debug = debug_instrument.enabled;
 
     try {
       // Loop through each method in the class
@@ -233,13 +234,17 @@ public class CallReplacementTransformer extends InstructionListUtils
 
           debug_transform.log("%ntransform method: ENTER %s%n", mg.getName());
 
+          // Skip method if it's synthetic. (default constructors and <clinit> are not synthetic)
+          if ((Const.ACC_SYNTHETIC & mg.getAccessFlags()) > 0) {
+            continue;
+          }
+
           // Get the instruction list and skip methods with no instructions
           InstructionList il = mg.getInstructionList();
           if (il == null) {
             continue;
           }
 
-          boolean save_debug = debug_instrument.enabled;
           debug_instrument.enabled = false;
 
           // Prepare method for instrumentation.
@@ -291,6 +296,7 @@ public class CallReplacementTransformer extends InstructionListUtils
     } catch (Exception e) {
       System.out.printf("Unexpected exception encountered: %s", e);
       e.printStackTrace();
+      debug_instrument.enabled = save_debug;
     }
 
     return transformed;
