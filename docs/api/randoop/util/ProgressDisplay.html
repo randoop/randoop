@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ProgressDisplay (randoop 4.0.3 API)</title>
+<title>ProgressDisplay (randoop 4.0.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ProgressDisplay (randoop 4.0.3 API)";
+            parent.document.title="ProgressDisplay (randoop 4.0.4 API)";
         }
     }
     catch(err) {
@@ -272,26 +272,28 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#messageWithoutTime--">messageWithoutTime</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>private void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#exitDueToNoSteps--">exitDueToNoSteps</a></span>()</code>
+<div class="block">Exit due to too much time without taking a step.</div>
+</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#messageWithTime--">messageWithTime</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#messageWithoutTime--">messageWithoutTime</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#messageWithTime--">messageWithTime</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#noProgressOutput--">noProgressOutput</a></span>()</code>
 <div class="block">Return true iff no progress output should be displayed.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>private void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#printAllStackTraces--">printAllStackTraces</a></span>()</code>&nbsp;</td>
-</tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>private void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#printStackTraceAndExit--">printStackTraceAndExit</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#printAllStackTraces--">printAllStackTraces</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -471,13 +473,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html
 </dl>
 </li>
 </ul>
-<a name="printStackTraceAndExit--">
+<a name="exitDueToNoSteps--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>printStackTraceAndExit</h4>
-<pre>private&nbsp;void&nbsp;printStackTraceAndExit()</pre>
+<h4>exitDueToNoSteps</h4>
+<pre>private&nbsp;void&nbsp;exitDueToNoSteps()</pre>
+<div class="block">Exit due to too much time without taking a step.</div>
 </li>
 </ul>
 <a name="printAllStackTraces--">

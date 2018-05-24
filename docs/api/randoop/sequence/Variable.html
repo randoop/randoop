@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Variable (randoop 4.0.3 API)</title>
+<title>Variable (randoop 4.0.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Variable (randoop 4.0.3 API)";
+            parent.document.title="Variable (randoop 4.0.4 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":9,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -176,63 +176,66 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparab
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#canUseShortForm--">canUseShortForm</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#classNameToVariableName-java.lang.String-">classNameToVariableName</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;className)</code>
 <div class="block">Convert the classname to a variable name, preserving camel case if used.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>(package private) static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#classToVariableName-randoop.types.Type-">classToVariableName</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</code>
 <div class="block">Build a variable name from the name of the given type.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#compareTo-randoop.sequence.Variable-">compareTo</a></span>(<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#equals-java.lang.Object-">equals</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#getDeclaringStatement--">getDeclaringStatement</a></span>()</code>
 <div class="block">The statement that produced this variable.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#getDeclIndex--">getDeclIndex</a></span>()</code>
 <div class="block">The index of the statement that creates this value.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#getName--">getName</a></span>()</code>
 <div class="block">Returns the name of this variable.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#getName-java.lang.String-int-">getName</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;className,
        int&nbsp;i)</code>
 <div class="block">The name of this variable using the given type name and index.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#getType--">getType</a></span>()</code>
 <div class="block">Returns the type of this variable.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#shouldInlineLiterals--">shouldInlineLiterals</a></span>()</code>
+<div class="block">True if this variable's value should be inlined as a literal at call sites, rather than
+ referencing the variable.</div>
+</td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
@@ -462,13 +465,19 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparab
 </dl>
 </li>
 </ul>
-<a name="canUseShortForm--">
+<a name="shouldInlineLiterals--">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>canUseShortForm</h4>
-<pre>public&nbsp;boolean&nbsp;canUseShortForm()</pre>
+<h4>shouldInlineLiterals</h4>
+<pre>public&nbsp;boolean&nbsp;shouldInlineLiterals()</pre>
+<div class="block">True if this variable's value should be inlined as a literal at call sites, rather than
+ referencing the variable.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>whether this variable's value should be inlined as a literal at call sites</dd>
+</dl>
 </li>
 </ul>
 </li>

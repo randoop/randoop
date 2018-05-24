@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SpecificationCollection (randoop 4.0.3 API)</title>
+<title>SpecificationCollection (randoop 4.0.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SpecificationCollection (randoop 4.0.3 API)";
+            parent.document.title="SpecificationCollection (randoop 4.0.4 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":10,"i5":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":10,"i5":9,"i6":9,"i7":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/condition/RandoopConditionError.html" title="class in randoop.condition"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/condition/RandoopSpecificationError.html" title="class in randoop.condition"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../randoop/condition/SpecificationTranslator.html" title="class in randoop.condition"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -218,7 +218,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition">SpecificationCollection</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationCollection.html#create-java.util.List-">create</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&gt;&nbsp;specificationFiles)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationCollection.html#create-java.util.List-">create</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt;&nbsp;specificationFiles)</code>
 <div class="block">Creates a <a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition"><code>SpecificationCollection</code></a> from the list of JSON specification files.</div>
 </td>
 </tr>
@@ -243,9 +243,25 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification">OperationSpecification</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationCollection.html#readSpecificationFile-java.io.File-">readSpecificationFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;specificationFile)</code>
-<div class="block">Reads a list of <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> objects from the given file.</div>
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationCollection.html#main-java.lang.String:A-">main</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;args)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>private static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationCollection.html#readSpecificationFile-java.nio.file.Path-java.util.Map-randoop.util.MultiMap-">readSpecificationFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;specificationFile,
+                     <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>,<a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification">OperationSpecification</a>&gt;&nbsp;specificationMap,
+                     <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/condition/specification/OperationSignature.html" title="class in randoop.condition.specification">OperationSignature</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&gt;&nbsp;signatureToMethods)</code>
+<div class="block">Reads <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> objects from the given file, and adds them to the other
+ two arguments, which are modified by side effect.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>private static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationCollection.html#readSpecificationZipFile-java.nio.file.Path-java.util.Map-randoop.util.MultiMap-">readSpecificationZipFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;specificationZipFile,
+                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>,<a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification">OperationSpecification</a>&gt;&nbsp;specificationMap,
+                        <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/condition/specification/OperationSignature.html" title="class in randoop.condition.specification">OperationSignature</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&gt;&nbsp;signatureToMethods)</code>
+<div class="block">Reads <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> objects from all the subfiles of the given zip file, and
+ adds them to the other two arguments, which are modified by side effect.</div>
 </td>
 </tr>
 </table>
@@ -350,8 +366,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                         <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&gt;&gt;&nbsp;overridden)</pre>
 <div class="block">Creates a <a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition"><code>SpecificationCollection</code></a> for the given specification map.
 
- <p>This constructor is used internally. It is only accessible to allow testing. Clients should
- use <a href="../../randoop/condition/SpecificationCollection.html#create-java.util.List-"><code>create(List)</code></a> instead.</div>
+ <p>This constructor is used internally. It is only accessible (package-protected) to allow
+ testing. Clients should use <a href="../../randoop/condition/SpecificationCollection.html#create-java.util.List-"><code>create(List)</code></a> instead.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>specificationMap</code> - the map from method or constructor to <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a></dd>
@@ -375,11 +391,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>create</h4>
-<pre>public static&nbsp;<a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition">SpecificationCollection</a>&nbsp;create(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&gt;&nbsp;specificationFiles)</pre>
+<pre>public static&nbsp;<a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition">SpecificationCollection</a>&nbsp;create(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt;&nbsp;specificationFiles)</pre>
 <div class="block">Creates a <a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition"><code>SpecificationCollection</code></a> from the list of JSON specification files.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>specificationFiles</code> - the files of serialized specifications</dd>
+<dd><code>specificationFiles</code> - files containing serialized specifications</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition"><code>SpecificationCollection</code></a> built from the serialized <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> objects, or null if the argument is null</dd>
 </dl>
@@ -438,19 +454,55 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="readSpecificationFile-java.io.File-">
+<a name="main-java.lang.String:A-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>main</h4>
+<pre>public static&nbsp;void&nbsp;main(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;args)
+                 throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="readSpecificationFile-java.nio.file.Path-java.util.Map-randoop.util.MultiMap-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>readSpecificationFile</h4>
-<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification">OperationSpecification</a>&gt;&nbsp;readSpecificationFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;specificationFile)</pre>
-<div class="block">Reads a list of <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> objects from the given file.</div>
+<pre>private static&nbsp;void&nbsp;readSpecificationFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;specificationFile,
+                                          <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>,<a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification">OperationSpecification</a>&gt;&nbsp;specificationMap,
+                                          <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/condition/specification/OperationSignature.html" title="class in randoop.condition.specification">OperationSignature</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&gt;&nbsp;signatureToMethods)</pre>
+<div class="block">Reads <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> objects from the given file, and adds them to the other
+ two arguments, which are modified by side effect.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>specificationFile</code> - the JSON file ofON <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> objects</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the list of <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> object from the file</dd>
+<dd><code>specificationFile</code> - the JSON file of <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> objects</dd>
+<dd><code>specificationMap</code> - side-effected by this method</dd>
+<dd><code>signatureToMethods</code> - side-effected by this method</dd>
+</dl>
+</li>
+</ul>
+<a name="readSpecificationZipFile-java.nio.file.Path-java.util.Map-randoop.util.MultiMap-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>readSpecificationZipFile</h4>
+<pre>private static&nbsp;void&nbsp;readSpecificationZipFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;specificationZipFile,
+                                             <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>,<a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification">OperationSpecification</a>&gt;&nbsp;specificationMap,
+                                             <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/condition/specification/OperationSignature.html" title="class in randoop.condition.specification">OperationSignature</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&gt;&nbsp;signatureToMethods)</pre>
+<div class="block">Reads <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> objects from all the subfiles of the given zip file, and
+ adds them to the other two arguments, which are modified by side effect.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>specificationZipFile</code> - a zip file containing files that contain <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> objects</dd>
+<dd><code>specificationMap</code> - side-effected by this method</dd>
+<dd><code>signatureToMethods</code> - side-effected by this method</dd>
 </dl>
 </li>
 </ul>
@@ -507,7 +559,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/condition/RandoopConditionError.html" title="class in randoop.condition"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/condition/RandoopSpecificationError.html" title="class in randoop.condition"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../randoop/condition/SpecificationTranslator.html" title="class in randoop.condition"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">

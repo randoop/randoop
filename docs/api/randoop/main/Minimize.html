@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Minimize (randoop 4.0.3 API)</title>
+<title>Minimize (randoop 4.0.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Minimize (randoop 4.0.3 API)";
+            parent.document.title="Minimize (randoop 4.0.4 API)";
         }
     }
     catch(err) {
@@ -272,7 +272,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>private static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#checkCorrectlyMinimized-java.io.File-java.lang.String-java.lang.String-java.util.Map-int-">checkCorrectlyMinimized</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#checkCorrectlyMinimized-java.nio.file.Path-java.lang.String-java.lang.String-java.util.Map-int-">checkCorrectlyMinimized</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classpath,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;expectedOutput,
@@ -282,14 +282,14 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#cleanUp-java.io.File-boolean-">cleanUp</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;outputFile,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#cleanUp-java.nio.file.Path-boolean-">cleanUp</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;outputFile,
        boolean&nbsp;verboseOutput)</code>
 <div class="block">Deletes the .class file associated with the outputFile.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>private static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#compileJavaFile-java.io.File-java.lang.String-java.lang.String-int-">compileJavaFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#compileJavaFile-java.nio.file.Path-java.lang.String-java.lang.String-int-">compileJavaFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classpath,
                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
                int&nbsp;timeoutLimit)</code>
@@ -297,15 +297,15 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#getExecutionDirectory-java.io.File-java.lang.String-">getExecutionDirectory</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#getExecutionDirectory-java.nio.file.Path-java.lang.String-">getExecutionDirectory</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName)</code>
 <div class="block">Get directory to execute command in, given file path and package name.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>private static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#getFileLength-java.io.File-">getFileLength</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#getFileLength-java.nio.file.Path-">getFileLength</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)</code>
 <div class="block">Calculate the length of a file, by number of lines.</div>
 </td>
 </tr>
@@ -345,7 +345,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#mainMinimize-java.io.File-java.lang.String-int-boolean-">mainMinimize</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#mainMinimize-java.nio.file.Path-java.lang.String-int-boolean-">mainMinimize</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classPath,
             int&nbsp;timeoutLimit,
             boolean&nbsp;verboseOutput)</code>
@@ -354,10 +354,10 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#minimizeMethod-com.github.javaparser.ast.body.MethodDeclaration-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.io.File-java.lang.String-java.util.Map-int-">minimizeMethod</a></span>(com.github.javaparser.ast.body.MethodDeclaration&nbsp;method,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#minimizeMethod-com.github.javaparser.ast.body.MethodDeclaration-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.nio.file.Path-java.lang.String-java.util.Map-int-">minimizeMethod</a></span>(com.github.javaparser.ast.body.MethodDeclaration&nbsp;method,
               com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
-              <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+              <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classpath,
               <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;expectedOutput,
               int&nbsp;timeoutLimit)</code>
@@ -366,9 +366,9 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#minimizeTestSuite-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.io.File-java.lang.String-java.util.Map-int-boolean-">minimizeTestSuite</a></span>(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#minimizeTestSuite-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.nio.file.Path-java.lang.String-java.util.Map-int-boolean-">minimizeTestSuite</a></span>(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
-                 <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+                 <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classpath,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;expectedOutput,
                  int&nbsp;timeoutLimit,
@@ -422,7 +422,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr id="i20" class="altColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#runJavaFile-java.io.File-java.lang.String-java.lang.String-int-">runJavaFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#runJavaFile-java.nio.file.Path-java.lang.String-java.lang.String-int-">runJavaFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;userClassPath,
            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
            int&nbsp;timeoutLimit)</code>
@@ -431,17 +431,17 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr id="i21" class="rowColor">
 <td class="colFirst"><code>private static <a href="../../randoop/main/Minimize.Outputs.html" title="class in randoop.main">Minimize.Outputs</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#runProcess-java.lang.String-java.io.File-int-">runProcess</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;command,
-          <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;executionDir,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#runProcess-java.lang.String-java.nio.file.Path-int-">runProcess</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;command,
+          <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;executionDir,
           int&nbsp;timeoutLimit)</code>
 <div class="block">Run a command given as a String and return the output and error results in an Outputs object.</div>
 </td>
 </tr>
 <tr id="i22" class="altColor">
 <td class="colFirst"><code>private static com.github.javaparser.ast.CompilationUnit</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#simplifyTypeNames-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.io.File-java.lang.String-java.util.Map-int-boolean-">simplifyTypeNames</a></span>(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#simplifyTypeNames-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.nio.file.Path-java.lang.String-java.util.Map-int-boolean-">simplifyTypeNames</a></span>(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
-                 <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+                 <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classpath,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;expectedOutput,
                  int&nbsp;timeoutLimit,
@@ -473,8 +473,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr id="i26" class="altColor">
 <td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#writeToFile-com.github.javaparser.ast.CompilationUnit-java.io.File-">writeToFile</a></span>(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
-           <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#writeToFile-com.github.javaparser.ast.CompilationUnit-java.nio.file.Path-">writeToFile</a></span>(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
+           <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)</code>
 <div class="block">Write a compilation unit to a Java file.</div>
 </td>
 </tr>
@@ -638,13 +638,13 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="mainMinimize-java.io.File-java.lang.String-int-boolean-">
+<a name="mainMinimize-java.nio.file.Path-java.lang.String-int-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>mainMinimize</h4>
-<pre>public static&nbsp;boolean&nbsp;mainMinimize(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+<pre>public static&nbsp;boolean&nbsp;mainMinimize(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classPath,
                                    int&nbsp;timeoutLimit,
                                    boolean&nbsp;verboseOutput)
@@ -679,7 +679,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="minimizeTestSuite-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.io.File-java.lang.String-java.util.Map-int-boolean-">
+<a name="minimizeTestSuite-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.nio.file.Path-java.lang.String-java.util.Map-int-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -687,7 +687,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <h4>minimizeTestSuite</h4>
 <pre>private static&nbsp;void&nbsp;minimizeTestSuite(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
                                       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
-                                      <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+                                      <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                                       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classpath,
                                       <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;expectedOutput,
                                       int&nbsp;timeoutLimit,
@@ -724,7 +724,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="minimizeMethod-com.github.javaparser.ast.body.MethodDeclaration-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.io.File-java.lang.String-java.util.Map-int-">
+<a name="minimizeMethod-com.github.javaparser.ast.body.MethodDeclaration-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.nio.file.Path-java.lang.String-java.util.Map-int-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -733,7 +733,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <pre>private static&nbsp;void&nbsp;minimizeMethod(com.github.javaparser.ast.body.MethodDeclaration&nbsp;method,
                                    com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
-                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classpath,
                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;expectedOutput,
                                    int&nbsp;timeoutLimit)
@@ -906,7 +906,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="simplifyTypeNames-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.io.File-java.lang.String-java.util.Map-int-boolean-">
+<a name="simplifyTypeNames-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.nio.file.Path-java.lang.String-java.util.Map-int-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -914,7 +914,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <h4>simplifyTypeNames</h4>
 <pre>private static&nbsp;com.github.javaparser.ast.CompilationUnit&nbsp;simplifyTypeNames(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
                                                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
-                                                                           <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+                                                                           <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                                                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classpath,
                                                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;expectedOutput,
                                                                            int&nbsp;timeoutLimit,
@@ -942,13 +942,13 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="checkCorrectlyMinimized-java.io.File-java.lang.String-java.lang.String-java.util.Map-int-">
+<a name="checkCorrectlyMinimized-java.nio.file.Path-java.lang.String-java.lang.String-java.util.Map-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>checkCorrectlyMinimized</h4>
-<pre>private static&nbsp;boolean&nbsp;checkCorrectlyMinimized(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+<pre>private static&nbsp;boolean&nbsp;checkCorrectlyMinimized(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classpath,
                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;expectedOutput,
@@ -968,13 +968,13 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="compileJavaFile-java.io.File-java.lang.String-java.lang.String-int-">
+<a name="compileJavaFile-java.nio.file.Path-java.lang.String-java.lang.String-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>compileJavaFile</h4>
-<pre>private static&nbsp;int&nbsp;compileJavaFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+<pre>private static&nbsp;int&nbsp;compileJavaFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classpath,
                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
                                    int&nbsp;timeoutLimit)</pre>
@@ -990,13 +990,13 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="runJavaFile-java.io.File-java.lang.String-java.lang.String-int-">
+<a name="runJavaFile-java.nio.file.Path-java.lang.String-java.lang.String-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>runJavaFile</h4>
-<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;runJavaFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;runJavaFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;userClassPath,
                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
                                   int&nbsp;timeoutLimit)</pre>
@@ -1012,15 +1012,15 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="getExecutionDirectory-java.io.File-java.lang.String-">
+<a name="getExecutionDirectory-java.nio.file.Path-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getExecutionDirectory</h4>
-<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;getExecutionDirectory(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;getExecutionDirectory(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
                                           <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName)</pre>
-<div class="block">Get directory to execute command in, given file path and package name. Returns a <code>File</code>
+<div class="block">Get directory to execute command in, given file path and package name. Returns a <code>Path</code>
  pointing to the directory that the Java file should be executed in.
 
  <p>For the simplest case where the Java file is nested in a single package layer, i.e.
@@ -1039,14 +1039,14 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="runProcess-java.lang.String-java.io.File-int-">
+<a name="runProcess-java.lang.String-java.nio.file.Path-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>runProcess</h4>
 <pre>private static&nbsp;<a href="../../randoop/main/Minimize.Outputs.html" title="class in randoop.main">Minimize.Outputs</a>&nbsp;runProcess(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;command,
-                                           <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;executionDir,
+                                           <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;executionDir,
                                            int&nbsp;timeoutLimit)</pre>
 <div class="block">Run a command given as a String and return the output and error results in an Outputs object.</div>
 <dl>
@@ -1078,14 +1078,14 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="writeToFile-com.github.javaparser.ast.CompilationUnit-java.io.File-">
+<a name="writeToFile-com.github.javaparser.ast.CompilationUnit-java.nio.file.Path-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>writeToFile</h4>
 <pre>private static&nbsp;void&nbsp;writeToFile(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
-                                <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file)
+                                <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)
                          throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
 <div class="block">Write a compilation unit to a Java file.</div>
 <dl>
@@ -1129,13 +1129,13 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="getFileLength-java.io.File-">
+<a name="getFileLength-java.nio.file.Path-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getFileLength</h4>
-<pre>private static&nbsp;int&nbsp;getFileLength(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file)
+<pre>private static&nbsp;int&nbsp;getFileLength(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)
                           throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
 <div class="block">Calculate the length of a file, by number of lines.</div>
 <dl>
@@ -1149,13 +1149,13 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="cleanUp-java.io.File-boolean-">
+<a name="cleanUp-java.nio.file.Path-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>cleanUp</h4>
-<pre>private static&nbsp;void&nbsp;cleanUp(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;outputFile,
+<pre>private static&nbsp;void&nbsp;cleanUp(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;outputFile,
                             boolean&nbsp;verboseOutput)</pre>
 <div class="block">Deletes the .class file associated with the outputFile.</div>
 <dl>

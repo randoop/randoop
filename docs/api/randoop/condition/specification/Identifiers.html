@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Identifiers (randoop 4.0.3 API)</title>
+<title>Identifiers (randoop 4.0.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Identifiers (randoop 4.0.3 API)";
+            parent.document.title="Identifiers (randoop 4.0.4 API)";
         }
     }
     catch(err) {
@@ -213,31 +213,32 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/condition/specification/Identifiers.html#duplicateName--">duplicateName</a></span>()</code>
+<div class="block">Returns an identifier name that occurs more than once in this <a href="../../../randoop/condition/specification/Identifiers.html" title="class in randoop.condition.specification"><code>Identifiers</code></a>, or null if
+ there are no duplicate names.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/condition/specification/Identifiers.html#equals-java.lang.Object-">equals</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;object)</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/condition/specification/Identifiers.html#getParameterNames--">getParameterNames</a></span>()</code>
 <div class="block">Returns the parameter names in this <a href="../../../randoop/condition/specification/Identifiers.html" title="class in randoop.condition.specification"><code>Identifiers</code></a> object.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/condition/specification/Identifiers.html#getReceiverName--">getReceiverName</a></span>()</code>
 <div class="block">Returns the identifier for the receiver object in this <a href="../../../randoop/condition/specification/Identifiers.html" title="class in randoop.condition.specification"><code>Identifiers</code></a> object.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/condition/specification/Identifiers.html#getReturnName--">getReturnName</a></span>()</code>
 <div class="block">Returns the identifier for the return value in this <a href="../../../randoop/condition/specification/Identifiers.html" title="class in randoop.condition.specification"><code>Identifiers</code></a> object.</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/condition/specification/Identifiers.html#hasDuplicatedName--">hasDuplicatedName</a></span>()</code>
-<div class="block">Indicates whether any identifier names occur more than once in this <a href="../../../randoop/condition/specification/Identifiers.html" title="class in randoop.condition.specification"><code>Identifiers</code></a>.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -402,17 +403,18 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="hasDuplicatedName--">
+<a name="duplicateName--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>hasDuplicatedName</h4>
-<pre>public&nbsp;boolean&nbsp;hasDuplicatedName()</pre>
-<div class="block">Indicates whether any identifier names occur more than once in this <a href="../../../randoop/condition/specification/Identifiers.html" title="class in randoop.condition.specification"><code>Identifiers</code></a>.</div>
+<h4>duplicateName</h4>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;duplicateName()</pre>
+<div class="block">Returns an identifier name that occurs more than once in this <a href="../../../randoop/condition/specification/Identifiers.html" title="class in randoop.condition.specification"><code>Identifiers</code></a>, or null if
+ there are no duplicate names.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if a name occurs more than once, false otherwise</dd>
+<dd>a name occurs more than once, or null if there are no duplicate names</dd>
 </dl>
 </li>
 </ul>
