@@ -754,6 +754,8 @@ The following commands do part of the work.
     Check that there are no broken links on the published website:
     <pre>./gradlew checklink</pre>
     This command creates file <code>checklink-log.txt</code>.
+    One error is expected: <code>404</code> because file <code>randoop-4.0.4.zip</code>
+    does not exist yet.
         If there are any other errors, then fix them by updating URLs in
         Randoop or by suppressing a warning in
         file <code>checklink-args.txt</code>, which was mentioned above.
