@@ -520,9 +520,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Output Bloodhound related information such as method weights and coverage ratios.")
   public static boolean bloodhound_logging = false;
 
-  /** Print to standard out, method weights and method uncovered ratios. */
+  /**
+   * Bloodhoud can update coverage information at a regular interval that is either based on time
+   * or on the number of successful invocations.
+   */
   @Unpublicized
-  @Option("Output Bloodhound related information such as method weights and coverage ratios.")
+  @Option("Specify how Bloodhound decides when to update coverage information.")
   public static BloodhoundCoverageUpdateMode bloodhound_update_mode =
       BloodhoundCoverageUpdateMode.TIME;
 
