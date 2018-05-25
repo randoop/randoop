@@ -520,6 +520,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Output Bloodhound related information such as method weights and coverage ratios.")
   public static boolean bloodhound_logging = false;
 
+  /** Print to standard out, method weights and method uncovered ratios. */
+  @Unpublicized
+  @Option("Output Bloodhound related information such as method weights and coverage ratios.")
+  public static BloodhoundCoverageUpdateMode bloodhound_update_mode =
+      BloodhoundCoverageUpdateMode.TIME;
+
+  /** The possible modes for updating the coverage information that is used by Bloodhound. */
+  public enum BloodhoundCoverageUpdateMode {
+    /** Update coverage information at some regular interval of time. */
+    TIME,
+    /** Update coverage information after some number of successful invocations. */
+    INVOCATIONS
+  }
+
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
   // the length of the string that will actually be printed out as code.

@@ -75,22 +75,31 @@ public class Bloodhound implements TypedOperationSelector {
    * Parameter for balancing branch coverage and number of times a method was chosen. The name alpha
    * is from the GRT paper.
    */
-  private final double alpha = 0.9;
+  private static final double alpha = 0.9;
 
   /**
    * Parameter for decreasing weights of methods between updates to coverage information. The name p
    * is from the GRT paper.
    */
-  private final double p = 0.99;
+  private static final double p = 0.99;
 
   /**
    * Time interval, in milliseconds, at which to recompute weights. The name t is from the GRT
    * paper.
    */
-  private final long t = 50000;
+  private static final long t = 50000;
 
   /** Time, in milliseconds, when branch coverage was last updated. */
   private long lastUpdateTime = 0;
+
+  /**
+   * Branch coverage is recomputed after this many successful invocations (= this many new tests
+   * were generated).
+   */
+  private static final int branchCoverageInterval = 100;
+
+  /** The total number of successful invocations of all the methods under test. */
+  private int totalSuccessfulInvocations = 0;
 
   /**
    * Maximum number of times any method under test has been successfully invoked. This value is
@@ -152,12 +161,27 @@ public class Bloodhound implements TypedOperationSelector {
    * for all methods under test is updated and weights for all methods under test are recomputed.
    */
   private void updateBranchCoverageMaybe() {
-    long currentTime = System.currentTimeMillis();
-    if (currentTime - lastUpdateTime >= t) {
+    boolean shouldUpdateBranchCoverage;
+
+    if (GenInputsAbstract.bloodhound_update_mode
+        == GenInputsAbstract.BloodhoundCoverageUpdateMode.TIME) {
+      // Use a time based approach for determining whether or not we want to update branch coverage.
+      long currentTime = System.currentTimeMillis();
+      shouldUpdateBranchCoverage = currentTime - lastUpdateTime >= t;
+
+      // Update the last update time if we decide that it's time to update branch coverage information.
+      if (shouldUpdateBranchCoverage) {
+        lastUpdateTime = currentTime;
+      }
+    } else {
+      // Use a selection based approach for determining whether or not we want to update branch coverage.
+      shouldUpdateBranchCoverage = totalSuccessfulInvocations % branchCoverageInterval == 0;
+    }
+
+    if (shouldUpdateBranchCoverage) {
       if (GenInputsAbstract.bloodhound_logging) {
         System.out.println("Updating branch coverage information.");
       }
-      lastUpdateTime = currentTime;
 
       methodSelectionCounts.clear();
       coverageTracker.updateBranchCoverageMap();
@@ -283,6 +307,7 @@ public class Bloodhound implements TypedOperationSelector {
    * @param operation the method under test that was successfully invoked
    */
   public void incrementSuccessfulInvocationCount(TypedOperation operation) {
+    totalSuccessfulInvocations += 1;
     int numSuccessfulInvocations = incrementInMap(methodInvocationCounts, operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
   }
