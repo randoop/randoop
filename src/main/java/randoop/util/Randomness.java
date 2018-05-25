@@ -192,7 +192,7 @@ public final class Randomness {
     } else {
       weight = elt.getWeight();
       Log.logPrintf(
-          "randoop.util.Randomness: key %s not found; using intrinsic weight %d%n", elt, weight);
+          "randoop.util.Randomness: key %s not found; using intrinsic weight %f.%n", elt, weight);
     }
     return weight;
   }
