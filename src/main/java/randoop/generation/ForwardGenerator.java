@@ -37,6 +37,7 @@ import randoop.util.SimpleList;
 
 /** Randoop's forward, component-based generator. */
 public class ForwardGenerator extends AbstractGenerator {
+
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
    * discarded.
