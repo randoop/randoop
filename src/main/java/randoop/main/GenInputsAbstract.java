@@ -876,7 +876,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       } catch (IOException e) {
         String message =
             String.format(
-                "Error while reading %s file %s: %s%n", listFile, fileDescription, e.getMessage());
+                "Error while reading %s file %s: %s%n", fileDescription, listFile, e.getMessage());
         throw new RandoopUsageError(message, e);
       }
     }
