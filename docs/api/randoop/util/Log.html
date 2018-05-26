@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Log (randoop 4.0.3 API)</title>
+<title>Log (randoop 4.0.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Log (randoop 4.0.3 API)";
+            parent.document.title="Log (randoop 4.0.4 API)";
         }
     }
     catch(err) {
@@ -153,13 +153,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Log.html#isLoggingOn--">isLoggingOn</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>static void</code></td>
+<td class="colFirst"><code>private static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Log.html#log-java.lang.String-">log</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
 <div class="block">Log to GenInputsAbstract.log, if that is non-null.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>static void</code></td>
+<td class="colFirst"><code>private static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Log.html#logLine-java.lang.String-">logLine</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
 <div class="block">Log to GenInputsAbstract.log, if that is non-null.</div>
 </td>
@@ -231,8 +231,19 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>log</h4>
-<pre>public static&nbsp;void&nbsp;log(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</pre>
-<div class="block">Log to GenInputsAbstract.log, if that is non-null.</div>
+<pre>private static&nbsp;void&nbsp;log(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</pre>
+<div class="block">Log to GenInputsAbstract.log, if that is non-null.
+
+ <p>This is private because it is better to use <a href="../../randoop/util/Log.html#logPrintf-java.lang.String-java.lang.Object...-"><code>logPrintf(java.lang.String, java.lang.Object...)</code></a> than to call <code>log</code> with
+ a concatenation. In other words:
+
+ <pre><code>
+ log("arg1=" + arg1);      // BAD
+ logPrintf("arg1=%s", arg1); // GOOD
+ </code></pre>
+
+ The reason is that if <code>arg1.toString()</code> fails, <code>#logPrintf</code> can catch that
+ exception, but the exception would occur before <code>logLine</code> is entered.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>s</code> - the string to output</dd>
@@ -245,8 +256,19 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>logLine</h4>
-<pre>public static&nbsp;void&nbsp;logLine(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</pre>
-<div class="block">Log to GenInputsAbstract.log, if that is non-null.</div>
+<pre>private static&nbsp;void&nbsp;logLine(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</pre>
+<div class="block">Log to GenInputsAbstract.log, if that is non-null.
+
+ <p>This is private because it is better to use <a href="../../randoop/util/Log.html#logPrintf-java.lang.String-java.lang.Object...-"><code>logPrintf(java.lang.String, java.lang.Object...)</code></a> than to call <code>logLine</code>
+ with a concatenation. In other words:
+
+ <pre><code>
+ logLine("arg1=" + arg1);      // BAD
+ logPrintf("arg1=%s%n", arg1); // GOOD
+ </code></pre>
+
+ The reason is that if <code>arg1.toString()</code> fails, <code>#logPrintf</code> can catch that
+ exception, but the exception would occur before <code>logLine</code> is entered.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>s</code> - the string to output (followed by a newline)</dd>
