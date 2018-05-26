@@ -8,7 +8,11 @@ import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
- * Biases input selection towards sequences that have lower execution cost. Execution cost is
+ * Implements the Orienteering component, as described by the paper "GRT: Program-Analysis-Guided
+ * Random Testing" by Ma et. al (appears in ASE 2015):
+ * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
+ *
+ * <p>Biases input selection towards sequences that have lower execution cost. Execution cost is
  * measured by the number of method calls in a sequence and the time it takes to execute.
  */
 public class OrienteeringSelection implements InputSequenceSelector {
