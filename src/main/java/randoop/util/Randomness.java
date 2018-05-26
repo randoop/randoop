@@ -191,8 +191,19 @@ public final class Randomness {
       weight = weightOrNull;
     } else {
       weight = elt.getWeight();
-      Log.logPrintf(
-          "randoop.util.Randomness: key %s not found; using intrinsic weight %f.%n", elt, weight);
+      try {
+        String eltToString = elt.toString();
+        // TODO: throw an error here unless the client permits the intrinsic weight to be used.
+        // Log.logPrintf(
+        //     "randoop.util.Randomness: key %s not found; using intrinsic weight %f.%n",
+        //     eltToString, weight);
+      } catch (Throwable t) {
+        int hc = elt.hashCode();
+        Log.logPrintf(
+            "User-defined toString() method failed, argument class=%s hashCode=%d.%n",
+            elt.getClass(), hc);
+        Log.logStackTrace(t);
+      }
     }
     return weight;
   }

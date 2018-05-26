@@ -228,9 +228,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * If true, Randoop outputs both original error-revealing tests and a minimized version. Setting
    * this option may cause long Randoop run times if Randoop outputs and minimizes more than about
-   * 100 error-revealing tests; consider using <a href="#option:stop-on-error-test"><code>
+   * 100 error-revealing tests; consider using <a
+   * href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test"><code>
    * --stop-on-error-test=true</code></a>. Also see the <a
-   * href="#optiongroup:Test-case-minimization-options">test case minimization options</a>.
+   * href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization-options">test
+   * case minimization options</a>.
    */
   // Omit this to keep the documentation short:
   // Regardless of this option's setting, minimization is enabled when
@@ -858,7 +860,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       } catch (IOException e) {
         String message =
             String.format(
-                "Error while reading %s file %s: %s%n", listFile, fileDescription, e.getMessage());
+                "Error while reading %s file %s: %s%n", fileDescription, listFile, e.getMessage());
         throw new RandoopUsageError(message, e);
       }
     }
