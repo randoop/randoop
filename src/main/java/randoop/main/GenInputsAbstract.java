@@ -521,8 +521,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean bloodhound_logging = false;
 
   /**
-   * Bloodhoud can update coverage information at a regular interval that is either based on time
-   * or on the number of successful invocations.
+   * Bloodhoud can update coverage information at a regular interval that is either based on time or
+   * on the number of successful invocations.
    */
   @Unpublicized
   @Option("Specify how Bloodhound decides when to update coverage information.")

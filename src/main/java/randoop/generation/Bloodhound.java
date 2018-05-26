@@ -26,7 +26,10 @@ import randoop.util.SimpleArrayList;
  * successfully invoked (to be the last statement of a new regression test) and the maximum number
  * of times any method under test has been successfully invoked. A method is "successfully invoked"
  * when a method under test is used to create a new sequence and the sequence is kept as a
- * regression test.
+ * regression test. An alternative definition of "successful invocations" that is also consistent
+ * with the description in the GRT paper, is the total number of times the method appears in any
+ * regression test. We believe our implementation, which uses the first definition, is likely what
+ * was intended by the authors of the GRT paper.
  *
  * <p>However, some hyper-parameters and edge cases were left unspecified in the GRT paper. We have
  * chosen our own values for the following unspecified hyper-parameters:
