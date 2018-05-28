@@ -239,7 +239,6 @@ public class Bloodhound implements TypedOperationSelector {
       // Default to zero for methods with no coverage information.
       // This is the case for the following methods under test:
       // - Object.<init> and Object.getClass which Randoop always includes as methods under test.
-      // - Classes that are from the JDK (eg, java.lang) or from external jars.
       // - Getters and setters operations for public member variables that Randoop synthesizes.
       // - Abstract method declarations and interface methods.
       // - Methods defined in abstract classes.
@@ -268,8 +267,6 @@ public class Bloodhound implements TypedOperationSelector {
           || isEnumConstant
           || isSyntheticMethod
           || isFromAbstractClass
-          || operationName.startsWith("java.")
-          || operationName.startsWith("javax.")
           || operationName.equals("java.lang.Object.<init>")
           || operationName.equals("java.lang.Object.getClass");
       uncovRatio = 0.5;
