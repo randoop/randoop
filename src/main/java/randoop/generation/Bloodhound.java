@@ -272,7 +272,7 @@ public class Bloodhound implements TypedOperationSelector {
           || operationName.startsWith("javax.")
           || operationName.equals("java.lang.Object.<init>")
           || operationName.equals("java.lang.Object.getClass");
-      uncovRatio = 0.0;
+      uncovRatio = 0.5;
     }
 
     // The number of successful invocations of this method. Corresponds to "succ(m)" in the GRT
