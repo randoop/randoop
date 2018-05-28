@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Pattern;
-import randoop.operation.CallableOperation;
-import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
@@ -93,10 +91,6 @@ public class OmitMethodsPredicate {
   boolean shouldOmit(final TypedClassOperation operation) {
     Log.logPrintf("shouldOmit: testing %s%n", operation);
 
-    if (makesCallToHashCode(operation)) {
-      return true;
-    }
-
     // Done if there are no patterns
     if (omitPatterns.isEmpty()) {
       return false;
@@ -157,19 +151,5 @@ public class OmitMethodsPredicate {
   @Override
   public String toString() {
     return "OmitMethodsPredicate: " + omitPatterns;
-  }
-
-  /**
-   * Check if the given operation makes a call to hashcode and the class does not override hashcode.
-   *
-   * @param typedClassOperation
-   * @return true if the given operation calls hashcode but does not override it
-   */
-  private boolean makesCallToHashCode(TypedClassOperation typedClassOperation) {
-    CallableOperation callableOperation = typedClassOperation.getOperation();
-    if (callableOperation instanceof MethodCall) {
-      MethodCall methodCall = (MethodCall) callableOperation;
-    }
-    return false;
   }
 }

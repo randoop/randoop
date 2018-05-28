@@ -1,6 +1,7 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,6 +69,9 @@ public class ForwardGenerator extends AbstractGenerator {
   /** How to selecting sequences as input for creating new sequences. */
   private final InputSequenceSelector inputSequenceSelector;
 
+  /** Set containing the input sequences used to create a new and unqiue sequence. */
+  private final Set<Sequence> inputSequencesForNewSequence = new HashSet<>();
+
   // The set of all primitive values seen during generation and execution
   // of sequences. This set is used to tell if a new primitive value has
   // been generated, to add the value to the components.
@@ -101,7 +105,6 @@ public class ForwardGenerator extends AbstractGenerator {
       inputSequenceSelector = new SmallTestsSequenceSelection();
     } else if (GenInputsAbstract.enable_orienteering) {
       inputSequenceSelector = new OrienteeringSelection();
-      System.out.println("Orienteering is enabled.");
     } else {
       inputSequenceSelector = new UniformRandomSequenceSelection();
     }
@@ -151,7 +154,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     startTime = System.nanoTime(); // reset start time.
 
-    inputSequenceSelector.assignExecTimeForSequence(eSeq);
+    inputSequenceSelector.assignExecTimeForInputSequences(inputSequencesForNewSequence, eSeq);
 
     determineActiveIndices(eSeq);
 
@@ -516,6 +519,10 @@ public class ForwardGenerator extends AbstractGenerator {
   @SuppressWarnings("unchecked")
   private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
 
+    // Clear the set, it will be used to contain the input sequences selected for the
+    // creation of this new sequence.
+    inputSequencesForNewSequence.clear();
+
     // Variable inputTypes contains the values required as input to the
     // statement given as a parameter to the selectInputs method.
 
@@ -692,6 +699,8 @@ public class ForwardGenerator extends AbstractGenerator {
       VarAndSeq varAndSeq = randomVariable(candidates, inputType, isReceiver);
       Variable randomVariable = varAndSeq.var;
       Sequence chosenSeq = varAndSeq.seq;
+
+      inputSequencesForNewSequence.add(chosenSeq);
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {

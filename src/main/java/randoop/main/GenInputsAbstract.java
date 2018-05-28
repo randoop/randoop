@@ -808,6 +808,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
               + Globals.lineSep
               + "Use the --classlist, --testclass, or --methodlist options.");
     }
+
+    if (small_tests && enable_orienteering) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --small_tests with --enable_orienteering");
+    }
   }
 
   public static Set<String> getClassnamesFromArgs() {

@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
@@ -35,14 +36,8 @@ public class OrienteeringSelection implements InputSequenceSelector {
   private final Map<Sequence, Long> sequenceExecutionTime = new HashMap<>();
 
   /**
-   * The sequence that was last selected by Orienteering. A reference is kept so that we can update
-   * its execution time once {@link ForwardGenerator} finishes executing the newly constructed
-   * sequence.
-   */
-  private Sequence lastSelectedSequence;
-
-  /**
-   * Bias input selection towards lower cost sequences.
+   * Bias input selection towards lower cost sequences. We first compute and update the weights of
+   * all the candidates within the candidate list before making our selection.
    *
    * @param candidates sequences to choose from
    * @return the chosen sequence
@@ -50,58 +45,68 @@ public class OrienteeringSelection implements InputSequenceSelector {
   @Override
   public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
     updateWeightMapForCandidates(candidates);
-    lastSelectedSequence = Randomness.randomMemberWeighted(candidates, weightMap);
-    incrementCountInMap(sequenceSelectionCount, lastSelectedSequence);
-    return lastSelectedSequence;
+
+    Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, weightMap);
+    incrementCountInMap(sequenceSelectionCount, selectedSequence);
+    return selectedSequence;
   }
 
   /**
-   * Update the weights of the candidates in the given list
+   * Update the weights of the candidates in the given list. If an input sequence has not been
+   * selected or executed before, it will be assigned its default weight, computed by {@code
+   * Sequence.getSize()}. The formula for updating a sequence's weight if selection count and
+   * execution time information are both available is
    *
-   * @param candidates list of candidates
+   * <p>1.0 / (k * seq.exec_time * sqrt(seq.meth_size))
+   *
+   * <p>Where k is the number of selections of seq and exec_time is the execution time of seq and
+   * meth_size is the number of method call statements in seq. This formula is a slight
+   * simplification of the one described in the GRT paper which maintains a separate exec_time for
+   * each execution of seq. However, we assume that the execution times of a sequence are the same
+   * as the first execution.
+   *
+   * @param candidates list of candidate sequences
    */
   private void updateWeightMapForCandidates(SimpleList<Sequence> candidates) {
     for (int i = 0; i < candidates.size(); i++) {
       Sequence candidate = candidates.get(i);
 
-      // If we haven't computed the square root of the method size of this sequence,
-      // compute it and permanently store it.
-      Double methodSizeSqrt = sequenceMethodSizeSqrt.get(candidate);
-      if (methodSizeSqrt == null) {
-        methodSizeSqrt = Math.sqrt(candidate.numMethodCalls());
-        sequenceMethodSizeSqrt.put(candidate, methodSizeSqrt);
-      }
-
-      // If this sequence has not been selected yet, don't compute its weight and
-      // use its default value.
+      double methodSizeSqrt = getMethodSizeSquareRootForSequence(candidate);
       Integer selectionCount = sequenceSelectionCount.get(candidate);
-      if (candidate == null) {
-        continue;
-      }
-
-      // If this sequence has not been executed yet, don't compute its weight and
-      // use its default value.
       Long executionTime = sequenceExecutionTime.get(candidate);
-      if (executionTime == null) {
-        continue;
-      }
 
       // Recompute and update this sequence's weight.
-      weightMap.put(candidate, 1.0 / (selectionCount * executionTime * methodSizeSqrt));
+      if (selectionCount != null && executionTime != null) {
+        weightMap.put(candidate, 1.0 / (selectionCount * executionTime * methodSizeSqrt));
+      } else {
+        weightMap.put(candidate, candidate.getWeight());
+      }
     }
   }
 
   /**
-   * Assign the last selected sequence's execution time to be that of this recently executed
-   * executable sequence.
+   * Each {@link Sequence} within {@code inputSequences} is a subsequence of {@code eSeq}. At this
+   * point, the given {@link ExecutableSequence} has been executed and contains the execution time
+   * of the sequence as a whole. Since we are not able to measure the execution time of each input
+   * sequence, we make the simplifying assumption that each input sequence's execution is equal to
+   * that of the entire {@link ExecutableSequence}. Furthermore, we do not update the execution time
+   * of an input sequence once it has been assigned. This is because we expect newer {@link
+   * ExecutableSequence}s to be longer in length as we extend existing sequences. Thus, the first
+   * measured execution time should be a closer approximation of the input sequence's execution
+   * time.
    *
-   * @param eSeq the recently executed sequence
+   * @param inputSequences the sequences that were chosen as the input to the method under test for
+   *     creating a new and unique sequence
+   * @param eSeq the recently executed, new sequence
    */
   @Override
-  public void assignExecTimeForSequence(ExecutableSequence eSeq) {
-    Long executionTime = sequenceExecutionTime.get(lastSelectedSequence);
-    if (executionTime == null) {
-      sequenceExecutionTime.put(lastSelectedSequence, eSeq.exectime);
+  public void assignExecTimeForInputSequences(
+      Set<Sequence> inputSequences, ExecutableSequence eSeq) {
+    for (Sequence inputSequence : inputSequences) {
+      Long executionTime = sequenceExecutionTime.get(inputSequence);
+      if (executionTime == null) {
+        sequenceExecutionTime.put(inputSequence, eSeq.exectime);
+      }
     }
   }
 
@@ -119,5 +124,24 @@ public class OrienteeringSelection implements InputSequenceSelector {
       count = 0;
     }
     map.put(key, count + 1);
+  }
+
+  /**
+   * Retrieve the method size square root of the given sequence. This is the square root of the
+   * number of method call statements within the given sequence.
+   *
+   * @param sequence the sequence to get the method size square root of
+   * @return square root of the number of method calls in the given sequence
+   */
+  private double getMethodSizeSquareRootForSequence(Sequence sequence) {
+    // If we haven't computed the square root of the method size of this sequence,
+    // compute it and permanently store it.
+    Double methodSizeSqrt = sequenceMethodSizeSqrt.get(sequence);
+    if (methodSizeSqrt == null) {
+      methodSizeSqrt = Math.sqrt(sequence.numMethodCalls());
+      sequenceMethodSizeSqrt.put(sequence, methodSizeSqrt);
+    }
+
+    return methodSizeSqrt;
   }
 }

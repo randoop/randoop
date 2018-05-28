@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import java.util.Set;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
@@ -21,8 +22,11 @@ public class UniformRandomSequenceSelection implements InputSequenceSelector {
   /**
    * Unused by this class.
    *
+   * @param inputSequences the sequences that were chosen as the input to the method under test for
+   *     creating a new and unique sequence
    * @param eSeq the recently executed sequence
    */
   @Override
-  public void assignExecTimeForSequence(ExecutableSequence eSeq) {}
+  public void assignExecTimeForInputSequences(
+      Set<Sequence> inputSequences, ExecutableSequence eSeq) {}
 }
