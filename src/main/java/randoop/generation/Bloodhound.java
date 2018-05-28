@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.CallableOperation;
 import randoop.operation.EnumConstant;
@@ -13,6 +14,7 @@ import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
+import randoop.types.ClassOrInterfaceType;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 
@@ -122,9 +124,9 @@ public class Bloodhound implements TypedOperationSelector {
    *
    * @param operations list of operations under test
    */
-  public Bloodhound(List<TypedOperation> operations) {
+  public Bloodhound(List<TypedOperation> operations, Set<ClassOrInterfaceType> classesUnderTest) {
     this.operationSimpleList = new SimpleArrayList<>(operations);
-    this.coverageTracker = new CoverageTracker(GenInputsAbstract.getClassnamesFromArgs());
+    this.coverageTracker = new CoverageTracker(classesUnderTest);
 
     // Compute an initial weight for all methods under test. We also initialize the uncovered ratio
     // value of all methods under test by updating branch coverage information. The weights for all
@@ -240,11 +242,15 @@ public class Bloodhound implements TypedOperationSelector {
       // - Classes that are from the JDK (eg, java.lang) or from external jars.
       // - Getters and setters operations for public member variables that Randoop synthesizes.
       // - Abstract method declarations and interface methods.
+      // - Methods defined in abstract classes.
+      // - Inherited methods, methods that aren't overridden in the calling class.
       // - Enum constants.
       String operationName = operation.getName();
       CallableOperation callableOperation = operation.getOperation();
 
       boolean isAbstractMethod = false;
+      boolean isSyntheticMethod = false;
+      boolean isFromAbstractClass = false;
       boolean isGetterMethod = callableOperation instanceof FieldGet;
       boolean isSetterMethod = callableOperation instanceof FieldSet;
       boolean isEnumConstant = callableOperation instanceof EnumConstant;
@@ -252,12 +258,16 @@ public class Bloodhound implements TypedOperationSelector {
       if (callableOperation instanceof MethodCall) {
         Method method = ((MethodCall) callableOperation).getMethod();
         isAbstractMethod = Modifier.isAbstract(method.getModifiers());
+        isSyntheticMethod = method.isSynthetic();
+        isFromAbstractClass = Modifier.isAbstract(method.getDeclaringClass().getModifiers());
       }
 
       assert isAbstractMethod
           || isGetterMethod
           || isSetterMethod
           || isEnumConstant
+          || isSyntheticMethod
+          || isFromAbstractClass
           || operationName.startsWith("java.")
           || operationName.startsWith("javax.")
           || operationName.equals("java.lang.Object.<init>")

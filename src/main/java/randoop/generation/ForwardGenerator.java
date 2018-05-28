@@ -23,6 +23,7 @@ import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
@@ -78,8 +79,9 @@ public class ForwardGenerator extends AbstractGenerator {
       Set<TypedOperation> observers,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
-      RandoopListenerManager listenerManager) {
-    this(operations, observers, limits, componentManager, null, listenerManager);
+      RandoopListenerManager listenerManager,
+      Set<ClassOrInterfaceType> classesUnderTest) {
+    this(operations, observers, limits, componentManager, null, listenerManager, classesUnderTest);
   }
 
   public ForwardGenerator(
@@ -88,7 +90,8 @@ public class ForwardGenerator extends AbstractGenerator {
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
-      RandoopListenerManager listenerManager) {
+      RandoopListenerManager listenerManager,
+      Set<ClassOrInterfaceType> classesUnderTest) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
@@ -99,7 +102,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (GenInputsAbstract.enable_bloodhound) {
       // If Bloodhound is enabled, select the next operation while considering the methods' weights.
-      this.operationSelector = new Bloodhound(operations);
+      this.operationSelector = new Bloodhound(operations, classesUnderTest);
     } else {
       this.operationSelector = new UniformRandomMethodSelection(operations);
     }

@@ -19,6 +19,7 @@ import org.jacoco.core.data.IExecutionDataVisitor;
 import org.jacoco.core.data.ISessionInfoVisitor;
 import org.jacoco.core.data.SessionInfo;
 import randoop.main.GenInputsAbstract;
+import randoop.types.ClassOrInterfaceType;
 
 /**
  * Tracks the branch coverage of each method under test. Specifically, for each method under test,
@@ -37,15 +38,17 @@ public class CoverageTracker {
   private final Map<String, Double> branchCoverageMap = new HashMap<>();
 
   /** Names of all the classes under test */
-  private final Set<String> classesUnderTest;
+  public final Set<String> classesUnderTest = new HashSet<>();
 
   /**
    * Initialize the coverage tracker.
    *
-   * @param classesUnderTest names of all the classes under test
+   * @param classInterfaceTypes names of all the classes under test
    */
-  public CoverageTracker(Set<String> classesUnderTest) {
-    this.classesUnderTest = new HashSet<>(classesUnderTest);
+  public CoverageTracker(Set<ClassOrInterfaceType> classInterfaceTypes) {
+    for (ClassOrInterfaceType classOrInterfaceType : classInterfaceTypes) {
+      classesUnderTest.add(classOrInterfaceType.getRuntimeClass().getName());
+    }
   }
 
   /**

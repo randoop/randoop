@@ -84,6 +84,7 @@ import randoop.test.ValidityCheckingGenerator;
 import randoop.test.predicate.AlwaysFalseExceptionPredicate;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
@@ -317,6 +318,7 @@ public class GenTests extends GenInputsAbstract {
     assert operationModel != null;
 
     List<TypedOperation> operations = operationModel.getOperations();
+    Set<ClassOrInterfaceType> classesUnderTest = operationModel.getClassTypes();
 
     /*
      * Stop if there is only 1 operation. This will be Object().
@@ -369,7 +371,12 @@ public class GenTests extends GenInputsAbstract {
      */
     AbstractGenerator explorer =
         new ForwardGenerator(
-            operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
+            operations,
+            observers,
+            new GenInputsAbstract.Limits(),
+            componentMgr,
+            listenerMgr,
+            classesUnderTest);
 
     /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
     operationModel.log();
