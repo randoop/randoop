@@ -70,6 +70,7 @@ The Randoop homepage is
           <li><a href="#nondeterminism-command-line-arguments">Timeouts and other command-line arguments enable nondeterminism</a></li>
           <li><a href="#nondeterminism-changed-program">Changes to the program or its environment</a></li>
           <li><a href="#nondeterminism-in-program-under-test">Nondeterministic program under test</a></li>
+          <li><a href="#nondeterminism-bug-in-randoop">Nondeterminism in Randoop</a></li>
         </ul></li>
     </ul></li>
   <li><a href="#getting_help">Getting help</a>
@@ -1989,17 +1990,19 @@ classes under test
 <h2 id="nondeterminism">Nondeterminism</h2>
 
 <p>
-Randoop is deterministic:  if you run Randoop twice, Randoop outputs the
-same tests in the same order.
+Randoop is deterministic:  if you run Randoop twice using
+the <a href="#option:randomseed"><code>--deterministic</code></a>
+command-line argument, Randoop outputs the same tests in the same order.
 </p>
 
 <p>
-This section gives several reasons why Randoop may produce different output
-when you run it twice, and tells you how to debug the problem.
-If after investigating these possibilities, you find that Randoop is
-nondeterministic because of a bug in Randoop,
-please <a href="#bug-reporting">report it</a> so that we can investigate
-and correct the problem.
+If Randoop produces a different output when you run it twice, then there is
+some source of nondeterminism.  To diagnose the problem, run Randoop twice
+with the <a href="#option:log"><code>--log</code></a>
+and <a href="#option:selection-log"><code>--selection-log</code></a>
+command-line options.  Compare the logs across runs, and the first place
+that they differ will help you find the nondeterminism.  The remainder of
+this section gives several reasons you may discover.
 </p>
 
 <p>
@@ -2013,7 +2016,16 @@ different values for the
 <h3 id="nondeterminism-command-line-arguments">Timeouts and other command-line arguments enable nondeterminism</h3>
 
 <p>
-  By default, Randoop runs until a timeout.  Due to other
+There are command-line arguments that instruct Randoop to behave
+nondeterministically.
+  To forbid use
+of such options, pass
+the <a href="#option:randomseed"><code>--deterministic</code></a>
+command-line argument.
+</p>
+
+<p>
+  For example, by default Randoop runs until a timeout.  Due to other
   processes running on your computer, Randoop may
   generate more or fewer tests in a given time period.
   To make Randoop deterministic, don't use the
@@ -2025,20 +2037,12 @@ different values for the
   generation</a>.
 </p>
 
-<p>
-There are other command-line arguments that instruct Randoop to behave
-nondeterministically, for example by specifying a timeout.  To forbid use
-of such options, pass
-the <a href="#option:randomseed"><code>--deterministic</code></a>
-command-line argument.
-</p>
-
-
 
 <h3 id="nondeterminism-changed-program">Changes to the program or its environment</h3>
 
 <p>
-You changed the program or its environment.
+If the program or its environment changed between runs, Randoop may produce
+different test suites..
 </p>
 
 <p>
@@ -2071,18 +2075,10 @@ implementation but fail on another.
 <h3 id="nondeterminism-in-program-under-test">Nondeterministic program under test</h3>
 
 <p>
-The program under test is nondeterministic.  This can cause Randoop to
-produce different tests on different runs.  More seriously, this can cause
-Randoop to produce <a href="#flaky-tests">flaky tests</a> that sometimes
+If the program under test is nondeterministic, Randoop may
+produce different tests on different runs.  More seriously,
+Randoop may produce <a href="#flaky-tests">flaky tests</a> that sometimes
 pass and sometimes fail.
-</p>
-
-<p>
-To determine which method is nondeterministic, run Randoop with
-the <a href="#option:log"><code>--log</code></a> and
-<a href="#option:selection-log"><code>--selection-log</code></a>
-command-line options.  Compare the logs across runs, and the first
-place that they differ indicates where the program is nondeterministic.
 </p>
 
 <p>
@@ -2121,7 +2117,7 @@ Here are some ways to eliminate nondeterminism in a sequential Java program:
 	on <code>Object.hashCode()</code>.
       </li>
       <li>
-	For deteriminism, don't instantiate the <code>Object</code> class,
+	For determinism, don't instantiate the <code>Object</code> class,
         as in <code>new Object()</code>; instead, use some class that overrides
 	<code>Object.hashCode()</code>.  For
 	example, <a href="http://plumelib.org/plume-util/api/org/plumelib/util/DeterministicObject.html">DeterministicObject</a>
@@ -2184,6 +2180,16 @@ rather than discarding them after generating them.
 <p>
 You can also see the techniques suggested in the paper
 <a href="http://homes.cs.washington.edu/~mernst/pubs/maintainable-tests-ase2011.pdf">Scaling Up Automated Test Generation</a>.
+</p>
+
+
+<h3 id="nondeterminism-bug-in-randoop">Nondeterminism in Randoop</h3>
+
+<p>
+If after investigating the above possibilities, you find that Randoop is
+nondeterministic because of a bug in Randoop,
+please <a href="#bug-reporting">report it</a> so that we can investigate
+and correct the problem.
 </p>
 
 
@@ -2623,9 +2629,9 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  subsequences online unpub javac TypeN postcondition jarpath
  -->
-<!--  LocalWords:  oom Xmx jdk OperationSpecification subtest
+<!--  LocalWords:  oom Xmx jdk OperationSpecification subtest minimizer
  -->
-<!--  LocalWords:  ErrorTest RegressionTest sgn
+<!--  LocalWords:  ErrorTest RegressionTest sgn DeterministicObject
  -->
 <!--  LocalWords:  npe subtests AssertionError basename myclasspath
  -->
