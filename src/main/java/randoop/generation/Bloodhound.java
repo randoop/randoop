@@ -261,14 +261,20 @@ public class Bloodhound implements TypedOperationSelector {
         isFromAbstractClass = Modifier.isAbstract(method.getDeclaringClass().getModifiers());
       }
 
-      assert isAbstractMethod
-          || isGetterMethod
-          || isSetterMethod
-          || isEnumConstant
-          || isSyntheticMethod
-          || isFromAbstractClass
-          || operationName.equals("java.lang.Object.<init>")
-          || operationName.equals("java.lang.Object.getClass");
+      boolean isExpectedToHaveNoCoverage =
+          isAbstractMethod
+              || isGetterMethod
+              || isSetterMethod
+              || isEnumConstant
+              || isSyntheticMethod
+              || isFromAbstractClass
+              || operationName.equals("java.lang.Object.<init>")
+              || operationName.equals("java.lang.Object.getClass");
+      if (!isExpectedToHaveNoCoverage) {
+        System.err.println(
+            "The method " + methodName + " is expected to have coverage info but has none.");
+      }
+      assert isExpectedToHaveNoCoverage;
       uncovRatio = 0.5;
     }
 
