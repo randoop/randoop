@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
@@ -88,6 +89,12 @@ public final class Log {
       msg = String.format(fmt, args);
     } catch (Throwable t) {
       logPrintf("A user-defined toString() method failed.%n");
+      Class<?>[] argTypes = new Class<?>[args.length];
+      for (int i = 0; i < args.length; i++) {
+        argTypes[i] = args[i].getClass();
+      }
+      logPrintf("  fmt = %s%n", fmt);
+      logPrintf("  arg types = %s%n", Arrays.toString(argTypes));
       logStackTrace(t);
       return;
     }
