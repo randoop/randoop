@@ -44,9 +44,9 @@ public class OrienteeringSelection implements InputSequenceSelector {
    */
   @Override
   public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
-    updateWeightMapForCandidates(candidates);
+    double totalWeight = updateWeightMapForCandidates(candidates);
 
-    Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, weightMap);
+    Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, weightMap, totalWeight);
     incrementCountInMap(sequenceSelectionCount, selectedSequence);
     return selectedSequence;
   }
@@ -66,8 +66,11 @@ public class OrienteeringSelection implements InputSequenceSelector {
    * as the first execution.
    *
    * @param candidates list of candidate sequences
+   * @return the total weight of all the elements in the candidate list
    */
-  private void updateWeightMapForCandidates(SimpleList<Sequence> candidates) {
+  private double updateWeightMapForCandidates(SimpleList<Sequence> candidates) {
+    double totalWeight = 0.0;
+
     for (int i = 0; i < candidates.size(); i++) {
       Sequence candidate = candidates.get(i);
 
@@ -75,13 +78,20 @@ public class OrienteeringSelection implements InputSequenceSelector {
       Integer selectionCount = sequenceSelectionCount.get(candidate);
       Long executionTime = sequenceExecutionTime.get(candidate);
 
-      // Recompute and update this sequence's weight.
-      if (selectionCount != null && executionTime != null) {
-        weightMap.put(candidate, 1.0 / (selectionCount * executionTime * methodSizeSqrt));
+      double weight;
+      // Recompute and update this sequence's weight. Note that we check methodSizeSqrt is not zero
+      // to prevent division by zero. This could occur for a sequence that has no method calls.
+      if (selectionCount != null && executionTime != null && methodSizeSqrt != 0) {
+        weight = 1.0 / (selectionCount * executionTime * methodSizeSqrt);
       } else {
-        weightMap.put(candidate, candidate.getWeight());
+        weight = candidate.getWeight();
       }
+
+      totalWeight += weight;
+      weightMap.put(candidate, weight);
     }
+
+    return totalWeight;
   }
 
   /**
