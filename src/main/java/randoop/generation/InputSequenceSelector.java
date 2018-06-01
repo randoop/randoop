@@ -18,8 +18,10 @@ public interface InputSequenceSelector {
   /**
    * Each {@link Sequence} within {@code inputSequences} is a subsequence of {@code eSeq}. At this
    * point, the given {@link ExecutableSequence} has been executed and contains the execution time
-   * of the sequence as a whole. Make use of the execution time value that is stored within eSeq and
-   * associate it with each of the input sequences.
+   * of the sequence as a whole. The Executable Sequence eSeq also contains an ExecutionOutcome for
+   * each statement within the entire sequence. The ExecutionOutcome contains the execution time for
+   * a given statement. This information can be used to compute the execution time of any
+   * subsequence within eSeq.
    *
    * @param inputSequences the sequences that were chosen as the input to the method under test for
    *     creating {@code eSeq} which is a new and unique sequence
