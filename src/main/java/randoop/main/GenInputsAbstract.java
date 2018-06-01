@@ -521,6 +521,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Use values that are extracted from classes under test")
   public static boolean enable_constant_mining = true;
 
+  @Unpublicized
+  @Option("Bias method selection to favor sequences with lower 'cost' (execution time and size)")
+  public static boolean enable_orienteering = false;
+
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
   // the length of the string that will atually be printed out as code.
@@ -791,6 +795,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
     }
 
+    if (deterministic && enable_orienteering) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --deterministic with --enable-orienteering");
+    }
+
     if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_DEFAULT
         && !ReflectionExecutor.usethreads) {
       throw new RandoopUsageError(
@@ -812,6 +821,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "You must specify some classes or methods to test."
               + Globals.lineSep
               + "Use the --classlist, --testclass, or --methodlist options.");
+    }
+
+    if (small_tests && enable_orienteering) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --small_tests with --enable_orienteering");
+    }
+
+    if (enable_constant_mining && enable_orienteering) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --enable_constant_mining with --enable_orienteering");
     }
   }
 

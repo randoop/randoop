@@ -1,7 +1,6 @@
 package randoop.generation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +48,6 @@ import randoop.util.SimpleList;
  */
 public class ForwardGenerator extends AbstractGenerator {
   /**
-   * Map of extracted literal sequences to their static weights. These weights are never changed
-   * once initialized.
-   */
-  private final Map<Sequence, Double> literalWeightMap = new HashMap<>();
-
-  /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
    * discarded.
    *
@@ -81,20 +74,21 @@ public class ForwardGenerator extends AbstractGenerator {
 
   private final TypeInstantiator instantiator;
 
+  /** How to selecting sequences as input for creating new sequences. */
+  private final InputSequenceSelector inputSequenceSelector;
+
   // The set of all primitive values seen during generation and execution
   // of sequences. This set is used to tell if a new primitive value has
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
-  // Called if you don't want to use the static weighting scheme for extracted literals.
-  // Currently used in regression tests and for backwards compatibility.
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       RandoopListenerManager listenerManager) {
-    this(operations, observers, limits, componentManager, null, listenerManager, 0, null);
+    this(operations, observers, limits, componentManager, null, listenerManager);
   }
 
   public ForwardGenerator(
@@ -125,7 +119,17 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
-    initializeLiteralWeightMap(numClasses, literalTermFrequencies);
+
+    if (GenInputsAbstract.small_tests) {
+      inputSequenceSelector = new SmallTestsSequenceSelection();
+    } else if (GenInputsAbstract.enable_orienteering) {
+      inputSequenceSelector = new OrienteeringSelection();
+    } else if (GenInputsAbstract.enable_constant_mining) {
+      inputSequenceSelector =
+          new ConstantMiningSelection(componentManager, numClasses, literalTermFrequencies);
+    } else {
+      inputSequenceSelector = new UniformRandomSequenceSelection();
+    }
   }
 
   /**
@@ -144,26 +148,6 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
-  /**
-   * Compute weights for the literals.
-   *
-   * @param numClasses number of classes under tests
-   * @param literalTermFrequencies a map from a literal to the number of times it appears in any
-   *     class under test
-   */
-  private void initializeLiteralWeightMap(
-      int numClasses, Map<Sequence, Integer> literalTermFrequencies) {
-    if (literalTermFrequencies != null) {
-      for (Sequence sequence : componentManager.getSequenceFrequency().keySet()) {
-        Integer documentFrequency = componentManager.getSequenceFrequency().get(sequence);
-        double tfIdf =
-            literalTermFrequencies.get(sequence)
-                * Math.log((numClasses + 1.0) / ((numClasses + 1.0) - documentFrequency));
-        literalWeightMap.put(sequence, tfIdf);
-      }
-    }
-  }
-
   @Override
   public ExecutableSequence step() {
 
@@ -173,11 +157,14 @@ public class ForwardGenerator extends AbstractGenerator {
       componentManager.clearGeneratedSequences();
     }
 
-    ExecutableSequence eSeq = createNewUniqueSequence();
+    ExecutableSequenceAndInputSequences eSeqWithInputs = createNewUniqueSequence();
 
-    if (eSeq == null) {
+    if (eSeqWithInputs == null) {
       return null;
     }
+
+    ExecutableSequence eSeq = eSeqWithInputs.executableSequence;
+    List<Sequence> inputSequencesForNewSequence = eSeqWithInputs.inputSequences;
 
     if (GenInputsAbstract.dontexecute) {
       this.componentManager.addGeneratedSequence(eSeq.sequence);
@@ -191,6 +178,8 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.execute(executionVisitor, checkGenerator);
 
     startTime = System.nanoTime(); // reset start time.
+
+    inputSequenceSelector.createdExecutableSequenceFromInputs(inputSequencesForNewSequence, eSeq);
 
     determineActiveIndices(eSeq);
 
@@ -323,9 +312,9 @@ public class ForwardGenerator extends AbstractGenerator {
    * sequence created is already in the manager's sequences, this method has no effect, and returns
    * null.
    *
-   * @return a new sequence, or null
+   * @return a new sequence with its input sequences, or null
    */
-  private ExecutableSequence createNewUniqueSequence() {
+  private ExecutableSequenceAndInputSequences createNewUniqueSequence() {
 
     Log.logPrintf("-------------------------------------------%n");
 
@@ -443,7 +432,8 @@ public class ForwardGenerator extends AbstractGenerator {
     // A test that consists of one of these sequences are probably redundant.
     subsumed_sequences.addAll(sequences.sequences);
 
-    return new ExecutableSequence(newSequence);
+    return new ExecutableSequenceAndInputSequences(
+        new ExecutableSequence(newSequence), sequences.sequences);
   }
 
   /**
@@ -554,7 +544,6 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   @SuppressWarnings("unchecked")
   private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
-
     // Variable inputTypes contains the values required as input to the
     // statement given as a parameter to the selectInputs method.
 
@@ -779,15 +768,7 @@ public class ForwardGenerator extends AbstractGenerator {
       //   }
       // }
 
-      Sequence chosenSeq;
-      if (GenInputsAbstract.small_tests) {
-        chosenSeq = Randomness.randomMemberWeighted(candidates);
-      } else if (GenInputsAbstract.enable_constant_mining) {
-        chosenSeq = Randomness.randomMemberWeighted(candidates, literalWeightMap);
-      } else {
-        chosenSeq = Randomness.randomMember(candidates);
-      }
-
+      Sequence chosenSeq = inputSequenceSelector.selectInputSequence(candidates);
       Log.logPrintf("chosenSeq: %s%n", chosenSeq);
 
       // TODO: the last statement might not be active -- it might not create a usable variable of
@@ -872,5 +853,15 @@ public class ForwardGenerator extends AbstractGenerator {
         + ","
         + ("runtimePrimitivesSeen.size()=" + runtimePrimitivesSeen.size())
         + ")";
+  }
+
+  private static class ExecutableSequenceAndInputSequences {
+    public ExecutableSequence executableSequence;
+    public List<Sequence> inputSequences;
+
+    public ExecutableSequenceAndInputSequences(ExecutableSequence eSeq, List<Sequence> inputs) {
+      this.executableSequence = eSeq;
+      this.inputSequences = inputs;
+    }
   }
 }
