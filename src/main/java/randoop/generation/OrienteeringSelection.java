@@ -1,10 +1,12 @@
 package randoop.generation;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import randoop.ExecutionOutcome;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
@@ -15,6 +17,12 @@ import randoop.util.SimpleList;
  *
  * <p>Biases input selection towards sequences that have lower execution cost. Execution cost is
  * measured by the number of method calls in a sequence and the time it takes to execute.
+ *
+ * <p>Our implementation of Orienteering differs from that described in the GRT paper in that we do
+ * not keep track of the execution time of an input sequence for each new run. Instead, we assume
+ * that an input sequence's execution time is equal to the execution time of its first run. We
+ * believe this assumption is reasonable since we do not expect an input sequence's execution time
+ * to differ greatly between separate runs.
  */
 public class OrienteeringSelection implements InputSequenceSelector {
   /** Map from a sequence to its weight. */
@@ -97,25 +105,58 @@ public class OrienteeringSelection implements InputSequenceSelector {
   /**
    * Each {@link Sequence} within {@code inputSequences} is a subsequence of {@code eSeq}. At this
    * point, the given {@link ExecutableSequence} has been executed and contains the execution time
-   * of the sequence as a whole. Since we are not able to measure the execution time of each input
-   * sequence, we make the simplifying assumption that each input sequence's execution is equal to
-   * that of the entire {@link ExecutableSequence}. Furthermore, we do not update the execution time
-   * of an input sequence once it has been assigned. This is because we expect newer {@link
-   * ExecutableSequence}s to be longer in length as we extend existing sequences. Thus, the first
-   * measured execution time should be a closer approximation of the input sequence's execution
-   * time.
+   * of the sequence as a whole. The ExecutableSequence, eSeq, contains an {@link
+   * randoop.sequence.Execution} which contains a list of {@link ExecutionOutcome}s. The execution
+   * outcome object represents the result of executing a single statement in a sequence. To compute
+   * the execution time of an input sequence, we iterate through its statements and retrieve their
+   * respective execution times from the eSeq object.
+   *
+   * <p>We do not update the execution time of an input sequence once it has been assigned. This is
+   * because we do not believe that a single input sequence's execution time will change drastically
+   * between different runs. This is a simplification upon GRT's description of Orienteering which
+   * does differentiate execution times of a given sequence between multiple runs.
    *
    * @param inputSequences the sequences that were chosen as the input to the method under test for
-   *     creating a new and unique sequence
-   * @param eSeq the recently executed, new sequence
+   *     creating {@code eSeq} which is a new and unique sequence
+   * @param eSeq the recently executed sequence which is new and unique
    */
   @Override
-  public void assignExecTimeForInputSequences(
-      Set<Sequence> inputSequences, ExecutableSequence eSeq) {
+  public void createdExecutableSequenceFromInputs(
+      List<Sequence> inputSequences, ExecutableSequence eSeq) {
+    Map<Statement, Long> statmentExecTime = new HashMap<>();
+
+    // We iterate through the executable sequence and populate our map, mapping from statement to
+    // execution time. There will be an execution outcome for each statement since we have
+    // the invariant in ExecutableSequence that sequence.size() == executionResults.size().
+    for (int i = 0; i < eSeq.size(); i++) {
+      Statement statement = eSeq.sequence.getStatement(i);
+      ExecutionOutcome executionOutcome = eSeq.getResult(i);
+
+      statmentExecTime.put(statement, executionOutcome.getExecutionTime());
+    }
+
     for (Sequence inputSequence : inputSequences) {
       Long executionTime = sequenceExecutionTime.get(inputSequence);
+
+      // If we have not yet computed an execution time for this input sequence, we do so now. Otherwise,
+      // we continue to the next statement since we only ever compute an input sequence's execution time
+      // once.
       if (executionTime == null) {
-        sequenceExecutionTime.put(inputSequence, eSeq.exectime);
+        Long sequenceExecTime = 0L;
+
+        // An input sequence's execution time is equal to the total sum of the execution times of the
+        // statements that constitute the sequence itself.
+        for (int i = 0; i < inputSequence.size(); i++) {
+          Statement statement = inputSequence.getStatement(i);
+
+          // Since each input sequence is a subsequence of the overall executable sequence, we expect
+          // every statement to exist within the executable sequence. We can then use our map from
+          // statement to execution time to add onto our running execution time sum.
+          assert statmentExecTime.containsKey(statement);
+          sequenceExecTime += statmentExecTime.get(statement);
+        }
+
+        sequenceExecutionTime.put(inputSequence, sequenceExecTime);
       }
     }
   }

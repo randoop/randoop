@@ -1,6 +1,6 @@
 package randoop.generation;
 
-import java.util.Set;
+import java.util.List;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.SimpleList;
@@ -22,8 +22,8 @@ public interface InputSequenceSelector {
    * associate it with each of the input sequences.
    *
    * @param inputSequences the sequences that were chosen as the input to the method under test for
-   *     creating a new and unique sequence
-   * @param eSeq the recently executed sequence
+   *     creating {@code eSeq} which is a new and unique sequence
+   * @param eSeq the recently executed sequence which is new and unique
    */
-  void assignExecTimeForInputSequences(Set<Sequence> inputSequences, ExecutableSequence eSeq);
+  void createdExecutableSequenceFromInputs(List<Sequence> inputSequences, ExecutableSequence eSeq);
 }

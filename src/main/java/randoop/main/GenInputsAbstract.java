@@ -509,7 +509,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   @Unpublicized
   @Option("Bias method selection to favor sequences with lower 'cost' (execution time and size)")
-  public static boolean enable_orienteering = false;
+  public static boolean enable_orienteering = true;
 
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
