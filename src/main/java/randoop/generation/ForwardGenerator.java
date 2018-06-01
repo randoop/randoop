@@ -115,7 +115,7 @@ public class ForwardGenerator extends AbstractGenerator {
       inputSequenceSelector = new SmallTestsSequenceSelection();
     } else if (GenInputsAbstract.enable_orienteering) {
       inputSequenceSelector = new OrienteeringSelection();
-    } else if (GenInputsAbstract.enable_constant_mining) {
+    } else if (GenInputsAbstract.enable_constant_mining && literalTermFrequencies != null) {
       inputSequenceSelector =
           new ConstantMiningSelection(componentManager, numClasses, literalTermFrequencies);
     } else {

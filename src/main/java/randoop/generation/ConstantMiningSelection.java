@@ -29,26 +29,26 @@ public class ConstantMiningSelection implements InputSequenceSelector {
    *     getting the frequency of a literal
    * @param numClasses number of classes under tests
    * @param literalTermFrequencies a map from a literal to the number of times it appears in any
-   *     class under test
+   *     class under test. If literalTermFrequencies is null, we simply don't compute any weights to
+   *     put in literalWeightMap and every sequence will end up using its default weight computed
+   *     with {@code sequence.getWeight();}.
    */
   public ConstantMiningSelection(
       ComponentManager componentManager,
       int numClasses,
       Map<Sequence, Integer> literalTermFrequencies) {
-    if (literalTermFrequencies != null) {
-      Map<Sequence, Integer> seqDocumentFrequencies = componentManager.getSeqDocumentFrequency();
+    Map<Sequence, Integer> seqDocumentFrequencies = componentManager.getSeqDocumentFrequency();
 
-      // We iterate through all literals that were found by the ClassLiteralExtractor.
-      for (Sequence sequence : seqDocumentFrequencies.keySet()) {
-        Integer documentFrequency = seqDocumentFrequencies.get(sequence);
-        Integer termFrequency = literalTermFrequencies.get(sequence);
+    // We iterate through all literals that were found by the ClassLiteralExtractor.
+    for (Sequence sequence : seqDocumentFrequencies.keySet()) {
+      Integer documentFrequency = seqDocumentFrequencies.get(sequence);
+      Integer termFrequency = literalTermFrequencies.get(sequence);
 
-        // Compute the term frequency-inverse document frequency based on GRT's formula for
-        // Constant Mining.
-        double tfIdf =
-            termFrequency * Math.log((numClasses + 1.0) / ((numClasses + 1.0) - documentFrequency));
-        literalWeightMap.put(sequence, tfIdf);
-      }
+      // Compute the term frequency-inverse document frequency based on GRT's formula for
+      // Constant Mining.
+      double tfIdf =
+          termFrequency * Math.log((numClasses + 1.0) / ((numClasses + 1.0) - documentFrequency));
+      literalWeightMap.put(sequence, tfIdf);
     }
   }
 
