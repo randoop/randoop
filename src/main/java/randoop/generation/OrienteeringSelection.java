@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
@@ -132,7 +133,11 @@ public class OrienteeringSelection implements InputSequenceSelector {
       Statement statement = eSeq.sequence.getStatement(i);
       ExecutionOutcome executionOutcome = eSeq.getResult(i);
 
-      statmentExecTime.put(statement, executionOutcome.getExecutionTime());
+      if (executionOutcome instanceof NormalExecution) {
+        statmentExecTime.put(statement, executionOutcome.getExecutionTime());
+      } else {
+        statmentExecTime.put(statement, 0L);
+      }
     }
 
     for (Sequence inputSequence : inputSequences) {
@@ -156,6 +161,8 @@ public class OrienteeringSelection implements InputSequenceSelector {
           sequenceExecTime += statmentExecTime.get(statement);
         }
 
+        // We want to ensure that all sequences have a positive execution time.
+        assert sequenceExecTime > 0;
         sequenceExecutionTime.put(inputSequence, sequenceExecTime);
       }
     }
