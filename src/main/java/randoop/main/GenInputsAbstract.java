@@ -517,9 +517,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("What probability to select only extracted literals")
   public static double p_const = .01;
 
+  /** Enable the Constant Mining scheme as defined by GRT. */
   @Unpublicized
   @Option("Use values that are extracted from classes under test")
   public static boolean enable_constant_mining = true;
+
+  @Unpublicized
+  @Option("Log to standard out, messages from the Constant Mining selection class.")
+  public static boolean constant_mining_logging = false;
 
   @Unpublicized
   @Option("Bias method selection to favor sequences with lower 'cost' (execution time and size)")

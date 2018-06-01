@@ -365,7 +365,6 @@ public class GenTests extends GenInputsAbstract {
     }
 
     int numClassesUnderTest = operationModel.getClassTypes().size();
-    System.out.println(operationModel.getClassTypes());
     Map<Sequence, Integer> literalTermFrequency = operationModel.getLiteralTermFrequency();
 
     /*

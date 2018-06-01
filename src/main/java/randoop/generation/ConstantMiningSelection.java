@@ -3,6 +3,7 @@ package randoop.generation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import randoop.main.GenInputsAbstract;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
@@ -64,7 +65,9 @@ public class ConstantMiningSelection implements InputSequenceSelector {
    */
   @Override
   public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
-    outputCandidateWeights(candidates);
+    if (GenInputsAbstract.constant_mining_logging) {
+      outputCandidateWeights(candidates);
+    }
     return Randomness.randomMemberWeighted(candidates, literalWeightMap);
   }
 
