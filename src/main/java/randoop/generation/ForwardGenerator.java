@@ -36,16 +36,7 @@ import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
-/**
- * Randoop's forward, component-based generator.
- *
- * <p>For weighted random selection of an input sequence, there are two weighting schemes:
- *
- * <ul>
- *   <li>Static weighting scheme applicable to only extracted literals
- *   <li>Default static weighting scheme from {@link Sequence}, applicable to all sequences
- * </ul>
- */
+/** Randoop's forward, component-based generator. */
 public class ForwardGenerator extends AbstractGenerator {
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then

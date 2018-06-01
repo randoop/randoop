@@ -29,7 +29,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * under test. Note that this is the raw frequency, just the number of times they occur within all
    * classes under test.
    */
-  private Map<Sequence, Integer> literalsTermFrequency;
+  private final Map<Sequence, Integer> literalsTermFrequency;
 
   ClassLiteralExtractor(
       MultiMap<ClassOrInterfaceType, Sequence> literalMap,
@@ -52,6 +52,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
                     TypedOperation.createNonreceiverInitialization(term),
                     new ArrayList<Variable>());
         literalMap.add(constantType, seq);
+
         // Increment the count of this sequence in the literalsTermFrequency map.
         Integer frequency = literalsTermFrequency.get(seq);
         if (frequency == null) {

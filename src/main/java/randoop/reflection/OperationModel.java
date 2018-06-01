@@ -52,15 +52,15 @@ import randoop.util.Log;
 import randoop.util.MultiMap;
 
 /**
- * {@code OperationModel} represents the information context from which tests are generated. It is
- * also used to store information needed for the static weighting scheme of extracted literals. The
+ * {@code OperationModel} represents the information context from which tests are generated. The
  * model includes:
  *
  * <ul>
  *   <li>classes under test,
  *   <li>operations of all classes,
  *   <li>any atomic code sequences derived from command-line arguments, and
- *   <li>the contracts or oracles used to generate tests.
+ *   <li>the contracts or oracles used to generate tests,
+ *   <li>frequency of literals that appear in the classes under test.
  * </ul>
  *
  * <p>This class manages all information about generic classes internally, and instantiates any type
@@ -81,11 +81,11 @@ public class OperationModel {
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
   /**
-   * The map of literals to their term frequency: tf(t,d), where t is a literal and d is all classes
+   * Map of literals to their term frequency: tf(t,d), where t is a literal and d is all classes
    * under test. Note that this is the raw frequency, just the number of times they occur within all
    * classes under test.
    */
-  private Map<Sequence, Integer> literalTermFrequency;
+  private final Map<Sequence, Integer> literalTermFrequency;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -292,9 +292,10 @@ public class OperationModel {
               compMgr.addPackageLevelLiteral(pkg, seq);
               break;
             case CLASS_OR_ALL:
-              compMgr.addClassLevelLiteral(
-                  type, seq); // add sequence to the collection of class literals
-              compMgr.addGeneratedSequence(seq); // add sequence to the collection of all sequences
+              // Add sequence to the collection of class literals.
+              compMgr.addClassLevelLiteral(type, seq);
+              // Add sequence to the collection of all sequences.
+              compMgr.addGeneratedSequence(seq);
               break;
             case ALL:
               compMgr.addGeneratedSequence(seq);

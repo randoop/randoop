@@ -194,9 +194,9 @@ public final class Randomness {
       try {
         String eltToString = elt.toString();
         // TODO: throw an error here unless the client permits the intrinsic weight to be used.
-        // Log.logPrintf(
-        //     "randoop.util.Randomness: key %s not found; using intrinsic weight %f.%n",
-        //     eltToString, weight);
+        Log.logPrintf(
+            "randoop.util.Randomness: key %s not found; using intrinsic weight %f.%n",
+            eltToString, weight);
       } catch (Throwable t) {
         int hc = elt.hashCode();
         Log.logPrintf(

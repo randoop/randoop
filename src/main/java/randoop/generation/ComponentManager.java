@@ -45,11 +45,11 @@ import randoop.util.SimpleList;
 public class ComponentManager {
 
   /**
-   * This frequency represents the number of times a class-level literal occurs in all classes under
-   * test. Used for the static weighting scheme of extracted class-level literals, which is used in
-   * the weighted sequence selection.
+   * Map of class-level literal to its frequency, the number of classes that this literal appears
+   * in. This information is used by {@link ConstantMiningSelection} to assign weights to input
+   * sequences based on a literal's tf-idf. This is the document frequency.
    */
-  private final Map<Sequence, Integer> sequenceFrequency = new LinkedHashMap<>();
+  private final Map<Sequence, Integer> seqDocumentFrequency = new LinkedHashMap<>();
 
   /** The principal set of sequences used to create other, larger sequences by the generator. */
   // Is never null. Contains both general components
@@ -148,11 +148,11 @@ public class ComponentManager {
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
-    Integer frequency = sequenceFrequency.get(sequence);
+    Integer frequency = seqDocumentFrequency.get(sequence);
     if (frequency == null) {
       frequency = 0;
     }
-    sequenceFrequency.put(sequence, frequency + 1);
+    seqDocumentFrequency.put(sequence, frequency + 1);
   }
 
   /**
@@ -163,8 +163,8 @@ public class ComponentManager {
   }
 
   /** @return the mapping of sequences to their frequency */
-  public Map<Sequence, Integer> getSequenceFrequency() {
-    return sequenceFrequency;
+  public Map<Sequence, Integer> getSeqDocumentFrequency() {
+    return seqDocumentFrequency;
   }
 
   /*
@@ -192,8 +192,8 @@ public class ComponentManager {
    * the given statement. Also includes any applicable class- or package-level literals.
    *
    * <p>With probability <code>--p-const</code> (as given by the command-line option), this only
-   * returns the subset of these component sequences that are extracted literals. Otherwise, it
-   * returns all of these component sequences.
+   * returns the subset of these component sequences that are extracted literals that belong to the
+   * class of the operation's receiver. Otherwise, it returns all of these component sequences.
    *
    * @param operation the statement
    * @param i the input value index of statement
@@ -237,7 +237,8 @@ public class ComponentManager {
           }
         }
       } else if (classLiterals != null && Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
-        // Return only the component sequences that are class-level extracted literals.
+        // Return only the component sequences that are class-level extracted literals from the
+        // declaring class.
         return classLiterals.getSequences(declaringCls, neededType);
       }
     }
