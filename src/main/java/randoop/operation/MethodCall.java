@@ -3,9 +3,9 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.plumelib.util.ArraysPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -168,7 +168,7 @@ public final class MethodCall extends CallableOperation {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {
         if (params[i] != null && params[i].getClass().isArray()) {
-          Log.logPrintf("  Param %d = %s%n", i, toString(params[i]));
+          Log.logPrintf("  Param %d = %s%n", i, ArraysPlume.toString(params[i]));
         } else {
           Log.logPrintf("  Param %d = %s%n", i, params[i]);
         }
@@ -178,48 +178,6 @@ public final class MethodCall extends CallableOperation {
     MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
 
     return ReflectionExecutor.executeReflectionCode(code, out);
-  }
-
-  // TODO: use ArraysPlume.toString instead of this, when plume-util 0.0.3 is released.
-  /**
-   * Returns a string representation of the contents of the specified array. The argument must be an
-   * array or null. This just dispatches one of the 9 overloaded versions of {@code
-   * java.util.Arrays.toString()}.
-   *
-   * @param obj an array
-   * @return a string representation of the array
-   * @throws IllegalArgumentException if obj is not an array
-   */
-  @SuppressWarnings("purity") // defensive coding: throw exception when argument is invalid
-  /*@SideEffectFree*/
-  private static String toString(Object a) {
-    if (a == null) {
-      return "null";
-    } else if (a instanceof boolean[]) {
-      return Arrays.toString((boolean[]) a);
-    } else if (a instanceof byte[]) {
-      return Arrays.toString((byte[]) a);
-    } else if (a instanceof char[]) {
-      return Arrays.toString((char[]) a);
-    } else if (a instanceof double[]) {
-      return Arrays.toString((double[]) a);
-    } else if (a instanceof float[]) {
-      return Arrays.toString((float[]) a);
-    } else if (a instanceof int[]) {
-      return Arrays.toString((int[]) a);
-    } else if (a instanceof long[]) {
-      return Arrays.toString((long[]) a);
-    } else if (a instanceof short[]) {
-      return Arrays.toString((short[]) a);
-    } else if (a instanceof Object[]) {
-      return Arrays.toString((Object[]) a);
-    } else if (a instanceof List<?>) {
-      // Handles lists, but this is not a documented feature
-      return a.toString();
-    } else {
-      throw new IllegalArgumentException(
-          "Argument is not an array, but has class " + a.getClass().getName());
-    }
   }
 
   /**
