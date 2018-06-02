@@ -4,11 +4,11 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import randoop.types.Type;
+import randoop.util.CheckpointingMultiMap;
+import randoop.util.CheckpointingSet;
 import randoop.util.IMultiMap;
 import randoop.util.ISimpleSet;
 import randoop.util.MultiMap;
-import randoop.util.ReversibleMultiMap;
-import randoop.util.ReversibleSet;
 import randoop.util.SimpleSet;
 
 /**
@@ -25,15 +25,15 @@ public class SubTypeSet {
   // no subtypes for the given type.
   private IMultiMap<Type, Type> subTypesWithsequences;
 
-  private boolean reversible;
+  private boolean supportsCheckpoints;
 
-  public SubTypeSet(boolean reversible) {
-    if (reversible) {
-      this.reversible = true;
-      this.subTypesWithsequences = new ReversibleMultiMap<>();
-      this.typesWithsequences = new ReversibleSet<>();
+  public SubTypeSet(boolean supportsCheckpoints) {
+    if (supportsCheckpoints) {
+      this.supportsCheckpoints = true;
+      this.subTypesWithsequences = new CheckpointingMultiMap<>();
+      this.typesWithsequences = new CheckpointingSet<>();
     } else {
-      this.reversible = false;
+      this.supportsCheckpoints = false;
       this.subTypesWithsequences = new MultiMap<>();
       this.typesWithsequences = new SimpleSet<>();
     }
@@ -41,20 +41,20 @@ public class SubTypeSet {
 
   /** Checkpoint the state of the data structure, for use by {@link #undoLastStep()}. */
   public void mark() {
-    if (!reversible) {
+    if (!supportsCheckpoints) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((ReversibleMultiMap<Type, Type>) subTypesWithsequences).mark();
-    ((ReversibleSet<Type>) typesWithsequences).mark();
+    ((CheckpointingMultiMap<Type, Type>) subTypesWithsequences).mark();
+    ((CheckpointingSet<Type>) typesWithsequences).mark();
   }
 
   /** Undo changes since the last call to {@link #mark()}. */
   public void undoLastStep() {
-    if (!reversible) {
+    if (!supportsCheckpoints) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((ReversibleMultiMap<Type, Type>) subTypesWithsequences).undoToLastMark();
-    ((ReversibleSet<Type>) typesWithsequences).undoToLastMark();
+    ((CheckpointingMultiMap<Type, Type>) subTypesWithsequences).undoToLastMark();
+    ((CheckpointingSet<Type>) typesWithsequences).undoToLastMark();
   }
 
   public void add(Type c) {

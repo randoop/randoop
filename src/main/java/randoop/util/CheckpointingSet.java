@@ -2,12 +2,16 @@ package randoop.util;
 
 import java.util.Set;
 
-public class ReversibleSet<T> implements ISimpleSet<T> {
+/**
+ * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
+ * state to them.
+ */
+public class CheckpointingSet<T> implements ISimpleSet<T> {
 
-  public final ReversibleMultiMap<T, Boolean> map;
+  public final CheckpointingMultiMap<T, Boolean> map;
 
-  public ReversibleSet() {
-    this.map = new ReversibleMultiMap<>();
+  public CheckpointingSet() {
+    this.map = new CheckpointingMultiMap<>();
   }
 
   @Override
