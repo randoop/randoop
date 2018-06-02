@@ -167,7 +167,7 @@ public final class MethodCall extends CallableOperation {
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
       if (Log.isLoggingOn()) {
-        if (params[i].getClass().isArray()) {
+        if (params[i] != null && params[i].getClass().isArray()) {
           Log.logPrintf("  Param %d = %s%n", i, Arrays.toString((Object[]) params[i]));
         } else {
           Log.logPrintf("  Param %d = %s%n", i, params[i]);
