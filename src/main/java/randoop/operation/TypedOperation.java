@@ -115,8 +115,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     }
 
     // the output type
-    // (TODO: Why is this necessary?  MethodComparator ignores the output type, and this makes this
-    // comparator inconsistent with MethodComparator.)
+    // (TODO: Why is this comparison necessary?  MethodComparator ignores the output type, and this
+    // comparison makes this method comparator inconsistent with MethodComparator.)
     result = this.outputType.compareTo(other.outputType);
     if (result != 0) {
       return result;
