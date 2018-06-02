@@ -187,7 +187,8 @@ public class ClassUtil {
 
     @Override
     public int compare(Method m1, Method m2) {
-      int result = m1.getName().compareTo(m2.getName());
+      int result;
+      result = m1.getName().compareTo(m2.getName());
       if (result != 0) {
         return result;
       }
