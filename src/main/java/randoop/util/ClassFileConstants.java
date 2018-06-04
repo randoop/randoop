@@ -15,7 +15,10 @@ import org.apache.bcel.classfile.ConstantFieldref;
 import org.apache.bcel.classfile.ConstantFloat;
 import org.apache.bcel.classfile.ConstantInteger;
 import org.apache.bcel.classfile.ConstantInterfaceMethodref;
+import org.apache.bcel.classfile.ConstantInvokeDynamic;
 import org.apache.bcel.classfile.ConstantLong;
+import org.apache.bcel.classfile.ConstantMethodHandle;
+import org.apache.bcel.classfile.ConstantMethodType;
 import org.apache.bcel.classfile.ConstantMethodref;
 import org.apache.bcel.classfile.ConstantNameAndType;
 import org.apache.bcel.classfile.ConstantPool;
@@ -155,6 +158,9 @@ public class ClassFileConstants {
           || c instanceof ConstantInterfaceMethodref
           || c instanceof ConstantMethodref
           || c instanceof ConstantNameAndType
+          || c instanceof ConstantMethodHandle
+          || c instanceof ConstantMethodType
+          || c instanceof ConstantInvokeDynamic
           || c instanceof ConstantUtf8) {
         continue;
       }
@@ -490,6 +496,7 @@ public class ClassFileConstants {
             case Const.INVOKEVIRTUAL:
             case Const.INVOKESPECIAL:
             case Const.INVOKEINTERFACE:
+            case Const.INVOKEDYNAMIC:
               break;
 
               // Throws an exception.
@@ -540,6 +547,7 @@ public class ClassFileConstants {
             case Const.NEW:
             case Const.NOP:
             case Const.RET: // this is the internal JSR return
+            case Const.WIDE:
               break;
 
               // Make sure we didn't miss anything
