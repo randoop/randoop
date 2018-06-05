@@ -107,21 +107,22 @@ public class OmitMethodsPredicate {
     while (!typeQueue.isEmpty()) {
       ClassOrInterfaceType type = typeQueue.remove();
       if (!visited.add(type)) {
-        continue; // visited already contains type
+        continue;
       }
 
+      Log.logPrintf("looking for %s in %s%n", signature.getName(), type.getRuntimeClass());
+      Log.logPrintf("  typeQueue.size() = %d%n", typeQueue.size());
+
       // Try to get the method for type
-      boolean exists;
+      boolean exists = false;
       try {
         Method method =
             type.getRuntimeClass().getMethod(signature.getName(), signature.getParameterTypes());
         exists = true;
       } catch (NoSuchMethodException e) {
-        exists = false;
-        Log.logPrintf("no method for %s%n", signature);
+        Log.logPrintf(
+            "no method for %s in %s%n", signature, type.getRuntimeClass().getSimpleName());
       }
-      Log.logPrintf(
-          "comparing: %s %s%n", signature.getName(), type.getRuntimeClass().getSimpleName());
       if (!exists && signature.getName().equals(type.getRuntimeClass().getSimpleName())) {
         try {
           Constructor<?> constructor =
@@ -129,7 +130,8 @@ public class OmitMethodsPredicate {
           exists = true;
         } catch (NoSuchMethodException e) {
           // nothing to do
-          Log.logPrintf("no constructor for %s%n", signature);
+          Log.logPrintf(
+              "no constructor for %s in %s%n", signature, type.getRuntimeClass().getSimpleName());
         }
       }
 
