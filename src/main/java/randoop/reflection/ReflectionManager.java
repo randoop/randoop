@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.plumelib.util.ClassDeterministic;
 import randoop.util.Log;
 
 /**
@@ -105,14 +106,16 @@ public class ReflectionManager {
 
         Log.logPrintf(
             "ReflectionManager.apply for class %s%n  getMethods => %d%n  getDeclaredMethods => %d%n",
-            c, ClassUtil.getMethods(c).length, ClassUtil.getDeclaredMethods(c).length);
+            c,
+            ClassDeterministic.getMethods(c).length,
+            ClassDeterministic.getDeclaredMethods(c).length);
         // System.out.println("ReflectionManager.apply for class " + c);
-        // System.out.println("  getMethods => " + ClassUtil.getMethods(c).length);
-        // System.out.println("  getDeclaredMethods => " + ClassUtil.getDeclaredMethods(c).length);
+        // System.out.println("  getMethods => " + ClassDeterministic.getMethods(c).length);
+        // System.out.println("  getDeclaredMethods => " + ClassDeterministic.getDeclaredMethods(c).length);
 
         // Methods
         Set<Method> methods = new HashSet<>(); // used only for containment check
-        for (Method m : ClassUtil.getMethods(c)) { // for all class methods
+        for (Method m : ClassDeterministic.getMethods(c)) { // for all class methods
           Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
           methods.add(m); // remember to avoid duplicates
           if (isVisible(m)) { // if satisfies predicate then visit
@@ -122,7 +125,7 @@ public class ReflectionManager {
         Log.logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
         // System.out.println("ReflectionManager.apply done with getMethods for class " + c);
 
-        for (Method m : ClassUtil.getDeclaredMethods(c)) { // for all methods declared by c
+        for (Method m : ClassDeterministic.getDeclaredMethods(c)) { // for all methods declared by c
           Log.logPrintf("ReflectionManager.apply considering declared method %s%n", m);
           // if not duplicate and satisfies predicate
           if ((!methods.contains(m)) && predicate.isVisible(m)) {
@@ -134,14 +137,14 @@ public class ReflectionManager {
         // c);
 
         // Constructors
-        for (Constructor<?> co : ClassUtil.getDeclaredConstructors(c)) {
+        for (Constructor<?> co : ClassDeterministic.getDeclaredConstructors(c)) {
           if (isVisible(co)) {
             applyTo(visitor, co);
           }
         }
 
         // member types
-        for (Class<?> ic : ClassUtil.getDeclaredClasses(c)) {
+        for (Class<?> ic : ClassDeterministic.getDeclaredClasses(c)) {
           if (predicate.isVisible(ic)) {
             applyTo(visitor, ic);
           }
@@ -151,13 +154,13 @@ public class ReflectionManager {
         // The set of fields declared in class c is needed to ensure we don't
         // collect inherited fields that are hidden by local declaration
         Set<String> declaredNames = new TreeSet<>();
-        for (Field f : ClassUtil.getDeclaredFields(c)) { // for fields declared by c
+        for (Field f : ClassDeterministic.getDeclaredFields(c)) { // for fields declared by c
           declaredNames.add(f.getName());
           if (predicate.isVisible(f)) {
             applyTo(visitor, f);
           }
         }
-        for (Field f : ClassUtil.getFields(c)) { // for all public fields of c
+        for (Field f : ClassDeterministic.getFields(c)) { // for all public fields of c
           // keep a field that satisfies filter, and is not inherited and hidden by
           // local declaration
           if (predicate.isVisible(f) && (!declaredNames.contains(f.getName()))) {
@@ -203,7 +206,7 @@ public class ReflectionManager {
       }
     }
     // get methods that are explicitly declared in the enum
-    for (Method m : ClassUtil.getDeclaredMethods(c)) {
+    for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
       if (predicate.isVisible(m)) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
           applyTo(visitor, m);
@@ -212,7 +215,7 @@ public class ReflectionManager {
     }
     // get any inherited methods also declared in anonymous class of some
     // constant
-    for (Method m : ClassUtil.getMethods(c)) {
+    for (Method m : ClassDeterministic.getMethods(c)) {
       if (predicate.isVisible(m)) {
         Set<Method> methodSet = overrideMethods.get(m.getName());
         if (methodSet != null) {

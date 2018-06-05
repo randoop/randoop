@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Objects;
+import org.plumelib.util.ArraysPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -165,7 +166,13 @@ public final class MethodCall extends CallableOperation {
     Object[] params = new Object[paramsLength];
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
-      Log.logPrintf("  Param %d = %s%n", i, params[i]);
+      if (Log.isLoggingOn()) {
+        if (params[i] != null && params[i].getClass().isArray()) {
+          Log.logPrintf("  Param %d = %s%n", i, ArraysPlume.toString(params[i]));
+        } else {
+          Log.logPrintf("  Param %d = %s%n", i, params[i]);
+        }
+      }
     }
 
     MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
