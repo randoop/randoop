@@ -228,7 +228,7 @@ public class MethodSignature {
    */
   private Class<?> typeToClass(Type type) throws ClassNotFoundException {
     String name = JvmUtil.fieldDescriptorToClassGetName(type.getSignature());
-    return UtilPlume.classForName(name);
+    return BcelUtil.classForName(name);
   }
 
   /**

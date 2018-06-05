@@ -8,7 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
+/**
+ * A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
+ * operations up to a checkpoint, also called a "mark").
+ */
+public class CheckpointingMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
   public static boolean verbose_log = false;
 
@@ -38,7 +42,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     }
   }
 
-  public ReversibleMultiMap() {
+  public CheckpointingMultiMap() {
     map = new LinkedHashMap<>();
     marks = new ArrayList<>();
     ops = new ArrayList<>();
