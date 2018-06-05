@@ -65,7 +65,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   private final TypeInstantiator instantiator;
 
-  /** How to selecting sequences as input for creating new sequences. */
+  /** How to select sequences as input for creating new sequences. */
   private final InputSequenceSelector inputSequenceSelector;
 
   // The set of all primitive values seen during generation and execution
