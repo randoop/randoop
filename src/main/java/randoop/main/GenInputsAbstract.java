@@ -506,7 +506,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     PACKAGE,
     /**
      * a literal for a given class is used as input only to methods of that class with probability
-     * <code>--p-const</code>, otherwise each literal is used as input to any method under test
+     * <code>--p-const</code>, otherwise each literal is used as input to any method under test.
      */
     CLASS_OR_ALL,
     /** Each literal is used as input to any method under test. */
