@@ -15,9 +15,6 @@ import randoop.util.MultiMap;
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
  * of each class visited, adding a sequence for each to a map associating a sequence with a type.
  *
- * <p>It also maintains a literalsTermFrequency for each literal, for use with the static weighting
- * scheme of literals.
- *
  * @see OperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
@@ -44,21 +41,22 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     constList.add(ClassFileConstants.getConstants(c.getName()));
     MultiMap<Class<?>, NonreceiverTerm> constantMap = ClassFileConstants.toMap(constList);
     for (Class<?> constantClass : constantMap.keySet()) {
-      ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
       for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
         Sequence seq =
             new Sequence()
                 .extend(
                     TypedOperation.createNonreceiverInitialization(term),
                     new ArrayList<Variable>());
+
+        // Map from the class to the class literal.
+        ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
         literalMap.add(constantType, seq);
 
-        // Increment the count of this sequence in the literalsTermFrequency map.
-        Integer frequency = literalsTermFrequency.get(seq);
-        if (frequency == null) {
-          frequency = 0;
+        Integer currFrequency = literalsTermFrequency.get(seq);
+        if (currFrequency == null) {
+          currFrequency = 0;
         }
-        literalsTermFrequency.put(seq, frequency + 1);
+        literalsTermFrequency.put(seq, currFrequency + term.getFrequency());
       }
     }
   }

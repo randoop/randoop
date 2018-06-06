@@ -39,6 +39,13 @@ public class ConstantMiningSelection implements InputSequenceSelector {
       Map<Sequence, Integer> literalTermFrequencies) {
     Map<Sequence, Integer> seqDocumentFrequencies = componentManager.getSeqDocumentFrequency();
 
+    if (GenInputsAbstract.constant_mining_logging) {
+      System.out.println("Literal term frequencies: ");
+      System.out.println(literalTermFrequencies);
+      System.out.println("Documenter term frequencies: ");
+      System.out.println(seqDocumentFrequencies);
+    }
+
     // We iterate through all literals that were found by the ClassLiteralExtractor.
     for (Sequence sequence : seqDocumentFrequencies.keySet()) {
       Integer documentFrequency = seqDocumentFrequencies.get(sequence);

@@ -36,6 +36,23 @@ public final class NonreceiverTerm extends CallableOperation {
   private final Object value;
 
   /**
+   * Number of occurrences of this non receiver term as determined by {@link
+   * randoop.util.ClassFileConstants}.
+   */
+  private int frequency = -1;
+
+  /**
+   * Constructs a NonreceiverTerm with type t, value o, and the specified frequency.
+   *
+   * @param type the type of the term
+   * @param value the value of the term
+   */
+  public NonreceiverTerm(Type type, Object value, int frequency) {
+    this(type, value);
+    this.frequency = frequency;
+  }
+
+  /**
    * Constructs a NonreceiverTerm with type t and value o.
    *
    * @param type the type of the term
@@ -470,5 +487,14 @@ public final class NonreceiverTerm extends CallableOperation {
   @Override
   public boolean isNonreceivingValue() {
     return true;
+  }
+
+  /**
+   * Gets the number of occurrences of this term.
+   *
+   * @return the frequency of this term.
+   */
+  public int getFrequency() {
+    return frequency;
   }
 }

@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.bcel.Const;
@@ -31,6 +33,9 @@ import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.ConstantPushInstruction;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
+import org.apache.bcel.generic.LDC;
+import org.apache.bcel.generic.LDC2_W;
+import org.apache.bcel.generic.LDC_W;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
 import randoop.operation.NonreceiverTerm;
@@ -70,6 +75,9 @@ public class ClassFileConstants {
     public Set<String> strings = new TreeSet<>();
     public Set<Class<?>> classes = new TreeSet<>();
 
+    // Map from a literal to its frequency.
+    public final Map<Object, Integer> constantToFrequency = new HashMap<>();
+
     @Override
     public String toString() {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -95,6 +103,11 @@ public class ClassFileConstants {
         System.out.printf("Class:%s%n", x);
       }
       System.out.printf("%nEND CLASSLITERALS%n");
+
+      for (Object term : constantToFrequency.keySet()) {
+        System.out.println("Term " + term + " has a frequency of " + constantToFrequency.get(term));
+      }
+      System.out.println("End term frequencies");
 
       return baos.toString();
     }
@@ -150,7 +163,9 @@ public class ClassFileConstants {
 
     // Get all of the constants from the pool
     ConstantPool constant_pool = jc.getConstantPool();
-    for (Constant c : constant_pool.getConstantPool()) {
+    for (int i = 0; i < constant_pool.getConstantPool().length; i++) {
+      Constant c = constant_pool.getConstantPool()[i];
+
       // System.out.printf ("*Constant = %s%n", c);
       if (c == null
           || c instanceof ConstantClass
@@ -164,16 +179,33 @@ public class ClassFileConstants {
           || c instanceof ConstantUtf8) {
         continue;
       }
+
+      // Here we are examining the constant pool and we increment in the constantToFrequency map
+      // because these are static constants defined in the class.
+      // For example, if our class includes static final int myInt = 31;
+      // but the literal 31 doesn't appear anywhere else in the class, we need to note that
+      // this literal appeared once. This is the place to do so.
+
       if (c instanceof ConstantString) {
-        result.strings.add((String) ((ConstantString) c).getConstantValue(constant_pool));
+        String val = (String) ((ConstantString) c).getConstantValue(constant_pool);
+        result.strings.add(val);
+        incrementInMap(result.constantToFrequency, val);
       } else if (c instanceof ConstantDouble) {
-        result.doubles.add((Double) ((ConstantDouble) c).getConstantValue(constant_pool));
+        Double val = (Double) ((ConstantDouble) c).getConstantValue(constant_pool);
+        result.doubles.add(val);
+        incrementInMap(result.constantToFrequency, val);
       } else if (c instanceof ConstantFloat) {
-        result.floats.add((Float) ((ConstantFloat) c).getConstantValue(constant_pool));
+        Float val = (Float) ((ConstantFloat) c).getConstantValue(constant_pool);
+        result.floats.add(val);
+        incrementInMap(result.constantToFrequency, val);
       } else if (c instanceof ConstantInteger) {
-        result.ints.add((Integer) ((ConstantInteger) c).getConstantValue(constant_pool));
+        Integer val = (Integer) ((ConstantInteger) c).getConstantValue(constant_pool);
+        result.ints.add(val);
+        incrementInMap(result.constantToFrequency, val);
       } else if (c instanceof ConstantLong) {
-        result.longs.add((Long) ((ConstantLong) c).getConstantValue(constant_pool));
+        Long val = (Long) ((ConstantLong) c).getConstantValue(constant_pool);
+        result.longs.add(val);
+        incrementInMap(result.constantToFrequency, val);
       } else {
         throw new RuntimeException("Unrecognized constant of type " + c.getClass() + ": " + c);
       }
@@ -362,9 +394,26 @@ public class ClassFileConstants {
               // Push a value from the runtime constant pool. We'll get these
               // values when processing the constant pool itself
             case Const.LDC:
+              {
+                LDC ldc = (LDC) inst;
+                Object term = getValueFromConstantPoolAtIndex(jc.getConstantPool(), ldc.getIndex());
+                incrementInMap(result.constantToFrequency, term);
+                break;
+              }
             case Const.LDC_W:
+              {
+                LDC_W ldc_w = (LDC_W) inst;
+                Object term =
+                    getValueFromConstantPoolAtIndex(jc.getConstantPool(), ldc_w.getIndex());
+                incrementInMap(result.constantToFrequency, term);
+                break;
+              }
             case Const.LDC2_W:
               {
+                LDC2_W ldc2_w = (LDC2_W) inst;
+                Object term =
+                    getValueFromConstantPoolAtIndex(jc.getConstantPool(), ldc2_w.getIndex());
+                incrementInMap(result.constantToFrequency, term);
                 break;
               }
 
@@ -398,7 +447,9 @@ public class ClassFileConstants {
             case Const.SIPUSH:
               {
                 ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
-                result.ints.add((Integer) cpi.getValue());
+                Integer value = (Integer) cpi.getValue();
+                result.ints.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
 
@@ -577,47 +628,106 @@ public class ClassFileConstants {
       }
       for (Integer x : cs.ints) {
         try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
+          int frequency = getFrequencyOfTerm(x, cs);
+          map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
           System.out.println("Ignoring int constant value: " + e.getMessage());
         }
       }
       for (Long x : cs.longs) {
         try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
+          int frequency = getFrequencyOfTerm(x, cs);
+          map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
           System.out.println("Ignoring long constant value: " + e.getMessage());
         }
       }
       for (Float x : cs.floats) {
         try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
+          int frequency = getFrequencyOfTerm(x, cs);
+          map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
           System.out.println("Ignoring float constant value: " + e.getMessage());
         }
       }
       for (Double x : cs.doubles) {
         try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
+          int frequency = getFrequencyOfTerm(x, cs);
+          map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
           System.out.println("Ignoring double constant value: " + e.getMessage());
         }
       }
       for (String x : cs.strings) {
         try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+          int frequency = getFrequencyOfTerm(x, cs);
+          map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
           System.out.println("Ignoring String constant value: " + e.getMessage());
         }
       }
       for (Class<?> x : cs.classes) {
         try {
-          map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+          int frequency = getFrequencyOfTerm(x, cs);
+          map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
           System.out.println("Ignoring Class<?> constant value: " + e.getMessage());
         }
       }
+
+      System.out.println(cs);
     }
     return map;
+  }
+
+  /**
+   * Increment value in map
+   *
+   * @param map map of keys and values
+   * @param term term whose value to increment
+   */
+  private static void incrementInMap(Map<Object, Integer> map, Object term) {
+    Integer value = map.get(term);
+    if (value == null) {
+      value = 0;
+    }
+    map.put(term, value + 1);
+  }
+
+  /**
+   * Frequency of the term in the {@link ConstantSet}
+   *
+   * @param term the literal constant
+   * @param constantSet the constant set containing the literals, frequencies, and indices.
+   * @return the frequency of the given term
+   */
+  private static int getFrequencyOfTerm(Object term, ConstantSet constantSet) {
+    Integer frequency = constantSet.constantToFrequency.get(term);
+    assert frequency != null;
+    return frequency;
+  }
+
+  /**
+   * Retrieve the value from the Constant Pool at the given index.
+   *
+   * @param constantPool constant pool from which to extract the value
+   * @param index index of the element
+   * @return the element located at the specified index in the given constant pool
+   */
+  private static Object getValueFromConstantPoolAtIndex(ConstantPool constantPool, int index) {
+    Constant c = constantPool.getConstantPool()[index];
+    if (c instanceof ConstantString) {
+      return ((ConstantString) c).getConstantValue(constantPool);
+    } else if (c instanceof ConstantDouble) {
+      return ((ConstantDouble) c).getConstantValue(constantPool);
+    } else if (c instanceof ConstantFloat) {
+      return ((ConstantFloat) c).getConstantValue(constantPool);
+    } else if (c instanceof ConstantInteger) {
+      return ((ConstantInteger) c).getConstantValue(constantPool);
+    } else if (c instanceof ConstantLong) {
+      return ((ConstantLong) c).getConstantValue(constantPool);
+    } else {
+      throw new RuntimeException("Unexpected constant of type " + c.getClass() + ": " + c);
+    }
   }
 }
