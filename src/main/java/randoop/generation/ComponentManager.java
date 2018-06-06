@@ -47,7 +47,8 @@ public class ComponentManager {
   /**
    * Map of class-level literal to its frequency, the number of classes that this literal appears
    * in. This information is used by {@link ConstantMiningSelection} to assign weights to input
-   * sequences based on a literal's tf-idf. This is the document frequency.
+   * sequences based on a literal's tf-idf. This is the document frequency, or the number of
+   * documents for which a given literal appears in.
    */
   private final Map<Sequence, Integer> seqDocumentFrequency = new LinkedHashMap<>();
 
@@ -203,11 +204,7 @@ public class ComponentManager {
    */
   @SuppressWarnings("unchecked")
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
-
     Type neededType = operation.getInputTypes().get(i);
-
-    SimpleList<Sequence> result =
-        gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
     // Compute relevant literals.
     SimpleList<Sequence> literals = null;
@@ -243,13 +240,12 @@ public class ComponentManager {
       }
     }
 
-    // Append literals to result.
+    SimpleList<Sequence> result =
+        gralComponents.getSequencesForType(neededType, false, onlyReceivers);
+
+    // Append literals to result. Result list of sequences will not be null at this point.
     if (literals != null) {
-      if (result == null) {
-        result = literals;
-      } else {
-        result = new ListOfLists<>(result, literals);
-      }
+      result = new ListOfLists<>(result, literals);
     }
     return result;
   }

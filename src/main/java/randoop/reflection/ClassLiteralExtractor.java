@@ -52,11 +52,12 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
         ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
         literalMap.add(constantType, seq);
 
-        Integer currFrequency = literalsTermFrequency.get(seq);
-        if (currFrequency == null) {
-          currFrequency = 0;
+        // Retrieve the frequency of the literal represented by seq.
+        Integer currFrequencyOfLiteral = literalsTermFrequency.get(seq);
+        if (currFrequencyOfLiteral == null) {
+          currFrequencyOfLiteral = 0;
         }
-        literalsTermFrequency.put(seq, currFrequency + term.getFrequency());
+        literalsTermFrequency.put(seq, currFrequencyOfLiteral + term.getFrequency());
       }
     }
   }

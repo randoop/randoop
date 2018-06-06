@@ -75,7 +75,8 @@ public class ClassFileConstants {
     public Set<String> strings = new TreeSet<>();
     public Set<Class<?>> classes = new TreeSet<>();
 
-    // Map from a literal to its frequency.
+    // Map from a literal to its frequency. The frequency of a literal is the number of uses of
+    // the literal in the byte code of the class.
     public final Map<Object, Integer> constantToFrequency = new HashMap<>();
 
     @Override
@@ -161,7 +162,7 @@ public class ClassFileConstants {
     }
     result.classname = jc.getClassName();
 
-    // Get all of the constants from the pool
+    // Get all of the constants from the Constant Pool.
     ConstantPool constant_pool = jc.getConstantPool();
     for (int i = 0; i < constant_pool.getConstantPool().length; i++) {
       Constant c = constant_pool.getConstantPool()[i];
@@ -674,8 +675,6 @@ public class ClassFileConstants {
           System.out.println("Ignoring Class<?> constant value: " + e.getMessage());
         }
       }
-
-      System.out.println(cs);
     }
     return map;
   }
