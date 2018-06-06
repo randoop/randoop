@@ -686,6 +686,10 @@ public class ClassFileConstants {
    * @param term term whose value to increment
    */
   private static void incrementInMap(Map<Object, Integer> map, Object term) {
+    if (term == null) {
+      return;
+    }
+
     Integer value = map.get(term);
     if (value == null) {
       value = 0;
@@ -711,7 +715,8 @@ public class ClassFileConstants {
    *
    * @param constantPool constant pool from which to extract the value
    * @param index index of the element
-   * @return the element located at the specified index in the given constant pool
+   * @return the element located at the specified index in the given constant pool, null if it's
+   *     type is not one of String, Double, Float, Integer, or Long.
    */
   private static Object getValueFromConstantPoolAtIndex(ConstantPool constantPool, int index) {
     Constant c = constantPool.getConstantPool()[index];
@@ -726,7 +731,7 @@ public class ClassFileConstants {
     } else if (c instanceof ConstantLong) {
       return ((ConstantLong) c).getConstantValue(constantPool);
     } else {
-      throw new RuntimeException("Unexpected constant of type " + c.getClass() + ": " + c);
+      return null;
     }
   }
 }
