@@ -24,9 +24,8 @@ import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
- * Stores and provides means to access the component sequences generated during a run of Randoop.
- * "Component sequences" are sequences that Randoop uses to create larger sequences. Also stores and
- * provides means to access the frequency of extracted class literals.
+ * Stores the component sequences (which are sequences that Randoop uses to create larger sequences)
+ * and literals from classfiles.
  *
  * <p>This class manages different collections of component sequences:
  *
@@ -45,10 +44,8 @@ import randoop.util.SimpleList;
 public class ComponentManager {
 
   /**
-   * Map of class-level literal to its frequency, the number of classes that this literal appears
-   * in. This information is used by {@link ConstantMiningSelection} to assign weights to input
-   * sequences based on a literal's tf-idf. This is the document frequency, or the number of
-   * documents for which a given literal appears in.
+   * Map of class-level literal to document frequency: the number of classes that this literal
+   * appears in.
    */
   private final Map<Sequence, Integer> seqDocumentFrequency = new LinkedHashMap<>();
 
@@ -204,6 +201,7 @@ public class ComponentManager {
    */
   @SuppressWarnings("unchecked")
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
+
     Type neededType = operation.getInputTypes().get(i);
 
     // Compute relevant literals.
