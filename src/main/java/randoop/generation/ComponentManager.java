@@ -181,6 +181,10 @@ public class ComponentManager {
 
     Type neededType = operation.getInputTypes().get(i);
 
+    // This method appends two lists:
+    //  * determines sequences from the pool (gralComponents)
+    //  * determines literals
+
     SimpleList<Sequence> result =
         gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
