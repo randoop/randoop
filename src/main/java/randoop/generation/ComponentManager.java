@@ -72,8 +72,6 @@ public class ComponentManager {
    */
   private PackageLiterals packageLiterals = null;
 
-  private Set<Type> sequenceTypes;
-
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
@@ -182,6 +180,10 @@ public class ComponentManager {
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
+
+    // This method appends two lists:
+    //  * determines sequences from the pool (gralComponents)
+    //  * determines literals
 
     SimpleList<Sequence> result =
         gralComponents.getSequencesForType(neededType, false, onlyReceivers);

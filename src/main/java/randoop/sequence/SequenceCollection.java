@@ -224,7 +224,7 @@ public class SequenceCollection {
             compatibleType.isNonreceiverType(), compatibleType);
         if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
           SimpleArrayList<Sequence> newMethods = this.sequenceMap.get(compatibleType);
-          Log.logPrintf("  Adding %d methods.%n", newMethods);
+          Log.logPrintf("  Adding %d methods.%n", newMethods.size());
           resultList.add(newMethods);
         }
       }
