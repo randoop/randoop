@@ -120,7 +120,8 @@ public class Bloodhound implements TypedOperationSelector {
   private double totalWeightOfMethodsUnderTest = 0;
 
   /**
-   * Initialize Bloodhound.
+   * Initialize Bloodhound. Branch coverage information is initialized and all methods under test
+   * are assigned a weight based on the weighting scheme defined by GRT's Bloodhound description.
    *
    * @param operations list of operations under test
    */
@@ -162,8 +163,19 @@ public class Bloodhound implements TypedOperationSelector {
   }
 
   /**
-   * At every {@code branchCoverageInterval}'th call of this method, the branch coverage information
-   * for all methods under test is updated and weights for all methods under test are recomputed.
+   * When an interval is reached, the branch coverage information for all methods under test is
+   * updated and the weight for every method under test is recomputed.
+   *
+   * <p>There are two choices for the metric by which we determine when to update branch coverage
+   * information. GRT's approach is time based and is the default choice that we provide in our
+   * implementation. We provide an alternative metric which uses the total number of successful
+   * invocations of all the methods under test.
+   *
+   * <p>If the interval is time based, then branch coverage is updated when more than {@code t}
+   * seconds has elapsed since branch coverage was last updated.
+   *
+   * <p>If the interval is invocation based, then branch coverage is updated after every {@code
+   * branchCoverageInteral} total successful invocations of all methods under test.
    */
   private void updateBranchCoverageMaybe() {
     boolean shouldUpdateBranchCoverage;
