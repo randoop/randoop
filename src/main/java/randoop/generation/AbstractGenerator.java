@@ -331,9 +331,6 @@ public abstract class AbstractGenerator {
           outErrorSeqs.add(eSeq);
         } else {
           outRegressionSeqs.add(eSeq);
-
-          // Bloodhound uses this hook to increment the number of times the last operation
-          // of this sequence was successfully invoked as the final method of a new sequence.
           newRegressionTestHook(eSeq.sequence);
         }
       }
