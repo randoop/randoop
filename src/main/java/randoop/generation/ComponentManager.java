@@ -160,7 +160,7 @@ public class ComponentManager {
     gralComponents = new SequenceCollection(this.gralSeeds);
   }
 
-  /** @return the mapping of sequences to their frequency */
+  /** @return the mapping of sequences to their document frequency */
   public Map<Sequence, Integer> getSeqDocumentFrequency() {
     return seqDocumentFrequency;
   }
