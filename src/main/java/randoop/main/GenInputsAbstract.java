@@ -508,7 +508,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   @Unpublicized
-  @Option("Bias method selection to favor sequences with lower 'cost' (execution time and size)")
+  @Option("Bias method selection to favor sequences with lower execution time and size")
   public static boolean enable_orienteering = false;
 
   // Implementation note: when checking whether a String S exceeds the given
