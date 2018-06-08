@@ -20,7 +20,7 @@ public class SmallTestsSequenceSelection implements InputSequenceSelector {
   }
 
   /**
-   * Unused by this class.
+   * Does nothing.
    *
    * @param inputSequences the sequences that were chosen as the input to the method under test for
    *     creating {@code eSeq} which is a new and unique sequence
