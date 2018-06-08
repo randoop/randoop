@@ -183,6 +183,11 @@ public final class Randomness {
         return list.get(i);
       }
     }
+    System.out.printf("totalWeight=%f%n", totalWeight);
+    System.out.printf("currentPoint=%f%n", currentPoint);
+    for (int i = 0; i < list.size(); i++) {
+      System.out.printf("%d, %f%n", i, weights.get(list.get(i)));
+    }
     throw new BugInRandoopException("Unable to select random member");
   }
 
