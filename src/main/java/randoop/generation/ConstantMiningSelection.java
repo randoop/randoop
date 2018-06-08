@@ -25,9 +25,9 @@ public class ConstantMiningSelection implements InputSequenceSelector {
    * Initialize Constant Mining selection by computing weights for literals that appear in classes
    * under test.
    *
-   * @param componentManager reference to component generator from {@link ForwardGenerator} used for
-   *     getting the frequency of a literal
-   * @param numClasses number of classes under tests
+   * @param componentManager component generator from {@link ForwardGenerator} used for getting the
+   *     frequency of a literal
+   * @param numClasses number of classes under test
    * @param literalTermFrequencies a map from a literal to the number of times it appears in any
    *     class under test. If literalTermFrequencies is null, we simply don't compute any weights to
    *     put in literalWeightMap and every sequence will end up using its default weight computed
@@ -42,7 +42,7 @@ public class ConstantMiningSelection implements InputSequenceSelector {
     if (GenInputsAbstract.constant_mining_logging) {
       System.out.println("Literal term frequencies: ");
       System.out.println(literalTermFrequencies);
-      System.out.println("Documenter term frequencies: ");
+      System.out.println("Document term frequencies: ");
       System.out.println(seqDocumentFrequencies);
     }
 
