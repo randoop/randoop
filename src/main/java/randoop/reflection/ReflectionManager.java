@@ -19,17 +19,17 @@ import org.plumelib.util.ClassDeterministic;
 import randoop.util.Log;
 
 /**
- * ReflectionManager reflectively visits a {@link Class} instance to apply a set of {@link
- * ClassVisitor} objects to the class members. Uses a {@link VisibilityPredicate} and heuristics to
- * determine which classes and class members to visit.
+ * ReflectionManager contains a set of visitors and a visibility predicate. It applies each visitor
+ * to each declaration (class, method, field) that satisfies the predicate.
  *
  * <p>For a non-enum class, visits:
  *
  * <ul>
  *   <li>all methods satisfying predicate.
  *   <li>all constructors satisfying predicate.
- *   <li>all fields that satisfy predicate and are not hidden. (A hidden field is a member of
- *       superclass with field of same name in current class. These are accessible via reflection.).
+ *   <li>all fields that satisfy predicate and are not shadowed. (A shadowed field is a member of a
+ *       superclass with the same name as a field in the current class. These are accessible via
+ *       reflection.)
  *   <li>inner enums satisfying predicate.
  * </ul>
  *
@@ -45,14 +45,19 @@ import randoop.util.Log;
  */
 public class ReflectionManager {
 
-  /** The visibility predicate for classes and class members. */
+  /**
+   * The visibility predicate for classes and class members.
+   *
+   * <p>DO NOT use this field directly (except on classes and fields)! Instead, call the methods
+   * {@code isVisible()} that are defined in this class.
+   */
   private VisibilityPredicate predicate;
 
   /** The visitors to apply. */
   private ArrayList<ClassVisitor> visitors;
 
   /**
-   * Creates a manager object that uses the given predicate to determine which classes, methods and
+   * Creates a manager object that uses the given predicate to determine which classes, methods, and
    * constructors should be visited. The list of visitors is initially empty.
    *
    * @param predicate the predicate to indicate whether classes and class members should be visited
@@ -73,7 +78,7 @@ public class ReflectionManager {
 
   /**
    * Applies the registered {@link ClassVisitor} objects of this object to the given class and its
-   * members that satisfy the given predicate. Excludes fields that are hidden by inheritance that
+   * members that satisfy the given predicate. Excludes fields that are shadowed by inheritance that
    * are otherwise still accessible by reflection. Each visitor is applied to each member at most
    * once.
    *
@@ -111,8 +116,12 @@ public class ReflectionManager {
             ClassDeterministic.getDeclaredMethods(c).length);
 
         // Methods
-        Set<Method> methods = new HashSet<>(); // used only for containment check
-        for (Method m : ClassDeterministic.getMethods(c)) { // for all class methods
+        // Need to call both getMethods (which returns only public methods) and also
+        // getDeclaredMethods (which includes all methods declared by the class itself, but not
+        // inherited ones).
+
+        Set<Method> methods = new HashSet<>();
+        for (Method m : ClassDeterministic.getMethods(c)) {
           Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
           methods.add(m);
           if (isVisible(m)) {
@@ -120,18 +129,15 @@ public class ReflectionManager {
           }
         }
         Log.logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
-        // System.out.println("ReflectionManager.apply done with getMethods for class " + c);
 
-        for (Method m : ClassDeterministic.getDeclaredMethods(c)) { // for all methods declared by c
+        for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
           Log.logPrintf("ReflectionManager.apply considering declared method %s%n", m);
           // if not duplicate and satisfies predicate
-          if ((!methods.contains(m)) && predicate.isVisible(m)) {
+          if ((!methods.contains(m)) && isVisible(m)) {
             applyTo(visitor, m);
           }
         }
         Log.logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
-        // System.out.println("ReflectionManager.apply done with getDeclaredMethods for class " +
-        // c);
 
         // Constructors
         for (Constructor<?> co : ClassDeterministic.getDeclaredConstructors(c)) {
@@ -142,14 +148,14 @@ public class ReflectionManager {
 
         // member types
         for (Class<?> ic : ClassDeterministic.getDeclaredClasses(c)) {
-          if (predicate.isVisible(ic)) {
+          if (isVisible(ic)) {
             applyTo(visitor, ic);
           }
         }
 
         // Fields
         // The set of fields declared in class c is needed to ensure we don't
-        // collect inherited fields that are hidden by local declaration
+        // collect inherited fields that are shadowed by a local declaration.
         Set<String> declaredNames = new TreeSet<>();
         for (Field f : ClassDeterministic.getDeclaredFields(c)) { // for fields declared by c
           declaredNames.add(f.getName());
@@ -158,7 +164,7 @@ public class ReflectionManager {
           }
         }
         for (Field f : ClassDeterministic.getFields(c)) { // for all public fields of c
-          // keep a field that satisfies filter, and is not inherited and hidden by
+          // keep a field that satisfies filter, and is not inherited and shadowed by
           // local declaration
           if (predicate.isVisible(f) && (!declaredNames.contains(f.getName()))) {
             applyTo(visitor, f);
@@ -204,7 +210,7 @@ public class ReflectionManager {
     }
     // get methods that are explicitly declared in the enum
     for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
-      if (predicate.isVisible(m)) {
+      if (isVisible(m)) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
           applyTo(visitor, m);
         }
@@ -213,7 +219,7 @@ public class ReflectionManager {
     // get any inherited methods also declared in anonymous class of some
     // constant
     for (Method m : ClassDeterministic.getMethods(c)) {
-      if (predicate.isVisible(m)) {
+      if (isVisible(m)) {
         Set<Method> methodSet = overrideMethods.get(m.getName());
         if (methodSet != null) {
           for (Method method : methodSet) {
@@ -284,16 +290,6 @@ public class ReflectionManager {
   }
 
   /**
-   * Apply a visitor to a class. Called at the end of {@link #apply(Class)}.
-   *
-   * @param v the {@link ClassVisitor}
-   * @param c the class to be visited
-   */
-  private void visitAfter(ClassVisitor v, Class<?> c) {
-    v.visitAfter(c);
-  }
-
-  /**
    * Apply a visitor to a class. Called at the beginning of {@link #apply(Class)}.
    *
    * @param v the {@link ClassVisitor}
@@ -301,6 +297,16 @@ public class ReflectionManager {
    */
   private void visitBefore(ClassVisitor v, Class<?> c) {
     v.visitBefore(c);
+  }
+
+  /**
+   * Apply a visitor to a class. Called at the end of {@link #apply(Class)}.
+   *
+   * @param v the {@link ClassVisitor}
+   * @param c the class to be visited
+   */
+  private void visitAfter(ClassVisitor v, Class<?> c) {
+    v.visitAfter(c);
   }
 
   /**
