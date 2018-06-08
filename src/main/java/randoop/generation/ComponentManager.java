@@ -223,6 +223,14 @@ public class ComponentManager {
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
 
+      // If the literals level is set to CLASSES_OR_ALL, and we succeed on our coin flip, return only
+      // the component sequences that are class-level extracted literals from the declaring class.
+      if (classLiterals != null
+          && GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS_OR_ALL
+          && Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
+        return classLiterals.getSequences(declaringCls, neededType);
+      }
+
       if (classLiterals != null) {
         SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
         if (!sl.isEmpty()) {
@@ -238,10 +246,6 @@ public class ComponentManager {
             literals = (literals == null) ? sl : new ListOfLists<>(literals, sl);
           }
         }
-      } else if (classLiterals != null && Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
-        // Return only the component sequences that are class-level extracted literals from the
-        // declaring class.
-        return classLiterals.getSequences(declaringCls, neededType);
       }
     }
 

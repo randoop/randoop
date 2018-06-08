@@ -90,11 +90,22 @@ public class ForwardGenerator extends AbstractGenerator {
       ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager) {
-    this(operations, observers, limits, componentManager, stopper, listenerManager, 0, null);
+    this(operations, observers, limits, componentManager, stopper, listenerManager, -1, null);
   }
 
-  // Called if you don't want to use the static weighting scheme for extracted literals.
-  // Currently used in regression tests and for backwards compatibility.
+  /**
+   * Initialize the Forward Generator.
+   *
+   * @param operations list of methods under test
+   * @param observers side-effect free observer methods
+   * @param limits limits test generation process
+   * @param componentManager container for sequences that are used to generate new sequences
+   * @param stopper determines when the test generation process should conclude
+   * @param listenerManager TODO: apparently unused according to {@link RandoopListenerManager}
+   * @param numClasses number of classes under test
+   * @param literalTermFrequencies map from literal to its frequency observed in all classes under
+   *     test
+   */
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,

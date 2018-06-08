@@ -291,13 +291,13 @@ public class OperationModel {
               assert pkg != null;
               compMgr.addPackageLevelLiteral(pkg, seq);
               break;
+            case ALL:
+              compMgr.addGeneratedSequence(seq);
+              break;
             case CLASS_OR_ALL:
               // Add sequence to the collection of class literals.
               compMgr.addClassLevelLiteral(type, seq);
               // Add sequence to the collection of all sequences.
-              compMgr.addGeneratedSequence(seq);
-              break;
-            case ALL:
               compMgr.addGeneratedSequence(seq);
               break;
             default:
