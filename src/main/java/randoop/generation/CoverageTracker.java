@@ -38,7 +38,7 @@ public class CoverageTracker {
   private final Map<String, Double> branchCoverageMap = new HashMap<>();
 
   /** Names of all the classes under test */
-  public final Set<String> classesUnderTest = new HashSet<>();
+  private final Set<String> classesUnderTest = new HashSet<>();
 
   /**
    * Initialize the coverage tracker.
@@ -58,8 +58,20 @@ public class CoverageTracker {
   private void collectCoverageInformation() {
     try {
       // Retrieve the execution data from the Jacoco Java agent.
-      final InputStream execDataStream =
-          new ByteArrayInputStream(RT.getAgent().getExecutionData(false));
+      final InputStream execDataStream;
+      try {
+        execDataStream = new ByteArrayInputStream(RT.getAgent().getExecutionData(false));
+      } catch (IllegalStateException e) {
+        System.err.println(
+            "If the error notes: 'JaCoCo agent not started', the issue is likely "
+                + "that the Jacoco agent is not included as a Java agent.");
+        System.err.println(
+            "To do so, add "
+                + "'-Xbootclasspath/a:/path/to/jacocoagent.jar -javaagent:jacocoagent.jar' "
+                + "to the command line argument.");
+        throw (e);
+      }
+
       final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
 
       // The reader requires a session info visitor, however we don't need any information from it.

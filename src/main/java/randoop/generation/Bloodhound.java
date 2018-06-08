@@ -32,18 +32,6 @@ import randoop.util.SimpleArrayList;
  * with the description in the GRT paper, is the total number of times the method appears in any
  * regression test. We believe our implementation, which uses the first definition, is likely what
  * was intended by the authors of the GRT paper.
- *
- * <p>However, some hyper-parameters and edge cases were left unspecified in the GRT paper. We have
- * chosen our own values for the following unspecified hyper-parameters:
- *
- * <ul>
- *   <li>{@code alpha} - parameter to balance branch coverage and number of invocations when
- *       computing weight.
- *   <li>{@code p} - parameter for decreasing weights of methods between updates to coverage
- *       information.
- *   <li>{@code branchCoverageInterval} - interval for recomputing branch coverage information.
- *   <li>Default weight for cases where a method has zero branches or computed weight is zero.
- * </ul>
  */
 public class Bloodhound implements TypedOperationSelector {
 
@@ -77,20 +65,20 @@ public class Bloodhound implements TypedOperationSelector {
   private final SimpleArrayList<TypedOperation> operationSimpleList;
 
   /**
-   * Parameter for balancing branch coverage and number of times a method was chosen. The name alpha
-   * is from the GRT paper.
+   * Parameter for balancing branch coverage and number of times a method was chosen. The name
+   * "alpha" and the specified value are both from the GRT paper.
    */
   private static final double alpha = 0.9;
 
   /**
-   * Parameter for decreasing weights of methods between updates to coverage information. The name p
-   * is from the GRT paper.
+   * Parameter for decreasing weights of methods between updates to coverage information. The name
+   * "p" and the specified value are both from the GRT paper.
    */
   private static final double p = 0.99;
 
   /**
-   * Time interval, in milliseconds, at which to recompute weights. The name t is from the GRT
-   * paper.
+   * Time interval, in milliseconds, at which to recompute weights. The name "t" and the specified
+   * value are both from the GRT paper.
    */
   private static final long t = 50000;
 
@@ -138,10 +126,7 @@ public class Bloodhound implements TypedOperationSelector {
 
   /**
    * Selects a method under test for the {@link ForwardGenerator} to use to construct a new
-   * sequence. A method under test is randomly selected with a weight probability.
-   *
-   * <p>Branch coverage information, which is used to compute weights for methods under test, is
-   * updated at every {@code branchCoverageInterval}'th call of this method.
+   * sequence. A method under test is randomly selected with a weighted probability.
    *
    * @return the chosen {@code TypedOperation} for the new sequence
    */
@@ -191,8 +176,17 @@ public class Bloodhound implements TypedOperationSelector {
         lastUpdateTime = currentTime;
       }
     } else {
-      // Use a selection based approach for determining whether or not we want to update branch coverage.
+      // Use an invocation based approach for determining whether or not we want to update branch coverage.
       shouldUpdateBranchCoverage = totalSuccessfulInvocations % branchCoverageInterval == 0;
+
+      // If we decide that it's time to update the branch coverage information, we "reset" the
+      // totalSuccessfulInvocations to 1 (or we could have incremented it by 1). This is to prevent
+      // ourselves from immediately re-updating branch coverage information should it be the case
+      // that the next test sequence that is generated is not a regression test and thus
+      // totalSuccessfulInvocations is not recomputed causing shouldUpdateBranchCoverage to be true again.
+      if (shouldUpdateBranchCoverage) {
+        totalSuccessfulInvocations = 1;
+      }
     }
 
     if (shouldUpdateBranchCoverage) {
@@ -220,7 +214,7 @@ public class Bloodhound implements TypedOperationSelector {
 
   /**
    * Computes and updates weights in {@code methodWeights} map for all methods under test.
-   * Recomputes the {@code totalWeightOfMethodsUnderTest} to aovid problems with roundoff error.
+   * Recomputes the {@code totalWeightOfMethodsUnderTest} to avoid problems with round-off error.
    */
   private void updateWeightsForAllOperations() {
     double totalWeight = 0;
