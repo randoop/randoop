@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
 import randoop.reflection.ClassVisitor;
-import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
+import randoop.reflection.VisibilityPredicate;
 
 /** Uses {@link WildcardBoundExamples} to test handling of type bounds involving variables */
 public class TypeBoundTest {
@@ -203,7 +203,8 @@ public class TypeBoundTest {
   private Map<String, TypeVariable> getArgumentTypes(Class<?> classType) {
     Map<String, TypeVariable> arguments = new LinkedHashMap<>();
     ReflectionManager mgr =
-        new ReflectionManager(new PackageVisibilityPredicate(classType.getPackage().getName()));
+        new ReflectionManager(
+            new VisibilityPredicate.PackageVisibilityPredicate(classType.getPackage().getName()));
     mgr.apply(new ArgumentVisitor(arguments), classType);
     return arguments;
   }

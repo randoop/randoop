@@ -162,7 +162,8 @@ public class OmitMethodsTest {
     List<Pattern> omitList = new ArrayList<>();
     omitList.add(omitpattern);
     OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(omitList);
-    VisibilityPredicate visibility = new PackageVisibilityPredicate("randoop.reflection");
+    VisibilityPredicate visibility =
+        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection");
     ReflectionManager mgr = new ReflectionManager(visibility);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     final OperationExtractor extractor =
