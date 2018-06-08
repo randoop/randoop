@@ -1,3 +1,9 @@
+Vernios 4.1.0, released ??, 2018
+
+Command-line argument changes:
+ * renamed --small-tests to --input-selection=small-tests
+
+
 Version 4.0.4, released May 23, 2018
 
 Command-line argument changes:
