@@ -27,7 +27,12 @@ public class SmallTestsSequenceSelection implements InputSequenceSelector {
     return Randomness.randomMemberWeighted(candidates, weightMap, totalWeight);
   }
 
-  /** Update the weight for any sequence not currently in the map, and compute the total weight. */
+  /**
+   * Update the weight for any sequence not currently in the map, and compute the total weight.
+   *
+   * @param candidates the elements to compute a weight for
+   * @return the total weight of all the candidates
+   */
   private double updateWeightMapForCandidates(SimpleList<Sequence> candidates) {
 
     double totalWeight = 0.0;
