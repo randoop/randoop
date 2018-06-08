@@ -27,6 +27,7 @@ public class RandomnessTest extends TestCase {
     int sumOfAllWeights = 0;
     for (int i = 1; i < 10; i++) {
       int weight = i;
+      list.add(i);
       weightMap.put(i, (double) weight);
       sumOfAllWeights += weight;
     }

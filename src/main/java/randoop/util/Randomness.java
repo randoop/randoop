@@ -137,6 +137,10 @@ public final class Randomness {
    */
   public static <T> T randomMemberWeighted(SimpleList<T> list, Map<T, Double> weights) {
 
+    if (list.size() == 0) {
+      throw new IllegalArgumentException("Empty list");
+    }
+
     double totalWeight = 0.0;
     for (int i = 0; i < list.size(); i++) {
       T elt = list.get(i);
@@ -164,6 +168,10 @@ public final class Randomness {
   public static <T> T randomMemberWeighted(
       SimpleList<T> list, Map<T, Double> weights, double totalWeight) {
 
+    if (list.size() == 0) {
+      throw new IllegalArgumentException("Empty list");
+    }
+
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom("randomMemberWeighted(SimpleList)");
     double chosenPoint = Randomness.random.nextDouble() * totalWeight;
@@ -185,6 +193,7 @@ public final class Randomness {
     }
     System.out.printf("totalWeight=%f%n", totalWeight);
     System.out.printf("currentPoint=%f%n", currentPoint);
+    System.out.printf("list.size()=%d%n", list.size());
     for (int i = 0; i < list.size(); i++) {
       System.out.printf("%d, %f%n", i, weights.get(list.get(i)));
     }
