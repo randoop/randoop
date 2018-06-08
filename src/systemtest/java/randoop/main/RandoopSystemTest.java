@@ -366,7 +366,7 @@ public class RandoopSystemTest {
     options.setOption("generated_limit", "5000"); // runs out of memory on Travis if 6000
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
-    options.setFlag("small-tests");
+    options.setOption("input-selection", "small-tests");
     options.setFlag("clear=2000");
     options.addClassList("resources/systemTest/jdk_classlist.txt");
 
@@ -931,7 +931,7 @@ public class RandoopSystemTest {
     options.addTestClass("collectiongen.InputClass");
     options.addTestClass("collectiongen.Day");
     options.addTestClass("collectiongen.AnInputClass");
-    options.setFlag("small-tests");
+    options.setOption("input-selection", "small-tests");
     options.setOption("generated_limit", "500");
     options.setOption("omitmethods", "hashCode\\(\\)");
 
@@ -962,7 +962,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("EnumCheckRegression");
     options.setErrorBasename("EnumCheckError");
     options.addTestClass("examples.Option");
-    options.setFlag("small-tests");
+    options.setOption("input-selection", "small-tests");
     options.setOption("generated_limit", "20");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;

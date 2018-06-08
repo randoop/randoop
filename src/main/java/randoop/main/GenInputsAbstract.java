@@ -517,18 +517,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("What probability to select only extracted literals")
   public static double p_const = .01;
 
-  /** Enable the Constant Mining scheme as defined by GRT. */
-  @Unpublicized
-  @Option("Use values that are extracted from classes under test")
-  public static boolean enable_constant_mining = true;
-
   @Unpublicized
   @Option("Log to standard out, messages from the Constant Mining selection class.")
   public static boolean constant_mining_logging = false;
-
-  @Unpublicized
-  @Option("Bias method selection to favor sequences with lower 'cost' (execution time and size)")
-  public static boolean enable_orienteering = false;
 
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
@@ -554,15 +545,21 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Reuse values with the given frequency")
   public static double alias_ratio = 0;
 
+  public enum InputSelectionMode {
+    /** Favor shorter sequences. This makes Randoop produce smaller JUnit tests. */
+    SMALL_TESTS,
+    /** Select sequences uniformly at random. */
+    UNIFORM,
+    /** Use values that are extracted from classes under test. */
+    CONSTANT_MINING
+  }
+
   /**
-   * Favor shorter sequences when assembling new sequences out of old ones.
-   *
-   * <p>Randoop generates new tests by combining old previously-generated tests. If this option is
-   * given, tests with fewer calls are given greater weight during its random selection. This has
-   * the overall effect of producing smaller JUnit tests.
+   * Randoop generates new tests by combining old previously-generated tests. This controls how the
+   * old tests are chosen, from among all existing tests.
    */
-  @Option("Favor shorter tests during generation")
-  public static boolean small_tests = false;
+  @Option("How to choose tests for Randoop to extend")
+  public static InputSelectionMode input_selection = InputSelectionMode.UNIFORM;
 
   /**
    * Clear the component set each time it contains the given number of inputs.
@@ -800,11 +797,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
     }
 
-    if (deterministic && enable_orienteering) {
-      throw new RandoopUsageError(
-          "Invalid parameter combination: --deterministic with --enable-orienteering");
-    }
-
     if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_DEFAULT
         && !ReflectionExecutor.usethreads) {
       throw new RandoopUsageError(
@@ -826,16 +818,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "You must specify some classes or methods to test."
               + Globals.lineSep
               + "Use the --classlist, --testclass, or --methodlist options.");
-    }
-
-    if (small_tests && enable_orienteering) {
-      throw new RandoopUsageError(
-          "Invalid parameter combination: --small_tests with --enable_orienteering");
-    }
-
-    if (enable_constant_mining && enable_orienteering) {
-      throw new RandoopUsageError(
-          "Invalid parameter combination: --enable_constant_mining with --enable_orienteering");
     }
   }
 

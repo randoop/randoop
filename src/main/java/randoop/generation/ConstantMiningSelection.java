@@ -72,9 +72,17 @@ public class ConstantMiningSelection implements InputSequenceSelector {
    */
   @Override
   public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
-    if (GenInputsAbstract.constant_mining_logging) {
-      outputCandidateWeights(candidates);
+    outputCandidateWeights(candidates);
+
+    // TODO: Candidates contains mixture of constants and regular sequences but
+    // regular sequences have no weight?
+    for (int i = 0; i < candidates.size(); i++) {
+      Sequence candidate = candidates.get(i);
+      if (!literalWeightMap.containsKey(candidate)) {
+        literalWeightMap.put(candidate, 1.0);
+      }
     }
+
     return Randomness.randomMemberWeighted(candidates, literalWeightMap);
   }
 
@@ -84,13 +92,15 @@ public class ConstantMiningSelection implements InputSequenceSelector {
    * @param candidates list of input sequences
    */
   private void outputCandidateWeights(SimpleList<Sequence> candidates) {
+    if (!GenInputsAbstract.constant_mining_logging) {
+      return;
+    }
+
     for (int i = 0; i < candidates.size(); i++) {
       Sequence sequence = candidates.get(i);
       Double sequenceWeight = literalWeightMap.get(sequence);
-      if (sequenceWeight == null) {
-        System.out.println("Using default weight " + sequence + " " + sequence.getWeight());
-      } else {
-        System.out.println("Using computed weight " + sequence + " " + sequenceWeight);
+      if (sequenceWeight != null) {
+        System.out.println("weight of " + sequence + " is " + sequenceWeight);
       }
     }
     System.out.println("------------");

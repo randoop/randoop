@@ -123,15 +123,22 @@ public class ForwardGenerator extends AbstractGenerator {
 
     initializeRuntimePrimitivesSeen();
 
-    if (GenInputsAbstract.small_tests) {
-      inputSequenceSelector = new SmallTestsSequenceSelection();
-    } else if (GenInputsAbstract.enable_orienteering) {
-      inputSequenceSelector = new OrienteeringSelection();
-    } else if (GenInputsAbstract.enable_constant_mining && literalTermFrequencies != null) {
-      inputSequenceSelector =
-          new ConstantMiningSelection(componentManager, numClasses, literalTermFrequencies);
-    } else {
-      inputSequenceSelector = new UniformRandomSequenceSelection();
+    switch (GenInputsAbstract.input_selection) {
+      case SMALL_TESTS:
+        inputSequenceSelector = new SmallTestsSequenceSelection();
+        break;
+      case CONSTANT_MINING:
+        // TODO: Literal term frequencies can be null for system tests when we don't perform constant mining?
+        if (literalTermFrequencies == null || numClasses < 0) {
+          inputSequenceSelector =
+              new ConstantMiningSelection(componentManager, numClasses, literalTermFrequencies);
+          break;
+        }
+      case UNIFORM:
+        inputSequenceSelector = new UniformRandomSequenceSelection();
+        break;
+      default:
+        throw new Error("This can't happen");
     }
   }
 

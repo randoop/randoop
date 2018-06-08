@@ -1138,12 +1138,14 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>A ratio of 0 results in tests where each value created within a test input is typically used
  at most once as an argument in a method call. A ratio of 1 tries to maximize the number of
  times values are used as inputs to parameters within a test. [default 0.0]
-            <li id="option:small-tests"><b>--small-tests=</b><i>boolean</i>.
-             Favor shorter sequences when assembling new sequences out of old ones.
+            <li id="option:input-selection"><b>--input-selection=</b><i>enum</i>.
+             Randoop generates new tests by combining old previously-generated tests. This controls how the
+ old tests are chosen, from among all existing tests. [default UNIFORM]
+<ul>
+  <li><b>SMALL_TESTS</b> Favor shorter sequences. This makes Randoop produce smaller JUnit tests.
+  <li><b>UNIFORM</b> Select sequences uniformly at random.
+</ul>
 
- <p>Randoop generates new tests by combining old previously-generated tests. If this option is
- given, tests with fewer calls are given greater weight during its random selection. This has
- the overall effect of producing smaller JUnit tests. [default false]
             <li id="option:clear"><b>--clear=</b><i>int</i>.
              Clear the component set each time it contains the given number of inputs.
 

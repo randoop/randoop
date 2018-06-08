@@ -81,7 +81,7 @@ public class ICSE07ContainersTest {
     System.out.println("GenInputsAbstract.alias_ratio=" + GenInputsAbstract.alias_ratio);
     System.out.println("GenInputsAbstract.forbid_null=" + GenInputsAbstract.forbid_null);
     System.out.println("GenInputsAbstract.null_ratio=" + GenInputsAbstract.null_ratio);
-    System.out.println("GenInputsAbstract.small_tests=" + GenInputsAbstract.small_tests);
+    System.out.println("GenInputsAbstract.input_selection=" + GenInputsAbstract.input_selection);
 
     final List<TypedOperation> model = new ArrayList<>();
     VisibilityPredicate visibility = IS_PUBLIC;
