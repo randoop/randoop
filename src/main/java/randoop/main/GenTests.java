@@ -58,7 +58,6 @@ import randoop.output.MinimizerWriter;
 import randoop.output.RandoopOutputException;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
-import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.RawSignature;
 import randoop.reflection.ReflectionPredicate;
@@ -231,7 +230,8 @@ public class GenTests extends GenInputsAbstract {
                 + " since --only-test-public-members is set");
       }
     } else {
-      visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
+      visibility =
+          new VisibilityPredicate.PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
 
     omitmethods.addAll(readOmitMethods(omitmethods_file));

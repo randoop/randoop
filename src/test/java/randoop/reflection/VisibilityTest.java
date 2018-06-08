@@ -100,7 +100,7 @@ public class VisibilityTest {
     }
 
     VisibilityPredicate visibility =
-        new PackageVisibilityPredicate("randoop.reflection.visibilitytest");
+        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection.visibilitytest");
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
@@ -300,7 +300,7 @@ public class VisibilityTest {
     assertFalse("should have nonempty expected  method set", expectedMethods.isEmpty());
 
     VisibilityPredicate visibility =
-        new PackageVisibilityPredicate("randoop.reflection.visibilitytest");
+        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection.visibilitytest");
 
     assertTrue("class should be visible", visibility.isVisible(c));
 

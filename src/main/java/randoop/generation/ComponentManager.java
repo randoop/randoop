@@ -204,6 +204,13 @@ public class ComponentManager {
 
     Type neededType = operation.getInputTypes().get(i);
 
+    // This method appends two lists:
+    //  * determines sequences from the pool (gralComponents)
+    //  * determines literals
+
+    SimpleList<Sequence> result =
+        gralComponents.getSequencesForType(neededType, false, onlyReceivers);
+
     // Compute relevant literals.
     SimpleList<Sequence> literals = null;
     if (operation instanceof TypedClassOperation
@@ -237,9 +244,6 @@ public class ComponentManager {
         return classLiterals.getSequences(declaringCls, neededType);
       }
     }
-
-    SimpleList<Sequence> result =
-        gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
     // Append literals to result. Result list of sequences will not be null at this point.
     if (literals != null) {

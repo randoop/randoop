@@ -13,7 +13,6 @@ import org.junit.Test;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -69,7 +68,8 @@ public class TypedClassOperationTest {
 
   private Set<TypedOperation> getOperations(ClassOrInterfaceType type) {
     OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(new ArrayList<Pattern>());
-    VisibilityPredicate visibility = new PackageVisibilityPredicate("randoop.reflection");
+    VisibilityPredicate visibility =
+        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection");
     ReflectionManager mgr = new ReflectionManager(visibility);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     final OperationExtractor extractor =
