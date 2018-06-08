@@ -97,12 +97,17 @@ public class ForwardGenerator extends AbstractGenerator {
 
     initializeRuntimePrimitivesSeen();
 
-    if (GenInputsAbstract.small_tests) {
-      inputSequenceSelector = new SmallTestsSequenceSelection();
-    } else if (GenInputsAbstract.enable_orienteering) {
-      inputSequenceSelector = new OrienteeringSelection();
-    } else {
-      inputSequenceSelector = new UniformRandomSequenceSelection();
+    switch (GenInputsAbstract.input_selection) {
+      case SMALL_TESTS:
+        inputSequenceSelector = new SmallTestsSequenceSelection();
+        break;
+      case UNIFORM:
+        inputSequenceSelector = new UniformRandomSequenceSelection();
+        break;
+      case ORIENTEERING:
+        inputSequenceSelector = new OrienteeringSelection();
+      default:
+        throw new Error("This can't happen");
     }
   }
 
