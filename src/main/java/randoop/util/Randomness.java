@@ -126,106 +126,25 @@ public final class Randomness {
   }
 
   /**
-   * Randomly selects an element from a weighted distribution of elements.
-   *
-   * <p>Efficiency note: iterates through the entire list twice (once to compute interval length,
-   * once to select element).
-   *
-   * @param <T> the type of elements of the list
-   * @param list the list from which to choose an element
-   * @return a member of {@code list}, chosen according to the weights
-   */
-  public static <T extends WeightedElement> T randomMemberWeighted(SimpleList<T> list) {
-
-    double totalWeight = 0.0;
-    for (int i = 0; i < list.size(); i++) {
-      double weight = list.get(i).getWeight();
-      if (weight <= 0) {
-        throw new BugInRandoopException("Weight should be positive: " + weight);
-      }
-      totalWeight += weight;
-    }
-
-    return randomMemberWeighted(list, totalWeight);
-  }
-
-  /**
-   * Randomly selects an element from a weighted distribution of elements.
-   *
-   * <p>Efficiency note: iterates through the entire list twice (once to compute interval length,
-   * once to select element).
-   *
-   * @param <T> the type of elements of the list
-   * @param list the list from which to choose an element
-   * @param totalWeight the total weight of the elements of the list
-   * @return a member of {@code list}, chosen according to the weights
-   */
-  public static <T extends WeightedElement> T randomMemberWeighted(
-      SimpleList<T> list, double totalWeight) {
-    // Select a random point in interval and find its corresponding element.
-    incrementCallsToRandom("randomMemberWeighted(SimpleList)");
-    double chosenPoint = Randomness.random.nextDouble() * totalWeight;
-    double currentPoint = 0;
-    for (int i = 0; i < list.size(); i++) {
-      currentPoint += list.get(i).getWeight();
-      if (currentPoint > chosenPoint) {
-        logSelection(i, "randomMemberWeighted", list);
-        return list.get(i);
-      }
-    }
-    throw new BugInRandoopException("Unable to select random member");
-  }
-
-  /**
-   * Return weight from weights map, or intrinsic weight if elt is not a key for weights.
-   *
-   * @param <T> type of elt
-   * @param elt item to get the weight of
-   * @param weights mapping from T to weights
-   * @return weight of elt
-   */
-  private static <T extends WeightedElement> double getWeight(T elt, Map<T, Double> weights) {
-    Double weightOrNull = weights.get(elt);
-    double weight;
-    if (weightOrNull != null) {
-      weight = weightOrNull;
-    } else {
-      weight = elt.getWeight();
-      try {
-        String eltToString = elt.toString();
-        // TODO: throw an error here unless the client permits the intrinsic weight to be used.
-        Log.logPrintf(
-            "randoop.util.Randomness: key %s not found; using intrinsic weight %f.%n",
-            eltToString, weight);
-      } catch (Throwable t) {
-        int hc = elt.hashCode();
-        Log.logPrintf(
-            "User-defined toString() method failed, argument class=%s hashCode=%d.%n",
-            elt.getClass(), hc);
-        Log.logStackTrace(t);
-      }
-    }
-    return weight;
-  }
-
-  /**
    * Randomly selects an element from a weighted distribution of elements. These weights are with
    * respect to each other. They are not normalized (they might add up to any value).
    *
    * @param list the list of elements to select from
-   * @param weights the map of elements to their weights; uses the intrinsic weight if the element
-   *     is not a key in the map. Each element's weight must be non-negative. An element with a
-   *     weight of zero will never be selected.
+   * @param weights the map of elements to their weights. Each element's weight must be
+   *     non-negative. An element with a weight of zero will never be selected.
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
-  public static <T extends WeightedElement> T randomMemberWeighted(
-      SimpleList<T> list, Map<T, Double> weights) {
+  public static <T> T randomMemberWeighted(SimpleList<T> list, Map<T, Double> weights) {
+
+    if (list.size() == 0) {
+      throw new IllegalArgumentException("Empty list");
+    }
 
     double totalWeight = 0.0;
     for (int i = 0; i < list.size(); i++) {
       T elt = list.get(i);
-      double weight = getWeight(elt, weights);
+      double weight = weights.get(elt);
       if (weight < 0) {
         throw new BugInRandoopException("Weight should be positive: " + weight);
       }
@@ -241,14 +160,17 @@ public final class Randomness {
    *
    * @param <T> the type of the elements in the list
    * @param list the list of elements to select from
-   * @param weights the map of elements to their weights; uses the intrinsic weight if the element
-   *     is not a key in the map. Each element's weight must be non-negative. An element with a
-   *     weight of zero will never be selected.
+   * @param weights the map of elements to their weights. Each element's weight must be
+   *     non-negative. An element with a weight of zero will never be selected.
    * @param totalWeight the total weight of the elements of the list
    * @return a randomly selected element from {@code list}
    */
-  public static <T extends WeightedElement> T randomMemberWeighted(
+  public static <T> T randomMemberWeighted(
       SimpleList<T> list, Map<T, Double> weights, double totalWeight) {
+
+    if (list.size() == 0) {
+      throw new IllegalArgumentException("Empty list");
+    }
 
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom("randomMemberWeighted(SimpleList)");
@@ -263,11 +185,17 @@ public final class Randomness {
 
     double currentPoint = 0;
     for (int i = 0; i < list.size(); i++) {
-      currentPoint += getWeight(list.get(i), weights);
+      currentPoint += weights.get(list.get(i));
       if (currentPoint > chosenPoint) {
         logSelection(i, "randomMemberWeighted", list);
         return list.get(i);
       }
+    }
+    System.out.printf("totalWeight=%f%n", totalWeight);
+    System.out.printf("currentPoint=%f%n", currentPoint);
+    System.out.printf("list.size()=%d%n", list.size());
+    for (int i = 0; i < list.size(); i++) {
+      System.out.printf("%d, %f%n", i, weights.get(list.get(i)));
     }
     throw new BugInRandoopException("Unable to select random member");
   }
