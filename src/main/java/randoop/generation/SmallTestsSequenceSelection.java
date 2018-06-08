@@ -1,9 +1,7 @@
 package randoop.generation;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
@@ -49,15 +47,4 @@ public class SmallTestsSequenceSelection implements InputSequenceSelector {
     }
     return totalWeight;
   }
-
-  /**
-   * Unused by this class.
-   *
-   * @param inputSequences the sequences that were chosen as the input to the method under test for
-   *     creating {@code eSeq} which is a new and unique sequence
-   * @param eSeq the recently executed sequence which is new and unique
-   */
-  @Override
-  public void createdExecutableSequenceFromInputs(
-      List<Sequence> inputSequences, ExecutableSequence eSeq) {}
 }

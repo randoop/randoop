@@ -167,14 +167,11 @@ public class ForwardGenerator extends AbstractGenerator {
       componentManager.clearGeneratedSequences();
     }
 
-    ExecutableSequenceAndInputSequences eSeqWithInputs = createNewUniqueSequence();
+    ExecutableSequence eSeq = createNewUniqueSequence();
 
-    if (eSeqWithInputs == null) {
+    if (eSeq == null) {
       return null;
     }
-
-    ExecutableSequence eSeq = eSeqWithInputs.executableSequence;
-    List<Sequence> inputSequencesForNewSequence = eSeqWithInputs.inputSequences;
 
     if (GenInputsAbstract.dontexecute) {
       this.componentManager.addGeneratedSequence(eSeq.sequence);
@@ -188,8 +185,6 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.execute(executionVisitor, checkGenerator);
 
     startTime = System.nanoTime(); // reset start time.
-
-    inputSequenceSelector.createdExecutableSequenceFromInputs(inputSequencesForNewSequence, eSeq);
 
     determineActiveIndices(eSeq);
 
@@ -322,9 +317,9 @@ public class ForwardGenerator extends AbstractGenerator {
    * sequence created is already in the manager's sequences, this method has no effect, and returns
    * null.
    *
-   * @return a new sequence with its input sequences, or null
+   * @return a new sequence, or null
    */
-  private ExecutableSequenceAndInputSequences createNewUniqueSequence() {
+  private ExecutableSequence createNewUniqueSequence() {
 
     Log.logPrintf("-------------------------------------------%n");
 
@@ -442,8 +437,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // A test that consists of one of these sequences are probably redundant.
     subsumed_sequences.addAll(sequences.sequences);
 
-    return new ExecutableSequenceAndInputSequences(
-        new ExecutableSequence(newSequence), sequences.sequences);
+    return new ExecutableSequence(newSequence);
   }
 
   /**
@@ -554,6 +548,7 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   @SuppressWarnings("unchecked")
   private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
+
     // Variable inputTypes contains the values required as input to the
     // statement given as a parameter to the selectInputs method.
 
@@ -871,15 +866,5 @@ public class ForwardGenerator extends AbstractGenerator {
         + ","
         + ("runtimePrimitivesSeen.size()=" + runtimePrimitivesSeen.size())
         + ")";
-  }
-
-  private static class ExecutableSequenceAndInputSequences {
-    public ExecutableSequence executableSequence;
-    public List<Sequence> inputSequences;
-
-    public ExecutableSequenceAndInputSequences(ExecutableSequence eSeq, List<Sequence> inputs) {
-      this.executableSequence = eSeq;
-      this.inputSequences = inputs;
-    }
   }
 }

@@ -24,8 +24,8 @@ import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
- * Stores the component sequences (which are sequences that Randoop uses to create larger sequences)
- * and literals from classfiles.
+ * Stores and provides means to access the component sequences generated during a run of Randoop.
+ * "Component sequences" are sequences that Randoop uses to create larger sequences.
  *
  * <p>This class manages different collections of component sequences:
  *
@@ -33,6 +33,7 @@ import randoop.util.SimpleList;
  *   <li>General components that can be used as input to any method in any class.
  *   <li>Class literals: components representing literal values that apply only to a specific class
  *       and should not be used as inputs to other classes.
+ *   <li>Package literals: analogous to class literals but at the package level.
  * </ul>
  *
  * SEED SEQUENCES. Seed sequences are sequences that were not created during the generation process
@@ -140,7 +141,7 @@ public class ComponentManager {
   }
 
   /**
-   * Add a component sequence, and update the sequence's frequency.
+   * Add a component sequence and update the sequence's frequency.
    *
    * @param sequence the sequence
    */
@@ -160,12 +161,18 @@ public class ComponentManager {
     gralComponents = new SequenceCollection(this.gralSeeds);
   }
 
-  /** @return the mapping of sequences to their document frequency */
+  /**
+   * Get the map from sequence to document frequency.
+   *
+   * @return the mapping of sequences to their document frequency
+   */
   public Map<Sequence, Integer> getSeqDocumentFrequency() {
     return seqDocumentFrequency;
   }
 
-  /*
+  /**
+   * Get the set of all generated sequences.
+   *
    * @return the set of generated sequences
    */
   Set<Sequence> getAllGeneratedSequences() {
@@ -189,9 +196,9 @@ public class ComponentManager {
    * Returns component sequences that create values of the type required by the i-th input value of
    * the given statement. Also includes any applicable class- or package-level literals.
    *
-   * <p>With probability <code>--p-const</code> (as given by the command-line option), this only
-   * returns the subset of these component sequences that are extracted literals that belong to the
-   * class of the operation's receiver. Otherwise, it returns all of these component sequences.
+   * <p>If literals level is set to CLASS_OR_ALL, then with probability {@code --p-const}, this only
+   * returns the subset of component sequences that are extracted literals that belong to the class
+   * of the operation's receiver. Otherwise, it returns all of these component sequences.
    *
    * @param operation the statement
    * @param i the input value index of statement
@@ -249,9 +256,15 @@ public class ComponentManager {
       }
     }
 
-    // Append literals to result. Result list of sequences will not be null at this point.
+    // Append literals to result.
     if (literals != null) {
-      result = new ListOfLists<>(result, literals);
+      if (result == null) {
+        result = literals;
+      } else if (literals == null) {
+        // nothing to do
+      } else {
+        result = new ListOfLists<>(result, literals);
+      }
     }
     return result;
   }
