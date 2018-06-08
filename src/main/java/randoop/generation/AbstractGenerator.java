@@ -452,7 +452,7 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Take action based on the given {@link Sequence} was classified as a regression test.
+   * Take action based on the given {@link Sequence} that was classified as a regression test.
    *
    * @param sequence the new test sequence that was classified as a regression test
    */

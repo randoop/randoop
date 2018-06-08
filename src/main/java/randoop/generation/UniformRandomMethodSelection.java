@@ -1,6 +1,5 @@
 package randoop.generation;
 
-import java.util.ArrayList;
 import java.util.List;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -16,7 +15,7 @@ public class UniformRandomMethodSelection implements TypedOperationSelector {
    * @param operations methods under test
    */
   public UniformRandomMethodSelection(List<TypedOperation> operations) {
-    this.operations = new ArrayList<>(operations);
+    this.operations = operations;
   }
 
   /**
