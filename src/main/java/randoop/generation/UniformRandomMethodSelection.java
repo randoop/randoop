@@ -10,7 +10,9 @@ public class UniformRandomMethodSelection implements TypedOperationSelector {
   private final List<TypedOperation> operations;
 
   /**
-   * Creates a copy of the list of the methods under test.
+   * Maintains a reference to the list of the methods under test. Note that a copy is not made.
+   * Doing so causes various system tests to fail due to changes in coverage. We've observed that
+   * for some reason the resulting "normal method executions" to drop significantly.
    *
    * @param operations methods under test
    */
