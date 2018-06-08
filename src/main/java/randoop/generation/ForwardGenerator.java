@@ -727,6 +727,14 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
+  /**
+   * Return a variable of the given type.
+   *
+   * @param candidates the list to choose from (I think?)
+   * @param inputType the type of the chosen variable/sequence
+   * @param isReceiver whether the value will be used as a receiver
+   * @return a random variable of the given type, chosen from the candidates
+   */
   VarAndSeq randomVariable(SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
     // Log.logPrintf("entering randomVariable(%s)%n", inputType);
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
