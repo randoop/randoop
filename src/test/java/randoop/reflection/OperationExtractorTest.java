@@ -174,7 +174,8 @@ public class OperationExtractorTest {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager mgr =
         new ReflectionManager(
-            new PackageVisibilityPredicate(this.getClass().getPackage().getName()));
+            new VisibilityPredicate.PackageVisibilityPredicate(
+                this.getClass().getPackage().getName()));
 
     String classname = "randoop.reflection.PartialBindingInput";
     Class<?> c;
