@@ -58,7 +58,7 @@ public class OrienteeringSelection implements InputSequenceSelector {
    */
   @Override
   public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
-    double totalWeight = computeWeightMapForCandidates(candidates);
+    double totalWeight = computeWeightForCandidates(candidates);
 
     Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, weightMap, totalWeight);
     incrementCountInMap(sequenceSelectionCount, selectedSequence);
@@ -71,7 +71,7 @@ public class OrienteeringSelection implements InputSequenceSelector {
    * @param candidates list of candidate sequences
    * @return the total weight of all the elements in the candidate list
    */
-  private double computeWeightMapForCandidates(SimpleList<Sequence> candidates) {
+  private double computeWeightForCandidates(SimpleList<Sequence> candidates) {
     double totalWeight = 0.0;
 
     // Iterate through the candidate list, computing the weight for a sequence only if it has
