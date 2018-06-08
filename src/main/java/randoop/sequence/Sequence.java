@@ -23,7 +23,6 @@ import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
-import randoop.util.WeightedElement;
 
 /**
  * Immutable.
@@ -35,7 +34,7 @@ import randoop.util.WeightedElement;
  * contain any information about the runtime behavior of the sequence. The class
  * randoop.ExecutableSequence adds functionality that executes the sequence.
  */
-public final class Sequence implements WeightedElement {
+public final class Sequence {
 
   public double lastTimeUsed = java.lang.System.currentTimeMillis();
 
@@ -245,15 +244,6 @@ public final class Sequence implements WeightedElement {
       statements1.add(c.statements);
     }
     return new Sequence(new ListOfLists<>(statements1), newHashCode, newNetSize);
-  }
-
-  /*
-   * Weight is used by heuristic that favors smaller sequences so it makes sense
-   * to define weight as the inverse of size.
-   */
-  @Override
-  public double getWeight() {
-    return 1 / (double) size();
   }
 
   /**
