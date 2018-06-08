@@ -1,11 +1,11 @@
 package randoop.test;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import junit.framework.TestCase;
 import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
-import randoop.util.WeightedElement;
 
 public class RandomnessTest extends TestCase {
 
@@ -20,42 +20,34 @@ public class RandomnessTest extends TestCase {
    */
   public void testRandomMemberWeighted() {
 
-    class WeightedElt implements WeightedElement {
-      public final int weight;
-
-      public WeightedElt(int weight) {
-        this.weight = weight;
-      }
-
-      @Override
-      public double getWeight() {
-        return this.weight;
-      }
-    }
+    Map<Object, Double> weightMap = new HashMap<>();
 
     // Create a list of weighted elements.
-    SimpleArrayList<WeightedElt> list = new SimpleArrayList<>();
+    SimpleArrayList<Object> list = new SimpleArrayList<>();
     int sumOfAllWeights = 0;
     for (int i = 1; i < 10; i++) {
       int weight = i;
-      list.add(new WeightedElt(weight));
+      list.add(i);
+      weightMap.put(i, (double) weight);
       sumOfAllWeights += weight;
     }
 
-    Map<Integer, Integer> weightToTimesSelected = new LinkedHashMap<>();
+    Map<Double, Integer> weightToTimesSelected = new LinkedHashMap<>();
     int totalSelections = 0;
 
     // Select lots of times.
     for (int i = 0; i < 100000; i++) {
-      int weightSelected = Randomness.randomMemberWeighted(list).weight;
+      double weightSelected = weightMap.get(Randomness.randomMemberWeighted(list, weightMap));
       Integer timesSelected = weightToTimesSelected.get(weightSelected);
-      if (timesSelected == null) timesSelected = 0;
+      if (timesSelected == null) {
+        timesSelected = 0;
+      }
       weightToTimesSelected.put(weightSelected, timesSelected + 1);
       totalSelections++;
     }
 
     // Check that elements were selected the right number of times.
-    for (Map.Entry<Integer, Integer> e : weightToTimesSelected.entrySet()) {
+    for (Map.Entry<Double, Integer> e : weightToTimesSelected.entrySet()) {
       double actualRatio = e.getValue() / (double) totalSelections;
       double expectedRatio = e.getKey() / (double) sumOfAllWeights;
       assertTrue(Math.abs(actualRatio - expectedRatio) < epsilon);

@@ -508,24 +508,33 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Enable the "Bloodhound" technique from the GRT paper, which prioritizes methods with lower
-   * branch coverage.
+   * Randoop generates new tests by choosing from a set of methods under test. This controls how the
+   * next method is chosen, from among all methods under test.
    */
-  @Unpublicized
-  @Option("Prioritize methods with lower branch coverage.")
-  public static boolean enable_bloodhound = false;
+  @Option("How to choose the next method to test")
+  public static MethodSelectionMode method_selection = MethodSelectionMode.UNIFORM;
+
+  /** The possible values of the method_selection command-line argument. */
+  public enum MethodSelectionMode {
+    /** Select methods randomly with uniform probability. */
+    UNIFORM,
+    /**
+     * The "Bloodhound" technique from the GRT paper prioritizes methods with lower branch coverage.
+     */
+    BLOODHOUND
+  }
 
   /** Print to standard out, method weights and method uncovered ratios. */
   @Unpublicized
-  @Option("Output Bloodhound related information such as method weights and coverage ratios.")
+  @Option("Output Bloodhound related information such as method weights and coverage ratios")
   public static boolean bloodhound_logging = false;
 
   /**
-   * Bloodhoud can update coverage information at a regular interval that is either based on time or
-   * on the number of successful invocations.
+   * Bloodhound can update coverage information at a regular interval that is either based on time
+   * or on the number of successful invocations.
    */
   @Unpublicized
-  @Option("Specify how Bloodhound decides when to update coverage information.")
+  @Option("Specify how Bloodhound decides when to update coverage information")
   public static BloodhoundCoverageUpdateMode bloodhound_update_mode =
       BloodhoundCoverageUpdateMode.TIME;
 
@@ -561,15 +570,19 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Reuse values with the given frequency")
   public static double alias_ratio = 0;
 
+  public enum InputSelectionMode {
+    /** Favor shorter sequences. This makes Randoop produce smaller JUnit tests. */
+    SMALL_TESTS,
+    /** Select sequences uniformly at random. */
+    UNIFORM
+  }
+
   /**
-   * Favor shorter sequences when assembling new sequences out of old ones.
-   *
-   * <p>Randoop generates new tests by combining old previously-generated tests. If this option is
-   * given, tests with fewer calls are given greater weight during its random selection. This has
-   * the overall effect of producing smaller JUnit tests.
+   * Randoop generates new tests by combining old previously-generated tests. This controls how the
+   * old tests are chosen, from among all existing tests.
    */
-  @Option("Favor shorter tests during generation")
-  public static boolean small_tests = false;
+  @Option("How to choose tests for Randoop to extend")
+  public static InputSelectionMode input_selection = InputSelectionMode.UNIFORM;
 
   /**
    * Clear the component set each time it contains the given number of inputs.

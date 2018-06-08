@@ -66,13 +66,16 @@ public class ForwardGenerator extends AbstractGenerator {
 
   private final TypeInstantiator instantiator;
 
+  /** How to select sequences as input for creating new sequences. */
+  private final InputSequenceSelector inputSequenceSelector;
+
+  /** How to select the method to use for creating a new sequence. */
+  private final TypedOperationSelector operationSelector;
+
   // The set of all primitive values seen during generation and execution
   // of sequences. This set is used to tell if a new primitive value has
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
-
-  /** Selects the method to use for creating a new sequence. */
-  private final TypedOperationSelector operationSelector;
 
   public ForwardGenerator(
       List<TypedOperation> operations,
@@ -100,11 +103,26 @@ public class ForwardGenerator extends AbstractGenerator {
 
     initializeRuntimePrimitivesSeen();
 
-    if (GenInputsAbstract.enable_bloodhound) {
-      // If Bloodhound is enabled, select the next operation while considering the methods' weights.
-      this.operationSelector = new Bloodhound(operations, classesUnderTest);
-    } else {
-      this.operationSelector = new UniformRandomMethodSelection(operations);
+    switch (GenInputsAbstract.method_selection) {
+      case UNIFORM:
+        this.operationSelector = new UniformRandomMethodSelection(operations);
+        break;
+      case BLOODHOUND:
+        this.operationSelector = new Bloodhound(operations, classesUnderTest);
+        break;
+      default:
+        throw new Error("This can't happen");
+    }
+
+    switch (GenInputsAbstract.input_selection) {
+      case SMALL_TESTS:
+        inputSequenceSelector = new SmallTestsSequenceSelection();
+        break;
+      case UNIFORM:
+        inputSequenceSelector = new UniformRandomSequenceSelection();
+        break;
+      default:
+        throw new Error("This can't happen");
     }
   }
 
@@ -736,6 +754,14 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
+  /**
+   * Return a variable of the given type.
+   *
+   * @param candidates the list to choose from (I think?)
+   * @param inputType the type of the chosen variable/sequence
+   * @param isReceiver whether the value will be used as a receiver
+   * @return a random variable of the given type, chosen from the candidates
+   */
   VarAndSeq randomVariable(SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
     // Log.logPrintf("entering randomVariable(%s)%n", inputType);
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
@@ -749,13 +775,7 @@ public class ForwardGenerator extends AbstractGenerator {
       //   }
       // }
 
-      Sequence chosenSeq;
-      if (GenInputsAbstract.small_tests) {
-        chosenSeq = Randomness.randomMemberWeighted(candidates);
-      } else {
-        chosenSeq = Randomness.randomMember(candidates);
-      }
-
+      Sequence chosenSeq = inputSequenceSelector.selectInputSequence(candidates);
       Log.logPrintf("chosenSeq: %s%n", chosenSeq);
 
       // TODO: the last statement might not be active -- it might not create a usable variable of
