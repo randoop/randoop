@@ -58,7 +58,7 @@ public class OrienteeringSelection implements InputSequenceSelector {
    */
   @Override
   public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
-    double totalWeight = updateWeightMapForCandidates(candidates);
+    double totalWeight = computeWeightMapForCandidates(candidates);
 
     Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, weightMap, totalWeight);
     incrementCountInMap(sequenceSelectionCount, selectedSequence);
@@ -66,10 +66,32 @@ public class OrienteeringSelection implements InputSequenceSelector {
   }
 
   /**
-   * Update the weights of the candidates in the given list. If an input sequence has not been
-   * selected or executed before, it will be assigned its default weight, computed by {@code
-   * Sequence.getSize()}. The formula for updating a sequence's weight if selection count and
-   * execution time information are both available is
+   * Compute the weights of the candidates in the given list that have not been assigned a weight.
+   *
+   * @param candidates list of candidate sequences
+   * @return the total weight of all the elements in the candidate list
+   */
+  private double computeWeightMapForCandidates(SimpleList<Sequence> candidates) {
+    double totalWeight = 0.0;
+
+    // Iterate through the candidate list, computing the weight for a sequence only if it has
+    // not yet been computed before.
+    for (int i = 0; i < candidates.size(); i++) {
+      Sequence candidate = candidates.get(i);
+
+      Double weight = weightMap.get(candidate);
+      if (weight == null) {
+        weight = computeWeightForCandidate(candidate);
+      }
+
+      totalWeight += weight;
+    }
+
+    return totalWeight;
+  }
+
+  /**
+   * Compute the weight of an input sequence. The formula for updating a sequence's weight is:
    *
    * <p>1.0 / (k * seq.exec_time * sqrt(seq.meth_size))
    *
@@ -79,33 +101,25 @@ public class OrienteeringSelection implements InputSequenceSelector {
    * each execution of seq. However, we assume that every execution times for a sequence is the same
    * as the first execution.
    *
-   * @param candidates list of candidate sequences
-   * @return the total weight of all the elements in the candidate list
+   * @param sequence the sequence to compute a weight for
+   * @return the computed weight for the given sequence
    */
-  private double updateWeightMapForCandidates(SimpleList<Sequence> candidates) {
-    double totalWeight = 0.0;
-
-    for (int i = 0; i < candidates.size(); i++) {
-      Sequence candidate = candidates.get(i);
-
-      double methodSizeSqrt = getMethodSizeSquareRootForSequence(candidate);
-      Integer selectionCount = sequenceSelectionCount.get(candidate);
-      Long executionTime = sequenceExecutionTime.get(candidate);
-
-      double weight;
-      // Recompute and update this sequence's weight. Note that we check methodSizeSqrt is not zero
-      // to prevent division by zero. This could occur for a sequence that has no method calls.
-      if (selectionCount != null && executionTime != null && methodSizeSqrt != 0) {
-        weight = 1.0 / (selectionCount * executionTime * methodSizeSqrt);
-      } else {
-        weight = candidate.getWeight();
-      }
-
-      totalWeight += weight;
-      weightMap.put(candidate, weight);
+  private double computeWeightForCandidate(Sequence sequence) {
+    double methodSizeSqrt = getMethodSizeSquareRootForSequence(sequence);
+    Integer selectionCount = sequenceSelectionCount.get(sequence);
+    if (selectionCount == null) {
+      selectionCount = 1;
     }
 
-    return totalWeight;
+    Long executionTime = sequenceExecutionTime.get(sequence);
+    if (executionTime == null) {
+      executionTime = 1L;
+    }
+
+    double weight = 1.0 / (selectionCount * executionTime * methodSizeSqrt);
+    weightMap.put(sequence, weight);
+
+    return weight;
   }
 
   /**
@@ -186,7 +200,7 @@ public class OrienteeringSelection implements InputSequenceSelector {
           assert statementExecTime != null;
 
           // If this statement has a negative execution time, we know that it did not execute
-          // normally.  We therefore do not compute the execution time of the input sequence as a
+          // normally. We therefore do not compute the execution time of the input sequence as a
           // whole.
           if (statementExecTime < 0) {
             sequenceExecutedNormally = false;
@@ -206,6 +220,9 @@ public class OrienteeringSelection implements InputSequenceSelector {
           sequenceExecutionTime.put(inputSequence, sequenceExecTime);
         }
       }
+
+      // Update the weight of the input sequence.
+      computeWeightForCandidate(inputSequence);
     }
   }
 
@@ -229,6 +246,10 @@ public class OrienteeringSelection implements InputSequenceSelector {
    * Retrieve the method size square root of the given sequence. This is the square root of the
    * number of method call statements within the given sequence.
    *
+   * <p>The method size square root value will be used in a product in the denominator of a
+   * division. To prevent division by zero, we assign the method size square root a value of 1 if it
+   * 0. This could happen for sequences with no method calls.
+   *
    * @param sequence the sequence to get the method size square root of
    * @return square root of the number of method calls in the given sequence
    */
@@ -238,6 +259,13 @@ public class OrienteeringSelection implements InputSequenceSelector {
     Double methodSizeSqrt = sequenceMethodSizeSqrt.get(sequence);
     if (methodSizeSqrt == null) {
       methodSizeSqrt = Math.sqrt(sequence.numMethodCalls());
+
+      // Check for special case where a sequence can have zero method calls and assign it a
+      // method size square root value of 1.
+      if (methodSizeSqrt == 0) {
+        methodSizeSqrt = 1.0;
+      }
+
       sequenceMethodSizeSqrt.put(sequence, methodSizeSqrt);
     }
 
