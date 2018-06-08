@@ -680,7 +680,7 @@ public class ClassFileConstants {
   }
 
   /**
-   * Increment value in map
+   * Increment value in map. If the key is null, we ignore this call and return.
    *
    * @param map map of keys and values
    * @param term term whose value to increment

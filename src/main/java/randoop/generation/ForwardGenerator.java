@@ -128,12 +128,13 @@ public class ForwardGenerator extends AbstractGenerator {
         inputSequenceSelector = new SmallTestsSequenceSelection();
         break;
       case CONSTANT_MINING:
-        // TODO: Literal term frequencies can be null for system tests when we don't perform constant mining?
         if (literalTermFrequencies == null || numClasses < 0) {
-          inputSequenceSelector =
-              new ConstantMiningSelection(componentManager, numClasses, literalTermFrequencies);
-          break;
+          throw new Error(
+              "Error in ForwardGenerator using Constant Mining, literal term frequencies can't be null and num classes must be non-negative.");
         }
+        inputSequenceSelector =
+            new ConstantMiningSelection(componentManager, numClasses, literalTermFrequencies);
+        break;
       case UNIFORM:
         inputSequenceSelector = new UniformRandomSequenceSelection();
         break;

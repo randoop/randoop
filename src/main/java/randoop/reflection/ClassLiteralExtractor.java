@@ -41,15 +41,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     constList.add(ClassFileConstants.getConstants(c.getName()));
     MultiMap<Class<?>, NonreceiverTerm> constantMap = ClassFileConstants.toMap(constList);
     for (Class<?> constantClass : constantMap.keySet()) {
+      ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
       for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
         Sequence seq =
             new Sequence()
                 .extend(
                     TypedOperation.createNonreceiverInitialization(term),
                     new ArrayList<Variable>());
-
-        // Map from the class to the class literal.
-        ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
         literalMap.add(constantType, seq);
 
         // Retrieve the frequency of the literal represented by seq.
