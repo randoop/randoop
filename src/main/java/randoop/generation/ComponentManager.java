@@ -230,14 +230,6 @@ public class ComponentManager {
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
 
-      // If the literals level is set to CLASSES_OR_ALL, and we succeed on our coin flip, return only
-      // the component sequences that are class-level extracted literals from the declaring class.
-      if (classLiterals != null
-          && GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS_OR_ALL
-          && Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
-        return classLiterals.getSequences(declaringCls, neededType);
-      }
-
       if (classLiterals != null) {
         SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
         if (!sl.isEmpty()) {
@@ -245,7 +237,14 @@ public class ComponentManager {
         }
       }
 
-      if (packageLiterals != null) {
+      // If the literals level is set to CLASSES_OR_ALL, and we succeed on our coin flip,
+      // set literals to only the component sequences that are class-level extracted literals from
+      // the declaring class. That is, don't add literals from the package level.
+      boolean shouldOnlyIncludeConstantsFromDeclaringClass =
+          GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS_OR_ALL
+              && Randomness.weightedCoinFlip(GenInputsAbstract.p_const);
+
+      if (!shouldOnlyIncludeConstantsFromDeclaringClass && packageLiterals != null) {
         Package pkg = declaringCls.getPackage();
         if (pkg != null) {
           SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
