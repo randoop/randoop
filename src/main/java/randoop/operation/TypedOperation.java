@@ -23,7 +23,6 @@ import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
-import randoop.util.WeightedElement;
 
 /**
  * Type decorator of {@link Operation} objects. An operation has zero or more input types, and one
@@ -32,8 +31,7 @@ import randoop.util.WeightedElement;
  * @see randoop.operation.TypedClassOperation
  * @see randoop.operation.TypedTermOperation
  */
-public abstract class TypedOperation
-    implements Operation, Comparable<TypedOperation>, WeightedElement {
+public abstract class TypedOperation implements Operation, Comparable<TypedOperation> {
 
   /** The operation to be decorated */
   private final CallableOperation operation;
@@ -614,10 +612,5 @@ public abstract class TypedOperation
    */
   public void addExecutableSpecification(ExecutableSpecification execSpec) {
     this.execSpec = execSpec;
-  }
-
-  @Override
-  public double getWeight() {
-    return 1.0;
   }
 }
