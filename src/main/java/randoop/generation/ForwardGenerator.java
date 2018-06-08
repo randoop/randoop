@@ -65,6 +65,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
   private final TypeInstantiator instantiator;
 
+  /** How to select sequences as input for creating new sequences. */
+  private final InputSequenceSelector inputSequenceSelector;
+
   // The set of all primitive values seen during generation and execution
   // of sequences. This set is used to tell if a new primitive value has
   // been generated, to add the value to the components.
@@ -93,6 +96,12 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
+
+    if (GenInputsAbstract.small_tests) {
+      inputSequenceSelector = new SmallTestsSequenceSelection();
+    } else {
+      inputSequenceSelector = new UniformRandomSequenceSelection();
+    }
   }
 
   /**
@@ -726,13 +735,7 @@ public class ForwardGenerator extends AbstractGenerator {
       //   }
       // }
 
-      Sequence chosenSeq;
-      if (GenInputsAbstract.small_tests) {
-        chosenSeq = Randomness.randomMemberWeighted(candidates);
-      } else {
-        chosenSeq = Randomness.randomMember(candidates);
-      }
-
+      Sequence chosenSeq = inputSequenceSelector.selectInputSequence(candidates);
       Log.logPrintf("chosenSeq: %s%n", chosenSeq);
 
       // TODO: the last statement might not be active -- it might not create a usable variable of
