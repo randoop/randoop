@@ -22,14 +22,13 @@ import randoop.util.SimpleList;
  * <p>Our implementation of Orienteering differs from that described in the GRT paper in that we do
  * not keep track of the execution time of an input sequence for each new run. Instead, we assume
  * that an input sequence's execution time is equal to the execution time of its first run. We
- * believe this assumption is reasonable since we do not expect an input sequence's execution time
- * to differ greatly between separate runs.
+ * believe this assumption is reasonable since a sequence does not take any inputs (it is
+ * self-contained), so its execution time probably does not differ greatly between separate runs.
  *
  * <p>The GRT paper also does not describe how to handle input sequences that have an execution time
- * of zero. We observe that this is the case for simple input sequences such as one that only
- * includes the assignment of a primitive type {@code byte byte0 = (byte)1;}. We handle this by
- * assigning these input sequences an execution time of 1 nanosecond to prevent division by zero
- * when later computing weights.
+ * of zero, such as one that only includes the assignment of a primitive type {@code byte byte0 =
+ * (byte)1;}. We assign these input sequences an execution time of 1 nanosecond to prevent division
+ * by zero when later computing weights.
  */
 public class OrienteeringSelection implements InputSequenceSelector {
   /** Map from a sequence to its weight. */
@@ -45,13 +44,13 @@ public class OrienteeringSelection implements InputSequenceSelector {
   private final Map<Sequence, Double> sequenceMethodSizeSqrt = new HashMap<>();
 
   /**
-   * Map from a sequence to its approximate execution time in nanoseconds. Once computed for a given
-   * sequence, the execution time of an input sequence is never updated.
+   * Map from a sequence to its execution time in nanoseconds. Once computed for a given sequence,
+   * the execution time of an input sequence is never updated.
    */
   private final Map<Sequence, Long> sequenceExecutionTime = new HashMap<>();
 
   /**
-   * Bias input selection towards lower cost sequences. We first compute and update the weights of
+   * Bias input selection towards lower-cost sequences. We first compute and update the weights of
    * all the candidates within the candidate list before making our selection.
    *
    * @param candidates sequences to choose from
@@ -77,7 +76,7 @@ public class OrienteeringSelection implements InputSequenceSelector {
    * <p>Where k is the number of selections of seq and exec_time is the execution time of seq and
    * meth_size is the number of method call statements in seq. This formula is a slight
    * simplification of the one described in the GRT paper which maintains a separate exec_time for
-   * each execution of seq. However, we assume that the execution times of a sequence are the same
+   * each execution of seq. However, we assume that every execution times for a sequence is the same
    * as the first execution.
    *
    * @param candidates list of candidate sequences
@@ -148,17 +147,18 @@ public class OrienteeringSelection implements InputSequenceSelector {
 
       if (executionOutcome instanceof NormalExecution) {
         Long statementExecTime = executionOutcome.getExecutionTime();
-        // If the statement executed normally but has a measured time of 0 nanoseconds, we assign
-        // it an execution time of 1 nanosecond. This is to prevent division by zero when computing
-        // weights which uses the statement's execution time as part of a product in the denominator.
+        // If the statement executed normally but has a measured time of 0 nanoseconds, we assign it
+        // an execution time of 1 nanosecond. This is to prevent division by zero when computing
+        // weights which uses the statement's execution time as part of a product in the
+        // denominator.
         if (statementExecTime == 0) {
           statementExecTime = 1L;
         }
         statementExecTimeMap.put(statement, statementExecTime);
       } else {
-        // If the statement did not execute normally, we assign it a measured time of -1 nanoseconds.
-        // We will check for this below and subsequently skip computing the execution time of any
-        // sequence that contains a statement that did not execute normally.
+        // If the statement did not execute normally, we assign it a measured time of -1
+        // nanoseconds.  We will check for this below and subsequently skip computing the execution
+        // time of any sequence that contains a statement that did not execute normally.
         statementExecTimeMap.put(statement, -1L);
       }
     }
@@ -167,26 +167,27 @@ public class OrienteeringSelection implements InputSequenceSelector {
     for (Sequence inputSequence : inputSequences) {
       Long executionTime = sequenceExecutionTime.get(inputSequence);
 
-      // If we have not yet computed an execution time for this input sequence, we do so now. Otherwise,
-      // we continue to the next statement since we only ever compute an input sequence's execution time
-      // once.
+      // If we have not yet computed an execution time for this input sequence, we do so now.
+      // Otherwise, we continue to the next statement since we only ever compute an input sequence's
+      // execution time once.
       if (executionTime == null) {
         boolean sequenceExecutedNormally = true;
         Long sequenceExecTime = 0L;
 
-        // An input sequence's execution time is equal to the total sum of the execution times of the
-        // statements that constitute the sequence itself.
+        // An input sequence's execution time is equal to the total sum of the execution times of
+        // the statements that constitute the sequence itself.
         for (int i = 0; i < inputSequence.size(); i++) {
           Statement statement = inputSequence.getStatement(i);
           Long statementExecTime = statementExecTimeMap.get(statement);
 
-          // Since each input sequence is a subsequence of the overall executable sequence, we expect
-          // every statement to exist within the executable sequence. We can then use our map from
-          // statement to execution time to add onto our running execution time sum.
+          // Since each input sequence is a subsequence of the overall executable sequence, we
+          // expect every statement to exist within the executable sequence. We can then use our map
+          // from statement to execution time to add onto our running execution time sum.
           assert statementExecTime != null;
 
-          // If this statement has a negative execution time, we know that it did not execute normally.
-          // We therefore do not compute the execution time of the input sequence as a whole.
+          // If this statement has a negative execution time, we know that it did not execute
+          // normally.  We therefore do not compute the execution time of the input sequence as a
+          // whole.
           if (statementExecTime < 0) {
             sequenceExecutedNormally = false;
             break;
@@ -194,12 +195,13 @@ public class OrienteeringSelection implements InputSequenceSelector {
           sequenceExecTime += statementExecTimeMap.get(statement);
         }
 
-        // We only assign an input sequence the computed sequence execution time if the sequence as a whole
-        // executed normally - meaning all of its statements also executed normally. If this is not the case,
-        // we will skip this input sequence for now and perhaps assign it an execution time in the future.
+        // We only assign an input sequence the computed sequence execution time if the sequence as
+        // a whole executed normally - meaning all of its statements also executed normally. If this
+        // is not the case, we will skip this input sequence for now and perhaps assign it an
+        // execution time in the future.
         if (sequenceExecutedNormally) {
-          // A sequence will have a positive execution time if all of the statements within it executed
-          // normally.
+          // A sequence will have a positive execution time if all of the statements within it
+          // executed normally.
           assert sequenceExecTime > 0;
           sequenceExecutionTime.put(inputSequence, sequenceExecTime);
         }

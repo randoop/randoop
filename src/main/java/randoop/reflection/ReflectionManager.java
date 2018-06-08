@@ -105,20 +105,17 @@ public class ReflectionManager {
       } else {
 
         Log.logPrintf(
-            "ReflectionManager.apply for class %s%n  getMethods => %d%n  getDeclaredMethods => %d%n",
+            "ReflectionManager.apply%n  %s%n  getMethods => %d%n  getDeclaredMethods => %d%n",
             c,
             ClassDeterministic.getMethods(c).length,
             ClassDeterministic.getDeclaredMethods(c).length);
-        // System.out.println("ReflectionManager.apply for class " + c);
-        // System.out.println("  getMethods => " + ClassDeterministic.getMethods(c).length);
-        // System.out.println("  getDeclaredMethods => " + ClassDeterministic.getDeclaredMethods(c).length);
 
         // Methods
         Set<Method> methods = new HashSet<>(); // used only for containment check
         for (Method m : ClassDeterministic.getMethods(c)) { // for all class methods
           Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
-          methods.add(m); // remember to avoid duplicates
-          if (isVisible(m)) { // if satisfies predicate then visit
+          methods.add(m);
+          if (isVisible(m)) {
             applyTo(visitor, m);
           }
         }

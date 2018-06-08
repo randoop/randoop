@@ -508,12 +508,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   @Unpublicized
-  @Option("Bias method selection to favor sequences with lower 'cost' (execution time and size)")
+  @Option("Bias method selection to favor sequences with lower execution time and size")
   public static boolean enable_orienteering = false;
 
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
-  // the length of the string that will atually be printed out as code.
+  // the length of the string that will actually be printed out as code.
   /**
    * Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
    * (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
