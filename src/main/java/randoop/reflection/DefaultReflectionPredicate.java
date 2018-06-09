@@ -159,32 +159,43 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * Determines whether a bridge method is a <i>visibility</i> bridge, which allows access to a
    * definition of the method in a non-visible superclass.
    *
-   * <p>To recognize a visibility bridge, it is sufficient to run up the superclass chain and
-   * confirm that the visibility of the class changes to non-public. If it does not, then the bridge
-   * method is not a visibility bridge.
+   * <p>The method is a visibility bridge if this class is public and some superclass with the
+   * method is non-public.
    *
    * @param m the bridge method to test
-   * @return true if {@code m} is not a visibility bridge, and false otherwise
+   * @return true iff {@code m} is a visibility bridge
    * @throws Error if a {@link SecurityException} is thrown when accessing superclass methods
    */
   private boolean isVisibilityBridge(Method m) throws Error {
-    Method method = m;
     Class<?> c = m.getDeclaringClass();
     if (!isPublic(c)) {
       return false;
     }
-    while (c != null && isPublic(c) && method != null && method.isBridge()) {
-      c = c.getSuperclass();
-      try {
-        method = c.getDeclaredMethod(m.getName(), m.getParameterTypes());
-      } catch (NoSuchMethodException e) {
-        method = null;
-      } catch (SecurityException e) {
-        String msg = "Cannot access method " + m.getName() + " in class " + c.getCanonicalName();
-        throw new Error(msg);
+    c = c.getSuperclass();
+    while (c != null) {
+      if (!hasBridgeMethod(c, m)) {
+        return false;
       }
+      if (!isPublic(c)) {
+        return true;
+      }
+      c = c.getSuperclass();
     }
-    return !isPublic(c);
+    return false;
+  }
+
+  /** Returns true if the class has the given bridge method. */
+  private boolean hasBridgeMethod(Class<?> c, Method goalMethod) {
+    try {
+      Method overridden = c.getDeclaredMethod(goalMethod.getName(), goalMethod.getParameterTypes());
+      return overridden.isBridge();
+    } catch (NoSuchMethodException e) {
+      return false;
+    } catch (SecurityException e) {
+      String msg =
+          "Cannot access method " + goalMethod.getName() + " in class " + c.getCanonicalName();
+      throw new Error(msg);
+    }
   }
 
   /**
