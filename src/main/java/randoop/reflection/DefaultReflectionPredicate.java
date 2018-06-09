@@ -88,10 +88,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    // Always consider Object.getClass to be under test (even if not specified by user).
-    // This is a special case handled here to avoid printing the reason for exclusion.
-    // Most Object methods are excluded. Allow getClass. Equals is used in contracts.
-    // The rest are problematic (toString), involve threads, waiting, or are somehow problematic.
+    // Within Object, consider only getClass to be under test (even if not specified by user).
+    // Exclude all other methods.  They involve threads, waiting, or are somehow problematic
+    // (e.g. toString).
     if (m.getDeclaringClass().equals(java.lang.Object.class)) {
       return m.getName().equals("getClass");
     }
@@ -159,8 +158,8 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * Determines whether a bridge method is a <i>visibility</i> bridge, which allows access to a
    * definition of the method in a non-visible superclass.
    *
-   * <p>The method is a visibility bridge if this class is public and some superclass with the
-   * method is non-public.
+   * <p>The method is a visibility bridge if this class is public and some superclass defines the
+   * method as non-public.
    *
    * @param m the bridge method to test
    * @return true iff {@code m} is a visibility bridge
@@ -173,22 +172,21 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     }
     c = c.getSuperclass();
     while (c != null) {
-      if (!hasBridgeMethod(c, m)) {
-        return false;
-      }
-      if (!isPublic(c)) {
+      if (!isPublic(c) && definesNonBridgeMethod(c, m)) {
+        // System.out.printf("class %s defines non-bridge method %s%n", c, m);
         return true;
       }
       c = c.getSuperclass();
     }
+    // System.out.printf("Never found superclass with definition of %s%n", m);
     return false;
   }
 
-  /** Returns true if the class has the given bridge method. */
-  private boolean hasBridgeMethod(Class<?> c, Method goalMethod) {
+  /** Returns true if the class defines the given non-bridge method. */
+  private boolean definesNonBridgeMethod(Class<?> c, Method goalMethod) {
     try {
-      Method overridden = c.getDeclaredMethod(goalMethod.getName(), goalMethod.getParameterTypes());
-      return overridden.isBridge();
+      Method defined = c.getDeclaredMethod(goalMethod.getName(), goalMethod.getParameterTypes());
+      return !defined.isBridge();
     } catch (NoSuchMethodException e) {
       return false;
     } catch (SecurityException e) {
