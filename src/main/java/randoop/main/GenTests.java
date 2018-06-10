@@ -1,7 +1,6 @@
 package randoop.main;
 
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
-import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_ERROR;
 import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_INVALID;
 
 import com.github.javaparser.ParseException;
@@ -896,7 +895,7 @@ public class GenTests extends GenInputsAbstract {
             IS_INVALID, GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT);
 
     // Extend with contract checker.
-    ContractCheckingGenerator contractVisitor = new ContractCheckingGenerator(contracts, IS_ERROR);
+    ContractCheckingGenerator contractVisitor = new ContractCheckingGenerator(contracts);
     testGen = new ExtendGenerator(testGen, contractVisitor);
 
     // And, generate regression tests, unless user says not to.

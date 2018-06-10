@@ -83,6 +83,8 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
         if (((ExceptionalExecution) sequenceResult).getException()
             instanceof randoop.util.TimeoutExceededException) {
           // Do not count TimeoutExceeded as a CompileFailure.
+          // TODO: Though if this occurs, something is wrong!  Maybe Randoop has started thrashing
+          // and is running slower as a result.
           return result;
         }
       }
