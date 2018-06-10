@@ -1,9 +1,11 @@
 package randoop.test;
 
+import static randoop.main.GenInputsAbstract.BehaviorType.EXPECTED;
+
 import randoop.ExceptionalExecution;
+import randoop.main.ExceptionBehaviorClassifier;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
-import randoop.test.predicate.ExceptionPredicate;
 
 /**
  * A check generator that based on an {@code ExceptionPredicate} when given an exception, generates
@@ -15,8 +17,6 @@ import randoop.test.predicate.ExceptionPredicate;
  */
 public class ExpectedExceptionCheckGen {
 
-  /** the predicate to indicate whether an exception is expected */
-  private ExceptionPredicate isExpected;
   /** a predicate to determine visibility of exception classes */
   private VisibilityPredicate visibility;
 
@@ -25,11 +25,9 @@ public class ExpectedExceptionCheckGen {
    * predicate, and empty exception checks for others.
    *
    * @param visibility a predicate to determine visibility of exception classes
-   * @param isExpected the predicate to indicate whether an exception is expected
    */
-  public ExpectedExceptionCheckGen(VisibilityPredicate visibility, ExceptionPredicate isExpected) {
+  public ExpectedExceptionCheckGen(VisibilityPredicate visibility) {
     this.visibility = visibility;
-    this.isExpected = isExpected;
   }
 
   /**
@@ -48,7 +46,7 @@ public class ExpectedExceptionCheckGen {
 
     String catchClassName = getCatchClassName(e.getClass(), visibility);
 
-    if (isExpected.test(exec, eseq)) {
+    if (ExceptionBehaviorClassifier.classify(exec, eseq) == EXPECTED) {
       return new ExpectedExceptionCheck(e, statementIndex, catchClassName);
     } else {
       return new EmptyExceptionCheck(e, statementIndex, catchClassName);

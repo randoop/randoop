@@ -1,7 +1,6 @@
 package randoop.main;
 
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
-import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_INVALID;
 
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
@@ -79,9 +78,6 @@ import randoop.test.RegressionCaptureGenerator;
 import randoop.test.RegressionTestPredicate;
 import randoop.test.TestCheckGenerator;
 import randoop.test.ValidityCheckingGenerator;
-import randoop.test.predicate.AlwaysFalseExceptionPredicate;
-import randoop.test.predicate.ExceptionBehaviorPredicate;
-import randoop.test.predicate.ExceptionPredicate;
 import randoop.types.Type;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
@@ -892,7 +888,7 @@ public class GenTests extends GenInputsAbstract {
     // Start with checking for invalid exceptions.
     TestCheckGenerator testGen =
         new ValidityCheckingGenerator(
-            IS_INVALID, GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT);
+            GenInputsAbstract.flaky_test_behavior == FlakyTestAction.HALT);
 
     // Extend with contract checker.
     ContractCheckingGenerator contractVisitor = new ContractCheckingGenerator(contracts);
@@ -900,13 +896,7 @@ public class GenTests extends GenInputsAbstract {
 
     // And, generate regression tests, unless user says not to.
     if (!GenInputsAbstract.no_regression_tests) {
-      ExceptionPredicate isExpected;
-      if (GenInputsAbstract.no_regression_assertions) {
-        isExpected = new AlwaysFalseExceptionPredicate();
-      } else {
-        isExpected = ExceptionBehaviorPredicate.IS_EXPECTED;
-      }
-      ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+      ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility);
 
       RegressionCaptureGenerator regressionVisitor =
           new RegressionCaptureGenerator(
