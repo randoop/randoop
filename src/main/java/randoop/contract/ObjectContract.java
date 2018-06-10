@@ -141,7 +141,6 @@ public abstract class ObjectContract {
       }
 
       BehaviorType eseqBehavior = ExceptionBehaviorClassifier.classify(e, eseq);
-
       Log.logPrintf("  ExceptionBehaviorClassifier.classify(e, eseq) => %s%n", eseqBehavior);
 
       if (eseqBehavior == BehaviorType.EXPECTED) {

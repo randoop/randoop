@@ -8,9 +8,9 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 
 /**
- * A check generator that based on an {@code ExceptionPredicate} when given an exception, generates
- * an {@code ExpectedExceptionCheck} object when the predicate is satisfied, and an {@code
- * EmptyExceptionCheck} otherwise. Resulting tests only enforce expected matching exceptions.
+ * A check generator that when given an exception, generates either an {@code
+ * ExpectedExceptionCheck} object or an {@code EmptyExceptionCheck}. Resulting tests only enforce
+ * expected matching exceptions.
  *
  * @see
  *     randoop.test.RegressionCaptureGenerator#generateTestChecks(randoop.sequence.ExecutableSequence)

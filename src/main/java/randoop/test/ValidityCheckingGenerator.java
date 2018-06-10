@@ -11,11 +11,10 @@ import randoop.util.TimeoutExceededException;
 
 /**
  * A {@code ValidityCheckingGenerator} checks for occurrences of exceptions that have been tagged as
- * invalid behaviors as represented by a {@code ExceptionPredicate}. Also, either ignores or reports
- * flaky test sequences --- an input sequence that throws an exception in a longer test sequence,
- * despite having run normally by itself. Ignored flaky sequences are classified as invalid. Flaky
- * occurrences of {@code OutOfMemoryError} or {@code StackOverflowError} are always treated as
- * invalid.
+ * invalid behaviors. Also, either ignores or reports flaky test sequences --- an input sequence
+ * that throws an exception in a longer test sequence, despite having run normally by itself.
+ * Ignored flaky sequences are classified as invalid. Flaky occurrences of {@code OutOfMemoryError}
+ * or {@code StackOverflowError} are always treated as invalid.
  */
 public class ValidityCheckingGenerator extends TestCheckGenerator {
 
@@ -46,14 +45,11 @@ public class ValidityCheckingGenerator extends TestCheckGenerator {
    *             OutOfMemoryError} or {@code StackOverflowError}, throw an exception.
    *         <li>Otherwise, the sequence is invalid.
    *       </ul>
-   *
    *   <li>An exception is seen on the last statement:
    *       <ul>
-   *         <li>if the exception is classified as invalid by this visitor's {@code
-   *             ExceptionPredicate}, the sequence is invalid.
+   *         <li>if the exception is classified as invalid, the sequence is invalid.
    *         <li>otherwise, the returned InvalidChecks is empty (the sequence is valid).
    *       </ul>
-   *
    *   <li>Otherwise, the returned InvalidChecks is empty (the sequence is valid)..
    * </ul>
    *
