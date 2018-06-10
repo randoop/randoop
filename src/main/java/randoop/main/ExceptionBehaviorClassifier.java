@@ -1,7 +1,6 @@
 package randoop.main;
 
 import java.util.ConcurrentModificationException;
-import randoop.SystemExitCalledError;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
 import randoop.util.TimeoutExceededException;
@@ -54,11 +53,6 @@ public class ExceptionBehaviorClassifier {
 
       if (t instanceof StackOverflowError) {
         return GenInputsAbstract.sof_exception;
-      }
-
-      if (t instanceof SystemExitCalledError) {
-        // TODO: should there be a command-line option for this?
-        return BehaviorType.INVALID;
       }
 
       if (t instanceof TimeoutExceededException) {
