@@ -56,7 +56,6 @@ public class ExceptionBehaviorClassifier {
       }
 
       if (t instanceof TimeoutExceededException) {
-        // TODO: should there be a command-line option for this?
         return BehaviorType.INVALID;
       }
 
