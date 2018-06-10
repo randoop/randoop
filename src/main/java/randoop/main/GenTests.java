@@ -80,7 +80,6 @@ import randoop.test.RegressionCaptureGenerator;
 import randoop.test.RegressionTestPredicate;
 import randoop.test.TestCheckGenerator;
 import randoop.test.ValidityCheckingGenerator;
-import randoop.test.predicate.AlwaysFalseExceptionPredicate;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
 import randoop.types.Type;
@@ -902,11 +901,7 @@ public class GenTests extends GenInputsAbstract {
     // And, generate regression tests, unless user says not to.
     if (!GenInputsAbstract.no_regression_tests) {
       ExceptionPredicate isExpected;
-      if (GenInputsAbstract.no_regression_assertions) {
-        isExpected = new AlwaysFalseExceptionPredicate();
-      } else {
-        isExpected = ExceptionBehaviorPredicate.IS_EXPECTED;
-      }
+      isExpected = ExceptionBehaviorPredicate.IS_EXPECTED;
       ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
 
       RegressionCaptureGenerator regressionVisitor =
