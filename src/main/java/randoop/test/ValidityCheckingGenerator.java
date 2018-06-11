@@ -52,7 +52,7 @@ public class ValidityCheckingGenerator extends TestCheckGenerator {
    *         <li>otherwise, the returned InvalidChecks is empty (the sequence is valid).
    *       </ul>
    *
-   *   <li>Otherwise, the returned InvalidChecks is empty (the sequence is valid)..
+   *   <li>Otherwise, the returned InvalidChecks is empty (the sequence is valid).
    * </ul>
    *
    * @return a possibly-empty {@link InvalidChecks} object for sequence

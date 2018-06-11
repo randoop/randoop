@@ -5,12 +5,12 @@ import java.util.Set;
 import randoop.BugInRandoopException;
 
 /**
- * An empty or singleton set. It contains at most one InvalidExceptionCheck, which captures invalid
- * behavior in a sequence.
+ * An empty or singleton set. It contains at most one InvalidExceptionCheck or InvalidValueCheck,
+ * which captures invalid behavior in a sequence.
  */
 public class InvalidChecks implements TestChecks<InvalidChecks> {
 
-  /** An empty, immutable set of error-revealing checks. */
+  /** An empty, immutable set of invalid checks. */
   public static final InvalidChecks EMPTY = new InvalidChecks();
 
   // Either an InvalidExceptionCheck or an InvalidValueCheck.
