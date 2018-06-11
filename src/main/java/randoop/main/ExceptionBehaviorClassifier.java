@@ -17,7 +17,7 @@ public class ExceptionBehaviorClassifier {
   }
 
   /**
-   * Delegates to {@link #classify{Throwable, ExecutableSequence}.
+   * Delegates to {@link #classify(Throwable, ExecutableSequence)}.
    *
    * @param exec the ExceptionalExecution to classify
    * @param eseq the {@code ExecutableSequence} that threw exception
