@@ -36,6 +36,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /** The operation to be decorated */
   private final CallableOperation operation;
 
+  // TODO: document whether this includes the receiver.
   /** The type tuple of input types. */
   private final TypeTuple inputTypes;
 
@@ -150,6 +151,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     return getName() + inputTypes;
   }
 
+  // TODO: document whether this includes the receiver.
   /**
    * Returns the tuple of input types for this operation.
    *

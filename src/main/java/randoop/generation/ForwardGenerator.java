@@ -305,6 +305,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
+  // TODO: document that this can change operations (remove elements from it)
   /**
    * Tries to create and execute a new sequence. If the sequence is new (not already in the
    * specified component manager), then it is executed and added to the manager's sequences. If the
@@ -391,9 +392,11 @@ public class ForwardGenerator extends AbstractGenerator {
       Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
     }
 
-    // If parameterless operation, subsequence inputs will all be redundant, so just remove it from
-    // list of operations. These can only be static constant methods or no-argument constructors.
-    // XXX OK if we know constant, otherwise may depend on static state
+    // A parameterless operation (a static constant method or no-argument constructor) returns the
+    // same thing every time it is invoked (unless it's nondeterministic, but Randoop should not be
+    // run on nondeterministic methods).
+    // Since we have just invoked it, its result will be in the pool.  There is no need to call this
+    // operation again, so remove it from the list of operations.
     if (operation.getInputTypes().isEmpty()) {
       operationHistory.add(operation, OperationOutcome.REMOVED);
       operations.remove(operation);
