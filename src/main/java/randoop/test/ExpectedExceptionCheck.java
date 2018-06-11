@@ -18,6 +18,10 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    * Creates check that enforces expectation that an exception is thrown by the statement at the
    * statement index.
    *
+   * <p>These are created before the test is classified as normal, exceptional, or invalid behavior.
+   * For example, this could be created with a TimeoutExceededException, but the sequence would
+   * later be classified as invalid.
+   *
    * @param exception the expected exception
    * @param statementIndex the index of the statement in the sequence where exception is thrown
    * @param catchClassName the name of exception to be caught

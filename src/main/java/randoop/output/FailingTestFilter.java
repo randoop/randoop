@@ -258,6 +258,11 @@ public class FailingTestFilter implements CodeWriter {
 
       // Check that the method name in the failure message is a test method.
       if (!methodName.matches(GenTests.TEST_METHOD_NAME_PREFIX + "\\d+")) {
+        System.out.println();
+        System.out.printf("Failure in commentFailingAssertions(%s, %s)%n", packageName, classname);
+        System.out.printf("javaCode =%n%s%n", javaCode);
+        System.out.printf("status =%n%s%n", status);
+        System.out.println();
         if (line.contains("initializationError")) {
           throw new BugInRandoopException(
               "Check configuration of test environment: "
@@ -401,10 +406,14 @@ public class FailingTestFilter implements CodeWriter {
         case "char":
         case "short":
         case "int":
-        case "long":
           newInitializer = "0";
           break;
+        case "long":
+          newInitializer = "0L";
+          break;
         case "float":
+          newInitializer = "0.0f";
+          break;
         case "double":
           newInitializer = "0.0";
           break;

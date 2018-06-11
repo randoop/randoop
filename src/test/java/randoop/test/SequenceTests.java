@@ -4,8 +4,6 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
-import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_ERROR;
-import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_EXPECTED;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -115,10 +113,10 @@ public class SequenceTests {
 
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     VisibilityPredicate visibility = IS_PUBLIC;
-    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, IS_EXPECTED);
+    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility);
     testGen =
         new ExtendGenerator(
-            new ContractCheckingGenerator(contracts, IS_ERROR),
+            new ContractCheckingGenerator(contracts),
             new RegressionCaptureGenerator(
                 expectation, new MultiMap<Type, TypedOperation>(), visibility, true));
   }
