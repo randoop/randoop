@@ -102,9 +102,10 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param componentManager container for sequences that are used to generate new sequences
    * @param stopper determines when the test generation process should conclude
    * @param listenerManager TODO: apparently unused according to {@link RandoopListenerManager}
-   * @param numClasses number of classes under test
+   * @param numClasses number of classes under test, expected to be non-negative if Constant Mining
+   *     is enabled
    * @param literalTermFrequencies map from literal to its frequency observed in all classes under
-   *     test
+   *     test, expected to be non null if Constant Mining is enabled
    */
   public ForwardGenerator(
       List<TypedOperation> operations,
