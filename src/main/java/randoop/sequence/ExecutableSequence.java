@@ -244,17 +244,18 @@ public class ExecutableSequence {
    *       </ul>
    *
    *   <li>For the last statement, check its specifications (pre-, post-, and throws-conditions).
-   *   <li>Execution stops if one of the following conditions holds:
-   *       <ul>
-   *         <li>All statements in the sequences have been executed.
-   *         <li>A pre-condition for the final statement fails
-   *         <li>A statement's execution results in an exception and {@code ignoreException==false}.
-   *         <li>A {@code null} input value is implicitly passed to the statement (i.e., not via
-   *             explicit declaration like x = null)
-   *         <li>After executing the i-th statement and calling the visitor's {@code visitAfter}
-   *             method, a {@code ContractViolation} check is present at index i.
-   *       </ul>
+   * </ul>
    *
+   * Execution stops if one of the following conditions holds:
+   *
+   * <ul>
+   *   <li>All statements in the sequences have been executed.
+   *   <li>A pre-condition for the final statement fails
+   *   <li>A statement's execution results in an exception and {@code ignoreException==false}.
+   *   <li>A {@code null} input value is implicitly passed to the statement (i.e., not via explicit
+   *       declaration like x = null)
+   *   <li>After executing the i-th statement and calling the visitor's {@code visitAfter} method, a
+   *       {@code ContractViolation} check is present at index i.
    * </ul>
    *
    * <p>After invoking this method, the client can query the outcome of executing each statement via
