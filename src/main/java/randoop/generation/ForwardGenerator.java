@@ -844,13 +844,12 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Class that wraps an {@link ExecutableSequence} and its corresponding list of input {@link
-   * Sequence}s. Each input sequence is a subsequence of the underlying sequence contained within
-   * the executable sequence.
+   * A pair containing an {@link ExecutableSequence} and its corresponding list of input {@link
+   * Sequence}s. Each element of inputSequences is a subsequence of executableSequence.
    */
   private static class ExecutableSequenceAndInputSequences {
-    public ExecutableSequence executableSequence;
-    public List<Sequence> inputSequences;
+    public final ExecutableSequence executableSequence;
+    public final List<Sequence> inputSequences;
 
     public ExecutableSequenceAndInputSequences(ExecutableSequence eSeq, List<Sequence> inputs) {
       this.executableSequence = eSeq;
