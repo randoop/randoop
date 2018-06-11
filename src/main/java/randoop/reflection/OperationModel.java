@@ -139,7 +139,7 @@ public class OperationModel {
    * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
-   * @param operationCollection the collection of operation specifications
+   * @param operationSpecifications the collection of operation specifications
    * @return the {@link OperationModel} constructed with the given arguments
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
@@ -153,7 +153,7 @@ public class OperationModel {
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
-      SpecificationCollection operationCollection)
+      SpecificationCollection operationSpecifications)
       throws SignatureParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
@@ -172,7 +172,7 @@ public class OperationModel {
     OmitMethodsPredicate omitPredicate = new OmitMethodsPredicate(omitMethods);
 
     model.addOperationsFromClasses(
-        model.classTypes, visibility, reflectionPredicate, omitPredicate, operationCollection);
+        model.classTypes, visibility, reflectionPredicate, omitPredicate, operationSpecifications);
     model.addOperationsUsingSignatures(
         methodSignatures, visibility, reflectionPredicate, omitPredicate);
     model.addObjectConstructor();
