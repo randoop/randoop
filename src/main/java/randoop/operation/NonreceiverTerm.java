@@ -36,7 +36,7 @@ public final class NonreceiverTerm extends CallableOperation {
   private final Object value;
 
   /**
-   * Number of occurrences of this non receiver term as determined by {@link
+   * Number of occurrences of this non-receiver term as determined by {@link
    * randoop.util.ClassFileConstants}. This is currently only used for Constant Mining to count the
    * number of usages of a given literal.
    */

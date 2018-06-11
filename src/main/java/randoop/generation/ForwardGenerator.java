@@ -105,7 +105,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param numClasses number of classes under test, expected to be non-negative if Constant Mining
    *     is enabled
    * @param literalTermFrequencies map from literal to its frequency observed in all classes under
-   *     test, expected to be non null if Constant Mining is enabled
+   *     test, expected to be non-null if Constant Mining is enabled
    */
   public ForwardGenerator(
       List<TypedOperation> operations,
