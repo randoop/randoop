@@ -536,7 +536,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     SMALL_TESTS,
     /** Select sequences uniformly at random. */
     UNIFORM,
-    /** Bias method selection to favor sequences with lower execution time and size */
+    /** Bias method selection to favor sequences with lower execution time and size. */
     ORIENTEERING
   }
 
