@@ -105,7 +105,9 @@ public class ForwardGenerator extends AbstractGenerator {
         inputSequenceSelector = new UniformRandomSequenceSelection();
         break;
       default:
-        throw new Error("This can't happen");
+        throw new Error(
+            "Case statement does not handle all InputSelectionModes: "
+                + GenInputsAbstract.input_selection);
     }
   }
 
