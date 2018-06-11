@@ -323,6 +323,7 @@ public abstract class AbstractGenerator {
       num_sequences_generated++;
 
       if (outputTest.test(eSeq)) {
+        // Classify the sequence
         if (eSeq.hasInvalidBehavior()) {
           invalidSequenceCount++;
         } else if (eSeq.hasFailure()) {

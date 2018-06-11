@@ -25,14 +25,17 @@ import randoop.types.TypeTuple;
  */
 public class VisibilityBridgeTest {
 
-  // can't compare method of superclass directly to method of subclass
-  // so need to convert to abstraction to allow list search
-  private static class FormalMethod {
+  /**
+   * Represents a method signature: its name, parameter types, and return type. This is needed
+   * because we can't use equals() to compare a method of superclass directly to a method of
+   * subclass. This method has an equals() method, permitting list search.
+   */
+  private static class MethodSignature {
     private Type returnType;
     private String name;
     private TypeTuple parameterTypes;
 
-    FormalMethod(Method m, ClassOrInterfaceType declaringType) {
+    MethodSignature(Method m, ClassOrInterfaceType declaringType) {
       this.returnType = Type.forClass(m.getReturnType());
       this.name = m.getName();
       List<Type> paramTypes = new ArrayList<>();
@@ -45,7 +48,7 @@ public class VisibilityBridgeTest {
       this.parameterTypes = new TypeTuple(paramTypes);
     }
 
-    FormalMethod(TypedOperation op) {
+    MethodSignature(TypedOperation op) {
       this.returnType = op.getOutputType();
       this.parameterTypes = op.getInputTypes();
       this.name = op.getOperation().getName();
@@ -53,10 +56,10 @@ public class VisibilityBridgeTest {
 
     @Override
     public boolean equals(Object obj) {
-      if (!(obj instanceof FormalMethod)) {
+      if (!(obj instanceof MethodSignature)) {
         return false;
       }
-      FormalMethod m = (FormalMethod) obj;
+      MethodSignature m = (MethodSignature) obj;
       return this.returnType.equals(m.returnType)
           && this.name.equals(m.name)
           && this.parameterTypes.equals(m.parameterTypes);
@@ -87,29 +90,29 @@ public class VisibilityBridgeTest {
     ClassOrInterfaceType declaringType = new NonParameterizedType(sub);
 
     // should only inherit public non-synthetic methods of package private superclass
-    List<FormalMethod> include = new ArrayList<>();
+    List<MethodSignature> superclassMethods = new ArrayList<>();
     Class<?> sup = Class.forName("randoop.reflection.visibilitytest.PackagePrivateBase");
     for (Method m : sup.getDeclaredMethods()) {
       if (Modifier.isPublic(m.getModifiers()) && !m.isBridge() && !m.isSynthetic()) {
-        include.add(new FormalMethod(m, declaringType));
+        superclassMethods.add(new MethodSignature(m, declaringType));
       }
     }
 
-    Set<TypedOperation> actualOps = getConcreteOperations(sub);
+    Set<TypedOperation> subclassMethodsOps = getConcreteOperations(sub);
     assertEquals(
         "expect operations count to be inherited methods plus constructor",
-        include.size() + 2,
-        actualOps.size());
+        superclassMethods.size() + 2,
+        subclassMethodsOps.size());
 
-    List<FormalMethod> actual = new ArrayList<>();
-    for (TypedOperation op : actualOps) {
+    List<MethodSignature> subclassMethods = new ArrayList<>();
+    for (TypedOperation op : subclassMethodsOps) {
       if (op.isMethodCall()) {
-        actual.add(new FormalMethod(op));
+        subclassMethods.add(new MethodSignature(op));
       }
     }
 
-    for (FormalMethod m : include) {
-      assertTrue("method " + m.getName() + " should occur", actual.contains(m));
+    for (MethodSignature m : superclassMethods) {
+      assertTrue("method " + m.getName() + " should occur", subclassMethods.contains(m));
     }
   }
 
@@ -122,13 +125,11 @@ public class VisibilityBridgeTest {
       ReflectionPredicate reflectionPredicate,
       VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor =
         new OperationExtractor(classType, reflectionPredicate, visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(extractor);
     manager.apply(c);
-    operations.addAll(extractor.getOperations());
-    return operations;
+    return new LinkedHashSet<>(extractor.getOperations());
   }
 }

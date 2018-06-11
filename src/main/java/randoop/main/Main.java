@@ -6,6 +6,7 @@ import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.condition.RandoopSpecificationError;
 import randoop.generation.AbstractGenerator;
+import randoop.sequence.Sequence;
 
 /**
  * Main entry point for Randoop. Asks the command handlers who can handle the command given by the
@@ -111,10 +112,15 @@ public class Main {
       if (!success) {
         System.out.println();
         System.out.println("Randoop failed.");
-        System.out.println("Last sequence under execution: ");
-        String[] lines = AbstractGenerator.currSeq.toString().split(Globals.lineSep);
-        for (String line : lines) {
-          System.out.println(line);
+        Sequence lastSequence = AbstractGenerator.currSeq;
+        if (lastSequence == null) {
+          System.out.println("No sequences generated.");
+        } else {
+          System.out.println("Last sequence under execution: ");
+          String[] lines = lastSequence.toString().split(Globals.lineSep);
+          for (String line : lines) {
+            System.out.println(line);
+          }
         }
         System.exit(1);
       }

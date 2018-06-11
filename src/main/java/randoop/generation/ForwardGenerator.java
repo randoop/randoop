@@ -122,7 +122,9 @@ public class ForwardGenerator extends AbstractGenerator {
         inputSequenceSelector = new UniformRandomSequenceSelection();
         break;
       default:
-        throw new Error("This can't happen");
+        throw new Error(
+            "Case statement does not handle all InputSelectionModes: "
+                + GenInputsAbstract.input_selection);
     }
   }
 
@@ -307,10 +309,16 @@ public class ForwardGenerator extends AbstractGenerator {
 
   // TODO: document that this can change operations (remove elements from it)
   /**
-   * Tries to create and execute a new sequence. If the sequence is new (not already in the
-   * specified component manager), then it is executed and added to the manager's sequences. If the
-   * sequence created is already in the manager's sequences, this method has no effect, and returns
-   * null.
+   * Tries to create a new sequence. If the sequence is new (not already in the specified component
+   * manager), then it is added to the manager's sequences.
+   *
+   * <p>This method returns null if:
+   *
+   * <ul>
+   *   <li>it selects an operation but cannot generate inputs for the operation
+   *   <li>it creates too large a method
+   *   <li>it creates a duplicate sequence
+   * </ul>
    *
    * @return a new sequence, or null
    */
@@ -349,9 +357,9 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // add flags here
-    InputsAndSuccessFlag sequences;
+    InputsAndSuccessFlag inputs;
     try {
-      sequences = selectInputs(operation);
+      inputs = selectInputs(operation);
     } catch (Throwable e) {
       if (GenInputsAbstract.fail_on_generation_error) {
         throw new RandoopGenerationError(operation, e);
@@ -361,25 +369,22 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
         e.printStackTrace();
-        sequences = null;
+        return null;
       }
     }
-    if (sequences == null) {
-      return null;
-    }
 
-    if (!sequences.success) {
+    if (!inputs.success) {
       operationHistory.add(operation, OperationOutcome.NO_INPUTS_FOUND);
       Log.logPrintf("Failed to find inputs for operation: %s%n", operation);
       return null;
     }
 
-    Sequence concatSeq = Sequence.concatenate(sequences.sequences);
+    Sequence concatSeq = Sequence.concatenate(inputs.sequences);
 
     // Figure out input variables.
     List<Variable> inputVars = new ArrayList<>();
-    for (Integer oneinput : sequences.indices) {
-      Variable v = concatSeq.getVariable(oneinput);
+    for (Integer inputIndex : inputs.indices) {
+      Variable v = concatSeq.getVariable(inputIndex);
       inputVars.add(v);
     }
 
@@ -413,6 +418,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     randoopConsistencyTests(newSequence);
 
+    // Discard if sequence is a duplicate.
     if (this.allSequences.contains(newSequence)) {
       operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
       Log.logPrintf("Sequence discarded because the same sequence was previously created.%n");
@@ -421,8 +427,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     this.allSequences.add(newSequence);
 
-    for (Sequence s : sequences.sequences) {
-      s.lastTimeUsed = java.lang.System.currentTimeMillis();
+    for (Sequence inputSequence : inputs.sequences) {
+      inputSequence.lastTimeUsed = java.lang.System.currentTimeMillis();
     }
 
     randoopConsistencyTest2(newSequence);
@@ -431,8 +437,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Keep track of any input sequences that are used in this sequence.
 
-    // A test that consists of one of these sequences are probably redundant.
-    subsumed_sequences.addAll(sequences.sequences);
+    // A test that is a subsequence of the new one is redundant.
+    subsumed_sequences.addAll(inputs.sequences);
 
     return new ExecutableSequence(newSequence);
   }

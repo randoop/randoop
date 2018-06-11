@@ -1,11 +1,10 @@
 package randoop.test.predicate;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_ERROR;
-import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_EXPECTED;
-import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_INVALID;
+import static randoop.main.GenInputsAbstract.BehaviorType.ERROR;
+import static randoop.main.GenInputsAbstract.BehaviorType.EXPECTED;
+import static randoop.main.GenInputsAbstract.BehaviorType.INVALID;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -15,8 +14,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
-import randoop.main.GenInputsAbstract;
+import randoop.main.ExceptionBehaviorClassifier;
 import randoop.main.GenInputsAbstract.BehaviorType;
+import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
@@ -31,8 +31,8 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/** Tests to check whether exception predicates are acting as expected. */
-public class ExceptionPredicateTest {
+/** Tests to check whether exception classifiers are acting as expected. */
+public class ExceptionClassifierTest {
 
   private static OptionsCache optionsCache;
 
@@ -60,11 +60,6 @@ public class ExceptionPredicateTest {
   }
 
   /*
-   * Predicates for behavior types
-   */
-  private ExceptionPredicate alwaysFalse = new AlwaysFalseExceptionPredicate();
-
-  /*
    * Faked occurrence of NullPointerException should not satisfy the
    * NPEContractPredicate, which is looking for an NPE when null is input.
    */
@@ -73,10 +68,7 @@ public class ExceptionPredicateTest {
     ExceptionalExecution exec = new ExceptionalExecution(new NullPointerException(), 0);
     ExecutableSequence s = new ExecutableSequence(new Sequence());
 
-    assertTrue("non-null input NPE is error", IS_ERROR.test(exec, s));
-    assertFalse("non-null input NPE is not invalid", IS_INVALID.test(exec, s));
-    assertFalse("non-null input NPE is expected", IS_EXPECTED.test(exec, s));
-    assertFalse("no exception satisfies this predicate", alwaysFalse.test(exec, s));
+    assertEquals(ERROR, ExceptionBehaviorClassifier.classify(exec, s));
   }
 
   @Test
@@ -105,10 +97,7 @@ public class ExceptionPredicateTest {
     ExecutableSequence s = new ExecutableSequence(seq);
     s.execute(new DummyVisitor(), new DummyCheckGenerator());
 
-    assertFalse("null input NPE is not error", IS_ERROR.test(exec, s));
-    assertFalse("null input NPE is not invalid", IS_INVALID.test(exec, s));
-    assertTrue("null input NPE is expected", IS_EXPECTED.test(exec, s));
-    assertFalse("no exception satisfies this predicate", alwaysFalse.test(exec, s));
+    assertEquals(EXPECTED, ExceptionBehaviorClassifier.classify(exec, s));
   }
 
   @Test
@@ -116,10 +105,7 @@ public class ExceptionPredicateTest {
     ExceptionalExecution exec = new ExceptionalExecution(new OutOfMemoryError(), 0);
     ExecutableSequence s = new ExecutableSequence(new Sequence());
 
-    assertFalse("OOM is not error", IS_ERROR.test(exec, s));
-    assertTrue("OOM is invalid", IS_INVALID.test(exec, s));
-    assertFalse("OOM is not expected", IS_EXPECTED.test(exec, s));
-    assertFalse("no exception satisfies this predicate", alwaysFalse.test(exec, s));
+    assertEquals(INVALID, ExceptionBehaviorClassifier.classify(exec, s));
   }
 
   @Test
@@ -128,14 +114,8 @@ public class ExceptionPredicateTest {
     ExceptionalExecution overflowExec = new ExceptionalExecution(new StackOverflowError(), 0);
     ExecutableSequence s = new ExecutableSequence(new Sequence());
 
-    assertTrue("AE is error", IS_ERROR.test(assertionExec, s));
-    assertFalse("AE is not invalid", IS_INVALID.test(assertionExec, s));
-    assertFalse("AE is not expected", IS_EXPECTED.test(assertionExec, s));
-    assertFalse("no exception satisfies this predicate", alwaysFalse.test(assertionExec, s));
+    assertEquals(ERROR, ExceptionBehaviorClassifier.classify(assertionExec, s));
 
-    assertFalse("SOE is not error", IS_ERROR.test(overflowExec, s));
-    assertTrue("SOE is invalid", IS_INVALID.test(overflowExec, s));
-    assertFalse("SOE is not expected", IS_EXPECTED.test(overflowExec, s));
-    assertFalse("no exception satisfies this predicate", alwaysFalse.test(overflowExec, s));
+    assertEquals(INVALID, ExceptionBehaviorClassifier.classify(overflowExec, s));
   }
 }
