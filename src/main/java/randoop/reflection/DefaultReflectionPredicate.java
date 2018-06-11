@@ -185,7 +185,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   /**
    * Returns true if the class defines the given method, not as a bridge method. Returns false if
    * the class does not define the given method, or if the class defines the method as a bridge
-   * method. Ifnores inheritance of methods.
+   * method. Ignores inheritance of methods.
    */
   private boolean definesNonBridgeMethod(Class<?> c, Method goalMethod) {
     try {
