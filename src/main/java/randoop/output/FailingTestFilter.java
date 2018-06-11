@@ -401,10 +401,14 @@ public class FailingTestFilter implements CodeWriter {
         case "char":
         case "short":
         case "int":
-        case "long":
           newInitializer = "0";
           break;
+        case "long":
+          newInitializer = "0L";
+          break;
         case "float":
+          newInitializer = "0.0f";
+          break;
         case "double":
           newInitializer = "0.0";
           break;

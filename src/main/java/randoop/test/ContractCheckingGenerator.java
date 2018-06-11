@@ -1,14 +1,16 @@
 package randoop.test;
 
+import static randoop.main.GenInputsAbstract.BehaviorType.ERROR;
+
 import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.contract.ObjectContract;
+import randoop.main.ExceptionBehaviorClassifier;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.ReferenceValue;
-import randoop.test.predicate.ExceptionPredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
@@ -32,7 +34,6 @@ import randoop.util.TupleSet;
 public final class ContractCheckingGenerator extends TestCheckGenerator {
 
   private ContractSet contracts;
-  private ExceptionPredicate exceptionPredicate;
 
   /**
    * Create a new visitor that checks the given contracts after the last statement in a sequence is
@@ -40,11 +41,9 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
    *
    * @param contracts expected to be unary contracts, i.e. for each contract {@code c}, {@code
    *     c.getArity() == 1}.
-   * @param exceptionPredicate the predicate to test for exceptions that are errors
    */
-  public ContractCheckingGenerator(ContractSet contracts, ExceptionPredicate exceptionPredicate) {
+  public ContractCheckingGenerator(ContractSet contracts) {
     this.contracts = contracts;
-    this.exceptionPredicate = exceptionPredicate;
   }
 
   // TODO: what is a "failure exception"?
@@ -68,7 +67,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
       // If there is an exception, check whether it is considered a failure
       ExceptionalExecution exec = (ExceptionalExecution) finalResult;
 
-      if (exceptionPredicate.test(exec, eseq)) {
+      if (ExceptionBehaviorClassifier.classify(exec, eseq) == ERROR) {
         String exceptionName = exec.getException().getClass().getName();
         NoExceptionCheck obs = new NoExceptionCheck(finalIndex, exceptionName);
         return new ErrorRevealingChecks(obs);

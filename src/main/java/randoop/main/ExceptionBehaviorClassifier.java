@@ -1,6 +1,7 @@
 package randoop.main;
 
 import java.util.ConcurrentModificationException;
+import randoop.ExceptionalExecution;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
 import randoop.util.TimeoutExceededException;
@@ -13,6 +14,17 @@ public class ExceptionBehaviorClassifier {
 
   private ExceptionBehaviorClassifier() {
     throw new Error("Do not instantiate");
+  }
+
+  /**
+   * Delegates to {@link #classify{Throwable, ExecutableSequence}.
+   *
+   * @param exec the ExceptionalExecution to classify
+   * @param eseq the {@code ExecutableSequence} that threw exception
+   * @return {@code BehaviorType} determined by command-line arguments
+   */
+  public static BehaviorType classify(ExceptionalExecution exec, ExecutableSequence eseq) {
+    return classify(exec.getException(), eseq);
   }
 
   /**
@@ -56,7 +68,6 @@ public class ExceptionBehaviorClassifier {
       }
 
       if (t instanceof TimeoutExceededException) {
-        // TODO: should there be a command-line option for this?
         return BehaviorType.INVALID;
       }
 
