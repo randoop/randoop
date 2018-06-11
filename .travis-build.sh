@@ -49,9 +49,6 @@ fi
 
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
   ./gradlew javadoc
-  echo "./gradlew javadoc status: $?"
-  ./gradlew clean javadoc
-  echo "./gradlew clean javadoc status: $?"
   ./gradlew manual
 fi
 
