@@ -680,7 +680,21 @@ javadoc {
   options.with {
     linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
   }
-  failOnError = true
+  failOnError = true  // does not fail on warnings
+}
+
+// Make Javadoc fail on warnings
+// From https://stackoverflow.com/a/49544352/173852
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        // The '-quiet' as second argument is actually a hack,
+        // since the one paramater addStringOption doesn't seem to
+        // work, we extra add '-quiet', which is added anyway by
+        // gradle. See https://github.com/gradle/gradle/issues/2354
+        // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
+        // for information about the -Xwerror option.
+        options.addStringOption('Xwerror', '-quiet')
+    }
 }
 
 // needed for javadoc.doLast
