@@ -418,7 +418,7 @@ public class ForwardGenerator extends AbstractGenerator {
     subsumed_sequences.addAll(inputs.sequences);
 
     return new ExecutableSequenceAndInputSequences(
-        new ExecutableSequence(newSequence), sequences.sequences);
+        new ExecutableSequence(newSequence), inputs.sequences);
   }
 
   /**
