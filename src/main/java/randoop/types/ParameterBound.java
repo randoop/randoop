@@ -60,7 +60,7 @@ public abstract class ParameterBound {
   static ParameterBound forTypes(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type[] bounds) {
     if (bounds == null) {
-      throw new IllegalArgumentException("bounds must be non null");
+      throw new IllegalArgumentException("bounds must be non-null");
     }
 
     if (bounds.length == 1) {
