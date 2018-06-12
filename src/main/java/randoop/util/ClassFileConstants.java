@@ -374,23 +374,75 @@ public class ClassFileConstants {
                 break;
               }
 
-              // Push small constants (-1..5) on the stack. These literals are
-              // too common to bother mentioning
+              // Push small constants (-1..5) on the stack.
             case Const.DCONST_0:
+              {
+                result.doubles.add(Double.valueOf(0));
+                break;
+              }
             case Const.DCONST_1:
+              {
+                result.doubles.add(Double.valueOf(1));
+                break;
+              }
             case Const.FCONST_0:
+              {
+                result.floats.add(Float.valueOf(0));
+                break;
+              }
             case Const.FCONST_1:
+              {
+                result.floats.add(Float.valueOf(1));
+                break;
+              }
             case Const.FCONST_2:
+              {
+                result.floats.add(Float.valueOf(2));
+                break;
+              }
             case Const.ICONST_0:
+              {
+                result.ints.add(Integer.valueOf(0));
+                break;
+              }
             case Const.ICONST_1:
+              {
+                result.ints.add(Integer.valueOf(1));
+                break;
+              }
             case Const.ICONST_2:
+              {
+                result.ints.add(Integer.valueOf(2));
+                break;
+              }
             case Const.ICONST_3:
+              {
+                result.ints.add(Integer.valueOf(3));
+                break;
+              }
             case Const.ICONST_4:
+              {
+                result.ints.add(Integer.valueOf(4));
+                break;
+              }
             case Const.ICONST_5:
+              {
+                result.ints.add(Integer.valueOf(5));
+                break;
+              }
             case Const.ICONST_M1:
+              {
+                result.ints.add(Integer.valueOf(-1));
+                break;
+              }
             case Const.LCONST_0:
+              {
+                result.longs.add(Long.valueOf(0));
+                break;
+              }
             case Const.LCONST_1:
               {
+                result.longs.add(Long.valueOf(1));
                 break;
               }
 
