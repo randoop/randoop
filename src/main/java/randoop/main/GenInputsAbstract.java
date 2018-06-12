@@ -815,9 +815,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
 
     if (input_selection == InputSelectionMode.CONSTANT_MINING
-        && literals_level != ClassLiteralsMode.ALL) {
+        && (literals_level != ClassLiteralsMode.ALL || !literals_file.contains("CLASSES"))) {
       // If constant mining is enabled, the literals level should be all to allow the use of a given literal
-      // at both the class and global (among all classes) level.
+      // at both the class and global (among all classes) level and we need literals file to contain
+      // CLASSES to enable literal extraction.
       throw new RandoopUsageError(
           "Invalid parameter combination: --input-selection=CONSTANT_MINING without --literals-level=ALL");
     }

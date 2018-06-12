@@ -410,72 +410,100 @@ public class ClassFileConstants {
               // Push small constants (-1..5) on the stack.
             case Const.DCONST_0:
               {
-                result.doubles.add(Double.valueOf(0));
+                Double value = Double.valueOf(0);
+                result.doubles.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.DCONST_1:
               {
-                result.doubles.add(Double.valueOf(1));
+                Double value = Double.valueOf(1);
+                result.doubles.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.FCONST_0:
               {
-                result.floats.add(Float.valueOf(0));
+                Float value = Float.valueOf(0);
+                result.floats.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.FCONST_1:
               {
-                result.floats.add(Float.valueOf(1));
+                Float value = Float.valueOf(1);
+                result.floats.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.FCONST_2:
               {
-                result.floats.add(Float.valueOf(2));
+                Float value = Float.valueOf(2);
+                result.floats.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_0:
               {
-                result.ints.add(Integer.valueOf(0));
+                Integer value = Integer.valueOf(0);
+                result.ints.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_1:
               {
-                result.ints.add(Integer.valueOf(1));
+                Integer value = Integer.valueOf(1);
+                result.ints.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_2:
               {
-                result.ints.add(Integer.valueOf(2));
+                Integer value = Integer.valueOf(2);
+                result.ints.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_3:
               {
-                result.ints.add(Integer.valueOf(3));
+                Integer value = Integer.valueOf(3);
+                result.ints.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_4:
               {
-                result.ints.add(Integer.valueOf(4));
+                Integer value = Integer.valueOf(4);
+                result.ints.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_5:
               {
-                result.ints.add(Integer.valueOf(5));
+                Integer value = Integer.valueOf(5);
+                result.ints.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_M1:
               {
-                result.ints.add(Integer.valueOf(-1));
+                Integer value = Integer.valueOf(-1);
+                result.ints.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.LCONST_0:
               {
-                result.longs.add(Long.valueOf(0));
+                Long value = Long.valueOf(0);
+                result.longs.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
             case Const.LCONST_1:
               {
-                result.longs.add(Long.valueOf(1));
+                Long value = Long.valueOf(1);
+                result.longs.add(value);
+                incrementInMap(result.constantToFrequency, value);
                 break;
               }
 
@@ -741,7 +769,15 @@ public class ClassFileConstants {
    */
   private static int getFrequencyOfTerm(Object term, ConstantSet constantSet) {
     Integer frequency = constantSet.constantToFrequency.get(term);
-    assert frequency != null;
+
+    // The frequency of a term will be null if the term appears in the constant pool of the class
+    // but is never referenced in the byte code. For example, if we define a static variable,
+    // {@code public static final int mInt = 31;} that is never used, it's frequency won't be
+    // defined in the map. We set the frequency to a value of 1 here to account for its appearance
+    // in the constant pool.
+    if (frequency == null) {
+      frequency = 1;
+    }
     return frequency;
   }
 
