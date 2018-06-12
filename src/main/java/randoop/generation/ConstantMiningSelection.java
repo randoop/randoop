@@ -27,9 +27,7 @@ public class ConstantMiningSelection implements InputSequenceSelector {
    *     frequency of a literal
    * @param numClasses number of classes under test
    * @param literalTermFrequencies a map from a literal to the number of times it appears in any
-   *     class under test. If literalTermFrequencies is null, we simply don't compute any weights to
-   *     put in literalWeightMap and every sequence will end up using its default weight computed
-   *     with {@code sequence.getWeight();}.
+   *     class under test
    */
   public ConstantMiningSelection(
       ComponentManager componentManager,

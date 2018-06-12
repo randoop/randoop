@@ -180,33 +180,16 @@ public class ClassFileConstants {
           || c instanceof ConstantUtf8) {
         continue;
       }
-
-      // Here we are examining the constant pool and we increment in the constantToFrequency map
-      // because these are static constants defined in the class.
-      // For example, if our class includes static final int myInt = 31;
-      // but the literal 31 doesn't appear anywhere else in the class, we need to note that
-      // this literal appeared once. This is the place to do so.
-
       if (c instanceof ConstantString) {
-        String val = (String) ((ConstantString) c).getConstantValue(constant_pool);
-        result.strings.add(val);
-        incrementInMap(result.constantToFrequency, val);
+        result.strings.add((String) ((ConstantString) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantDouble) {
-        Double val = (Double) ((ConstantDouble) c).getConstantValue(constant_pool);
-        result.doubles.add(val);
-        incrementInMap(result.constantToFrequency, val);
+        result.doubles.add((Double) ((ConstantDouble) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantFloat) {
-        Float val = (Float) ((ConstantFloat) c).getConstantValue(constant_pool);
-        result.floats.add(val);
-        incrementInMap(result.constantToFrequency, val);
+        result.floats.add((Float) ((ConstantFloat) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantInteger) {
-        Integer val = (Integer) ((ConstantInteger) c).getConstantValue(constant_pool);
-        result.ints.add(val);
-        incrementInMap(result.constantToFrequency, val);
+        result.ints.add((Integer) ((ConstantInteger) c).getConstantValue(constant_pool));
       } else if (c instanceof ConstantLong) {
-        Long val = (Long) ((ConstantLong) c).getConstantValue(constant_pool);
-        result.longs.add(val);
-        incrementInMap(result.constantToFrequency, val);
+        result.longs.add((Long) ((ConstantLong) c).getConstantValue(constant_pool));
       } else {
         throw new RuntimeException("Unrecognized constant of type " + c.getClass() + ": " + c);
       }

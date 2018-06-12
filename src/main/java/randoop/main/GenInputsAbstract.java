@@ -488,8 +488,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * @see ClassLiteralsMode
    */
-  @Option(
-      "How to use literal values specified via --literals-file: ALL, PACKAGE, CLASS, CLASS_OR_ALL, or NONE")
+  @Option("How to use literal values specified via --literals-file: ALL, PACKAGE, CLASS, or NONE")
   public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS;
 
   /**
@@ -504,11 +503,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
     CLASS,
     /** A literal is used as input to methods of any classes in the same package. */
     PACKAGE,
-    /**
-     * a literal for a given class is used as input only to methods of that class with probability
-     * <code>--p-const</code>, otherwise each literal is used as input to any method under test.
-     */
-    CLASS_OR_ALL,
     /** Each literal is used as input to any method under test. */
     ALL
   }
@@ -818,6 +812,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "You must specify some classes or methods to test."
               + Globals.lineSep
               + "Use the --classlist, --testclass, or --methodlist options.");
+    }
+
+    if (input_selection == InputSelectionMode.CONSTANT_MINING
+        && literals_level != ClassLiteralsMode.ALL) {
+      // If constant mining is enabled, the literals level should be all to allow the use of a given literal
+      // at both the class and global (among all classes) level.
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --input-selection=CONSTANT_MINING without --literals-level=ALL");
     }
   }
 
