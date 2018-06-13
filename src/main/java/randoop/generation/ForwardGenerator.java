@@ -307,7 +307,6 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
-  // TODO: document that this can change operations (remove elements from it)
   /**
    * Tries to create a new sequence. If the sequence is new (not already in the specified component
    * manager), then it is added to the manager's sequences.
@@ -319,6 +318,14 @@ public class ForwardGenerator extends AbstractGenerator {
    *   <li>it creates too large a method
    *   <li>it creates a duplicate sequence
    * </ul>
+   *
+   * This method modifies the list of operations that represent the set of methods under tests.
+   * Specifically, if the selected operation used for creating a new and unique sequence is a
+   * parameterless operation (a static constant method or no-argument constructor) it is removed
+   * from the list of operations. Such a method will return the same thing every time it is invoked
+   * (unless it's nondeterministic, but Randoop should not be run on nondeterministic methods). Once
+   * invoked, its result is in the pool and there is no need to call the operation again and so we
+   * will remove it from the list of operations.
    *
    * @return a new sequence, or null
    */
@@ -398,10 +405,8 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // A parameterless operation (a static constant method or no-argument constructor) returns the
-    // same thing every time it is invoked (unless it's nondeterministic, but Randoop should not be
-    // run on nondeterministic methods).
-    // Since we have just invoked it, its result will be in the pool.  There is no need to call this
-    // operation again, so remove it from the list of operations.
+    // same thing every time it is invoked. Since we have just invoked it, its result will be in the pool.
+    //  There is no need to call this operation again, so remove it from the list of operations.
     if (operation.getInputTypes().isEmpty()) {
       operationHistory.add(operation, OperationOutcome.REMOVED);
       operations.remove(operation);
