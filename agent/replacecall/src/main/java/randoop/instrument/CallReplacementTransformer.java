@@ -134,11 +134,14 @@ public class CallReplacementTransformer extends InstructionListUtils
             "transform: EXIT class %s not transformed (nothing to replace)%n", className);
         return null;
       }
+    } catch (ThreadDeath e) {
+      // Probably the thread ran out of time while transforming a class
+      throw e;
     } catch (IllegalClassFormatException e) {
       debug_transform.log(
           "transform: EXIT transform of %s resulted in exception %s%n", className, e);
       System.out.format(
-          "Unexpected exception %s (%s) in CallReplacementTransformer.transform(%s)%n",
+          "Unexpected exception %s (cause=%s) in CallReplacementTransformer.transform(%s)%n",
           e, e.getCause(), className);
       throw e;
     } catch (Throwable e) {

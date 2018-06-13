@@ -1,6 +1,5 @@
 package randoop.reflection;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
@@ -98,21 +97,20 @@ public class VisibilityBridgeTest {
       }
     }
 
-    Set<TypedOperation> subclassMethodsOps = getConcreteOperations(sub);
-    assertEquals(
-        "expect operations count to be inherited methods plus constructor",
-        superclassMethods.size() + 2,
-        subclassMethodsOps.size());
-
     List<MethodSignature> subclassMethods = new ArrayList<>();
-    for (TypedOperation op : subclassMethodsOps) {
+    for (TypedOperation op : getConcreteOperations(sub)) {
       if (op.isMethodCall()) {
         subclassMethods.add(new MethodSignature(op));
       }
     }
 
     for (MethodSignature m : superclassMethods) {
-      assertTrue("method " + m.getName() + " should occur", subclassMethods.contains(m));
+      assertTrue(
+          "superclass method "
+              + m.getName()
+              + " should occur in subclassMethods: "
+              + subclassMethods,
+          subclassMethods.contains(m));
     }
   }
 
