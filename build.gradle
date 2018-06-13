@@ -771,11 +771,25 @@ task updateUserOptions(dependsOn: 'assemble') {
   }
 }
 
+/* Requires that the html5validator program is installed */
+task html5validatorExists {
+    doLast {
+        def result = exec {
+            def command = "command -v html5validator"
+            ignoreExitValue = true
+            executable "bash" args "-l", "-c", command
+        }
+        if (result.getExitValue() != 0) {
+            ant.fail('html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .')
+        }
+    }
+}
+
 /*
  * Configuration of manual task to generate/update and move documentation into
  * build/docs directory.
  */
-task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC']) {
+task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC', 'html5validatorExists']) {
   group 'Documentation'
   description "Adds options and TOC to documentation in src/docs"
   doLast {
@@ -796,7 +810,7 @@ build.dependsOn manual
  * Applies HTML5 validator to API javadoc.
  * Note: prior to Java 9, javadoc does not comply with HTML5.
  */
-task validateAPI(type: Exec, dependsOn: 'javadoc') {
+task validateAPI(type: Exec, dependsOn: ['javadoc', 'html5validatorExists']) {
   group 'Documentation'
   description "Run html5validator to find HTML errors in API documentation"
   if (JavaVersion.current().isJava9Compatible()) {
@@ -859,7 +873,7 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) 
 /*
  * Applies HTML5 validator to project site HTML, including the manual
  */
-task validateSite {
+task validateSite(dependsOn: 'html5validatorExists') {
   description "Run html5validator to find HTML errors in site files (excludes manual and api)"
   if (JavaVersion.current().isJava8Compatible()) {
     exec {
