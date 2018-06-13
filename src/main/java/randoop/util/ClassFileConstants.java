@@ -164,9 +164,7 @@ public class ClassFileConstants {
 
     // Get all of the constants from the Constant Pool.
     ConstantPool constant_pool = jc.getConstantPool();
-    for (int i = 0; i < constant_pool.getConstantPool().length; i++) {
-      Constant c = constant_pool.getConstantPool()[i];
-
+    for (Constant c : constant_pool.getConstantPool()) {
       // System.out.printf ("*Constant = %s%n", c);
       if (c == null
           || c instanceof ConstantClass

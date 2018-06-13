@@ -544,7 +544,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
     SMALL_TESTS,
     /** Select sequences uniformly at random. */
     UNIFORM,
-    /** Sometimes, only use literal values that are extracted from classes under test. */
+    /**
+     * Sometimes, only use literal values that are extracted from classes under test. Otherwise
+     * favor literals that occur more frequently and in more classes under test.
+     */
     CONSTANT_MINING,
   }
 
@@ -816,11 +819,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     if (input_selection == InputSelectionMode.CONSTANT_MINING
         && (literals_level != ClassLiteralsMode.ALL || !literals_file.contains("CLASSES"))) {
-      // If constant mining is enabled, the literals level should be all to allow the use of a given literal
+      // If constant mining is enabled, the literals level should be ALL to allow the use of a given literal
       // at both the class and global (among all classes) level and we need literals file to contain
       // CLASSES to enable literal extraction.
       throw new RandoopUsageError(
-          "Invalid parameter combination: --input-selection=CONSTANT_MINING without --literals-level=ALL");
+          "Invalid parameter combination: --input-selection=CONSTANT_MINING without --literals-level=ALL"
+              + "or without --literals-file=CLASSES");
     }
   }
 
