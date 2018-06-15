@@ -31,6 +31,12 @@ import randoop.util.Randomness;
 import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
+/**
+ * Contains static methods that create Sequences.
+ *
+ * <p>The only two methods that are currently externally used are {@link #createArraySequence} and
+ * {@link #createCollection}.
+ */
 class HelperSequenceCreator {
 
   private HelperSequenceCreator() {

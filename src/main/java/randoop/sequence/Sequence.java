@@ -25,10 +25,7 @@ import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /**
- * Immutable.
- *
- * <p>A sequence of {@link Statement}s. Each element in the sequence represents a particular {@link
- * Statement}, like a method call {@code Foo f = m(i1...iN)} or a declaration {@code int x = 0}.
+ * An immutable sequence of {@link Statement}s.
  *
  * <p>This class represents only the structure of a well-formed sequence of statements, and does not
  * contain any information about the runtime behavior of the sequence. The class
