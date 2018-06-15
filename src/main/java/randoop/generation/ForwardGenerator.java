@@ -1,6 +1,7 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -96,6 +97,7 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
+    filterOutConstantOperations(operations);
 
     switch (GenInputsAbstract.input_selection) {
       case SMALL_TESTS:
@@ -367,14 +369,6 @@ public class ForwardGenerator extends AbstractGenerator {
       int times = Randomness.nextRandomInt(100);
       newSequence = repeat(newSequence, operation, times);
       Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
-    }
-
-    // If parameterless operation, subsequence inputs will all be redundant, so just remove it from
-    // list of operations. These can only be static constant methods or no-argument constructors.
-    // XXX OK if we know constant, otherwise may depend on static state
-    if (operation.getInputTypes().isEmpty()) {
-      operationHistory.add(operation, OperationOutcome.REMOVED);
-      operations.remove(operation);
     }
 
     // Discard if sequence is larger than size limit
@@ -839,5 +833,55 @@ public class ForwardGenerator extends AbstractGenerator {
         + ","
         + ("runtimePrimitivesSeen.size()=" + runtimePrimitivesSeen.size())
         + ")";
+  }
+
+  /**
+   * Remove constant operations, execute them once, and add their results to the pool.
+   *
+   * <p>This method modifies the list of operations that represent the set of methods under tests.
+   * Specifically, if the selected operation used for creating a new and unique sequence is a
+   * parameter-less operation (a static constant method or no-argument constructor) it is removed
+   * from the list of operations. Such a method will return the same thing every time it is invoked
+   * (unless it's non-deterministic, but Randoop should not be run on non-deterministic methods).
+   * Once invoked, its result is in the pool and there is no need to call the operation again and so
+   * we will remove it from the list of operations.
+   *
+   * @param operations list of methods under test
+   */
+  private void filterOutConstantOperations(List<TypedOperation> operations) {
+    for (Iterator<TypedOperation> iterator = operations.iterator(); iterator.hasNext(); ) {
+      TypedOperation operation = iterator.next();
+      if (operation.getInputTypes().isEmpty()) {
+        SimpleArrayList<Statement> statements = new SimpleArrayList<>();
+        statements.add(new Statement(operation));
+        ExecutableSequence eSeq = new ExecutableSequence(new Sequence(statements));
+
+        if (GenInputsAbstract.dontexecute) {
+          componentManager.addGeneratedSequence(eSeq.sequence);
+        } else {
+          long startTime = System.nanoTime();
+
+          setCurrentSequence(eSeq.sequence);
+
+          long gentime1 = System.nanoTime() - startTime;
+
+          eSeq.execute(executionVisitor, checkGenerator);
+
+          startTime = System.nanoTime();
+
+          determineActiveIndices(eSeq);
+
+          if (eSeq.sequence.hasActiveFlags()) {
+            componentManager.addGeneratedSequence(eSeq.sequence);
+          }
+
+          long gentime2 = System.nanoTime() - startTime;
+
+          eSeq.gentime = gentime1 + gentime2;
+        }
+
+        iterator.remove();
+      }
+    }
   }
 }

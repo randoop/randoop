@@ -11,9 +11,6 @@ public enum OperationOutcome {
   /** No sequence was generated because no inputs could be found. */
   NO_INPUTS_FOUND,
 
-  /** The operation was removed from the list. */
-  REMOVED,
-
   /** The generated sequence was discarded because it was subsumed. */
   SUBSUMED,
 
