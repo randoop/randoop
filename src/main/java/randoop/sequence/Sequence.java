@@ -33,8 +33,6 @@ import randoop.util.SimpleList;
  */
 public final class Sequence {
 
-  public double lastTimeUsed = java.lang.System.currentTimeMillis();
-
   /** The list of statements. */
   public final SimpleList<Statement> statements;
 
