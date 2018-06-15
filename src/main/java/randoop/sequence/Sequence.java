@@ -477,10 +477,7 @@ public final class Sequence {
     return netSize;
   }
 
-  /**
-   * Set lastStatementVariables and lastStatementTypes to their appropriate values. See
-   * documentation for these fields for more info.
-   */
+  /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
   private void computeLastStatementInfo() {
     this.lastStatementTypes = new ArrayList<>();
     this.lastStatementVariables = new ArrayList<>();
