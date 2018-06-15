@@ -151,11 +151,24 @@ public class ForwardGenerator extends AbstractGenerator {
 
     setCurrentSequence(eSeq.sequence);
 
-    long gentime1 = System.nanoTime() - startTime;
+    long selectionTime = System.nanoTime() - startTime;
 
+    executeSequenceAndAddToComponentManager(eSeq, selectionTime);
+
+    return eSeq;
+  }
+
+  /**
+   * Execute the sequence, determine active indices and store in the component manager.
+   *
+   * @param eSeq {@link ExecutableSequence} to execute
+   * @param selectionTime amount of time taken to select the sequence and its inputs
+   */
+  private void executeSequenceAndAddToComponentManager(
+      ExecutableSequence eSeq, long selectionTime) {
     eSeq.execute(executionVisitor, checkGenerator);
 
-    startTime = System.nanoTime(); // reset start time.
+    long startTime = System.nanoTime();
 
     determineActiveIndices(eSeq);
 
@@ -163,11 +176,9 @@ public class ForwardGenerator extends AbstractGenerator {
       componentManager.addGeneratedSequence(eSeq.sequence);
     }
 
-    long gentime2 = System.nanoTime() - startTime;
+    long postExecutionTime = System.nanoTime() - startTime;
 
-    eSeq.gentime = gentime1 + gentime2;
-
-    return eSeq;
+    eSeq.gentime = selectionTime + postExecutionTime;
   }
 
   @Override
@@ -308,26 +319,10 @@ public class ForwardGenerator extends AbstractGenerator {
     TypedOperation operation = Randomness.randomMember(this.operations);
     Log.logPrintf("Selected operation: %s%n", operation.toString());
 
-    if (operation.isGeneric() || operation.hasWildcardTypes()) {
-      try {
-        operation = instantiator.instantiate((TypedClassOperation) operation);
-      } catch (Throwable e) {
-        if (GenInputsAbstract.fail_on_generation_error) {
-          if (operation.isMethodCall() || operation.isConstructorCall()) {
-            String opName = operation.getOperation().getReflectionObject().toString();
-            throw new RandoopInstantiationError(opName, e);
-          }
-        } else {
-          operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-          Log.logPrintf("Instantiation error for operation %s%n", operation);
-          Log.logStackTrace(e);
-          System.out.println("Instantiation error for operation " + operation);
-          operation = null;
-        }
-      }
-      if (operation == null) { // failed to instantiate generic
-        return null;
-      }
+    operation = attemptToInstantiateIfGeneric(operation);
+    // If the operation is generic or includes wildcards but instantiation failed, null is returned.
+    if (operation == null) {
+      return null;
     }
 
     // add flags here
@@ -405,6 +400,38 @@ public class ForwardGenerator extends AbstractGenerator {
     subsumed_sequences.addAll(inputs.sequences);
 
     return new ExecutableSequence(newSequence);
+  }
+
+  /**
+   * Instantiate the operation if it is generic or has wildcard types.
+   *
+   * @param operation the operation to check and instantiate
+   * @return the instantiated operation if it was generic, otherwise the original operation is
+   *     returned. If the operation is generic but instantiation failed, null is returned.
+   */
+  private TypedOperation attemptToInstantiateIfGeneric(TypedOperation operation) {
+    if (operation.isGeneric() || operation.hasWildcardTypes()) {
+      try {
+        operation = instantiator.instantiate((TypedClassOperation) operation);
+      } catch (Throwable e) {
+        if (GenInputsAbstract.fail_on_generation_error) {
+          if (operation.isMethodCall() || operation.isConstructorCall()) {
+            String opName = operation.getOperation().getReflectionObject().toString();
+            throw new RandoopInstantiationError(opName, e);
+          }
+        } else {
+          operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
+          Log.logPrintf("Instantiation error for operation %s%n", operation);
+          Log.logStackTrace(e);
+          System.out.println("Instantiation error for operation " + operation);
+          operation = null;
+        }
+      }
+      if (operation == null) { // failed to instantiate generic
+        return null;
+      }
+    }
+    return operation;
   }
 
   /**
@@ -852,34 +879,19 @@ public class ForwardGenerator extends AbstractGenerator {
     for (Iterator<TypedOperation> iterator = operations.iterator(); iterator.hasNext(); ) {
       TypedOperation operation = iterator.next();
       if (operation.getInputTypes().isEmpty()) {
-        SimpleArrayList<Statement> statements = new SimpleArrayList<>();
-        statements.add(new Statement(operation));
-        ExecutableSequence eSeq = new ExecutableSequence(new Sequence(statements));
+        operation = attemptToInstantiateIfGeneric(operation);
+        if (operation != null) {
+          SimpleArrayList<Statement> statements = new SimpleArrayList<>();
+          statements.add(new Statement(operation));
+          ExecutableSequence eSeq = new ExecutableSequence(new Sequence(statements));
 
-        if (GenInputsAbstract.dontexecute) {
-          componentManager.addGeneratedSequence(eSeq.sequence);
-        } else {
-          long startTime = System.nanoTime();
-
-          setCurrentSequence(eSeq.sequence);
-
-          long gentime1 = System.nanoTime() - startTime;
-
-          eSeq.execute(executionVisitor, checkGenerator);
-
-          startTime = System.nanoTime();
-
-          determineActiveIndices(eSeq);
-
-          if (eSeq.sequence.hasActiveFlags()) {
+          if (GenInputsAbstract.dontexecute) {
             componentManager.addGeneratedSequence(eSeq.sequence);
+          } else {
+            setCurrentSequence(eSeq.sequence);
+            executeSequenceAndAddToComponentManager(eSeq, 0);
           }
-
-          long gentime2 = System.nanoTime() - startTime;
-
-          eSeq.gentime = gentime1 + gentime2;
         }
-
         iterator.remove();
       }
     }
