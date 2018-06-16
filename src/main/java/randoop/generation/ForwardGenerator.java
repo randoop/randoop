@@ -97,7 +97,6 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
-    filterOutConstantOperations(operations);
 
     switch (GenInputsAbstract.input_selection) {
       case SMALL_TESTS:
@@ -872,10 +871,9 @@ public class ForwardGenerator extends AbstractGenerator {
    * (unless it's non-deterministic, but Randoop should not be run on non-deterministic methods).
    * Once invoked, its result is in the pool and there is no need to call the operation again and so
    * we will remove it from the list of operations.
-   *
-   * @param operations list of methods under test
    */
-  private void filterOutConstantOperations(List<TypedOperation> operations) {
+  @Override
+  public void filterOutConstantOperations() {
     for (Iterator<TypedOperation> iterator = operations.iterator(); iterator.hasNext(); ) {
       TypedOperation operation = iterator.next();
       if (operation.getInputTypes().isEmpty()) {

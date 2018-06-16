@@ -384,6 +384,8 @@ public class GenTests extends GenInputsAbstract {
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap);
     explorer.setTestCheckGenerator(testGen);
 
+    explorer.filterOutConstantOperations();
+
     /*
      * Setup for test predicate
      */

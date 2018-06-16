@@ -450,4 +450,7 @@ public abstract class AbstractGenerator {
   public OperationHistoryLogInterface getOperationHistory() {
     return operationHistory;
   }
+
+  /** Remove parameter-less operations from the set of methods under test. */
+  public abstract void filterOutConstantOperations();
 }
