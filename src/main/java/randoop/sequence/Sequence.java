@@ -40,25 +40,21 @@ public final class Sequence {
    * The variables that are inputs or output for the last statement of this sequence: first the
    * return variable if any (ie, if the operation is non-void), then the input variables. These hold
    * the values "produced" by some statement of the sequence. Should be final but cannot because of
-   * serialization. This info is used by some generators.
+   * serialization.
    */
   private transient /*final*/ List<Variable> lastStatementVariables;
 
-  /**
-   * The types of the inputs and output for the last statement of this sequence: first the return
-   * type if any (ie, if the operation is non-void), then the input types. Should be final but
-   * cannot because of serialization. This info is used by some generators.
-   */
+  /** The types of elements of {@link #lastStatementVariables}. */
   private transient /*final*/ List<Type> lastStatementTypes;
 
-  /** If true, inline primitive values rather than creating and using a variable. */
-  private transient boolean shouldInlineLiterals;
-
   /**
-   * The list of statement indices that as determined by construction define outputs of this
-   * sequence.
+   * The list of statement indices that define outputs of this sequence. These are the indices of
+   * the statements that create {@link #lastStatementVariables}.
    */
   private List<Integer> outputIndices;
+
+  /** If true, inline primitive values rather than creating and using a variable. */
+  private transient boolean shouldInlineLiterals = true;
 
   /** Create a new, empty sequence. */
   public Sequence() {
@@ -83,7 +79,6 @@ public final class Sequence {
     this.savedNetSize = netSize;
     this.computeLastStatementInfo();
     this.outputIndices = new ArrayList<>();
-    this.shouldInlineLiterals = true;
     this.outputIndices.add(this.statements.size() - 1);
     this.activeFlags = new BitSet(this.size());
     this.setAllActiveFlags();
@@ -1155,11 +1150,10 @@ public final class Sequence {
     return shouldInlineLiterals;
   }
 
+  // TODO: does this apply to the output value of this sequence, or to the input variables to this sequence, or both?
   /**
-   * Disables inlining of variable values as arguments in this sequence. This is a hack to deal with
-   * inability to determine when a variable definition is necessary because it is used more than
-   * once, which is an issue because post-conditions can use variables but don't have the abilility
-   * to use the inlined form.
+   * Disables inlining of variable values as arguments in this sequence. This is a hack to give the
+   * variable a name, so that post-conditions can refer to it.
    */
   public void doNotInlineLiterals() {
     shouldInlineLiterals = false;
