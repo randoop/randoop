@@ -25,18 +25,13 @@ import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /**
- * Immutable.
- *
- * <p>A sequence of {@link Statement}s. Each element in the sequence represents a particular {@link
- * Statement}, like a method call {@code Foo f = m(i1...iN)} or a declaration {@code int x = 0}.
+ * An immutable sequence of {@link Statement}s.
  *
  * <p>This class represents only the structure of a well-formed sequence of statements, and does not
  * contain any information about the runtime behavior of the sequence. The class
  * randoop.ExecutableSequence adds functionality that executes the sequence.
  */
 public final class Sequence {
-
-  public double lastTimeUsed = java.lang.System.currentTimeMillis();
 
   /** The list of statements. */
   public final SimpleList<Statement> statements;
@@ -482,10 +477,7 @@ public final class Sequence {
     return netSize;
   }
 
-  /**
-   * Set lastStatementVariables and lastStatementTypes to their appropriate values. See
-   * documentation for these fields for more info.
-   */
+  /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
   private void computeLastStatementInfo() {
     this.lastStatementTypes = new ArrayList<>();
     this.lastStatementVariables = new ArrayList<>();

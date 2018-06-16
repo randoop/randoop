@@ -47,11 +47,10 @@ import randoop.util.ProgressDisplay;
  *       represents whether the check passed or failed during the last execution of the sequence.
  * </ul>
  *
- * <p>Of the three pieces of data above, an ExecutableSequence only directly manages the first one,
- * i.e. the execution results. Other pieces of data, including checks and check evaluation results,
- * are added or removed by the client of the ExecutableSequence. One way of doing this is by
- * implementing an {@link ExecutionVisitor} and passing it as an argument to the {@code execute}
- * method.
+ * <p>An ExecutableSequence only directly manages the execution results. Other data, including
+ * checks and check evaluation results, are added or removed by the client of the
+ * ExecutableSequence. One way of doing this is by implementing an {@link ExecutionVisitor} and
+ * passing it as an argument to the {@code execute} method.
  */
 public class ExecutableSequence {
 
@@ -87,10 +86,13 @@ public class ExecutableSequence {
    */
   private boolean hasNullInput = false;
 
-  /** Output buffer used to capture the output from the executed sequence */
+  /** Captures output from the executed sequence */
+  // static, so initializing eagerly is not a large cost.
   private static ByteArrayOutputStream output_buffer = new ByteArrayOutputStream();
 
-  private static PrintStream ps_output_buffer = new PrintStream(output_buffer);
+  /** Used to populate {@link #output_buffer}. */
+  // static, so initializing eagerly is not a large cost.
+  private static PrintStream output_buffer_stream = new PrintStream(output_buffer);
 
   /* Maps a value to the set of variables that hold it. */
   private IdentityMultiMap<Object, Variable> variableMap = new IdentityMultiMap<>();
@@ -392,8 +394,8 @@ public class ExecutableSequence {
       if (GenInputsAbstract.capture_output) {
         System.out.flush();
         System.err.flush();
-        System.setOut(ps_output_buffer);
-        System.setErr(ps_output_buffer);
+        System.setOut(output_buffer_stream);
+        System.setErr(output_buffer_stream);
       }
 
       // assert ((statement.isMethodCall() && !statement.isStatic()) ?
@@ -407,6 +409,7 @@ public class ExecutableSequence {
       }
       assert r != null;
       if (GenInputsAbstract.capture_output) {
+        output_buffer_stream.flush();
         System.setOut(orig_out);
         System.setErr(orig_err);
         r.set_output(output_buffer.toString());
