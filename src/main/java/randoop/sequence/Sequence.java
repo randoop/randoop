@@ -42,16 +42,10 @@ public final class Sequence {
    * the values "produced" by some statement of the sequence. Should be final but cannot because of
    * serialization.
    */
-  private transient /*final*/ List<Variable> lastStatementVariables;
+  private transient /*final*/ List<Variable> outputVariables;
 
-  /** The types of elements of {@link #lastStatementVariables}. */
-  private transient /*final*/ List<Type> lastStatementTypes;
-
-  /**
-   * The list of statement indices that define outputs of this sequence. These are the indices of
-   * the statements that create {@link #lastStatementVariables}.
-   */
-  private List<Integer> outputIndices;
+  /** The types of elements of {@link #outputVariables}. */
+  private transient /*final*/ List<Type> outputTypes;
 
   /** If true, inline primitive values rather than creating and using a variable. */
   private transient boolean shouldInlineLiterals = true;
@@ -78,8 +72,6 @@ public final class Sequence {
     this.savedHashCode = hashCode;
     this.savedNetSize = netSize;
     this.computeLastStatementInfo();
-    this.outputIndices = new ArrayList<>();
-    this.outputIndices.add(this.statements.size() - 1);
     this.activeFlags = new BitSet(this.size());
     this.setAllActiveFlags();
     this.checkRep();
@@ -136,7 +128,7 @@ public final class Sequence {
    *
    * @param operation the operation for the sequence
    * @param inputSequences the sequences computing inputs to the operation
-   * @param indexes the indices of the inputs to the operation
+   * @param indexes the indices of the inputs to the operation; same length as inputSequences
    * @return the sequence that applies the operation to the given inputs
    */
   public static Sequence createSequence(
@@ -150,25 +142,17 @@ public final class Sequence {
     return inputSequence.extend(operation, inputs);
   }
 
-  public static Sequence createSequence(TypedOperation operation, Sequence inputSequence) {
+  // TODO: I suspect that this sequence was specifically created to have a set of outputIndices that
+  // are appropriate for the given operation?
+  public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
     List<Variable> inputs = new ArrayList<>();
-    for (int index : inputSequence.getOutputIndices()) {
-      inputs.add(inputSequence.getVariable(index));
+    // This assumes that the variable is exactly the output variable of each of the
+    // given statements, and no other.  I guess that's OK since it might have been
+    // side-effected in the meanwhile.
+    for (int index : elementsSequence.getOutputIndices()) {
+      inputs.add(elementsSequence.sequence.getVariable(index));
     }
-    return inputSequence.extend(operation, inputs);
-  }
-
-  public static Sequence createSequence(List<Sequence> sequences, List<Integer> variables) {
-    assert sequences.size() == variables.size() : "must be one variable for each sequence";
-    Sequence sequence = Sequence.concatenate(sequences);
-    List<Integer> outputIndices = new ArrayList<>();
-    int size = 0;
-    for (int i = 0; i < sequences.size(); i++) {
-      outputIndices.add(size + variables.get(i));
-      size += sequences.get(i).size();
-    }
-    sequence.outputIndices = outputIndices;
-    return sequence;
+    return elementsSequence.sequence.extend(operation, inputs);
   }
 
   /**
@@ -271,8 +255,8 @@ public final class Sequence {
    *
    * @return the variables used in the last statement of this sequence
    */
-  List<Variable> getVariablesOfLastStatement() {
-    return this.lastStatementVariables;
+  List<Variable> getOutputVariables() {
+    return this.outputVariables;
   }
 
   /**
@@ -283,7 +267,7 @@ public final class Sequence {
    * @return the types of the variables in the last statement of this sequence
    */
   List<Type> getTypesForLastStatement() {
-    return this.lastStatementTypes;
+    return this.outputTypes;
   }
 
   /**
@@ -305,17 +289,6 @@ public final class Sequence {
   public Statement getCreatingStatement(Variable value) {
     if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
     return statements.get((value).index);
-  }
-
-  /**
-   * Returns the list of output indices for use when sequences are dealt with compositionally. What
-   * is an output index is determined by how the sequence is created, but generally is the index of
-   * the last statement.
-   *
-   * @return the list of output indices for this sequence
-   */
-  public List<Integer> getOutputIndices() {
-    return outputIndices;
   }
 
   /**
@@ -472,10 +445,10 @@ public final class Sequence {
     return netSize;
   }
 
-  /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
+  /** Set {@link #outputVariables} and {@link #outputTypes}. */
   private void computeLastStatementInfo() {
-    this.lastStatementTypes = new ArrayList<>();
-    this.lastStatementVariables = new ArrayList<>();
+    this.outputTypes = new ArrayList<>();
+    this.outputVariables = new ArrayList<>();
 
     if (!this.statements.isEmpty()) {
       int lastStatementIndex = this.statements.size() - 1;
@@ -483,8 +456,8 @@ public final class Sequence {
 
       // Process return value
       if (!lastStatement.getOutputType().isVoid()) {
-        this.lastStatementTypes.add(lastStatement.getOutputType());
-        this.lastStatementVariables.add(new Variable(this, lastStatementIndex));
+        this.outputTypes.add(lastStatement.getOutputType());
+        this.outputVariables.add(new Variable(this, lastStatementIndex));
       }
 
       // Process input arguments.
@@ -505,8 +478,8 @@ public final class Sequence {
       for (int i = 0; i < v.size(); i++) {
         Variable actualArgument = v.get(i);
         assert lastStatement.getInputTypes().get(i).isAssignableFrom(actualArgument.getType());
-        this.lastStatementTypes.add(actualArgument.getType());
-        this.lastStatementVariables.add(actualArgument);
+        this.outputTypes.add(actualArgument.getType());
+        this.outputVariables.add(actualArgument);
       }
     }
   }
@@ -671,8 +644,8 @@ public final class Sequence {
    * @return a variable used in the last statement of the given type
    */
   public List<Variable> allVariablesForTypeLastStatement(Type type, boolean onlyReceivers) {
-    List<Variable> possibleVars = new ArrayList<>(this.lastStatementVariables.size());
-    for (Variable i : this.lastStatementVariables) {
+    List<Variable> possibleVars = new ArrayList<>(this.outputVariables.size());
+    for (Variable i : this.outputVariables) {
       Statement s = statements.get(i.index);
       Type outputType = s.getOutputType();
       if (type.isAssignableFrom(outputType)
