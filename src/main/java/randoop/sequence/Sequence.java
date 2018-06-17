@@ -42,10 +42,10 @@ public final class Sequence {
    * the values "produced" by some statement of the sequence. Should be final but cannot because of
    * serialization.
    */
-  private transient /*final*/ List<Variable> outputVariables;
+  private transient /*final*/ List<Variable> lastStatementVariables;
 
-  /** The types of elements of {@link #outputVariables}. */
-  private transient /*final*/ List<Type> outputTypes;
+  /** The types of elements of {@link #lastStatementVariables}. */
+  private transient /*final*/ List<Type> lastStatementTypes;
 
   /** If true, inline primitive values rather than creating and using a variable. */
   private transient boolean shouldInlineLiterals = true;
@@ -255,8 +255,8 @@ public final class Sequence {
    *
    * @return the variables used in the last statement of this sequence
    */
-  List<Variable> getOutputVariables() {
-    return this.outputVariables;
+  List<Variable> getVariablesOfLastStatement() {
+    return this.lastStatementVariables;
   }
 
   /**
@@ -267,7 +267,7 @@ public final class Sequence {
    * @return the types of the variables in the last statement of this sequence
    */
   List<Type> getTypesForLastStatement() {
-    return this.outputTypes;
+    return this.lastStatementTypes;
   }
 
   /**
@@ -445,10 +445,10 @@ public final class Sequence {
     return netSize;
   }
 
-  /** Set {@link #outputVariables} and {@link #outputTypes}. */
+  /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
   private void computeLastStatementInfo() {
-    this.outputTypes = new ArrayList<>();
-    this.outputVariables = new ArrayList<>();
+    this.lastStatementTypes = new ArrayList<>();
+    this.lastStatementVariables = new ArrayList<>();
 
     if (!this.statements.isEmpty()) {
       int lastStatementIndex = this.statements.size() - 1;
@@ -456,8 +456,8 @@ public final class Sequence {
 
       // Process return value
       if (!lastStatement.getOutputType().isVoid()) {
-        this.outputTypes.add(lastStatement.getOutputType());
-        this.outputVariables.add(new Variable(this, lastStatementIndex));
+        this.lastStatementTypes.add(lastStatement.getOutputType());
+        this.lastStatementVariables.add(new Variable(this, lastStatementIndex));
       }
 
       // Process input arguments.
@@ -478,8 +478,8 @@ public final class Sequence {
       for (int i = 0; i < v.size(); i++) {
         Variable actualArgument = v.get(i);
         assert lastStatement.getInputTypes().get(i).isAssignableFrom(actualArgument.getType());
-        this.outputTypes.add(actualArgument.getType());
-        this.outputVariables.add(actualArgument);
+        this.lastStatementTypes.add(actualArgument.getType());
+        this.lastStatementVariables.add(actualArgument);
       }
     }
   }
@@ -644,8 +644,8 @@ public final class Sequence {
    * @return a variable used in the last statement of the given type
    */
   public List<Variable> allVariablesForTypeLastStatement(Type type, boolean onlyReceivers) {
-    List<Variable> possibleVars = new ArrayList<>(this.outputVariables.size());
-    for (Variable i : this.outputVariables) {
+    List<Variable> possibleVars = new ArrayList<>(this.lastStatementVariables.size());
+    for (Variable i : this.lastStatementVariables) {
       Statement s = statements.get(i.index);
       Type outputType = s.getOutputType();
       if (type.isAssignableFrom(outputType)

@@ -101,7 +101,8 @@ class HelperSequenceCreator {
       length = Randomness.nextRandomInt(MAX_LENGTH);
     }
 
-    TupleSequence elementsSequence = createElementsSequence(candidates, length, componentType);
+    TupleSequence elementsSequence =
+        TupleSequence.createElementsSequence(candidates, length, componentType);
     Sequence s = createAnArray(elementsSequence, componentType, length);
     assert s != null;
     SimpleArrayList<Sequence> l = new SimpleArrayList<>();
@@ -141,7 +142,8 @@ class HelperSequenceCreator {
     // TODO: It seems this could create a very long list.
     int length = Randomness.nextRandomInt(candidates.size()) + 1;
     assert !candidates.isEmpty() || length == 0 : "if there are no candidates, length must be zero";
-    TupleSequence elementsSequence = createElementsSequence(candidates, length, elementType);
+    TupleSequence elementsSequence =
+        TupleSequence.createElementsSequence(candidates, length, elementType);
 
     // build sequence to create a Collection object
     Sequence creationSequence = createCollectionCreationSequence(implementingType, elementType);
@@ -363,28 +365,6 @@ class HelperSequenceCreator {
       creationType = implementingType.instantiate(typeArgumentList);
     }
     return creationType;
-  }
-
-  /**
-   * Selects sequences as element values for creating a collection.
-   *
-   * @param candidates the sequences from which to select
-   * @param length the number of values to select
-   * @param elementType the type of elements
-   * @return a sequence with subsequences that create element values for a collection
-   */
-  private static TupleSequence createElementsSequence(
-      SimpleList<Sequence> candidates, int length, Type elementType) {
-    List<Sequence> sequences = new ArrayList<>();
-    List<Integer> variables = new ArrayList<>();
-    for (int i = 0; i < length; i++) {
-      Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
-      sequences.add(sequence);
-      Variable element = sequence.randomVariableForTypeLastStatement(elementType, false);
-      assert element != null;
-      variables.add(element.index);
-    }
-    return new TupleSequence(sequences, variables);
   }
 
   /**

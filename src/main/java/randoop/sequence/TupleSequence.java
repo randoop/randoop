@@ -2,6 +2,9 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import randoop.types.Type;
+import randoop.util.Randomness;
+import randoop.util.SimpleList;
 
 /**
  * A Sequence that produces a tuple or collection of values, all of the same type.
@@ -46,7 +49,7 @@ public final class TupleSequence {
    * Create a TupleSequence that concatenates the given sequences, choosing the given variable from
    * each.
    *
-   * @param sequences that will be concatenated to mkae the new TupleSequence
+   * @param sequences that will be concatenated to make the new TupleSequence
    * @param variables one index per sequence in {@code sequences}, defining the ouptuts of the
    *     TupleSequence
    * @param a TupleSequence that concatenates the given sequences
@@ -54,7 +57,7 @@ public final class TupleSequence {
   public TupleSequence(List<Sequence> sequences, List<Integer> variables) {
     assert sequences.size() == variables.size() : "must be one variable for each sequence";
     sequence = Sequence.concatenate(sequences);
-    List<Integer> outputIndices = new ArrayList<>();
+    outputIndices = new ArrayList<>();
     int size = 0;
     for (int i = 0; i < sequences.size(); i++) {
       outputIndices.add(size + variables.get(i));
@@ -69,5 +72,27 @@ public final class TupleSequence {
    */
   public List<Integer> getOutputIndices() {
     return outputIndices;
+  }
+
+  /**
+   * Selects sequences as element values for creating a collection.
+   *
+   * @param candidates the sequences from which to select
+   * @param length the number of values to select
+   * @param elementType the type of elements
+   * @return a sequence with subsequences that create element values for a collection
+   */
+  public static TupleSequence createElementsSequence(
+      SimpleList<Sequence> candidates, int length, Type elementType) {
+    List<Sequence> sequences = new ArrayList<>();
+    List<Integer> variables = new ArrayList<>();
+    for (int i = 0; i < length; i++) {
+      Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
+      sequences.add(sequence);
+      Variable element = sequence.randomVariableForTypeLastStatement(elementType, false);
+      assert element != null;
+      variables.add(element.index);
+    }
+    return new TupleSequence(sequences, variables);
   }
 }

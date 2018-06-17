@@ -151,7 +151,7 @@ public class SequenceCollection {
    */
   public void add(Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
-    List<Variable> arguments = sequence.getOutputVariables();
+    List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
     for (int i = 0; i < formalTypes.size(); i++) {
       Variable argument = arguments.get(i);
