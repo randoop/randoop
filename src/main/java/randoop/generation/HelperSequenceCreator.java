@@ -100,8 +100,8 @@ class HelperSequenceCreator {
       length = Randomness.nextRandomInt(MAX_LENGTH);
     }
 
-    Sequence elementSequence = createElementSequence(candidates, length, componentType);
-    Sequence s = createAnArray(elementSequence, componentType, length);
+    Sequence elementsSequence = createElementsSequence(candidates, length, componentType);
+    Sequence s = createAnArray(elementsSequence, componentType, length);
     assert s != null;
     SimpleArrayList<Sequence> l = new SimpleArrayList<>();
     l.add(s);
@@ -136,7 +136,7 @@ class HelperSequenceCreator {
       length = Randomness.nextRandomInt(candidates.size()) + 1;
     }
     assert !candidates.isEmpty() || length == 0 : "if there are no candidates, length must be zero";
-    Sequence elementSequence = createElementSequence(candidates, length, elementType);
+    Sequence elementsSequence = createElementsSequence(candidates, length, elementType);
 
     // build sequence to create a Collection object
     Sequence creationSequence = createCollectionCreationSequence(implementingType, elementType);
@@ -150,7 +150,7 @@ class HelperSequenceCreator {
       int totStatements = 0;
       List<Sequence> inputSequences = new ArrayList<>();
       List<Integer> variableIndices = new ArrayList<>();
-      Sequence inputSequence = createAnArray(elementSequence, elementType, length);
+      Sequence inputSequence = createAnArray(elementsSequence, elementType, length);
       inputSequences.add(inputSequence);
       int inputIndex = totStatements + inputSequence.getLastVariable().index;
       totStatements += inputSequence.size();
@@ -174,7 +174,7 @@ class HelperSequenceCreator {
               return addSequence.extend(addOperation, inputs);
             }
           };
-      return buildAddSequence(creationSequence, elementSequence, addExtender);
+      return buildAddSequence(creationSequence, elementsSequence, addExtender);
     }
   }
 
@@ -183,14 +183,14 @@ class HelperSequenceCreator {
   }
 
   private static Sequence buildAddSequence(
-      Sequence creationSequence, Sequence elementSequence, SequenceExtender addSequenceExtender) {
+      Sequence creationSequence, Sequence elementsSequence, SequenceExtender addSequenceExtender) {
     List<Sequence> inputSequences = new ArrayList<>();
-    inputSequences.add(elementSequence);
+    inputSequences.add(elementsSequence);
     inputSequences.add(creationSequence);
     Sequence addSequence = Sequence.concatenate(inputSequences);
     int creationIndex = addSequence.getLastVariable().index;
     int i = 0;
-    for (Integer index : elementSequence.getOutputIndices()) {
+    for (Integer index : elementsSequence.getOutputIndices()) {
       addSequence = addSequenceExtender.extend(addSequence, creationIndex, index, i);
       i++;
     }
@@ -232,19 +232,19 @@ class HelperSequenceCreator {
    * Creates a sequence that builds an array of the given element type using sequences from the
    * given list of candidates.
    *
-   * @param elementSequence the sequence creating element values
+   * @param elementsSequence the sequence creating element values
    * @param elementType the type of elements for the array
    * @param length the length of the array
    * @return a sequence that creates an array with the given element type
    */
-  private static Sequence createAnArray(Sequence elementSequence, Type elementType, int length) {
+  private static Sequence createAnArray(Sequence elementsSequence, Type elementType, int length) {
 
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     if (!elementType.isParameterized()
         && !(elementType.isArray() && ((ArrayType) elementType).hasParameterizedElementType())) {
       TypedOperation creationOperation =
           TypedOperation.createInitializedArrayCreation(arrayType, length);
-      return Sequence.createSequence(creationOperation, elementSequence);
+      return Sequence.createSequence(creationOperation, elementsSequence);
     } else {
       Sequence createSequence = createGenericArrayCreationSequence(arrayType, length);
       final TypedOperation arrayElementAssignment =
@@ -263,7 +263,7 @@ class HelperSequenceCreator {
               return addSequence.extend(arrayElementAssignment, inputs);
             }
           };
-      return buildAddSequence(createSequence, elementSequence, addExtender);
+      return buildAddSequence(createSequence, elementsSequence, addExtender);
     }
   }
 
@@ -353,7 +353,7 @@ class HelperSequenceCreator {
    * @param elementType the type of elements
    * @return a sequence with subsequences that create element values for a collection
    */
-  private static Sequence createElementSequence(
+  private static Sequence createElementsSequence(
       SimpleList<Sequence> candidates, int length, Type elementType) {
     List<Sequence> sequences = new ArrayList<>();
     List<Integer> variables = new ArrayList<>();
