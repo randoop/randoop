@@ -108,6 +108,19 @@ class HelperSequenceCreator {
     return l;
   }
 
+  /** Returns the element type of the given collection type. */
+  private static ReferenceType getElementType(InstantiatedType collectionType) {
+    List<TypeArgument> argumentList = collectionType.getTypeArguments();
+    assert argumentList.size() == 1
+        : String.format(
+            "Collection type %s should have one type argument, has %d",
+            collectionType, argumentList.size());
+    TypeArgument argumentType = argumentList.get(0);
+    assert argumentType instanceof ReferenceArgument
+        : "Type argument " + argumentType + " should be a reference type";
+    return ((ReferenceArgument) argumentType).getReferenceType();
+  }
+
   /**
    * Generates a sequence that creates a Collection.
    *
@@ -118,14 +131,7 @@ class HelperSequenceCreator {
   static Sequence createCollection(
       ComponentManager componentManager, InstantiatedType collectionType) {
 
-    // get the element type
-    List<TypeArgument> argumentList = collectionType.getTypeArguments();
-    assert argumentList.size() == 1 : "Collection classes should have one type argument";
-    TypeArgument argumentType = argumentList.get(0);
-    ReferenceType elementType;
-    assert argumentType instanceof ReferenceArgument
-        : "type argument must be reference type, have " + argumentType;
-    elementType = ((ReferenceArgument) argumentType).getReferenceType();
+    ReferenceType elementType = getElementType(collectionType);
 
     // select implementing Collection type and instantiate
     InstantiatedType implementingType = getImplementingType(collectionType);
