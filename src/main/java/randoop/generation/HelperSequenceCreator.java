@@ -140,7 +140,13 @@ class HelperSequenceCreator {
 
     SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType);
     // TODO: It seems this could create a very long list.
-    int length = Randomness.nextRandomInt(candidates.size()) + 1;
+    // TODO: Changing this to
+    //   int length = Randomness.nextRandomInt(candidates.size()) + 1;
+    // causes a system test failure due to changed coverage.
+    int length = 0;
+    if (!candidates.isEmpty()) {
+      length = Randomness.nextRandomInt(candidates.size()) + 1;
+    }
     assert !candidates.isEmpty() || length == 0 : "if there are no candidates, length must be zero";
     TupleSequence elementsSequence =
         TupleSequence.createElementsSequence(candidates, length, elementType);
