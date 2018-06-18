@@ -128,7 +128,7 @@ class HelperSequenceCreator {
    *
    * @param componentManager the component manager for selecting values
    * @param collectionType the type for collection
-   * @return a sequence that returns a collection of type {@code collectionType}
+   * @return a sequence that creates a collection of type {@code collectionType}
    */
   static Sequence createCollection(
       ComponentManager componentManager, InstantiatedType collectionType) {

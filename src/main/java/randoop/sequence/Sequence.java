@@ -142,13 +142,8 @@ public final class Sequence {
     return inputSequence.extend(operation, inputs);
   }
 
-  // TODO: I suspect that this sequence was specifically created to have a set of outputIndices that
-  // are appropriate for the given operation?
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
     List<Variable> inputs = new ArrayList<>();
-    // This assumes that the variable is exactly the output variable of each of the
-    // given statements, and no other.  I guess that's OK since it might have been
-    // side-effected in the meanwhile.
     for (int index : elementsSequence.getOutputIndices()) {
       inputs.add(elementsSequence.sequence.getVariable(index));
     }
@@ -1123,7 +1118,8 @@ public final class Sequence {
     return shouldInlineLiterals;
   }
 
-  // TODO: does this apply to the output value of this sequence, or to the input variables to this sequence, or both?
+  // TODO: does this apply to the output value of this sequence, or to the input variables to this
+  // sequence, or both?  I think the output value, but I'm not sure.
   /**
    * Disables inlining of variable values as arguments in this sequence. This is a hack to give the
    * variable a name, so that post-conditions can refer to it.

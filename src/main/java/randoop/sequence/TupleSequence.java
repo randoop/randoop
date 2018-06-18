@@ -9,11 +9,11 @@ import randoop.util.SimpleList;
 /**
  * A Sequence that produces a tuple or collection of values, all of the same type.
  *
- * <p>To make a new sequence requires choosing an operation, choosing a value (really, a sequence
- * and one of its outputs) for each of the operation's inputs, and then concatenating all the inputs
- * along with the new operation. Most operations take a well-defined number and type of inputs. This
- * helper class supports calling operations that take a variable number of inputs -- namely, array
- * and list creation.
+ * <p>To make a new sequence requires choosing an operation, choosing a value (really, a
+ * previously-created sequence and one of its outputs) for each of the operation's inputs, and then
+ * concatenating all the input sequences along with the new operation. Most operations take a
+ * well-defined number and type of inputs. This helper class supports calling operations that take a
+ * variable number of inputs -- namely, array and list creation.
  *
  * <p>Ordinarily:
  *
@@ -31,10 +31,10 @@ import randoop.util.SimpleList;
  * This sequence is different.
  *
  * <ul>
- *   <li>It is created as the concatenation of valid sequences.
- *   <li>Its ouptuts are one value from each of the sequences that created it.
+ *   <li>It is created as the concatenation of valid sequences, without an operation at the end.
+ *   <li>Its outputs are one value from each of the sequences that created it.
  *   <li>It is not output as a regression test, but is used as one of the inputs to an array- or
- *       list-producing operation that will be output. All of its ouptuts values are used.
+ *       list-producing operation that will be output. All of its outputs are used.
  * </ul>
  */
 public final class TupleSequence {
@@ -50,7 +50,7 @@ public final class TupleSequence {
    * each.
    *
    * @param sequences that will be concatenated to make the new TupleSequence
-   * @param variables one index per sequence in {@code sequences}, defining the ouptuts of the
+   * @param variables one index per sequence in {@code sequences}, defining the outputs of the
    *     TupleSequence
    */
   public TupleSequence(List<Sequence> sequences, List<Integer> variables) {
