@@ -384,8 +384,6 @@ public class GenTests extends GenInputsAbstract {
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap);
     explorer.setTestCheckGenerator(testGen);
 
-    explorer.filterOutConstantOperations();
-
     /*
      * Setup for test predicate
      */
@@ -432,6 +430,8 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     explorer.setExecutionVisitor(visitors);
+
+    explorer.filterOutConstantOperations();
 
     // Diagnostic output
     if (GenInputsAbstract.progressdisplay) {

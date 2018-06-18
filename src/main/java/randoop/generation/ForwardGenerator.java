@@ -150,24 +150,11 @@ public class ForwardGenerator extends AbstractGenerator {
 
     setCurrentSequence(eSeq.sequence);
 
-    long selectionTime = System.nanoTime() - startTime;
+    long gentime1 = System.nanoTime() - startTime;
 
-    executeSequenceAndAddToComponentManager(eSeq, selectionTime);
-
-    return eSeq;
-  }
-
-  /**
-   * Execute the sequence, determine active indices and store in the component manager.
-   *
-   * @param eSeq {@link ExecutableSequence} to execute
-   * @param selectionTime amount of time taken to select the sequence and its inputs
-   */
-  private void executeSequenceAndAddToComponentManager(
-      ExecutableSequence eSeq, long selectionTime) {
     eSeq.execute(executionVisitor, checkGenerator);
 
-    long startTime = System.nanoTime();
+    startTime = System.nanoTime(); // reset start time.
 
     determineActiveIndices(eSeq);
 
@@ -175,9 +162,11 @@ public class ForwardGenerator extends AbstractGenerator {
       componentManager.addGeneratedSequence(eSeq.sequence);
     }
 
-    long postExecutionTime = System.nanoTime() - startTime;
+    long gentime2 = System.nanoTime() - startTime;
 
-    eSeq.gentime = selectionTime + postExecutionTime;
+    eSeq.gentime = gentime1 + gentime2;
+
+    return eSeq;
   }
 
   @Override
@@ -873,21 +862,22 @@ public class ForwardGenerator extends AbstractGenerator {
     for (Iterator<TypedOperation> iterator = operations.iterator(); iterator.hasNext(); ) {
       TypedOperation operation = iterator.next();
       if (operation.getInputTypes().isEmpty()) {
+        Log.logPrintf("Filtering out operation: %s%n", operation);
+
         operation = attemptToInstantiateIfGeneric(operation);
         if (operation != null) {
           SimpleArrayList<Statement> statements = new SimpleArrayList<>();
           statements.add(new Statement(operation));
-          ExecutableSequence eSeq = new ExecutableSequence(new Sequence(statements));
-
-          if (GenInputsAbstract.dontexecute) {
-            componentManager.addGeneratedSequence(eSeq.sequence);
-          } else {
-            setCurrentSequence(eSeq.sequence);
-            executeSequenceAndAddToComponentManager(eSeq, 0);
-          }
+          Sequence newSequence = new Sequence(statements);
+          componentManager.addGeneratedSequence(newSequence);
+          System.out.println("Adding new seq " + newSequence);
         }
         iterator.remove();
       }
+    }
+    System.out.println("Remaining operations --");
+    for (TypedOperation operation : operations) {
+      System.out.println(operation);
     }
   }
 }
