@@ -14,6 +14,7 @@ import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
+import randoop.sequence.TupleSequence;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
@@ -100,12 +101,26 @@ class HelperSequenceCreator {
       length = Randomness.nextRandomInt(MAX_LENGTH);
     }
 
-    Sequence elementSequence = createElementSequence(candidates, length, componentType);
-    Sequence s = createAnArray(elementSequence, componentType, length);
+    TupleSequence elementsSequence =
+        TupleSequence.createElementsSequence(candidates, length, componentType);
+    Sequence s = createAnArray(elementsSequence, componentType, length);
     assert s != null;
     SimpleArrayList<Sequence> l = new SimpleArrayList<>();
     l.add(s);
     return l;
+  }
+
+  /** Returns the element type of the given collection type. */
+  private static ReferenceType getElementType(InstantiatedType collectionType) {
+    List<TypeArgument> argumentList = collectionType.getTypeArguments();
+    assert argumentList.size() == 1
+        : String.format(
+            "Collection type %s should have one type argument, has %d",
+            collectionType, argumentList.size());
+    TypeArgument argumentType = argumentList.get(0);
+    assert argumentType instanceof ReferenceArgument
+        : "Type argument " + argumentType + " should be a reference type";
+    return ((ReferenceArgument) argumentType).getReferenceType();
   }
 
   /**
@@ -113,30 +128,28 @@ class HelperSequenceCreator {
    *
    * @param componentManager the component manager for selecting values
    * @param collectionType the type for collection
-   * @return a collection of the given type
+   * @return a sequence that creates a collection of type {@code collectionType}
    */
   static Sequence createCollection(
       ComponentManager componentManager, InstantiatedType collectionType) {
 
-    // get the element type
-    List<TypeArgument> argumentList = collectionType.getTypeArguments();
-    assert argumentList.size() == 1 : "Collection classes should have one type argument";
-    TypeArgument argumentType = argumentList.get(0);
-    ReferenceType elementType;
-    assert argumentType instanceof ReferenceArgument
-        : "type argument must be reference type, have " + argumentType;
-    elementType = ((ReferenceArgument) argumentType).getReferenceType();
+    ReferenceType elementType = getElementType(collectionType);
 
     // select implementing Collection type and instantiate
     InstantiatedType implementingType = getImplementingType(collectionType);
 
     SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType);
+    // TODO: It seems this could create a very long list.
+    // TODO: Changing this to
+    //   int length = Randomness.nextRandomInt(candidates.size()) + 1;
+    // causes a system test failure due to changed coverage.
     int length = 0;
     if (!candidates.isEmpty()) {
       length = Randomness.nextRandomInt(candidates.size()) + 1;
     }
     assert !candidates.isEmpty() || length == 0 : "if there are no candidates, length must be zero";
-    Sequence elementSequence = createElementSequence(candidates, length, elementType);
+    TupleSequence elementsSequence =
+        TupleSequence.createElementsSequence(candidates, length, elementType);
 
     // build sequence to create a Collection object
     Sequence creationSequence = createCollectionCreationSequence(implementingType, elementType);
@@ -150,7 +163,7 @@ class HelperSequenceCreator {
       int totStatements = 0;
       List<Sequence> inputSequences = new ArrayList<>();
       List<Integer> variableIndices = new ArrayList<>();
-      Sequence inputSequence = createAnArray(elementSequence, elementType, length);
+      Sequence inputSequence = createAnArray(elementsSequence, elementType, length);
       inputSequences.add(inputSequence);
       int inputIndex = totStatements + inputSequence.getLastVariable().index;
       totStatements += inputSequence.size();
@@ -174,7 +187,7 @@ class HelperSequenceCreator {
               return addSequence.extend(addOperation, inputs);
             }
           };
-      return buildAddSequence(creationSequence, elementSequence, addExtender);
+      return buildAddSequence(creationSequence, elementsSequence, addExtender);
     }
   }
 
@@ -182,15 +195,29 @@ class HelperSequenceCreator {
     Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i);
   }
 
+  /**
+   * Returns a sequence that creates a list or array. The resulting sequence consists of the two
+   * given sequences, augmented by N invocations of addSequenceExtender, where N is the size of
+   * elementsSequence.outputIndices.
+   *
+   * @param creationSequence creates an empty array or list
+   * @param elementsSequence a tuple-producing sequence; produces the elements of the result
+   * @param addSequenceExtender creates {@code a[i]=e} (for an array) or {@code l.add(e)} (for a
+   *     list)
+   * @return a sequence that creates an array or list that contains all the elements produced by
+   *     elementsSequence
+   */
   private static Sequence buildAddSequence(
-      Sequence creationSequence, Sequence elementSequence, SequenceExtender addSequenceExtender) {
+      Sequence creationSequence,
+      TupleSequence elementsSequence,
+      SequenceExtender addSequenceExtender) {
     List<Sequence> inputSequences = new ArrayList<>();
-    inputSequences.add(elementSequence);
+    inputSequences.add(elementsSequence.sequence);
     inputSequences.add(creationSequence);
     Sequence addSequence = Sequence.concatenate(inputSequences);
     int creationIndex = addSequence.getLastVariable().index;
     int i = 0;
-    for (Integer index : elementSequence.getOutputIndices()) {
+    for (Integer index : elementsSequence.getOutputIndices()) {
       addSequence = addSequenceExtender.extend(addSequence, creationIndex, index, i);
       i++;
     }
@@ -232,19 +259,20 @@ class HelperSequenceCreator {
    * Creates a sequence that builds an array of the given element type using sequences from the
    * given list of candidates.
    *
-   * @param elementSequence the sequence creating element values
+   * @param elementsSequence the sequence creating element values
    * @param elementType the type of elements for the array
    * @param length the length of the array
    * @return a sequence that creates an array with the given element type
    */
-  private static Sequence createAnArray(Sequence elementSequence, Type elementType, int length) {
+  private static Sequence createAnArray(
+      TupleSequence elementsSequence, Type elementType, int length) {
 
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     if (!elementType.isParameterized()
         && !(elementType.isArray() && ((ArrayType) elementType).hasParameterizedElementType())) {
       TypedOperation creationOperation =
           TypedOperation.createInitializedArrayCreation(arrayType, length);
-      return Sequence.createSequence(creationOperation, elementSequence);
+      return Sequence.createSequence(creationOperation, elementsSequence);
     } else {
       Sequence createSequence = createGenericArrayCreationSequence(arrayType, length);
       final TypedOperation arrayElementAssignment =
@@ -263,7 +291,7 @@ class HelperSequenceCreator {
               return addSequence.extend(arrayElementAssignment, inputs);
             }
           };
-      return buildAddSequence(createSequence, elementSequence, addExtender);
+      return buildAddSequence(createSequence, elementsSequence, addExtender);
     }
   }
 
@@ -343,28 +371,6 @@ class HelperSequenceCreator {
       creationType = implementingType.instantiate(typeArgumentList);
     }
     return creationType;
-  }
-
-  /**
-   * Selects sequences as element values for creating a collection.
-   *
-   * @param candidates the sequences from which to select
-   * @param length the number of values to select
-   * @param elementType the type of elements
-   * @return a sequence with subsequences that create element values for a collection
-   */
-  private static Sequence createElementSequence(
-      SimpleList<Sequence> candidates, int length, Type elementType) {
-    List<Sequence> sequences = new ArrayList<>();
-    List<Integer> variables = new ArrayList<>();
-    for (int i = 0; i < length; i++) {
-      Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
-      sequences.add(sequence);
-      Variable element = sequence.randomVariableForTypeLastStatement(elementType, false);
-      assert element != null;
-      variables.add(element.index);
-    }
-    return Sequence.createSequence(sequences, variables);
   }
 
   /**
