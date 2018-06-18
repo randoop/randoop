@@ -139,13 +139,13 @@ public class SequenceCollection {
    * value is deemed useful or not is left up to the client.
    *
    * <p>Note that this takes into consideration only the assigned value for each statement. If a
-   * statement might side-effect some variable, then that variable is considered as an output from
-   * its own statement, not the one that side-effects it.
+   * statement might side-effect some variable V, then V is considered as an output from the
+   * statement that declares/creates V, not the one that side-effects V.
    *
    * <p>(An alternative would be to only use outputs from the last statement, and include its inputs
    * as well. That alternative is not implemented. It would probably be faster, but it would not
    * handle the case of a method side-effecting a variable that that was not explicitly passed to
-   * it. Is that case important?
+   * it. That case probably isn't important/common.)
    *
    * @param sequence the sequence to add to this collection
    */
