@@ -52,7 +52,7 @@ public final class TupleSequence {
    * @param sequences that will be concatenated to make the new TupleSequence
    * @param variables one index per sequence in {@code sequences}, defining the ouptuts of the
    *     TupleSequence
-   * @param a TupleSequence that concatenates the given sequences
+   * @return a TupleSequence that concatenates the given sequences
    */
   public TupleSequence(List<Sequence> sequences, List<Integer> variables) {
     assert sequences.size() == variables.size() : "must be one variable for each sequence";

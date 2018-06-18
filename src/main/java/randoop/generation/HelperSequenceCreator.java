@@ -200,7 +200,7 @@ class HelperSequenceCreator {
    * given sequences, augmented by N invocations of addSequenceExtender, where N is the size of
    * elementsSequence.outputIndices.
    *
-   * @param creates an empty array or list
+   * @param creationSequence creates an empty array or list
    * @param elementsSequence a tuple-producing sequence; produces the elements of the result
    * @param addSequenceExtender creates {@code a[i]=e} (for an array) or {@code l.add(e)} (for a
    *     list)
