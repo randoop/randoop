@@ -498,7 +498,7 @@ public class RandoopSystemTest {
             "java7.util7.StringTokenizer.isDelimiter(int) exclude",
             "java7.util7.TreeMap.addAllForTreeSet(java7.util7.SortedSet, java.lang.Object) ignore",
             "java7.util7.TreeMap.colorOf(java7.util7.TreeMap.Entry) exclude",
-            "java7.util7.TreeMap.compare(java.lang.Object, java.lang.Object) exclude",
+            "java7.util7.TreeMap.compare(java.lang.Object, java.lang.Object) ignore",
             "java7.util7.TreeMap.decrementSize() ignore", // Travis
             "java7.util7.TreeMap.deleteEntry(java7.util7.TreeMap.Entry) ignore", // Travis
             "java7.util7.TreeMap.descendingKeyIterator() exclude",
@@ -510,7 +510,7 @@ public class RandoopSystemTest {
             "java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude",
             "java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude",
             "java7.util7.TreeMap.headMap(java.lang.Object) exclude",
-            "java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude",
+            "java7.util7.TreeMap.headMap(java.lang.Object, boolean) ignore",
             "java7.util7.TreeMap.keySet() ignore",
             "java7.util7.TreeMap.lastKey() ignore",
             "java7.util7.TreeMap.leftOf(java7.util7.TreeMap.Entry) exclude",
@@ -524,11 +524,11 @@ public class RandoopSystemTest {
             "java7.util7.TreeMap.rotateLeft(java7.util7.TreeMap.Entry) exclude",
             "java7.util7.TreeMap.rotateRight(java7.util7.TreeMap.Entry) exclude",
             "java7.util7.TreeMap.setColor(java7.util7.TreeMap.Entry, boolean) exclude",
-            "java7.util7.TreeMap.subMap(java.lang.Object, boolean, java.lang.Object, boolean) exclude",
+            "java7.util7.TreeMap.subMap(java.lang.Object, boolean, java.lang.Object, boolean) ignore",
             "java7.util7.TreeMap.subMap(java.lang.Object, java.lang.Object) ignore",
             "java7.util7.TreeMap.successor(java7.util7.TreeMap.Entry) exclude",
-            "java7.util7.TreeMap.tailMap(java.lang.Object) exclude",
-            "java7.util7.TreeMap.tailMap(java.lang.Object, boolean) exclude",
+            "java7.util7.TreeMap.tailMap(java.lang.Object) ignore",
+            "java7.util7.TreeMap.tailMap(java.lang.Object, boolean) ignore",
             "java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude",
             "java7.util7.TreeMap.valueSearchNonNull(java7.util7.TreeMap.Entry, java.lang.Object) ignore",
             "java7.util7.TreeMap.valueSearchNull(java7.util7.TreeMap.Entry) ignore",
@@ -585,7 +585,16 @@ public class RandoopSystemTest {
             "java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore",
             "java7.util7.LinkedList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.Vector.removeAll(java7.util7.Collection) ignore",
-            "java7.util7.Vector.retainAll(java7.util7.Collection) ignore"
+            "java7.util7.Vector.retainAll(java7.util7.Collection) ignore",
+            "java7.util7.Arrays.deepHashCode(java.lang.Object[]) ignore",
+            "java7.util7.Arrays.fill(char[], int, int, char) ignore",
+            "java7.util7.Hashtable.getIterator(int) ignore",
+            "java7.util7.LinkedList.node(int) ignore",
+            "java7.util7.LinkedList.pop() ignore",
+            "java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) ignore",
+            "java7.util7.Observable.deleteObserver(java7.util7.Observer) ignore",
+            "java7.util7.TreeMap.containsKey(java.lang.Object) ignore",
+            "java7.util7.TreeMap.floorEntry(java.lang.Object) ignore"
             // end of list (line break to permit easier sorting)
             );
     generateAndTest(
