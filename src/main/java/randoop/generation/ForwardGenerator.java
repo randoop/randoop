@@ -307,10 +307,26 @@ public class ForwardGenerator extends AbstractGenerator {
     TypedOperation operation = Randomness.randomMember(this.operations);
     Log.logPrintf("Selected operation: %s%n", operation.toString());
 
-    operation = attemptToInstantiateIfGeneric(operation);
-    // If the operation is generic or includes wildcards but instantiation failed, null is returned.
-    if (operation == null) {
-      return null;
+    if (operation.isGeneric() || operation.hasWildcardTypes()) {
+      try {
+        operation = instantiator.instantiate((TypedClassOperation) operation);
+      } catch (Throwable e) {
+        if (GenInputsAbstract.fail_on_generation_error) {
+          if (operation.isMethodCall() || operation.isConstructorCall()) {
+            String opName = operation.getOperation().getReflectionObject().toString();
+            throw new RandoopInstantiationError(opName, e);
+          }
+        } else {
+          operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
+          Log.logPrintf("Instantiation error for operation %s%n", operation);
+          Log.logStackTrace(e);
+          System.out.println("Instantiation error for operation " + operation);
+          operation = null;
+        }
+      }
+      if (operation == null) { // failed to instantiate generic
+        return null;
+      }
     }
 
     // add flags here
@@ -384,38 +400,6 @@ public class ForwardGenerator extends AbstractGenerator {
     subsumed_sequences.addAll(inputs.sequences);
 
     return new ExecutableSequence(newSequence);
-  }
-
-  /**
-   * Instantiate the operation if it is generic or has wildcard types.
-   *
-   * @param operation the operation to check and instantiate
-   * @return the instantiated operation if it was generic, otherwise the original operation is
-   *     returned. If the operation is generic but instantiation failed, null is returned.
-   */
-  private TypedOperation attemptToInstantiateIfGeneric(TypedOperation operation) {
-    if (operation.isGeneric() || operation.hasWildcardTypes()) {
-      try {
-        operation = instantiator.instantiate((TypedClassOperation) operation);
-      } catch (Throwable e) {
-        if (GenInputsAbstract.fail_on_generation_error) {
-          if (operation.isMethodCall() || operation.isConstructorCall()) {
-            String opName = operation.getOperation().getReflectionObject().toString();
-            throw new RandoopInstantiationError(opName, e);
-          }
-        } else {
-          operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-          Log.logPrintf("Instantiation error for operation %s%n", operation);
-          Log.logStackTrace(e);
-          System.out.println("Instantiation error for operation " + operation);
-          operation = null;
-        }
-      }
-      if (operation == null) { // failed to instantiate generic
-        return null;
-      }
-    }
-    return operation;
   }
 
   /**
@@ -861,23 +845,19 @@ public class ForwardGenerator extends AbstractGenerator {
   public void filterOutConstantOperations() {
     for (Iterator<TypedOperation> iterator = operations.iterator(); iterator.hasNext(); ) {
       TypedOperation operation = iterator.next();
-      if (operation.getInputTypes().isEmpty()) {
+      // Filter out parameter-less operations except those that are generic or include wildcard types.
+      if (operation.getInputTypes().isEmpty()
+          && !operation.isGeneric()
+          && !operation.hasWildcardTypes()) {
         Log.logPrintf("Filtering out operation: %s%n", operation);
 
-        operation = attemptToInstantiateIfGeneric(operation);
-        if (operation != null) {
-          SimpleArrayList<Statement> statements = new SimpleArrayList<>();
-          statements.add(new Statement(operation));
-          Sequence newSequence = new Sequence(statements);
-          componentManager.addGeneratedSequence(newSequence);
-          System.out.println("Adding new seq " + newSequence);
-        }
+        SimpleArrayList<Statement> statements = new SimpleArrayList<>();
+        statements.add(new Statement(operation));
+        Sequence newSequence = new Sequence(statements);
+        componentManager.addGeneratedSequence(newSequence);
+
         iterator.remove();
       }
-    }
-    System.out.println("Remaining operations --");
-    for (TypedOperation operation : operations) {
-      System.out.println(operation);
     }
   }
 }
