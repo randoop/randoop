@@ -845,19 +845,49 @@ public class ForwardGenerator extends AbstractGenerator {
   public void filterOutConstantOperations() {
     for (Iterator<TypedOperation> iterator = operations.iterator(); iterator.hasNext(); ) {
       TypedOperation operation = iterator.next();
-      // Filter out parameter-less operations except those that are generic or include wildcard types.
-      if (operation.getInputTypes().isEmpty()
-          && !operation.isGeneric()
-          && !operation.hasWildcardTypes()) {
+      // Filter out parameter-less operations.
+      if (operation.getInputTypes().isEmpty()) {
+        // For operations that are generic or include wildcard types, we instantiate it with matching
+        // types from our input pool and add all sequences to the pool.
+        if (operation.isGeneric() || operation.hasWildcardTypes()) {
+          try {
+            Set<TypedClassOperation> operations =
+                instantiator.instantiateWithMultiplePossibleTypes((TypedClassOperation) operation);
+            for (TypedClassOperation op : operations) {
+              createAndAddSequence(op);
+            }
+          } catch (Throwable e) {
+            if (GenInputsAbstract.fail_on_generation_error) {
+              if (operation.isMethodCall() || operation.isConstructorCall()) {
+                String opName = operation.getOperation().getReflectionObject().toString();
+                throw new RandoopInstantiationError(opName, e);
+              }
+            } else {
+              operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
+              Log.logPrintf("Instantiation error for operation %s%n", operation);
+              Log.logStackTrace(e);
+              System.out.println("Instantiation error for operation " + operation);
+            }
+          }
+        } else {
+          createAndAddSequence(operation);
+        }
+
         Log.logPrintf("Filtering out operation: %s%n", operation);
-
-        SimpleArrayList<Statement> statements = new SimpleArrayList<>();
-        statements.add(new Statement(operation));
-        Sequence newSequence = new Sequence(statements);
-        componentManager.addGeneratedSequence(newSequence);
-
         iterator.remove();
       }
     }
+  }
+
+  /**
+   * Create a new sequence from the given operation and add it to the component manager.
+   *
+   * @param operation operation used to create sequence
+   */
+  private void createAndAddSequence(TypedOperation operation) {
+    SimpleArrayList<Statement> statements = new SimpleArrayList<>();
+    statements.add(new Statement(operation));
+    Sequence newSequence = new Sequence(statements);
+    componentManager.addGeneratedSequence(newSequence);
   }
 }

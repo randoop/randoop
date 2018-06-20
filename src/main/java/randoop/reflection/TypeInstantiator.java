@@ -1,6 +1,7 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -81,6 +82,140 @@ public class TypeInstantiator {
 
     // if operation == null failed to build instantiation
     return operation;
+  }
+
+  /**
+   * Creates a set of instantiations of a given operation that is generic or has wildcard types.
+   *
+   * @param operation an operation that is generic or has wildcard types
+   * @return a set of different instantiations
+   */
+  public Set<TypedClassOperation> instantiateWithMultiplePossibleTypes(
+      TypedClassOperation operation) {
+    assert operation.isGeneric() || operation.hasWildcardTypes()
+        : "operation must be generic or have wildcards";
+
+    // Need to allow for backtracking, because choice of instantiation for declaring type may fail
+    // for generic operation --- OR maybe not.
+
+    List<Substitution<ReferenceType>> substitutions = new ArrayList<>();
+
+    // if declaring type of operation is generic, select instantiation
+    ClassOrInterfaceType declaringType = operation.getDeclaringType();
+    if (declaringType.isGeneric()) {
+
+      // If the operation creates objects of its declaring type, it may create a new instantiation.
+      if (operation.isConstructorCall()
+          || (operation.isStatic() && operation.getOutputType().equals(declaringType))) {
+        if (declaringType.isSubtypeOf(JDKTypes.SORTED_SET_TYPE)) {
+          instantiationsForSortedSetType(operation, substitutions);
+        } else {
+          instantationsForGeneralTypes(declaringType, substitutions);
+        }
+      } else {
+        // Otherwise, select from existing ones.
+        for (Type type : inputTypes) {
+          if (type.isParameterized()
+              && ((InstantiatedType) type).isInstantiationOf(declaringType)) {
+            substitutions.add(
+                ((InstantiatedType) type).getInstantiatingSubstitution(declaringType));
+          }
+        }
+      }
+    }
+
+    Set<TypedClassOperation> result = new HashSet<>();
+    // Apply each one of these type substitutions and create an instantiated operation.
+    for (Substitution<ReferenceType> substitution : substitutions) {
+      if (substitution != null) {
+        // Instantiate type parameters of declaring type.
+        TypedClassOperation typedOperation = operation.apply(substitution);
+
+        // If necessary, do capture conversion first.
+        if (typedOperation.hasWildcardTypes()) {
+          Log.logPrintf("Applying capture conversion to %s%n", typedOperation);
+          typedOperation = typedOperation.applyCaptureConversion();
+        }
+
+        typedOperation = instantiateOperationTypes(typedOperation);
+        if (typedOperation != null) {
+          result.add(typedOperation);
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Instantiate for general types.
+   *
+   * @param declaringType
+   * @param substitutions
+   */
+  private void instantationsForGeneralTypes(
+      ClassOrInterfaceType declaringType, List<Substitution<ReferenceType>> substitutions) {
+    List<TypeVariable> typeParameters = declaringType.getTypeParameters();
+    List<Substitution<ReferenceType>> possSubs =
+        collectSubstitutions(typeParameters, new Substitution<ReferenceType>());
+
+    for (Substitution<ReferenceType> substitution : possSubs) {
+      if (substitution != null) {
+        ClassOrInterfaceType instantiatingType = declaringType.apply(substitution);
+        if (!instantiatingType.isGeneric()) {
+          substitutions.add(substitution);
+        } else {
+          Log.logPrintf("Didn't find types to satisfy bounds on generic type: %s%n", declaringType);
+        }
+      }
+    }
+  }
+
+  private void instantiationsForSortedSetType(
+      TypedClassOperation operation, List<Substitution<ReferenceType>> subs) {
+    TypeVariable parameter = operation.getDeclaringType().getTypeParameters().get(0);
+    List<TypeVariable> parameters = new ArrayList<>();
+    parameters.add(parameter);
+
+    TypeTuple opInputTypes = operation.getInputTypes();
+
+    GenericClassType genericClassType = null;
+
+    // this is default constructor, choose a type E that is Comparable<E>
+    if (opInputTypes.isEmpty()) {
+      genericClassType = JavaTypes.COMPARABLE_TYPE;
+    } else if (opInputTypes.size() == 1) {
+      ClassOrInterfaceType inputType = (ClassOrInterfaceType) opInputTypes.get(0);
+
+      // this constructor has Comparator<E> arg, choose type E with Comparator<E> in sequence types
+      if (inputType.isInstantiationOf(JDKTypes.COMPARATOR_TYPE)) {
+        genericClassType = JDKTypes.COMPARATOR_TYPE;
+      }
+
+      // this constructor has Collection<E> arg, choose type E that is Comparable<E>
+      if (inputType.isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
+        genericClassType = JavaTypes.COMPARABLE_TYPE;
+      }
+
+      // this constructor has SortedSet<E> arg, choose existing matching type
+      if (inputType.isInstantiationOf(JDKTypes.SORTED_SET_TYPE)) {
+        genericClassType = JDKTypes.SORTED_SET_TYPE;
+      }
+    }
+
+    if (genericClassType != null) {
+      for (Type type : inputTypes) {
+        if (type.isParameterized()
+            && ((InstantiatedType) type).isInstantiationOf(genericClassType)) {
+          Substitution<ReferenceType> substitution =
+              ((InstantiatedType) type).getInstantiatingSubstitution(genericClassType);
+          TypeArgument argumentType =
+              genericClassType.apply(substitution).getTypeArguments().get(0);
+          subs.add(
+              Substitution.forArgs(
+                  parameters, ((ReferenceArgument) argumentType).getReferenceType()));
+        }
+      }
+    }
   }
 
   /**
