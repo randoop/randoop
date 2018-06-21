@@ -870,6 +870,7 @@ public class ForwardGenerator extends AbstractGenerator {
             }
           }
         } else {
+          // For all other operations, we simply create a sequence from it and add it to the input pool.
           createAndAddSequence(operation);
         }
 
