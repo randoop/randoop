@@ -17,6 +17,10 @@ import randoop.Globals;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 
+/*>>>
+import org.checkerframework.checker.nullness.qual.Nullable;
+*/
+
 /** Container for Randoop options. They are stored as static variables, not instance variables. */
 @SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
