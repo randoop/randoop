@@ -59,7 +59,11 @@ public class SubTypeSet {
     ((CheckpointingSet<Type>) types).undoToLastMark();
   }
 
-  /** Adds a type to this set. */
+  /**
+   * Adds a type to this set.
+   *
+   * @param c the type to be added
+   */
   public void add(Type c) {
     if (c == null) throw new IllegalArgumentException("c cannot be null.");
     if (types.contains(c)) {
@@ -108,12 +112,20 @@ public class SubTypeSet {
     return Collections.unmodifiableSet(subTypes.getValues(type));
   }
 
-  /** Returns the number of elements of this set. */
+  /**
+   * Returns the number of elements of this set.
+   *
+   * @return the size of the set
+   */
   public int size() {
     return types.size();
   }
 
-  /** Returns the elements of this set. */
+  /**
+   * Returns the elements of this set.
+   *
+   * @return the elements of the set
+   */
   public Set<Type> getElements() {
     return types.getElements();
   }
