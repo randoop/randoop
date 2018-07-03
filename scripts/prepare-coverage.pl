@@ -29,7 +29,7 @@ Prints the manual page and exits.
 =head1 DESCRIPTION
 
 This perl script is intended for use by Randoop developers to convert
-the Randoop code coverage results into a csv file suitable for input to 
+the Randoop code coverage results into a csv file suitable for input to
 "Randoop Coverage.xlsm".  The output is written to the file named
 "report-<input file modifcation date>.csv" in the current directory.
 By default, the script will read the file:
