@@ -10,9 +10,10 @@ env:
     - THIS_REPO=randoop
     - OS=ubuntu
   matrix:
-    - OS=ubuntu JDKVER=jdk7 GROUP=test
-    - OS=ubuntu JDKVER=jdk8 GROUP=test
-    - OS=ubuntu JDKVER=jdkany GROUP=misc
+#    - OS=ubuntu JDKVER=jdk7 GROUP=test
+#    - OS=ubuntu JDKVER=jdk8 GROUP=test
+#    - OS=ubuntu JDKVER=jdkany GROUP=misc
+    - OS=ubuntu JDKVER=jdkany GROUP=diff
 #    - OS=fedora JDKVER=jdk8 GROUP=test
 #    - OS=centos JDKVER=jdk8 GROUP=test
 

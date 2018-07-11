@@ -52,6 +52,16 @@ if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
   ./gradlew manual
 fi
 
+## TODO: merge into "misc" once it is working.
+if [[ "${GROUP}" == "diff" || "${GROUP}" == "all" ]]; then
+  echo "TRAVIS_BRANCH = $TRAVIS_BRANCH"
+  git diff HEAD...$TRAVIS_BRANCH || true > /tmp/diff.txt 2>&1
+  ./gradlew requireJavadoc || true > /tmp/output.txt 2>&1
+  sudo apt install composer
+  composer require --dev exussum12/coverage-checker
+  ./vendor/bin/diffFilter /tmp/diff.txt /tmp/output.txt
+fi
+
 ## TODO Re-enable codecov.io code coverage tests.
 ## Disabled for now, because codecov is only aware of unit tests.
 ## Once we inform it of system tests as well, it will be more useful
