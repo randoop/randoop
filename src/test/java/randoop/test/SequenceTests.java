@@ -32,7 +32,6 @@ import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
-import randoop.util.Util;
 
 /*
 Note: I disabled this test in the build script because the test-script includes the use of
@@ -204,11 +203,11 @@ public class SequenceTests {
     b.append("Failure in test ").append(testId).append(": ").append(msg).append(".");
     b.append("").append(Globals.lineSep).append("Expected:").append(Globals.lineSep).append("");
     for (int i = 0; i < expected.size(); i++) {
-      b.append(i).append(": ").append(expected.get(i)).append(Util.newLine);
+      b.append(i).append(": ").append(expected.get(i)).append(Globals.lineSep);
     }
     b.append("").append(Globals.lineSep).append("Actual:").append(Globals.lineSep).append("");
     for (int i = 0; i < actual.size(); i++) {
-      b.append(i).append(": ").append(actual.get(i)).append(Util.newLine);
+      b.append(i).append(": ").append(actual.get(i)).append(Globals.lineSep);
     }
     return b.toString();
   }
