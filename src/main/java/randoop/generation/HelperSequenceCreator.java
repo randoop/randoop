@@ -110,7 +110,12 @@ class HelperSequenceCreator {
     return l;
   }
 
-  /** Returns the element type of the given collection type. */
+  /**
+   * Returns the element type of the given collection type.
+   *
+   * @param collectionType the collection type
+   * @return the ReferenceType with the given collection type
+   */
   private static ReferenceType getElementType(InstantiatedType collectionType) {
     List<TypeArgument> argumentList = collectionType.getTypeArguments();
     assert argumentList.size() == 1
