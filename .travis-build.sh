@@ -57,8 +57,9 @@ if [[ "${GROUP}" == "diff" || "${GROUP}" == "all" ]]; then
   echo "TRAVIS_BRANCH = $TRAVIS_BRANCH"
   (git diff HEAD...$TRAVIS_BRANCH > /tmp/diff.txt 2>&1) || true
   (./gradlew requireJavadoc > /tmp/output.txt 2>&1) || true
-  echo "diff.txt"
-  cat diff.txt
+  ls -l /tmp
+  echo "/tmp/diff.txt"
+  cat /tmp/diff.txt
   echo "difffilter output:"
   /vendor/bin/diffFilter /tmp/diff.txt /tmp/output.txt
 fi
