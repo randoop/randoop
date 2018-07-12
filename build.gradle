@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '2.0.1'
+  id 'com.github.johnrengelman.shadow' version '2.0.4'
   id 'java'
   id 'eclipse'
   id 'idea'
@@ -62,7 +62,7 @@ allprojects {
     //plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     plumelib 'org.plumelib:options:0.3.3'
-    plumelib 'org.plumelib:plume-util:0.0.4'
+    plumelib 'org.plumelib:plume-util:0.1.0'
   }
 }
 
@@ -699,6 +699,23 @@ if (JavaVersion.current().isJava8Compatible()) {
         // for information about the -Xwerror option.
         options.addStringOption('Xwerror', '-quiet')
     }
+}
+
+configurations {
+  requireJavadoc
+}
+dependencies {
+  compile group: 'org.plumelib', name: 'require-javadoc', version: '0.0.7'
+}
+task requireJavadoc(type: Javadoc) {
+  description = 'Ensures that all Java elements have Javadoc documentation.'
+  destinationDir.deleteDir()
+  source = sourceSets.main.allJava
+  classpath = project.sourceSets.main.compileClasspath
+  // options.memberLevel = JavadocMemberLevel.PRIVATE
+  options.docletpath = project.sourceSets.main.compileClasspath as List
+  options.doclet = "org.plumelib.javadoc.RequireJavadoc"
+  // options.addStringOption('skip', 'ClassNotToCheck|OtherClass')
 }
 
 // needed for javadoc.doLast
