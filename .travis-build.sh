@@ -60,6 +60,7 @@ if [[ "${GROUP}" == "diff" || "${GROUP}" == "all" ]]; then
   ls -l /tmp
   echo "/tmp/diff.txt"
   cat /tmp/diff.txt
+  [ -s /tmp/diff.txt ] || (echo "/tmp/diff.txt is empty" && false)
   echo "difffilter output:"
   /root/vendor/bin/diffFilter --pylint /tmp/diff.txt /tmp/output.txt
 fi
