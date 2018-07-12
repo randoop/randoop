@@ -651,14 +651,14 @@ task cloneHtmlTools {
 
 task clonePlumeLib {
   doLast {
-    if ( ! file("$buildDir/utils/plume-lib").exists() ) {
+    if ( ! file("$buildDir/utils/plume-scripts").exists() ) {
       exec {
-        commandLine 'git', 'clone', '--depth', '1', "https://github.com/mernst/plume-lib.git", "$buildDir/utils/plume-lib"
+        commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/plume-scripts.git", "$buildDir/utils/plume-scripts"
       }
     } else {
       // Ignore exit value so this does not halt the build when not connected to the Internet.
       exec {
-        workingDir "$buildDir/utils/plume-lib"
+        workingDir "$buildDir/utils/plume-scripts"
         ignoreExitValue true
         commandLine 'git', 'pull', '-q'
       }
@@ -718,7 +718,7 @@ task requireJavadoc(type: Javadoc) {
 javadoc.dependsOn cloneLibs
 
 javadoc.doLast {
-  def preplace = file("$buildDir/utils/plume-lib/bin/preplace")
+  def preplace = file("$buildDir/utils/plume-scripts/preplace")
   // Work around Javadoc bug
   exec {
     commandLine preplace, "<dt><span class=\"memberNameLink\"><a href=\".*\\(\\)</a></span> - Constructor for enum [a-zA-Z0-9_.]*<a href=\".*</a></dt>", "", "build/docs/api/index-all.html"
@@ -923,14 +923,14 @@ task wrapper(type: Wrapper) {
 task tags(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testinput | $buildDir/utils/plume-lib/bin/sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testinput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
 task tagsNoTests(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-lib/bin/sort-directory-order | grep -v /testinput/ | xargs etags"
+  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-scripts/sort-directory-order | grep -v /testinput/ | xargs etags"
 }
 
 /* Run checklink */
