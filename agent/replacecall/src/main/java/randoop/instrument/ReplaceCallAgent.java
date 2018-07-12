@@ -30,7 +30,7 @@ import randoop.MethodReplacements;
  * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
  * documentation</a> the file format.) Default replacements are given in an internal resource file
  * {@code "default-replacements.txt"}. User replacements are then loaded using the {@code
- * --map-calls} command-line argument. A user replacement may override a default replacement.
+ * --replacement-file} command-line argument. A user replacement may override a default replacement.
  *
  * <p>The classes of packages listed in the resource file {@code "default-load-exclusions.txt"} are
  * excluded from transformation.
