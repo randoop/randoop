@@ -20,23 +20,23 @@ configurations {
   }
 }
 
-// Checker Framework from Maven Central
+// By default, use Checker Framework from Maven Central.
+// Pass -PcfLocal to use a locally-built version of the Checker Framework.
 dependencies {
-  ext.checkerFrameworkVersion = '2.4.0'
-  checkerFrameworkAnnotatedJDK "org.checkerframework:jdk8:${checkerFrameworkVersion}"
-  checkerFrameworkJavac "org.checkerframework:compiler:2.4.0"
-  checkerFrameworkCheckerJar "org.checkerframework:checker:${checkerFrameworkVersion}"
-  compile "org.checkerframework:checker-qual7:${checkerFrameworkVersion}"
+  if (!rootProject.hasProperty('cfLocal')) {
+    ext.checkerFrameworkVersion = '2.5.2'
+    checkerFrameworkAnnotatedJDK "org.checkerframework:jdk8:${checkerFrameworkVersion}"
+    checkerFrameworkJavac "org.checkerframework:compiler:2.4.0"
+    checkerFrameworkCheckerJar "org.checkerframework:checker:${checkerFrameworkVersion}"
+    implementation "org.checkerframework:checker-qual7:2.4.0"
+  } else {
+    ext.checkerframeworkdist = "$System.env.CHECKERFRAMEWORK/checker/dist"
+    checkerFrameworkAnnotatedJDK fileTree(dir: "${ext.checkerframeworkdist}", include: "jdk8.jar")
+    checkerFrameworkJavac "org.checkerframework:compiler:2.4.0"
+    checkerFrameworkCheckerJar fileTree(dir: "${ext.checkerframeworkdist}", include: 'checker.jar')
+    compile fileTree(dir: "${ext.checkerframeworkdist}", include: 'checker-qual.jar')
+  }
 }
-
-// Checker Framework from local build
-// dependencies {
-//   ext.checkerframeworkdist = "$System.env.CHECKERFRAMEWORK/checker/dist"
-//   checkerFrameworkAnnotatedJDK fileTree(dir: "${ext.checkerframeworkdist}", include: "jdk8.jar")
-//   checkerFrameworkJavac fileTree(dir: "${ext.checkerframeworkdist}", include: "javac.jar")
-//   checkerFrameworkCheckerJar fileTree(dir: "${ext.checkerframeworkdist}", include: 'checker.jar')
-//   compile fileTree(dir: "${ext.checkerframeworkdist}", include: 'checker-qual.jar')
-// }
 
 // // To type-check all projects.
 // allprojects {
@@ -44,11 +44,11 @@ dependencies {
 //     compile.doFirst {
 //       compile.options.compilerArgs = [
 //         '-processor', 'org.checkerframework.checker.formatter.FormatterChecker,org.checkerframework.checker.index.IndexChecker,org.checkerframework.checker.lock.LockChecker,org.checkerframework.checker.nullness.NullnessChecker,org.checkerframework.checker.signature.SignatureChecker',
-//        '-processorpath', "${configurations.checkerFrameworkCheckerJar.asPath}",
 //         '-Xmaxerrs', '10000',
 //         '-Awarns',    // turn Checker Framework errors into warnings
 //         '-source', '7', '-target', '7', // include if Java 7 compatibility is needed
 //         '-AcheckPurityAnnotations',
+//         '-processorpath', "${configurations.checkerFrameworkCheckerJar.asPath}",
 //         "-Xbootclasspath/p:${configurations.checkerFrameworkAnnotatedJDK.asPath}",
 //         "-Astubs=$System.env.CHECKERFRAMEWORK/checker/resources/javadoc.astub" // TODO: does not work when downloading from Maven Central
 //       ]
@@ -66,7 +66,6 @@ if (JavaVersion.current().isJava8Compatible()) {
         destinationDir = new File("${buildDir}", "checkerframework")
 
         options.compilerArgs = [
-                '-processorpath', "${configurations.checkerFrameworkCheckerJar.asPath}",
                 '-processor', 'org.checkerframework.checker.index.IndexChecker',
                 '-Xmaxerrs', '10000',
                 '-Xmaxwarns', '10000',
@@ -74,6 +73,7 @@ if (JavaVersion.current().isJava8Compatible()) {
                 '-source', '7', '-target', '7', // include if Java 7 compatibility is needed
                 // '-AcheckPurityAnnotations',
                 '-AprintErrorStack',
+                '-processorpath', "${configurations.checkerFrameworkCheckerJar.asPath}",
                 "-Xbootclasspath/p:${configurations.checkerFrameworkAnnotatedJDK.asPath}",
                 '-g', '-Xlint:-classfile'
         ]
