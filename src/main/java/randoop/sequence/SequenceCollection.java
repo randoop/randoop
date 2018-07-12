@@ -20,37 +20,34 @@ import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /**
- * A collection of sequences that makes its efficient to ask for all the sequences that create a
- * value of a given type.
- *
- * <p>RANDOOP IMPLEMENTATION NOTE.
- *
- * <p>When creating new sequences, Randoop often needs to search for all the previously-generated
- * sequences that create one or more values of a given type. Since this set can contain thousands of
- * sequences. Profiling showed that finding these sequences was a bottleneck in generation.
- *
- * <p>This class makes the above search faster by maintaining two data structures:
- *
- * <ul>
- *   <li>A map from types to the sets of all sequences that create one or more values of exactly the
- *       given type.
- *   <li>A set of all the types that can be created with the existing set of sequences. The set is
- *       maintained as a {@link SubTypeSet} that allows for quick queries about can-be-used-as
- *       relationships among the types in the set.
- * </ul>
- *
- * To find all the sequences that create values of a given type, Randoop first uses the {@code
- * SubTypeSet} to find the set {@code S} of feasible subtypes in set of sequences, and returns the
- * range of {@code S} in the sequence map.
+ * A collection of sequences that makes it efficient to ask for all the sequences that create a
+ * value of a given type. This implements Randoop's pool. A SequenceCollection is the main field of
+ * {@link randoop.generation.ComponentManager}.
  */
+// Randoop often needs to find all the previously-generated sequences that create values of a
+// given type. When Randoop kept all previously-generated sequences together, in a single
+// collection, profiling showed that finding these sequences was a bottleneck in generation.
+// This class makes the above search faster.
+//
+// To find all the sequences that create values of a given type, Randoop first uses the {@code
+// SubTypeSet} to find the set {@code T} of feasible subtypes, and returns the range of {@code T}
+// (that is, all the sequences mapped to by any t&isin;T) in the sequence map.
 public class SequenceCollection {
 
-  // We make the value type a list to make it easier to pick out an element at random.
+  /** For each type, all the sequences that produce one or more values of exactly the given type. */
   private Map<Type, SimpleArrayList<Sequence>> sequenceMap = new LinkedHashMap<>();
 
+  /**
+   * A set of all the types that can be created with the sequences in this. This is the same as
+   * {@code sequenceMap.keySet()}, but provides additional operations.
+   */
   private SubTypeSet typeSet = new SubTypeSet(false);
 
-  private Set<Type> sequenceTypes = new TreeSet<>();
+  /**
+   * A set of all the types that can be created with the sequences in this, and all their
+   * supertypes. Thus, this may be larger than {@link #typeSet}.
+   */
+  private Set<Type> typesAndSupertypes = new TreeSet<>();
 
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
@@ -64,9 +61,9 @@ public class SequenceCollection {
           "sequenceMap.keySet()="
               + Globals.lineSep
               + sequenceMap.keySet()
-              + ", typeSet.typesWithsequences="
+              + ", typeSet.types="
               + Globals.lineSep
-              + typeSet.typesWithsequences;
+              + typeSet.types;
       throw new IllegalStateException(b);
     }
   }
@@ -139,13 +136,13 @@ public class SequenceCollection {
    * value is deemed useful or not is left up to the client.
    *
    * <p>Note that this takes into consideration only the assigned value for each statement. If a
-   * statement might side-effect some variable, then that variable is considered as an output from
-   * its own statement, not the one that side-effects it.
+   * statement might side-effect some variable V, then V is considered as an output from the
+   * statement that declares/creates V, not the one that side-effects V.
    *
    * <p>(An alternative would be to only use outputs from the last statement, and include its inputs
    * as well. That alternative is not implemented. It would probably be faster, but it would not
    * handle the case of a method side-effecting a variable that that was not explicitly passed to
-   * it. Is that case important?
+   * it. That case probably isn't important/common.)
    *
    * @param sequence the sequence to add to this collection
    */
@@ -161,9 +158,10 @@ public class SequenceCollection {
               + argument.getType().getName();
       if (sequence.isActive(argument.getDeclIndex())) {
         Type type = formalTypes.get(i);
-        sequenceTypes.add(type);
+        typesAndSupertypes.add(type);
         if (type.isClassOrInterfaceType()) {
-          sequenceTypes.addAll(((ClassOrInterfaceType) type).getSuperTypes());
+          // This adds all the supertypes, not just immediate ones.
+          typesAndSupertypes.addAll(((ClassOrInterfaceType) type).getSuperTypes());
         }
         typeSet.add(type);
         updateCompatibleMap(sequence, type);
@@ -252,7 +250,7 @@ public class SequenceCollection {
   }
 
   public TypeInstantiator getTypeInstantiator() {
-    return new TypeInstantiator(sequenceTypes);
+    return new TypeInstantiator(typesAndSupertypes);
   }
 
   public void log() {

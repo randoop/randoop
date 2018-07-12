@@ -404,10 +404,6 @@ public class ForwardGenerator extends AbstractGenerator {
 
     this.allSequences.add(newSequence);
 
-    for (Sequence inputSequence : inputs.sequences) {
-      inputSequence.lastTimeUsed = java.lang.System.currentTimeMillis();
-    }
-
     randoopConsistencyTest2(newSequence);
 
     Log.logPrintf("Successfully created new unique sequence:%n%s%n", newSequence.toString());

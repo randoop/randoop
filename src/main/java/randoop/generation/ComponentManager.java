@@ -21,7 +21,8 @@ import randoop.util.SimpleList;
 
 /**
  * Stores and provides means to access the component sequences generated during a run of Randoop.
- * "Component sequences" are sequences that Randoop uses to create larger sequences.
+ * "Component sequences" are sequences that Randoop uses to create larger sequences. The collection
+ * of sequences is also called Randoop's "pool".
  *
  * <p>This class manages different collections of component sequences:
  *
@@ -32,25 +33,24 @@ import randoop.util.SimpleList;
  *   <li>Package literals: analogous to class literals but at the package level.
  * </ul>
  *
- * SEED SEQUENCES. Seed sequences are sequences that were not created during the generation process
- * but obtained via other means. They include (1) sequences passed via the constructor, (2) class
- * literals, and (3) package literals. The only different treatment of seed sequences is during
- * calls to the clearGeneratedSequences() method, which removes only general, non-seed components
- * from the collection.
+ * <p>SEED SEQUENCES. Seed sequences are sequences that were not created during the generation
+ * process but obtained via other means. They include (1) sequences passed via the constructor, (2)
+ * class literals, and (3) package literals. The only different treatment of seed sequences is
+ * during calls to the clearGeneratedSequences() method, which removes only general, non-seed
+ * components from the collection.
  */
 public class ComponentManager {
 
   /** The principal set of sequences used to create other, larger sequences by the generator. */
-  // Is never null. Contains both general components
-  // and seed sequences.
+  // Is never null. Contains both general components and seed sequences.
+  // "gral" probably stands for "general".
   private SequenceCollection gralComponents;
 
   /**
    * The subset of the sequences that were given pre-generation to the component manager (via its
    * constructor).
    */
-  // Seeds are all contained in gralComponents. This list
-  // is kept to restore seeds if the user calls
+  // Seeds are all contained in gralComponents. This list is kept to restore seeds if the user calls
   // clearGeneratedSequences().
   private final Collection<Sequence> gralSeeds;
 

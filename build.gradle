@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '2.0.1'
+  id 'com.github.johnrengelman.shadow' version '2.0.4'
   id 'java'
   id 'eclipse'
   id 'idea'
@@ -62,7 +62,7 @@ allprojects {
     //plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     plumelib 'org.plumelib:options:0.3.3'
-    plumelib 'org.plumelib:plume-util:0.0.4'
+    plumelib 'org.plumelib:plume-util:0.1.0'
   }
 }
 
@@ -651,14 +651,14 @@ task cloneHtmlTools {
 
 task clonePlumeLib {
   doLast {
-    if ( ! file("$buildDir/utils/plume-lib").exists() ) {
+    if ( ! file("$buildDir/utils/plume-scripts").exists() ) {
       exec {
-        commandLine 'git', 'clone', '--depth', '1', "https://github.com/mernst/plume-lib.git", "$buildDir/utils/plume-lib"
+        commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/plume-scripts.git", "$buildDir/utils/plume-scripts"
       }
     } else {
       // Ignore exit value so this does not halt the build when not connected to the Internet.
       exec {
-        workingDir "$buildDir/utils/plume-lib"
+        workingDir "$buildDir/utils/plume-scripts"
         ignoreExitValue true
         commandLine 'git', 'pull', '-q'
       }
@@ -697,11 +697,28 @@ if (JavaVersion.current().isJava8Compatible()) {
     }
 }
 
+configurations {
+  requireJavadoc
+}
+dependencies {
+  compile group: 'org.plumelib', name: 'require-javadoc', version: '0.0.7'
+}
+task requireJavadoc(type: Javadoc) {
+  description = 'Ensures that all Java elements have Javadoc documentation.'
+  destinationDir.deleteDir()
+  source = sourceSets.main.allJava
+  classpath = project.sourceSets.main.compileClasspath
+  // options.memberLevel = JavadocMemberLevel.PRIVATE
+  options.docletpath = project.sourceSets.main.compileClasspath as List
+  options.doclet = "org.plumelib.javadoc.RequireJavadoc"
+  // options.addStringOption('skip', 'ClassNotToCheck|OtherClass')
+}
+
 // needed for javadoc.doLast
 javadoc.dependsOn cloneLibs
 
 javadoc.doLast {
-  def preplace = file("$buildDir/utils/plume-lib/bin/preplace")
+  def preplace = file("$buildDir/utils/plume-scripts/preplace")
   // Work around Javadoc bug
   exec {
     commandLine preplace, "<dt><span class=\"memberNameLink\"><a href=\".*\\(\\)</a></span> - Constructor for enum [a-zA-Z0-9_.]*<a href=\".*</a></dt>", "", "build/docs/api/index-all.html"
@@ -771,11 +788,25 @@ task updateUserOptions(dependsOn: 'assemble') {
   }
 }
 
+/* Requires that the html5validator program is installed */
+task html5validatorExists {
+    doLast {
+        def result = exec {
+            def command = "command -v html5validator"
+            ignoreExitValue = true
+            executable "bash" args "-l", "-c", command
+        }
+        if (result.getExitValue() != 0) {
+            ant.fail('html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .')
+        }
+    }
+}
+
 /*
  * Configuration of manual task to generate/update and move documentation into
  * build/docs directory.
  */
-task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC']) {
+task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC', 'html5validatorExists']) {
   group 'Documentation'
   description "Adds options and TOC to documentation in src/docs"
   doLast {
@@ -796,7 +827,7 @@ build.dependsOn manual
  * Applies HTML5 validator to API javadoc.
  * Note: prior to Java 9, javadoc does not comply with HTML5.
  */
-task validateAPI(type: Exec, dependsOn: 'javadoc') {
+task validateAPI(type: Exec, dependsOn: ['javadoc', 'html5validatorExists']) {
   group 'Documentation'
   description "Run html5validator to find HTML errors in API documentation"
   if (JavaVersion.current().isJava9Compatible()) {
@@ -859,7 +890,7 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) 
 /*
  * Applies HTML5 validator to project site HTML, including the manual
  */
-task validateSite {
+task validateSite(dependsOn: 'html5validatorExists') {
   description "Run html5validator to find HTML errors in site files (excludes manual and api)"
   if (JavaVersion.current().isJava8Compatible()) {
     exec {
@@ -892,14 +923,14 @@ task wrapper(type: Wrapper) {
 task tags(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testinput | $buildDir/utils/plume-lib/bin/sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testinput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
 task tagsNoTests(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-lib/bin/sort-directory-order | grep -v /testinput/ | xargs etags"
+  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-scripts/sort-directory-order | grep -v /testinput/ | xargs etags"
 }
 
 /* Run checklink */

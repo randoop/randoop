@@ -1,5 +1,7 @@
-// This file was copied from: // https://github.com/javaparser/javaparser/blob/javaparser-parent-2.4.0/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/CloneVisitor.java
-// Direct URL: https://raw.githubusercontent.com/javaparser/javaparser/javaparser-parent-2.4.0/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/CloneVisitor.java
+// This file was copied from:
+// https://github.com/javaparser/javaparser/blob/javaparser-parent-2.4.0/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/CloneVisitor.java
+// Direct URL:
+// https://raw.githubusercontent.com/javaparser/javaparser/javaparser-parent-2.4.0/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/CloneVisitor.java
 //
 // Then, the file was modified to allow the CloneVisitor to copy orphan
 // comments when visiting each node. This class is used by the minimizer to
