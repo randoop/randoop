@@ -61,7 +61,7 @@ if [[ "${GROUP}" == "diff" || "${GROUP}" == "all" ]]; then
   echo "/tmp/diff.txt"
   cat /tmp/diff.txt
   echo "difffilter output:"
-  /root/vendor/bin/diffFilter /tmp/diff.txt /tmp/output.txt
+  /root/vendor/bin/diffFilter --pylint /tmp/diff.txt /tmp/output.txt
 fi
 
 ## TODO Re-enable codecov.io code coverage tests.
