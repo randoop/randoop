@@ -13,7 +13,7 @@ RUN apt-get -qqy update \
   git \
   gradle \
   xvfb \
-  default-jdk \
+  openjdk-8-jdk \
 && apt-get -qqy update \
 && apt-get -qqy install \
   python-pip \
