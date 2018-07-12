@@ -57,12 +57,16 @@ if [[ "${GROUP}" == "diff" || "${GROUP}" == "all" ]]; then
   echo "TRAVIS_BRANCH = $TRAVIS_BRANCH"
   echo "TRAVIS_COMMIT_RANGE = $TRAVIS_COMMIT_RANGE"
   (git diff $TRAVIS_COMMIT_RANGE > /tmp/diff.txt 2>&1) || true
+  # The change to TRAVIS_COMMIT_RANGE is due to travis-ci/travis-ci#4596 .
+  (git diff "${TRAVIS_COMMIT_RANGE/.../..}" > /tmp/diff2.txt 2>&1) || true
   # (git diff HEAD...$TRAVIS_BRANCH > /tmp/diff.txt 2>&1) || true
   # (git diff $(git merge-base origin/master...HEAD) > /tmp/diff1.txt 2>&1) || true
   (./gradlew requireJavadoc > /tmp/output.txt 2>&1) || true
   ls -l /tmp
   echo "/tmp/diff.txt"
   cat /tmp/diff.txt
+  echo "/tmp/diff2.txt"
+  cat /tmp/diff2.txt
   [ -s /tmp/diff.txt ] || (echo "/tmp/diff.txt is empty" && false)
   echo "difffilter output:"
   /root/vendor/bin/diffFilter --pylint /tmp/diff.txt /tmp/output.txt
