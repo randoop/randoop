@@ -28,6 +28,8 @@ before_script:
 # with no error (!).
 # The git commands are tried twice, in case of temporary network failure.
 # The fcntl line works around a bug where Travis truncates logs and fails.
+# The change to TRAVIS_COMMIT_RANGE is due to travis-ci/travis-ci#4596 .
+  # echo "TRAVIS_COMMIT_RANGE = $TRAVIS_COMMIT_RANGE"
 script:
 - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"
 - REMOTE_ORIGIN_URL=`git config --get remote.origin.url`
