@@ -28,3 +28,4 @@ bin/
 
 # Temporary file
 gradle-build-output.txt
+scripts/dockerdir
