@@ -63,7 +63,6 @@ script:
      javac -version &&
      export TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG &&
      export TRAVIS_BUILD_DIR=$TRAVIS_BUILD_DIR &&
-     export TRAVIS_BRANCH=$TRAVIS_BRANCH &&
      export TRAVIS_COMMIT_RANGE=$TRAVIS_COMMIT_RANGE &&
      ./.travis-build.sh $GROUP"
 

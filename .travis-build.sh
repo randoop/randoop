@@ -51,7 +51,6 @@ if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
   ./gradlew javadoc
   ./gradlew manual
 
-  echo "TRAVIS_BRANCH = $TRAVIS_BRANCH"
   echo "TRAVIS_COMMIT_RANGE = $TRAVIS_COMMIT_RANGE"
   # (git diff $TRAVIS_COMMIT_RANGE > /tmp/diff.txt 2>&1) || true
   # The change to TRAVIS_COMMIT_RANGE is due to travis-ci/travis-ci#4596 .
