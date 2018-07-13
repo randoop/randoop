@@ -67,6 +67,8 @@ if [[ "${GROUP}" == "diff" || "${GROUP}" == "all" ]]; then
   cat /tmp/diff.txt
   echo "/tmp/diff2.txt"
   cat /tmp/diff2.txt
+  echo "/tmp/output.txt"
+  cat /tmp/output.txt
   [ -s /tmp/diff.txt ] || (echo "/tmp/diff.txt is empty" && false)
   echo "difffilter output:"
   wget https://raw.githubusercontent.com/plume-lib/plume-scripts/master/lint-diff.py
