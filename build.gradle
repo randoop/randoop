@@ -714,7 +714,7 @@ task requireJavadoc(type: Javadoc) {
   // options.addStringOption('skip', 'ClassNotToCheck|OtherClass')
 }
 task requireJavadocPrivate(type: Javadoc) {
-  description = 'Ensures that all Java elements have Javadoc documentation.'
+  description = 'Ensures that all (even private) Java elements have Javadoc documentation.'
   destinationDir.deleteDir()
   source = sourceSets.main.allJava
   classpath = project.sourceSets.main.compileClasspath
