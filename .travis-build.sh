@@ -69,7 +69,8 @@ if [[ "${GROUP}" == "diff" || "${GROUP}" == "all" ]]; then
   cat /tmp/diff2.txt
   [ -s /tmp/diff.txt ] || (echo "/tmp/diff.txt is empty" && false)
   echo "difffilter output:"
-  /root/vendor/bin/diffFilter --pylint /tmp/diff.txt /tmp/output.txt
+  wget https://raw.githubusercontent.com/plume-lib/plume-scripts/master/lint-diff.py
+  python lint-diff.py /tmp/diff.txt /tmp/output.txt
 fi
 
 ## TODO Re-enable codecov.io code coverage tests.
