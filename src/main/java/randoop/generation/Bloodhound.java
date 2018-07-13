@@ -58,7 +58,7 @@ public class Bloodhound implements TypedOperationSelector {
    */
   private final Map<TypedOperation, Integer> methodInvocationCounts = new HashMap<>();
 
-  /*
+  /**
    * List of operations, identical to {@link ForwardGenerator}'s operation list. Used for making
    * random, weighted selections for a method under test.
    */

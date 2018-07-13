@@ -5,14 +5,17 @@ import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
 
-/** This class selects a method with uniform probability. */
+/** This class selects a method, from the list of methods under test, with uniform probability. */
 public class UniformRandomMethodSelection implements TypedOperationSelector {
+
+  /** The list of methods under test from which we will select. */
   private final List<TypedOperation> operations;
 
   /**
    * Maintains a reference to the list of the methods under test. Note that a copy is not made.
-   * Doing so causes various system tests to fail due to changes in coverage. We've observed that
-   * for some reason the resulting "normal method executions" to drop significantly.
+   * Doing so causes various system tests to fail due to changes in coverage. We discovered that
+   * this was caused by {@link ForwardGenerator} which was removing parameter-less operations after
+   * testing them once.
    *
    * @param operations methods under test
    */
