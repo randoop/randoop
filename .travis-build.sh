@@ -8,7 +8,7 @@ if [[ "${GROUP}" == "" ]]; then
   export GROUP=all
 fi
 
-if [[ "${GROUP}" != "all" && "${GROUP}" != "test" && "${GROUP}" != "misc" && "${GROUP}" != "diff" ]]; then
+if [[ "${GROUP}" != "all" && "${GROUP}" != "test" && "${GROUP}" != "misc" ]]; then
   echo "Bad argument '${GROUP}'; should be omitted or one of: all, test, misc"
   exit 1
 fi
@@ -50,27 +50,14 @@ fi
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
   ./gradlew javadoc
   ./gradlew manual
-fi
 
-## TODO: merge into "misc" once it is working.
-if [[ "${GROUP}" == "diff" || "${GROUP}" == "all" ]]; then
   echo "TRAVIS_BRANCH = $TRAVIS_BRANCH"
   echo "TRAVIS_COMMIT_RANGE = $TRAVIS_COMMIT_RANGE"
-  (git diff $TRAVIS_COMMIT_RANGE > /tmp/diff.txt 2>&1) || true
+  # (git diff $TRAVIS_COMMIT_RANGE > /tmp/diff.txt 2>&1) || true
   # The change to TRAVIS_COMMIT_RANGE is due to travis-ci/travis-ci#4596 .
-  (git diff "${TRAVIS_COMMIT_RANGE/.../..}" > /tmp/diff2.txt 2>&1) || true
-  # (git diff HEAD...$TRAVIS_BRANCH > /tmp/diff.txt 2>&1) || true
-  # (git diff $(git merge-base origin/master...HEAD) > /tmp/diff1.txt 2>&1) || true
-  (./gradlew requireJavadocPrivate > /tmp/output.txt 2>&1) || true
-  ls -l /tmp
-  echo "/tmp/diff.txt"
-  cat /tmp/diff.txt
-  echo "/tmp/diff2.txt"
-  cat /tmp/diff2.txt
-  echo "/tmp/output.txt"
-  cat /tmp/output.txt
+  (git diff "${TRAVIS_COMMIT_RANGE/.../..}" > /tmp/diff.txt 2>&1) || true
+  (./gradlew requireJavadocPrivate > /tmp/rjp-output.txt 2>&1) || true
   [ -s /tmp/diff.txt ] || (echo "/tmp/diff.txt is empty" && false)
-  echo "difffilter output:"
   wget https://raw.githubusercontent.com/plume-lib/plume-scripts/master/lint-diff.py
   python lint-diff.py --strip-diff=1 --strip-lint=2 /tmp/diff.txt /tmp/output.txt
 fi
