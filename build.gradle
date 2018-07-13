@@ -713,6 +713,16 @@ task requireJavadoc(type: Javadoc) {
   options.doclet = "org.plumelib.javadoc.RequireJavadoc"
   // options.addStringOption('skip', 'ClassNotToCheck|OtherClass')
 }
+task requireJavadocPrivate(type: Javadoc) {
+  description = 'Ensures that all Java elements have Javadoc documentation.'
+  destinationDir.deleteDir()
+  source = sourceSets.main.allJava
+  classpath = project.sourceSets.main.compileClasspath
+  options.memberLevel = JavadocMemberLevel.PRIVATE
+  options.docletpath = project.sourceSets.main.compileClasspath as List
+  options.doclet = "org.plumelib.javadoc.RequireJavadoc"
+  // options.addStringOption('skip', 'ClassNotToCheck|OtherClass')
+}
 
 // needed for javadoc.doLast
 javadoc.dependsOn cloneLibs
