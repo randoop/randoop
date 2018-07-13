@@ -58,7 +58,7 @@ if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
   (./gradlew requireJavadocPrivate > /tmp/rjp-output.txt 2>&1) || true
   [ -s /tmp/diff.txt ] || (echo "/tmp/diff.txt is empty" && false)
   wget https://raw.githubusercontent.com/plume-lib/plume-scripts/master/lint-diff.py
-  python lint-diff.py --strip-diff=1 --strip-lint=2 /tmp/diff.txt /tmp/output.txt
+  python lint-diff.py --strip-diff=1 --strip-lint=2 /tmp/diff.txt /tmp/rjp-output.txt
 fi
 
 ## TODO Re-enable codecov.io code coverage tests.
