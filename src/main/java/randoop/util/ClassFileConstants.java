@@ -75,8 +75,10 @@ public class ClassFileConstants {
     public Set<String> strings = new TreeSet<>();
     public Set<Class<?>> classes = new TreeSet<>();
 
-    // Map from a literal to its frequency. The frequency of a literal is the number of uses of
-    // the literal in the byte code of the class.
+    /**
+     * Map from a literal to its frequency. The frequency of a literal is the number of uses of the
+     * literal in the byte code of the class.
+     */
     public final Map<Object, Integer> constantToFrequency = new HashMap<>();
 
     @Override

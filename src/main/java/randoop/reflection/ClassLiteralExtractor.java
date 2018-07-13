@@ -19,6 +19,10 @@ import randoop.util.MultiMap;
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
 
+  /**
+   * A map from a class under test to the set of literals, represented by {@link Sequence}s, that
+   * occur within the class.
+   */
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /**
@@ -28,6 +32,14 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    */
   private final Map<Sequence, Integer> literalsTermFrequency;
 
+  /**
+   * Initializes the ClassLiteralExtractor with the given literal map and literal terms map.
+   *
+   * @param literalMap a map from a class under test to the set of literals that appear in that
+   *     class
+   * @param literalsTermFrequency a map of literals to their term frequency. A literal is
+   *     represented by a {@link Sequence}.
+   */
   ClassLiteralExtractor(
       MultiMap<ClassOrInterfaceType, Sequence> literalMap,
       Map<Sequence, Integer> literalsTermFrequency) {

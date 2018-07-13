@@ -511,6 +511,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("What probability to select only extracted literals")
   public static double p_const = .01;
 
+  /**
+   * Enable this flag to log literal term frequencies, document term frequencies, and weights
+   * assigned to constants by {@link randoop.generation.ConstantMiningSelection}.
+   */
   @Unpublicized
   @Option("Log to standard out, messages from the Constant Mining selection class.")
   public static boolean constant_mining_logging = false;
