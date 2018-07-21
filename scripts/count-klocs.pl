@@ -67,6 +67,13 @@ pod2usage(-verbose => 2) if $man;
 # Check for too many filenames
 pod2usage("$0: Too many files given.\n")  if (@ARGV > 1);
 
+# locate the java_count tool
+my $java_count = $ENV{'JAVA_COUNT_TOOL'};
+if (! defined($java_count)) {
+    print "JAVA_COUNT_TOOL environment variable not set\n";
+    exit 1;
+}
+
 my $tot_line = 0;
 my $tot_exec = 0;
 my @xml_lines;
@@ -119,8 +126,8 @@ for my $i (0 .. $#xml_lines) {
     } elsif (substr($element, 0, length("/package")) eq "/package") {
         # count the klocs in the files we have collected
         # print "end of package\n";
-# UNDONE: need better way to find java_count tool
-        my $cmd = "/homes/gws/markro/sloccount-2.26/java_count -f $tfname";
+
+        my $cmd = "$java_count -f $tfname";
         # print "$cmd\n";
         my $output = `$cmd`;
         chomp $output;
