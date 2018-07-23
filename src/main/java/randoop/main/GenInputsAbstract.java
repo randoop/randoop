@@ -530,7 +530,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /** Print to standard out, method weights and method uncovered ratios. */
   @Unpublicized
-  @Option("Output Bloodhound related information such as method weights and coverage ratios")
+  @Option("Output Bloodhound-related information such as method weights and coverage ratios")
   public static boolean bloodhound_logging = false;
 
   /**
@@ -823,6 +823,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
         throw new RandoopUsageError(
             "Invalid parameter combination: --deterministic with --progressintervalmillis");
       }
+    }
+
+    if (deterministic
+        && GenInputsAbstract.bloodhound_update_mode
+            == GenInputsAbstract.BloodhoundCoverageUpdateMode.TIME) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --deterministic with --bloodhound-update-mode=time");
     }
 
     if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_DEFAULT

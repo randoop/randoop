@@ -129,7 +129,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Take action based on the given {@link Sequence} was classified as a regression test.
+   * Take action based on the given {@link Sequence} that was classified as a regression test.
    *
    * @param sequence the new sequence that was classified as a regression test
    */
@@ -405,8 +405,9 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // A parameterless operation (a static constant method or no-argument constructor) returns the
-    // same thing every time it is invoked. Since we have just invoked it, its result will be in the pool.
-    //  There is no need to call this operation again, so remove it from the list of operations.
+    // same thing every time it is invoked. Since we have just invoked it, its result will be in the
+    // pool.
+    // There is no need to call this operation again, so remove it from the list of operations.
     if (operation.getInputTypes().isEmpty()) {
       operationHistory.add(operation, OperationOutcome.REMOVED);
       operations.remove(operation);

@@ -37,9 +37,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   private final CallableOperation operation;
 
   /**
-   * The type tuple of input types. For a non-static method call or instance field access, the first
-   * input type is always that of the receiver, that is, the declaring class of the method or the
-   * field. Refer to {@link Operation}.
+   * The type tuple of input types. For a non-static method call or an instance field access, the
+   * first input type is always that of the receiver, that is, the declaring class of the method or
+   * the field. Refer to {@link Operation}.
    */
   private final TypeTuple inputTypes;
 
@@ -155,8 +155,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Returns the tuple of input types for this operation. For a non-static method call or instance
-   * field access, the first input type is always the declaring class of the method or field.
+   * Returns the tuple of input types for this operation. For a non-static method call or an
+   * instance field access, the first input type is always the declaring class of the method or
+   * field.
    *
    * @return tuple of concrete input types
    */
