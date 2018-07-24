@@ -826,8 +826,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
 
     if (deterministic
-        && GenInputsAbstract.bloodhound_update_mode
-            == GenInputsAbstract.BloodhoundCoverageUpdateMode.TIME) {
+        && method_selection == MethodSelectionMode.BLOODHOUND
+        && bloodhound_update_mode == BloodhoundCoverageUpdateMode.TIME) {
       throw new RandoopUsageError(
           "Invalid parameter combination: --deterministic with --bloodhound-update-mode=time");
     }
