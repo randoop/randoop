@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.CallableOperation;
 import randoop.operation.EnumConstant;
@@ -24,14 +25,19 @@ import randoop.util.SimpleArrayList;
  * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
  *
  * <p>Bloodhound computes a weight for each method under test by taking a weighted combination of
- * the uncovered branch ratio and the ratio between the number of times the method has been
- * successfully invoked (to be the last statement of a new regression test) and the maximum number
- * of times any method under test has been successfully invoked. A method is "successfully invoked"
- * when a method under test is used to create a new sequence and the sequence is kept as a
- * regression test. An alternative definition of "successful invocations" that is also consistent
- * with the description in the GRT paper, is the total number of times the method appears in any
- * regression test. We believe our implementation, which uses the first definition, is likely what
- * was intended by the authors of the GRT paper.
+ *
+ * <ul>
+ *   <li>the uncovered branch ratio and
+ *   <li>the ratio between the number of times the method has been successfully invoked (to be the
+ *       last statement of a new regression test) and the maximum number of times any method under
+ *       test has been successfully invoked.
+ * </ul>
+ *
+ * A method is "successfully invoked" when a method under test is used to create a new sequence and
+ * the sequence is kept as a regression test. An alternative definition of "successful invocations"
+ * is the total number of times the method appears in any regression test. Both definitions are
+ * consistent with the description in the GRT paper. We believe our implementation, which uses the
+ * first definition, is likely what was intended by the authors of the GRT paper.
  */
 public class Bloodhound implements TypedOperationSelector {
 
@@ -39,22 +45,22 @@ public class Bloodhound implements TypedOperationSelector {
   private final CoverageTracker coverageTracker;
 
   /**
-   * Map of methods under test to their weights. These weights are dynamic and depend on branch
+   * Map from methods under test to their weights. These weights are dynamic and depend on branch
    * coverage.
    */
   private final Map<TypedOperation, Double> methodWeights = new HashMap<>();
 
   /**
-   * Map of methods under test to the number of times they have been recently selected by the {@link
-   * ForwardGenerator} to construct a new sequence. This map is cleared every time branch coverage
-   * is recomputed.
+   * Map from methods under test to the number of times they have been recently selected by the
+   * {@link ForwardGenerator} to construct a new sequence. This map is cleared every time branch
+   * coverage is recomputed.
    */
   private final Map<TypedOperation, Integer> methodSelectionCounts = new HashMap<>();
 
   /**
-   * Map of methods under test to the total number of times they have ever been successfully invoked
-   * by the {@link AbstractGenerator}. The integer value for a given method is non-decreasing during
-   * a run of Randoop.
+   * Map from methods under test to the total number of times they have ever been successfully
+   * invoked by the {@link AbstractGenerator}. The integer value for a given method is
+   * non-decreasing during a run of Randoop.
    */
   private final Map<TypedOperation, Integer> methodInvocationCounts = new HashMap<>();
 
@@ -82,7 +88,7 @@ public class Bloodhound implements TypedOperationSelector {
    */
   private static final long t = 50000;
 
-  /** Time, in milliseconds, when branch coverage was last updated. */
+  /** {@code System.currentTimeMillis()} when branch coverage was last updated. */
   private long lastUpdateTime = 0;
 
   /**
@@ -109,7 +115,7 @@ public class Bloodhound implements TypedOperationSelector {
 
   /**
    * Initialize Bloodhound. Branch coverage information is initialized and all methods under test
-   * are assigned a weight based on the weighting scheme defined by GRT's Bloodhound description.
+   * are assigned a weight based on the weighting scheme defined by GRT's description of Bloodhound.
    *
    * @param operations list of operations under test
    */
@@ -120,7 +126,8 @@ public class Bloodhound implements TypedOperationSelector {
     // Compute an initial weight for all methods under test. We also initialize the uncovered ratio
     // value of all methods under test by updating branch coverage information. The weights for all
     // methods may not be uniform in cases where we have methods with "zero" branches and methods
-    // with non-"zero" branches. This initialization depends on lastUpdateTime being initialized to zero.
+    // with non-"zero" branches. This initialization depends on lastUpdateTime being initialized to
+    // zero.
     updateBranchCoverageMaybe();
   }
 
@@ -151,42 +158,49 @@ public class Bloodhound implements TypedOperationSelector {
    * When an interval is reached, the branch coverage information for all methods under test is
    * updated and the weight for every method under test is recomputed.
    *
-   * <p>There are two choices for the metric by which we determine when to update branch coverage
-   * information. GRT's approach is time based and is the default choice that we provide in our
-   * implementation. We provide an alternative metric which uses the total number of successful
-   * invocations of all the methods under test.
+   * <p>There are two choices for when to update branch coverage information:
    *
-   * <p>If the interval is time based, then branch coverage is updated when more than {@code t}
-   * seconds has elapsed since branch coverage was last updated.
-   *
-   * <p>If the interval is invocation based, then branch coverage is updated after every {@code
-   * branchCoverageInteral} total successful invocations of all methods under test.
+   * <ul>
+   *   <li>Time: branch coverage is updated when more than {@code t} milliseconds have elapsed since
+   *       branch coverage was last updated. This is GRT's approach and is the default. It makes
+   *       Randoop non-deterministic.
+   *   <li>Count of successful invocations: branch coverage is updated after every {@code
+   *       branchCoverageInteral} successful invocations (of any method under test).
+   * </ul>
    */
   private void updateBranchCoverageMaybe() {
     boolean shouldUpdateBranchCoverage;
 
-    if (GenInputsAbstract.bloodhound_update_mode
-        == GenInputsAbstract.BloodhoundCoverageUpdateMode.TIME) {
-      // Use a time based approach for determining whether or not we want to update branch coverage.
-      long currentTime = System.currentTimeMillis();
-      shouldUpdateBranchCoverage = currentTime - lastUpdateTime >= t;
+    switch (GenInputsAbstract.bloodhound_update_mode) {
+      case TIME:
+        long currentTime = System.currentTimeMillis();
+        shouldUpdateBranchCoverage = currentTime - lastUpdateTime >= t;
 
-      // Update the last update time if we decide that it's time to update branch coverage information.
-      if (shouldUpdateBranchCoverage) {
-        lastUpdateTime = currentTime;
-      }
-    } else {
-      // Use an invocation based approach for determining whether or not we want to update branch coverage.
-      shouldUpdateBranchCoverage = totalSuccessfulInvocations % branchCoverageInterval == 0;
+        // Update the last update time if we decide that it's time to update branch coverage
+        // information.
+        if (shouldUpdateBranchCoverage) {
+          lastUpdateTime = currentTime;
+        }
+        break;
+      case INVOCATIONS:
+        shouldUpdateBranchCoverage = totalSuccessfulInvocations % branchCoverageInterval == 0;
 
-      // If we decide that it's time to update the branch coverage information, we "reset" the
-      // totalSuccessfulInvocations to 1 (or we could have incremented it by 1). This is to prevent
-      // ourselves from immediately re-updating branch coverage information should it be the case
-      // that the next test sequence that is generated is not a regression test and thus
-      // totalSuccessfulInvocations is not recomputed causing shouldUpdateBranchCoverage to be true again.
-      if (shouldUpdateBranchCoverage) {
-        totalSuccessfulInvocations = 1;
-      }
+        // If we decide that it's time to update the branch coverage information, we "reset" the
+        // totalSuccessfulInvocations to 1 (or we could have incremented it by 1). This is to
+        // prevent
+        // ourselves from immediately re-updating branch coverage information should it be the case
+        // that the next test sequence that is generated is not a regression test and thus
+        // totalSuccessfulInvocations is not recomputed causing shouldUpdateBranchCoverage to be
+        // true
+        // again.
+        if (shouldUpdateBranchCoverage) {
+          totalSuccessfulInvocations = 1;
+        }
+        break;
+      default:
+        throw new BugInRandoopException(
+            "Unhandled value for bloodhound_update_mode: "
+                + GenInputsAbstract.bloodhound_update_mode);
     }
 
     if (shouldUpdateBranchCoverage) {
@@ -226,10 +240,15 @@ public class Bloodhound implements TypedOperationSelector {
 
   /**
    * Recompute weight for a method under test. A method under test is assigned a weight based on a
-   * weighted combination of the number of branches uncovered and the ratio between the number of
-   * times this method has been recently selected and the maximum number of times any method under
-   * test has been successfully invoked. The weighting scheme is based on Bloodhound in the Guided
-   * Random Testing (GRT) paper.
+   * weighted combination of
+   *
+   * <ul>
+   *   <li>the number of branches uncovered and
+   *   <li>the ratio between the number of times this method has been recently selected and the
+   *       maximum number of times any method under test has been successfully invoked.
+   * </ul>
+   *
+   * The weighting scheme is based on Bloodhound in the Guided Random Testing (GRT) paper.
    *
    * @param operation method to compute weight for
    * @return the updated weight for the given operation
@@ -244,11 +263,11 @@ public class Bloodhound implements TypedOperationSelector {
     if (uncovRatio == null) {
       // Default to zero for methods with no coverage information.
       // This is the case for the following methods under test:
-      // - Object.<init> and Object.getClass which Randoop always includes as methods under test.
-      // - Getters and setters operations for public member variables that Randoop synthesizes.
-      // - Abstract method declarations and interface methods.
+      // - Object.<init> and Object.getClass, which Randoop always includes as methods under test.
+      // - Getter and setter operations for public member variables, which Randoop synthesizes.
+      // - Abstract methods and interface methods.
       // - Methods defined in abstract classes.
-      // - Inherited methods, methods that aren't overridden in the calling class.
+      // - Inherited methods, which aren't overridden in the calling class.
       // - Enum constants.
       String operationName = operation.getName();
       CallableOperation callableOperation = operation.getOperation();
@@ -256,16 +275,16 @@ public class Bloodhound implements TypedOperationSelector {
       boolean isAbstractMethod = false;
       boolean isSyntheticMethod = false;
       boolean isFromAbstractClass = false;
-      boolean isGetterMethod = callableOperation instanceof FieldGet;
-      boolean isSetterMethod = callableOperation instanceof FieldSet;
-      boolean isEnumConstant = callableOperation instanceof EnumConstant;
-
       if (callableOperation instanceof MethodCall) {
         Method method = ((MethodCall) callableOperation).getMethod();
         isAbstractMethod = Modifier.isAbstract(method.getModifiers());
         isSyntheticMethod = method.isSynthetic();
         isFromAbstractClass = Modifier.isAbstract(method.getDeclaringClass().getModifiers());
       }
+
+      boolean isGetterMethod = callableOperation instanceof FieldGet;
+      boolean isSetterMethod = callableOperation instanceof FieldSet;
+      boolean isEnumConstant = callableOperation instanceof EnumConstant;
 
       boolean isExpectedToHaveNoCoverage =
           isAbstractMethod
@@ -324,7 +343,7 @@ public class Bloodhound implements TypedOperationSelector {
   }
 
   /**
-   * Increments the count of the number of times a method under test was successfully invoked.
+   * Increments the number of times a method under test was successfully invoked.
    *
    * @param operation the method under test that was successfully invoked
    */
@@ -335,10 +354,10 @@ public class Bloodhound implements TypedOperationSelector {
   }
 
   /**
-   * Increment the number of successful invocations of the last method in the newly created sequence
+   * Increment the number of successful invocations of the last method in the newly-created sequence
    * that was classified as a regression test.
    *
-   * @param sequence newly created sequence that was classified as a regression test
+   * @param sequence newly-created sequence that was classified as a regression test
    */
   @Override
   public void newRegressionTestHook(Sequence sequence) {

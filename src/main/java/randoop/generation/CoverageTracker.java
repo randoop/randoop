@@ -28,12 +28,16 @@ import randoop.types.ClassOrInterfaceType;
  * method from Jacoco's data structures.
  */
 public class CoverageTracker {
-  /** In-memory store of the coverage information for all classes under test. */
+  /**
+   * A local copy of Jacoco's in-memory store of the coverage information for all classes under
+   * test.
+   */
   private final ExecutionDataStore executionData = new ExecutionDataStore();
 
   /**
-   * Map from method name to uncovered branch ratio. In cases where a method's total branches is
-   * zero, the missed ratio is NaN, and this map uses zero instead.
+   * Map from method name to uncovered branch ratio (in Jacoco terms, the "missed ratio"). In cases
+   * where a method's total branches is zero, the uncovered branch ratio is NaN, and this map uses
+   * zero instead.
    */
   private final Map<String, Double> branchCoverageMap = new HashMap<>();
 
@@ -43,7 +47,7 @@ public class CoverageTracker {
   /**
    * Initialize the coverage tracker.
    *
-   * @param classInterfaceTypes names of all the classes under test
+   * @param classInterfaceTypes all the classes under test
    */
   public CoverageTracker(Set<ClassOrInterfaceType> classInterfaceTypes) {
     for (ClassOrInterfaceType classOrInterfaceType : classInterfaceTypes) {
@@ -100,7 +104,7 @@ public class CoverageTracker {
   /**
    * Updates branch coverage information for all methods under test. At this point, Jacoco has
    * already generated coverage data while Randoop has been constructing and executing its test
-   * sequences. Coverage data is now collected and the {@code branchCoverageMap} is updated to
+   * sequences. Coverage data is now collected and the {@code branchCoverageMap} field is updated to
    * contain the updated coverage information of each method branch.
    */
   public void updateBranchCoverageMap() {
@@ -112,7 +116,7 @@ public class CoverageTracker {
     Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 
     // For each class that is under test, summarize the branch coverage information
-    // produced by Jacoco and update the coverageBuilder to store this information.
+    // produced by Jacoco and store it in the coverageBuilder local variable.
     for (String className : classesUnderTest) {
       String resource = getResourceFromClassName(className);
       InputStream original = getClass().getResourceAsStream(resource);
@@ -128,16 +132,16 @@ public class CoverageTracker {
     // branchCoverageMap.
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
       for (final IMethodCoverage cm : cc.getMethods()) {
-        String ifMethodName = cc.getName() + "." + cm.getName();
         // Jacoco uses class names in internal form.
+        String ifMethodName = cc.getName() + "." + cm.getName();
         // Randoop uses fully-qualified class names, with only periods as delimiters.
-        String fqMethodName = ifMethodName.replaceAll("/", ".").replaceAll("\\$", ".");
+        String fqMethodName = internalFormToFullyQualified(ifMethodName);
 
         if (GenInputsAbstract.bloodhound_logging) {
           System.out.println(fqMethodName + " - " + cm.getBranchCounter().getMissedRatio());
         }
 
-        // In cases where a method's total branches is zero, the missed ratio is NaN,
+        // In cases where a method's total branches is zero, the Jacoco missed ratio is NaN,
         // but use zero as the uncovRatio instead.
         double uncovRatio = cm.getBranchCounter().getMissedRatio();
         uncovRatio = Double.isNaN(uncovRatio) ? 0 : uncovRatio;
@@ -151,9 +155,19 @@ public class CoverageTracker {
   }
 
   /**
+   * Converts a type in internal form to a fully-qualified name.
+   *
+   * @param internalForm a type in internal form
+   * @return a fully-qualified name
+   */
+  private String internalFormToFullyQualified(String internalForm) {
+    return internalForm.replaceAll("/", ".").replaceAll("\\$", ".");
+  }
+
+  /**
    * Construct the absolute resource name of a class given a class name.
    *
-   * @param className name of class
+   * @param className fully-qualified name of class
    * @return absolute resource name of the class
    */
   private String getResourceFromClassName(String className) {
