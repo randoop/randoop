@@ -3,6 +3,7 @@ package randoop.generation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.plumelib.util.CollectionsPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.ExecutableSequence;
@@ -30,7 +31,7 @@ import randoop.util.SimpleList;
  * (byte)1;}. We assign these input sequences an execution time of 1 nanosecond to prevent division
  * by zero when later computing weights.
  */
-public class OrienteeringSelection implements InputSequenceSelector {
+public class OrienteeringSelection extends InputSequenceSelector {
   /** Map from a sequence to its weight. */
   private final Map<Sequence, Double> weightMap = new HashMap<>();
 
@@ -45,7 +46,7 @@ public class OrienteeringSelection implements InputSequenceSelector {
 
   /**
    * Map from a sequence to its execution time in nanoseconds. Once computed for a given sequence,
-   * the execution time of an input sequence is never updated.
+   * the value is never updated.
    */
   private final Map<Sequence, Long> sequenceExecutionTime = new HashMap<>();
 
@@ -61,7 +62,7 @@ public class OrienteeringSelection implements InputSequenceSelector {
     double totalWeight = computeWeightForCandidates(candidates);
 
     Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, weightMap, totalWeight);
-    incrementCountInMap(sequenceSelectionCount, selectedSequence);
+    CollectionsPlume.incrementMap(sequenceSelectionCount, selectedSequence);
     return selectedSequence;
   }
 
@@ -91,14 +92,14 @@ public class OrienteeringSelection implements InputSequenceSelector {
   }
 
   /**
-   * Compute the weight of an input sequence. The formula for updating a sequence's weight is:
+   * Compute the weight of a sequence. The formula for a sequence's weight is:
    *
    * <p>1.0 / (k * seq.exec_time * sqrt(seq.meth_size))
    *
-   * <p>Where k is the number of selections of seq and exec_time is the execution time of seq and
+   * <p>where k is the number of selections of seq and exec_time is the execution time of seq and
    * meth_size is the number of method call statements in seq. This formula is a slight
    * simplification of the one described in the GRT paper which maintains a separate exec_time for
-   * each execution of seq. However, we assume that every execution times for a sequence is the same
+   * each execution of seq. However, we assume that every execution time for a sequence is the same
    * as the first execution.
    *
    * @param sequence the sequence to compute a weight for
@@ -123,36 +124,31 @@ public class OrienteeringSelection implements InputSequenceSelector {
   }
 
   /**
-   * Each {@link Sequence} within {@code inputSequences} is a subsequence of {@code eSeq}. At this
-   * point, the given {@link ExecutableSequence} has been executed and contains the execution time
-   * of the sequence as a whole. The ExecutableSequence, eSeq, contains an {@link
-   * randoop.sequence.Execution} which contains a list of {@link ExecutionOutcome}s. The execution
-   * outcome object represents the result of executing a single statement in a sequence. To compute
-   * the execution time of an input sequence, we iterate through its statements and retrieve their
-   * respective execution times from the eSeq object.
+   * To compute the execution time of an input sequence, we iterate through its statements and
+   * retrieve their respective execution times from the eSeq object.
    *
    * <p>If the statement executed normally but has a measured time of 0 nanoseconds, we assign it an
-   * execution time of 1 nanosecond. This is to prevent division by zero when computing weights
-   * which uses the statement's execution time as part of a product in the denominator. We've
-   * observed that statements that have a measured execution time of zero typically include
-   * assignment statements of primitive types with a constant value. For example: {@code byte byte0
-   * = (byte)1;}.
+   * execution time of 1 nanosecond. This is to prevent division by zero. An example of a statement
+   * with a measured execution time of zero is assignment statements of primitive types with a
+   * constant value, such as {@code byte byte0 = (byte)1;}.
    *
    * <p>We do not update the execution time of an input sequence once it has been assigned. This is
    * because we do not believe that a single input sequence's execution time will change drastically
-   * between different runs. This is a simplification upon GRT's description of Orienteering which
+   * between different runs. This is a simplification of GRT's description of Orienteering, which
    * does differentiate execution times of a given sequence between multiple runs.
    *
    * @param inputSequences the sequences that were chosen as the input to the method under test for
-   *     creating {@code eSeq} which is a new and unique sequence
-   * @param eSeq the recently executed sequence which is new and unique
+   *     creating {@code eSeq}; each one is a subsequence of {@code eSeq}
+   * @param eSeq the recently executed sequence which is new and unique, and has just been executed.
+   *     It contains its overall execution time. It also contains, for each statement, an
+   *     ExecutionOutcome that gives the statement's execution time.
    */
   @Override
   public void createdExecutableSequenceFromInputs(
       List<Sequence> inputSequences, ExecutableSequence eSeq) {
     Map<Statement, Long> statementExecTimeMap = new HashMap<>();
 
-    // We iterate through the executable sequence and populate our map, mapping from statement to
+    // Iterate through the executable sequence and populate the map, mapping from statement to
     // execution time. There will be an execution outcome for each statement since we have
     // the invariant in ExecutableSequence that sequence.size() == executionResults.size().
     for (int i = 0; i < eSeq.size(); i++) {
@@ -227,28 +223,10 @@ public class OrienteeringSelection implements InputSequenceSelector {
   }
 
   /**
-   * Increments the value mapped to by the key in the given map. If the map does not contain the
-   * value, the value is set to 1 in the map.
-   *
-   * @param map input map
-   * @param key given key
-   * @param <K> any reference type
-   */
-  private <K> void incrementCountInMap(Map<K, Integer> map, K key) {
-    Integer count = map.get(key);
-    if (count == null) {
-      count = 0;
-    }
-    map.put(key, count + 1);
-  }
-
-  /**
    * Retrieve the method size square root of the given sequence. This is the square root of the
    * number of method call statements within the given sequence.
    *
-   * <p>The method size square root value will be used in a product in the denominator of a
-   * division. To prevent division by zero, we assign the method size square root a value of 1 if it
-   * 0. This could happen for sequences with no method calls.
+   * <p>To prevent division by zero, we use 1 for a sequence with no method calls.
    *
    * @param sequence the sequence to get the method size square root of
    * @return square root of the number of method calls in the given sequence

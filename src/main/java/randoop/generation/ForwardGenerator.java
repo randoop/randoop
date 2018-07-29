@@ -106,6 +106,7 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       case ORIENTEERING:
         inputSequenceSelector = new OrienteeringSelection();
+        break;
       default:
         throw new Error(
             "Case statement does not handle all InputSelectionModes: "

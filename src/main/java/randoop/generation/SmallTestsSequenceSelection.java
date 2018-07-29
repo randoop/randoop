@@ -1,9 +1,7 @@
 package randoop.generation;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
@@ -12,7 +10,7 @@ import randoop.util.SimpleList;
  * Select input sequences, favoring shorter sequences. This makes Randoop produce smaller JUnit
  * tests.
  */
-public class SmallTestsSequenceSelection implements InputSequenceSelector {
+public class SmallTestsSequenceSelection extends InputSequenceSelector {
 
   /** Map from a sequence to its weight. */
   private final Map<Sequence, Double> weightMap = new HashMap<>();
@@ -49,15 +47,4 @@ public class SmallTestsSequenceSelection implements InputSequenceSelector {
     }
     return totalWeight;
   }
-
-  /**
-   * Does nothing.
-   *
-   * @param inputSequences the sequences that were chosen as the input to the method under test for
-   *     creating {@code eSeq} which is a new and unique sequence
-   * @param eSeq the recently executed sequence which is new and unique
-   */
-  @Override
-  public void createdExecutableSequenceFromInputs(
-      List<Sequence> inputSequences, ExecutableSequence eSeq) {}
 }
