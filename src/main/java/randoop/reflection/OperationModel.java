@@ -283,7 +283,8 @@ public class OperationModel {
       for (ClassOrInterfaceType type : literalmap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalmap.getValues(type)) {
-          // If constant mining is enabled, add the sequence to the collection of class literals and
+          // If GRT Constant Mining is enabled, add the sequence to the collection of class literals
+          // and
           // the collection of all sequences.
           if (GenInputsAbstract.input_selection
               == GenInputsAbstract.InputSelectionMode.CONSTANT_MINING) {

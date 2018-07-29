@@ -102,10 +102,10 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param componentManager container for sequences that are used to generate new sequences
    * @param stopper determines when the test generation process should conclude
    * @param listenerManager TODO: apparently unused according to {@link RandoopListenerManager}
-   * @param numClasses number of classes under test, expected to be non-negative if Constant Mining
-   *     is enabled
+   * @param numClasses number of classes under test, expected to be non-negative if GRT Constant
+   *     Mining is enabled
    * @param literalTermFrequencies map from literal to its frequency observed in all classes under
-   *     test, expected to be non-null if Constant Mining is enabled
+   *     test, expected to be non-null if GRT Constant Mining is enabled
    */
   public ForwardGenerator(
       List<TypedOperation> operations,
@@ -131,7 +131,7 @@ public class ForwardGenerator extends AbstractGenerator {
       case CONSTANT_MINING:
         if (literalTermFrequencies == null || numClasses < 0) {
           throw new Error(
-              "Error in ForwardGenerator using Constant Mining, literal term frequencies can't be null and num classes must be non-negative.");
+              "Error in ForwardGenerator using GRT Constant Mining, literal term frequencies can't be null and num classes must be non-negative.");
         }
         inputSequenceSelector =
             new ConstantMiningSelection(componentManager, numClasses, literalTermFrequencies);

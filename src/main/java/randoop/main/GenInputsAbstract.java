@@ -520,7 +520,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * assigned to constants by {@link randoop.generation.ConstantMiningSelection}.
    */
   @Unpublicized
-  @Option("Log to standard out, messages from the Constant Mining selection class.")
+  @Option("Log to standard out, messages from the GRT Constant Mining selection class.")
   public static boolean constant_mining_logging = false;
 
   // Implementation note: when checking whether a String S exceeds the given
@@ -828,7 +828,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     if (input_selection == InputSelectionMode.CONSTANT_MINING
         && (literals_level != ClassLiteralsMode.ALL || !literals_file.contains("CLASSES"))) {
-      // If constant mining is enabled, the literals level should be ALL to allow the use of a given literal
+      // If GRT Constant Mining is enabled, the literals level should be ALL to allow the use of a
+      // given literal
       // at both the class and global (among all classes) level and we need literals file to contain
       // CLASSES to enable literal extraction.
       throw new RandoopUsageError(

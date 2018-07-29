@@ -196,10 +196,10 @@ public class ComponentManager {
    * Returns component sequences that create values of the type required by the i-th input value of
    * the given statement. Also includes any applicable class- or package-level literals.
    *
-   * <p>If the input selector in {@link ForwardGenerator} is constant mining, then with probability
-   * {@code --p-const}, this only returns the subset of component sequences that are extracted
-   * literals that belong to the class of the operation's receiver. Otherwise, it returns all of
-   * these component sequences.
+   * <p>If the input selector in {@link ForwardGenerator} is GRT Constant Mining, then with
+   * probability {@code --p-const}, this only returns the subset of component sequences that are
+   * extracted literals that belong to the class of the operation's receiver. Otherwise, it returns
+   * all of these component sequences.
    *
    * @param operation the statement
    * @param i the input value index of statement
@@ -238,7 +238,8 @@ public class ComponentManager {
         }
       }
 
-      // If the input selector in {@link ForwardGenerator} is constant mining and we succeed on our coin flip,
+      // If the input selector in {@link ForwardGenerator} is GRT Constant Mining and we succeed on
+      // our coin flip,
       // set literals to only the component sequences that are class-level extracted literals from
       // the declaring class. That is, don't add literals from the package level.
       boolean shouldOnlyIncludeConstantsFromDeclaringClass =

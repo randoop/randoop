@@ -8,8 +8,8 @@ import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
- * Implements the Constant Mining component, as described by the paper "GRT: Program-Analysis-Guided
- * Random Testing" by Ma et. al (appears in ASE 2015):
+ * Implements the GRT Constant Mining component, as described by the paper "GRT:
+ * Program-Analysis-Guided Random Testing" by Ma et. al (appears in ASE 2015):
  * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
  */
 public class ConstantMiningSelection implements InputSequenceSelector {
@@ -20,8 +20,8 @@ public class ConstantMiningSelection implements InputSequenceSelector {
   private final Map<Sequence, Double> literalWeightMap = new HashMap<>();
 
   /**
-   * Initialize Constant Mining selection by computing weights for literals that appear in classes
-   * under test.
+   * Initialize GRT Constant Mining selection by computing weights for literals that appear in
+   * classes under test.
    *
    * @param componentManager component generator from {@link ForwardGenerator} used for getting the
    *     frequency of a literal
@@ -47,7 +47,7 @@ public class ConstantMiningSelection implements InputSequenceSelector {
       Integer documentFrequency = seqDocumentFrequencies.get(sequence);
       Integer termFrequency = literalTermFrequencies.get(sequence);
 
-      // Compute the term frequency-inverse document frequency based on GRT's formula for Constant Mining.
+      // Compute the term frequency-inverse document frequency for GRT Constant Mining.
       double tfIdf =
           termFrequency * Math.log((numClasses + 1.0) / ((numClasses + 1.0) - documentFrequency));
       literalWeightMap.put(sequence, tfIdf);

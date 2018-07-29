@@ -37,8 +37,8 @@ public final class NonreceiverTerm extends CallableOperation {
 
   /**
    * Number of occurrences of this non-receiver term as determined by {@link
-   * randoop.util.ClassFileConstants}. This is currently only used for Constant Mining to count the
-   * number of usages of a given literal.
+   * randoop.util.ClassFileConstants}. This is currently only used for GRT Constant Mining to count
+   * the number of usages of a given literal.
    */
   private final int frequency;
 
