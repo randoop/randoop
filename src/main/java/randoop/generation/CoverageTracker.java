@@ -16,6 +16,8 @@ import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataReader;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.IExecutionDataVisitor;
+import org.jacoco.core.data.ISessionInfoVisitor;
+import org.jacoco.core.data.SessionInfo;
 import randoop.main.GenInputsAbstract;
 import randoop.types.ClassOrInterfaceType;
 
@@ -176,5 +178,23 @@ public class CoverageTracker {
    */
   public Double getBranchCoverageForMethod(String methodName) {
     return this.branchCoverageMap.get(methodName);
+  }
+
+  /** An {@link ISessionInfoVisitor} that does nothing. */
+  private static class DummySessionInfoVisitor implements ISessionInfoVisitor {
+    /** Singleton instance of this class. */
+    public static final DummySessionInfoVisitor instance = new DummySessionInfoVisitor();
+
+    /** Initializes the session info visitor. */
+    private DummySessionInfoVisitor() {}
+
+    /**
+     * Required by the {@link ISessionInfoVisitor} but the session information is not used by this
+     * class.
+     *
+     * @param info session information
+     */
+    @Override
+    public void visitSessionInfo(final SessionInfo info) {}
   }
 }
