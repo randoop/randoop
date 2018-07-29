@@ -377,29 +377,33 @@ public class ClassFileConstants {
                 break;
               }
 
-              // Push a value from the runtime constant pool. We'll get these
+              // Push a value from the constant pool. We'll get these
               // values when processing the constant pool itself.
             case Const.LDC:
               {
                 LDC ldc = (LDC) inst;
-                Object term = getValueFromConstantPoolAtIndex(jc.getConstantPool(), ldc.getIndex());
-                incrementInMapIgnoreNull(result.constantToFrequency, term);
+                Object term = getConstantValue(jc.getConstantPool(), ldc.getIndex());
+                if (term != null) {
+                  CollectionsPlume.incrementMap(result.constantToFrequency, term);
+                }
                 break;
               }
             case Const.LDC_W:
               {
                 LDC_W ldc_w = (LDC_W) inst;
-                Object term =
-                    getValueFromConstantPoolAtIndex(jc.getConstantPool(), ldc_w.getIndex());
-                incrementInMapIgnoreNull(result.constantToFrequency, term);
+                Object term = getConstantValue(jc.getConstantPool(), ldc_w.getIndex());
+                if (term != null) {
+                  CollectionsPlume.incrementMap(result.constantToFrequency, term);
+                }
                 break;
               }
             case Const.LDC2_W:
               {
                 LDC2_W ldc2_w = (LDC2_W) inst;
-                Object term =
-                    getValueFromConstantPoolAtIndex(jc.getConstantPool(), ldc2_w.getIndex());
-                incrementInMapIgnoreNull(result.constantToFrequency, term);
+                Object term = getConstantValue(jc.getConstantPool(), ldc2_w.getIndex());
+                if (term != null) {
+                  CollectionsPlume.incrementMap(result.constantToFrequency, term);
+                }
                 break;
               }
 
@@ -723,24 +727,6 @@ public class ClassFileConstants {
   }
 
   /**
-   * Increment value in map. If the key is null, we ignore this call and return.
-   *
-   * @param map map of keys and values
-   * @param term term whose value to increment
-   */
-  private static void incrementInMapIgnoreNull(Map<Object, Integer> map, Object term) {
-    if (term == null) {
-      return;
-    }
-
-    Integer value = map.get(term);
-    if (value == null) {
-      value = 0;
-    }
-    map.put(term, value + 1);
-  }
-
-  /**
    * Frequency of the term in the {@link ConstantSet}
    *
    * @param term the literal constant
@@ -762,14 +748,14 @@ public class ClassFileConstants {
   }
 
   /**
-   * Retrieve the value from the Constant Pool at the given index.
+   * Retrieve the value at the given index in the given Constant Pool.
    *
    * @param constantPool constant pool from which to extract the value
-   * @param index index of the element
-   * @return the element located at the specified index in the given constant pool, null if it's
-   *     type is not one of String, Double, Float, Integer, or Long.
+   * @param index index in the constant pool
+   * @return the element located at the specified index in the given constant pool, null if its type
+   *     is not one of String, Double, Float, Integer, or Long.
    */
-  private static Object getValueFromConstantPoolAtIndex(ConstantPool constantPool, int index) {
+  private static Object getConstantValue(ConstantPool constantPool, int index) {
     Constant c = constantPool.getConstantPool()[index];
     if (c instanceof ConstantString) {
       return ((ConstantString) c).getConstantValue(constantPool);
