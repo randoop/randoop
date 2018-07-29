@@ -411,113 +411,53 @@ public class ClassFileConstants {
 
               // Push small constants (-1..5) on the stack.
             case Const.DCONST_0:
-              {
-                Double value = Double.valueOf(0);
-                result.doubles.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              doubleConstant(Double.valueOf(0), result);
+              break;
             case Const.DCONST_1:
-              {
-                Double value = Double.valueOf(1);
-                result.doubles.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              doubleConstant(Double.valueOf(1), result);
+              break;
             case Const.FCONST_0:
-              {
-                Float value = Float.valueOf(0);
-                result.floats.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              floatConstant(Float.valueOf(0), result);
+              break;
             case Const.FCONST_1:
-              {
-                Float value = Float.valueOf(1);
-                result.floats.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              floatConstant(Float.valueOf(1), result);
+              break;
             case Const.FCONST_2:
-              {
-                Float value = Float.valueOf(2);
-                result.floats.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              floatConstant(Float.valueOf(2), result);
+              break;
             case Const.ICONST_0:
-              {
-                Integer value = Integer.valueOf(0);
-                result.ints.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              integerConstant(Integer.valueOf(0), result);
+              break;
             case Const.ICONST_1:
-              {
-                Integer value = Integer.valueOf(1);
-                result.ints.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              integerConstant(Integer.valueOf(1), result);
+              break;
             case Const.ICONST_2:
-              {
-                Integer value = Integer.valueOf(2);
-                result.ints.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              integerConstant(Integer.valueOf(2), result);
+              break;
             case Const.ICONST_3:
-              {
-                Integer value = Integer.valueOf(3);
-                result.ints.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              integerConstant(Integer.valueOf(3), result);
+              break;
             case Const.ICONST_4:
-              {
-                Integer value = Integer.valueOf(4);
-                result.ints.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              integerConstant(Integer.valueOf(4), result);
+              break;
             case Const.ICONST_5:
-              {
-                Integer value = Integer.valueOf(5);
-                result.ints.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              integerConstant(Integer.valueOf(5), result);
+              break;
             case Const.ICONST_M1:
-              {
-                Integer value = Integer.valueOf(-1);
-                result.ints.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              integerConstant(Integer.valueOf(-1), result);
+              break;
             case Const.LCONST_0:
-              {
-                Long value = Long.valueOf(0);
-                result.longs.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              longConstant(Long.valueOf(0), result);
+              break;
             case Const.LCONST_1:
-              {
-                Long value = Long.valueOf(1);
-                result.longs.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              longConstant(Long.valueOf(1), result);
+              break;
 
             case Const.BIPUSH:
             case Const.SIPUSH:
-              {
-                ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
-                Integer value = (Integer) cpi.getValue();
-                result.ints.add(value);
-                CollectionsPlume.incrementMap(result.constantToFrequency, value);
-                break;
-              }
+              ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
+              integerConstant((Integer) cpi.getValue(), result);
+              break;
 
               // Primitive Binary operators.
             case Const.DADD:
@@ -675,6 +615,50 @@ public class ClassFileConstants {
       }
     }
     return result;
+  }
+
+  /**
+   * Register a double constant in the given ConstantSet.
+   *
+   * @param value the double constant
+   * @param cs the ConstantSet
+   */
+  static void doubleConstant(Double value, ConstantSet cs) {
+    cs.doubles.add(value);
+    CollectionsPlume.incrementMap(cs.constantToFrequency, value);
+  }
+
+  /**
+   * Register a float constant in the given ConstantSet.
+   *
+   * @param value the float constant
+   * @param cs the ConstantSet
+   */
+  static void floatConstant(Float value, ConstantSet cs) {
+    cs.floats.add(value);
+    CollectionsPlume.incrementMap(cs.constantToFrequency, value);
+  }
+
+  /**
+   * Register a integer constant in the given ConstantSet.
+   *
+   * @param value the integer constant
+   * @param cs the ConstantSet
+   */
+  static void integerConstant(Integer value, ConstantSet cs) {
+    cs.ints.add(value);
+    CollectionsPlume.incrementMap(cs.constantToFrequency, value);
+  }
+
+  /**
+   * Register a long constant in the given ConstantSet.
+   *
+   * @param value the long constant
+   * @param cs the ConstantSet
+   */
+  static void longConstant(Long value, ConstantSet cs) {
+    cs.longs.add(value);
+    CollectionsPlume.incrementMap(cs.constantToFrequency, value);
   }
 
   /**
