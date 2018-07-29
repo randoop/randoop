@@ -57,6 +57,7 @@ public final class NonreceiverTerm extends CallableOperation {
    *
    * @param type the type of the term
    * @param value the value of the term
+   * @param frequence how many times the term was used
    */
   public NonreceiverTerm(Type type, Object value, int frequency) {
     if (type == null) {
@@ -493,7 +494,7 @@ public final class NonreceiverTerm extends CallableOperation {
   /**
    * Gets the number of occurrences of this term.
    *
-   * @return the frequency of this term.
+   * @return the frequency of this term
    */
   public int getFrequency() {
     return frequency;

@@ -58,8 +58,8 @@ import randoop.util.MultiMap;
  * <ul>
  *   <li>classes under test,
  *   <li>operations of all classes,
- *   <li>any atomic code sequences derived from command-line arguments, and
- *   <li>the contracts or oracles used to generate tests,
+ *   <li>any atomic code sequences derived from command-line arguments,
+ *   <li>the contracts or oracles used to generate tests, and
  *   <li>frequency of literals that appear in the classes under test.
  * </ul>
  *
@@ -284,8 +284,7 @@ public class OperationModel {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalmap.getValues(type)) {
           // If GRT Constant Mining is enabled, add the sequence to the collection of class literals
-          // and
-          // the collection of all sequences.
+          // and the collection of all sequences.
           if (GenInputsAbstract.input_selection
               == GenInputsAbstract.InputSelectionMode.CONSTANT_MINING) {
             compMgr.addClassLevelLiteral(type, seq);

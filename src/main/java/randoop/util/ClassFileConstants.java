@@ -38,6 +38,8 @@ import org.apache.bcel.generic.LDC2_W;
 import org.apache.bcel.generic.LDC_W;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
+import org.plumelib.util.CollectionsPlume;
+import randoop.BugInRandoopException;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
@@ -164,7 +166,7 @@ public class ClassFileConstants {
     }
     result.classname = jc.getClassName();
 
-    // Get all of the constants from the Constant Pool.
+    // Get all of the constants from the classfile's constant pool.
     ConstantPool constant_pool = jc.getConstantPool();
     for (Constant c : constant_pool.getConstantPool()) {
       // System.out.printf ("*Constant = %s%n", c);
@@ -212,7 +214,7 @@ public class ClassFileConstants {
               break;
 
               // These instructions compare the integer on the top of the stack
-              // to zero. There are no literals here (except 0)
+              // to zero. There are no literals here (except 0).
             case Const.IFEQ:
             case Const.IFNE:
             case Const.IFLT:
@@ -376,12 +378,12 @@ public class ClassFileConstants {
               }
 
               // Push a value from the runtime constant pool. We'll get these
-              // values when processing the constant pool itself
+              // values when processing the constant pool itself.
             case Const.LDC:
               {
                 LDC ldc = (LDC) inst;
                 Object term = getValueFromConstantPoolAtIndex(jc.getConstantPool(), ldc.getIndex());
-                incrementInMap(result.constantToFrequency, term);
+                incrementInMapIgnoreNull(result.constantToFrequency, term);
                 break;
               }
             case Const.LDC_W:
@@ -389,7 +391,7 @@ public class ClassFileConstants {
                 LDC_W ldc_w = (LDC_W) inst;
                 Object term =
                     getValueFromConstantPoolAtIndex(jc.getConstantPool(), ldc_w.getIndex());
-                incrementInMap(result.constantToFrequency, term);
+                incrementInMapIgnoreNull(result.constantToFrequency, term);
                 break;
               }
             case Const.LDC2_W:
@@ -397,7 +399,7 @@ public class ClassFileConstants {
                 LDC2_W ldc2_w = (LDC2_W) inst;
                 Object term =
                     getValueFromConstantPoolAtIndex(jc.getConstantPool(), ldc2_w.getIndex());
-                incrementInMap(result.constantToFrequency, term);
+                incrementInMapIgnoreNull(result.constantToFrequency, term);
                 break;
               }
 
@@ -412,98 +414,98 @@ public class ClassFileConstants {
               {
                 Double value = Double.valueOf(0);
                 result.doubles.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.DCONST_1:
               {
                 Double value = Double.valueOf(1);
                 result.doubles.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.FCONST_0:
               {
                 Float value = Float.valueOf(0);
                 result.floats.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.FCONST_1:
               {
                 Float value = Float.valueOf(1);
                 result.floats.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.FCONST_2:
               {
                 Float value = Float.valueOf(2);
                 result.floats.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_0:
               {
                 Integer value = Integer.valueOf(0);
                 result.ints.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_1:
               {
                 Integer value = Integer.valueOf(1);
                 result.ints.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_2:
               {
                 Integer value = Integer.valueOf(2);
                 result.ints.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_3:
               {
                 Integer value = Integer.valueOf(3);
                 result.ints.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_4:
               {
                 Integer value = Integer.valueOf(4);
                 result.ints.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_5:
               {
                 Integer value = Integer.valueOf(5);
                 result.ints.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.ICONST_M1:
               {
                 Integer value = Integer.valueOf(-1);
                 result.ints.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.LCONST_0:
               {
                 Long value = Long.valueOf(0);
                 result.longs.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
             case Const.LCONST_1:
               {
                 Long value = Long.valueOf(1);
                 result.longs.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
 
@@ -513,7 +515,7 @@ public class ClassFileConstants {
                 ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
                 Integer value = (Integer) cpi.getValue();
                 result.ints.add(value);
-                incrementInMap(result.constantToFrequency, value);
+                CollectionsPlume.incrementMap(result.constantToFrequency, value);
                 break;
               }
 
@@ -618,7 +620,7 @@ public class ClassFileConstants {
             case Const.ATHROW:
               break;
 
-              // Opcodes that don't need any modifications. Here for reference
+              // Opcodes that don't need any modifications. Here for reference.
             case Const.ACONST_NULL:
             case Const.ALOAD:
             case Const.ALOAD_0:
@@ -667,7 +669,7 @@ public class ClassFileConstants {
 
               // Make sure we didn't miss anything
             default:
-              throw new Error("instruction " + inst + " unsupported");
+              throw new BugInRandoopException("instruction " + inst + " unsupported");
           }
         }
       }
@@ -748,7 +750,7 @@ public class ClassFileConstants {
    * @param map map of keys and values
    * @param term term whose value to increment
    */
-  private static void incrementInMap(Map<Object, Integer> map, Object term) {
+  private static void incrementInMapIgnoreNull(Map<Object, Integer> map, Object term) {
     if (term == null) {
       return;
     }

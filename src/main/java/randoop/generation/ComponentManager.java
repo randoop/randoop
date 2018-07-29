@@ -239,9 +239,8 @@ public class ComponentManager {
       }
 
       // If the input selector in {@link ForwardGenerator} is GRT Constant Mining and we succeed on
-      // our coin flip,
-      // set literals to only the component sequences that are class-level extracted literals from
-      // the declaring class. That is, don't add literals from the package level.
+      // our coin flip, set literals to only the component sequences that are class-level extracted
+      // literals from the declaring class. That is, don't add literals from the package level.
       boolean shouldOnlyIncludeConstantsFromDeclaringClass =
           GenInputsAbstract.input_selection == GenInputsAbstract.InputSelectionMode.CONSTANT_MINING
               && Randomness.weightedCoinFlip(GenInputsAbstract.p_const);
