@@ -681,7 +681,7 @@ public class ClassFileConstants {
           int frequency = getFrequencyOfTerm(x, cs);
           map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring int constant value: " + e.getMessage());
+          throw new BugInRandoopException(e);
         }
       }
       for (Long x : cs.longs) {
@@ -689,7 +689,7 @@ public class ClassFileConstants {
           int frequency = getFrequencyOfTerm(x, cs);
           map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring long constant value: " + e.getMessage());
+          throw new BugInRandoopException(e);
         }
       }
       for (Float x : cs.floats) {
@@ -697,7 +697,7 @@ public class ClassFileConstants {
           int frequency = getFrequencyOfTerm(x, cs);
           map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring float constant value: " + e.getMessage());
+          throw new BugInRandoopException(e);
         }
       }
       for (Double x : cs.doubles) {
@@ -705,7 +705,7 @@ public class ClassFileConstants {
           int frequency = getFrequencyOfTerm(x, cs);
           map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring double constant value: " + e.getMessage());
+          throw new BugInRandoopException(e);
         }
       }
       for (String x : cs.strings) {
@@ -713,7 +713,7 @@ public class ClassFileConstants {
           int frequency = getFrequencyOfTerm(x, cs);
           map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring String constant value: " + e.getMessage());
+          throw new BugInRandoopException(e);
         }
       }
       for (Class<?> x : cs.classes) {
@@ -721,7 +721,7 @@ public class ClassFileConstants {
           int frequency = getFrequencyOfTerm(x, cs);
           map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x, frequency));
         } catch (IllegalArgumentException e) {
-          System.out.println("Ignoring Class<?> constant value: " + e.getMessage());
+          throw new BugInRandoopException(e);
         }
       }
     }
