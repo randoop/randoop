@@ -752,8 +752,8 @@ public class ClassFileConstants {
    *
    * @param constantPool constant pool from which to extract the value
    * @param index index in the constant pool
-   * @return the element located at the specified index in the given constant pool, null if its type
-   *     is not one of String, Double, Float, Integer, or Long.
+   * @return the element located at the specified index in the given constant pool, or null if its
+   *     type is not one of String, Double, Float, Integer, or Long.
    */
   private static Object getConstantValue(ConstantPool constantPool, int index) {
     Constant c = constantPool.getConstantPool()[index];
