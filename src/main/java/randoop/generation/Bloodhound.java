@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.CallableOperation;
@@ -148,7 +149,7 @@ public class Bloodhound implements TypedOperationSelector {
             operationSimpleList, methodWeights, totalWeightOfMethodsUnderTest);
 
     // Update the selected method's selection count and recompute its weight.
-    incrementInMap(methodSelectionCounts, selectedOperation);
+    CollectionsPlume.incrementMap(methodSelectionCounts, selectedOperation);
     updateWeight(selectedOperation);
 
     return selectedOperation;
@@ -349,7 +350,7 @@ public class Bloodhound implements TypedOperationSelector {
    */
   public void incrementSuccessfulInvocationCount(TypedOperation operation) {
     totalSuccessfulInvocations += 1;
-    int numSuccessfulInvocations = incrementInMap(methodInvocationCounts, operation);
+    int numSuccessfulInvocations = CollectionsPlume.incrementMap(methodInvocationCounts, operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
   }
 
@@ -362,23 +363,5 @@ public class Bloodhound implements TypedOperationSelector {
   @Override
   public void newRegressionTestHook(Sequence sequence) {
     incrementSuccessfulInvocationCount(sequence.getOperation());
-  }
-
-  /**
-   * Increment value mapped to from key in map. Set the value to 1 if not currently mapped.
-   *
-   * @param map input map
-   * @param key key to use
-   * @return resulting value
-   */
-  private static int incrementInMap(Map<TypedOperation, Integer> map, TypedOperation key) {
-    Integer value = map.get(key);
-    if (value == null) {
-      value = 0;
-    }
-    value += 1;
-
-    map.put(key, value);
-    return value;
   }
 }
