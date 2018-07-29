@@ -16,8 +16,6 @@ import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataReader;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.IExecutionDataVisitor;
-import org.jacoco.core.data.ISessionInfoVisitor;
-import org.jacoco.core.data.SessionInfo;
 import randoop.main.GenInputsAbstract;
 import randoop.types.ClassOrInterfaceType;
 
@@ -78,12 +76,8 @@ public class CoverageTracker {
 
       final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
 
-      // The reader requires a session info visitor, however we don't need any information from it.
-      reader.setSessionInfoVisitor(
-          new ISessionInfoVisitor() {
-            @Override
-            public void visitSessionInfo(final SessionInfo info) {}
-          });
+      // The reader requires a session info visitor, however we do not need any information from it.
+      reader.setSessionInfoVisitor(DummySessionInfoVisitor.instance);
       reader.setExecutionDataVisitor(
           new IExecutionDataVisitor() {
             @Override
