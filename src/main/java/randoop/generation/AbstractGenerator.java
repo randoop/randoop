@@ -332,6 +332,7 @@ public abstract class AbstractGenerator {
           outErrorSeqs.add(eSeq);
         } else {
           outRegressionSeqs.add(eSeq);
+          newRegressionTestHook(eSeq.sequence);
         }
       }
 
@@ -450,4 +451,13 @@ public abstract class AbstractGenerator {
   public OperationHistoryLogInterface getOperationHistory() {
     return operationHistory;
   }
+
+  /**
+   * Take action based on the given {@link Sequence} that was classified as a regression test, i.e.,
+   * normal behavior.
+   *
+   * @param sequence the new test sequence that was classified as a regression test, i.e., normal
+   *     behavior
+   */
+  public abstract void newRegressionTestHook(Sequence sequence);
 }

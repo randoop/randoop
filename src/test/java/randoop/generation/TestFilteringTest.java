@@ -250,6 +250,9 @@ public class TestFilteringTest {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitfields);
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
 
+    Set<ClassOrInterfaceType> classesUnderTest = new HashSet<>();
+    classesUnderTest.add(classType);
+
     OmitMethodsPredicate omitMethodsPredicate =
         new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
     ReflectionManager manager = new ReflectionManager(visibility);
@@ -268,7 +271,8 @@ public class TestFilteringTest {
             new GenInputsAbstract.Limits(),
             componentMgr,
             null,
-            listenerMgr);
+            listenerMgr,
+            classesUnderTest);
     GenTests genTests = new GenTests();
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(new HashSet<Sequence>(), new HashSet<Class<?>>(), null);
