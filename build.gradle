@@ -62,7 +62,7 @@ allprojects {
     //plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     plumelib 'org.plumelib:options:0.3.3'
-    plumelib 'org.plumelib:plume-util:0.1.0'
+    plumelib 'org.plumelib:plume-util:0.1.1'
   }
 }
 
@@ -154,6 +154,10 @@ dependencies {
 
   /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files. */
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
+
+  /* Jacoco measures coverage of classes and methods under test. */
+  implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.9'
+  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.9', classifier: 'runtime'
 
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.5'
