@@ -262,7 +262,10 @@ public class Bloodhound implements TypedOperationSelector {
     Double uncovRatio = coverageTracker.getBranchCoverageForMethod(methodName);
 
     if (uncovRatio == null) {
-      // Default to zero for methods with no coverage information.
+      // Default to 0.5 for methods with no coverage information. The GRT paper does not mention
+      // how methods with no coverage information are handled. This value was chosen based on
+      // the reasoning that methods with no coverage information should still be given a reasonable
+      // chance at being selected. A more optimal value could be determined empirically.
       // This is the case for the following methods under test:
       // - Object.<init> and Object.getClass, which Randoop always includes as methods under test.
       // - Getter and setter operations for public member variables, which Randoop synthesizes.
