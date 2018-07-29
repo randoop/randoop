@@ -53,13 +53,7 @@ public class Substitution<T> {
    */
   @SafeVarargs
   public static <T> Substitution<T> forArgs(List<TypeVariable> parameters, T... arguments) {
-    if (parameters.size() != arguments.length) {
-      throw new IllegalArgumentException(
-          "number of parameters and arguments must agree, have: "
-              + parameters.size()
-              + ", "
-              + arguments.length);
-    }
+    assert parameters.size() == arguments.length;
     Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {
       s.put(parameters.get(i), arguments[i]);
@@ -76,9 +70,7 @@ public class Substitution<T> {
    * @return the substitution that maps the type parameters to the corresponding type argument
    */
   public static <T> Substitution<T> forArgs(List<TypeVariable> parameters, List<T> arguments) {
-    if (parameters.size() != arguments.size()) {
-      throw new IllegalArgumentException("number of parameters and arguments must agree");
-    }
+    assert parameters.size() == arguments.size();
     Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {
       s.put(parameters.get(i), arguments.get(i));
