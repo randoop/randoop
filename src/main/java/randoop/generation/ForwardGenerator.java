@@ -166,14 +166,11 @@ public class ForwardGenerator extends AbstractGenerator {
       componentManager.clearGeneratedSequences();
     }
 
-    ExecutableSequenceAndInputSequences eSeqWithInputs = createNewUniqueSequence();
+    ExecutableSequence eSeq = createNewUniqueSequence();
 
-    if (eSeqWithInputs == null) {
+    if (eSeq == null) {
       return null;
     }
-
-    ExecutableSequence eSeq = eSeqWithInputs.executableSequence;
-    List<Sequence> inputSequencesForNewSequence = eSeqWithInputs.inputSequences;
 
     if (GenInputsAbstract.dontexecute) {
       this.componentManager.addGeneratedSequence(eSeq.sequence);
@@ -188,7 +185,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     startTime = System.nanoTime(); // reset start time.
 
-    inputSequenceSelector.createdExecutableSequenceFromInputs(inputSequencesForNewSequence, eSeq);
+    inputSequenceSelector.createdExecutableSequenceFromInputs(eSeq);
 
     determineActiveIndices(eSeq);
 
@@ -337,7 +334,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  private ExecutableSequenceAndInputSequences createNewUniqueSequence() {
+  private ExecutableSequence createNewUniqueSequence() {
 
     Log.logPrintf("-------------------------------------------%n");
 
@@ -450,8 +447,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // A test that is a subsequence of the new one is redundant.
     subsumed_sequences.addAll(inputs.sequences);
 
-    return new ExecutableSequenceAndInputSequences(
-        new ExecutableSequence(newSequence), inputs.sequences);
+    return new ExecutableSequence(newSequence);
   }
 
   /**
@@ -880,33 +876,5 @@ public class ForwardGenerator extends AbstractGenerator {
         + ","
         + ("runtimePrimitivesSeen.size()=" + runtimePrimitivesSeen.size())
         + ")";
-  }
-
-  /**
-   * A pair containing an {@link ExecutableSequence} and its corresponding list of input {@link
-   * Sequence}s. Each element of inputSequences is a subsequence of executableSequence.
-   */
-  private static class ExecutableSequenceAndInputSequences {
-    /** The executable sequence. */
-    public final ExecutableSequence executableSequence;
-
-    /**
-     * The list of input sequences that correspond to the executable sequence in this pair. Each
-     * input sequence produces a variable that will be used in the final statement, which is a
-     * method call, of the executable sequence.
-     */
-    public final List<Sequence> inputSequences;
-
-    /**
-     * Constructs a pair containing an {@link ExecutableSequence} and a {@code List} of input {@link
-     * Sequence}s.
-     *
-     * @param eSeq an executable sequence
-     * @param inputs the list of input sequences belonging to the given executable sequence
-     */
-    public ExecutableSequenceAndInputSequences(ExecutableSequence eSeq, List<Sequence> inputs) {
-      this.executableSequence = eSeq;
-      this.inputSequences = inputs;
-    }
   }
 }

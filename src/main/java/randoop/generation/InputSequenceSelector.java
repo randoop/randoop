@@ -1,6 +1,5 @@
 package randoop.generation;
 
-import java.util.List;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.SimpleList;
@@ -20,12 +19,9 @@ public abstract class InputSequenceSelector {
    *
    * <p>The default implementation does nothing. Subclasses may override it to add behavior.
    *
-   * @param inputSequences the sequences that were chosen as the input to the method under test for
-   *     creating {@code eSeq}; each one is a subsequence of {@code eSeq}
    * @param eSeq the recently executed sequence which is new and unique, and has just been executed.
-   *     It contains its overall execution time. It also contains, for each statement, an
-   *     ExecutionOutcome that gives the statement's execution time.
+   *     It contains its overall execution time which can be associated with the underlying {@link
+   *     Sequence} in {@code eSeq}.
    */
-  public void createdExecutableSequenceFromInputs(
-      List<Sequence> inputSequences, ExecutableSequence eSeq) {}
+  public void createdExecutableSequenceFromInputs(ExecutableSequence eSeq) {}
 }
