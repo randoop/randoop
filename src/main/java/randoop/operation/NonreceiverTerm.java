@@ -14,6 +14,7 @@ import randoop.types.NonParameterizedType;
 import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.util.ClassFileConstants;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
 
@@ -53,11 +54,22 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
+   * Constructs a NonreceiverTerm with type t, value o, and frequency looked up from cs
+   *
+   * @param type the type of the term
+   * @param value the value of the term
+   * @param cs where to look up the frequency of the term
+   */
+  public NonreceiverTerm(Type type, Object value, ClassFileConstants.ConstantSet cs) {
+    this(type, value, ClassFileConstants.getFrequencyOfTerm(value, cs));
+  }
+
+  /**
    * Constructs a NonreceiverTerm with type t, value o, and the specified frequency.
    *
    * @param type the type of the term
    * @param value the value of the term
-   * @param frequence how many times the term was used
+   * @param frequency how many times the term was used
    */
   public NonreceiverTerm(Type type, Object value, int frequency) {
     if (type == null) {

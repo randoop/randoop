@@ -678,48 +678,42 @@ public class ClassFileConstants {
       }
       for (Integer x : cs.ints) {
         try {
-          int frequency = getFrequencyOfTerm(x, cs);
-          map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x, frequency));
+          map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x, cs));
         } catch (IllegalArgumentException e) {
           throw new BugInRandoopException(e);
         }
       }
       for (Long x : cs.longs) {
         try {
-          int frequency = getFrequencyOfTerm(x, cs);
-          map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x, frequency));
+          map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x, cs));
         } catch (IllegalArgumentException e) {
           throw new BugInRandoopException(e);
         }
       }
       for (Float x : cs.floats) {
         try {
-          int frequency = getFrequencyOfTerm(x, cs);
-          map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x, frequency));
+          map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x, cs));
         } catch (IllegalArgumentException e) {
           throw new BugInRandoopException(e);
         }
       }
       for (Double x : cs.doubles) {
         try {
-          int frequency = getFrequencyOfTerm(x, cs);
-          map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x, frequency));
+          map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x, cs));
         } catch (IllegalArgumentException e) {
           throw new BugInRandoopException(e);
         }
       }
       for (String x : cs.strings) {
         try {
-          int frequency = getFrequencyOfTerm(x, cs);
-          map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x, frequency));
+          map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x, cs));
         } catch (IllegalArgumentException e) {
           throw new BugInRandoopException(e);
         }
       }
       for (Class<?> x : cs.classes) {
         try {
-          int frequency = getFrequencyOfTerm(x, cs);
-          map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x, frequency));
+          map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x, cs));
         } catch (IllegalArgumentException e) {
           throw new BugInRandoopException(e);
         }
@@ -753,7 +747,7 @@ public class ClassFileConstants {
    * @param constantSet the constant set containing the literals, frequencies, and indices.
    * @return the frequency of the given term
    */
-  private static int getFrequencyOfTerm(Object term, ConstantSet constantSet) {
+  public static int getFrequencyOfTerm(Object term, ConstantSet constantSet) {
     Integer frequency = constantSet.constantToFrequency.get(term);
 
     // The frequency of a term will be null if the term appears in the constant pool of the class
