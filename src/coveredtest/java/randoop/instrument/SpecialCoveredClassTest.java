@@ -130,8 +130,8 @@ public class SpecialCoveredClassTest {
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);
 
-    // Filter out paramter-less operations and add them to the pool of sequences.
-    testGenerator.filterOutConstantOperations();
+    // Filter out paramter-less operations; instead, add them to the pool of sequences.
+    testGenerator.moveConstantOperationsToPool();
 
     // for debugging:  operationModel.dumpModel();
     testGenerator.createAndClassifySequences();

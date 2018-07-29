@@ -452,5 +452,5 @@ public abstract class AbstractGenerator {
   }
 
   /** Remove parameter-less operations from the set of methods under test. */
-  public abstract void filterOutConstantOperations();
+  public abstract void moveConstantOperationsToPool();
 }

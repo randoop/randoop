@@ -834,25 +834,26 @@ public class ForwardGenerator extends AbstractGenerator {
    * Remove constant operations, execute them once, and add their results to the pool.
    *
    * <p>This method modifies the list of operations that represent the set of methods under tests.
-   * Specifically, if the selected operation used for creating a new and unique sequence is a
-   * parameter-less operation (a static constant method or no-argument constructor) it is removed
-   * from the list of operations. Such a method will return the same thing every time it is invoked
-   * (unless it's non-deterministic, but Randoop should not be run on non-deterministic methods).
-   * Once invoked, its result is in the pool and there is no need to call the operation again and so
-   * we will remove it from the list of operations.
+   *
+   * <p>A parameter-less operation (a static constant method or no-argument constructor) will return
+   * the same thing every time it is invoked (unless it's non-deterministic, but Randoop should not
+   * be run on non-deterministic methods). Once this method puts its result in the pool, and there
+   * is no need to call the operation again and so this method removes it from the list of
+   * operations.
    */
   @Override
-  public void filterOutConstantOperations() {
+  public void moveConstantOperationsToPool() {
     for (Iterator<TypedOperation> iterator = operations.iterator(); iterator.hasNext(); ) {
       TypedOperation operation = iterator.next();
       // Filter out parameter-less operations.
       if (operation.getInputTypes().isEmpty()) {
-        // For operations that are generic or include wildcard types, we instantiate it with matching
+        // For operations that are generic or include wildcard types, we instantiate it with
+        // matching
         // types from our input pool and add all sequences to the pool.
         if (operation.isGeneric() || operation.hasWildcardTypes()) {
           try {
             Set<TypedClassOperation> operations =
-                instantiator.instantiateWithMultiplePossibleTypes((TypedClassOperation) operation);
+                instantiator.instantiateWithMultipleTypes((TypedClassOperation) operation);
             for (TypedClassOperation op : operations) {
               createAndAddSequence(op);
             }
@@ -870,11 +871,12 @@ public class ForwardGenerator extends AbstractGenerator {
             }
           }
         } else {
-          // For all other operations, we simply create a sequence from it and add it to the input pool.
+          // For all other operations, we simply create a sequence from it and add it to the input
+          // pool.
           createAndAddSequence(operation);
         }
 
-        Log.logPrintf("Filtering out operation: %s%n", operation);
+        Log.logPrintf("Moving operation to pool: %s%n", operation);
         iterator.remove();
       }
     }

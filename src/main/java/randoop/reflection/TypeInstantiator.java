@@ -90,15 +90,14 @@ public class TypeInstantiator {
    * @param operation an operation that is generic or has wildcard types
    * @return a set of different instantiations for the given operation
    */
-  public Set<TypedClassOperation> instantiateWithMultiplePossibleTypes(
-      TypedClassOperation operation) {
+  public Set<TypedClassOperation> instantiateWithMultipleTypes(TypedClassOperation operation) {
     assert operation.isGeneric() || operation.hasWildcardTypes()
         : "operation must be generic or have wildcards";
 
+    // This list is the same size as the set returned by this method.
     List<Substitution<ReferenceType>> substitutions = new ArrayList<>();
 
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
-
     // If the declaring type of the operation is generic, get the set of possible instantiations.
     if (declaringType.isGeneric()) {
 
@@ -147,9 +146,8 @@ public class TypeInstantiator {
   /**
    * Find instantiations for types that are not subtypes of {@code SortedSet}.
    *
-   * @param declaringType the type for which we want to find substitutions for
-   * @param substitutions set of resulting substitutions. This method modifies this set by adding to
-   *     it.
+   * @param declaringType the type to find substitutions for
+   * @param substitutions set of substitutions. This method modifies this set by adding to it.
    */
   private void instantiationsForGeneralTypes(
       ClassOrInterfaceType declaringType, List<Substitution<ReferenceType>> substitutions) {
@@ -157,7 +155,8 @@ public class TypeInstantiator {
     List<Substitution<ReferenceType>> possSubs =
         collectSubstitutions(typeParameters, new Substitution<ReferenceType>());
 
-    // For each possible substitution, check that applying such a substitution will give us a fully instantiated type.
+    // For each possible substitution, check that applying such a substitution will give us a fully
+    // instantiated type.
     for (Substitution<ReferenceType> substitution : possSubs) {
       if (substitution != null) {
         ClassOrInterfaceType instantiatingType = declaringType.apply(substitution);
@@ -171,11 +170,11 @@ public class TypeInstantiator {
   /**
    * Find instantiations for types that are subtypes of {@code SortedSet}.
    *
-   * @param operation operation for which we want to find instantiations for
-   * @param subs a list of resulting substitutions which we use to instantiate the given operation
+   * @param operation the operation to find instantiations for
+   * @param substitutions set of substitutions. This method modifies this set by adding to it.
    */
   private void instantiationsForSortedSetType(
-      TypedClassOperation operation, List<Substitution<ReferenceType>> subs) {
+      TypedClassOperation operation, List<Substitution<ReferenceType>> substitutions) {
     TypeVariable parameter = operation.getDeclaringType().getTypeParameters().get(0);
     List<TypeVariable> parameters = new ArrayList<>();
     parameters.add(parameter);
@@ -213,7 +212,7 @@ public class TypeInstantiator {
           Substitution<ReferenceType> sub =
               ((InstantiatedType) type).getInstantiatingSubstitution(genericClassType);
           TypeArgument typeArg = genericClassType.apply(sub).getTypeArguments().get(0);
-          subs.add(
+          substitutions.add(
               Substitution.forArgs(parameters, ((ReferenceArgument) typeArg).getReferenceType()));
         }
       }

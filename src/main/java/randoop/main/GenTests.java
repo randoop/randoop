@@ -431,7 +431,7 @@ public class GenTests extends GenInputsAbstract {
     }
     explorer.setExecutionVisitor(visitors);
 
-    explorer.filterOutConstantOperations();
+    explorer.moveConstantOperationsToPool();
 
     // Diagnostic output
     if (GenInputsAbstract.progressdisplay) {
