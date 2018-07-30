@@ -26,7 +26,8 @@ public class Globals {
     // System.setErr(blackHole);
   }
 
-  /** Return the version number for Randoop.
+  /**
+   * Return the version number for Randoop.
    *
    * @return the version number for Randoop
    */
@@ -34,7 +35,8 @@ public class Globals {
     return RANDOOP_VERSION;
   }
 
-  /** Return the Java classpath.
+  /**
+   * Return the Java classpath.
    *
    * @return the Java classpath
    */

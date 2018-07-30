@@ -14,7 +14,8 @@ public final class Util {
     throw new IllegalStateException("no instance");
   }
 
-  /** Return true if a and b are equal (both true or both false).
+  /**
+   * Return true if a and b are equal (both true or both false).
    *
    * @param a first boolean to test
    * @param b second bject to test
@@ -24,7 +25,8 @@ public final class Util {
     return a == b;
   }
 
-  /** Return true if a is false or b is true.
+  /**
+   * Return true if a is false or b is true.
    *
    * @param a first boolean to test
    * @param b second bject to test
@@ -49,7 +51,8 @@ public final class Util {
     return o2 != null && (o1.equals(o2));
   }
 
-  /** Return true if the string is a legal Java identifier.
+  /**
+   * Return true if the string is a legal Java identifier.
    *
    * @param s string to test
    * @return true if the string is a legal Java identifier
@@ -66,7 +69,8 @@ public final class Util {
     return true;
   }
 
-  /** Convert each character to the form "\\uHEXDIGITS".
+  /**
+   * Convert each character to the form "\\uHEXDIGITS".
    *
    * @param unicodeString string to convert
    * @return converted string
@@ -87,7 +91,8 @@ public final class Util {
     return output.toString();
   }
 
-  /** Return the number of times that the pattern appears in the text.
+  /**
+   * Return the number of times that the pattern appears in the text.
    *
    * @param text string to search
    * @param pattern string pattern to search for
