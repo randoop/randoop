@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import org.plumelib.util.CollectionsPlume;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -61,13 +62,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
                     TypedOperation.createNonreceiverInitialization(term),
                     new ArrayList<Variable>());
         literalMap.add(constantType, seq);
-
-        // Retrieve the frequency of the literal represented by seq.
-        Integer currFrequencyOfLiteral = literalsTermFrequency.get(seq);
-        if (currFrequencyOfLiteral == null) {
-          currFrequencyOfLiteral = 0;
-        }
-        literalsTermFrequency.put(seq, currFrequencyOfLiteral + term.getFrequency());
+        CollectionsPlume.incrementMap(literalsTermFrequency, seq, term.getFrequency());
       }
     }
   }
