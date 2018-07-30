@@ -20,8 +20,6 @@ public abstract class InputSequenceSelector {
    * <p>The default implementation does nothing. Subclasses may override it to add behavior.
    *
    * @param eSeq the recently executed sequence which is new and unique, and has just been executed.
-   *     It contains its overall execution time which can be associated with the underlying {@link
-   *     Sequence} in {@code eSeq}.
    */
-  public void createdExecutableSequenceFromInputs(ExecutableSequence eSeq) {}
+  public void createdExecutableSequence(ExecutableSequence eSeq) {}
 }

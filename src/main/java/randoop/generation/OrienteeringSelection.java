@@ -46,6 +46,9 @@ public class OrienteeringSelection extends InputSequenceSelector {
    */
   private final Map<Sequence, Long> sequenceExecutionTime = new HashMap<>();
 
+  /** Total weight of the sequences within {@code weightMap}. */
+  private double totalWeight;
+
   /**
    * Bias input selection towards lower-cost sequences. We first compute and update the weights of
    * all the candidates within the candidate list before making our selection.
@@ -55,15 +58,17 @@ public class OrienteeringSelection extends InputSequenceSelector {
    */
   @Override
   public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
-    double totalWeight = computeWeightForCandidates(candidates);
+    computeWeightForCandidates(candidates);
 
     Sequence selectedSequence = Randomness.randomMemberWeighted(candidates, weightMap, totalWeight);
     CollectionsPlume.incrementMap(sequenceSelectionCount, selectedSequence);
 
     // Compute and update the weight of the selected sequence which will be affected by its
     // increased selection count.
+    double oldWeight = weightMap.get(selectedSequence);
     double updatedWeight = computeWeightForCandidate(selectedSequence);
     weightMap.put(selectedSequence, updatedWeight);
+    totalWeight = totalWeight - oldWeight + updatedWeight;
 
     return selectedSequence;
   }
@@ -73,11 +78,8 @@ public class OrienteeringSelection extends InputSequenceSelector {
    * and updates them in the {@code weightMap}.
    *
    * @param candidates list of candidate sequences
-   * @return the total weight of all the elements in the candidate list
    */
-  private double computeWeightForCandidates(SimpleList<Sequence> candidates) {
-    double totalWeight = 0.0;
-
+  private void computeWeightForCandidates(SimpleList<Sequence> candidates) {
     // Iterate through the candidate list, computing the weight for a sequence only if it has
     // not yet been computed.
     for (int i = 0; i < candidates.size(); i++) {
@@ -87,12 +89,9 @@ public class OrienteeringSelection extends InputSequenceSelector {
       if (weight == null) {
         weight = computeWeightForCandidate(candidate);
         weightMap.put(candidate, weight);
+        totalWeight += weight;
       }
-
-      totalWeight += weight;
     }
-
-    return totalWeight;
   }
 
   /**
@@ -144,7 +143,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
    *     It contains its overall execution time for the underlying {@link Sequence}.
    */
   @Override
-  public void createdExecutableSequenceFromInputs(ExecutableSequence eSeq) {
+  public void createdExecutableSequence(ExecutableSequence eSeq) {
     Sequence inputSequence = eSeq.sequence;
 
     if (!sequenceExecutionTime.containsKey(inputSequence)) {

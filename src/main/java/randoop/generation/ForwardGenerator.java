@@ -185,7 +185,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     startTime = System.nanoTime(); // reset start time.
 
-    inputSequenceSelector.createdExecutableSequenceFromInputs(eSeq);
+    inputSequenceSelector.createdExecutableSequence(eSeq);
 
     determineActiveIndices(eSeq);
 
