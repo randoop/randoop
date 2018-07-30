@@ -33,18 +33,19 @@ public class ConstantMiningSelection implements InputSequenceSelector {
       ComponentManager componentManager,
       int numClasses,
       Map<Sequence, Integer> literalTermFrequencies) {
-    Map<Sequence, Integer> seqDocumentFrequencies = componentManager.getSeqDocumentFrequency();
+    Map<Sequence, Integer> literalDocumentFrequencies =
+        componentManager.getLiteralDocumentFrequency();
 
     if (GenInputsAbstract.constant_mining_logging) {
       System.out.println("Literal term frequencies: ");
       System.out.println(literalTermFrequencies);
       System.out.println("Document term frequencies: ");
-      System.out.println(seqDocumentFrequencies);
+      System.out.println(literalDocumentFrequencies);
     }
 
     // We iterate through all literals that were found by the ClassLiteralExtractor.
-    for (Sequence sequence : seqDocumentFrequencies.keySet()) {
-      Integer documentFrequency = seqDocumentFrequencies.get(sequence);
+    for (Sequence sequence : literalDocumentFrequencies.keySet()) {
+      Integer documentFrequency = literalDocumentFrequencies.get(sequence);
       Integer termFrequency = literalTermFrequencies.get(sequence);
 
       // Compute the term frequency-inverse document frequency for GRT Constant Mining.

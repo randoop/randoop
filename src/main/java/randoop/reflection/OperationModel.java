@@ -288,7 +288,7 @@ public class OperationModel {
           if (GenInputsAbstract.input_selection
               == GenInputsAbstract.InputSelectionMode.CONSTANT_MINING) {
             compMgr.addClassLevelLiteral(type, seq);
-            compMgr.addGeneratedSequence(seq);
+            compMgr.addLiteral(seq);
             continue;
           }
 

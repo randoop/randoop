@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import org.plumelib.util.CollectionsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -44,13 +45,6 @@ import randoop.util.SimpleList;
  * components from the collection.
  */
 public class ComponentManager {
-
-  /**
-   * Map of class-level literal to document frequency: the number of classes that this literal
-   * appears in.
-   */
-  private final Map<Sequence, Integer> seqDocumentFrequency = new LinkedHashMap<>();
-
   /** The principal set of sequences used to create other, larger sequences by the generator. */
   // Is never null. Contains both general components and seed sequences.
   // "gral" probably stands for "general".
@@ -81,6 +75,9 @@ public class ComponentManager {
    * packageliterals is non-null.
    */
   private PackageLiterals packageLiterals = null;
+
+  /** Map of literal to document frequency, the number of classes that each literal appears in. */
+  private final Map<Sequence, Integer> literalDocumentFrequency = new LinkedHashMap<>();
 
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
@@ -141,17 +138,23 @@ public class ComponentManager {
   }
 
   /**
-   * Add a component sequence and update the sequence's frequency.
+   * Given a sequence that represents a literal that was found by constant mining, increment its
+   * document frequency and add it as a component sequence.
+   *
+   * @param literalSequence sequence representing a literal
+   */
+  public void addLiteral(Sequence literalSequence) {
+    CollectionsPlume.incrementMap(literalDocumentFrequency, literalSequence);
+    addGeneratedSequence(literalSequence);
+  }
+
+  /**
+   * Add a component sequence.
    *
    * @param sequence the sequence
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
-    Integer frequency = seqDocumentFrequency.get(sequence);
-    if (frequency == null) {
-      frequency = 0;
-    }
-    seqDocumentFrequency.put(sequence, frequency + 1);
   }
 
   /**
@@ -162,12 +165,12 @@ public class ComponentManager {
   }
 
   /**
-   * Get the map from sequence to document frequency.
+   * Get the map from literal to document frequency.
    *
-   * @return the mapping of sequences to their document frequency
+   * @return the mapping of literals to their document frequency
    */
-  public Map<Sequence, Integer> getSeqDocumentFrequency() {
-    return seqDocumentFrequency;
+  public Map<Sequence, Integer> getLiteralDocumentFrequency() {
+    return literalDocumentFrequency;
   }
 
   /**
