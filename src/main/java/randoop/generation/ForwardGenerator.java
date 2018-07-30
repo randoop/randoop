@@ -24,6 +24,7 @@ import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
@@ -69,6 +70,9 @@ public class ForwardGenerator extends AbstractGenerator {
   /** How to select sequences as input for creating new sequences. */
   private final InputSequenceSelector inputSequenceSelector;
 
+  /** How to select the method to use for creating a new sequence. */
+  private final TypedOperationSelector operationSelector;
+
   // The set of all primitive values seen during generation and execution
   // of sequences. This set is used to tell if a new primitive value has
   // been generated, to add the value to the components.
@@ -79,18 +83,9 @@ public class ForwardGenerator extends AbstractGenerator {
       Set<TypedOperation> observers,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
-      RandoopListenerManager listenerManager) {
-    this(operations, observers, limits, componentManager, null, listenerManager);
-  }
-
-  public ForwardGenerator(
-      List<TypedOperation> operations,
-      Set<TypedOperation> observers,
-      GenInputsAbstract.Limits limits,
-      ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager) {
-    this(operations, observers, limits, componentManager, stopper, listenerManager, -1, null);
+    this(operations, observers, limits, componentManager, stopper, listenerManager, -1, null, null);
   }
 
   /**
@@ -106,6 +101,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *     Mining is enabled
    * @param literalTermFrequencies map from literal to its frequency observed in all classes under
    *     test, expected to be non-null if GRT Constant Mining is enabled
+   * @param classesUnderTest the classes that are under test
    */
   public ForwardGenerator(
       List<TypedOperation> operations,
@@ -115,7 +111,8 @@ public class ForwardGenerator extends AbstractGenerator {
       IStopper stopper,
       RandoopListenerManager listenerManager,
       int numClasses,
-      Map<Sequence, Integer> literalTermFrequencies) {
+      Map<Sequence, Integer> literalTermFrequencies,
+      Set<ClassOrInterfaceType> classesUnderTest) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
@@ -123,6 +120,17 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
+
+    switch (GenInputsAbstract.method_selection) {
+      case UNIFORM:
+        this.operationSelector = new UniformRandomMethodSelection(operations);
+        break;
+      case BLOODHOUND:
+        this.operationSelector = new Bloodhound(operations, classesUnderTest);
+        break;
+      default:
+        throw new Error("This can't happen");
+    }
 
     switch (GenInputsAbstract.input_selection) {
       case SMALL_TESTS:
@@ -144,6 +152,16 @@ public class ForwardGenerator extends AbstractGenerator {
             "Case statement does not handle all InputSelectionModes: "
                 + GenInputsAbstract.input_selection);
     }
+  }
+
+  /**
+   * Take action based on the given {@link Sequence} that was classified as a regression test.
+   *
+   * @param sequence the new sequence that was classified as a regression test
+   */
+  @Override
+  public void newRegressionTestHook(Sequence sequence) {
+    operationSelector.newRegressionTestHook(sequence);
   }
 
   /**
@@ -327,6 +345,14 @@ public class ForwardGenerator extends AbstractGenerator {
    *   <li>it creates a duplicate sequence
    * </ul>
    *
+   * This method modifies the list of operations that represent the set of methods under tests.
+   * Specifically, if the selected operation used for creating a new and unique sequence is a
+   * parameterless operation (a static constant method or no-argument constructor) it is removed
+   * from the list of operations. Such a method will return the same thing every time it is invoked
+   * (unless it's nondeterministic, but Randoop should not be run on nondeterministic methods). Once
+   * invoked, its result is in the pool and there is no need to call the operation again and so we
+   * will remove it from the list of operations.
+   *
    * @return a new sequence, or null
    */
   private ExecutableSequence createNewUniqueSequence() {
@@ -338,7 +364,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // Select the next operation to use in constructing a new sequence.
-    TypedOperation operation = Randomness.randomMember(this.operations);
+    TypedOperation operation = operationSelector.selectOperation();
     Log.logPrintf("Selected operation: %s%n", operation.toString());
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
@@ -404,9 +430,10 @@ public class ForwardGenerator extends AbstractGenerator {
       Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
     }
 
-    // If parameterless operation, subsequence inputs will all be redundant, so just remove it from
-    // list of operations. These can only be static constant methods or no-argument constructors.
-    // XXX OK if we know constant, otherwise may depend on static state
+    // A parameterless operation (a static constant method or no-argument constructor) returns the
+    // same thing every time it is invoked. Since we have just invoked it, its result will be in the
+    // pool.
+    // There is no need to call this operation again, so remove it from the list of operations.
     if (operation.getInputTypes().isEmpty()) {
       operationHistory.add(operation, OperationOutcome.REMOVED);
       operations.remove(operation);

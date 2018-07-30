@@ -250,7 +250,15 @@ public class CoveredClassTest {
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
-            model, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
+            model,
+            observers,
+            new GenInputsAbstract.Limits(),
+            componentMgr,
+            null,
+            listenerMgr,
+            operationModel.getClassTypes().size(),
+            operationModel.getLiteralTermFrequency(),
+            operationModel.getClassTypes());
     GenTests genTests = new GenTests();
 
     TypedOperation objectConstructor;

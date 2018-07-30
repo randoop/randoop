@@ -425,7 +425,10 @@ public class TestClassificationTest {
             new GenInputsAbstract.Limits(),
             componentMgr,
             null,
-            listenerMgr);
+            listenerMgr,
+            classnames.size(),
+            operationModel.getLiteralTermFrequency(),
+            operationModel.getClassTypes());
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.setTestPredicate(isOutputTest);
 
