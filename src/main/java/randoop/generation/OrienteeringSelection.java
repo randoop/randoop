@@ -17,10 +17,10 @@ import randoop.util.SimpleList;
  * measured by the number of method calls in a sequence and the time it takes to execute.
  *
  * <p>Our implementation of Orienteering differs from that described in the GRT paper in that we do
- * not keep track of the execution time of an input sequence for each new run. Instead, we assume
- * that an input sequence's execution time is equal to the execution time of its first run. We
- * believe this assumption is reasonable since a sequence does not take any inputs (it is
- * self-contained), so its execution time probably does not differ greatly between separate runs.
+ * not measure the time of every execution of a sequence. Instead, we assume that a sequence's
+ * execution time is equal to the execution time of its first run. We believe this assumption is
+ * reasonable since a sequence does not take any inputs (it is self-contained), so its execution
+ * time probably does not differ greatly between separate runs.
  *
  * <p>The GRT paper also does not describe how to handle input sequences that have an execution time
  * of zero, such as one that only includes the assignment of a primitive type {@code byte byte0 =
@@ -79,7 +79,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
     double totalWeight = 0.0;
 
     // Iterate through the candidate list, computing the weight for a sequence only if it has
-    // not yet been computed before.
+    // not yet been computed.
     for (int i = 0; i < candidates.size(); i++) {
       Sequence candidate = candidates.get(i);
 
@@ -121,7 +121,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
 
     Long executionTime = sequenceExecutionTime.get(sequence);
     // If the sequence has not been executed before, it will not have an associated execution time.
-    // Additionally, single statement sequences can have a measured execution time of zero units.
+    // Additionally, single-statement sequences can have a measured execution time of zero units.
     // For both cases, we use an execution time of 1 unit for the weight computation.
     if (executionTime == null || executionTime == 0) {
       executionTime = 1L;
@@ -161,7 +161,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
    *
    * <p>To prevent division by zero, we use 1 for a sequence with no method calls.
    *
-   * @param sequence the sequence to get the method size square root of
+   * @param sequence the sequence whose the method size square root to get
    * @return square root of the number of method calls in the given sequence
    */
   private double getMethodSizeSquareRootForSequence(Sequence sequence) {
@@ -170,13 +170,9 @@ public class OrienteeringSelection extends InputSequenceSelector {
     Double methodSizeSqrt = sequenceMethodSizeSqrt.get(sequence);
     if (methodSizeSqrt == null) {
       methodSizeSqrt = Math.sqrt(sequence.numMethodCalls());
-
-      // Check for special case where a sequence can have zero method calls and assign it a
-      // method size square root value of 1.
       if (methodSizeSqrt == 0) {
         methodSizeSqrt = 1.0;
       }
-
       sequenceMethodSizeSqrt.put(sequence, methodSizeSqrt);
     }
 
