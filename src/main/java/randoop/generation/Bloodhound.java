@@ -119,6 +119,7 @@ public class Bloodhound implements TypedOperationSelector {
    * are assigned a weight based on the weighting scheme defined by GRT's description of Bloodhound.
    *
    * @param operations list of operations under test
+   * @param classesUnderTest set of classes under test
    */
   public Bloodhound(List<TypedOperation> operations, Set<ClassOrInterfaceType> classesUnderTest) {
     this.operationSimpleList = new SimpleArrayList<>(operations);

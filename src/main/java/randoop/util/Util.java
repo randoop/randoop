@@ -14,12 +14,22 @@ public final class Util {
     throw new IllegalStateException("no instance");
   }
 
-  /** Return true if a and b are equal (both true or both false). */
+  /** Return true if a and b are equal (both true or both false).
+   *
+   * @param a first boolean to test
+   * @param b second bject to test
+   * @return true if a and b are equal
+   */
   public static boolean iff(boolean a, boolean b) {
     return a == b;
   }
 
-  /** Return true if a is false or b is true. */
+  /** Return true if a is false or b is true.
+   *
+   * @param a first boolean to test
+   * @param b second bject to test
+   * @return true if a is false or b is true
+   */
   public static boolean implies(boolean a, boolean b) {
     return !a || b;
   }
@@ -39,7 +49,11 @@ public final class Util {
     return o2 != null && (o1.equals(o2));
   }
 
-  /** Return true if the string is a legal Java identifier. */
+  /** Return true if the string is a legal Java identifier.
+   *
+   * @param s string to test
+   * @return true if the string is a legal Java identifier
+   */
   public static boolean isJavaIdentifier(String s) {
     if (s == null || s.length() == 0 || !Character.isJavaIdentifierStart(s.charAt(0))) {
       return false;
@@ -52,7 +66,11 @@ public final class Util {
     return true;
   }
 
-  /** Convert each character to the fom "\\uHEXDIGITS". */
+  /** Convert each character to the form "\\uHEXDIGITS".
+   *
+   * @param unicodeString string to convert
+   * @return converted string
+   */
   public static String convertToHexString(String unicodeString) {
     char[] chars = unicodeString.toCharArray();
     StringBuilder output = new StringBuilder();
@@ -69,7 +87,12 @@ public final class Util {
     return output.toString();
   }
 
-  /** Return the number of times that the pattern appears in the text. */
+  /** Return the number of times that the pattern appears in the text.
+   *
+   * @param text string to search
+   * @param pattern string pattern to search for
+   * @return the number of times the pattern appears in the text
+   */
   public static int occurCount(StringBuilder text, String pattern) {
     if (pattern.length() == 0) throw new IllegalArgumentException("empty pattern");
     int i = 0;

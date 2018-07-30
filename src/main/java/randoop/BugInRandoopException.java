@@ -10,17 +10,27 @@ public class BugInRandoopException extends RuntimeException {
     super();
   }
 
-  /** Create a BugInRandoopException with the given message. */
+  /** Create a BugInRandoopException with the given message.
+   *
+   * @param message exception message
+   */
   public BugInRandoopException(String message) {
     super(message);
   }
 
-  /** Create a BugInRandoopException with the given message and cause. */
+  /** Create a BugInRandoopException with the given message and cause.
+   *
+   * @param message exception message
+   * @param cause exception cause
+   */
   public BugInRandoopException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  /** Create a BugInRandoopException with the given cause. */
+  /** Create a BugInRandoopException with the given cause.
+   *
+   * @param cause exception cause
+   */
   public BugInRandoopException(Throwable cause) {
     super(cause);
   }
