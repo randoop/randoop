@@ -511,6 +511,45 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
+  /**
+   * Randoop generates new tests by choosing from a set of methods under test. This controls how the
+   * next method is chosen, from among all methods under test.
+   */
+  @Option("How to choose the next method to test")
+  public static MethodSelectionMode method_selection = MethodSelectionMode.UNIFORM;
+
+  /** The possible values of the method_selection command-line argument. */
+  public enum MethodSelectionMode {
+    /** Select methods randomly with uniform probability. */
+    UNIFORM,
+    /**
+     * The "Bloodhound" technique from the GRT paper prioritizes methods with lower branch coverage.
+     */
+    BLOODHOUND
+  }
+
+  /** Print to standard out, method weights and method uncovered ratios. */
+  @Unpublicized
+  @Option("Output Bloodhound-related information such as method weights and coverage ratios")
+  public static boolean bloodhound_logging = false;
+
+  /**
+   * Bloodhound can update coverage information at a regular interval that is either based on time
+   * or on the number of successful invocations.
+   */
+  @Unpublicized
+  @Option("Specify how Bloodhound decides when to update coverage information")
+  public static BloodhoundCoverageUpdateMode bloodhound_update_mode =
+      BloodhoundCoverageUpdateMode.TIME;
+
+  /** The possible modes for updating the coverage information that is used by Bloodhound. */
+  public enum BloodhoundCoverageUpdateMode {
+    /** Update coverage information at some regular interval of time. */
+    TIME,
+    /** Update coverage information after some number of successful invocations. */
+    INVOCATIONS
+  }
+
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
   // the length of the string that will actually be printed out as code.
@@ -784,6 +823,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
         throw new RandoopUsageError(
             "Invalid parameter combination: --deterministic with --progressintervalmillis");
       }
+    }
+
+    if (deterministic
+        && method_selection == MethodSelectionMode.BLOODHOUND
+        && bloodhound_update_mode == BloodhoundCoverageUpdateMode.TIME) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --deterministic with --bloodhound-update-mode=time");
     }
 
     if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_DEFAULT

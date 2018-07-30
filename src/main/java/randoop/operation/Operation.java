@@ -18,7 +18,7 @@ import randoop.types.Type;
  * is the list of input types, and T is the output type. The input types are represented by an
  * ordered list of {@link Type} objects, and the output type is a single {@link Type} object.
  *
- * <p>For a non-static method call or instance field access, the first input type is always the
+ * <p>For a non-static method call or an instance field access, the first input type is always the
  * declaring class of the method or field. If we have a method {@code int A.m(double d)}, it is
  * represented as an operation m : [A, double] &rarr; int. A value, such as an int or enum constant,
  * can be represented as an operation with no input types, and its own type as the output type. So,
