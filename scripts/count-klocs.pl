@@ -45,6 +45,9 @@ By default, the script will read the file:
 This file is generated as part of the gradlew build task. You may generate it directly
 with the gradlew jacocoTestReport task.
 
+For more details on the KLOC process see:
+https://gitlab.cs.washington.edu/randoop/coverage-tools/blob/master/KLOCS-README.md
+
 =cut
 
 use strict;
