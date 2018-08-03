@@ -17,7 +17,11 @@ public class ExceptionalExecution extends ExecutionOutcome {
     this.exception = exception;
   }
 
-  /** Return the exception. */
+  /**
+   * Return the exception.
+   *
+   * @return the exception
+   */
   public Throwable getException() {
     return this.exception;
   }

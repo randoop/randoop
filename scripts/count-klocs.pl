@@ -36,13 +36,17 @@ Prints the manual page and exits.
 
 This perl script is intended for use by Randoop developers to parse
 the Randoop code coverage results in order to count the KLOCS of
-the portions of Randoop that have been tested.
+the portions of Randoop that have been tested. It will write to
+standard output a list of Randoop packages and their KLOCs.
 By default, the script will read the file:
 
   build/reports/jacoco/test/jacocoTestReport.xml
 
 This file is generated as part of the gradlew build task. You may generate it directly
 with the gradlew jacocoTestReport task.
+
+For more details on the KLOC process see:
+https://gitlab.cs.washington.edu/randoop/coverage-tools/blob/master/KLOCS-README.md
 
 =cut
 

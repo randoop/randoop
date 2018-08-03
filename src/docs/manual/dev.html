@@ -306,7 +306,7 @@ option on the command line.
 For instance,
 </p>
 <pre><code>    ./gradlew test --tests="*GenericTypesTest"
-    # Don't include "run" in the test name.
+    # You can include "run" in the test name, but still use a leading "*"
     ./gradlew systemtest --tests="*Collection*"
 </code></pre>
 
@@ -337,6 +337,10 @@ Note that this works for system tests only, not for unit tests or other types of
 tests.
 Further note that selection logging can slow down the system tests so much that
 they fail.
+Finally, it should be noted that even though the default replacements attempt to suppress calls to
+methods that use a graphical windowing system, not all such calls are captured.
+Currently, the subtest {@code runDirectSwingTest} will fail with {@code java.awt.AWTError:
+Local GraphicsEnvironment must not be null} if the system tests are run in a headless environment.
 </p>
 
 <p>
