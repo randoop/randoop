@@ -9,4 +9,4 @@ set -e
 # Be certain that all code compiles, the code is formatted correctly
 # (compile tasks run verifyGoogleJavaFormat).
 # The manual might have been changed, or the Javadoc that generates manual text.
-./gradlew compileAll manual
+./gradlew verifyGoogleJavaFormat compileAll javadoc manual
