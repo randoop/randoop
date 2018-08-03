@@ -14,8 +14,9 @@ import randoop.util.SimpleList;
  */
 public class ConstantMiningSelection implements InputSequenceSelector {
   /**
-   * Map of extracted literal sequences to their static weights. These weights are never changed
-   * once initialized.
+   * Map of extracted literal sequences to their weights. These sequences represent literals that
+   * are "mined" by the {@code randoop.reflection.ClassLiteralExtractor}. These weights are never
+   * changed once initialized.
    */
   private final Map<Sequence, Double> literalWeightMap = new HashMap<>();
 
