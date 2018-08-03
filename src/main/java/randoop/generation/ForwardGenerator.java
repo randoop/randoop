@@ -122,7 +122,8 @@ public class ForwardGenerator extends AbstractGenerator {
         inputSequenceSelector = new UniformRandomSequenceSelection();
         break;
       case ORIENTEERING:
-        inputSequenceSelector = new OrienteeringSelection();
+        inputSequenceSelector =
+            new OrienteeringSelection(componentManager.getAllGeneratedSequences());
         break;
       default:
         throw new Error(
