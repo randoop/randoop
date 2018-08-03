@@ -75,6 +75,7 @@ public class ClassFileConstants {
     public Set<Float> floats = new TreeSet<>();
     public Set<Double> doubles = new TreeSet<>();
     public Set<String> strings = new TreeSet<>();
+    /** Values that are non-receiver terms. */
     public Set<Class<?>> classes = new TreeSet<>();
 
     /**
