@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
@@ -21,7 +22,6 @@ import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
-import randoop.util.predicate.Predicate;
 
 /**
  * Algorithm template for implementing a test generator.

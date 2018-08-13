@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.junit.Test;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
@@ -37,7 +38,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
-import randoop.util.predicate.Predicate;
 
 /**
  * Test special cases of covered class filtering. Want to ensure behaves well when given abstract

@@ -1,5 +1,7 @@
 Version 4.1.0, released ??, 2018
 
+Randoop requires Java 8; it no longer runs on a Java 7 JVM.
+
 Command-line argument changes:
  * renamed --small-tests to --input-selection=small-tests
 

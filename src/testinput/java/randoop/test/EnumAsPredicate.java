@@ -1,6 +1,6 @@
 package randoop.test;
 
-import randoop.util.predicate.Predicate;
+import java.util.function.Predicate;
 
 /**
  * Class for enums with parameterized types.

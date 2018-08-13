@@ -4,6 +4,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.compile.SequenceClassLoader;
@@ -12,10 +13,9 @@ import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
 import randoop.output.NameGenerator;
 import randoop.sequence.ExecutableSequence;
-import randoop.util.predicate.DefaultPredicate;
 
 /** {@code TestPredicate} that checks whether the given {@link ExecutableSequence} is compilable. */
-public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence> {
+public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
   /** The compiler for sequence code */
   private final SequenceCompiler compiler;
 

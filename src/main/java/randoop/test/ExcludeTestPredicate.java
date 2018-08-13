@@ -1,11 +1,11 @@
 package randoop.test;
 
 import java.util.Set;
+import java.util.function.Predicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
-import randoop.util.predicate.DefaultPredicate;
 
-public class ExcludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
+public class ExcludeTestPredicate implements Predicate<ExecutableSequence> {
 
   private Set<Sequence> excludeSet;
 
