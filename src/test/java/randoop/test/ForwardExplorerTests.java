@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,7 +42,6 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
-import randoop.util.predicate.Predicate;
 
 public class ForwardExplorerTests {
 

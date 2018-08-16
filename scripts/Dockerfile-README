@@ -28,11 +28,6 @@ alias create_upload_docker_image=' \
   rm -rf dockerdir'
 
 export OS=ubuntu
-export JDKVER=jdk7
-export PROJECT=randoop
-create_upload_docker_image
-
-export OS=ubuntu
 export JDKVER=jdk8
 export PROJECT=randoop
 create_upload_docker_image
