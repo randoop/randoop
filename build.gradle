@@ -29,6 +29,7 @@ plugins {
 }
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
+// It is not run in the main build because the Checker Framework is incompatible with Error Prone.
 apply from: "checkerframework-annos-in-comments.gradle"
 // apply from: "checkerframework.gradle"
 
