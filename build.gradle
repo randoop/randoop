@@ -28,8 +28,9 @@ plugins {
   id "net.ltgt.errorprone-base" version "0.0.16"
 }
 
-// Checker Framework pluggable type-checking
-apply from: "gradle/checkerframework.gradle"
+// For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
+apply from: "checkerframework-annos-in-comments.gradle"
+// apply from: "checkerframework.gradle"
 
 /* Common build configuration for Randoop and agents */
 allprojects {
