@@ -58,7 +58,7 @@ allprojects {
   }
 
   dependencies {
-    plumelib 'org.plumelib:bcel-util:0.0.9'
+    plumelib 'org.plumelib:bcel-util:1.0.0'
     // To use a local version comment out line above and uncomment line below.
     //plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
