@@ -3,7 +3,7 @@ package randoop.util;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.plumelib.bcelutil.JvmUtil;
+import org.plumelib.signature.Signatures;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
@@ -174,7 +174,7 @@ public final class Util {
 
       // If primitive, Class.getName() returns the keyword. Convert to JVML.
       if (cls.isPrimitive()) {
-        b.append(JvmUtil.primitiveTypeNameToFieldDescriptor(cls.getName()));
+        b.append(Signatures.primitiveTypeNameToFieldDescriptor(cls.getName()));
         continue;
       }
 
@@ -197,7 +197,7 @@ public final class Util {
 
       // Is object, non-array. Class.getName() returns foo.bar.Baz. Convert to
       // JVML.
-      b.append(JvmUtil.binaryNameToFieldDescriptor(paramClasses[i].getName()));
+      b.append(Signatures.binaryNameToFieldDescriptor(paramClasses[i].getName()));
     }
     b.append(")");
     return b.toString();
