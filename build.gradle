@@ -64,7 +64,7 @@ allprojects {
 
     plumelib 'org.plumelib:options:1.0.1'
     plumelib 'org.plumelib:plume-util:1.0.4'
-    plumelib 'org.plumelib:signature-util:0.0.6'
+    plumelib 'org.plumelib:reflection-util:0.0.1'
   }
 }
 
