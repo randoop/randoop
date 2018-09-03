@@ -7,7 +7,7 @@ import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
 import org.plumelib.bcelutil.BcelUtil;
-import org.plumelib.bcelutil.JvmUtil;
+import org.plumelib.signature.Signatures;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -227,7 +227,7 @@ public class MethodSignature {
    * @throws ClassNotFoundException if no {@code Class<?>} was found for the type
    */
   private Class<?> typeToClass(Type type) throws ClassNotFoundException {
-    String name = JvmUtil.fieldDescriptorToClassGetName(type.getSignature());
+    String name = Signatures.fieldDescriptorToClassGetName(type.getSignature());
     return BcelUtil.classForName(name);
   }
 
