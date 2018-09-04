@@ -3,7 +3,7 @@ package randoop.util;
 import java.io.PrintStream;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
-import org.plumelib.util.ReflectionPlume;
+import org.plumelib.reflection.ReflectionPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
