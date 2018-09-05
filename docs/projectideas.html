@@ -20,6 +20,7 @@
         </ul></li>
       <li><a href="#better-choice-of-arguments">Better choice of arguments</a></li>
       <li><a href="#known-bad-arguments">Avoid known bad arguments</a></li>
+      <li><a href="#nondeterminism">Nondeterminism</a></li>
       <li><a href="#Improved_test_generation_via_GRT_techniques">Improved test generation via GRT techniques</a></li>
       <li><a href="#creating-independent-tests">Creating independent tests</a>
         <ul>
@@ -222,6 +223,20 @@ performance.
 <p>
 When a programmer can characterize which inputs to a method are reasonable,
 it would be nice for Randoop to avoid creating such tests.
+</p>
+
+
+<h2 id="nondeterminism">Nondeterminism</h2>
+
+<p>
+When a method is nondeterministic, such as any method that returns
+a <code>Set</code>, the user currently needs to exclude that method from
+consideration by Randoop.  It would be better to permit Randoop to call
+methods that do not depend on the nondeterminism.  For example, rather than
+avoiding construction of all <code>Set</code>s, Randoop could create them,
+and call methods like <code>size()</code> and <code>contains()</code>.
+Randoop would not iterate through the <code>Set</code> nor print it (or,
+better, the <code>Set</code> could iterate/print in a deterministic order).
 </p>
 
 
@@ -540,6 +555,12 @@ compelling.
     are allowed).
   </li>
 </ul>
+
+<p>
+Perhaps one of these existing side effect analyses could be used:
+ https://github.com/Sable/soot/wiki/Using-Side-Effect-Attributes
+ http://www2.informatik.uni-freiburg.de/~geffken/GeffkenST14.pdf
+</p>
 
 
 <h1 id="user-interface-and-user-experience-projects">User interface and user experience projects</h1>

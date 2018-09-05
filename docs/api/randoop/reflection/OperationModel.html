@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OperationModel (randoop 4.0.4 API)</title>
+<title>OperationModel (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OperationModel (randoop 4.0.4 API)";
+            parent.document.title="OperationModel (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/reflection/OperationExtractor.html" title="class in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/reflection/PackageVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/reflection/OperationModel.html" target="_top">Frames</a></li>
@@ -292,7 +292,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
            <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;methodSignatures,
            <a href="../../randoop/main/ClassNameErrorHandler.html" title="interface in randoop.main">ClassNameErrorHandler</a>&nbsp;errorHandler,
            <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;literalsFileList,
-           <a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition">SpecificationCollection</a>&nbsp;operationCollection)</code>
+           <a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition">SpecificationCollection</a>&nbsp;operationSpecifications)</code>
 <div class="block">Factory method to construct an operation model for a particular set of classes.</div>
 </td>
 </tr>
@@ -530,7 +530,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                          <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;methodSignatures,
                                          <a href="../../randoop/main/ClassNameErrorHandler.html" title="interface in randoop.main">ClassNameErrorHandler</a>&nbsp;errorHandler,
                                          <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;literalsFileList,
-                                         <a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition">SpecificationCollection</a>&nbsp;operationCollection)
+                                         <a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition">SpecificationCollection</a>&nbsp;operationSpecifications)
                                   throws <a href="../../randoop/reflection/SignatureParseException.html" title="class in randoop.reflection">SignatureParseException</a>,
                                          <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/NoSuchMethodException.html?is-external=true" title="class or interface in java.lang">NoSuchMethodException</a></pre>
 <div class="block">Factory method to construct an operation model for a particular set of classes.</div>
@@ -547,7 +547,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>methodSignatures</code> - the signatures of methods to be added to the model</dd>
 <dd><code>errorHandler</code> - the handler for bad file name errors</dd>
 <dd><code>literalsFileList</code> - the list of literals file names</dd>
-<dd><code>operationCollection</code> - the collection of operation specifications</dd>
+<dd><code>operationSpecifications</code> - the collection of operation specifications</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <a href="../../randoop/reflection/OperationModel.html" title="class in randoop.reflection"><code>OperationModel</code></a> constructed with the given arguments</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -946,7 +946,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/reflection/OperationExtractor.html" title="class in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/reflection/PackageVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/reflection/OperationModel.html" target="_top">Frames</a></li>

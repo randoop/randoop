@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.test (randoop 4.0.4 API)</title>
+<title>randoop.test (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.test (randoop 4.0.4 API)";
+            parent.document.title="randoop.test (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -43,7 +43,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/sequence/package-summary.html">Prev&nbsp;Package</a></li>
-<li><a href="../../randoop/test/predicate/package-summary.html">Next&nbsp;Package</a></li>
+<li><a href="../../randoop/types/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/test/package-summary.html" target="_top">Frames</a></li>
@@ -143,7 +143,9 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/ErrorTestPredicate.html" title="class in randoop.test">ErrorTestPredicate</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Returns true if the sequence is an error test (has a failure).</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></td>
@@ -154,7 +156,9 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/ExcludeTestPredicate.html" title="class in randoop.test">ExcludeTestPredicate</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Forbids certain sequences.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/ExpectedExceptionCheck.html" title="class in randoop.test">ExpectedExceptionCheck</a></td>
@@ -165,8 +169,7 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test">ExpectedExceptionCheckGen</a></td>
 <td class="colLast">
-<div class="block">A check generator that based on an <code>ExceptionPredicate</code> when given an exception, generates
- an <code>ExpectedExceptionCheck</code> object when the predicate is satisfied, and an <code>EmptyExceptionCheck</code> otherwise.</div>
+<div class="block">A check generator that when given an exception, generates either an <code>ExpectedExceptionCheck</code> object or an <code>EmptyExceptionCheck</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -193,8 +196,8 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/IncludeTestPredicate.html" title="class in randoop.test">IncludeTestPredicate</a></td>
 <td class="colLast">
-<div class="block">A test predicate that checks for the occurrence of variables that match the given regular
- expression.</div>
+<div class="block">A test predicate that checks for the occurrence of variables (and methods) that match the given
+ regular expression.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -288,7 +291,7 @@
 <td class="colFirst"><a href="../../randoop/test/ValidityCheckingGenerator.html" title="class in randoop.test">ValidityCheckingGenerator</a></td>
 <td class="colLast">
 <div class="block">A <code>ValidityCheckingGenerator</code> checks for occurrences of exceptions that have been tagged as
- invalid behaviors as represented by a <code>ExceptionPredicate</code>.</div>
+ invalid behaviors.</div>
 </td>
 </tr>
 </tbody>
@@ -317,7 +320,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/sequence/package-summary.html">Prev&nbsp;Package</a></li>
-<li><a href="../../randoop/test/predicate/package-summary.html">Next&nbsp;Package</a></li>
+<li><a href="../../randoop/types/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/test/package-summary.html" target="_top">Frames</a></li>

@@ -3,22 +3,22 @@
 <html lang="en">
 <head>
 
-<title>ExceptionPredicate (randoop 4.0.4 API)</title>
+<title>TypedOperationSelector (randoop 4.1.0 API)</title>
 
-<link rel="stylesheet" type="text/css" href="../../../javadocstyle.css" title="Style">
-<script type="text/javascript" src="../../../script.js"></script>
+<link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
+<script type="text/javascript" src="../../script.js"></script>
 </head>
 <body>
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExceptionPredicate (randoop 4.0.4 API)";
+            parent.document.title="TypedOperationSelector (randoop 4.1.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":6};
+var methods = {"i0":6,"i1":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -37,26 +37,26 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="../../overview-summary.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
-<li><a href="../../../deprecated-list.html">Deprecated</a></li>
-<li><a href="../../../index-all.html">Index</a></li>
-<li><a href="../../../help-doc.html">Help</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
 </ul>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html" title="class in randoop.test.predicate"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li>Next&nbsp;Class</li>
+<li><a href="../../randoop/generation/TestUtils.html" title="class in randoop.generation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/UniformRandomMethodSelection.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../index.html?randoop/test/predicate/ExceptionPredicate.html" target="_top">Frames</a></li>
-<li><a href="ExceptionPredicate.html" target="_top">No&nbsp;Frames</a></li>
+<li><a href="../../index.html?randoop/generation/TypedOperationSelector.html" target="_top">Frames</a></li>
+<li><a href="TypedOperationSelector.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
-<li><a href="../../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+<li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
 </ul>
 <div>
 <script type="text/javascript"><!--
@@ -91,8 +91,8 @@ var activeTableTab = "activeTableTab";
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">randoop.test.predicate</div>
-<h2 title="Interface ExceptionPredicate" class="title">Interface ExceptionPredicate</h2>
+<div class="subTitle">randoop.generation</div>
+<h2 title="Interface TypedOperationSelector" class="title">Interface TypedOperationSelector</h2>
 </div>
 <div class="contentContainer">
 <div class="description">
@@ -100,14 +100,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Known Implementing Classes:</dt>
-<dd><a href="../../../randoop/test/predicate/AlwaysFalseExceptionPredicate.html" title="class in randoop.test.predicate">AlwaysFalseExceptionPredicate</a>, <a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html" title="class in randoop.test.predicate">ExceptionBehaviorPredicate</a></dd>
+<dd><a href="../../randoop/generation/Bloodhound.html" title="class in randoop.generation">Bloodhound</a>, <a href="../../randoop/generation/UniformRandomMethodSelection.html" title="class in randoop.generation">UniformRandomMethodSelection</a></dd>
 </dl>
 <hr>
 <br>
-<pre>public interface <span class="typeNameLabel">ExceptionPredicate</span></pre>
-<div class="block">An <code>ExceptionPredicate</code> is a test on an exception primarily used to check whether the
- exception is classified as expected. Used in <a href="../../../randoop/test/TestCheckGenerator.html" title="class in randoop.test"><code>TestCheckGenerator</code></a>
- implementations to decide whether an exception matches criteria of that check generator.</div>
+<pre>public interface <span class="typeNameLabel">TypedOperationSelector</span></pre>
+<div class="block">An interface for selecting an operation for the <a href="../../randoop/generation/ForwardGenerator.html" title="class in randoop.generation"><code>ForwardGenerator</code></a> to use in constructing a
+ new test sequence.</div>
 </li>
 </ul>
 </div>
@@ -127,11 +126,15 @@ var activeTableTab = "activeTableTab";
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/test/predicate/ExceptionPredicate.html#test-randoop.ExceptionalExecution-randoop.sequence.ExecutableSequence-">test</a></span>(<a href="../../../randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a>&nbsp;exec,
-    <a href="../../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
-<div class="block">Check whether the <code>ExceptionalExecution</code> of the <code>ExecutableSequence</code> satisfies the
- criterion of the predicate.</div>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/TypedOperationSelector.html#newRegressionTestHook-randoop.sequence.Sequence-">newRegressionTestHook</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;sequence)</code>
+<div class="block">Take action based on the given <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> was classified as a regression test.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/TypedOperationSelector.html#selectOperation--">selectOperation</a></span>()</code>
+<div class="block">Select a method, from the set of methods under test, to use to create a new test sequence.</div>
 </td>
 </tr>
 </table>
@@ -149,22 +152,31 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="test-randoop.ExceptionalExecution-randoop.sequence.ExecutableSequence-">
+<a name="selectOperation--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>selectOperation</h4>
+<pre><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;selectOperation()</pre>
+<div class="block">Select a method, from the set of methods under test, to use to create a new test sequence.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the selected method</dd>
+</dl>
+</li>
+</ul>
+<a name="newRegressionTestHook-randoop.sequence.Sequence-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>test</h4>
-<pre>boolean&nbsp;test(<a href="../../../randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a>&nbsp;exec,
-             <a href="../../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
-<div class="block">Check whether the <code>ExceptionalExecution</code> of the <code>ExecutableSequence</code> satisfies the
- criterion of the predicate.</div>
+<h4>newRegressionTestHook</h4>
+<pre>void&nbsp;newRegressionTestHook(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;sequence)</pre>
+<div class="block">Take action based on the given <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> was classified as a regression test.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>exec</code> - the exceptional execution wrapping an exception</dd>
-<dd><code>eseq</code> - the sequence where exception was thrown</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if exception satisfies the predicate, and false otherwise</dd>
+<dd><code>sequence</code> - newly created sequence that was classified as a regression test</dd>
 </dl>
 </li>
 </ul>
@@ -184,26 +196,26 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="../../overview-summary.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
-<li><a href="../../../deprecated-list.html">Deprecated</a></li>
-<li><a href="../../../index-all.html">Index</a></li>
-<li><a href="../../../help-doc.html">Help</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
 </ul>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../randoop/test/predicate/ExceptionBehaviorPredicate.html" title="class in randoop.test.predicate"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li>Next&nbsp;Class</li>
+<li><a href="../../randoop/generation/TestUtils.html" title="class in randoop.generation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/UniformRandomMethodSelection.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../index.html?randoop/test/predicate/ExceptionPredicate.html" target="_top">Frames</a></li>
-<li><a href="ExceptionPredicate.html" target="_top">No&nbsp;Frames</a></li>
+<li><a href="../../index.html?randoop/generation/TypedOperationSelector.html" target="_top">Frames</a></li>
+<li><a href="TypedOperationSelector.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
-<li><a href="../../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+<li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
 </ul>
 <div>
 <script type="text/javascript"><!--

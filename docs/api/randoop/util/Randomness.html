@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Randomness (randoop 4.0.4 API)</title>
+<title>Randomness (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Randomness (randoop 4.0.4 API)";
+            parent.document.title="Randomness (randoop 4.1.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -207,19 +207,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>private static &lt;T extends <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>&gt;<br>double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#getWeight-T-java.util.Map-">getWeight</a></span>(T&nbsp;elt,
-         <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;T,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights)</code>
-<div class="block">Return weight from weights map, or intrinsic weight if elt is not a key for weights.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code>private static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#incrementCallsToRandom-java.lang.String-">incrementCallsToRandom</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;caller)</code>
 <div class="block">Call this before every use of Randomness.random.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>private static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#logSelection-java.lang.Object-java.lang.String-java.lang.Object-">logSelection</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;returnValue,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;methodName,
@@ -227,76 +220,63 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Logs the value that was randomly selected, along with the calling method and its argument.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#nextRandomInt-int-">nextRandomInt</a></span>(int&nbsp;i)</code>
 <div class="block">Uniformly random int from [0, i)</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomBoolFromDistribution-double-double-">randomBoolFromDistribution</a></span>(double&nbsp;falseProb,
                           double&nbsp;trueProb)</code>
 <div class="block">Return true or false with the given relative probabilites, which need not add to 1.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomMember-java.util.List-">randomMember</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;T&gt;&nbsp;list)</code>
 <div class="block">Returns a randomly-chosen member of the list.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomMember-randoop.util.SimpleList-">randomMember</a></span>(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list)</code>
 <div class="block">Returns a randomly-chosen member of the list.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code>static &lt;T extends <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>&gt;<br>T</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomMemberWeighted-randoop.util.SimpleList-">randomMemberWeighted</a></span>(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list)</code>
-<div class="block">Randomly selects an element from a weighted distribution of elements.</div>
-</td>
-</tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>static &lt;T extends <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>&gt;<br>T</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomMemberWeighted-randoop.util.SimpleList-double-">randomMemberWeighted</a></span>(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list,
-                    double&nbsp;totalWeight)</code>
-<div class="block">Randomly selects an element from a weighted distribution of elements.</div>
-</td>
-</tr>
-<tr id="i11" class="rowColor">
-<td class="colFirst"><code>static &lt;T extends <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>&gt;<br>T</code></td>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>static &lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomMemberWeighted-randoop.util.SimpleList-java.util.Map-">randomMemberWeighted</a></span>(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list,
                     <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;T,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights)</code>
 <div class="block">Randomly selects an element from a weighted distribution of elements.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
-<td class="colFirst"><code>static &lt;T extends <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>&gt;<br>T</code></td>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>static &lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomMemberWeighted-randoop.util.SimpleList-java.util.Map-double-">randomMemberWeighted</a></span>(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list,
                     <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;T,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights,
                     double&nbsp;totalWeight)</code>
 <div class="block">Randomly selects an element from a weighted distribution of elements.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomSetMember-java.util.Collection-">randomSetMember</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;T&gt;&nbsp;set)</code>
 <div class="block">Return a random member of the set, selected uniformly at random.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#setSeed-long-">setSeed</a></span>(long&nbsp;newSeed)</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#toString-java.lang.Object-">toString</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;o)</code>
 <div class="block">Produces a printed representation of the object, depending on the verbosity level.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#weightedCoinFlip-double-">weightedCoinFlip</a></span>(double&nbsp;trueProb)</code>
 <div class="block">Return true with probability <code>trueProb</code>, otherwise false.</div>
@@ -494,80 +474,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="randomMemberWeighted-randoop.util.SimpleList-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>randomMemberWeighted</h4>
-<pre>public static&nbsp;&lt;T extends <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>&gt;&nbsp;T&nbsp;randomMemberWeighted(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list)</pre>
-<div class="block">Randomly selects an element from a weighted distribution of elements.
-
- <p>Efficiency note: iterates through the entire list twice (once to compute interval length,
- once to select element).</div>
-<dl>
-<dt><span class="paramLabel">Type Parameters:</span></dt>
-<dd><code>T</code> - the type of elements of the list</dd>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>list</code> - the list from which to choose an element</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a member of <code>list</code>, chosen according to the weights</dd>
-</dl>
-</li>
-</ul>
-<a name="randomMemberWeighted-randoop.util.SimpleList-double-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>randomMemberWeighted</h4>
-<pre>public static&nbsp;&lt;T extends <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>&gt;&nbsp;T&nbsp;randomMemberWeighted(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list,
-                                                                 double&nbsp;totalWeight)</pre>
-<div class="block">Randomly selects an element from a weighted distribution of elements.
-
- <p>Efficiency note: iterates through the entire list twice (once to compute interval length,
- once to select element).</div>
-<dl>
-<dt><span class="paramLabel">Type Parameters:</span></dt>
-<dd><code>T</code> - the type of elements of the list</dd>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>list</code> - the list from which to choose an element</dd>
-<dd><code>totalWeight</code> - the total weight of the elements of the list</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a member of <code>list</code>, chosen according to the weights</dd>
-</dl>
-</li>
-</ul>
-<a name="getWeight-randoop.util.WeightedElement-java.util.Map-">
-<!--   -->
-</a><a name="getWeight-T-java.util.Map-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getWeight</h4>
-<pre>private static&nbsp;&lt;T extends <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>&gt;&nbsp;double&nbsp;getWeight(T&nbsp;elt,
-                                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;T,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights)</pre>
-<div class="block">Return weight from weights map, or intrinsic weight if elt is not a key for weights.</div>
-<dl>
-<dt><span class="paramLabel">Type Parameters:</span></dt>
-<dd><code>T</code> - type of elt</dd>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>elt</code> - item to get the weight of</dd>
-<dd><code>weights</code> - mapping from T to weights</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>weight of elt</dd>
-</dl>
-</li>
-</ul>
 <a name="randomMemberWeighted-randoop.util.SimpleList-java.util.Map-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>randomMemberWeighted</h4>
-<pre>public static&nbsp;&lt;T extends <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>&gt;&nbsp;T&nbsp;randomMemberWeighted(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list,
-                                                                 <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;T,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights)</pre>
+<pre>public static&nbsp;&lt;T&gt;&nbsp;T&nbsp;randomMemberWeighted(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list,
+                                         <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;T,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights)</pre>
 <div class="block">Randomly selects an element from a weighted distribution of elements. These weights are with
  respect to each other. They are not normalized (they might add up to any value).</div>
 <dl>
@@ -575,9 +489,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>T</code> - the type of the elements in the list</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>list</code> - the list of elements to select from</dd>
-<dd><code>weights</code> - the map of elements to their weights; uses the intrinsic weight if the element
-     is not a key in the map. Each element's weight must be non-negative. An element with a
-     weight of zero will never be selected.</dd>
+<dd><code>weights</code> - the map of elements to their weights. Each element's weight must be
+     non-negative. An element with a weight of zero will never be selected.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a randomly selected element from <code>list</code></dd>
 </dl>
@@ -589,9 +502,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>randomMemberWeighted</h4>
-<pre>public static&nbsp;&lt;T extends <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>&gt;&nbsp;T&nbsp;randomMemberWeighted(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list,
-                                                                 <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;T,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights,
-                                                                 double&nbsp;totalWeight)</pre>
+<pre>public static&nbsp;&lt;T&gt;&nbsp;T&nbsp;randomMemberWeighted(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list,
+                                         <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;T,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights,
+                                         double&nbsp;totalWeight)</pre>
 <div class="block">Randomly selects an element from a weighted distribution of elements. These weights are with
  respect to each other. They are not normalized (they might add up to any value).</div>
 <dl>
@@ -599,9 +512,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>T</code> - the type of the elements in the list</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>list</code> - the list of elements to select from</dd>
-<dd><code>weights</code> - the map of elements to their weights; uses the intrinsic weight if the element
-     is not a key in the map. Each element's weight must be non-negative. An element with a
-     weight of zero will never be selected.</dd>
+<dd><code>weights</code> - the map of elements to their weights. Each element's weight must be
+     non-negative. An element with a weight of zero will never be selected.</dd>
 <dd><code>totalWeight</code> - the total weight of the elements of the list</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a randomly selected element from <code>list</code></dd>

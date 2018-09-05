@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExpectedExceptionCheck (randoop 4.0.4 API)</title>
+<title>ExpectedExceptionCheck (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExpectedExceptionCheck (randoop 4.0.4 API)";
+            parent.document.title="ExpectedExceptionCheck (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -232,7 +232,11 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
                               int&nbsp;statementIndex,
                               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;catchClassName)</pre>
 <div class="block">Creates check that enforces expectation that an exception is thrown by the statement at the
- statement index.</div>
+ statement index.
+
+ <p>These are created before the test is classified as normal, exceptional, or invalid behavior.
+ For example, this could be created with a TimeoutExceededException, but the sequence would
+ later be classified as invalid.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>exception</code> - the expected exception</dd>

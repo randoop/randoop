@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypedOperation (randoop 4.0.4 API)</title>
+<title>TypedOperation (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypedOperation (randoop 4.0.4 API)";
+            parent.document.title="TypedOperation (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -508,7 +508,9 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <li class="blockList">
 <h4>inputTypes</h4>
 <pre>private final&nbsp;<a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a> inputTypes</pre>
-<div class="block">The type tuple of input types.</div>
+<div class="block">The type tuple of input types. For a non-static method call or an instance field access, the
+ first input type is always that of the receiver, that is, the declaring class of the method or
+ the field. Refer to <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>.</div>
 </li>
 </ul>
 <a name="outputType">
@@ -663,7 +665,9 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <li class="blockList">
 <h4>getInputTypes</h4>
 <pre>public&nbsp;<a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;getInputTypes()</pre>
-<div class="block">Returns the tuple of input types for this operation.</div>
+<div class="block">Returns the tuple of input types for this operation. For a non-static method call or an
+ instance field access, the first input type is always the declaring class of the method or
+ field.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>tuple of concrete input types</dd>

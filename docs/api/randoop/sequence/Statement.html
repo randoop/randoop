@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Statement (randoop 4.0.4 API)</title>
+<title>Statement (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Statement (randoop 4.0.4 API)";
+            parent.document.title="Statement (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/sequence/SequenceParseException.html" title="class in randoop.sequence"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/sequence/Value.html" title="class in randoop.sequence"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/sequence/TupleSequence.html" title="class in randoop.sequence"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/sequence/Statement.html" target="_top">Frames</a></li>
@@ -110,8 +110,10 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public final class <span class="typeNameLabel">Statement</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">Statement represents a statement involving an operation (or term), and the list of inputs for the
- statement. The inputs are variables, but are represented by indexing into the enclosing sequence.</div>
+<div class="block">Statement represents a Java statement, such as a method call <code>Foo f = m(i1...iN)</code> or a
+ declaration <code>int x = 0</code>. The statement's data includes an operation and the list of inputs
+ for the operation. The inputs to the operation are variables, but are represented by indexing
+ into the enclosing sequence.</div>
 </li>
 </ul>
 </div>
@@ -636,7 +638,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/sequence/SequenceParseException.html" title="class in randoop.sequence"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/sequence/Value.html" title="class in randoop.sequence"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/sequence/TupleSequence.html" title="class in randoop.sequence"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/sequence/Statement.html" target="_top">Frames</a></li>

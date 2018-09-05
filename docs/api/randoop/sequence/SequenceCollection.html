@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceCollection (randoop 4.0.4 API)</title>
+<title>SequenceCollection (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceCollection (randoop 4.0.4 API)";
+            parent.document.title="SequenceCollection (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -110,27 +110,9 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">SequenceCollection</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">A collection of sequences that makes its efficient to ask for all the sequences that create a
- value of a given type.
-
- <p>RANDOOP IMPLEMENTATION NOTE.
-
- <p>When creating new sequences, Randoop often needs to search for all the previously-generated
- sequences that create one or more values of a given type. Since this set can contain thousands of
- sequences. Profiling showed that finding these sequences was a bottleneck in generation.
-
- <p>This class makes the above search faster by maintaining two data structures:
-
- <ul>
-   <li>A map from types to the sets of all sequences that create one or more values of exactly the
-       given type.
-   <li>A set of all the types that can be created with the existing set of sequences. The set is
-       maintained as a <a href="../../randoop/SubTypeSet.html" title="class in randoop"><code>SubTypeSet</code></a> that allows for quick queries about can-be-used-as
-       relationships among the types in the set.
- </ul>
-
- To find all the sequences that create values of a given type, Randoop first uses the <code>SubTypeSet</code> to find the set <code>S</code> of feasible subtypes in set of sequences, and returns the
- range of <code>S</code> in the sequence map.</div>
+<div class="block">A collection of sequences that makes it efficient to ask for all the sequences that create a
+ value of a given type. This implements Randoop's pool. A SequenceCollection is the main field of
+ <a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation"><code>ComponentManager</code></a>.</div>
 </li>
 </ul>
 </div>
@@ -157,15 +139,22 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/util/SimpleArrayList.html" title="class in randoop.util">SimpleArrayList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#sequenceMap">sequenceMap</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#sequenceMap">sequenceMap</a></span></code>
+<div class="block">For each type, all the sequences that produce one or more values of exactly the given type.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#sequenceTypes">sequenceTypes</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#typesAndSupertypes">typesAndSupertypes</a></span></code>
+<div class="block">A set of all the types that can be created with the sequences in this, and all their
+ supertypes.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/SubTypeSet.html" title="class in randoop">SubTypeSet</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#typeSet">typeSet</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#typeSet">typeSet</a></span></code>
+<div class="block">A set of all the types that can be created with the sequences in this.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -297,6 +286,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>sequenceMap</h4>
 <pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/util/SimpleArrayList.html" title="class in randoop.util">SimpleArrayList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&gt; sequenceMap</pre>
+<div class="block">For each type, all the sequences that produce one or more values of exactly the given type.</div>
 </li>
 </ul>
 <a name="typeSet">
@@ -306,15 +296,19 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>typeSet</h4>
 <pre>private&nbsp;<a href="../../randoop/SubTypeSet.html" title="class in randoop">SubTypeSet</a> typeSet</pre>
+<div class="block">A set of all the types that can be created with the sequences in this. This is the same as
+ <code>sequenceMap.keySet()</code>, but provides additional operations.</div>
 </li>
 </ul>
-<a name="sequenceTypes">
+<a name="typesAndSupertypes">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>sequenceTypes</h4>
-<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; sequenceTypes</pre>
+<h4>typesAndSupertypes</h4>
+<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; typesAndSupertypes</pre>
+<div class="block">A set of all the types that can be created with the sequences in this, and all their
+ supertypes. Thus, this may be larger than <a href="../../randoop/sequence/SequenceCollection.html#typeSet"><code>typeSet</code></a>.</div>
 </li>
 </ul>
 <a name="sequenceCount">
@@ -438,13 +432,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  value is deemed useful or not is left up to the client.
 
  <p>Note that this takes into consideration only the assigned value for each statement. If a
- statement might side-effect some variable, then that variable is considered as an output from
- its own statement, not the one that side-effects it.
+ statement might side-effect some variable V, then V is considered as an output from the
+ statement that declares/creates V, not the one that side-effects V.
 
  <p>(An alternative would be to only use outputs from the last statement, and include its inputs
  as well. That alternative is not implemented. It would probably be faster, but it would not
  handle the case of a method side-effecting a variable that that was not explicitly passed to
- it. Is that case important?</div>
+ it. That case probably isn't important/common.)</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>sequence</code> - the sequence to add to this collection</dd>

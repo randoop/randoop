@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Class Hierarchy (randoop 4.0.4 API)</title>
+<title>Class Hierarchy (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="javadocstyle.css" title="Style">
 <script type="text/javascript" src="script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Class Hierarchy (randoop 4.0.4 API)";
+            parent.document.title="Class Hierarchy (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -88,7 +88,6 @@
 <li><a href="randoop/runtime/package-tree.html">randoop.runtime</a>, </li>
 <li><a href="randoop/sequence/package-tree.html">randoop.sequence</a>, </li>
 <li><a href="randoop/test/package-tree.html">randoop.test</a>, </li>
-<li><a href="randoop/test/predicate/package-tree.html">randoop.test.predicate</a>, </li>
 <li><a href="randoop/types/package-tree.html">randoop.types</a>, </li>
 <li><a href="randoop/util/package-tree.html">randoop.util</a>, </li>
 <li><a href="randoop/util/predicate/package-tree.html">randoop.util.predicate</a></li>
@@ -124,7 +123,9 @@
 </ul>
 </li>
 <li type="circle">randoop.field.<a href="randoop/field/AccessibleField.html" title="class in randoop.field"><span class="typeNameLink">AccessibleField</span></a></li>
-<li type="circle">randoop.test.predicate.<a href="randoop/test/predicate/AlwaysFalseExceptionPredicate.html" title="class in randoop.test.predicate"><span class="typeNameLink">AlwaysFalseExceptionPredicate</span></a> (implements randoop.test.predicate.<a href="randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>)</li>
+<li type="circle">randoop.util.predicate.<a href="randoop/util/predicate/AlwaysFalse.html" title="class in randoop.util.predicate"><span class="typeNameLink">AlwaysFalse</span></a>&lt;T&gt; (implements java.util.function.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;T&gt;)</li>
+<li type="circle">randoop.util.predicate.<a href="randoop/util/predicate/AlwaysTrue.html" title="class in randoop.util.predicate"><span class="typeNameLink">AlwaysTrue</span></a>&lt;T&gt; (implements java.util.function.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;T&gt;)</li>
+<li type="circle">randoop.generation.<a href="randoop/generation/Bloodhound.html" title="class in randoop.generation"><span class="typeNameLink">Bloodhound</span></a> (implements randoop.generation.<a href="randoop/generation/TypedOperationSelector.html" title="interface in randoop.generation">TypedOperationSelector</a>)</li>
 <li type="circle">randoop.operation.<a href="randoop/operation/CallableOperation.html" title="class in randoop.operation"><span class="typeNameLink">CallableOperation</span></a> (implements randoop.operation.<a href="randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a>)
 <ul>
 <li type="circle">randoop.operation.<a href="randoop/operation/ArrayCreation.html" title="class in randoop.operation"><span class="typeNameLink">ArrayCreation</span></a></li>
@@ -140,6 +141,9 @@
 <li type="circle">randoop.operation.<a href="randoop/operation/UncheckedCast.html" title="class in randoop.operation"><span class="typeNameLink">UncheckedCast</span></a></li>
 </ul>
 </li>
+<li type="circle">randoop.util.<a href="randoop/util/CheckpointingMultiMap.html" title="class in randoop.util"><span class="typeNameLink">CheckpointingMultiMap</span></a>&lt;T1,T2&gt; (implements randoop.util.<a href="randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</a>&lt;T1,T2&gt;)</li>
+<li type="circle">randoop.util.<a href="randoop/util/CheckpointingMultiMap.OpKeyVal.html" title="class in randoop.util"><span class="typeNameLink">CheckpointingMultiMap.OpKeyVal</span></a></li>
+<li type="circle">randoop.util.<a href="randoop/util/CheckpointingSet.html" title="class in randoop.util"><span class="typeNameLink">CheckpointingSet</span></a>&lt;T&gt; (implements randoop.util.<a href="randoop/util/ISimpleSet.html" title="interface in randoop.util">ISimpleSet</a>&lt;T&gt;)</li>
 <li type="circle">randoop.util.<a href="randoop/util/ClassFileConstants.html" title="class in randoop.util"><span class="typeNameLink">ClassFileConstants</span></a></li>
 <li type="circle">randoop.util.<a href="randoop/util/ClassFileConstants.ConstantSet.html" title="class in randoop.util"><span class="typeNameLink">ClassFileConstants.ConstantSet</span></a></li>
 <li type="circle">java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/ClassLoader.html?is-external=true" title="class or interface in java.lang"><span class="typeNameLink">ClassLoader</span></a>
@@ -147,13 +151,6 @@
 <li type="circle">randoop.compile.<a href="randoop/compile/SequenceClassLoader.html" title="class in randoop.compile"><span class="typeNameLink">SequenceClassLoader</span></a></li>
 </ul>
 </li>
-<li type="circle">randoop.reflection.<a href="randoop/reflection/ClassUtil.html" title="class in randoop.reflection"><span class="typeNameLink">ClassUtil</span></a></li>
-<li type="circle">randoop.reflection.<a href="randoop/reflection/ClassUtil.AnnotationComparator.html" title="class in randoop.reflection"><span class="typeNameLink">ClassUtil.AnnotationComparator</span></a> (implements java.util.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html?is-external=true" title="class or interface in java.util">Comparator</a>&lt;T&gt;)</li>
-<li type="circle">randoop.reflection.<a href="randoop/reflection/ClassUtil.ClassComparator.html" title="class in randoop.reflection"><span class="typeNameLink">ClassUtil.ClassComparator</span></a> (implements java.util.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html?is-external=true" title="class or interface in java.util">Comparator</a>&lt;T&gt;)</li>
-<li type="circle">randoop.reflection.<a href="randoop/reflection/ClassUtil.ConstructorComparator.html" title="class in randoop.reflection"><span class="typeNameLink">ClassUtil.ConstructorComparator</span></a> (implements java.util.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html?is-external=true" title="class or interface in java.util">Comparator</a>&lt;T&gt;)</li>
-<li type="circle">randoop.reflection.<a href="randoop/reflection/ClassUtil.FieldComparator.html" title="class in randoop.reflection"><span class="typeNameLink">ClassUtil.FieldComparator</span></a> (implements java.util.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html?is-external=true" title="class or interface in java.util">Comparator</a>&lt;T&gt;)</li>
-<li type="circle">randoop.reflection.<a href="randoop/reflection/ClassUtil.MethodComparator.html" title="class in randoop.reflection"><span class="typeNameLink">ClassUtil.MethodComparator</span></a> (implements java.util.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html?is-external=true" title="class or interface in java.util">Comparator</a>&lt;T&gt;)</li>
-<li type="circle">randoop.reflection.<a href="randoop/reflection/ClassUtil.ToStringComparator.html" title="class in randoop.reflection"><span class="typeNameLink">ClassUtil.ToStringComparator</span></a> (implements java.util.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html?is-external=true" title="class or interface in java.util">Comparator</a>&lt;T&gt;)</li>
 <li type="circle">randoop.main.<a href="randoop/main/CloneVisitor.html" title="class in randoop.main"><span class="typeNameLink">CloneVisitor</span></a> (implements com.github.javaparser.ast.visitor.GenericVisitor&lt;R,A&gt;)</li>
 <li type="circle">randoop.runtime.<a href="randoop/runtime/ClosingStream.html" title="class in randoop.runtime"><span class="typeNameLink">ClosingStream</span></a> (implements randoop.runtime.<a href="randoop/runtime/IMessage.html" title="interface in randoop.runtime">IMessage</a>)</li>
 <li type="circle">randoop.util.<a href="randoop/util/CollectionsExt.html" title="class in randoop.util"><span class="typeNameLink">CollectionsExt</span></a></li>
@@ -168,10 +165,13 @@
 <li type="circle">randoop.main.<a href="randoop/main/Minimize.html" title="class in randoop.main"><span class="typeNameLink">Minimize</span></a></li>
 </ul>
 </li>
+<li type="circle">randoop.test.<a href="randoop/test/CompilableTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">CompilableTestPredicate</span></a> (implements java.util.function.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;T&gt;)</li>
 <li type="circle">randoop.compile.<a href="randoop/compile/CompileUtil.html" title="class in randoop.compile"><span class="typeNameLink">CompileUtil</span></a></li>
 <li type="circle">randoop.generation.<a href="randoop/generation/ComponentManager.html" title="class in randoop.generation"><span class="typeNameLink">ComponentManager</span></a></li>
 <li type="circle">randoop.test.<a href="randoop/test/ContractSet.html" title="class in randoop.test"><span class="typeNameLink">ContractSet</span></a></li>
 <li type="circle">randoop.util.<a href="randoop/util/CountDownTimer.html" title="class in randoop.util"><span class="typeNameLink">CountDownTimer</span></a></li>
+<li type="circle">randoop.generation.<a href="randoop/generation/CoverageTracker.html" title="class in randoop.generation"><span class="typeNameLink">CoverageTracker</span></a></li>
+<li type="circle">randoop.generation.<a href="randoop/generation/CoverageTracker.DummySessionInfoVisitor.html" title="class in randoop.generation"><span class="typeNameLink">CoverageTracker.DummySessionInfoVisitor</span></a> (implements org.jacoco.core.data.ISessionInfoVisitor)</li>
 <li type="circle">randoop.instrument.<a href="randoop/instrument/CoveredClassVisitor.html" title="class in randoop.instrument"><span class="typeNameLink">CoveredClassVisitor</span></a> (implements randoop.<a href="randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a>)</li>
 <li type="circle">randoop.runtime.<a href="randoop/runtime/CreatedJUnitFile.html" title="class in randoop.runtime"><span class="typeNameLink">CreatedJUnitFile</span></a> (implements randoop.runtime.<a href="randoop/runtime/IMessage.html" title="interface in randoop.runtime">IMessage</a>)</li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/DefaultClassVisitor.html" title="class in randoop.reflection"><span class="typeNameLink">DefaultClassVisitor</span></a> (implements randoop.reflection.<a href="randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a>)
@@ -185,29 +185,15 @@
 </ul>
 </li>
 <li type="circle">randoop.generation.<a href="randoop/generation/DefaultOperationHistoryLogger.html" title="class in randoop.generation"><span class="typeNameLink">DefaultOperationHistoryLogger</span></a> (implements randoop.generation.<a href="randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation">OperationHistoryLogInterface</a>)</li>
-<li type="circle">randoop.util.predicate.<a href="randoop/util/predicate/DefaultPredicate.html" title="class in randoop.util.predicate"><span class="typeNameLink">DefaultPredicate</span></a>&lt;T&gt; (implements randoop.util.predicate.<a href="randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;T&gt;)
-<ul>
-<li type="circle">randoop.util.predicate.<a href="randoop/util/predicate/AlwaysFalse.html" title="class in randoop.util.predicate"><span class="typeNameLink">AlwaysFalse</span></a>&lt;T&gt;</li>
-<li type="circle">randoop.util.predicate.<a href="randoop/util/predicate/AlwaysTrue.html" title="class in randoop.util.predicate"><span class="typeNameLink">AlwaysTrue</span></a>&lt;T&gt;</li>
-<li type="circle">randoop.util.predicate.<a href="randoop/util/predicate/AndPredicate.html" title="class in randoop.util.predicate"><span class="typeNameLink">AndPredicate</span></a>&lt;T&gt;</li>
-<li type="circle">randoop.test.<a href="randoop/test/CompilableTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">CompilableTestPredicate</span></a></li>
-<li type="circle">randoop.test.<a href="randoop/test/ErrorTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">ErrorTestPredicate</span></a></li>
-<li type="circle">randoop.test.<a href="randoop/test/ExcludeTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">ExcludeTestPredicate</span></a></li>
-<li type="circle">randoop.test.<a href="randoop/test/IncludeIfCoversPredicate.html" title="class in randoop.test"><span class="typeNameLink">IncludeIfCoversPredicate</span></a></li>
-<li type="circle">randoop.test.<a href="randoop/test/IncludeTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">IncludeTestPredicate</span></a></li>
-<li type="circle">randoop.util.predicate.<a href="randoop/util/predicate/OrPredicate.html" title="class in randoop.util.predicate"><span class="typeNameLink">OrPredicate</span></a>&lt;T&gt;</li>
-<li type="circle">randoop.test.<a href="randoop/test/RegressionTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">RegressionTestPredicate</span></a></li>
-</ul>
-</li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/DefaultReflectionPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">DefaultReflectionPredicate</span></a> (implements randoop.reflection.<a href="randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>)</li>
 <li type="circle">randoop.<a href="randoop/DummyVisitor.html" title="class in randoop"><span class="typeNameLink">DummyVisitor</span></a> (implements randoop.<a href="randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a>)</li>
 <li type="circle">randoop.generation.<a href="randoop/generation/EqualsMethodMatcher.html" title="class in randoop.generation"><span class="typeNameLink">EqualsMethodMatcher</span></a> (implements randoop.generation.<a href="randoop/generation/StateMatcher.html" title="interface in randoop.generation">StateMatcher</a>)</li>
 <li type="circle">randoop.runtime.<a href="randoop/runtime/ErrorRevealed.html" title="class in randoop.runtime"><span class="typeNameLink">ErrorRevealed</span></a> (implements randoop.runtime.<a href="randoop/runtime/IMessage.html" title="interface in randoop.runtime">IMessage</a>)</li>
 <li type="circle">randoop.test.<a href="randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><span class="typeNameLink">ErrorRevealingChecks</span></a> (implements randoop.test.<a href="randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;T&gt;)</li>
+<li type="circle">randoop.test.<a href="randoop/test/ErrorTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">ErrorTestPredicate</span></a> (implements java.util.function.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;T&gt;)</li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/EverythingAllowedPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">EverythingAllowedPredicate</span></a> (implements randoop.reflection.<a href="randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>)</li>
 <li type="circle">randoop.generation.<a href="randoop/generation/EverythingIsDifferentMatcher.html" title="class in randoop.generation"><span class="typeNameLink">EverythingIsDifferentMatcher</span></a> (implements randoop.generation.<a href="randoop/generation/StateMatcher.html" title="interface in randoop.generation">StateMatcher</a>)</li>
 <li type="circle">randoop.main.<a href="randoop/main/ExceptionBehaviorClassifier.html" title="class in randoop.main"><span class="typeNameLink">ExceptionBehaviorClassifier</span></a></li>
-<li type="circle">randoop.test.predicate.<a href="randoop/test/predicate/ExceptionBehaviorPredicate.html" title="class in randoop.test.predicate"><span class="typeNameLink">ExceptionBehaviorPredicate</span></a> (implements randoop.test.predicate.<a href="randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>)</li>
 <li type="circle">randoop.test.<a href="randoop/test/ExceptionCheck.html" title="class in randoop.test"><span class="typeNameLink">ExceptionCheck</span></a> (implements randoop.test.<a href="randoop/test/Check.html" title="interface in randoop.test">Check</a>)
 <ul>
 <li type="circle">randoop.test.<a href="randoop/test/EmptyExceptionCheck.html" title="class in randoop.test"><span class="typeNameLink">EmptyExceptionCheck</span></a></li>
@@ -215,6 +201,7 @@
 <li type="circle">randoop.test.<a href="randoop/test/InvalidExceptionCheck.html" title="class in randoop.test"><span class="typeNameLink">InvalidExceptionCheck</span></a></li>
 </ul>
 </li>
+<li type="circle">randoop.test.<a href="randoop/test/ExcludeTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">ExcludeTestPredicate</span></a> (implements java.util.function.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;T&gt;)</li>
 <li type="circle">randoop.condition.<a href="randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition"><span class="typeNameLink">ExecutableBooleanExpression</span></a></li>
 <li type="circle">randoop.sequence.<a href="randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><span class="typeNameLink">ExecutableSequence</span></a></li>
 <li type="circle">randoop.condition.<a href="randoop/condition/ExecutableSpecification.html" title="class in randoop.condition"><span class="typeNameLink">ExecutableSpecification</span></a></li>
@@ -240,12 +227,13 @@
 </li>
 <li type="circle">randoop.main.<a href="randoop/main/GenInputsAbstract.Limits.html" title="class in randoop.main"><span class="typeNameLink">GenInputsAbstract.Limits</span></a></li>
 <li type="circle">randoop.<a href="randoop/Globals.html" title="class in randoop"><span class="typeNameLink">Globals</span></a></li>
-<li type="circle">randoop.<a href="randoop/Globals.ErrorStreamAssigner.html" title="class in randoop"><span class="typeNameLink">Globals.ErrorStreamAssigner</span></a></li>
 <li type="circle">randoop.condition.<a href="randoop/condition/GuardPropertyPair.html" title="class in randoop.condition"><span class="typeNameLink">GuardPropertyPair</span></a></li>
 <li type="circle">randoop.condition.<a href="randoop/condition/GuardThrowsPair.html" title="class in randoop.condition"><span class="typeNameLink">GuardThrowsPair</span></a></li>
 <li type="circle">randoop.generation.<a href="randoop/generation/HelperSequenceCreator.html" title="class in randoop.generation"><span class="typeNameLink">HelperSequenceCreator</span></a></li>
 <li type="circle">randoop.condition.specification.<a href="randoop/condition/specification/Identifiers.html" title="class in randoop.condition.specification"><span class="typeNameLink">Identifiers</span></a></li>
 <li type="circle">randoop.util.<a href="randoop/util/IdentityMultiMap.html" title="class in randoop.util"><span class="typeNameLink">IdentityMultiMap</span></a>&lt;K,V&gt;</li>
+<li type="circle">randoop.test.<a href="randoop/test/IncludeIfCoversPredicate.html" title="class in randoop.test"><span class="typeNameLink">IncludeIfCoversPredicate</span></a> (implements java.util.function.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;T&gt;)</li>
+<li type="circle">randoop.test.<a href="randoop/test/IncludeTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">IncludeTestPredicate</span></a> (implements java.util.function.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;T&gt;)</li>
 <li type="circle">randoop.generation.<a href="randoop/generation/InputsAndSuccessFlag.html" title="class in randoop.generation"><span class="typeNameLink">InputsAndSuccessFlag</span></a></li>
 <li type="circle">randoop.test.<a href="randoop/test/InvalidChecks.html" title="class in randoop.test"><span class="typeNameLink">InvalidChecks</span></a> (implements randoop.test.<a href="randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;T&gt;)</li>
 <li type="circle">randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test"><span class="typeNameLink">InvalidValueCheck</span></a> (implements randoop.test.<a href="randoop/test/Check.html" title="interface in randoop.test">Check</a>)</li>
@@ -342,9 +330,7 @@
 <li type="circle">randoop.util.<a href="randoop/util/ReflectionExecutor.html" title="class in randoop.util"><span class="typeNameLink">ReflectionExecutor</span></a></li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/ReflectionManager.html" title="class in randoop.reflection"><span class="typeNameLink">ReflectionManager</span></a></li>
 <li type="circle">randoop.test.<a href="randoop/test/RegressionChecks.html" title="class in randoop.test"><span class="typeNameLink">RegressionChecks</span></a> (implements randoop.test.<a href="randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&lt;T&gt;)</li>
-<li type="circle">randoop.util.<a href="randoop/util/ReversibleMultiMap.html" title="class in randoop.util"><span class="typeNameLink">ReversibleMultiMap</span></a>&lt;T1,T2&gt; (implements randoop.util.<a href="randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</a>&lt;T1,T2&gt;)</li>
-<li type="circle">randoop.util.<a href="randoop/util/ReversibleMultiMap.OpKeyVal.html" title="class in randoop.util"><span class="typeNameLink">ReversibleMultiMap.OpKeyVal</span></a></li>
-<li type="circle">randoop.util.<a href="randoop/util/ReversibleSet.html" title="class in randoop.util"><span class="typeNameLink">ReversibleSet</span></a>&lt;T&gt; (implements randoop.util.<a href="randoop/util/ISimpleSet.html" title="interface in randoop.util">ISimpleSet</a>&lt;T&gt;)</li>
+<li type="circle">randoop.test.<a href="randoop/test/RegressionTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">RegressionTestPredicate</span></a> (implements java.util.function.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;T&gt;)</li>
 <li type="circle">randoop.execution.<a href="randoop/execution/RunCommand.html" title="class in randoop.execution"><span class="typeNameLink">RunCommand</span></a></li>
 <li type="circle">randoop.execution.<a href="randoop/execution/RunCommand.Status.html" title="class in randoop.execution"><span class="typeNameLink">RunCommand.Status</span></a></li>
 <li type="circle">java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/SecurityManager.html?is-external=true" title="class or interface in java.lang"><span class="typeNameLink">SecurityManager</span></a>
@@ -353,7 +339,7 @@
 </ul>
 </li>
 <li type="circle">randoop.generation.<a href="randoop/generation/SeedSequences.html" title="class in randoop.generation"><span class="typeNameLink">SeedSequences</span></a></li>
-<li type="circle">randoop.sequence.<a href="randoop/sequence/Sequence.html" title="class in randoop.sequence"><span class="typeNameLink">Sequence</span></a> (implements randoop.util.<a href="randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>)</li>
+<li type="circle">randoop.sequence.<a href="randoop/sequence/Sequence.html" title="class in randoop.sequence"><span class="typeNameLink">Sequence</span></a></li>
 <li type="circle">randoop.sequence.<a href="randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence"><span class="typeNameLink">Sequence.RelativeNegativeIndex</span></a></li>
 <li type="circle">randoop.sequence.<a href="randoop/sequence/SequenceCollection.html" title="class in randoop.sequence"><span class="typeNameLink">SequenceCollection</span></a></li>
 <li type="circle">randoop.compile.<a href="randoop/compile/SequenceCompiler.html" title="class in randoop.compile"><span class="typeNameLink">SequenceCompiler</span></a></li>
@@ -364,6 +350,7 @@
 </ul>
 </li>
 <li type="circle">randoop.util.<a href="randoop/util/SimpleSet.html" title="class in randoop.util"><span class="typeNameLink">SimpleSet</span></a>&lt;T&gt; (implements randoop.util.<a href="randoop/util/ISimpleSet.html" title="interface in randoop.util">ISimpleSet</a>&lt;T&gt;)</li>
+<li type="circle">randoop.generation.<a href="randoop/generation/SmallTestsSequenceSelection.html" title="class in randoop.generation"><span class="typeNameLink">SmallTestsSequenceSelection</span></a> (implements randoop.generation.<a href="randoop/generation/InputSequenceSelector.html" title="interface in randoop.generation">InputSequenceSelector</a>)</li>
 <li type="circle">randoop.output.<a href="randoop/output/SourceBuilder.html" title="class in randoop.output"><span class="typeNameLink">SourceBuilder</span></a></li>
 <li type="circle">randoop.condition.specification.<a href="randoop/condition/specification/SpecificationClause.html" title="class in randoop.condition.specification"><span class="typeNameLink">SpecificationClause</span></a>
 <ul>
@@ -433,11 +420,11 @@
 </li>
 <li type="circle">randoop.<a href="randoop/ReplayFailureException.html" title="class in randoop"><span class="typeNameLink">ReplayFailureException</span></a></li>
 <li type="circle">randoop.sequence.<a href="randoop/sequence/SequenceExecutionException.html" title="class in randoop.sequence"><span class="typeNameLink">SequenceExecutionException</span></a></li>
+<li type="circle">randoop.util.<a href="randoop/util/TimeoutExceededException.html" title="class in randoop.util"><span class="typeNameLink">TimeoutExceededException</span></a></li>
 </ul>
 </li>
 <li type="circle">randoop.sequence.<a href="randoop/sequence/SequenceParseException.html" title="class in randoop.sequence"><span class="typeNameLink">SequenceParseException</span></a></li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/SignatureParseException.html" title="class in randoop.reflection"><span class="typeNameLink">SignatureParseException</span></a></li>
-<li type="circle">randoop.util.<a href="randoop/util/TimeoutExceededException.html" title="class in randoop.util"><span class="typeNameLink">TimeoutExceededException</span></a></li>
 </ul>
 </li>
 <li type="circle">randoop.compile.<a href="randoop/compile/FileCompiler.FileCompilerException.html" title="class in randoop.compile"><span class="typeNameLink">FileCompiler.FileCompilerException</span></a></li>
@@ -449,6 +436,7 @@
 </li>
 <li type="circle">randoop.main.<a href="randoop/main/ThrowClassNameError.html" title="class in randoop.main"><span class="typeNameLink">ThrowClassNameError</span></a> (implements randoop.main.<a href="randoop/main/ClassNameErrorHandler.html" title="interface in randoop.main">ClassNameErrorHandler</a>)</li>
 <li type="circle">randoop.condition.<a href="randoop/condition/ThrowsClause.html" title="class in randoop.condition"><span class="typeNameLink">ThrowsClause</span></a></li>
+<li type="circle">randoop.sequence.<a href="randoop/sequence/TupleSequence.html" title="class in randoop.sequence"><span class="typeNameLink">TupleSequence</span></a></li>
 <li type="circle">randoop.util.<a href="randoop/util/TupleSet.html" title="class in randoop.util"><span class="typeNameLink">TupleSet</span></a>&lt;E&gt;</li>
 <li type="circle">randoop.types.<a href="randoop/types/Type.html" title="class in randoop.types"><span class="typeNameLink">Type</span></a> (implements java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html?is-external=true" title="class or interface in java.lang">Comparable</a>&lt;T&gt;)
 <ul>
@@ -507,13 +495,14 @@
 <li type="circle">randoop.types.<a href="randoop/types/TypeTuple.html" title="class in randoop.types"><span class="typeNameLink">TypeTuple</span></a> (implements java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html?is-external=true" title="class or interface in java.lang">Comparable</a>&lt;T&gt;, java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;T&gt;)</li>
 <li type="circle">randoop.types.<a href="randoop/types/TypeTuple.TypeIterator.html" title="class in randoop.types"><span class="typeNameLink">TypeTuple.TypeIterator</span></a> (implements java.util.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;E&gt;)</li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/TypeTupleSet.html" title="class in randoop.reflection"><span class="typeNameLink">TypeTupleSet</span></a></li>
+<li type="circle">randoop.generation.<a href="randoop/generation/UniformRandomMethodSelection.html" title="class in randoop.generation"><span class="typeNameLink">UniformRandomMethodSelection</span></a> (implements randoop.generation.<a href="randoop/generation/TypedOperationSelector.html" title="interface in randoop.generation">TypedOperationSelector</a>)</li>
+<li type="circle">randoop.generation.<a href="randoop/generation/UniformRandomSequenceSelection.html" title="class in randoop.generation"><span class="typeNameLink">UniformRandomSequenceSelection</span></a> (implements randoop.generation.<a href="randoop/generation/InputSequenceSelector.html" title="interface in randoop.generation">InputSequenceSelector</a>)</li>
 <li type="circle">randoop.util.<a href="randoop/util/Util.html" title="class in randoop.util"><span class="typeNameLink">Util</span></a></li>
 <li type="circle">randoop.sequence.<a href="randoop/sequence/Value.html" title="class in randoop.sequence"><span class="typeNameLink">Value</span></a></li>
 <li type="circle">randoop.sequence.<a href="randoop/sequence/Variable.html" title="class in randoop.sequence"><span class="typeNameLink">Variable</span></a> (implements java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html?is-external=true" title="class or interface in java.lang">Comparable</a>&lt;T&gt;)</li>
 <li type="circle">randoop.sequence.<a href="randoop/sequence/VariableRenamer.html" title="class in randoop.sequence"><span class="typeNameLink">VariableRenamer</span></a></li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">VisibilityPredicate</span></a>
 <ul>
-<li type="circle">randoop.reflection.<a href="randoop/reflection/PackageVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">PackageVisibilityPredicate</span></a></li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/VisibilityPredicate.NotPrivateVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">VisibilityPredicate.NotPrivateVisibilityPredicate</span></a></li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/VisibilityPredicate.PackageVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">VisibilityPredicate.PackageVisibilityPredicate</span></a></li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/VisibilityPredicate.PublicVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">VisibilityPredicate.PublicVisibilityPredicate</span></a></li>
@@ -548,16 +537,15 @@
 <li type="circle">randoop.main.<a href="randoop/main/ClassNameErrorHandler.html" title="interface in randoop.main"><span class="typeNameLink">ClassNameErrorHandler</span></a></li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><span class="typeNameLink">ClassVisitor</span></a></li>
 <li type="circle">randoop.output.<a href="randoop/output/CodeWriter.html" title="interface in randoop.output"><span class="typeNameLink">CodeWriter</span></a></li>
-<li type="circle">randoop.test.predicate.<a href="randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate"><span class="typeNameLink">ExceptionPredicate</span></a></li>
 <li type="circle">randoop.<a href="randoop/ExecutionVisitor.html" title="interface in randoop"><span class="typeNameLink">ExecutionVisitor</span></a></li>
 <li type="circle">randoop.generation.<a href="randoop/generation/HelperSequenceCreator.SequenceExtender.html" title="interface in randoop.generation"><span class="typeNameLink">HelperSequenceCreator.SequenceExtender</span></a></li>
 <li type="circle">randoop.generation.<a href="randoop/generation/IEventListener.html" title="interface in randoop.generation"><span class="typeNameLink">IEventListener</span></a></li>
 <li type="circle">randoop.util.<a href="randoop/util/IMultiMap.html" title="interface in randoop.util"><span class="typeNameLink">IMultiMap</span></a>&lt;T1,T2&gt;</li>
+<li type="circle">randoop.generation.<a href="randoop/generation/InputSequenceSelector.html" title="interface in randoop.generation"><span class="typeNameLink">InputSequenceSelector</span></a></li>
 <li type="circle">randoop.util.<a href="randoop/util/ISimpleSet.html" title="interface in randoop.util"><span class="typeNameLink">ISimpleSet</span></a>&lt;T&gt;</li>
 <li type="circle">randoop.generation.<a href="randoop/generation/IStopper.html" title="interface in randoop.generation"><span class="typeNameLink">IStopper</span></a></li>
 <li type="circle">randoop.operation.<a href="randoop/operation/Operation.html" title="interface in randoop.operation"><span class="typeNameLink">Operation</span></a></li>
 <li type="circle">randoop.generation.<a href="randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation"><span class="typeNameLink">OperationHistoryLogInterface</span></a></li>
-<li type="circle">randoop.util.predicate.<a href="randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate"><span class="typeNameLink">Predicate</span></a>&lt;T&gt;</li>
 <li type="circle">randoop.util.<a href="randoop/util/RecordProcessor.html" title="interface in randoop.util"><span class="typeNameLink">RecordProcessor</span></a></li>
 <li type="circle">randoop.reflection.<a href="randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><span class="typeNameLink">ReflectionPredicate</span></a></li>
 <li type="circle">java.io.<a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io"><span class="typeNameLink">Serializable</span></a>
@@ -568,7 +556,7 @@
 <li type="circle">randoop.util.<a href="randoop/util/SimpleList.html" title="interface in randoop.util"><span class="typeNameLink">SimpleList</span></a>&lt;T&gt;</li>
 <li type="circle">randoop.generation.<a href="randoop/generation/StateMatcher.html" title="interface in randoop.generation"><span class="typeNameLink">StateMatcher</span></a></li>
 <li type="circle">randoop.test.<a href="randoop/test/TestChecks.html" title="interface in randoop.test"><span class="typeNameLink">TestChecks</span></a>&lt;T&gt;</li>
-<li type="circle">randoop.util.<a href="randoop/util/WeightedElement.html" title="interface in randoop.util"><span class="typeNameLink">WeightedElement</span></a></li>
+<li type="circle">randoop.generation.<a href="randoop/generation/TypedOperationSelector.html" title="interface in randoop.generation"><span class="typeNameLink">TypedOperationSelector</span></a></li>
 </ul>
 <h2 title="Annotation Type Hierarchy">Annotation Type Hierarchy</h2>
 <ul>
@@ -588,9 +576,12 @@
 <li type="circle">randoop.main.<a href="randoop/main/GenInputsAbstract.FlakyTestAction.html" title="enum in randoop.main"><span class="typeNameLink">GenInputsAbstract.FlakyTestAction</span></a></li>
 <li type="circle">randoop.main.<a href="randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main"><span class="typeNameLink">GenInputsAbstract.BehaviorType</span></a></li>
 <li type="circle">randoop.main.<a href="randoop/main/GenInputsAbstract.ClassLiteralsMode.html" title="enum in randoop.main"><span class="typeNameLink">GenInputsAbstract.ClassLiteralsMode</span></a></li>
+<li type="circle">randoop.main.<a href="randoop/main/GenInputsAbstract.MethodSelectionMode.html" title="enum in randoop.main"><span class="typeNameLink">GenInputsAbstract.MethodSelectionMode</span></a></li>
+<li type="circle">randoop.main.<a href="randoop/main/GenInputsAbstract.BloodhoundCoverageUpdateMode.html" title="enum in randoop.main"><span class="typeNameLink">GenInputsAbstract.BloodhoundCoverageUpdateMode</span></a></li>
+<li type="circle">randoop.main.<a href="randoop/main/GenInputsAbstract.InputSelectionMode.html" title="enum in randoop.main"><span class="typeNameLink">GenInputsAbstract.InputSelectionMode</span></a></li>
+<li type="circle">randoop.util.<a href="randoop/util/CheckpointingMultiMap.Ops.html" title="enum in randoop.util"><span class="typeNameLink">CheckpointingMultiMap.Ops</span></a></li>
 <li type="circle">randoop.util.<a href="randoop/util/ProgressDisplay.Mode.html" title="enum in randoop.util"><span class="typeNameLink">ProgressDisplay.Mode</span></a></li>
 <li type="circle">randoop.util.<a href="randoop/util/RunnerThread.NextCallMustBe.html" title="enum in randoop.util"><span class="typeNameLink">RunnerThread.NextCallMustBe</span></a></li>
-<li type="circle">randoop.util.<a href="randoop/util/ReversibleMultiMap.Ops.html" title="enum in randoop.util"><span class="typeNameLink">ReversibleMultiMap.Ops</span></a></li>
 <li type="circle">randoop.util.<a href="randoop/util/RandoopSecurityManager.Status.html" title="enum in randoop.util"><span class="typeNameLink">RandoopSecurityManager.Status</span></a></li>
 <li type="circle">randoop.contract.<a href="randoop/contract/PrimValue.PrintMode.html" title="enum in randoop.contract"><span class="typeNameLink">PrimValue.PrintMode</span></a></li>
 </ul>

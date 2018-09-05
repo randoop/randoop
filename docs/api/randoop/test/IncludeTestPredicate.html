@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>IncludeTestPredicate (randoop 4.0.4 API)</title>
+<title>IncludeTestPredicate (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="IncludeTestPredicate (randoop 4.0.4 API)";
+            parent.document.title="IncludeTestPredicate (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -99,12 +99,7 @@ var activeTableTab = "activeTableTab";
 <li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li><a href="../../randoop/util/predicate/DefaultPredicate.html" title="class in randoop.util.predicate">randoop.util.predicate.DefaultPredicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</li>
-<li>
-<ul class="inheritance">
 <li>randoop.test.IncludeTestPredicate</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -113,14 +108,15 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</dd>
+<dd><a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">IncludeTestPredicate</span>
-extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="class in randoop.util.predicate">DefaultPredicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</pre>
-<div class="block">A test predicate that checks for the occurrence of variables that match the given regular
- expression.</div>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
+implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</pre>
+<div class="block">A test predicate that checks for the occurrence of variables (and methods) that match the given
+ regular expression.</div>
 </li>
 </ul>
 </div>
@@ -141,7 +137,9 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/IncludeTestPredicate.html#testClasses">testClasses</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/IncludeTestPredicate.html#testClasses">testClasses</a></span></code>
+<div class="block">Classes whose uses to require.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -177,24 +175,22 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/IncludeTestPredicate.html#test-randoop.sequence.ExecutableSequence-">test</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
-<div class="block">Determine whether object satisfies this predicate.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/IncludeTestPredicate.html#test-randoop.sequence.ExecutableSequence-">test</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code></td>
 </tr>
 </table>
-<ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.randoop.util.predicate.DefaultPredicate">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;randoop.util.predicate.<a href="../../randoop/util/predicate/DefaultPredicate.html" title="class in randoop.util.predicate">DefaultPredicate</a></h3>
-<code><a href="../../randoop/util/predicate/DefaultPredicate.html#and-randoop.util.predicate.Predicate-">and</a>, <a href="../../randoop/util/predicate/DefaultPredicate.html#or-randoop.util.predicate.Predicate-">or</a></code></li>
-</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
 <code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone--" title="class or interface in java.lang">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals-java.lang.Object-" title="class or interface in java.lang">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize--" title="class or interface in java.lang">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass--" title="class or interface in java.lang">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode--" title="class or interface in java.lang">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify--" title="class or interface in java.lang">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll--" title="class or interface in java.lang">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString--" title="class or interface in java.lang">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait--" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-" title="class or interface in java.lang">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait-long-int-" title="class or interface in java.lang">wait</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.java.util.function.Predicate">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;java.util.function.<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a></h3>
+<code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true#and-java.util.function.Predicate-" title="class or interface in java.util.function">and</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true#isEqual-java.lang.Object-" title="class or interface in java.util.function">isEqual</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true#negate--" title="class or interface in java.util.function">negate</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true#or-java.util.function.Predicate-" title="class or interface in java.util.function">or</a></code></li>
 </ul>
 </li>
 </ul>
@@ -217,6 +213,7 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 <li class="blockList">
 <h4>testClasses</h4>
 <pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a> testClasses</pre>
+<div class="block">Classes whose uses to require. Predicate returns true if one of these is used.</div>
 </li>
 </ul>
 </li>
@@ -251,10 +248,9 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 <li class="blockList">
 <h4>test</h4>
 <pre>public&nbsp;boolean&nbsp;test(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
-<div class="block">Determine whether object satisfies this predicate.</div>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>eseq</code> - the object to test</dd>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true#test-T-" title="class or interface in java.util.function">test</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the sequence uses a member of a class that matches the regular expression,
      false otherwise</dd>

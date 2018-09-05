@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ValidityCheckingGenerator (randoop 4.0.4 API)</title>
+<title>ValidityCheckingGenerator (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ValidityCheckingGenerator (randoop 4.0.4 API)";
+            parent.document.title="ValidityCheckingGenerator (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -116,11 +116,10 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">ValidityCheckingGenerator</span>
 extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">TestCheckGenerator</a></pre>
 <div class="block">A <code>ValidityCheckingGenerator</code> checks for occurrences of exceptions that have been tagged as
- invalid behaviors as represented by a <code>ExceptionPredicate</code>. Also, either ignores or reports
- flaky test sequences --- an input sequence that throws an exception in a longer test sequence,
- despite having run normally by itself. Ignored flaky sequences are classified as invalid. Flaky
- occurrences of <code>OutOfMemoryError</code> or <code>StackOverflowError</code> are always treated as
- invalid.</div>
+ invalid behaviors. Also, either ignores or reports flaky test sequences --- an input sequence
+ that throws an exception in a longer test sequence, despite having run normally by itself.
+ Ignored flaky sequences are classified as invalid. Flaky occurrences of <code>OutOfMemoryError</code>
+ or <code>StackOverflowError</code> are always treated as invalid.</div>
 </li>
 </ul>
 </div>
@@ -140,12 +139,6 @@ extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in ran
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private <a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ValidityCheckingGenerator.html#isInvalid">isInvalid</a></span></code>
-<div class="block">The predicate to determine whether a test sequence is valid</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ValidityCheckingGenerator.html#throwExceptionOnFlakyTest">throwExceptionOnFlakyTest</a></span></code>
 <div class="block">If true, report flaky tests by throwing an exception</div>
@@ -166,8 +159,7 @@ extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in ran
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ValidityCheckingGenerator.html#ValidityCheckingGenerator-randoop.test.predicate.ExceptionPredicate-boolean-">ValidityCheckingGenerator</a></span>(<a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>&nbsp;isInvalid,
-                         boolean&nbsp;throwExceptionOnFlakyTest)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ValidityCheckingGenerator.html#ValidityCheckingGenerator-boolean-">ValidityCheckingGenerator</a></span>(boolean&nbsp;throwExceptionOnFlakyTest)</code>
 <div class="block">Creates an object that looks for invalid exceptions.</div>
 </td>
 </tr>
@@ -222,16 +214,6 @@ extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in ran
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="isInvalid">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isInvalid</h4>
-<pre>private&nbsp;<a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a> isInvalid</pre>
-<div class="block">The predicate to determine whether a test sequence is valid</div>
-</li>
-</ul>
 <a name="throwExceptionOnFlakyTest">
 <!--   -->
 </a>
@@ -250,18 +232,16 @@ extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in ran
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ValidityCheckingGenerator-randoop.test.predicate.ExceptionPredicate-boolean-">
+<a name="ValidityCheckingGenerator-boolean-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ValidityCheckingGenerator</h4>
-<pre>public&nbsp;ValidityCheckingGenerator(<a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>&nbsp;isInvalid,
-                                 boolean&nbsp;throwExceptionOnFlakyTest)</pre>
+<pre>public&nbsp;ValidityCheckingGenerator(boolean&nbsp;throwExceptionOnFlakyTest)</pre>
 <div class="block">Creates an object that looks for invalid exceptions.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>isInvalid</code> - the predicate to test for invalid exceptions</dd>
 <dd><code>throwExceptionOnFlakyTest</code> - a flag indicating whether to report flaky tests by throwing an
      exception</dd>
 </dl>
@@ -298,7 +278,7 @@ extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in ran
 
    <li>An exception is seen on the last statement:
        <ul>
-         <li>if the exception is classified as invalid by this visitor's <code>ExceptionPredicate</code>, the sequence is invalid.
+         <li>if the exception is classified as invalid, the sequence is invalid.
          <li>otherwise, the returned InvalidChecks is empty (the sequence is valid).
        </ul>
 
