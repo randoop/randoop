@@ -43,7 +43,7 @@ if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
   /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
   sleep 3 # give xvfb some time to start
 
-  # ./gradlew --info check
+  # `gradle build` == `gradle check assemble`
   ./gradlew --info check
 fi
 
