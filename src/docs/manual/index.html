@@ -67,6 +67,7 @@ The Randoop homepage is
       <li><a href="#primitives">Specifying additional primitive values</a></li>
       <li><a href="#nondeterminism">Nondeterminism</a>
         <ul>
+          <li><a href="#nondeterminism-source">Finding the source of nondeterminism</a></li>
           <li><a href="#nondeterminism-command-line-arguments">Timeouts and other command-line arguments enable nondeterminism</a></li>
           <li><a href="#nondeterminism-changed-program">Changes to the program or its environment</a></li>
           <li><a href="#nondeterminism-in-program-under-test">Nondeterministic program under test</a></li>
@@ -329,7 +330,7 @@ java.util.TreeSet</pre>
 <p>
 and invoke Randoop as follows: </p>
 
-<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --time-limit=60</pre>
+<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --time-limit=60  --flaky-test-behavior=DISCARD</pre>
 
 
 <p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
@@ -2007,20 +2008,30 @@ command-line argument, Randoop outputs the same tests in the same order.
 </p>
 
 <p>
-If Randoop produces a different output when you run it twice, then there is
-some source of nondeterminism.  To diagnose the problem, run Randoop twice
-with the <a href="#option:log"><code>--log</code></a>
-and <a href="#option:selection-log"><code>--selection-log</code></a>
-command-line options.  Compare the logs across runs, and the first place
-that they differ will help you find the nondeterminism.  The remainder of
-this section gives several reasons you may discover.
-</p>
-
-<p>
 If you <em>want</em> Randoop to produce different test suites,
 run Randoop twice supplying
 different values for the
 <a href="#option:randomseed"><code>--randomseed</code></a> command-line argument.
+</p>
+
+
+<h3 id="nondeterminism-source">Finding the source of nondeterminism</h3>
+
+<p>
+If Randoop produces a different output when you run it twice, then there is
+some source of nondeterminism.  To diagnose the problem, run Randoop twice
+with the command-line options
+</p>
+<pre>
+  <a href="#option:log">--log</a>=randoop-log.txt <a href="#option:selection-log">--selection-log</a>=selection-log.txt
+</pre>
+<p>
+Compare the logs across runs, and the first place
+that they differ will help you find the nondeterminism.
+</p>
+
+<p>
+The remainder of this section gives several reasons you may discover.
 </p>
 
 
@@ -2473,8 +2484,10 @@ unit tests, so you should not call Randoop on such methods.
 
 <p>
 If Randoop encounters a flaky test, Randoop halts so that you
-can <a href="#nondeterminism-in-program-under-test">correct your invocation
-of Randoop</a>.
+can <a href="#nondeterminism-in-program-under-test">correct your invocation of
+Randoop</a>.  Another section of the manual
+gives <a href="#nondeterminism">steps for determining the source of
+nondeterminism</a>.
 </p>
 
 <p>
