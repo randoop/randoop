@@ -63,7 +63,7 @@ allprojects {
     //plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     plumelib 'org.plumelib:options:1.0.1'
-    plumelib 'org.plumelib:plume-util:1.0.4'
+    plumelib 'org.plumelib:plume-util:1.0.5'
     plumelib 'org.plumelib:reflection-util:0.0.1'
   }
 }

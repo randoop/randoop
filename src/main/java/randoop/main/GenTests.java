@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -741,25 +742,36 @@ public class GenTests extends GenInputsAbstract {
    */
   private void printSequenceExceptionError(AbstractGenerator explorer, SequenceExceptionError e) {
 
-    String msg =
-        String.format(
-            "%n%nERROR: Randoop stopped because of a flaky test.%n%n"
-                + "This can happen when Randoop is run on methods that side-effect global state.%n"
-                + "See the \"Randoop stopped because of a flaky test\" section of the user manual.%n");
-    if (GenInputsAbstract.log == null) {
-      msg += "For more details, rerun with logging turned on with --log=FILENAME.";
-    } else {
-      msg += "For more details, see the log at " + GenInputsAbstract.log;
-    }
+    StringJoiner msg = new StringJoiner(System.getProperty("line.separator"));
+    msg.add("");
+    msg.add("");
+    msg.add("ERROR: Randoop stopped because of a flaky test.");
+    msg.add("");
+    msg.add("This can happen when Randoop is run on methods that side-effect global state.");
+    msg.add("It can also indicate a bug in Randoop.  For example, it is often a bug in");
+    msg.add("Randoop if the Exception is ClassCastException and the Input Subsequence\"");
+    msg.add("below compiles but does not run.");
+    msg.add("See the below info and https://randoop.github.io/randoop/manual/#flaky-tests .");
+    msg.add("");
+    msg.add(String.format("Exception:%n  %s%n", e.getError()));
+    msg.add(String.format("Statement:%n  %s%n", e.getStatement()));
+    // No trailing newline needed.
+    msg.add(String.format("Full sequence:%n%s", e.getSequence()));
+    // No trailing newline needed.
+    msg.add(String.format("Input subsequence:%n%s", e.getSubsequence().toCodeString()));
+
+    Log.logPrintf("%s%n", msg);
     System.out.println(msg);
 
+    if (GenInputsAbstract.log == null) {
+      System.out.println("For more details, rerun with logging turned on with --log=FILENAME.");
+    } else {
+      System.out.println("For more details, see the log at " + GenInputsAbstract.log);
+    }
+
     if (Log.isLoggingOn()) {
+
       Sequence subsequence = e.getSubsequence();
-      Log.logPrintf("%s%n", msg);
-      Log.logPrintf("Exception:%n  %s%n", e.getError());
-      Log.logPrintf("Statement:%n  %s%n", e.getStatement());
-      Log.logPrintf("Full sequence:%n%s%n", e.getSequence());
-      Log.logPrintf("Input subsequence:%n%s%n", subsequence.toCodeString());
 
       /*
        * Get the set of operations executed since the first execution of the flaky subsequence
@@ -788,12 +800,14 @@ public class GenTests extends GenInputsAbstract {
           Log.logPrintf("%s%n", opName);
         }
       } else {
-        System.err.printf(
-            "Unable to find a previous occurrence of subsequence where exception was thrown:%n"
-                + "  %s%n"
-                + "Please submit an issue at https://github.com/randoop/randoop/issues/new%n",
+        Log.logPrintf(
+            "No previous occurrence of subsequence where exception was thrown:%n" + "%s%n"
+            // + "Please submit an issue at https://github.com/randoop/randoop/issues/new%n"
+            ,
             subsequence);
       }
+      Log.logPrintf("%n");
+      Log.logStackTrace(e);
     }
   }
 

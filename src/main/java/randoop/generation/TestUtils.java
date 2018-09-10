@@ -1,8 +1,8 @@
 package randoop.generation;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import org.plumelib.util.FileWriterWithName;
 import randoop.main.GenInputsAbstract;
 
 /**
@@ -44,7 +44,7 @@ public class TestUtils {
     }
     if (file != null && !file.isEmpty()) {
       try {
-        GenInputsAbstract.log = new FileWriter(file);
+        GenInputsAbstract.log = new FileWriterWithName(file);
         // GenInputsAbstract.log = Files.newBufferedWriter(Paths.get(file), UTF_8);
       } catch (IOException ioe) {
         // TODO: clarify that this is a user error
@@ -74,7 +74,7 @@ public class TestUtils {
     }
     if (file != null && !file.isEmpty()) {
       try {
-        setSelectionLog(new FileWriter(file));
+        setSelectionLog(new FileWriterWithName(file));
       } catch (IOException e) {
         throw new Error("problem creating FileWriter for " + file, e);
       }
@@ -86,7 +86,7 @@ public class TestUtils {
    *
    * @param fw the FileWriter to write the log to; does nothing if fw is null
    */
-  public static void setSelectionLog(FileWriter fw) {
+  public static void setSelectionLog(FileWriterWithName fw) {
     if (debug) {
       System.out.println("setSelectionLog(" + fw + ")");
     }

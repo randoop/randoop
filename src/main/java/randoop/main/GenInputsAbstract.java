@@ -1,6 +1,5 @@
 package randoop.main;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,6 +13,7 @@ import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
 import org.plumelib.options.Unpublicized;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
@@ -742,18 +742,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * logs slows down Randoop.
    */
   @Option("<filename> Log lots of information to this file")
-  public static FileWriter log = null;
+  public static FileWriterWithName log = null;
 
   /**
    * A file to which to log selections; helps find sources of non-determinism. If not specified, no
    * logging is done.
    */
   @Option("<filename> Log each random selection to this file")
-  public static FileWriter selection_log = null;
+  public static FileWriterWithName selection_log = null;
 
   /** A file to which to log the operation usage history. */
   @Option("<filename> Log operation usage counts to this file")
-  public static FileWriter operation_history_log = null;
+  public static FileWriterWithName operation_history_log = null;
 
   @Option("Display source if a generated test contains a compilation error.")
   public static boolean print_erroneous_file = false;
