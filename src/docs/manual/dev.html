@@ -373,8 +373,8 @@ A summary of the results is in the file <code>build/reports/jacoco/test/jacocoTe
 The overall coverage can be viewed by running the perl script: <code>scripts/show-coverage.pl</code>.
 This script will accept an optional argument of an alternative file location.
 Invoke the script with <code>-help</code> for a full list of options.
-If you are planning to update the Randoop coverage data spreadsheet <code>Randoop Coverage.xlsm</code>
-(location TBD) you will need to run the perl script: <code>scripts/prepare-coverage.pl</code>.
+If you are planning to create or update a Randoop coverage data spreadsheet
+you will need to run the perl script: <code>scripts/prepare-coverage.pl</code>.
 This tool reads the jacoco coverage data and converts it into into a csv file named
 "report-&lt;input file modifcation date&gt;.csv" in the current directory.
 This script will accept an optional argument of an alternative file location.
@@ -384,6 +384,12 @@ Invoke the script with <code>-help</code> for a full list of options.
   <li><a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage">Pascali</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage/blob/master/README.md">README.md</a> for details.</li>
   <li><a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage">Toradocu</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage/blob/master/README.md">README.md</a> for details.</li>
 </ul>
+<p>
+After collecting the four sets of coverage data you will probably want to update an existing coverage
+spreadsheet or create a new one.  The tools needed and the current spreadsheets are located in the
+<a href="https://gitlab.cs.washington.edu/randoop/coverage-tools">coverage-tools</a> repository.
+See the file <a href="https://gitlab.cs.washington.edu/randoop/coverage-tools/blob/master/README.md">README.md</a>
+for details.</p>
 
 
 <h2 id="travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</h2>
