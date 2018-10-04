@@ -204,9 +204,7 @@ dependencies {
  * Configuration for formatting
  */
 googleJavaFormat {
-  // as of 5/2018, default is still 1.1
-  // versions 1.2 and higher require Java 8
-  toolVersion '1.1'
+  toolVersion '1.6'
   exclude '**/CloneVisitor.java'
 }
 
