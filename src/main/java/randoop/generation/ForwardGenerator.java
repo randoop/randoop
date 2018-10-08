@@ -1,6 +1,7 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -402,15 +403,6 @@ public class ForwardGenerator extends AbstractGenerator {
       int times = Randomness.nextRandomInt(100);
       newSequence = repeat(newSequence, operation, times);
       Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
-    }
-
-    // A parameterless operation (a static constant method or no-argument constructor) returns the
-    // same thing every time it is invoked. Since we have just invoked it, its result will be in the
-    // pool.
-    // There is no need to call this operation again, so remove it from the list of operations.
-    if (operation.getInputTypes().isEmpty()) {
-      operationHistory.add(operation, OperationOutcome.REMOVED);
-      operations.remove(operation);
     }
 
     // Discard if sequence is larger than size limit
@@ -871,5 +863,69 @@ public class ForwardGenerator extends AbstractGenerator {
         + ","
         + ("runtimePrimitivesSeen.size()=" + runtimePrimitivesSeen.size())
         + ")";
+  }
+
+  /**
+   * Remove constant operations, execute them once, and add their results to the pool.
+   *
+   * <p>This method modifies the list of operations that represent the set of methods under tests.
+   *
+   * <p>A parameter-less operation (a static constant method or no-argument constructor) will return
+   * the same thing every time it is invoked (unless it's non-deterministic, but Randoop should not
+   * be run on non-deterministic methods). Once this method puts its result in the pool, and there
+   * is no need to call the operation again and so this method removes it from the list of
+   * operations.
+   */
+  @Override
+  public void moveConstantOperationsToPool() {
+    for (Iterator<TypedOperation> iterator = operations.iterator(); iterator.hasNext(); ) {
+      TypedOperation operation = iterator.next();
+      // Filter out parameter-less operations.
+      if (operation.getInputTypes().isEmpty()) {
+        // For operations that are generic or include wildcard types, we instantiate it with
+        // matching
+        // types from our input pool and add all sequences to the pool.
+        if (operation.isGeneric() || operation.hasWildcardTypes()) {
+          try {
+            Set<TypedClassOperation> operations =
+                instantiator.instantiateWithMultipleTypes((TypedClassOperation) operation);
+            for (TypedClassOperation op : operations) {
+              createAndAddSequence(op);
+            }
+          } catch (Throwable e) {
+            if (GenInputsAbstract.fail_on_generation_error) {
+              if (operation.isMethodCall() || operation.isConstructorCall()) {
+                String opName = operation.getOperation().getReflectionObject().toString();
+                throw new RandoopInstantiationError(opName, e);
+              }
+            } else {
+              operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
+              Log.logPrintf("Instantiation error for operation %s%n", operation);
+              Log.logStackTrace(e);
+              System.out.println("Instantiation error for operation " + operation);
+            }
+          }
+        } else {
+          // For all other operations, we simply create a sequence from it and add it to the input
+          // pool.
+          createAndAddSequence(operation);
+        }
+
+        Log.logPrintf("Moving operation to pool: %s%n", operation);
+        iterator.remove();
+      }
+    }
+  }
+
+  /**
+   * Create a new sequence from the given operation and add it to the component manager.
+   *
+   * @param operation operation used to create sequence
+   */
+  private void createAndAddSequence(TypedOperation operation) {
+    SimpleArrayList<Statement> statements = new SimpleArrayList<>();
+    statements.add(new Statement(operation));
+    Sequence newSequence = new Sequence(statements);
+    componentManager.addGeneratedSequence(newSequence);
   }
 }

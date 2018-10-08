@@ -452,6 +452,9 @@ public abstract class AbstractGenerator {
     return operationHistory;
   }
 
+  /** Remove parameter-less operations from the set of methods under test. */
+  public abstract void moveConstantOperationsToPool();
+
   /**
    * Take action based on the given {@link Sequence} that was classified as a regression test, i.e.,
    * normal behavior.
