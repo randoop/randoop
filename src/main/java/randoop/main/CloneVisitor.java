@@ -1320,7 +1320,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
     public <T extends Node> List<T> visit(List<T> _nodes, Object _arg) {
         if (_nodes == null)
             return null;
-        List<T> r = new ArrayList<T>(_nodes.size());
+        List<T> r = new ArrayList<>(_nodes.size());
         for (T n : _nodes) {
             T rN = cloneNodes(n, _arg);
             if (rN != null)
