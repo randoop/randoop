@@ -37,7 +37,7 @@ import org.plumelib.bcelutil.SimpleLog;
 public class CallReplacementTransformer extends InstructionListUtils
     implements ClassFileTransformer {
 
-  /** Debug information about which classes are transformed and why */
+  /** Debug information about which classes are transformed and why. */
   private static SimpleLog debug_transform =
       new SimpleLog(
           // ReplaceCallAgent.debugPath + File.separator + "replacecall-transform-log.txt",

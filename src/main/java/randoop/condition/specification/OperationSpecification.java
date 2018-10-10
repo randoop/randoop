@@ -55,21 +55,21 @@ public class OperationSpecification {
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
   // tools
 
-  /** The reflection object for the operation */
+  /** The reflection object for the operation. */
   private final OperationSignature operation;
 
-  /** The identifier names used in the specifications */
+  /** The identifier names used in the specifications. */
   private final Identifiers identifiers;
 
-  /** The list of pre-conditions for the operation */
+  /** The list of pre-conditions for the operation. */
   @SerializedName("pre")
   private final List<Precondition> preSpecifications;
 
-  /** The list of post-conditions for the operation */
+  /** The list of post-conditions for the operation. */
   @SerializedName("post")
   private final List<Postcondition> postSpecifications;
 
-  /** The specification of expected exceptions for the operation */
+  /** The specification of expected exceptions for the operation. */
   @SerializedName("throws")
   private final List<ThrowsCondition> throwsSpecifications;
 
@@ -122,7 +122,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the {@link OperationSignature} for the operation
+   * Return the {@link OperationSignature} for the operation.
    *
    * @return the reflection object for the operation
    */

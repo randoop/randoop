@@ -75,28 +75,28 @@ public class JUnitCreator {
   /** The Java text for AfterEach method of generated test class. */
   private BlockStmt afterEachBody = null;
 
-  /** The JUnit annotation for the BeforeAll option */
+  /** The JUnit annotation for the BeforeAll option. */
   private static final String BEFORE_ALL = "BeforeClass";
 
-  /** The JUnit annotation for the AfterAll option */
+  /** The JUnit annotation for the AfterAll option. */
   private static final String AFTER_ALL = "AfterClass";
 
-  /** The JUnit annotation for the BeforeEach option */
+  /** The JUnit annotation for the BeforeEach option. */
   private static final String BEFORE_EACH = "Before";
 
-  /** The JUnit annotation for the AfterEach option */
+  /** The JUnit annotation for the AfterEach option. */
   private static final String AFTER_EACH = "After";
 
-  /** The method name for the BeforeAll option */
+  /** The method name for the BeforeAll option. */
   private static final String BEFORE_ALL_METHOD = "setupAll";
 
-  /** The method name for the AfterAll option */
+  /** The method name for the AfterAll option. */
   private static final String AFTER_ALL_METHOD = "teardownAll";
 
-  /** The method name for the BeforeEach option */
+  /** The method name for the BeforeEach option. */
   private static final String BEFORE_EACH_METHOD = "setup";
 
-  /** The method name for the AfterEach option */
+  /** The method name for the AfterEach option. */
   private static final String AFTER_EACH_METHOD = "teardown";
 
   public static JUnitCreator getTestCreator(

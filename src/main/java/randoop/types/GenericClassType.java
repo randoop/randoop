@@ -180,7 +180,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Returns the list of type parameters of this generic class
+   * Returns the list of type parameters of this generic class.
    *
    * @return the list of type parameters of this generic class
    */

@@ -41,7 +41,7 @@ public class CoverageTracker {
    */
   private final Map<String, Double> branchCoverageMap = new HashMap<>();
 
-  /** Names of all the classes under test */
+  /** Names of all the classes under test. */
   private final Set<String> classesUnderTest = new HashSet<>();
 
   /**

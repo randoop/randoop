@@ -426,7 +426,7 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Sets the current sequence during exploration
+   * Sets the current sequence during exploration.
    *
    * @param s the current sequence
    */
@@ -444,7 +444,7 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Return the operation history logger for this generator
+   * Return the operation history logger for this generator.
    *
    * @return the operation history logger for this generator
    */

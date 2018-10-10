@@ -219,7 +219,7 @@ public class SimpleTypeTest {
         "Object is assignable from all types", objectType.isAssignableFrom(intArrayListType));
   }
 
-  /** Make sure boxing/unboxing conversions work in assignment */
+  /** Make sure boxing/unboxing conversions work in assignment. */
   @Test
   public void testBoxingUnboxingConversions() {
     Type booleanType = new PrimitiveType(boolean.class);

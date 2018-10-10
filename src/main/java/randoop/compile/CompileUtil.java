@@ -11,7 +11,7 @@ import javax.tools.JavaFileObject;
 /** Utilities for compiler classes. */
 class CompileUtil {
 
-  /** The file extension for a Java source file */
+  /** The file extension for a Java source file. */
   static final String JAVA_EXTENSION = ".java";
 
   /**

@@ -16,7 +16,7 @@ import randoop.sequence.ExecutableSequence;
 
 /** {@code TestPredicate} that checks whether the given {@link ExecutableSequence} is compilable. */
 public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
-  /** The compiler for sequence code */
+  /** The compiler for sequence code. */
   private final SequenceCompiler compiler;
 
   /**
@@ -25,10 +25,10 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    */
   private final JUnitCreator junitCreator;
 
-  /** The name generator for temporary class names */
+  /** The name generator for temporary class names. */
   private final NameGenerator nameGenerator;
 
-  /** The {@link GenTests} instance that created this predicate */
+  /** The {@link GenTests} instance that created this predicate. */
   private final GenTests genTests;
 
   /**

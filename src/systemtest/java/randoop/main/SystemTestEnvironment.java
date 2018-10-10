@@ -8,28 +8,28 @@ class SystemTestEnvironment {
   /** The current working directory. */
   final Path workingDir;
 
-  /** The source directory */
+  /** The source directory. */
   final Path sourceDir;
 
-  /** The class directory */
+  /** The class directory. */
   final Path classDir;
 
-  /** The JaCoCo output directory */
+  /** The JaCoCo output directory. */
   final Path jacocoDir;
 
-  /** The classpath to run the tests in this environment */
+  /** The classpath to run the tests in this environment. */
   final String testClassPath;
 
-  /** The bootclass path for running the tests in this environment */
+  /** The bootclass path for running the tests in this environment. */
   private final String bootclasspath;
 
-  /** The input classpath for running the tests in this environment */
+  /** The input classpath for running the tests in this environment. */
   private final String classpath;
 
-  /** The path of the JaCoCo agent */
+  /** The path of the JaCoCo agent. */
   private final Path jacocoAgentPath;
 
-  /** The path of the testinput class files */
+  /** The path of the testinput class files. */
   private final Path testInputClassDir;
 
   /** the path to the java agent. null by default. */

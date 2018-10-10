@@ -596,7 +596,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int clear = 100000000;
 
   ///////////////////////////////////////////////////////////////////
-  /** Maximum number of tests to write to each JUnit file */
+  /** Maximum number of tests to write to each JUnit file. */
   @OptionGroup("Outputting the JUnit tests")
   @Option("Maximum number of tests to write to each JUnit file")
   public static int testsperfile = 500;
@@ -662,7 +662,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Filename for code to include in AfterClass-annotated method of test classes")
   public static String junit_after_all = null;
 
-  /** Name of the directory to which JUnit files should be written */
+  /** Name of the directory to which JUnit files should be written. */
   @Option("Name of the directory to which JUnit files should be written")
   public static String junit_output_dir = null;
 

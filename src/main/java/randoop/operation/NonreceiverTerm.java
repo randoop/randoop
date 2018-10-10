@@ -95,7 +95,7 @@ public final class NonreceiverTerm extends CallableOperation {
         || c.equals(Class.class);
   }
 
-  /** Indicates whether this object is equal to o */
+  /** Indicates whether this object is equal to o. */
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof NonreceiverTerm)) {
@@ -109,13 +109,13 @@ public final class NonreceiverTerm extends CallableOperation {
     return this.type.equals(other.type) && Util.equalsWithNull(this.value, other.value);
   }
 
-  /** Returns a hash code value for this NonreceiverTerm */
+  /** Returns a hash code value for this NonreceiverTerm. */
   @Override
   public int hashCode() {
     return this.type.hashCode() + (this.value == null ? 0 : this.value.hashCode());
   }
 
-  /** Returns string representation of this NonreceiverTerm */
+  /** Returns string representation of this NonreceiverTerm. */
   @Override
   public String toString() {
     if (type.equals(JavaTypes.CLASS_TYPE)) {

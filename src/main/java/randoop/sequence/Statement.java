@@ -43,7 +43,7 @@ public final class Statement {
   }
 
   /**
-   * Creates a statement based on the given operation
+   * Creates a statement based on the given operation.
    *
    * @param operation the operation for action of this statement
    */

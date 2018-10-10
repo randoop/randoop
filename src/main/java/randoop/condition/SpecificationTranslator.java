@@ -420,7 +420,7 @@ public class SpecificationTranslator {
 
   /**
    * Returns the replacement map for the identifiers in the expression to the dummy variables
-   * expected in contract assertions
+   * expected in contract assertions.
    *
    * @return the replacement map for the identifiers in the expression
    */

@@ -14,7 +14,7 @@ public class SignatureParser {
   // module) so that it can also be used in javagents. The patterns are duplicated from {@code
   // ReplacementFileReader} from the replacecall agent.
 
-  /** Regex for Java identifiers */
+  /** Regex for Java identifiers. */
   public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**

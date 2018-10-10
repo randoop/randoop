@@ -111,7 +111,7 @@ public class FieldSet extends CallableOperation {
   }
 
   /**
-   * Returns the string descriptor for field that can be parsed by
+   * Returns the string descriptor for field that can be parsed by.
    *
    * @return the parsable string descriptor for this setter
    */

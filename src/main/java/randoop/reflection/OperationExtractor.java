@@ -42,7 +42,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The reflection policy for collecting operations. */
   private final ReflectionPredicate reflectionPredicate;
 
-  /** The predicate to test whether to omit an operation */
+  /** The predicate to test whether to omit an operation. */
   private OmitMethodsPredicate omitPredicate;
 
   /** The predicate to test visibility. */

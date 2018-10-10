@@ -18,7 +18,7 @@ import randoop.util.TimeoutExceededException;
  */
 public class ValidityCheckingGenerator extends TestCheckGenerator {
 
-  /** If true, report flaky tests by throwing an exception */
+  /** If true, report flaky tests by throwing an exception. */
   private boolean throwExceptionOnFlakyTest;
 
   /**

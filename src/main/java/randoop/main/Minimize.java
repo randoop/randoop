@@ -112,7 +112,7 @@ public class Minimize extends CommandHandler {
   @Option("Classpath to compile and run the JUnit test suite")
   public static String suiteclasspath;
 
-  /** The maximum number of seconds allowed for the entire minimization process */
+  /** The maximum number of seconds allowed for the entire minimization process. */
   @SuppressWarnings("WeakerAccess")
   @Option("Timeout, in seconds, for the whole minimization process")
   public static int minimizetimeout = 600;
@@ -1285,7 +1285,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return the number of JUnit test methods in a compilation unit
+   * Return the number of JUnit test methods in a compilation unit.
    *
    * @param compilationUnit the compilation unit to count the number of unit test methods
    * @return the number of unit test methods in compilationUnit
@@ -1306,7 +1306,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Output the minimizer's current progress
+   * Output the minimizer's current progress.
    *
    * @param currentTestIndex the number of tests that have been minimized so far
    * @param totalTests the total number of tests in the input test suite

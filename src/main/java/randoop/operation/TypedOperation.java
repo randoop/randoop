@@ -33,7 +33,7 @@ import randoop.types.TypeVariable;
  */
 public abstract class TypedOperation implements Operation, Comparable<TypedOperation> {
 
-  /** The operation to be decorated */
+  /** The operation to be decorated. */
   private final CallableOperation operation;
 
   /**
@@ -46,7 +46,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /** The output type. */
   private final Type outputType;
 
-  /** The specification for this operation */
+  /** The specification for this operation. */
   private ExecutableSpecification execSpec;
 
   /**

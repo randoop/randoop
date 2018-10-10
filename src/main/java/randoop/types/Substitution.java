@@ -19,7 +19,7 @@ import org.plumelib.util.UtilPlume;
  */
 public class Substitution<T> {
 
-  /** The substitution map */
+  /** The substitution map. */
   private Map<TypeVariable, T> map;
 
   /** map on reflection types - used for testing bounds */

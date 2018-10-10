@@ -18,7 +18,7 @@ import javax.tools.ToolProvider;
  */
 public class SequenceCompiler {
 
-  /** The {@code ClassLoader} for this compiler */
+  /** The {@code ClassLoader} for this compiler. */
   private final SequenceClassLoader classLoader;
 
   /** the options to the compiler */
@@ -27,7 +27,7 @@ public class SequenceCompiler {
   /** the Java compiler */
   private final JavaCompiler compiler;
 
-  /** The {@code FileManager} for this compiler */
+  /** The {@code FileManager} for this compiler. */
   private final SequenceJavaFileManager fileManager;
 
   /**

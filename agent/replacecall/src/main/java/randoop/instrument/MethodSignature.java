@@ -25,7 +25,7 @@ public class MethodSignature {
   /** simple method name */
   private final String name;
 
-  /** The parameter types */
+  /** The parameter types. */
   private final Type[] paramTypes;
 
   /** Cached {@link java.lang.reflect.Method} object for this {@link MethodSignature} */

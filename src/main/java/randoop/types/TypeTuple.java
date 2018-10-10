@@ -136,7 +136,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Return the number of components of the tuple
+   * Return the number of components of the tuple.
    *
    * @return the number of components of this tuple
    */

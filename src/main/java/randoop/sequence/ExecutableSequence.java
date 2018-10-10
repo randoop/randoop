@@ -86,7 +86,7 @@ public class ExecutableSequence {
    */
   private boolean hasNullInput = false;
 
-  /** Captures output from the executed sequence */
+  /** Captures output from the executed sequence. */
   // static, so initializing eagerly is not a large cost.
   private static ByteArrayOutputStream output_buffer = new ByteArrayOutputStream();
 

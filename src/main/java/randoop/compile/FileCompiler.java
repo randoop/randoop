@@ -81,13 +81,13 @@ public class FileCompiler {
 
     private static final long serialVersionUID = 8362158619216912395L;
 
-    /** The list of source files for the compilation */
+    /** The list of source files for the compilation. */
     private final List<File> sourceFiles;
 
     /** The compiler options. */
     private final List<String> options;
 
-    /** The compiler diagnostics */
+    /** The compiler diagnostics. */
     private final DiagnosticCollector<JavaFileObject> diagnostics;
 
     /**

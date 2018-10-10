@@ -19,7 +19,7 @@ import randoop.reflection.ClassVisitor;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
 
-/** Uses {@link WildcardBoundExamples} to test handling of type bounds involving variables */
+/** Uses {@link WildcardBoundExamples} to test handling of type bounds involving variables. */
 public class TypeBoundTest {
 
   @Test

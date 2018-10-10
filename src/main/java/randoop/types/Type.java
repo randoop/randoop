@@ -230,7 +230,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this object is an interface type
+   * Indicates whether this object is an interface type.
    *
    * @return true if this object is an interface type, false otherwise
    */

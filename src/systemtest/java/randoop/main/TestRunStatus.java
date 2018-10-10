@@ -11,7 +11,7 @@ class TestRunStatus {
   /** The {@link ProcessStatus} for running JUnit. */
   final ProcessStatus processStatus;
 
-  /** The number of tests run */
+  /** The number of tests run. */
   final int testsRun;
 
   /** The number of tests that failed. */

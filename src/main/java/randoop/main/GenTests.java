@@ -155,7 +155,7 @@ public class GenTests extends GenInputsAbstract {
           ForwardGenerator.class,
           AbstractGenerator.class);
 
-  /** The count of sequences that failed to compile */
+  /** The count of sequences that failed to compile. */
   private int sequenceCompileFailureCount = 0;
 
   public GenTests() {

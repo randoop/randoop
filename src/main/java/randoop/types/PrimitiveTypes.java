@@ -144,7 +144,7 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Return boxed type for a primitive type
+   * Return boxed type for a primitive type.
    *
    * @param cls the {@code Class} object for the primitive type
    * @return the boxed type for the primitive type, or null if the given type is not primitive
