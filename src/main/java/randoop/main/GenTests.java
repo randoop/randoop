@@ -350,6 +350,13 @@ public class GenTests extends GenInputsAbstract {
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.observers, "observer", "//.*", null);
 
+    Set<String> nonMultiRunDeterministicMethodSignatures =
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.nonMultiRunDeterministic,
+            "nonMultiRunDeterministicMethod",
+            "//.*",
+            null);
+
     MultiMap<Type, TypedOperation> observerMap;
     try {
       observerMap = operationModel.getObservers(observerSignatures);
@@ -363,6 +370,23 @@ public class GenTests extends GenInputsAbstract {
       observers.addAll(observerMap.getValues(keyType));
     }
 
+    // cxing TODO refactor
+    // Maps each class type to the observer methods in it.
+    MultiMap<Type, TypedOperation> nonMultiRunDeterministicMethodMap;
+    try {
+      nonMultiRunDeterministicMethodMap =
+          operationModel.getObservers(nonMultiRunDeterministicMethodSignatures);
+    } catch (OperationParseException e) {
+      System.out.printf("Parse error while reading observers: %s%n", e);
+      System.exit(1);
+      throw new Error("dead code");
+    }
+    assert nonMultiRunDeterministicMethodMap != null;
+    Set<TypedOperation> nonMultiRunDeterminsticMethods = new LinkedHashSet<>();
+    for (Type keyType : nonMultiRunDeterministicMethodMap.keySet()) {
+      nonMultiRunDeterminsticMethods.addAll(nonMultiRunDeterministicMethodMap.getValues(keyType));
+    }
+
     /*
      * Create the generator for this session.
      */
@@ -370,6 +394,7 @@ public class GenTests extends GenInputsAbstract {
         new ForwardGenerator(
             operations,
             observers,
+            nonMultiRunDeterminsticMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,

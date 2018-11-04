@@ -232,6 +232,10 @@ public class CoveredClassTest {
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.observers, "observer", "//.*", null);
 
+    Set<String> nonMultiRunDeterministicMethodSignatures =
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.nonMultiRunDeterministic, "observer", "//.*", null);
+
     // Maps each class type to the observer methods in it.
     MultiMap<Type, TypedOperation> observerMap;
     try {
@@ -247,11 +251,29 @@ public class CoveredClassTest {
       observers.addAll(observerMap.getValues(keyType));
     }
 
+    // cxing TODO refactor
+    // Maps each class type to the observer methods in it.
+    MultiMap<Type, TypedOperation> nonMultiRunDeterministicMethodMap;
+    try {
+      nonMultiRunDeterministicMethodMap =
+          operationModel.getObservers(nonMultiRunDeterministicMethodSignatures);
+    } catch (OperationParseException e) {
+      System.out.printf("Parse error while reading observers: %s%n", e);
+      System.exit(1);
+      throw new Error("dead code");
+    }
+    assert nonMultiRunDeterministicMethodMap != null;
+    Set<TypedOperation> nonMultiRunDeterminsticMethods = new LinkedHashSet<>();
+    for (Type keyType : nonMultiRunDeterministicMethodMap.keySet()) {
+      nonMultiRunDeterminsticMethods.addAll(nonMultiRunDeterministicMethodMap.getValues(keyType));
+    }
+
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
             observers,
+            nonMultiRunDeterminsticMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
