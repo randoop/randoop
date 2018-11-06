@@ -925,13 +925,6 @@ task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishS
   description "Builds system and documentation, validates HTML, and publishes site"
 }
 
-/*************** Gradle Wrapper ******************/
-/* Declares the Gradle version to be used when the wrapper is built */
-task wrapper(type: Wrapper) {
-  description "Configure Gradle Wrapper for this project"
-  gradleVersion = '4.1'
-}
-
 /*************** Other tool configs *************/
 /* Make Emacs TAGS table */
 task tags(type: Exec, dependsOn: 'cloneLibs') {
@@ -964,4 +957,4 @@ task installGitHooks(type: Copy) {
   into '.git/hooks'
 }
 /* Always run this task. */
-tasks.installGitHooks.execute()
+gradle.startParameter.taskNames = [":installGitHooks"] + gradle.startParameter.taskNames
