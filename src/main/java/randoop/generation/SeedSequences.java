@@ -18,6 +18,7 @@ public final class SeedSequences {
     throw new IllegalStateException("no instance");
   }
 
+  /** The initial pool of primitive values. */
   private static final List<Object> primitiveSeeds =
       Arrays.<Object>asList(
           (byte) -1,
