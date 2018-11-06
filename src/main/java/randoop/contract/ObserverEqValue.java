@@ -85,8 +85,8 @@ public final class ObserverEqValue extends ObjectContract {
     if (value == null) {
       b.append(String.format("assertNull(\"x0.%s() == null\", x0.%s());", methodname, methodname));
     } else if (observer.getOutputType().isPrimitive()
-        && (!value.equals(Double.NaN))
-        && (!value.equals(Float.NaN))) {
+        && !value.equals(Double.NaN)
+        && !value.equals(Float.NaN)) {
       if (observer.getOutputType().runtimeClassIs(boolean.class)) {
         assert value.equals(true) || value.equals(false);
         if (value.equals(true)) {

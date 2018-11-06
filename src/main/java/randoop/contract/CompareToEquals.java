@@ -28,7 +28,7 @@ public class CompareToEquals extends ObjectContract {
 
     if (o1 instanceof Comparable) {
       Comparable compObj1 = (Comparable) o1;
-      return (compObj1.compareTo(o2) == 0) == (o1.equals(o2));
+      return (compObj1.compareTo(o2) == 0) == o1.equals(o2);
     }
     return true;
   }
