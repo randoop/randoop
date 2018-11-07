@@ -195,7 +195,7 @@ public class VisibilityTest {
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
       int mods = m.getModifiers() & Modifier.methodModifiers();
-      if (!m.isBridge() && !m.isSynthetic() && (isPubliclyVisible(mods))) {
+      if (!m.isBridge() && !m.isSynthetic() && isPubliclyVisible(mods)) {
         expectedMethods.add(m);
       }
     }
@@ -396,7 +396,7 @@ public class VisibilityTest {
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
       int mods = m.getModifiers();
-      if (!m.isBridge() && !m.isSynthetic() && (Modifier.isPublic(mods))) {
+      if (!m.isBridge() && !m.isSynthetic() && Modifier.isPublic(mods)) {
         expectedMethods.add(m);
       }
     }

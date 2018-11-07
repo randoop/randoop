@@ -47,7 +47,7 @@ public final class Util {
     if (o1 == null) {
       return o2 == null;
     }
-    return o2 != null && (o1.equals(o2));
+    return o2 != null && o1.equals(o2);
   }
 
   /**
