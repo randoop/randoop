@@ -3,6 +3,7 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.plumelib.util.ArraysPlume;
@@ -217,6 +218,7 @@ public final class MethodCall extends CallableOperation {
    * @throws OperationParseException if s does not match expected descriptor
    * @see OperationParser#parse(String)
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
@@ -250,16 +252,21 @@ public final class MethodCall extends CallableOperation {
       throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
     }
     Method m = null;
-    String msg = "Method " + methodString + " does not exist";
     try {
       m = classType.getRuntimeClass().getDeclaredMethod(opname, typeArguments);
     } catch (NoSuchMethodException e) {
-      msg += ": " + e;
-    }
-    if (m == null) {
       try {
         m = classType.getRuntimeClass().getMethod(opname, typeArguments);
-      } catch (NoSuchMethodException e) {
+      } catch (NoSuchMethodException e2) {
+        String msg =
+            "Method "
+                + opname
+                + " with parameters "
+                + Arrays.toString(typeArguments)
+                + " does not exist in"
+                + classType
+                + ": "
+                + e;
         throw new OperationParseException(msg);
       }
     }

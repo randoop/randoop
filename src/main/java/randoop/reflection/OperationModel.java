@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.condition.SpecificationCollection;
@@ -137,8 +139,8 @@ public class OperationModel {
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       List<Pattern> omitMethods,
-      Set<String> classnames,
-      Set<String> coveredClassesGoalNames,
+      Set<@ClassGetName String> classnames,
+      Set<@ClassGetName String> coveredClassesGoalNames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
@@ -189,8 +191,8 @@ public class OperationModel {
   static OperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      Set<String> classnames,
-      Set<String> coveredClassnames,
+      Set<@ClassGetName String> classnames,
+      Set<@ClassGetName String> coveredClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
@@ -229,8 +231,8 @@ public class OperationModel {
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       List<Pattern> omitMethods,
-      Set<String> classnames,
-      Set<String> coveredClassnames,
+      Set<@ClassGetName String> classnames,
+      Set<@ClassGetName String> coveredClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
@@ -452,8 +454,8 @@ public class OperationModel {
   private void addClassTypes(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      Set<String> classnames,
-      Set<String> coveredClassesGoalNames,
+      Set<@ClassGetName String> classnames,
+      Set<@ClassGetName String> coveredClassesGoalNames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList) {
     ReflectionManager mgr = new ReflectionManager(visibility);
@@ -516,8 +518,9 @@ public class OperationModel {
     }
   }
 
-  /* May return null if errorHandler just warns on bad names. */
-  private static Class<?> getClass(String classname, ClassNameErrorHandler errorHandler) {
+  /** May return null if errorHandler just warns on bad names. */
+  private static @Nullable Class<?> getClass(
+      @ClassGetName String classname, ClassNameErrorHandler errorHandler) {
     try {
       return TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException e) {
