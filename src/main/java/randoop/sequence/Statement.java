@@ -14,8 +14,10 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * Statement represents a statement involving an operation (or term), and the list of inputs for the
- * statement. The inputs are variables, but are represented by indexing into the enclosing sequence.
+ * Statement represents a Java statement, such as a method call {@code Foo f = m(i1...iN)} or a
+ * declaration {@code int x = 0}. The statement's data includes an operation and the list of inputs
+ * for the operation. The inputs to the operation are variables, but are represented by indexing
+ * into the enclosing sequence.
  */
 public final class Statement {
 
@@ -41,7 +43,7 @@ public final class Statement {
   }
 
   /**
-   * Creates a statement based on the given operation
+   * Creates a statement based on the given operation.
    *
    * @param operation the operation for action of this statement
    */

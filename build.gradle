@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '2.0.1'
+  id 'com.github.johnrengelman.shadow' version '2.0.4'
   id 'java'
   id 'eclipse'
   id 'idea'
@@ -16,7 +16,7 @@ plugins {
    * Plugin that applies Google-Java-format to the Java files in the project.
    * https://github.com/sherter/google-java-format-gradle-plugin
    */
-  id 'com.github.sherter.google-java-format' version '0.6'
+  id 'com.github.sherter.google-java-format' version '0.7.1'
 
   /*
    * Plugin that applies Google's Error Prone linter (http://errorprone.info/).
@@ -25,10 +25,11 @@ plugins {
    * To run Error Prone, do:  ./gradlew compileJava
    * There is no separate target to just run Error Prone.
    */
-  id "net.ltgt.errorprone-base" version "0.0.11" // 0.0.13 does not work with Java 7
+  id "net.ltgt.errorprone-base" version "0.0.16"
 }
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
+// It is not run in the main build because the Checker Framework is incompatible with Error Prone.
 apply from: "checkerframework-annos-in-comments.gradle"
 // apply from: "checkerframework.gradle"
 
@@ -38,8 +39,8 @@ allprojects {
   apply plugin: 'java'
   apply plugin: 'com.github.johnrengelman.shadow'
 
-  sourceCompatibility = 1.7
-  targetCompatibility = 1.7
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
 
   /* Use Maven Central when have external dependencies */
   repositories {
@@ -48,7 +49,7 @@ allprojects {
   }
 
   /* Randoop version number - added to generated jar files */
-  version = '4.0.4'
+  version = '4.1.0'
 
   configurations {
     // A collection of all plumelib dependencies required, so that all
@@ -57,12 +58,13 @@ allprojects {
   }
 
   dependencies {
-    plumelib 'org.plumelib:bcel-util:0.0.9'
+    plumelib 'org.plumelib:bcel-util:1.1.3'
     // To use a local version comment out line above and uncomment line below.
     //plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
-    plumelib 'org.plumelib:options:0.3.3'
-    plumelib 'org.plumelib:plume-util:0.0.4'
+    plumelib 'org.plumelib:options:1.0.1'
+    plumelib 'org.plumelib:plume-util:1.0.5'
+    plumelib 'org.plumelib:reflection-util:0.0.1'
   }
 }
 
@@ -155,6 +157,10 @@ dependencies {
   /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files. */
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
 
+  /* Jacoco measures coverage of classes and methods under test. */
+  implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.9'
+  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.9', classifier: 'runtime'
+
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.5'
   testImplementation group: 'backport-util-concurrent', name: 'backport-util-concurrent', version: '2.1'
@@ -198,9 +204,7 @@ dependencies {
  * Configuration for formatting
  */
 googleJavaFormat {
-  // as of 5/2018, default is still 1.1
-  // versions 1.2 and higher require Java 8
-  toolVersion '1.1'
+  toolVersion '1.6'
   exclude '**/CloneVisitor.java'
 }
 
@@ -613,7 +617,7 @@ task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']
   *
   * Grgit has too many limitations.  Use exec instead.
   */
-task cloneLibs( dependsOn: [ 'cloneChecklink', 'cloneHtmlTools', 'clonePlumeLib' ]) { }
+task cloneLibs( dependsOn: [ 'cloneChecklink', 'cloneHtmlTools', 'clonePlumeScripts' ]) { }
 
 task cloneChecklink {
   doLast {
@@ -649,16 +653,16 @@ task cloneHtmlTools {
   }
 }
 
-task clonePlumeLib {
+task clonePlumeScripts {
   doLast {
-    if ( ! file("$buildDir/utils/plume-lib").exists() ) {
+    if ( ! file("$buildDir/utils/plume-scripts").exists() ) {
       exec {
-        commandLine 'git', 'clone', '--depth', '1', "https://github.com/mernst/plume-lib.git", "$buildDir/utils/plume-lib"
+        commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/plume-scripts.git", "$buildDir/utils/plume-scripts"
       }
     } else {
       // Ignore exit value so this does not halt the build when not connected to the Internet.
       exec {
-        workingDir "$buildDir/utils/plume-lib"
+        workingDir "$buildDir/utils/plume-scripts"
         ignoreExitValue true
         commandLine 'git', 'pull', '-q'
       }
@@ -680,14 +684,55 @@ javadoc {
   options.with {
     linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
   }
-  failOnError = true
+  failOnError = true  // does not fail on warnings
+}
+
+// Make Javadoc fail on warnings
+// From https://stackoverflow.com/a/49544352/173852
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        // The '-quiet' as second argument is actually a hack,
+        // since the one paramater addStringOption doesn't seem to
+        // work, we extra add '-quiet', which is added anyway by
+        // gradle. See https://github.com/gradle/gradle/issues/2354
+        // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
+        // for information about the -Xwerror option.
+        options.addStringOption('Xwerror', '-quiet')
+    }
+}
+
+configurations {
+  requireJavadoc
+}
+dependencies {
+  compile group: 'org.plumelib', name: 'require-javadoc', version: '0.0.7'
+}
+task requireJavadoc(type: Javadoc) {
+  description = 'Ensures that all Java elements have Javadoc documentation.'
+  destinationDir.deleteDir()
+  source = sourceSets.main.allJava
+  classpath = project.sourceSets.main.compileClasspath
+  // options.memberLevel = JavadocMemberLevel.PRIVATE
+  options.docletpath = project.sourceSets.main.compileClasspath as List
+  options.doclet = "org.plumelib.javadoc.RequireJavadoc"
+  // options.addStringOption('skip', 'ClassNotToCheck|OtherClass')
+}
+task requireJavadocPrivate(type: Javadoc) {
+  description = 'Ensures that all (even private) Java elements have Javadoc documentation.'
+  destinationDir.deleteDir()
+  source = sourceSets.main.allJava
+  classpath = project.sourceSets.main.compileClasspath
+  options.memberLevel = JavadocMemberLevel.PRIVATE
+  options.docletpath = project.sourceSets.main.compileClasspath as List
+  options.doclet = "org.plumelib.javadoc.RequireJavadoc"
+  // options.addStringOption('skip', 'ClassNotToCheck|OtherClass')
 }
 
 // needed for javadoc.doLast
 javadoc.dependsOn cloneLibs
 
 javadoc.doLast {
-  def preplace = file("$buildDir/utils/plume-lib/bin/preplace")
+  def preplace = file("$buildDir/utils/plume-scripts/preplace")
   // Work around Javadoc bug
   exec {
     commandLine preplace, "<dt><span class=\"memberNameLink\"><a href=\".*\\(\\)</a></span> - Constructor for enum [a-zA-Z0-9_.]*<a href=\".*</a></dt>", "", "build/docs/api/index-all.html"
@@ -757,11 +802,25 @@ task updateUserOptions(dependsOn: 'assemble') {
   }
 }
 
+/* Requires that the html5validator program is installed */
+task html5validatorExists {
+    doLast {
+        def result = exec {
+            def command = "command -v html5validator"
+            ignoreExitValue = true
+            executable "bash" args "-l", "-c", command
+        }
+        if (result.getExitValue() != 0) {
+            ant.fail('html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .')
+        }
+    }
+}
+
 /*
  * Configuration of manual task to generate/update and move documentation into
  * build/docs directory.
  */
-task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC']) {
+task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC', 'html5validatorExists']) {
   group 'Documentation'
   description "Adds options and TOC to documentation in src/docs"
   doLast {
@@ -782,7 +841,7 @@ build.dependsOn manual
  * Applies HTML5 validator to API javadoc.
  * Note: prior to Java 9, javadoc does not comply with HTML5.
  */
-task validateAPI(type: Exec, dependsOn: 'javadoc') {
+task validateAPI(type: Exec, dependsOn: ['javadoc', 'html5validatorExists']) {
   group 'Documentation'
   description "Run html5validator to find HTML errors in API documentation"
   if (JavaVersion.current().isJava9Compatible()) {
@@ -845,7 +904,7 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) 
 /*
  * Applies HTML5 validator to project site HTML, including the manual
  */
-task validateSite {
+task validateSite(dependsOn: 'html5validatorExists') {
   description "Run html5validator to find HTML errors in site files (excludes manual and api)"
   if (JavaVersion.current().isJava8Compatible()) {
     exec {
@@ -866,26 +925,19 @@ task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishS
   description "Builds system and documentation, validates HTML, and publishes site"
 }
 
-/*************** Gradle Wrapper ******************/
-/* Declares the Gradle version to be used when the wrapper is built */
-task wrapper(type: Wrapper) {
-  description "Configure Gradle Wrapper for this project"
-  gradleVersion = '4.1'
-}
-
 /*************** Other tool configs *************/
 /* Make Emacs TAGS table */
 task tags(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testinput | $buildDir/utils/plume-lib/bin/sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testinput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
 task tagsNoTests(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-lib/bin/sort-directory-order | grep -v /testinput/ | xargs etags"
+  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-scripts/sort-directory-order | grep -v /testinput/ | xargs etags"
 }
 
 /* Run checklink */
@@ -905,4 +957,4 @@ task installGitHooks(type: Copy) {
   into '.git/hooks'
 }
 /* Always run this task. */
-tasks.installGitHooks.execute()
+gradle.startParameter.taskNames = [":installGitHooks"] + gradle.startParameter.taskNames

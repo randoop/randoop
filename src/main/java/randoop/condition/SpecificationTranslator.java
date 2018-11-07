@@ -204,7 +204,7 @@ public class SpecificationTranslator {
    * @return the map from the parameter names to dummy variables
    */
   private static Map<String, String> createReplacementMap(List<String> parameterNames) {
-    Map<String, String> replacementMap = new HashMap<String, String>();
+    Map<String, String> replacementMap = new HashMap<>();
     for (int i = 0; i < parameterNames.size(); i++) {
       replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
     }
@@ -420,7 +420,7 @@ public class SpecificationTranslator {
 
   /**
    * Returns the replacement map for the identifiers in the expression to the dummy variables
-   * expected in contract assertions
+   * expected in contract assertions.
    *
    * @return the replacement map for the identifiers in the expression
    */

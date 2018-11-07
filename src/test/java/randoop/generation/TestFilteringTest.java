@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -33,7 +34,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
-import randoop.util.predicate.Predicate;
 
 public class TestFilteringTest {
 
@@ -250,6 +250,9 @@ public class TestFilteringTest {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitfields);
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
 
+    Set<ClassOrInterfaceType> classesUnderTest = new HashSet<>();
+    classesUnderTest.add(classType);
+
     OmitMethodsPredicate omitMethodsPredicate =
         new OmitMethodsPredicate(GenInputsAbstract.omitmethods);
     ReflectionManager manager = new ReflectionManager(visibility);
@@ -268,7 +271,8 @@ public class TestFilteringTest {
             new GenInputsAbstract.Limits(),
             componentMgr,
             null,
-            listenerMgr);
+            listenerMgr,
+            classesUnderTest);
     GenTests genTests = new GenTests();
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(new HashSet<Sequence>(), new HashSet<Class<?>>(), null);

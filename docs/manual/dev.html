@@ -289,7 +289,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.0.4.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.1.0.jar</code></pre>
 
 
 
@@ -306,7 +306,7 @@ option on the command line.
 For instance,
 </p>
 <pre><code>    ./gradlew test --tests="*GenericTypesTest"
-    # Don't include "run" in the test name.
+    # You can include "run" in the test name, but still use a leading "*"
     ./gradlew systemtest --tests="*Collection*"
 </code></pre>
 
@@ -337,6 +337,10 @@ Note that this works for system tests only, not for unit tests or other types of
 tests.
 Further note that selection logging can slow down the system tests so much that
 they fail.
+Finally, it should be noted that even though the default replacements attempt to suppress calls to
+methods that use a graphical windowing system, not all such calls are captured.
+Currently, the subtest {@code runDirectSwingTest} will fail with {@code java.awt.AWTError:
+Local GraphicsEnvironment must not be null} if the system tests are run in a headless environment.
 </p>
 
 <p>
@@ -351,7 +355,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.0.4.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.1.0.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -366,7 +370,13 @@ java -ea -cp randoop-all-4.0.4.jar randoop.main.Main minimize \
   <li>Randoop's test suite.  It produces
 reports in <code>build/reports/jacoco/test/html</code> and its subdirectories.
 A summary of the results is in the file <code>build/reports/jacoco/test/jacocoTestReport.xml</code>.
-The overall coverage can be extracted from this file by running the perl script: <code>scripts/show-coverage.pl</code>.
+The overall coverage can be viewed by running the perl script: <code>scripts/show-coverage.pl</code>.
+This script will accept an optional argument of an alternative file location.
+Invoke the script with <code>-help</code> for a full list of options.
+If you are planning to update the Randoop coverage data spreadsheet <code>Randoop Coverage.xlsm</code>
+(location TBD) you will need to run the perl script: <code>scripts/prepare-coverage.pl</code>.
+This tool reads the jacoco coverage data and converts it into into a csv file named
+"report-&lt;input file modifcation date&gt;.csv" in the current directory.
 This script will accept an optional argument of an alternative file location.
 Invoke the script with <code>-help</code> for a full list of options.
   </li>
@@ -692,6 +702,7 @@ task described below.
   <li>Compile, test, and build documentation.
     If there is any failure, fix them and start over.
     <pre>./gradlew clean build javadoc validateAPI manual validateSite</pre>
+    This takes around 30 minutes.  To shortcut it, omit <code>clean build</code>.
   </li>
   <li>Double-check that the changelog <code>src/docs/CHANGES.txt</code>
     contains all user-visible changes in
@@ -713,8 +724,8 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>4.0.4</em>
-NEWVERSION=<em>4.0.5</em></pre>
+OLDVERSION=<em>4.1.0</em>
+NEWVERSION=<em>4.1.1</em></pre>
     </li>
     <li>Update the version number and date in these files:
 <pre>
@@ -731,13 +742,14 @@ The following commands do part of the work.
   preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION 
   cd ..
 </pre>
-    You still need to manually update the date in <code>src/docs/CHANGES.txt</code>,
-    undo undesirable change to src/docs/CHANGES.txt, and
-    double-check all changes.
+    You still need to manually edit <code>src/docs/CHANGES.txt</code>:
+    update the date and undo undesirable changes.
+    Also, double-check all changes.
     </li>
     <li>Add an exception for the Randoop zip file
       to <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args</a>,
       for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.
+      Don't forget to commit and push your changes.
     </li>
   </ol>
 </li>
@@ -749,11 +761,14 @@ The following commands do part of the work.
   && git add -A . \
   && git commit . -m "Update version to $NEWVERSION" \
   && git push</pre>
+  This runs the tests again, so it takes about half an hour.
   </li>
   <li>
     Check that there are no broken links on the published website:
     <pre>./gradlew checklink</pre>
     This command creates file <code>checklink-log.txt</code>.
+    One error is expected: <code>404</code> because file <code>randoop-$NEWVERSION.zip</code>
+    does not exist yet.
         If there are any other errors, then fix them by updating URLs in
         Randoop or by suppressing a warning in
         file <code>checklink-args.txt</code>, which was mentioned above.
@@ -768,7 +783,8 @@ The following commands do part of the work.
   git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
     Wait for the <a href="https://travis-ci.org/randoop/randoop">Travis CI</a>
-    build to succeed.  If it fails, commit fixes, then re-tag and re-push tags
+    build to succeed.  (This takes about half an hour.)
+    If it fails, commit fixes, then re-tag and re-push tags
     (adding <code>-f</code> to both commands).
   </li>
   <li>Follow the
@@ -776,7 +792,7 @@ The following commands do part of the work.
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Tags", click "add release notes" for the new tag,
-    name it "Randoop version <em>4.0.4</em>", use the changelog entry as the
+    name it "Randoop version <em>4.1.0</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
     jar files from <code>build/libs</code> and the zip file from
     <code>build/distributions</code> (it doesn't matter what order you upload
@@ -785,9 +801,9 @@ The following commands do part of the work.
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
-    Subject: Randoop version <em>4.0.4</em>
+    Subject: Randoop version <em>4.1.0</em>
     <br/>
-    Randoop <em>4.0.4</em> has been released and is available at
+    Randoop <em>4.1.0</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.

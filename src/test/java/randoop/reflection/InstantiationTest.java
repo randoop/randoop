@@ -28,7 +28,7 @@ import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 
-/** Tests instantiation of type parameters by OperationModel */
+/** Tests instantiation of type parameters by OperationModel. */
 public class InstantiationTest {
 
   @Test

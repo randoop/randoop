@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExceptionBehaviorClassifier (randoop 4.0.4 API)</title>
+<title>ExceptionBehaviorClassifier (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExceptionBehaviorClassifier (randoop 4.0.4 API)";
+            parent.document.title="ExceptionBehaviorClassifier (randoop 4.1.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9};
+var methods = {"i0":9,"i1":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -110,7 +110,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">ExceptionBehaviorClassifier</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">Static method <a href="../../randoop/main/ExceptionBehaviorClassifier.html#classify-java.lang.Throwable-randoop.sequence.ExecutableSequence-"><code>classify(java.lang.Throwable, randoop.sequence.ExecutableSequence)</code></a> classifies exceptions thrown by a test sequence based on the
+<div class="block">Static method <a href="../../randoop/main/ExceptionBehaviorClassifier.html#classify-randoop.ExceptionalExecution-randoop.sequence.ExecutableSequence-"><code>classify(randoop.ExceptionalExecution, randoop.sequence.ExecutableSequence)</code></a> classifies exceptions thrown by a test sequence based on the
  <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main"><code>GenInputsAbstract.BehaviorType</code></a> command-line arguments.</div>
 </li>
 </ul>
@@ -150,6 +150,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>static <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main">GenInputsAbstract.BehaviorType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/ExceptionBehaviorClassifier.html#classify-randoop.ExceptionalExecution-randoop.sequence.ExecutableSequence-">classify</a></span>(<a href="../../randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a>&nbsp;exec,
+        <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
+<div class="block">Delegates to <a href="../../randoop/main/ExceptionBehaviorClassifier.html#classify-java.lang.Throwable-randoop.sequence.ExecutableSequence-"><code>classify(Throwable, ExecutableSequence)</code></a>.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main">GenInputsAbstract.BehaviorType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/ExceptionBehaviorClassifier.html#classify-java.lang.Throwable-randoop.sequence.ExecutableSequence-">classify</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;t,
         <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</code>
@@ -196,6 +203,24 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="classify-randoop.ExceptionalExecution-randoop.sequence.ExecutableSequence-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>classify</h4>
+<pre>public static&nbsp;<a href="../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main">GenInputsAbstract.BehaviorType</a>&nbsp;classify(<a href="../../randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a>&nbsp;exec,
+                                                      <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;eseq)</pre>
+<div class="block">Delegates to <a href="../../randoop/main/ExceptionBehaviorClassifier.html#classify-java.lang.Throwable-randoop.sequence.ExecutableSequence-"><code>classify(Throwable, ExecutableSequence)</code></a>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>exec</code> - the ExceptionalExecution to classify</dd>
+<dd><code>eseq</code> - the <code>ExecutableSequence</code> that threw exception</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd><code>BehaviorType</code> determined by command-line arguments</dd>
+</dl>
+</li>
+</ul>
 <a name="classify-java.lang.Throwable-randoop.sequence.ExecutableSequence-">
 <!--   -->
 </a>

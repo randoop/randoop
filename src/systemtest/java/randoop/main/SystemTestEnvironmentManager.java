@@ -9,31 +9,31 @@ import java.nio.file.Paths;
 
 /** Manages the SystemTestEnvironment for a system test run. */
 class SystemTestEnvironmentManager {
-  /** The default directory name for test source files */
+  /** The default directory name for test source files. */
   private static final String SOURCE_DIR_NAME = "java";
 
-  /** The default directory name for test source files */
+  /** The default directory name for test source files. */
   private static final String CLASS_DIR_NAME = "class";
 
-  /** The default directory name for test jacocoagent files */
+  /** The default directory name for test jacocoagent files. */
   private static final String JACOCO_DIR_NAME = "jacoco";
 
-  /** The classpath for the systemtest */
+  /** The classpath for the systemtest. */
   final String classpath;
 
-  /** The root for the system test working directories */
+  /** The root for the system test working directories. */
   private final Path systemTestWorkingDir;
 
-  /** The path for the JaCoCo javaagent */
+  /** The path for the JaCoCo javaagent. */
   private final Path jacocoAgentPath;
 
   /** The path for the root directory for test input classes. */
   private final Path testInputClassDir;
 
-  /** The path for the replacecall agent jar */
+  /** The path for the replacecall agent jar. */
   final Path replacecallAgentPath;
 
-  /** The path for the covered-class agent jar */
+  /** The path for the covered-class agent jar. */
   final Path coveredClassAgentPath;
 
   /**

@@ -14,10 +14,10 @@ import org.plumelib.util.EntryReader;
  */
 class RandoopOptions {
 
-  /** The list of options used to call Randoop */
+  /** The list of options used to call Randoop. */
   private final List<String> options;
 
-  /** The list of classnames for running Randoop */
+  /** The list of classnames for running Randoop. */
   private final Set<String> classnames;
 
   /** The package name for Randoop-generated test classes; null if default package. */
@@ -26,7 +26,7 @@ class RandoopOptions {
   /** The basename for generated regression test classes. */
   private String regressionBasename;
 
-  /** The basename for generated error test classes */
+  /** The basename for generated error test classes. */
   private String errorBasename;
 
   /**
@@ -106,7 +106,7 @@ class RandoopOptions {
   }
 
   /**
-   * Adds an option-flag set to the given value
+   * Adds an option-flag set to the given value.
    *
    * @param option the name of the option flag to be set to false
    */

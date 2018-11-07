@@ -17,13 +17,13 @@ import randoop.types.TypeTuple;
  */
 public class ArrayCreation extends CallableOperation {
 
-  /** The element type for the created array */
+  /** The element type for the created array. */
   private final Type elementType;
 
-  /** The component type for the created array */
+  /** The component type for the created array. */
   private final Type componentType;
 
-  /** The dimensions of the created array */
+  /** The dimensions of the created array. */
   private int dimensions;
 
   /**

@@ -25,18 +25,13 @@ import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /**
- * Immutable.
- *
- * <p>A sequence of {@link Statement}s. Each element in the sequence represents a particular {@link
- * Statement}, like a method call {@code Foo f = m(i1...iN)} or a declaration {@code int x = 0}.
+ * An immutable sequence of {@link Statement}s.
  *
  * <p>This class represents only the structure of a well-formed sequence of statements, and does not
  * contain any information about the runtime behavior of the sequence. The class
  * randoop.ExecutableSequence adds functionality that executes the sequence.
  */
 public final class Sequence {
-
-  public double lastTimeUsed = java.lang.System.currentTimeMillis();
 
   /** The list of statements. */
   public final SimpleList<Statement> statements;
@@ -45,25 +40,15 @@ public final class Sequence {
    * The variables that are inputs or output for the last statement of this sequence: first the
    * return variable if any (ie, if the operation is non-void), then the input variables. These hold
    * the values "produced" by some statement of the sequence. Should be final but cannot because of
-   * serialization. This info is used by some generators.
+   * serialization.
    */
   private transient /*final*/ List<Variable> lastStatementVariables;
 
-  /**
-   * The types of the inputs and output for the last statement of this sequence: first the return
-   * type if any (ie, if the operation is non-void), then the input types. Should be final but
-   * cannot because of serialization. This info is used by some generators.
-   */
+  /** The types of elements of {@link #lastStatementVariables}. */
   private transient /*final*/ List<Type> lastStatementTypes;
 
   /** If true, inline primitive values rather than creating and using a variable. */
-  private transient boolean shouldInlineLiterals;
-
-  /**
-   * The list of statement indices that as determined by construction define outputs of this
-   * sequence.
-   */
-  private List<Integer> outputIndices;
+  private transient boolean shouldInlineLiterals = true;
 
   /** Create a new, empty sequence. */
   public Sequence() {
@@ -87,9 +72,6 @@ public final class Sequence {
     this.savedHashCode = hashCode;
     this.savedNetSize = netSize;
     this.computeLastStatementInfo();
-    this.outputIndices = new ArrayList<>();
-    this.shouldInlineLiterals = true;
-    this.outputIndices.add(this.statements.size() - 1);
     this.activeFlags = new BitSet(this.size());
     this.setAllActiveFlags();
     this.checkRep();
@@ -146,7 +128,7 @@ public final class Sequence {
    *
    * @param operation the operation for the sequence
    * @param inputSequences the sequences computing inputs to the operation
-   * @param indexes the indices of the inputs to the operation
+   * @param indexes the indices of the inputs to the operation; same length as inputSequences
    * @return the sequence that applies the operation to the given inputs
    */
   public static Sequence createSequence(
@@ -160,25 +142,12 @@ public final class Sequence {
     return inputSequence.extend(operation, inputs);
   }
 
-  public static Sequence createSequence(TypedOperation operation, Sequence inputSequence) {
+  public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
     List<Variable> inputs = new ArrayList<>();
-    for (int index : inputSequence.getOutputIndices()) {
-      inputs.add(inputSequence.getVariable(index));
+    for (int index : elementsSequence.getOutputIndices()) {
+      inputs.add(elementsSequence.sequence.getVariable(index));
     }
-    return inputSequence.extend(operation, inputs);
-  }
-
-  public static Sequence createSequence(List<Sequence> sequences, List<Integer> variables) {
-    assert sequences.size() == variables.size() : "must be one variable for each sequence";
-    Sequence sequence = Sequence.concatenate(sequences);
-    List<Integer> outputIndices = new ArrayList<>();
-    int size = 0;
-    for (int i = 0; i < sequences.size(); i++) {
-      outputIndices.add(size + variables.get(i));
-      size += sequences.get(i).size();
-    }
-    sequence.outputIndices = outputIndices;
-    return sequence;
+    return elementsSequence.sequence.extend(operation, inputs);
   }
 
   /**
@@ -196,7 +165,7 @@ public final class Sequence {
       indexList.add(getRelativeIndexForVariable(size(), v));
     }
     Statement statement = new Statement(operation, indexList);
-    int newNetSize = (operation.isNonreceivingValue()) ? this.savedNetSize : this.savedNetSize + 1;
+    int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
         new OneMoreElementList<>(this.statements, statement),
         this.savedHashCode + statement.hashCode(),
@@ -314,18 +283,7 @@ public final class Sequence {
   @SuppressWarnings("ReferenceEquality")
   public Statement getCreatingStatement(Variable value) {
     if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
-    return statements.get((value).index);
-  }
-
-  /**
-   * Returns the list of output indices for use when sequences are dealt with compositionally. What
-   * is an output index is determined by how the sequence is created, but generally is the index of
-   * the last statement.
-   *
-   * @return the list of output indices for this sequence
-   */
-  public List<Integer> getOutputIndices() {
-    return outputIndices;
+    return statements.get(value.index);
   }
 
   /**
@@ -475,17 +433,14 @@ public final class Sequence {
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
     for (int i = 0; i < statements.size(); i++) {
-      if (!(statements.get(i).isNonreceivingInitialization())) {
+      if (!statements.get(i).isNonreceivingInitialization()) {
         netSize++;
       }
     }
     return netSize;
   }
 
-  /**
-   * Set lastStatementVariables and lastStatementTypes to their appropriate values. See
-   * documentation for these fields for more info.
-   */
+  /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
   private void computeLastStatementInfo() {
     this.lastStatementTypes = new ArrayList<>();
     this.lastStatementVariables = new ArrayList<>();
@@ -570,7 +525,7 @@ public final class Sequence {
         if (newRefConstraint == null) {
           throw new IllegalStateException();
         }
-        if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
+        if (!statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint)) {
           throw new IllegalArgumentException(
               i
                   + "th input constraint "
@@ -689,8 +644,8 @@ public final class Sequence {
       Statement s = statements.get(i.index);
       Type outputType = s.getOutputType();
       if (type.isAssignableFrom(outputType)
-          && (!(onlyReceivers && outputType.isNonreceiverType()))
-          && (!(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization()))) {
+          && !(onlyReceivers && outputType.isNonreceiverType())
+          && !(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization())) {
         possibleVars.add(i);
       }
     }
@@ -740,7 +695,7 @@ public final class Sequence {
       if (isActive(i)) {
         Type outputType = s.getOutputType();
         if (type.isAssignableFrom(outputType)
-            && (!(onlyReceivers && outputType.isNonreceiverType()))) {
+            && !(onlyReceivers && outputType.isNonreceiverType())) {
           possibleIndices.add(i);
         }
       }
@@ -811,7 +766,7 @@ public final class Sequence {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      if (!(operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
+      if (!operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint)) {
         String msg =
             i
                 + "th given type "
@@ -1163,11 +1118,11 @@ public final class Sequence {
     return shouldInlineLiterals;
   }
 
+  // TODO: does this apply to the output value of this sequence, or to the input variables to this
+  // sequence, or both?  I think the output value, but I'm not sure.
   /**
-   * Disables inlining of variable values as arguments in this sequence. This is a hack to deal with
-   * inability to determine when a variable definition is necessary because it is used more than
-   * once, which is an issue because post-conditions can use variables but don't have the abilility
-   * to use the inlined form.
+   * Disables inlining of variable values as arguments in this sequence. This is a hack to give the
+   * variable a name, so that post-conditions can refer to it.
    */
   public void doNotInlineLiterals() {
     shouldInlineLiterals = false;

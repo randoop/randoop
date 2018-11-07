@@ -42,7 +42,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The reflection policy for collecting operations. */
   private final ReflectionPredicate reflectionPredicate;
 
-  /** The predicate to test whether to omit an operation */
+  /** The predicate to test whether to omit an operation. */
   private OmitMethodsPredicate omitPredicate;
 
   /** The predicate to test visibility. */
@@ -300,7 +300,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (getter != null) {
       operations.add(getter);
     }
-    if (!(Modifier.isFinal(mods))) {
+    if (!Modifier.isFinal(mods)) {
       TypedClassOperation operation =
           instantiateTypes(TypedOperation.createSetterForField(field, declaringType));
       if (operation != null) {

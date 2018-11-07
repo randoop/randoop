@@ -17,10 +17,10 @@ import randoop.operation.TypedOperation;
  */
 public class OperationHistoryLogger implements OperationHistoryLogInterface {
 
-  /** The {@code PrintWriter} for outputting the operation history as a table */
+  /** The {@code PrintWriter} for outputting the operation history as a table. */
   private final PrintWriter writer;
 
-  /** A sparse representation for the operation-outcome table */
+  /** A sparse representation for the operation-outcome table. */
   private final Map<TypedOperation, Map<OperationOutcome, Integer>> operationMap;
 
   /**

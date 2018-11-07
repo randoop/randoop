@@ -121,7 +121,7 @@ public abstract class ObjectContract {
     }
 
     if (outcome instanceof NormalExecution) {
-      boolean result = ((Boolean) (((NormalExecution) outcome).getRuntimeValue())).booleanValue();
+      boolean result = ((Boolean) ((NormalExecution) outcome).getRuntimeValue()).booleanValue();
       if (result) {
         return null;
       } else {

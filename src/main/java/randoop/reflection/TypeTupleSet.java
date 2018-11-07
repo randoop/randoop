@@ -21,7 +21,7 @@ class TypeTupleSet {
   /** The list of type lists (tuples) */
   private List<List<ReferenceType>> typeTuples;
 
-  /** The length of tuples in the set */
+  /** The length of tuples in the set. */
   private int tupleLength;
 
   /** Creates a tuple set with a single empty tuple. */

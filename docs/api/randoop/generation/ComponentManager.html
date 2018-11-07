@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ComponentManager (randoop 4.0.4 API)</title>
+<title>ComponentManager (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ComponentManager (randoop 4.0.4 API)";
+            parent.document.title="ComponentManager (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -48,8 +48,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/generation/DefaultOperationHistoryLogger.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/Bloodhound.html" title="class in randoop.generation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/CoverageTracker.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/generation/ComponentManager.html" target="_top">Frames</a></li>
@@ -111,7 +111,8 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">ComponentManager</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Stores and provides means to access the component sequences generated during a run of Randoop.
- "Component sequences" are sequences that Randoop uses to create larger sequences.
+ "Component sequences" are sequences that Randoop uses to create larger sequences. The collection
+ of sequences is also called Randoop's "pool".
 
  <p>This class manages different collections of component sequences:
 
@@ -122,11 +123,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
    <li>Package literals: analogous to class literals but at the package level.
  </ul>
 
- SEED SEQUENCES. Seed sequences are sequences that were not created during the generation process
- but obtained via other means. They include (1) sequences passed via the constructor, (2) class
- literals, and (3) package literals. The only different treatment of seed sequences is during
- calls to the clearGeneratedSequences() method, which removes only general, non-seed components
- from the collection.</div>
+ <p>SEED SEQUENCES. Seed sequences are sequences that were not created during the generation
+ process but obtained via other means. They include (1) sequences passed via the constructor, (2)
+ class literals, and (3) package literals. The only different treatment of seed sequences is
+ during calls to the clearGeneratedSequences() method, which removes only general, non-seed
+ components from the collection.</div>
 </li>
 </ul>
 </div>
@@ -171,10 +172,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">A set of additional components representing literals that should only be used as input to
  specific packages.</div>
 </td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#sequenceTypes">sequenceTypes</a></span></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -343,7 +340,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a name="packageLiterals">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>packageLiterals</h4>
 <pre>private&nbsp;<a href="../../randoop/sequence/PackageLiterals.html" title="class in randoop.sequence">PackageLiterals</a> packageLiterals</pre>
@@ -352,15 +349,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 
  <p>Null if package literals are not used or none were found. At most one of classLiterals and
  packageliterals is non-null.</div>
-</li>
-</ul>
-<a name="sequenceTypes">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>sequenceTypes</h4>
-<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; sequenceTypes</pre>
 </li>
 </ul>
 </li>
@@ -587,8 +575,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/generation/DefaultOperationHistoryLogger.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/Bloodhound.html" title="class in randoop.generation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/CoverageTracker.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/generation/ComponentManager.html" target="_top">Frames</a></li>

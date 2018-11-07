@@ -3,7 +3,7 @@ package randoop.util;
 import java.io.PrintStream;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
-import org.plumelib.util.ReflectionPlume;
+import org.plumelib.reflection.ReflectionPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -121,7 +121,7 @@ public final class ReflectionExecutor {
    * @param out ignored
    * @throws TimeoutExceededException if execution times out
    */
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings({"deprecation", "DeprecatedThreadMethods"})
   private static void executeReflectionCodeThreaded(ReflectionCode code, PrintStream out)
       throws TimeoutExceededException {
 

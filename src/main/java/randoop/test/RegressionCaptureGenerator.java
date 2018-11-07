@@ -42,13 +42,13 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The generator for expected exceptions. */
   private ExpectedExceptionCheckGen exceptionExpectation;
 
-  /** The map from a type to the observer operations for the type */
+  /** The map from a type to the observer operations for the type. */
   private MultiMap<Type, TypedOperation> observerMap;
 
-  /** The visibility predicate */
+  /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
 
-  /** The flag whether to include regression assertions */
+  /** The flag whether to include regression assertions. */
   private boolean includeAssertions;
 
   public RegressionCaptureGenerator(
@@ -112,7 +112,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             checks.add(new ObjectCheck(new IsNull(), var));
 
           } else if (PrimitiveTypes.isBoxedPrimitive(runtimeValue.getClass())
-              || (runtimeValue.getClass().equals(String.class))) {
+              || runtimeValue.getClass().equals(String.class)) {
 
             if (runtimeValue instanceof String) {
               // System.out.printf("considering String check for seq %08X%n",
@@ -142,7 +142,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               Variable var0 = sequence.sequence.getInputs(i).get(0);
               if (var0.getType().runtimeClassIs(java.util.Date.class)) {
                 Statement sk = sequence.sequence.getCreatingStatement(var0);
-                if ((sk.isConstructorCall()) && (sequence.sequence.getInputs(i).size() == 1)) {
+                if (sk.isConstructorCall() && sequence.sequence.getInputs(i).size() == 1) {
                   continue;
                 }
                 // System.out.printf ("var type %s comes from date %s / %s%n",
@@ -173,7 +173,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             // Assert that the value is not null.
             // Exception: if the value comes directly from a constructor call,
             // not interesting that it's non-null; omit the check.
-            if (!(statement.isConstructorCall())) {
+            if (!statement.isConstructorCall()) {
               checks.add(new ObjectCheck(new IsNotNull(), var));
             }
 

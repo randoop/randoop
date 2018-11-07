@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.generation (randoop 4.0.4 API)</title>
+<title>randoop.generation (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.generation (randoop 4.0.4 API)";
+            parent.document.title="randoop.generation (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -93,20 +93,33 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/generation/InputSequenceSelector.html" title="interface in randoop.generation">InputSequenceSelector</a></td>
+<td class="colLast">
+<div class="block">Interface for selecting sequences as input for creating new sequences.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/IStopper.html" title="interface in randoop.generation">IStopper</a></td>
 <td class="colLast">
 <div class="block">Used by Randoop to determine whether generation should stop.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation">OperationHistoryLogInterface</a></td>
 <td class="colLast">
 <div class="block">Interface for classes that log the usage of operations in the generated sequences.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/StateMatcher.html" title="interface in randoop.generation">StateMatcher</a></td>
 <td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/generation/TypedOperationSelector.html" title="interface in randoop.generation">TypedOperationSelector</a></td>
+<td class="colLast">
+<div class="block">An interface for selecting an operation for the <a href="../../randoop/generation/ForwardGenerator.html" title="class in randoop.generation"><code>ForwardGenerator</code></a> to use in constructing a
+ new test sequence.</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -126,65 +139,92 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/generation/Bloodhound.html" title="class in randoop.generation">Bloodhound</a></td>
+<td class="colLast">
+<div class="block">Implements the Bloodhound component, as described by the paper "GRT: Program-Analysis-Guided
+ Random Testing" by Ma et.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation">ComponentManager</a></td>
 <td class="colLast">
 <div class="block">Stores and provides means to access the component sequences generated during a run of Randoop.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/generation/CoverageTracker.html" title="class in randoop.generation">CoverageTracker</a></td>
+<td class="colLast">
+<div class="block">Tracks the branch coverage of each method under test.</div>
+</td>
+</tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/generation/CoverageTracker.DummySessionInfoVisitor.html" title="class in randoop.generation">CoverageTracker.DummySessionInfoVisitor</a></td>
+<td class="colLast">
+<div class="block">An <code>ISessionInfoVisitor</code> that does nothing.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/DefaultOperationHistoryLogger.html" title="class in randoop.generation">DefaultOperationHistoryLogger</a></td>
 <td class="colLast">
 <div class="block">The default implementation of the <a href="../../randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation"><code>OperationHistoryLogInterface</code></a>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/generation/EqualsMethodMatcher.html" title="class in randoop.generation">EqualsMethodMatcher</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/EverythingIsDifferentMatcher.html" title="class in randoop.generation">EverythingIsDifferentMatcher</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/generation/ForwardGenerator.html" title="class in randoop.generation">ForwardGenerator</a></td>
 <td class="colLast">
 <div class="block">Randoop's forward, component-based generator.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/ForwardGenerator.VarAndSeq.html" title="class in randoop.generation">ForwardGenerator.VarAndSeq</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="../../randoop/generation/HelperSequenceCreator.html" title="class in randoop.generation">HelperSequenceCreator</a></td>
-<td class="colLast">&nbsp;</td>
-</tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/generation/HelperSequenceCreator.html" title="class in randoop.generation">HelperSequenceCreator</a></td>
+<td class="colLast">
+<div class="block">Contains static methods that create Sequences.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/InputsAndSuccessFlag.html" title="class in randoop.generation">InputsAndSuccessFlag</a></td>
 <td class="colLast">
 <div class="block">Return type for ForwardGenerator's private selectInputs method, which is responsible for
  selecting a set of component sequences to be concatenated into a longer sequence.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/generation/ObjectCache.html" title="class in randoop.generation">ObjectCache</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/OperationHistoryLogger.html" title="class in randoop.generation">OperationHistoryLogger</a></td>
 <td class="colLast">
 <div class="block">The working implementation of a <a href="../../randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation"><code>OperationHistoryLogInterface</code></a> that will collect and print
  the operation history log to the <code>PrintWriter</code> given when constructed.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/generation/RandoopListenerManager.html" title="class in randoop.generation">RandoopListenerManager</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/generation/SeedSequences.html" title="class in randoop.generation">SeedSequences</a></td>
 <td class="colLast">
 <div class="block">Provides functionality for creating a set of sequences that create a set of primitive values.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/generation/SmallTestsSequenceSelection.html" title="class in randoop.generation">SmallTestsSequenceSelection</a></td>
+<td class="colLast">
+<div class="block">Select input sequences, favoring shorter sequences.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -192,6 +232,18 @@
 <td class="colLast">
 <div class="block">Utility methods for setting up selection and operation-history logging in integration tests that
  use a generator.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/generation/UniformRandomMethodSelection.html" title="class in randoop.generation">UniformRandomMethodSelection</a></td>
+<td class="colLast">
+<div class="block">This class selects a method, from the list of methods under test, with uniform probability.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/generation/UniformRandomSequenceSelection.html" title="class in randoop.generation">UniformRandomSequenceSelection</a></td>
+<td class="colLast">
+<div class="block">Select sequences uniformly at random.</div>
 </td>
 </tr>
 </tbody>

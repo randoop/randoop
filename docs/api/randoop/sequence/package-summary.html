@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.sequence (randoop 4.0.4 API)</title>
+<title>randoop.sequence (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.sequence (randoop 4.0.4 API)";
+            parent.document.title="randoop.sequence (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -124,7 +124,7 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></td>
 <td class="colLast">
-<div class="block">Immutable.</div>
+<div class="block">An immutable sequence of <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>s.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -136,30 +136,36 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/sequence/SequenceCollection.html" title="class in randoop.sequence">SequenceCollection</a></td>
 <td class="colLast">
-<div class="block">A collection of sequences that makes its efficient to ask for all the sequences that create a
+<div class="block">A collection of sequences that makes it efficient to ask for all the sequences that create a
  value of a given type.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a></td>
 <td class="colLast">
-<div class="block">Statement represents a statement involving an operation (or term), and the list of inputs for the
- statement.</div>
+<div class="block">Statement represents a Java statement, such as a method call <code>Foo f = m(i1...iN)</code> or a
+ declaration <code>int x = 0</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/sequence/TupleSequence.html" title="class in randoop.sequence">TupleSequence</a></td>
+<td class="colLast">
+<div class="block">A Sequence that produces a tuple or collection of values, all of the same type.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/sequence/Value.html" title="class in randoop.sequence">Value</a></td>
 <td class="colLast">
 <div class="block">Utility methods to work with values in test sequences.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></td>
 <td class="colLast">
 <div class="block">Represents the result of a statement call in a sequence.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/sequence/VariableRenamer.html" title="class in randoop.sequence">VariableRenamer</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>

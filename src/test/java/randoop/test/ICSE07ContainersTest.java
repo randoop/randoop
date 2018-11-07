@@ -7,6 +7,7 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -86,8 +87,10 @@ public class ICSE07ContainersTest {
     final List<TypedOperation> model = new ArrayList<>();
     VisibilityPredicate visibility = IS_PUBLIC;
     ReflectionManager mgr = new ReflectionManager(visibility);
+    Set<ClassOrInterfaceType> classesUnderTest = new HashSet<>();
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+      classesUnderTest.add(classType);
       final OperationExtractor extractor =
           new OperationExtractor(
               classType,
@@ -113,7 +116,8 @@ public class ICSE07ContainersTest {
                 120 /* 2 minutes */, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),
             componentMgr,
             stopper,
-            null);
+            null,
+            classesUnderTest);
     explorer.setTestCheckGenerator(new DummyCheckGenerator());
     explorer.createAndClassifySequences();
   }

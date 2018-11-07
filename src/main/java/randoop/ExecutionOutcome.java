@@ -14,6 +14,10 @@ public abstract class ExecutionOutcome {
   /** The execution time, in nanoseconds. */
   private final long executionTime;
 
+  /**
+   * The standard output and error output of executing the sequence. Only populated if {@link
+   * randoop.main.GenInputsAbstract#capture_output} is true.
+   */
   String output = null;
 
   /** @param executionTime the execution time, in nanoseconds */
@@ -31,7 +35,7 @@ public abstract class ExecutionOutcome {
   }
 
   /**
-   * Set the output of the statement
+   * Set the output of the statement.
    *
    * @param output the statement output
    */
@@ -40,7 +44,7 @@ public abstract class ExecutionOutcome {
   }
 
   /**
-   * Retrieve the output of the statement
+   * Retrieve the output of the statement.
    *
    * @return the statement output
    */

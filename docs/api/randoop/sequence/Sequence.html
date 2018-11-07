@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Sequence (randoop 4.0.4 API)</title>
+<title>Sequence (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Sequence (randoop 4.0.4 API)";
+            parent.document.title="Sequence (randoop 4.1.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":10,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":9,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":9,"i44":9,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":9};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":10,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":9,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":9,"i41":9,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -106,18 +106,11 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>All Implemented Interfaces:</dt>
-<dd><a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public final class <span class="typeNameLabel">Sequence</span>
-extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
-implements <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a></pre>
-<div class="block">Immutable.
-
- <p>A sequence of <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>s. Each element in the sequence represents a particular <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>, like a method call <code>Foo f = m(i1...iN)</code> or a declaration <code>int x = 0</code>.
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+<div class="block">An immutable sequence of <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>s.
 
  <p>This class represents only the structure of a well-formed sequence of statements, and does not
  contain any information about the runtime behavior of the sequence. The class
@@ -171,8 +164,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <tr class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#lastStatementTypes">lastStatementTypes</a></span></code>
-<div class="block">The types of the inputs and output for the last statement of this sequence: first the return
- type if any (ie, if the operation is non-void), then the input types.</div>
+<div class="block">The types of elements of <a href="../../randoop/sequence/Sequence.html#lastStatementVariables"><code>lastStatementVariables</code></a>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -180,17 +172,6 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#lastStatementVariables">lastStatementVariables</a></span></code>
 <div class="block">The variables that are inputs or output for the last statement of this sequence: first the
  return variable if any (ie, if the operation is non-void), then the input variables.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#lastTimeUsed">lastTimeUsed</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#outputIndices">outputIndices</a></span></code>
-<div class="block">The list of statement indices that as determined by construction define outputs of this
- sequence.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -310,7 +291,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#computeLastStatementInfo--">computeLastStatementInfo</a></span>()</code>
-<div class="block">Set lastStatementVariables and lastStatementTypes to their appropriate values.</div>
+<div class="block">Set <a href="../../randoop/sequence/Sequence.html#lastStatementVariables"><code>lastStatementVariables</code></a> and <a href="../../randoop/sequence/Sequence.html#lastStatementTypes"><code>lastStatementTypes</code></a>.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
@@ -327,48 +308,43 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#createSequence-java.util.List-java.util.List-">createSequence</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;sequences,
-              <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;variables)</code>&nbsp;</td>
-</tr>
-<tr id="i12" class="altColor">
-<td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#createSequence-randoop.operation.TypedOperation-java.util.List-java.util.List-">createSequence</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
               <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;inputSequences,
               <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;indexes)</code>
 <div class="block">Creates a sequence consisting of the given operation given the input.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#createSequence-randoop.operation.TypedOperation-randoop.sequence.Sequence-">createSequence</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-              <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;inputSequence)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#createSequence-randoop.operation.TypedOperation-randoop.sequence.TupleSequence-">createSequence</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
+              <a href="../../randoop/sequence/TupleSequence.html" title="class in randoop.sequence">TupleSequence</a>&nbsp;elementsSequence)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#createSequenceForPrimitive-java.lang.Object-">createSequenceForPrimitive</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;value)</code>
 <div class="block">Creates a sequence corresponding to the given non-null primitive value.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#doNotInlineLiterals--">doNotInlineLiterals</a></span>()</code>
 <div class="block">Disables inlining of variable values as arguments in this sequence.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#equals-java.lang.Object-">equals</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;o)</code>
 <div class="block">Two sequences are equal if their statements(+inputs) are element-wise equal.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#extend-randoop.sequence.Statement-java.util.List-">extend</a></span>(<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&nbsp;statement,
       <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputs)</code>
 <div class="block">extend adds a new statement to this sequence using the operation of the given statement.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#extend-randoop.operation.TypedOperation-java.util.List-">extend</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
       <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVariables)</code>
@@ -376,7 +352,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
  the end.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#extend-randoop.operation.TypedOperation-randoop.sequence.Variable...-">extend</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
       <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>...&nbsp;inputs)</code>
@@ -384,43 +360,37 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
  the end.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getCreatingStatement-randoop.sequence.Variable-">getCreatingStatement</a></span>(<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&nbsp;value)</code>
 <div class="block">The statement that created this value.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getInputs-int-">getInputs</a></span>(int&nbsp;statementIndex)</code>
 <div class="block">The inputs for the ith statement.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getInputsAsAbsoluteIndices-int-">getInputsAsAbsoluteIndices</a></span>(int&nbsp;i)</code>
 <div class="block">The inputs for the ith statement, as indices.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getLastVariable--">getLastVariable</a></span>()</code>
 <div class="block">The value created by the last statement in the sequence.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getOperation--">getOperation</a></span>()</code>
 <div class="block">Returns the operation from which this sequence was constructed.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getOutputIndices--">getOutputIndices</a></span>()</code>
-<div class="block">Returns the list of output indices for use when sequences are dealt with compositionally.</div>
-</td>
-</tr>
-<tr id="i26" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>private static <a href="../../randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence">Sequence.RelativeNegativeIndex</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getRelativeIndexForVariable-int-randoop.sequence.Variable-">getRelativeIndexForVariable</a></span>(int&nbsp;statementPosition,
                            <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&nbsp;v)</code>
@@ -428,43 +398,43 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
  the statement at position statementPosition.</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getStatement-int-">getStatement</a></span>(int&nbsp;index)</code>
 <div class="block">The statement for the statement at the given index.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getStatementsWithInputs--">getStatementsWithInputs</a></span>()</code>
 <div class="block">An list of all the statements in this sequence.</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getStatementWithInputs-int-">getStatementWithInputs</a></span>(int&nbsp;index)</code>
 <div class="block">The statement(+inputs) at the given index.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>(package private) <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getSubsequence-int-">getSubsequence</a></span>(int&nbsp;index)</code>
 <div class="block">Return a subsequence of this sequence that contains the statement at the given index.</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>(package private) <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getTypesForLastStatement--">getTypesForLastStatement</a></span>()</code>
 <div class="block">The types of all the variables involved in the last statement.</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getVariable-int-">getVariable</a></span>(int&nbsp;i)</code>
 <div class="block">The value created by the ith statement.</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getVariableForInput-int-randoop.sequence.Sequence.RelativeNegativeIndex-">getVariableForInput</a></span>(int&nbsp;statementPosition,
                    <a href="../../randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence">Sequence.RelativeNegativeIndex</a>&nbsp;input)</code>
@@ -472,131 +442,127 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
  position statementPosition.</div>
 </td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>(package private) <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getVariablesOfLastStatement--">getVariablesOfLastStatement</a></span>()</code>
 <div class="block">The variables involved in the last statement.</div>
 </td>
 </tr>
-<tr id="i35" class="rowColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getWeight--">getWeight</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i36" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#hasActiveFlags--">hasActiveFlags</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#hasUseOfMatchingClass-java.util.regex.Pattern-">hasUseOfMatchingClass</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a>&nbsp;classNames)</code>
 <div class="block">Test whether any statement of this sequence has an operation whose declaring class matches the
  given regular expression.</div>
 </td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#isActive-int-">isActive</a></span>(int&nbsp;i)</code>&nbsp;</td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#isNonreceiver--">isNonreceiver</a></span>()</code>
 <div class="block">A sequence representing a single primitive value, like "Foo var0 = null" or "int var0 = 1".</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#isValidIndex-int-">isValidIndex</a></span>(int&nbsp;index)</code>
 <div class="block">True iff this sequence contains a statement at the given index.</div>
 </td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#log--">log</a></span>()</code>
 <div class="block">Write this sequence to the Randoop log.</div>
 </td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#parse-java.util.List-">parse</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;statements)</code>
 <div class="block">NOTE: the ONLY place this is used is in a test.</div>
 </td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#parse-java.lang.String-">parse</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;string)</code>
 <div class="block">Parse a sequence encoded as a strings.</div>
 </td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#randomVariableForType-randoop.types.Type-boolean-">randomVariableForType</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
                      boolean&nbsp;onlyReceivers)</code>
 <div class="block">Choose one of the statements that produces a values of type <code>type</code>.</div>
 </td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#randomVariableForTypeLastStatement-randoop.types.Type-boolean-">randomVariableForTypeLastStatement</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
                                   boolean&nbsp;onlyReceivers)</code>
 <div class="block">The last statement produces multiple values of type <code>type</code>.</div>
 </td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#setAllActiveFlags--">setAllActiveFlags</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#shouldInlineLiterals--">shouldInlineLiterals</a></span>()</code>
 <div class="block">By default, every value used in a sequence is named as a variable.</div>
 </td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#size--">size</a></span>()</code>
 <div class="block">The number of statements in the sequence.</div>
 </td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toCodeString--">toCodeString</a></span>()</code>
 <div class="block">Returns the Java source code representation of this sequence with values substituted for simple
  initializations.</div>
 </td>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toFullCodeString--">toFullCodeString</a></span>()</code>
 <div class="block">Returns the Java source representation of this sequence showing all statements.</div>
 </td>
 </tr>
-<tr id="i52" class="altColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toParsableString--">toParsableString</a></span>()</code>
 <div class="block">Returns a string representing this sequence.</div>
 </td>
 </tr>
-<tr id="i53" class="rowColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toParsableString-java.lang.String-">toParsableString</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;statementSep)</code>
 <div class="block">Like toParsableString, but the client can specify a string that will be used a separator
  between statements.</div>
 </td>
 </tr>
-<tr id="i54" class="altColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i55" class="rowColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#verifyFalse-java.lang.String-randoop.sequence.Sequence-">verifyFalse</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message,
            <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;other)</code>&nbsp;</td>
 </tr>
-<tr id="i56" class="altColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#zero-randoop.types.Type-">zero</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;c)</code>
 <div class="block">Returns a sequence that is of the form "Foo f = null;" where Foo is the given class.</div>
@@ -624,15 +590,6 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="lastTimeUsed">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>lastTimeUsed</h4>
-<pre>public&nbsp;double lastTimeUsed</pre>
-</li>
-</ul>
 <a name="statements">
 <!--   -->
 </a>
@@ -653,7 +610,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <div class="block">The variables that are inputs or output for the last statement of this sequence: first the
  return variable if any (ie, if the operation is non-void), then the input variables. These hold
  the values "produced" by some statement of the sequence. Should be final but cannot because of
- serialization. This info is used by some generators.</div>
+ serialization.</div>
 </li>
 </ul>
 <a name="lastStatementTypes">
@@ -663,9 +620,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>lastStatementTypes</h4>
 <pre>private transient&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; lastStatementTypes</pre>
-<div class="block">The types of the inputs and output for the last statement of this sequence: first the return
- type if any (ie, if the operation is non-void), then the input types. Should be final but
- cannot because of serialization. This info is used by some generators.</div>
+<div class="block">The types of elements of <a href="../../randoop/sequence/Sequence.html#lastStatementVariables"><code>lastStatementVariables</code></a>.</div>
 </li>
 </ul>
 <a name="shouldInlineLiterals">
@@ -676,17 +631,6 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <h4>shouldInlineLiterals</h4>
 <pre>private transient&nbsp;boolean shouldInlineLiterals</pre>
 <div class="block">If true, inline primitive values rather than creating and using a variable.</div>
-</li>
-</ul>
-<a name="outputIndices">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>outputIndices</h4>
-<pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt; outputIndices</pre>
-<div class="block">The list of statement indices that as determined by construction define outputs of this
- sequence.</div>
 </li>
 </ul>
 <a name="activeFlags">
@@ -829,30 +773,20 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>operation</code> - the operation for the sequence</dd>
 <dd><code>inputSequences</code> - the sequences computing inputs to the operation</dd>
-<dd><code>indexes</code> - the indices of the inputs to the operation</dd>
+<dd><code>indexes</code> - the indices of the inputs to the operation; same length as inputSequences</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the sequence that applies the operation to the given inputs</dd>
 </dl>
 </li>
 </ul>
-<a name="createSequence-randoop.operation.TypedOperation-randoop.sequence.Sequence-">
+<a name="createSequence-randoop.operation.TypedOperation-randoop.sequence.TupleSequence-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createSequence</h4>
 <pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createSequence(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-                                      <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;inputSequence)</pre>
-</li>
-</ul>
-<a name="createSequence-java.util.List-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createSequence</h4>
-<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createSequence(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;sequences,
-                                      <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;variables)</pre>
+                                      <a href="../../randoop/sequence/TupleSequence.html" title="class in randoop.sequence">TupleSequence</a>&nbsp;elementsSequence)</pre>
 </li>
 </ul>
 <a name="extend-randoop.operation.TypedOperation-java.util.List-">
@@ -927,19 +861,6 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <dd><code>sequences</code> - the list of sequences to concatenate</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the concatenation of the sequences in the list</dd>
-</dl>
-</li>
-</ul>
-<a name="getWeight--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getWeight</h4>
-<pre>public&nbsp;double&nbsp;getWeight()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/util/WeightedElement.html#getWeight--">getWeight</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -1046,22 +967,6 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <dd><code>value</code> - the variable</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the statement that assigned to this variable</dd>
-</dl>
-</li>
-</ul>
-<a name="getOutputIndices--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getOutputIndices</h4>
-<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;getOutputIndices()</pre>
-<div class="block">Returns the list of output indices for use when sequences are dealt with compositionally. What
- is an output index is determined by how the sequence is created, but generally is the index of
- the last statement.</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the list of output indices for this sequence</dd>
 </dl>
 </li>
 </ul>
@@ -1251,8 +1156,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>computeLastStatementInfo</h4>
 <pre>private&nbsp;void&nbsp;computeLastStatementInfo()</pre>
-<div class="block">Set lastStatementVariables and lastStatementTypes to their appropriate values. See
- documentation for these fields for more info.</div>
+<div class="block">Set <a href="../../randoop/sequence/Sequence.html#lastStatementVariables"><code>lastStatementVariables</code></a> and <a href="../../randoop/sequence/Sequence.html#lastStatementTypes"><code>lastStatementTypes</code></a>.</div>
 </li>
 </ul>
 <a name="checkRep--">
@@ -1673,10 +1577,8 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>doNotInlineLiterals</h4>
 <pre>public&nbsp;void&nbsp;doNotInlineLiterals()</pre>
-<div class="block">Disables inlining of variable values as arguments in this sequence. This is a hack to deal with
- inability to determine when a variable definition is necessary because it is used more than
- once, which is an issue because post-conditions can use variables but don't have the abilility
- to use the inlined form.</div>
+<div class="block">Disables inlining of variable values as arguments in this sequence. This is a hack to give the
+ variable a name, so that post-conditions can refer to it.</div>
 </li>
 </ul>
 <a name="getOperation--">

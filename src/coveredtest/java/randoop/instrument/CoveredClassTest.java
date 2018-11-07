@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -39,7 +40,6 @@ import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.Type;
 import randoop.util.MultiMap;
-import randoop.util.predicate.Predicate;
 
 public class CoveredClassTest {
 
@@ -250,7 +250,12 @@ public class CoveredClassTest {
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
-            model, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
+            model,
+            observers,
+            new GenInputsAbstract.Limits(),
+            componentMgr,
+            listenerMgr,
+            operationModel.getClassTypes());
     GenTests genTests = new GenTests();
 
     TypedOperation objectConstructor;

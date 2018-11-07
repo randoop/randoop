@@ -751,7 +751,7 @@ public class RandoopSystemTest {
         is(equalTo(0)));
   }
 
-  /** Runs with --observers flag and should have no observers called for side effect */
+  /** Runs with --observers flag and should have no observers called for side effect. */
   @Test
   public void runSideEffectObserversTest() {
     String directoryName = "side-effect-observers-test";
@@ -851,7 +851,7 @@ public class RandoopSystemTest {
     generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
-  /** Tests that Randoop deals properly with exceptions */
+  /** Tests that Randoop deals properly with exceptions. */
   @Test
   public void runExceptionTest() {
     SystemTestEnvironment testEnvironment =
@@ -1359,7 +1359,7 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Expecting something like
+   * Expecting something like.
    *
    * <pre>
    * generation.Dim6Matrix dim6Matrix = new generation.Dim6Matrix();

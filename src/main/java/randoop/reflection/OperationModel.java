@@ -83,10 +83,10 @@ public class OperationModel {
   /** Set of object contracts used to generate tests. */
   private ContractSet contracts;
 
-  /** Set of concrete operations extracted from classes */
+  /** Set of concrete operations extracted from classes. */
   private final Set<TypedOperation> operations;
 
-  /** For debugging only */
+  /** For debugging only. */
   private List<Pattern> omitMethods;
 
   /** Create an empty model of test context. */

@@ -14,7 +14,7 @@ import javax.tools.JavaFileObject;
  */
 public final class SequenceClassLoader extends ClassLoader {
 
-  /** The map from fully-qualified class name to the class object */
+  /** The map from fully-qualified class name to the class object. */
   private final HashMap<String, JavaFileObject> classes;
 
   /**

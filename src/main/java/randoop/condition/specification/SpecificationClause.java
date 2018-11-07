@@ -17,7 +17,7 @@ public abstract class SpecificationClause {
   /** The description of this {@link SpecificationClause}. */
   private final String description;
 
-  /** The {@link Guard} for this specification */
+  /** The {@link Guard} for this specification. */
   private final Guard guard;
 
   /** Gson serialization requires a default constructor. */

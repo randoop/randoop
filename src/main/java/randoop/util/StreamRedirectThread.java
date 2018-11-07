@@ -69,12 +69,14 @@ public class StreamRedirectThread extends Thread {
    * @param in stream to copy from
    * @param out stream to copy to
    */
+  @SuppressWarnings("ThreadPriorityCheck")
   public StreamRedirectThread(String name, InputStream in, OutputStream out) {
     super(name);
     this.in = new InputStreamReader(in, UTF_8);
     this.out = new OutputStreamWriter(out, UTF_8);
     this.outWriter = new PrintStream(out);
 
+    //  heuristic to improve performance; unnecessary?
     setPriority(Thread.MAX_PRIORITY - 1);
   }
 

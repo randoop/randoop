@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Globals (randoop 4.0.4 API)</title>
+<title>Globals (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Globals (randoop 4.0.4 API)";
+            parent.document.title="Globals (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../randoop/ExecutionVisitor.html" title="interface in randoop"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../randoop/Globals.ErrorStreamAssigner.html" title="class in randoop"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../randoop/MultiVisitor.html" title="class in randoop"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../index.html?randoop/Globals.html" target="_top">Frames</a></li>
@@ -73,7 +73,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -117,25 +117,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="nested.class.summary">
-<!--   -->
-</a>
-<h3>Nested Class Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
-<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Class and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.ErrorStreamAssigner.html" title="class in randoop">Globals.ErrorStreamAssigner</a></span></code>&nbsp;</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
@@ -150,7 +131,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#blackHole">blackHole</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#blackHole">blackHole</a></span></code>
+<div class="block">A PrintStream whose contents are ignored.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/ByteArrayOutputStream.html?is-external=true" title="class or interface in java.io">ByteArrayOutputStream</a></code></td>
@@ -158,27 +141,31 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#COLWIDTH">COLWIDTH</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#COLWIDTH">COLWIDTH</a></span></code>
+<div class="block">Column width for printing messages.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#INDENTWIDTH">INDENTWIDTH</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#INDENTWIDTH">INDENTWIDTH</a></span></code>
+<div class="block">Number of spaces for leading indentation for printing messages.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#lineSep">lineSep</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#lineSep">lineSep</a></span></code>
+<div class="block">The system-specific line separator string.</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#MAX_MODEL_DEPTH">MAX_MODEL_DEPTH</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#oldStdErr">oldStdErr</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#RANDOOP_VERSION">RANDOOP_VERSION</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#RANDOOP_VERSION">RANDOOP_VERSION</a></span></code>
+<div class="block">The version number for Randoop.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -214,11 +201,15 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#getClassPath--">getClassPath</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#getClassPath--">getClassPath</a></span>()</code>
+<div class="block">Return the Java classpath.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#getRandoopVersion--">getRandoopVersion</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#getRandoopVersion--">getRandoopVersion</a></span>()</code>
+<div class="block">Return the version number for Randoop.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -249,6 +240,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>RANDOOP_VERSION</h4>
 <pre>public static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> RANDOOP_VERSION</pre>
+<div class="block">The version number for Randoop.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../constant-values.html#randoop.Globals.RANDOOP_VERSION">Constant Field Values</a></dd>
@@ -262,6 +254,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>lineSep</h4>
 <pre>public static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> lineSep</pre>
+<div class="block">The system-specific line separator string.</div>
 </li>
 </ul>
 <a name="blackHole">
@@ -271,6 +264,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>blackHole</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a> blackHole</pre>
+<div class="block">A PrintStream whose contents are ignored.</div>
 </li>
 </ul>
 <a name="bos">
@@ -280,19 +274,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>bos</h4>
 <pre>private static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/ByteArrayOutputStream.html?is-external=true" title="class or interface in java.io">ByteArrayOutputStream</a> bos</pre>
-</li>
-</ul>
-<a name="MAX_MODEL_DEPTH">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MAX_MODEL_DEPTH</h4>
-<pre>public static final&nbsp;int MAX_MODEL_DEPTH</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../constant-values.html#randoop.Globals.MAX_MODEL_DEPTH">Constant Field Values</a></dd>
-</dl>
 </li>
 </ul>
 <a name="oldStdErr">
@@ -311,6 +292,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>COLWIDTH</h4>
 <pre>public static final&nbsp;int COLWIDTH</pre>
+<div class="block">Column width for printing messages.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../constant-values.html#randoop.Globals.COLWIDTH">Constant Field Values</a></dd>
@@ -324,6 +306,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>INDENTWIDTH</h4>
 <pre>public static final&nbsp;int INDENTWIDTH</pre>
+<div class="block">Number of spaces for leading indentation for printing messages.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../constant-values.html#randoop.Globals.INDENTWIDTH">Constant Field Values</a></dd>
@@ -362,6 +345,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getRandoopVersion</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getRandoopVersion()</pre>
+<div class="block">Return the version number for Randoop.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the version number for Randoop</dd>
+</dl>
 </li>
 </ul>
 <a name="getClassPath--">
@@ -371,6 +359,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getClassPath</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getClassPath()</pre>
+<div class="block">Return the Java classpath.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the Java classpath</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -401,7 +394,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="subNav">
 <ul class="navList">
 <li><a href="../randoop/ExecutionVisitor.html" title="interface in randoop"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../randoop/Globals.ErrorStreamAssigner.html" title="class in randoop"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../randoop/MultiVisitor.html" title="class in randoop"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../index.html?randoop/Globals.html" target="_top">Frames</a></li>
@@ -425,7 +418,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

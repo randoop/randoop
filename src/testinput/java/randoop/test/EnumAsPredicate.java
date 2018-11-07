@@ -1,6 +1,6 @@
 package randoop.test;
 
-import randoop.util.predicate.Predicate;
+import java.util.function.Predicate;
 
 /**
  * Class for enums with parameterized types.
@@ -22,12 +22,12 @@ public enum EnumAsPredicate implements Predicate<Integer> {
   };
 
   @Override
-  public Predicate<Integer> or(Predicate<Integer> p) {
+  public Predicate<Integer> or(Predicate<? super Integer> p) {
     return this;
   }
 
   @Override
-  public Predicate<Integer> and(Predicate<Integer> q) {
+  public Predicate<Integer> and(Predicate<? super Integer> q) {
     return this;
   }
 }

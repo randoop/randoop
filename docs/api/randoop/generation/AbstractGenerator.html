@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>AbstractGenerator (randoop 4.0.4 API)</title>
+<title>AbstractGenerator (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="AbstractGenerator (randoop 4.0.4 API)";
+            parent.document.title="AbstractGenerator (randoop 4.1.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":6,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":6,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":6};
+var methods = {"i0":10,"i1":10,"i2":6,"i3":10,"i4":10,"i5":10,"i6":10,"i7":6,"i8":10,"i9":10,"i10":6,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/Bloodhound.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/generation/AbstractGenerator.html" target="_top">Frames</a></li>
@@ -216,7 +216,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#outputTest">outputTest</a></span></code>
 <div class="block">A filter to determine whether a sequence should be added to the output sequence lists.</div>
 </td>
@@ -327,82 +327,89 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr id="i7" class="rowColor">
+<td class="colFirst"><code>abstract void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#newRegressionTestHook-randoop.sequence.Sequence-">newRegressionTestHook</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;sequence)</code>
+<div class="block">Take action based on the given <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> that was classified as a regression test, i.e.,
+ normal behavior.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#numAttemptedSequences--">numAttemptedSequences</a></span>()</code>
 <div class="block">Returns the count of attempts to generate a sequence so far.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>private int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#numErrorSequences--">numErrorSequences</a></span>()</code>
 <div class="block">Returns the count of generated error-revealing sequences.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>abstract int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#numGeneratedSequences--">numGeneratedSequences</a></span>()</code>
 <div class="block">Returns the count of sequences generated so far by the generator.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#numOutputSequences--">numOutputSequences</a></span>()</code>
 <div class="block">Returns the count of generated sequence currently for output.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#outputSequenceCount--">outputSequenceCount</a></span>()</code>
 <div class="block">Returns the total number of test sequences generated to output, including both regression tests
  and error-revealing tests.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>(package private) void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#setCurrentSequence-randoop.sequence.Sequence-">setCurrentSequence</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;s)</code>
 <div class="block">Sets the current sequence during exploration</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#setExecutionVisitor-randoop.ExecutionVisitor-">setExecutionVisitor</a></span>(<a href="../../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a>&nbsp;executionVisitor)</code>
 <div class="block">Registers a visitor with this object for use while executing each generated sequence.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#setExecutionVisitor-java.util.List-">setExecutionVisitor</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a>&gt;&nbsp;visitors)</code>
 <div class="block">Registers a MultiVisitor of all the given visitors with this object for use while executing
  each generated sequence.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#setOperationHistoryLogger-randoop.generation.OperationHistoryLogInterface-">setOperationHistoryLogger</a></span>(<a href="../../randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation">OperationHistoryLogInterface</a>&nbsp;logger)</code>
 <div class="block">Sets the operation history logger for this generator.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#setTestCheckGenerator-randoop.test.TestCheckGenerator-">setTestCheckGenerator</a></span>(<a href="../../randoop/test/TestCheckGenerator.html" title="class in randoop.test">TestCheckGenerator</a>&nbsp;checkGenerator)</code>
 <div class="block">Registers a visitor with this object to generate checks following execution of each generated
  test sequence.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#setTestPredicate-randoop.util.predicate.Predicate-">setTestPredicate</a></span>(<a href="../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;&nbsp;outputTest)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#setTestPredicate-java.util.function.Predicate-">setTestPredicate</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;&nbsp;outputTest)</code>
 <div class="block">Registers test predicate with this generator for use while filtering generated tests for
  output.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#shouldStop--">shouldStop</a></span>()</code>
 <div class="block">Tests stopping criteria.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>abstract <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#step--">step</a></span>()</code>
 <div class="block">Attempt to generate a test (a sequence).</div>
@@ -602,7 +609,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>outputTest</h4>
-<pre>public&nbsp;<a href="../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt; outputTest</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt; outputTest</pre>
 <div class="block">A filter to determine whether a sequence should be added to the output sequence lists.</div>
 </li>
 </ul>
@@ -681,13 +688,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="setTestPredicate-randoop.util.predicate.Predicate-">
+<a name="setTestPredicate-java.util.function.Predicate-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setTestPredicate</h4>
-<pre>public&nbsp;void&nbsp;setTestPredicate(<a href="../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;&nbsp;outputTest)</pre>
+<pre>public&nbsp;void&nbsp;setTestPredicate(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html?is-external=true" title="class or interface in java.util.function">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;&nbsp;outputTest)</pre>
 <div class="block">Registers test predicate with this generator for use while filtering generated tests for
  output.</div>
 <dl>
@@ -944,7 +951,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a name="getOperationHistory--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getOperationHistory</h4>
 <pre>public&nbsp;<a href="../../randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation">OperationHistoryLogInterface</a>&nbsp;getOperationHistory()</pre>
@@ -952,6 +959,22 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the operation history logger for this generator</dd>
+</dl>
+</li>
+</ul>
+<a name="newRegressionTestHook-randoop.sequence.Sequence-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>newRegressionTestHook</h4>
+<pre>public abstract&nbsp;void&nbsp;newRegressionTestHook(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;sequence)</pre>
+<div class="block">Take action based on the given <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> that was classified as a regression test, i.e.,
+ normal behavior.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>sequence</code> - the new test sequence that was classified as a regression test, i.e., normal
+     behavior</dd>
 </dl>
 </li>
 </ul>
@@ -983,7 +1006,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/Bloodhound.html" title="class in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/generation/AbstractGenerator.html" target="_top">Frames</a></li>

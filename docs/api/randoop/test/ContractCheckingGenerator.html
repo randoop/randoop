@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ContractCheckingGenerator (randoop 4.0.4 API)</title>
+<title>ContractCheckingGenerator (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ContractCheckingGenerator (randoop 4.0.4 API)";
+            parent.document.title="ContractCheckingGenerator (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -145,10 +145,6 @@ extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in ran
 <td class="colFirst"><code>private <a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ContractCheckingGenerator.html#contracts">contracts</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>private <a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ContractCheckingGenerator.html#exceptionPredicate">exceptionPredicate</a></span></code>&nbsp;</td>
-</tr>
 </table>
 </li>
 </ul>
@@ -164,8 +160,7 @@ extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in ran
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ContractCheckingGenerator.html#ContractCheckingGenerator-randoop.test.ContractSet-randoop.test.predicate.ExceptionPredicate-">ContractCheckingGenerator</a></span>(<a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a>&nbsp;contracts,
-                         <a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>&nbsp;exceptionPredicate)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ContractCheckingGenerator.html#ContractCheckingGenerator-randoop.test.ContractSet-">ContractCheckingGenerator</a></span>(<a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a>&nbsp;contracts)</code>
 <div class="block">Create a new visitor that checks the given contracts after the last statement in a sequence is
  executed.</div>
 </td>
@@ -251,19 +246,10 @@ extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in ran
 <a name="contracts">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>contracts</h4>
 <pre>private&nbsp;<a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a> contracts</pre>
-</li>
-</ul>
-<a name="exceptionPredicate">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>exceptionPredicate</h4>
-<pre>private&nbsp;<a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a> exceptionPredicate</pre>
 </li>
 </ul>
 </li>
@@ -274,20 +260,18 @@ extends <a href="../../randoop/test/TestCheckGenerator.html" title="class in ran
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ContractCheckingGenerator-randoop.test.ContractSet-randoop.test.predicate.ExceptionPredicate-">
+<a name="ContractCheckingGenerator-randoop.test.ContractSet-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ContractCheckingGenerator</h4>
-<pre>public&nbsp;ContractCheckingGenerator(<a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a>&nbsp;contracts,
-                                 <a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>&nbsp;exceptionPredicate)</pre>
+<pre>public&nbsp;ContractCheckingGenerator(<a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a>&nbsp;contracts)</pre>
 <div class="block">Create a new visitor that checks the given contracts after the last statement in a sequence is
  executed.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>contracts</code> - expected to be unary contracts, i.e. for each contract <code>c</code>, <code>c.getArity() == 1</code>.</dd>
-<dd><code>exceptionPredicate</code> - the predicate to test for exceptions that are errors</dd>
 </dl>
 </li>
 </ul>

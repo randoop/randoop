@@ -17,25 +17,27 @@ import randoop.util.SimpleSet;
  */
 public class SubTypeSet {
 
-  // The members of the set.
-  public ISimpleSet<Type> typesWithsequences;
+  /** The members of the set. */
+  public ISimpleSet<Type> types;
 
-  // Maps a type to the list of subtypes in the set.
-  // The list for a given type can be empty, which means that the set contains
-  // no subtypes for the given type.
-  private IMultiMap<Type, Type> subTypesWithsequences;
+  /**
+   * Maps a type to all its proper subtypes that are in the set. If the mapped-to list is empty,
+   * then the set contains no subtypes of the given type.
+   */
+  private IMultiMap<Type, Type> subTypes;
 
+  /** If true, then {@link #mark} and {@link #undoLastStep()} are supported. */
   private boolean supportsCheckpoints;
 
   public SubTypeSet(boolean supportsCheckpoints) {
     if (supportsCheckpoints) {
       this.supportsCheckpoints = true;
-      this.subTypesWithsequences = new CheckpointingMultiMap<>();
-      this.typesWithsequences = new CheckpointingSet<>();
+      this.subTypes = new CheckpointingMultiMap<>();
+      this.types = new CheckpointingSet<>();
     } else {
       this.supportsCheckpoints = false;
-      this.subTypesWithsequences = new MultiMap<>();
-      this.typesWithsequences = new SimpleSet<>();
+      this.subTypes = new MultiMap<>();
+      this.types = new SimpleSet<>();
     }
   }
 
@@ -44,8 +46,8 @@ public class SubTypeSet {
     if (!supportsCheckpoints) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((CheckpointingMultiMap<Type, Type>) subTypesWithsequences).mark();
-    ((CheckpointingSet<Type>) typesWithsequences).mark();
+    ((CheckpointingMultiMap<Type, Type>) subTypes).mark();
+    ((CheckpointingSet<Type>) types).mark();
   }
 
   /** Undo changes since the last call to {@link #mark()}. */
@@ -53,42 +55,49 @@ public class SubTypeSet {
     if (!supportsCheckpoints) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((CheckpointingMultiMap<Type, Type>) subTypesWithsequences).undoToLastMark();
-    ((CheckpointingSet<Type>) typesWithsequences).undoToLastMark();
+    ((CheckpointingMultiMap<Type, Type>) subTypes).undoToLastMark();
+    ((CheckpointingSet<Type>) types).undoToLastMark();
   }
 
+  /**
+   * Adds a type to this set.
+   *
+   * @param c the type to be added
+   */
   public void add(Type c) {
     if (c == null) throw new IllegalArgumentException("c cannot be null.");
-    if (typesWithsequences.contains(c)) {
+    if (types.contains(c)) {
       return;
     }
-    typesWithsequences.add(c);
+    types.add(c);
 
     // Update existing entries.
-    for (Type cls : subTypesWithsequences.keySet()) {
+    for (Type cls : subTypes.keySet()) {
       if (cls.isAssignableFrom(c)) {
-        if (!subTypesWithsequences.getValues(cls).contains(c)) subTypesWithsequences.add(cls, c);
+        if (!subTypes.getValues(cls).contains(c)) subTypes.add(cls, c);
       }
     }
   }
 
   private void addQueryType(Type type) {
     if (type == null) throw new IllegalArgumentException("c cannot be null.");
-    Set<Type> keySet = subTypesWithsequences.keySet();
+    Set<Type> keySet = subTypes.keySet();
     if (keySet.contains(type)) {
       return;
     }
 
-    Set<Type> compatibleTypesWithSequences = new LinkedHashSet<>();
-    for (Type t : typesWithsequences.getElements()) {
+    Set<Type> compatibleTypes = new LinkedHashSet<>();
+    for (Type t : types.getElements()) {
       if (type.isAssignableFrom(t)) {
-        compatibleTypesWithSequences.add(t);
+        compatibleTypes.add(t);
       }
     }
-    for (Type cls : compatibleTypesWithSequences) {
-      subTypesWithsequences.add(type, cls);
+    for (Type cls : compatibleTypes) {
+      subTypes.add(type, cls);
     }
   }
+
+  // TODO: I think that the set does not contain {@code c} itself.  Check and document.
 
   /**
    * Returns all the classes in the set that can-be-used-as the given {@code c}.
@@ -97,19 +106,27 @@ public class SubTypeSet {
    * @return the set of types that can be used in place of the query type
    */
   public Set<Type> getMatches(Type type) {
-    if (!subTypesWithsequences.keySet().contains(type)) {
+    if (!subTypes.keySet().contains(type)) {
       addQueryType(type);
     }
-    return Collections.unmodifiableSet(subTypesWithsequences.getValues(type));
+    return Collections.unmodifiableSet(subTypes.getValues(type));
   }
 
-  // TODO create tests for this method.
-
+  /**
+   * Returns the number of elements of this set.
+   *
+   * @return the size of the set
+   */
   public int size() {
-    return typesWithsequences.size();
+    return types.size();
   }
 
+  /**
+   * Returns the elements of this set.
+   *
+   * @return the elements of the set
+   */
   public Set<Type> getElements() {
-    return typesWithsequences.getElements();
+    return types.getElements();
   }
 }

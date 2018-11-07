@@ -6,10 +6,10 @@ import randoop.types.ClassOrInterfaceType;
 /** Represents an expected exception in a throws-condition. */
 public class ThrowsClause {
 
-  /** The descriptive text for this exception */
+  /** The descriptive text for this exception. */
   private final String comment;
 
-  /** The type of the exception */
+  /** The type of the exception. */
   private final ClassOrInterfaceType exceptionType;
 
   /**

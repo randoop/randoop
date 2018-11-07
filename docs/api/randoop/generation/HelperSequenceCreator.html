@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>HelperSequenceCreator (randoop 4.0.4 API)</title>
+<title>HelperSequenceCreator (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="HelperSequenceCreator (randoop 4.0.4 API)";
+            parent.document.title="HelperSequenceCreator (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -110,6 +110,10 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>class <span class="typeNameLabel">HelperSequenceCreator</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+<div class="block">Contains static methods that create Sequences.
+
+ <p>The only two methods that are currently externally used are <a href="../../randoop/generation/HelperSequenceCreator.html#createArraySequence-randoop.generation.ComponentManager-randoop.types.Type-"><code>createArraySequence(randoop.generation.ComponentManager, randoop.types.Type)</code></a> and
+ <a href="../../randoop/generation/HelperSequenceCreator.html#createCollection-randoop.generation.ComponentManager-randoop.types.InstantiatedType-"><code>createCollection(randoop.generation.ComponentManager, randoop.types.InstantiatedType)</code></a>.</div>
 </li>
 </ul>
 </div>
@@ -168,13 +172,15 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>private static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#buildAddSequence-randoop.sequence.Sequence-randoop.sequence.Sequence-randoop.generation.HelperSequenceCreator.SequenceExtender-">buildAddSequence</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;creationSequence,
-                <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;elementSequence,
-                <a href="../../randoop/generation/HelperSequenceCreator.SequenceExtender.html" title="interface in randoop.generation">HelperSequenceCreator.SequenceExtender</a>&nbsp;addSequenceExtender)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#buildAddSequence-randoop.sequence.Sequence-randoop.sequence.TupleSequence-randoop.generation.HelperSequenceCreator.SequenceExtender-">buildAddSequence</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;creationSequence,
+                <a href="../../randoop/sequence/TupleSequence.html" title="class in randoop.sequence">TupleSequence</a>&nbsp;elementsSequence,
+                <a href="../../randoop/generation/HelperSequenceCreator.SequenceExtender.html" title="interface in randoop.generation">HelperSequenceCreator.SequenceExtender</a>&nbsp;addSequenceExtender)</code>
+<div class="block">Returns a sequence that creates a list or array.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>private static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createAnArray-randoop.sequence.Sequence-randoop.types.Type-int-">createAnArray</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;elementSequence,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createAnArray-randoop.sequence.TupleSequence-randoop.types.Type-int-">createAnArray</a></span>(<a href="../../randoop/sequence/TupleSequence.html" title="class in randoop.sequence">TupleSequence</a>&nbsp;elementsSequence,
              <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;elementType,
              int&nbsp;length)</code>
 <div class="block">Creates a sequence that builds an array of the given element type using sequences from the
@@ -204,37 +210,35 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>private static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createElementSequence-randoop.util.SimpleList-int-randoop.types.Type-">createElementSequence</a></span>(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;candidates,
-                     int&nbsp;length,
-                     <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;elementType)</code>
-<div class="block">Selects sequences as element values for creating a collection.</div>
-</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>private static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createGenericArrayCreationSequence-randoop.types.ArrayType-int-">createGenericArrayCreationSequence</a></span>(<a href="../../randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a>&nbsp;arrayType,
                                   int&nbsp;length)</code>
 <div class="block">Creates a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> for creating an array with parameterized type.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>private static <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#getAddOperation-randoop.types.ParameterizedType-randoop.types.ReferenceType-">getAddOperation</a></span>(<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a>&nbsp;collectionType,
                <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;elementType)</code>
 <div class="block">Create a method call operation for the <code>add()</code> method of the given collection type.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private static <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#getCollectionAddAllOperation-randoop.types.ReferenceType-">getCollectionAddAllOperation</a></span>(<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;elementType)</code>
 <div class="block">Create the operation to call <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html?is-external=true#addAll-java.util.Collection-T...-" title="class or interface in java.util"><code>Collections.addAll(Collection, Object[])</code></a> that
  allows initialization of a <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util"><code>Collection</code></a> object.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect">Constructor</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#getDefaultConstructor-randoop.types.ClassOrInterfaceType-">getDefaultConstructor</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;creationType)</code>
 <div class="block">Gets the default constructor for a <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a>.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>private static <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#getElementType-randoop.types.InstantiatedType-">getElementType</a></span>(<a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a>&nbsp;collectionType)</code>
+<div class="block">Returns the element type of the given collection type.</div>
 </td>
 </tr>
 <tr id="i10" class="altColor">
@@ -310,6 +314,22 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
+<a name="getElementType-randoop.types.InstantiatedType-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getElementType</h4>
+<pre>private static&nbsp;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;getElementType(<a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a>&nbsp;collectionType)</pre>
+<div class="block">Returns the element type of the given collection type.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>collectionType</code> - the collection type</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the ReferenceType with the given collection type</dd>
+</dl>
+</li>
+</ul>
 <a name="createCollection-randoop.generation.ComponentManager-randoop.types.InstantiatedType-">
 <!--   -->
 </a>
@@ -324,19 +344,32 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>componentManager</code> - the component manager for selecting values</dd>
 <dd><code>collectionType</code> - the type for collection</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a collection of the given type</dd>
+<dd>a sequence that creates a collection of type <code>collectionType</code></dd>
 </dl>
 </li>
 </ul>
-<a name="buildAddSequence-randoop.sequence.Sequence-randoop.sequence.Sequence-randoop.generation.HelperSequenceCreator.SequenceExtender-">
+<a name="buildAddSequence-randoop.sequence.Sequence-randoop.sequence.TupleSequence-randoop.generation.HelperSequenceCreator.SequenceExtender-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>buildAddSequence</h4>
 <pre>private static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;buildAddSequence(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;creationSequence,
-                                         <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;elementSequence,
+                                         <a href="../../randoop/sequence/TupleSequence.html" title="class in randoop.sequence">TupleSequence</a>&nbsp;elementsSequence,
                                          <a href="../../randoop/generation/HelperSequenceCreator.SequenceExtender.html" title="interface in randoop.generation">HelperSequenceCreator.SequenceExtender</a>&nbsp;addSequenceExtender)</pre>
+<div class="block">Returns a sequence that creates a list or array. The resulting sequence consists of the two
+ given sequences, augmented by N invocations of addSequenceExtender, where N is the size of
+ elementsSequence.outputIndices.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>creationSequence</code> - creates an empty array or list</dd>
+<dd><code>elementsSequence</code> - a tuple-producing sequence; produces the elements of the result</dd>
+<dd><code>addSequenceExtender</code> - creates <code>a[i]=e</code> (for an array) or <code>l.add(e)</code> (for a
+     list)</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a sequence that creates an array or list that contains all the elements produced by
+     elementsSequence</dd>
+</dl>
 </li>
 </ul>
 <a name="createCollectionCreationSequence-randoop.types.InstantiatedType-randoop.types.ReferenceType-">
@@ -357,20 +390,20 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="createAnArray-randoop.sequence.Sequence-randoop.types.Type-int-">
+<a name="createAnArray-randoop.sequence.TupleSequence-randoop.types.Type-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createAnArray</h4>
-<pre>private static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createAnArray(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;elementSequence,
+<pre>private static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createAnArray(<a href="../../randoop/sequence/TupleSequence.html" title="class in randoop.sequence">TupleSequence</a>&nbsp;elementsSequence,
                                       <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;elementType,
                                       int&nbsp;length)</pre>
 <div class="block">Creates a sequence that builds an array of the given element type using sequences from the
  given list of candidates.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>elementSequence</code> - the sequence creating element values</dd>
+<dd><code>elementsSequence</code> - the sequence creating element values</dd>
 <dd><code>elementType</code> - the type of elements for the array</dd>
 <dd><code>length</code> - the length of the array</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -433,26 +466,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>elementType</code> - the type</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a non-abstract subtype of the given type, or the original type</dd>
-</dl>
-</li>
-</ul>
-<a name="createElementSequence-randoop.util.SimpleList-int-randoop.types.Type-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createElementSequence</h4>
-<pre>private static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createElementSequence(<a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;candidates,
-                                              int&nbsp;length,
-                                              <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;elementType)</pre>
-<div class="block">Selects sequences as element values for creating a collection.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>candidates</code> - the sequences from which to select</dd>
-<dd><code>length</code> - the number of values to select</dd>
-<dd><code>elementType</code> - the type of elements</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a sequence with subsequences that create element values for a collection</dd>
 </dl>
 </li>
 </ul>

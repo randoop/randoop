@@ -47,6 +47,7 @@ public abstract class ExceptionCheck implements Check {
    * have no state.
    */
   @Override
+  @SuppressWarnings("EqualsGetClass")
   public boolean equals(Object o) {
     if (o == null) {
       return false;

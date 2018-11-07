@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.util (randoop 4.0.4 API)</title>
+<title>randoop.util (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.util (randoop 4.0.4 API)";
+            parent.document.title="randoop.util (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -103,10 +103,6 @@
 <div class="block">Stores a sequence of items, much like a regular <code>List</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a></td>
-<td class="colLast">&nbsp;</td>
-</tr>
 </tbody>
 </table>
 </li>
@@ -119,127 +115,133 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/util/CheckpointingMultiMap.html" title="class in randoop.util">CheckpointingMultiMap</a>&lt;T1,T2&gt;</td>
+<td class="colLast">
+<div class="block">A MultiMap that supports checkpointing and restoring to a checkpoint (that is, undoing all
+ operations up to a checkpoint, also called a "mark").</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/util/CheckpointingSet.html" title="class in randoop.util">CheckpointingSet</a>&lt;T&gt;</td>
+<td class="colLast">
+<div class="block">A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
+ state to them.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/ClassFileConstants.html" title="class in randoop.util">ClassFileConstants</a></td>
 <td class="colLast">
 <div class="block">Reads literals from a class file, including from the constant pool and from bytecodes that take
  immediate arguments.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/util/ClassFileConstants.ConstantSet.html" title="class in randoop.util">ClassFileConstants.ConstantSet</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/CollectionsExt.html" title="class in randoop.util">CollectionsExt</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/util/ConstructorReflectionCode.html" title="class in randoop.util">ConstructorReflectionCode</a></td>
 <td class="colLast">
 <div class="block">Wraps a constructor together with its arguments, ready for execution.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/CountDownTimer.html" title="class in randoop.util">CountDownTimer</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/util/IdentityMultiMap.html" title="class in randoop.util">IdentityMultiMap</a>&lt;K,V&gt;</td>
 <td class="colLast">
 <div class="block">A multi-map using key identity rather than equality.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/JarReader.html" title="class in randoop.util">JarReader</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/util/KeyToMultiSet.html" title="class in randoop.util">KeyToMultiSet</a>&lt;T1,T2&gt;</td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/ListOfLists.html" title="class in randoop.util">ListOfLists</a>&lt;T&gt;</td>
 <td class="colLast">
 <div class="block">Given a list of lists, defines methods that can access all the elements as if they were part of a
  single list, without actually merging the lists.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/util/Log.html" title="class in randoop.util">Log</a></td>
 <td class="colLast">
 <div class="block">Static methods that log to GenInputsAbstract.log, if that is non-null.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/MethodReflectionCode.html" title="class in randoop.util">MethodReflectionCode</a></td>
 <td class="colLast">
 <div class="block">Wraps a method together with its arguments, ready for execution.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;T1,T2&gt;</td>
 <td class="colLast">
 <div class="block">Implements an IMultiMap with a java.util.LinkedHashMap.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/MultiSet.html" title="class in randoop.util">MultiSet</a>&lt;T&gt;</td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/util/ObjectContractReflectionCode.html" title="class in randoop.util">ObjectContractReflectionCode</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/OneMoreElementList.html" title="class in randoop.util">OneMoreElementList</a>&lt;T&gt;</td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/util/ProgressDisplay.html" title="class in randoop.util">ProgressDisplay</a></td>
 <td class="colLast">
 <div class="block">Modified from Daikon.FileIOProgress.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/Randomness.html" title="class in randoop.util">Randomness</a></td>
 <td class="colLast">
 <div class="block">A simple-to-use wrapper around <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Random.html?is-external=true" title="class or interface in java.util"><code>Random</code></a>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/RandoopUncaughtRunnerThreadExceptionHandler.html" title="class in randoop.util">RandoopUncaughtRunnerThreadExceptionHandler</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/util/RecordListReader.html" title="class in randoop.util">RecordListReader</a></td>
 <td class="colLast">
 <div class="block">Reads a list of records from a text file, where a record is partially specified by the client of
  this class.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a></td>
 <td class="colLast">
 <div class="block">Wraps a method or constructor together with its arguments.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/util/ReflectionExecutor.html" title="class in randoop.util">ReflectionExecutor</a></td>
 <td class="colLast">
 <div class="block">Static methods that executes the code of a ReflectionCode object.</div>
 </td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a href="../../randoop/util/ReversibleMultiMap.html" title="class in randoop.util">ReversibleMultiMap</a>&lt;T1,T2&gt;</td>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a href="../../randoop/util/ReversibleSet.html" title="class in randoop.util">ReversibleSet</a>&lt;T&gt;</td>
-<td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/util/RunnerThread.html" title="class in randoop.util">RunnerThread</a></td>
@@ -304,15 +306,15 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a href="../../randoop/util/ProgressDisplay.Mode.html" title="enum in randoop.util">ProgressDisplay.Mode</a></td>
+<td class="colFirst"><a href="../../randoop/util/CheckpointingMultiMap.Ops.html" title="enum in randoop.util">CheckpointingMultiMap.Ops</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="../../randoop/util/RandoopSecurityManager.Status.html" title="enum in randoop.util">RandoopSecurityManager.Status</a></td>
+<td class="colFirst"><a href="../../randoop/util/ProgressDisplay.Mode.html" title="enum in randoop.util">ProgressDisplay.Mode</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a href="../../randoop/util/ReversibleMultiMap.Ops.html" title="enum in randoop.util">ReversibleMultiMap.Ops</a></td>
+<td class="colFirst"><a href="../../randoop/util/RandoopSecurityManager.Status.html" title="enum in randoop.util">RandoopSecurityManager.Status</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">

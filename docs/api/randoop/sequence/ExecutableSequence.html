@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExecutableSequence (randoop 4.0.4 API)</title>
+<title>ExecutableSequence (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExecutableSequence (randoop 4.0.4 API)";
+            parent.document.title="ExecutableSequence (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -127,11 +127,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
        represents whether the check passed or failed during the last execution of the sequence.
  </ul>
 
- <p>Of the three pieces of data above, an ExecutableSequence only directly manages the first one,
- i.e. the execution results. Other pieces of data, including checks and check evaluation results,
- are added or removed by the client of the ExecutableSequence. One way of doing this is by
- implementing an <a href="../../randoop/ExecutionVisitor.html" title="interface in randoop"><code>ExecutionVisitor</code></a> and passing it as an argument to the <code>execute</code>
- method.</div>
+ <p>An ExecutableSequence only directly manages the execution results. Other data, including
+ checks and check evaluation results, are added or removed by the client of the
+ ExecutableSequence. One way of doing this is by implementing an <a href="../../randoop/ExecutionVisitor.html" title="interface in randoop"><code>ExecutionVisitor</code></a> and
+ passing it as an argument to the <code>execute</code> method.</div>
 </li>
 </ul>
 </div>
@@ -184,12 +183,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr class="rowColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/ByteArrayOutputStream.html?is-external=true" title="class or interface in java.io">ByteArrayOutputStream</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#output_buffer">output_buffer</a></span></code>
-<div class="block">Output buffer used to capture the output from the executed sequence</div>
+<div class="block">Captures output from the executed sequence</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#ps_output_buffer">ps_output_buffer</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#output_buffer_stream">output_buffer_stream</a></span></code>
+<div class="block">Used to populate <a href="../../randoop/sequence/ExecutableSequence.html#output_buffer"><code>output_buffer</code></a>.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
@@ -540,16 +541,17 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>output_buffer</h4>
 <pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/ByteArrayOutputStream.html?is-external=true" title="class or interface in java.io">ByteArrayOutputStream</a> output_buffer</pre>
-<div class="block">Output buffer used to capture the output from the executed sequence</div>
+<div class="block">Captures output from the executed sequence</div>
 </li>
 </ul>
-<a name="ps_output_buffer">
+<a name="output_buffer_stream">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>ps_output_buffer</h4>
-<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a> ps_output_buffer</pre>
+<h4>output_buffer_stream</h4>
+<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a> output_buffer_stream</pre>
+<div class="block">Used to populate <a href="../../randoop/sequence/ExecutableSequence.html#output_buffer"><code>output_buffer</code></a>.</div>
 </li>
 </ul>
 <a name="variableMap">
@@ -710,17 +712,18 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
        </ul>
 
    <li>For the last statement, check its specifications (pre-, post-, and throws-conditions).
-   <li>Execution stops if one of the following conditions holds:
-       <ul>
-         <li>All statements in the sequences have been executed.
-         <li>A pre-condition for the final statement fails
-         <li>A statement's execution results in an exception and <code>ignoreException==false</code>.
-         <li>A <code>null</code> input value is implicitly passed to the statement (i.e., not via
-             explicit declaration like x = null)
-         <li>After executing the i-th statement and calling the visitor's <code>visitAfter</code>
-             method, a <code>ContractViolation</code> check is present at index i.
-       </ul>
+ </ul>
 
+ Execution stops if one of the following conditions holds:
+
+ <ul>
+   <li>All statements in the sequences have been executed.
+   <li>A pre-condition for the final statement fails
+   <li>A statement's execution results in an exception and <code>ignoreException==false</code>.
+   <li>A <code>null</code> input value is implicitly passed to the statement (i.e., not via explicit
+       declaration like x = null)
+   <li>After executing the i-th statement and calling the visitor's <code>visitAfter</code> method, a
+       <code>ContractViolation</code> check is present at index i.
  </ul>
 
  <p>After invoking this method, the client can query the outcome of executing each statement via

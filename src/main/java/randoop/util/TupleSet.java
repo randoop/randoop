@@ -14,7 +14,7 @@ public class TupleSet<E> {
   /** The list of element lists (tuples) */
   private List<List<E>> tuples;
 
-  /** The length of tuples in the set */
+  /** The length of tuples in the set. */
   private int tupleLength;
 
   /** Creates a tuple set with a single empty tuple. */

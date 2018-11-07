@@ -15,7 +15,7 @@ public abstract class AbstractBooleanExpression {
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
   // tools
 
-  /** The text of the Java code for this expression */
+  /** The text of the Java code for this expression. */
   @SerializedName("condition")
   private final String conditionSource;
 

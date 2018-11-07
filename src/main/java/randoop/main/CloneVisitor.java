@@ -1,5 +1,7 @@
-// This file was copied from: // https://github.com/javaparser/javaparser/blob/javaparser-parent-2.4.0/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/CloneVisitor.java
-// Direct URL: https://raw.githubusercontent.com/javaparser/javaparser/javaparser-parent-2.4.0/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/CloneVisitor.java
+// This file was copied from:
+// https://github.com/javaparser/javaparser/blob/javaparser-parent-2.4.0/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/CloneVisitor.java
+// Direct URL:
+// https://raw.githubusercontent.com/javaparser/javaparser/javaparser-parent-2.4.0/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/CloneVisitor.java
 //
 // Then, the file was modified to allow the CloneVisitor to copy orphan
 // comments when visiting each node. This class is used by the minimizer to
@@ -1318,7 +1320,7 @@ public class CloneVisitor implements GenericVisitor<Node, Object> {
     public <T extends Node> List<T> visit(List<T> _nodes, Object _arg) {
         if (_nodes == null)
             return null;
-        List<T> r = new ArrayList<T>(_nodes.size());
+        List<T> r = new ArrayList<>(_nodes.size());
         for (T n : _nodes) {
             T rN = cloneNodes(n, _arg);
             if (rN != null)

@@ -7,25 +7,33 @@ repositories {
 }
 
 configurations {
+  checkerFrameworkCheckerJar {
+    description = 'the Checker Framework, including the Type Annotations compiler'
+  }
+
   checkerFrameworkAnnotatedJDK {
     description = 'a copy of JDK classes with Checker Framework type qualifers inserted'
   }
 }
 
-// // Checker Framework from Maven Central
-// dependencies {
-//   ext.checkerFrameworkVersion = '2.4.0'
-//   checkerFrameworkAnnotatedJDK "org.checkerframework:jdk8:${checkerFrameworkVersion}"
-//   compileOnly "org.checkerframework:checker:${checkerFrameworkVersion}"
-//   compile "org.checkerframework:checker-qual:${checkerFrameworkVersion}"
-// }
-
-// Checker Framework from local build
+// By default, use Checker Framework from Maven Central.
+// Pass -PcfLocal to use a locally-built version of the Checker Framework.
 dependencies {
-  ext.checkerframeworkdist = "$System.env.CHECKERFRAMEWORK/checker/dist"
-  checkerFrameworkAnnotatedJDK fileTree(dir: "${ext.checkerframeworkdist}", include: "jdk8.jar")
-  compileOnly fileTree(dir: "${ext.checkerframeworkdist}", include: 'checker.jar')
-  compile fileTree(dir: "${ext.checkerframeworkdist}", include: 'checker-qual.jar')
+  if (!rootProject.hasProperty('cfLocal')) {
+    ext.checkerFrameworkVersion = '2.5.4'
+    checkerFrameworkAnnotatedJDK "org.checkerframework:jdk8:${checkerFrameworkVersion}"
+    checkerFrameworkCheckerJar "org.checkerframework:checker:${checkerFrameworkVersion}"
+    implementation "org.checkerframework:checker-qual:${checkerFrameworkVersion}"
+  } else if (System.getenv("CHECKERFRAMEWORK") == null) {
+    throw new GradleException("Environment variable CHECKERFRAMEWORK is not set")
+  } else if (! file(System.getenv("CHECKERFRAMEWORK")).exists()) {
+    throw new GradleException("Environment variable CHECKERFRAMEWORK is set to non-existent directory " + System.getenv("CHECKERFRAMEWORK"));
+  } else {
+    ext.checkerframeworkdist = "$System.env.CHECKERFRAMEWORK/checker/dist"
+    checkerFrameworkAnnotatedJDK fileTree(dir: "${ext.checkerframeworkdist}", include: "jdk8.jar")
+    checkerFrameworkCheckerJar fileTree(dir: "${ext.checkerframeworkdist}", include: 'checker.jar')
+    compile fileTree(dir: "${ext.checkerframeworkdist}", include: 'checker-qual.jar')
+  }
 }
 
 // // To type-check all projects.
@@ -37,6 +45,7 @@ dependencies {
 //         '-Xmaxerrs', '10000',
 //         '-Awarns',    // turn Checker Framework errors into warnings
 //         '-AcheckPurityAnnotations',
+//         '-processorpath', "${configurations.checkerFrameworkCheckerJar.asPath}",
 //         "-Xbootclasspath/p:${configurations.checkerFrameworkAnnotatedJDK.asPath}",
 //         "-Astubs=$System.env.CHECKERFRAMEWORK/checker/resources/javadoc.astub" // TODO: does not work when downloading from Maven Central
 //       ]
@@ -54,6 +63,7 @@ compileJava {
         '-Xmaxwarns', '10000',
         // '-Awarns',      // turn Checker Framework errors into warnings
         '-AcheckPurityAnnotations',
+        '-processorpath', "${configurations.checkerFrameworkCheckerJar.asPath}",
         "-Xbootclasspath/p:${configurations.checkerFrameworkAnnotatedJDK.asPath}"
     ]
   }

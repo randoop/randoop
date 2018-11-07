@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExpectedExceptionCheckGen (randoop 4.0.4 API)</title>
+<title>ExpectedExceptionCheckGen (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExpectedExceptionCheckGen (randoop 4.0.4 API)";
+            parent.document.title="ExpectedExceptionCheckGen (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -110,8 +110,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">ExpectedExceptionCheckGen</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">A check generator that based on an <code>ExceptionPredicate</code> when given an exception, generates
- an <code>ExpectedExceptionCheck</code> object when the predicate is satisfied, and an <code>EmptyExceptionCheck</code> otherwise. Resulting tests only enforce expected matching exceptions.</div>
+<div class="block">A check generator that when given an exception, generates either an <code>ExpectedExceptionCheck</code> object or an <code>EmptyExceptionCheck</code>. Resulting tests only enforce
+ expected matching exceptions.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/test/RegressionCaptureGenerator.html#generateTestChecks-randoop.sequence.ExecutableSequence-"><code>RegressionCaptureGenerator.generateTestChecks(randoop.sequence.ExecutableSequence)</code></a></dd>
@@ -135,12 +135,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private <a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionCheckGen.html#isExpected">isExpected</a></span></code>
-<div class="block">the predicate to indicate whether an exception is expected</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionCheckGen.html#visibility">visibility</a></span></code>
 <div class="block">a predicate to determine visibility of exception classes</div>
@@ -161,8 +155,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionCheckGen.html#ExpectedExceptionCheckGen-randoop.reflection.VisibilityPredicate-randoop.test.predicate.ExceptionPredicate-">ExpectedExceptionCheckGen</a></span>(<a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
-                         <a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>&nbsp;isExpected)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionCheckGen.html#ExpectedExceptionCheckGen-randoop.reflection.VisibilityPredicate-">ExpectedExceptionCheckGen</a></span>(<a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility)</code>
 <div class="block">Create an object that generates expected exception checks for exceptions that satisfy the given
  predicate, and empty exception checks for others.</div>
 </td>
@@ -235,16 +228,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="isExpected">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isExpected</h4>
-<pre>private&nbsp;<a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a> isExpected</pre>
-<div class="block">the predicate to indicate whether an exception is expected</div>
-</li>
-</ul>
 <a name="visibility">
 <!--   -->
 </a>
@@ -263,20 +246,18 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ExpectedExceptionCheckGen-randoop.reflection.VisibilityPredicate-randoop.test.predicate.ExceptionPredicate-">
+<a name="ExpectedExceptionCheckGen-randoop.reflection.VisibilityPredicate-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ExpectedExceptionCheckGen</h4>
-<pre>public&nbsp;ExpectedExceptionCheckGen(<a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
-                                 <a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>&nbsp;isExpected)</pre>
+<pre>public&nbsp;ExpectedExceptionCheckGen(<a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility)</pre>
 <div class="block">Create an object that generates expected exception checks for exceptions that satisfy the given
  predicate, and empty exception checks for others.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>visibility</code> - a predicate to determine visibility of exception classes</dd>
-<dd><code>isExpected</code> - the predicate to indicate whether an exception is expected</dd>
 </dl>
 </li>
 </ul>

@@ -12,7 +12,7 @@ public class StaticCache {
   /** The class for which static state is to be saved. */
   private final Class<?> declaringClass;
 
-  /** The map from static fields to a value */
+  /** The map from static fields to a value. */
   private final Map<Field, Object> valueMap;
 
   /**

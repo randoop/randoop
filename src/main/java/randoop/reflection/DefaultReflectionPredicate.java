@@ -88,10 +88,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    // Always consider Object.getClass to be under test (even if not specified by user).
-    // This is a special case handled here to avoid printing the reason for exclusion.
-    // Most Object methods are excluded. Allow getClass. Equals is used in contracts.
-    // The rest are problematic (toString), involve threads, waiting, or are somehow problematic.
+    // Within Object, consider only getClass to be under test (even if not specified by user).
+    // Exclude all other methods.  They involve threads, waiting, or are somehow problematic
+    // (e.g. toString).
     if (m.getDeclaringClass().equals(java.lang.Object.class)) {
       return m.getName().equals("getClass");
     }
@@ -159,32 +158,50 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * Determines whether a bridge method is a <i>visibility</i> bridge, which allows access to a
    * definition of the method in a non-visible superclass.
    *
-   * <p>To recognize a visibility bridge, it is sufficient to run up the superclass chain and
-   * confirm that the visibility of the class changes to non-public. If it does not, then the bridge
-   * method is not a visibility bridge.
+   * <p>The method is a visibility bridge if this class is public and some superclass defines the
+   * method as non-public.
    *
    * @param m the bridge method to test
-   * @return true if {@code m} is not a visibility bridge, and false otherwise
+   * @return true iff {@code m} is a visibility bridge
    * @throws Error if a {@link SecurityException} is thrown when accessing superclass methods
    */
   private boolean isVisibilityBridge(Method m) throws Error {
-    Method method = m;
     Class<?> c = m.getDeclaringClass();
     if (!isPublic(c)) {
       return false;
     }
-    while (c != null && isPublic(c) && method != null && method.isBridge()) {
-      c = c.getSuperclass();
-      try {
-        method = c.getDeclaredMethod(m.getName(), m.getParameterTypes());
-      } catch (NoSuchMethodException e) {
-        method = null;
-      } catch (SecurityException e) {
-        String msg = "Cannot access method " + m.getName() + " in class " + c.getCanonicalName();
-        throw new Error(msg);
+    c = c.getSuperclass();
+    while (c != null) {
+      if (!isPublic(c) && definesNonBridgeMethod(c, m)) {
+        // System.out.printf("class %s defines non-bridge method %s%n", c, m);
+        return true;
       }
+      c = c.getSuperclass();
     }
-    return !isPublic(c);
+    // System.out.printf("Never found superclass with definition of %s%n", m);
+    return false;
+  }
+
+  /**
+   * Returns true if the class defines the given method, not as a bridge method. Returns false if
+   * the class does not define the given method, or if the class defines the method as a bridge
+   * method. Ignores inheritance of methods.
+   *
+   * @param c the possibly-containing class
+   * @param goalMethod the method to search for
+   * @return true if the class defines the method
+   */
+  private boolean definesNonBridgeMethod(Class<?> c, Method goalMethod) {
+    try {
+      Method defined = c.getDeclaredMethod(goalMethod.getName(), goalMethod.getParameterTypes());
+      return !defined.isBridge();
+    } catch (NoSuchMethodException e) {
+      return false;
+    } catch (SecurityException e) {
+      String msg =
+          "Cannot access method " + goalMethod.getName() + " in class " + c.getCanonicalName();
+      throw new Error(msg);
+    }
   }
 
   /**

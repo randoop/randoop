@@ -18,7 +18,7 @@ public class InstantiatedType extends ParameterizedType {
 
   private final List<TypeArgument> argumentList;
 
-  /** The generic class for this type */
+  /** The generic class for this type. */
   private final GenericClassType instantiatedType;
 
   /**

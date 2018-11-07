@@ -1,6 +1,6 @@
 package randoop.test;
 
-import randoop.util.predicate.Predicate;
+import java.util.function.Predicate;
 
 /** Input test for parameterized types. */
 public class AnIntegerPredicate implements Predicate<Integer> {
@@ -11,12 +11,12 @@ public class AnIntegerPredicate implements Predicate<Integer> {
   }
 
   @Override
-  public Predicate<Integer> or(Predicate<Integer> p) {
+  public Predicate<Integer> or(Predicate<? super Integer> p) {
     return null;
   }
 
   @Override
-  public Predicate<Integer> and(Predicate<Integer> q) {
+  public Predicate<Integer> and(Predicate<? super Integer> q) {
     return null;
   }
 }

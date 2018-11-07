@@ -13,7 +13,7 @@ import org.junit.Test;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 
-/** Tests for omitmethods filtering */
+/** Tests for omitmethods filtering. */
 public class OmitMethodsTest {
 
   private static ClassOrInterfaceType gType;

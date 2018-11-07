@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-prepare-coverage-data
+prepare-coverage.pl
 
 =head1 SYNOPSIS
 
-prepare-coverage-data [options] [optional coverage xml file]
+prepare-coverage.pl [options] [optional coverage xml file]
 
  Options:
   -help        brief help message
@@ -28,14 +28,18 @@ Prints the manual page and exits.
 
 =head1 DESCRIPTION
 
-This perl script is intended for use by Randoop developers to prepare the
-Randoop code coverage results for inclusion into the master results CSV file.
+This perl script is intended for use by Randoop developers to convert
+the Randoop code coverage results into a csv file suitable for input to
+"Randoop Coverage.xlsm".  The output is written to the file named
+"report-<input file modifcation date>.csv" in the current directory.
 By default, the script will read the file:
 
   build/reports/jacoco/test/jacocoTestReport.xml
 
 This file is generated as part of the gradlew build task. You may generate it directly
-with the gradlew jacocoTestReport task.
+with the gradlew jacocoTestReport task. As part of this testing process, you may
+wish to compare previous and current versions of Randoop.  To that end, the script
+will accept an alternative file as an argument.
 
 =cut
 
@@ -67,12 +71,17 @@ if (@ARGV == 1) {
     $filename = $ARGV[0];
 }
 
-open(my $fh, '<', $filename)
+open(my $ifh, '<', $filename)
   or die "Could not open file '$filename'. $!.\n";
+printf("\nProcessing file: %s\n", $filename);
+print(strftime("Created: %Y-%m-%d %H:%M:%S", localtime((stat($ifh))[9])), "\n");
 
-my $time_run = (stat($fh))[9];
+my $outfilename = "report-" . strftime("%Y%m%d", localtime((stat($ifh))[9])) . ".csv";
+open(my $ofh, '>', $outfilename)
+  or die "Could not open file '$outfilename' $!";
+printf $ofh ("%s, %s\n", $filename, strftime("%Y-%m-%d %H:%M:%S", localtime((stat($ifh))[9])));
 
-while (<$fh>) {
+while (<$ifh>) {
     chomp;
     $tot_line++;
     @xml_lines = split /></;
@@ -86,27 +95,25 @@ if ($xml_lines[$#xml_lines] ne "/report>") {
     die "Unrecognized format of file '$filename'";
 }
 
+print $ofh "project,case,covered lines,total lines\n";
+
 my $element;
 my $name;
-my @output;
-my $index = 0;
-
+my $rest;
 for my $i (0 .. $#xml_lines) {
     $element = $xml_lines[$i];
     if (substr($element, 0, length("package")) eq "package") {
         @fields = split(/"/, $element);
-        $name = $fields[1];
+        ($name, $rest) = split(/\//, $fields[1], 2);
+        if (!defined($rest)) {
+            $rest = " ";
+        }
     } elsif (substr($element, 0, length("/package")) eq "/package") {
         @fields = split(/"/, $xml_lines[$i-4]);
         $tot_exec = $fields[5];
         $tot_line = $fields[3] + $tot_exec;
-        # time run, suite name, test name, sub-test number, lines covered, total lines
-        $output[$index++] = sprintf("%d, %s, %s, %d, %d, %d \n", $time_run, "randoop", $name, 1, $tot_exec, $tot_line);
+        printf $ofh ("%s,%s,%d,%d\n", $name, $rest, $tot_exec, $tot_line);
     }
-}
-
-foreach (sort(@output)) {
-    print $_
 }
 
 @fields = split(/"/, $xml_lines[$#xml_lines-4]);
@@ -115,3 +122,5 @@ if ($fields[0] ne "counter type=" || $fields[1] ne "LINE") {
     die "Unrecognized format of file '$filename'";
 }
 
+close $ifh;
+close $ofh;

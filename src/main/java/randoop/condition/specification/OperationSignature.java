@@ -38,7 +38,7 @@ public class OperationSignature {
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
   // tools
 
-  /** The fully-qualified name of the declaring class of this operation */
+  /** The fully-qualified name of the declaring class of this operation. */
   private final String classname;
 
   /**
@@ -47,7 +47,7 @@ public class OperationSignature {
    */
   private final String name;
 
-  /** The list of fully-qualified raw type names for the parameters of this operation */
+  /** The list of fully-qualified raw type names for the parameters of this operation. */
   private final List<String> parameterTypes;
 
   /** Gson serialization requires a default constructor. */

@@ -240,7 +240,7 @@ public class JDKTypes {
   public static final GenericClassType ABSTRACT_MAP_TYPE =
       GenericClassType.forClass(AbstractMap.class);
 
-  /** Maps interface and abstract class types to a selected implementing type */
+  /** Maps interface and abstract class types to a selected implementing type. */
   private static Map<GenericClassType, GenericClassType> implementingTypeMap =
       new LinkedHashMap<>();
 

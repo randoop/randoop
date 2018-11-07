@@ -1,6 +1,5 @@
 package randoop.main;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -8,11 +7,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
 import org.plumelib.options.Unpublicized;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
@@ -507,6 +508,45 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
+  /**
+   * Randoop generates new tests by choosing from a set of methods under test. This controls how the
+   * next method is chosen, from among all methods under test.
+   */
+  @Option("How to choose the next method to test")
+  public static MethodSelectionMode method_selection = MethodSelectionMode.UNIFORM;
+
+  /** The possible values of the method_selection command-line argument. */
+  public enum MethodSelectionMode {
+    /** Select methods randomly with uniform probability. */
+    UNIFORM,
+    /**
+     * The "Bloodhound" technique from the GRT paper prioritizes methods with lower branch coverage.
+     */
+    BLOODHOUND
+  }
+
+  /** Print to standard out, method weights and method uncovered ratios. */
+  @Unpublicized
+  @Option("Output Bloodhound-related information such as method weights and coverage ratios")
+  public static boolean bloodhound_logging = false;
+
+  /**
+   * Bloodhound can update coverage information at a regular interval that is either based on time
+   * or on the number of successful invocations.
+   */
+  @Unpublicized
+  @Option("Specify how Bloodhound decides when to update coverage information")
+  public static BloodhoundCoverageUpdateMode bloodhound_update_mode =
+      BloodhoundCoverageUpdateMode.TIME;
+
+  /** The possible modes for updating the coverage information that is used by Bloodhound. */
+  public enum BloodhoundCoverageUpdateMode {
+    /** Update coverage information at some regular interval of time. */
+    TIME,
+    /** Update coverage information after some number of successful invocations. */
+    INVOCATIONS
+  }
+
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
   // the length of the string that will actually be printed out as code.
@@ -556,7 +596,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int clear = 100000000;
 
   ///////////////////////////////////////////////////////////////////
-  /** Maximum number of tests to write to each JUnit file */
+  /** Maximum number of tests to write to each JUnit file. */
   @OptionGroup("Outputting the JUnit tests")
   @Option("Maximum number of tests to write to each JUnit file")
   public static int testsperfile = 500;
@@ -622,7 +662,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Filename for code to include in AfterClass-annotated method of test classes")
   public static String junit_after_all = null;
 
-  /** Name of the directory to which JUnit files should be written */
+  /** Name of the directory to which JUnit files should be written. */
   @Option("Name of the directory to which JUnit files should be written")
   public static String junit_output_dir = null;
 
@@ -653,7 +693,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("-D Specify system properties to be set (similar to java -Dx=y)")
   public static List<String> system_props = new ArrayList<>();
 
-  @Option("Capture all output to stdout and stderr")
+  @Unpublicized
+  @Option("Store all output to stdout and stderr in the ExecutionOutcome.")
   public static boolean capture_output = false;
 
   /**
@@ -701,18 +742,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * logs slows down Randoop.
    */
   @Option("<filename> Log lots of information to this file")
-  public static FileWriter log = null;
+  public static FileWriterWithName log = null;
 
   /**
    * A file to which to log selections; helps find sources of non-determinism. If not specified, no
    * logging is done.
    */
   @Option("<filename> Log each random selection to this file")
-  public static FileWriter selection_log = null;
+  public static FileWriterWithName selection_log = null;
 
   /** A file to which to log the operation usage history. */
   @Option("<filename> Log operation usage counts to this file")
-  public static FileWriter operation_history_log = null;
+  public static FileWriterWithName operation_history_log = null;
 
   @Option("Display source if a generated test contains a compilation error.")
   public static boolean print_erroneous_file = false;
@@ -781,6 +822,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
     }
 
+    if (deterministic
+        && method_selection == MethodSelectionMode.BLOODHOUND
+        && bloodhound_update_mode == BloodhoundCoverageUpdateMode.TIME) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination: --deterministic with --bloodhound-update-mode=time");
+    }
+
     if (ReflectionExecutor.call_timeout != ReflectionExecutor.CALL_TIMEOUT_DEFAULT
         && !ReflectionExecutor.usethreads) {
       throw new RandoopUsageError(
@@ -834,10 +882,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
-      /*@Nullable*/ Path listFile,
-      String fileDescription,
-      String commentRegex,
-      String includeRegex) {
+      @Nullable Path listFile, String fileDescription, String commentRegex, String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile.toFile(), commentRegex, includeRegex)) {

@@ -41,8 +41,7 @@ public class JarReader {
         if (jarEntry == null) {
           break;
         }
-        if ((jarEntry.getName().startsWith(packageName))
-            && (jarEntry.getName().endsWith(".class"))) {
+        if (jarEntry.getName().startsWith(packageName) && jarEntry.getName().endsWith(".class")) {
           if (debug) System.out.println(jarEntry.getName().replaceAll("/", "\\."));
           classes.add(jarEntry.getName().replaceAll("/", "\\."));
         }

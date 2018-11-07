@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SubTypeSet (randoop 4.0.4 API)</title>
+<title>SubTypeSet (randoop 4.1.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SubTypeSet (randoop 4.0.4 API)";
+            parent.document.title="SubTypeSet (randoop 4.1.0 API)";
         }
     }
     catch(err) {
@@ -131,16 +131,22 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#reversible">reversible</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>private <a href="../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</a>&lt;<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#subTypes">subTypes</a></span></code>
+<div class="block">Maps a type to all its proper subtypes that are in the set.</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private <a href="../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</a>&lt;<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#subTypesWithsequences">subTypesWithsequences</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>private boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#supportsCheckpoints">supportsCheckpoints</a></span></code>
+<div class="block">If true, then <a href="../randoop/SubTypeSet.html#mark--"><code>mark()</code></a> and <a href="../randoop/SubTypeSet.html#undoLastStep--"><code>undoLastStep()</code></a> are supported.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../randoop/util/ISimpleSet.html" title="interface in randoop.util">ISimpleSet</a>&lt;<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#typesWithsequences">typesWithsequences</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#types">types</a></span></code>
+<div class="block">The members of the set.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -157,7 +163,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#SubTypeSet-boolean-">SubTypeSet</a></span>(boolean&nbsp;reversible)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#SubTypeSet-boolean-">SubTypeSet</a></span>(boolean&nbsp;supportsCheckpoints)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -176,7 +182,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#add-randoop.types.Type-">add</a></span>(<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;c)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#add-randoop.types.Type-">add</a></span>(<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;c)</code>
+<div class="block">Adds a type to this set.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
@@ -184,7 +192,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#getElements--">getElements</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#getElements--">getElements</a></span>()</code>
+<div class="block">Returns the elements of this set.</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
@@ -200,7 +210,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#size--">size</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/SubTypeSet.html#size--">size</a></span>()</code>
+<div class="block">Returns the number of elements of this set.</div>
+</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -230,31 +242,35 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="typesWithsequences">
+<a name="types">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>typesWithsequences</h4>
-<pre>public&nbsp;<a href="../randoop/util/ISimpleSet.html" title="interface in randoop.util">ISimpleSet</a>&lt;<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; typesWithsequences</pre>
+<h4>types</h4>
+<pre>public&nbsp;<a href="../randoop/util/ISimpleSet.html" title="interface in randoop.util">ISimpleSet</a>&lt;<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; types</pre>
+<div class="block">The members of the set.</div>
 </li>
 </ul>
-<a name="subTypesWithsequences">
+<a name="subTypes">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>subTypesWithsequences</h4>
-<pre>private&nbsp;<a href="../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</a>&lt;<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; subTypesWithsequences</pre>
+<h4>subTypes</h4>
+<pre>private&nbsp;<a href="../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</a>&lt;<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; subTypes</pre>
+<div class="block">Maps a type to all its proper subtypes that are in the set. If the mapped-to list is empty,
+ then the set contains no subtypes of the given type.</div>
 </li>
 </ul>
-<a name="reversible">
+<a name="supportsCheckpoints">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>reversible</h4>
-<pre>private&nbsp;boolean reversible</pre>
+<h4>supportsCheckpoints</h4>
+<pre>private&nbsp;boolean supportsCheckpoints</pre>
+<div class="block">If true, then <a href="../randoop/SubTypeSet.html#mark--"><code>mark()</code></a> and <a href="../randoop/SubTypeSet.html#undoLastStep--"><code>undoLastStep()</code></a> are supported.</div>
 </li>
 </ul>
 </li>
@@ -271,7 +287,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SubTypeSet</h4>
-<pre>public&nbsp;SubTypeSet(boolean&nbsp;reversible)</pre>
+<pre>public&nbsp;SubTypeSet(boolean&nbsp;supportsCheckpoints)</pre>
 </li>
 </ul>
 </li>
@@ -309,6 +325,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>add</h4>
 <pre>public&nbsp;void&nbsp;add(<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;c)</pre>
+<div class="block">Adds a type to this set.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>c</code> - the type to be added</dd>
+</dl>
 </li>
 </ul>
 <a name="addQueryType-randoop.types.Type-">
@@ -343,6 +364,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>size</h4>
 <pre>public&nbsp;int&nbsp;size()</pre>
+<div class="block">Returns the number of elements of this set.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the size of the set</dd>
+</dl>
 </li>
 </ul>
 <a name="getElements--">
@@ -352,6 +378,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getElements</h4>
 <pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;getElements()</pre>
+<div class="block">Returns the elements of this set.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the elements of the set</dd>
+</dl>
 </li>
 </ul>
 </li>

@@ -9,10 +9,10 @@ import randoop.types.ReferenceType;
  */
 public final class ReferenceValue {
 
-  /** The type of this value */
+  /** The type of this value. */
   private final ReferenceType type;
 
-  /** The {@link Object} reference of this value */
+  /** The {@link Object} reference of this value. */
   private final Object value;
 
   /**

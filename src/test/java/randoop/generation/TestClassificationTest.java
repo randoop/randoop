@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,7 +48,6 @@ import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 import randoop.util.SimpleList;
 import randoop.util.predicate.AlwaysTrue;
-import randoop.util.predicate.Predicate;
 
 /**
  * Tests the classification of tests based on exception behavior assignments. So, question is where
@@ -425,7 +425,8 @@ public class TestClassificationTest {
             new GenInputsAbstract.Limits(),
             componentMgr,
             null,
-            listenerMgr);
+            listenerMgr,
+            operationModel.getClassTypes());
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.setTestPredicate(isOutputTest);
 
