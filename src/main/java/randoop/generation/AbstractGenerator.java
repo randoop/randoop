@@ -12,7 +12,6 @@ import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MultiVisitor;
-import randoop.RandoopStat;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
@@ -40,17 +39,18 @@ public abstract class AbstractGenerator {
   @Option("Dump each sequence to the log file")
   public static boolean dump_sequences = false;
 
-  @RandoopStat(
-      "Number of generation steps (each an attempt to generate and execute a new, distinct sequence)")
+  /**
+   * Number of generation steps (each an attempt to generate and execute a new, distinct sequence).
+   */
   public int num_steps = 0;
 
-  @RandoopStat("Number of sequences generated.")
+  /** Number of sequences generated. */
   public int num_sequences_generated = 0;
 
-  @RandoopStat("Number of failing sequences generated.")
+  /** Number of failing sequences generated. */
   public int num_failing_sequences = 0;
 
-  @RandoopStat("Number of invalid sequences generated.")
+  /** Number of invalid sequences generated. */
   public int invalidSequenceCount = 0;
 
   /** When the generator started (millisecond-based system timestamp). */
