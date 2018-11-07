@@ -854,6 +854,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
   }
 
+  /** Read names of classes under test, as provided with the --classlist command-line argument. */
   @SuppressWarnings("signature") // TODO: reading from file; no guarantee strings are @ClassGetName
   public static Set<@ClassGetName String> getClassnamesFromArgs() {
     Set<@ClassGetName String> classnames = getStringSetFromFile(classlist, "tested classes");

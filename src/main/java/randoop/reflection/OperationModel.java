@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.BugInRandoopException;
 import randoop.Globals;
@@ -517,8 +518,8 @@ public class OperationModel {
     }
   }
 
-  /* May return null if errorHandler just warns on bad names. */
-  private static Class<?> getClass(
+  /** May return null if errorHandler just warns on bad names. */
+  private static @Nullable Class<?> getClass(
       @ClassGetName String classname, ClassNameErrorHandler errorHandler) {
     try {
       return TypeNames.getTypeForName(classname);
