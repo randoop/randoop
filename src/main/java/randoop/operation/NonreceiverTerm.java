@@ -261,6 +261,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return the non-receiver term for the given string descriptor
    * @throws OperationParseException if string does not represent valid object
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String s) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');

@@ -154,6 +154,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @throws OperationParseException if string does not have expected form
    * @see OperationParser#parse(String)
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String str) throws OperationParseException {
     int openBr = str.indexOf('[');
     int closeBr = str.indexOf(']');

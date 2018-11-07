@@ -28,6 +28,7 @@ import java.util.StringJoiner;
 import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.EntryReader;
@@ -206,10 +207,11 @@ public class GenTests extends GenInputsAbstract {
      * Setup model of classes under test
      */
     // Get names of classes under test
-    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs();
 
     // Get names of classes that must be covered by output tests
-    Set<String> coveredClassnames =
+    @SuppressWarnings("signature") // TOOD: read from file, no guarantee strings are @ClassGetName
+    Set<@ClassGetName String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(require_covered_classes, "coverage class names");
 
     // Get names of fields to be omitted

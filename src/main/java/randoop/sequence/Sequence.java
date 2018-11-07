@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
@@ -307,6 +308,7 @@ public final class Sequence {
    *
    * @return a string containing Java code for this sequence
    */
+  @SideEffectFree
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {

@@ -27,6 +27,9 @@ public class ExceptionBehaviorClassifier {
     return classify(exec.getException(), eseq);
   }
 
+  // TODO: This ignores the possibility that the exception is an expected exception (as determined
+  // by the operation specification).  So, it should only be called if the exception is not
+  // expected.
   /**
    * Classifies a {@code Throwable} thrown by the {@code ExecutableSequence} using the command-line
    * arguments {@link GenInputsAbstract#checked_exception}, {@link
@@ -51,6 +54,9 @@ public class ExceptionBehaviorClassifier {
         return GenInputsAbstract.ncdf_exception;
       }
 
+      // TODO:  A contract might specify that NullPointerException is the expected behavior (or any
+      // other exception might be the expected behavior).  How should this routine be cognizant of
+      // that?
       if (t instanceof NullPointerException) {
         if (eseq.hasNullInput()) {
           return GenInputsAbstract.npe_on_null_input;

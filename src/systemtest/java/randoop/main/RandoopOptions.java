@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
 
 /**
@@ -18,7 +19,7 @@ class RandoopOptions {
   private final List<String> options;
 
   /** The list of classnames for running Randoop. */
-  private final Set<String> classnames;
+  private final Set<@ClassGetName String> classnames;
 
   /** The package name for Randoop-generated test classes; null if default package. */
   private String packageName;
@@ -244,7 +245,7 @@ class RandoopOptions {
    *
    * @return the names of input classes in this options set
    */
-  Set<String> getClassnames() {
+  Set<@ClassGetName String> getClassnames() {
     return classnames;
   }
 }
