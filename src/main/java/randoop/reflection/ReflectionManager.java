@@ -133,7 +133,7 @@ public class ReflectionManager {
         for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
           Log.logPrintf("ReflectionManager.apply considering declared method %s%n", m);
           // if not duplicate and satisfies predicate
-          if ((!methods.contains(m)) && isVisible(m)) {
+          if (!methods.contains(m) && isVisible(m)) {
             applyTo(visitor, m);
           }
         }
@@ -166,7 +166,7 @@ public class ReflectionManager {
         for (Field f : ClassDeterministic.getFields(c)) { // for all public fields of c
           // keep a field that satisfies filter, and is not inherited and shadowed by
           // local declaration
-          if (predicate.isVisible(f) && (!declaredNames.contains(f.getName()))) {
+          if (predicate.isVisible(f) && !declaredNames.contains(f.getName())) {
             applyTo(visitor, f);
           }
         }

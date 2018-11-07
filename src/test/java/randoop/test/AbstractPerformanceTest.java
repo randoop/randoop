@@ -31,8 +31,9 @@ public abstract class AbstractPerformanceTest {
 
   private final double DIVIDE_FACTOR = 1700;
 
-  private final double EXPECTED_MIN = (0.7) / computeFactor();
+  private final double EXPECTED_MIN = 0.7 / computeFactor();
 
+  @SuppressWarnings("ModifiedButNotUsed")
   private double computeFactor() {
     String foo = "make sure that the loop doesn't get optimized away";
     List<String> list = new ArrayList<>();

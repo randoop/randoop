@@ -163,7 +163,7 @@ public class SimpleTypeTest {
     Type longType = new PrimitiveType(long.class);
     Type shortType = new PrimitiveType(short.class);
 
-    assertTrue("void is primitive", (void.class).isPrimitive());
+    assertTrue("void is primitive", void.class.isPrimitive());
     assertFalse("void is not assignable from void", voidType.isAssignableFrom(voidType));
     assertFalse("void is not assignable from Object", voidType.isAssignableFrom(objectType));
     assertFalse("void is not assignable from boolean", voidType.isAssignableFrom(booleanType));

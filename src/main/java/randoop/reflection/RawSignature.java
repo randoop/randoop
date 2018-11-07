@@ -113,7 +113,7 @@ public class RawSignature {
     }
 
     return ((packageName == null) ? "" : packageName + ".")
-        + ((classname.equals(name)) ? name : classname + "." + name)
+        + (classname.equals(name) ? name : classname + "." + name)
         + "("
         + UtilPlume.join(typeNames, ",")
         + ")";

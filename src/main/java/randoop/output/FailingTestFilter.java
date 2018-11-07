@@ -99,7 +99,7 @@ public class FailingTestFilter implements CodeWriter {
                   packageName,
                   classname,
                   classSource,
-                  (e.getDiagnostics()).getDiagnostics(),
+                  e.getDiagnostics().getDiagnostics(),
                   workingDirectory,
                   e);
           continue;
