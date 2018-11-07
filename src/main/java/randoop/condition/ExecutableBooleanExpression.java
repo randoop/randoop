@@ -7,12 +7,12 @@ import java.util.Objects;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import org.plumelib.util.UtilPlume;
-import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
 import randoop.compile.SequenceCompilerException;
 import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.output.NameGenerator;
 import randoop.reflection.RawSignature;
 
@@ -212,13 +212,13 @@ public class ExecutableBooleanExpression {
     try {
       expressionClass = compiler.loadClass(packageName, classname);
     } catch (ClassNotFoundException e) {
-      throw new BugInRandoopException("Failed to load expression class", e);
+      throw new RandoopBug("Failed to load expression class", e);
     }
 
     try {
       return expressionClass.getDeclaredMethod(signature.getName(), signature.getParameterTypes());
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("Condition class does not contain expression method", e);
+      throw new RandoopBug("Condition class does not contain expression method", e);
     }
   }
 

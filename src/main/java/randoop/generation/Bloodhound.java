@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.plumelib.util.CollectionsPlume;
-import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.EnumConstant;
 import randoop.operation.FieldGet;
@@ -200,7 +200,7 @@ public class Bloodhound implements TypedOperationSelector {
         }
         break;
       default:
-        throw new BugInRandoopException(
+        throw new RandoopBug(
             "Unhandled value for bloodhound_update_mode: "
                 + GenInputsAbstract.bloodhound_update_mode);
     }

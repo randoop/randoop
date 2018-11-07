@@ -12,7 +12,6 @@ import java.util.function.Predicate;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import randoop.BugInRandoopException;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -20,6 +19,7 @@ import randoop.generation.TestUtils;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
+import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -225,7 +225,7 @@ public class ForwardExplorerTests {
     try {
       objectConstructor = new ConstructorCall(Object.class.getConstructor());
     } catch (Exception e) {
-      throw new BugInRandoopException(e); // Should never reach here!
+      throw new RandoopBug(e); // Should never reach here!
     }
     TypedOperation op =
         new TypedClassOperation(

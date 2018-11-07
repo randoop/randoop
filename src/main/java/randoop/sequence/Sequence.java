@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.operation.TypedOperation;
@@ -667,7 +667,7 @@ public final class Sequence {
     if (possibleVars.isEmpty()) {
       Statement lastStatement = this.statements.get(this.statements.size() - 1);
       return null; // deal with the problem elsewhere.  TODO: fix so this cannot happen.
-      // throw new BugInRandoopException(
+      // throw new RandoopBug(
       //     String.format(
       //         "Failed to select %svariable with input type %s from statement %s",
       //         (onlyReceivers ? "receiver " : ""), type, lastStatement));
@@ -703,7 +703,7 @@ public final class Sequence {
       }
     }
     if (possibleIndices.isEmpty()) {
-      throw new BugInRandoopException(
+      throw new RandoopBug(
           "Failed to select variable with input type " + type + " from sequence " + this);
     }
 
@@ -1105,7 +1105,7 @@ public final class Sequence {
       GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      throw new BugInRandoopException("Error while logging sequence", e);
+      throw new RandoopBug("Error while logging sequence", e);
     }
   }
 
