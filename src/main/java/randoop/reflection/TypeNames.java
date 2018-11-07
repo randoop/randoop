@@ -24,7 +24,9 @@ public class TypeNames {
    */
   public static Class<?> getTypeForName(String typeName) throws ClassNotFoundException {
     if (isArrayType(typeName)) {
-      return getArrayType(typeName);
+      // new Exception("It's an array").printStackTrace(System.out);
+      throw new Error("It's an array");
+      // return getArrayType(typeName);
     }
     Class<?> c = PrimitiveTypes.classForName(typeName);
     if (c == null) {

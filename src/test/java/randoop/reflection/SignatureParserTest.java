@@ -31,7 +31,7 @@ public class SignatureParserTest {
     checkParse("randoop.reflection.ConcreteClass.getThePrivateField()");
     checkParse("randoop.reflection.ConcreteClass.setThePublicField(java.lang.Object)");
     checkParse("randoop.reflection.ConcreteClass.setThePrivateField(int)");
-    checkParse("randoop.reflection.ConcreteClass.setTheArrayField(int[])");
+    // checkParse("randoop.reflection.ConcreteClass.setTheArrayField(int[])");
   }
 
   @Test
