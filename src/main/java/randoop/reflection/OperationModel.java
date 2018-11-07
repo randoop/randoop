@@ -518,7 +518,14 @@ public class OperationModel {
     }
   }
 
-  /** May return null if errorHandler just warns on bad names. */
+  /**
+   * Returns the class whose name is {@code classname}. A wrapper around Class.forName.
+   *
+   * @param classname the name of a class or primitive type
+   * @param errorHandler is called if no such class exists
+   * @return the Class whose name is {@code classname}. May return null if {@code errorHandler} just
+   *     warns on bad names.
+   */
   private static @Nullable Class<?> getClass(
       @ClassGetName String classname, ClassNameErrorHandler errorHandler) {
     try {
