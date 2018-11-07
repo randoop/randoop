@@ -34,6 +34,7 @@ import randoop.util.predicate.AlwaysFalse;
  */
 public abstract class AbstractGenerator {
 
+  /** If true, dump each sequence to the log file as it is generated. */
   @OptionGroup(value = "AbstractGenerator unpublicized options", unpublicized = true)
   @Unpublicized
   @Option("Dump each sequence to the log file")
