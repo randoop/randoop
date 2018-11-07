@@ -25,11 +25,6 @@ public class ListOfListsIteratorTests extends TestCase {
     a3.add(4);
     a3.add(5);
 
-    List<SimpleList<Integer>> level0 = new ArrayList<>();
-    level0.add(a1);
-    level0.add(a2);
-    level0.add(a3);
-
     for (int i = 0; i < 100; i++) {
 
       // Create random list.

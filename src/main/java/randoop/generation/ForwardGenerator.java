@@ -624,7 +624,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // true if statement st represents an instance method, and we are
       // currently selecting a value to act as the receiver for the method.
-      boolean isReceiver = (i == 0 && (operation.isMessage()) && (!operation.isStatic()));
+      boolean isReceiver = (i == 0 && operation.isMessage() && !operation.isStatic());
 
       // If alias ratio is given, attempt with some probability to use a
       // variable already in S.
@@ -824,8 +824,8 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
       if (isReceiver
-          && ((chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
-              || randomVariable.getType().isPrimitive()))) {
+          && (chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
+              || randomVariable.getType().isPrimitive())) {
         System.out.println();
         System.out.println("Selected null or a primitive as the receiver for a method call.");
         // System.out.printf("  operation = %s%n", operation);

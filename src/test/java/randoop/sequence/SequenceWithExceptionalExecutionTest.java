@@ -56,7 +56,7 @@ public class SequenceWithExceptionalExecutionTest {
 
     Constructor<?> constructor;
     try {
-      constructor = (LinkedHashSet.class).getConstructor();
+      constructor = LinkedHashSet.class.getConstructor();
     } catch (NoSuchMethodException e) {
       fail("couldn't get default constructor for LinkedHashSet: " + e.getMessage());
       throw new Error("Unreachable");

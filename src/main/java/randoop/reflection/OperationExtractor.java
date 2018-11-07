@@ -300,7 +300,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (getter != null) {
       operations.add(getter);
     }
-    if (!(Modifier.isFinal(mods))) {
+    if (!Modifier.isFinal(mods)) {
       TypedClassOperation operation =
           instantiateTypes(TypedOperation.createSetterForField(field, declaringType));
       if (operation != null) {

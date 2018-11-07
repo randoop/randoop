@@ -233,7 +233,7 @@ public class ForwardExplorerTests {
     TypedOperation op =
         new TypedClassOperation(
             objectConstructor, JavaTypes.OBJECT_TYPE, new TypeTuple(), JavaTypes.OBJECT_TYPE);
-    sequences.add((new Sequence().extend(op, new ArrayList<Variable>())));
+    sequences.add(new Sequence().extend(op, new ArrayList<Variable>()));
     return new GenTests()
         .createTestOutputPredicate(
             sequences, new LinkedHashSet<Class<?>>(), require_classname_in_test);
