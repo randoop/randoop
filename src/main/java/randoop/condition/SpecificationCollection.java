@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
@@ -159,7 +160,7 @@ public class SpecificationCollection {
    */
   private static AccessibleObject getAccessibleObject(OperationSignature operation) {
     if (operation.isValid()) {
-      List<String> paramTypeNames = operation.getParameterTypeNames();
+      List<@ClassGetName String> paramTypeNames = operation.getParameterTypeNames();
       Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
       try {
         for (int i = 0; i < argTypes.length; i++) {

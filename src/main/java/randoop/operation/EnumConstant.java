@@ -107,6 +107,7 @@ public class EnumConstant extends CallableOperation {
    * @return the enum constant operation for the string descriptor
    * @throws OperationParseException if desc does not match expected form
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedClassOperation parse(String desc) throws OperationParseException {
     if (desc == null) {
       throw new IllegalArgumentException("desc cannot be null");

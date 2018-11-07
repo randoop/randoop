@@ -2,6 +2,7 @@ package randoop.condition.specification;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 
 /**
  * A specification clause that an exception should be thrown.
@@ -30,10 +31,13 @@ public class ThrowsCondition extends SpecificationClause {
 
   /** The fully-qualified name of the type of the expected exception. */
   @SerializedName("exception")
-  private final String exceptionType;
+  private final @ClassGetName String exceptionType;
 
   /** Gson serialization requires a default constructor. */
-  @SuppressWarnings("unused")
+  @SuppressWarnings({
+    "unused",
+    "signature" // dummy value
+  })
   private ThrowsCondition() {
     super();
     this.exceptionType = "";
@@ -46,7 +50,7 @@ public class ThrowsCondition extends SpecificationClause {
    * @param guard the guard for the specification
    * @param exceptionType the expected exception type
    */
-  public ThrowsCondition(String description, Guard guard, String exceptionType) {
+  public ThrowsCondition(String description, Guard guard, @ClassGetName String exceptionType) {
     super(description, guard);
     this.exceptionType = exceptionType;
   }
@@ -56,7 +60,7 @@ public class ThrowsCondition extends SpecificationClause {
    *
    * @return the exception type name for this throws specification
    */
-  public String getExceptionTypeName() {
+  public @ClassGetName String getExceptionTypeName() {
     return exceptionType;
   }
 

@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.report.JavaNames;
@@ -21,7 +22,7 @@ import org.plumelib.util.UtilPlume;
 class CoverageChecker {
 
   /** The classes whose methods must be covered. */
-  private final Set<String> classnames;
+  private final Set<@ClassGetName String> classnames;
 
   /** The methods that must not be covered. */
   private final HashSet<String> excludedMethods;
@@ -34,7 +35,7 @@ class CoverageChecker {
    *
    * @param classnames the class name set
    */
-  private CoverageChecker(Set<String> classnames) {
+  private CoverageChecker(Set<@ClassGetName String> classnames) {
     this.classnames = classnames;
     this.excludedMethods = new HashSet<>();
     this.dontCareMethods = new HashSet<>();

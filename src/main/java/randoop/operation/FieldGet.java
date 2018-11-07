@@ -120,6 +120,7 @@ public class FieldGet extends CallableOperation {
    * @return the getter operation for the given string descriptor
    * @throws OperationParseException if any error in descriptor string
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
 
