@@ -217,6 +217,7 @@ public final class MethodCall extends CallableOperation {
    * @throws OperationParseException if s does not match expected descriptor
    * @see OperationParser#parse(String)
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");

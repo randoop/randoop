@@ -128,6 +128,7 @@ public class FieldSet extends CallableOperation {
    * @return the field setter for the given string descriptor
    * @throws OperationParseException if descr does not have expected form
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field set statement: ";
 

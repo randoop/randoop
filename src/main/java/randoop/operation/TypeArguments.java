@@ -1,5 +1,6 @@
 package randoop.operation;
 
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.reflection.TypeNames;
 
 /**
@@ -30,6 +31,8 @@ class TypeArguments {
       String[] argsStrs = argStr.split(",");
       argTypes = new Class<?>[argsStrs.length];
       for (int i = 0; i < argsStrs.length; i++) {
+        @SuppressWarnings("signature") // uncheckable string manipulation
+        @ClassGetName
         String typeName = argsStrs[i].trim();
 
         try {

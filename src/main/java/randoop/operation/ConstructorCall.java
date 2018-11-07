@@ -221,6 +221,7 @@ public final class ConstructorCall extends CallableOperation {
    * @throws OperationParseException if no constructor found for signature
    * @see OperationParser#parse(String)
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
