@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 
 /**
  * A simple-to-use wrapper around {@link java.util.Random}.
@@ -146,7 +146,7 @@ public final class Randomness {
       T elt = list.get(i);
       double weight = weights.get(elt);
       if (weight < 0) {
-        throw new BugInRandoopException("Weight should be positive: " + weight);
+        throw new RandoopBug("Weight should be positive: " + weight);
       }
       totalWeight += weight;
     }
@@ -197,7 +197,7 @@ public final class Randomness {
     for (int i = 0; i < list.size(); i++) {
       System.out.printf("%d, %f%n", i, weights.get(list.get(i)));
     }
-    throw new BugInRandoopException("Unable to select random member");
+    throw new RandoopBug("Unable to select random member");
   }
 
   /**

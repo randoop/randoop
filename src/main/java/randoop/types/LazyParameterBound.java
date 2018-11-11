@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import randoop.BugInRandoopException;
+import randoop.main.RandoopBug;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Prevents type recognition
@@ -88,7 +88,7 @@ class LazyParameterBound extends ParameterBound {
       return new EagerReferenceBound(instantiatedType);
     }
 
-    throw new BugInRandoopException(
+    throw new RandoopBug(
         "lazy parameter bounds should be either a type variable or parameterized type");
   }
 

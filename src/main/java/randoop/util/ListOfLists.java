@@ -3,7 +3,7 @@ package randoop.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import randoop.BugInRandoopException;
+import randoop.main.RandoopBug;
 
 /**
  * Given a list of lists, defines methods that can access all the elements as if they were part of a
@@ -80,7 +80,7 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
       }
       previousListSize = this.cumulativeSize[i];
     }
-    throw new BugInRandoopException("Indexing error in ListOfLists");
+    throw new RandoopBug("Indexing error in ListOfLists");
   }
 
   @Override
@@ -96,7 +96,7 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
       }
       previousListSize = cumulativeSize[i];
     }
-    throw new BugInRandoopException("indexing error in ListOfLists");
+    throw new RandoopBug("indexing error in ListOfLists");
   }
 
   @Override

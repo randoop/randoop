@@ -2,15 +2,15 @@ package randoop.test;
 
 import java.util.Collections;
 import java.util.Set;
-import randoop.BugInRandoopException;
+import randoop.main.RandoopBug;
 
 /**
- * An empty or singleton set. It contains at most one InvalidExceptionCheck, which captures invalid
- * behavior in a sequence.
+ * An empty or singleton set. It contains at most one InvalidExceptionCheck or InvalidValueCheck,
+ * which captures invalid behavior in a sequence.
  */
 public class InvalidChecks implements TestChecks<InvalidChecks> {
 
-  /** An empty, immutable set of error-revealing checks. */
+  /** An empty, immutable set of invalid checks. */
   public static final InvalidChecks EMPTY = new InvalidChecks();
 
   // Either an InvalidExceptionCheck or an InvalidValueCheck.
@@ -69,10 +69,10 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   @Override
   public void add(Check check) {
     if (this == EMPTY) {
-      throw new BugInRandoopException("Don't add to InvalidChecks.EMPTY");
+      throw new RandoopBug("Don't add to InvalidChecks.EMPTY");
     }
     if (this.check != null) {
-      throw new BugInRandoopException(
+      throw new RandoopBug(
           String.format("add(%s) when InvalidChecks already contains %s", check, this.check));
     }
     if (!((check instanceof InvalidExceptionCheck) || (check instanceof InvalidValueCheck))) {

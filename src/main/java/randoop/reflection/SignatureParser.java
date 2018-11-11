@@ -62,6 +62,7 @@ public class SignatureParser {
    * @throws SignatureParseException if the signature is not fully-qualified, or the class, an
    *     argument type, or the method or constructor is not found using reflection
    */
+  @SuppressWarnings("signature") // parsing
   public static AccessibleObject parse(
       String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate)
       throws SignatureParseException {
@@ -86,15 +87,12 @@ public class SignatureParser {
      *   package-name.class-name.method-name for a method
      * Now, parse it.
      */
-    String name;
-    String qualifiedClassname;
     int dotPos = qualifiedName.lastIndexOf('.');
-    if (dotPos > 0) {
-      name = qualifiedName.substring(dotPos + 1);
-      qualifiedClassname = qualifiedName.substring(0, dotPos);
-    } else {
+    if (dotPos <= 0) {
       throw new SignatureParseException("Fully-qualified name expected: " + qualifiedName);
     }
+    String name = qualifiedName.substring(dotPos + 1);
+    String qualifiedClassname = qualifiedName.substring(0, dotPos);
 
     // Check whether signature has constructor reflection format
     boolean isConstructor = name.equals("<init>");

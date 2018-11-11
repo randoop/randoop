@@ -41,6 +41,7 @@ public class ForwardExplorerPerformanceTest {
     optionsCache.restoreState();
   }
 
+  @SuppressWarnings("ModifiedButNotUsed")
   private static long performanceMultiplier() {
     String foo = "make sure that the loop doesn't get optimized away";
     List<String> list = new ArrayList<>();

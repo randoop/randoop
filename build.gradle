@@ -30,7 +30,7 @@ plugins {
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
 // It is not run in the main build because the Checker Framework is incompatible with Error Prone.
-apply from: "checkerframework-annos-in-comments.gradle"
+// TODO: Uncomment
 // apply from: "checkerframework.gradle"
 
 /* Common build configuration for Randoop and agents */
@@ -58,6 +58,8 @@ allprojects {
   }
 
   dependencies {
+    compile "org.checkerframework:checker-qual:2.5.7"
+
     plumelib 'org.plumelib:bcel-util:1.1.3'
     // To use a local version comment out line above and uncomment line below.
     //plumelib files("${rootDir}/libs/bcel-util-all.jar")
@@ -925,13 +927,6 @@ task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishS
   description "Builds system and documentation, validates HTML, and publishes site"
 }
 
-/*************** Gradle Wrapper ******************/
-/* Declares the Gradle version to be used when the wrapper is built */
-task wrapper(type: Wrapper) {
-  description "Configure Gradle Wrapper for this project"
-  gradleVersion = '4.1'
-}
-
 /*************** Other tool configs *************/
 /* Make Emacs TAGS table */
 task tags(type: Exec, dependsOn: 'cloneLibs') {
@@ -964,4 +959,4 @@ task installGitHooks(type: Copy) {
   into '.git/hooks'
 }
 /* Always run this task. */
-tasks.installGitHooks.execute()
+gradle.startParameter.taskNames = [":installGitHooks"] + gradle.startParameter.taskNames

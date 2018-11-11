@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.lang.reflect.WildcardType;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 
 /**
  * The superclass of a class hierarchy representing Java types defined in JLS Section 4.1. This
@@ -63,7 +64,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the type object for the type with the name, null if none is found
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Type forName(String typeName) throws ClassNotFoundException {
+  public static Type forName(@ClassGetName String typeName) throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.classForName(typeName);
     if (c == null) {
       c = Class.forName(typeName);

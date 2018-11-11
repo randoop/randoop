@@ -46,7 +46,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
     ExecutionOutcome result = eseq.getResult(finalIndex);
 
     if (result instanceof NotExecuted) {
-      // TODO: Should this be BugInRandoopException?
+      // TODO: Should this be RandoopBug?
       throw new Error("Abnormal execution in sequence: " + eseq);
     } else if (result instanceof ExceptionalExecution) { // exception occurred
       ExceptionalExecution exec = (ExceptionalExecution) result;

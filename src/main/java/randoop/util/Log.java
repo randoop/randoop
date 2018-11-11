@@ -3,9 +3,9 @@ package randoop.util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 
 /** Static methods that log to GenInputsAbstract.log, if that is non-null. */
 public final class Log {
@@ -43,7 +43,7 @@ public final class Log {
       GenInputsAbstract.log.write(s);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      throw new BugInRandoopException("Exception while writing to log", e);
+      throw new RandoopBug("Exception while writing to log", e);
     }
   }
 
@@ -69,7 +69,7 @@ public final class Log {
       GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      throw new BugInRandoopException("Exception while writing to log", e);
+      throw new RandoopBug("Exception while writing to log", e);
     }
   }
 
@@ -103,7 +103,7 @@ public final class Log {
       GenInputsAbstract.log.write(msg);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      throw new BugInRandoopException("Exception while writing to log", e);
+      throw new RandoopBug("Exception while writing to log", e);
     }
   }
 
@@ -124,7 +124,7 @@ public final class Log {
       pw.flush();
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      throw new BugInRandoopException("Exception while writing to log", e);
+      throw new RandoopBug("Exception while writing to log", e);
     }
   }
 }

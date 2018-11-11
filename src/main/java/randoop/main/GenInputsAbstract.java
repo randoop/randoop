@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
@@ -778,7 +779,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /** Install the given runtime visitor. See class randoop.ExecutionVisitor. */
   @OptionGroup(value = "Advanced extension points")
   @Option("Install the given runtime visitor")
-  public static List<String> visitor = new ArrayList<>();
+  public static List<@ClassGetName String> visitor = new ArrayList<>();
 
   ///////////////////////////////////////////////////////////////////
   // This is only here to keep the ICSE07ContainersTest working
@@ -861,8 +862,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
   }
 
-  public static Set<String> getClassnamesFromArgs() {
-    Set<String> classnames = getStringSetFromFile(classlist, "tested classes");
+  /**
+   * Read names of classes under test, as provided with the --classlist command-line argument.
+   *
+   * @return the classes provided via the --classlist command-line argument
+   */
+  @SuppressWarnings("signature") // TODO: reading from file; no guarantee strings are @ClassGetName
+  public static Set<@ClassGetName String> getClassnamesFromArgs() {
+    Set<@ClassGetName String> classnames = getStringSetFromFile(classlist, "tested classes");
     classnames.addAll(testclass);
     return classnames;
   }

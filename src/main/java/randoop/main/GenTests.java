@@ -28,11 +28,11 @@ import java.util.StringJoiner;
 import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.UtilPlume;
-import randoop.BugInRandoopException;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
@@ -206,10 +206,11 @@ public class GenTests extends GenInputsAbstract {
      * Setup model of classes under test
      */
     // Get names of classes under test
-    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs();
 
     // Get names of classes that must be covered by output tests
-    Set<String> coveredClassnames =
+    @SuppressWarnings("signature") // TOOD: read from file, no guarantee strings are @ClassGetName
+    Set<@ClassGetName String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(require_covered_classes, "coverage class names");
 
     // Get names of fields to be omitted
@@ -426,7 +427,7 @@ public class GenTests extends GenInputsAbstract {
     try {
       objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("failed to get Object constructor", e);
+      throw new RandoopBug("failed to get Object constructor", e);
     }
 
     Sequence newObj = new Sequence().extend(objectConstructor);
@@ -459,7 +460,7 @@ public class GenTests extends GenInputsAbstract {
           ExecutionVisitor vis = cls.getDeclaredConstructor().newInstance();
           visitors.add(vis);
         } catch (Exception e) {
-          throw new BugInRandoopException("Error while loading visitor class " + visitorClsName, e);
+          throw new RandoopBug("Error while loading visitor class " + visitorClsName, e);
         }
       }
     }
@@ -486,14 +487,13 @@ public class GenTests extends GenInputsAbstract {
 
       System.exit(1);
     } catch (RandoopInstantiationError e) {
-      throw new BugInRandoopException("Error instantiating operation " + e.getOpName(), e);
+      throw new RandoopBug("Error instantiating operation " + e.getOpName(), e);
     } catch (RandoopGenerationError e) {
-      throw new BugInRandoopException(
-          "Error in generation with operation " + e.getInstantiatedOperation(), e);
+      throw new RandoopBug("Error in generation with operation " + e.getInstantiatedOperation(), e);
     } catch (SequenceExecutionException e) {
-      throw new BugInRandoopException("Error executing generated sequence", e);
+      throw new RandoopBug("Error executing generated sequence", e);
     } catch (RandoopLoggingError e) {
-      throw new BugInRandoopException("Logging error", e);
+      throw new RandoopBug("Logging error", e);
     }
 
     /* post generation */
@@ -993,7 +993,7 @@ public class GenTests extends GenInputsAbstract {
    * Returns the list of JDK specification files from the {@code specifications/jdk} resources
    * directory in the Randoop jar file.
    *
-   * @throws BugInRandoopException if there is an error locating the specification files
+   * @throws randoop.main.RandoopBug if there is an error locating the specification files
    * @return the list of JDK specification files
    */
   private Collection<? extends Path> getJDKSpecificationFiles() {
@@ -1006,7 +1006,7 @@ public class GenTests extends GenInputsAbstract {
         fileList.add(entry);
       }
     } catch (IOException e) {
-      throw new BugInRandoopException("Error reading JDK specification directory", e);
+      throw new RandoopBug("Error reading JDK specification directory", e);
     }
 
     return fileList;
@@ -1017,7 +1017,7 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param resourceDirectory the resource directory relative to the root of the jar file, should
    *     start with "/"
-   * @throws BugInRandoopException if an error occurs when locating the directory
+   * @throws randoop.main.RandoopBug if an error occurs when locating the directory
    * @return the {@code Path} for the resource directory
    */
   private Path getResourceDirectoryPath(String resourceDirectory) {
@@ -1025,14 +1025,14 @@ public class GenTests extends GenInputsAbstract {
     try {
       directoryURI = GenTests.class.getResource(resourceDirectory).toURI();
     } catch (URISyntaxException e) {
-      throw new BugInRandoopException("Error locating directory " + resourceDirectory, e);
+      throw new RandoopBug("Error locating directory " + resourceDirectory, e);
     }
 
     FileSystem fileSystem = null;
     try {
       fileSystem = FileSystems.newFileSystem(directoryURI, Collections.<String, Object>emptyMap());
     } catch (IOException e) {
-      throw new BugInRandoopException("Error locating directory " + resourceDirectory, e);
+      throw new RandoopBug("Error locating directory " + resourceDirectory, e);
     }
     return fileSystem.getPath(resourceDirectory);
   }

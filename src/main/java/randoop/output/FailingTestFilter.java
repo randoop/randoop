@@ -17,13 +17,13 @@ import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import org.plumelib.util.UtilPlume;
-import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
+import randoop.main.RandoopBug;
 import randoop.main.RandoopUsageError;
 
 /**
@@ -99,7 +99,7 @@ public class FailingTestFilter implements CodeWriter {
                   packageName,
                   classname,
                   classSource,
-                  (e.getDiagnostics()).getDiagnostics(),
+                  e.getDiagnostics().getDiagnostics(),
                   workingDirectory,
                   e);
           continue;
@@ -109,7 +109,7 @@ public class FailingTestFilter implements CodeWriter {
         try {
           status = testEnvironment.runTest(qualifiedClassname, workingDirectory);
         } catch (CommandException e) {
-          throw new BugInRandoopException("Error filtering regression tests", e);
+          throw new RandoopBug("Error filtering regression tests", e);
         }
 
         if (status.exitStatus == 0) {
@@ -153,8 +153,8 @@ public class FailingTestFilter implements CodeWriter {
    * @param destinationDir the directory that contains the source code, used only for debugging
    * @param e the exception that was raised when compiling the source code, used only for debugging
    * @return the class source edited so that failing assertions are replaced by comments
-   * @throws BugInRandoopException if there is an unhandled compilation error (i.e., not about an
-   *     unnecessary catch or try statement)
+   * @throws RandoopBug if there is an unhandled compilation error (i.e., not about an unnecessary
+   *     catch or try statement)
    */
   private String commentCatchStatements(
       String packageName,
@@ -219,7 +219,7 @@ public class FailingTestFilter implements CodeWriter {
               "Use --print-erroneous-file to print the file with the compilation error.%n");
     }
     message += String.format("Diagnostics:%n%s%n", diagnostics);
-    throw new BugInRandoopException(message, e);
+    throw new RandoopBug(message, e);
   }
 
   /**
@@ -231,7 +231,7 @@ public class FailingTestFilter implements CodeWriter {
    * @param javaCode the source code for the test class; each assertion must be on its own line
    * @param status the {@link randoop.execution.RunCommand.Status} from running the test with JUnit
    * @return the class source edited so that failing assertions are replaced by comments
-   * @throws BugInRandoopException if {@code status} contains output for a failure not involving a
+   * @throws RandoopBug if {@code status} contains output for a failure not involving a
    *     Randoop-generated test method
    */
   private String commentFailingAssertions(
@@ -264,13 +264,12 @@ public class FailingTestFilter implements CodeWriter {
         System.out.printf("status =%n%s%n", status);
         System.out.println();
         if (line.contains("initializationError")) {
-          throw new BugInRandoopException(
+          throw new RandoopBug(
               "Check configuration of test environment: "
                   + "initialization error of test in flaky-test filter: "
                   + line);
         } else {
-          throw new BugInRandoopException(
-              "Bad method name " + methodName + " in flaky-test filter: " + line);
+          throw new RandoopBug("Bad method name " + methodName + " in flaky-test filter: " + line);
         }
       }
 
@@ -286,7 +285,7 @@ public class FailingTestFilter implements CodeWriter {
       // lineNumber is 1-based, not 0-based
       int lineNumber = Integer.parseInt(failureLineMatch.group);
       if (lineNumber < 1 || lineNumber > javaCodeLines.length) {
-        throw new BugInRandoopException(
+        throw new RandoopBug(
             String.format(
                 "Line number %d read from JUnit is out of range [1,%d]: %s",
                 lineNumber, javaCodeLines.length, failureLineMatch.line));
@@ -376,11 +375,11 @@ public class FailingTestFilter implements CodeWriter {
         errorMessage.append(Globals.lineSep);
         errorMessage.append(javaCode);
       }
-      throw new BugInRandoopException(errorMessage.toString());
+      throw new RandoopBug(errorMessage.toString());
     }
     int totalFailures = Integer.parseInt(failureCountMatch.group);
     if (totalFailures <= 0) {
-      throw new BugInRandoopException("JUnit has non-zero exit status, but no failure found");
+      throw new RandoopBug("JUnit has non-zero exit status, but no failure found");
     }
     return totalFailures;
   }
@@ -434,8 +433,7 @@ public class FailingTestFilter implements CodeWriter {
    * @param lineIterator the iterator for reading from the JUnit output
    * @param pattern the pattern for a regex with at least one group
    * @return the pair containing the line and the text matching the first group
-   * @throws BugInRandoopException if the iterator has no more lines, but the pattern hasn't been
-   *     matched
+   * @throws RandoopBug if the iterator has no more lines, but the pattern hasn't been matched
    */
   private Match readUntilMatch(Iterator<String> lineIterator, Pattern pattern) {
     while (lineIterator.hasNext()) {
@@ -472,7 +470,7 @@ public class FailingTestFilter implements CodeWriter {
     try {
       sourceFile = javaFileWriter.writeClassCode(packageName, classname, classSource);
     } catch (RandoopOutputException e) {
-      throw new BugInRandoopException("Output error during flaky-test filtering", e);
+      throw new RandoopBug("Output error during flaky-test filtering", e);
     }
     FileCompiler fileCompiler = new FileCompiler();
     fileCompiler.compile(sourceFile, destinationDir);
@@ -492,7 +490,7 @@ public class FailingTestFilter implements CodeWriter {
       Path workingDirectory = Files.createTempDirectory("check" + classname + pass);
       return workingDirectory;
     } catch (IOException e) {
-      // not BugInRandoopException
+      // not RandoopBug
       System.err.printf(
           "Unable to create temporary directory for flaky-test filtering, exception: %s%n",
           e.getMessage());

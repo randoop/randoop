@@ -2,7 +2,6 @@ package randoop.main;
 
 import java.util.ArrayList;
 import java.util.List;
-import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.condition.RandoopSpecificationError;
 import randoop.generation.AbstractGenerator;
@@ -90,7 +89,7 @@ public class Main {
       }
       System.exit(1);
 
-    } catch (BugInRandoopException e) {
+    } catch (RandoopBug e) {
       System.out.println();
       System.out.println("Randoop failed in an unexpected way.");
       System.out.println("Please report at https://github.com/randoop/randoop/issues .");

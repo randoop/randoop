@@ -3,12 +3,12 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
+import randoop.main.RandoopBug;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.SequenceExecutionException;
 import randoop.sequence.Variable;
@@ -44,7 +44,7 @@ public class FieldGet extends CallableOperation {
    * @param statementInput the inputs for statement
    * @param out the stream for printing output (unused)
    * @return outcome of access
-   * @throws BugInRandoopException if field access throws bug exception
+   * @throws RandoopBug if field access throws bug exception
    * @throws SequenceExecutionException if field access has a type exception
    */
   @Override
@@ -58,7 +58,7 @@ public class FieldGet extends CallableOperation {
       Object value = field.getValue(input);
       return new NormalExecution(value, 0);
 
-    } catch (BugInRandoopException | SequenceExecutionException e) {
+    } catch (RandoopBug | SequenceExecutionException e) {
       throw e;
     } catch (Throwable thrown) {
       return new ExceptionalExecution(thrown, 0);
@@ -120,6 +120,7 @@ public class FieldGet extends CallableOperation {
    * @return the getter operation for the given string descriptor
    * @throws OperationParseException if any error in descriptor string
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
 
