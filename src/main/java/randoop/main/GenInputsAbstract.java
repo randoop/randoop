@@ -367,10 +367,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   /** cxing TODO */
-  @OptionGroup("non-MRD methods")
-  @Option("File containing non-MRD functions")
+  @OptionGroup("MRD methods")
+  @Option("File containing MRD functions")
   // This file is used to populate RegressionCaptureGenerator.observer_map
-  public static Path nonMultiRunDeterministic = Paths.get("/home/casey/omitmethods.txt");
+  public static Path multiRunDeterministic = Paths.get("/home/casey/omitmethods.txt");
 
   /**
    * Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop
