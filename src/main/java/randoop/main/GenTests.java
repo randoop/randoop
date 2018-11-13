@@ -352,10 +352,8 @@ public class GenTests extends GenInputsAbstract {
             GenInputsAbstract.observers, "observer", "//.*", null);
 
     Set<String> multiRunDeterministicMethodSignatures =
-        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.multiRunDeterministic,
-            "multiRunDeterministicMethod",
-            "//.*",
-            null);
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.multiRunDeterministic, "multiRunDeterministicMethod", "//.*", null);
 
     MultiMap<Type, TypedOperation> observerMap;
     try {
@@ -375,7 +373,8 @@ public class GenTests extends GenInputsAbstract {
     MultiMap<Type, TypedOperation> multiRunDeterministicMethodMap;
     try {
       multiRunDeterministicMethodMap =
-          operationModel.getTypedOperationFromFullyQualifiedSignatures(multiRunDeterministicMethodSignatures);
+          operationModel.getTypedOperationFromFullyQualifiedSignatures(
+              multiRunDeterministicMethodSignatures);
     } catch (OperationParseException e) {
       System.out.printf("Parse error while reading multiRunDeterministicMethods: %s%n", e);
       System.exit(1);

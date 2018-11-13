@@ -313,7 +313,7 @@ public class OperationModel {
     }
     return observerMap;
   }
-  
+
   /**
    * Given a set of signatures, returns the operations for them. TODO CXING
    *
@@ -322,8 +322,8 @@ public class OperationModel {
    * @return a map from each class type to the set of observer methods in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public MultiMap<Type, TypedOperation> getTypedOperationFromFullyQualifiedSignatures(Set<String> fullyQualifiedSignatures)
-      throws OperationParseException {
+  public MultiMap<Type, TypedOperation> getTypedOperationFromFullyQualifiedSignatures(
+      Set<String> fullyQualifiedSignatures) throws OperationParseException {
     MultiMap<Type, TypedOperation> operationMap = new MultiMap<>();
     for (String sig : fullyQualifiedSignatures) {
       TypedClassOperation operation = null;
@@ -332,14 +332,20 @@ public class OperationModel {
       } catch (OperationParseException e) {
         try {
           operation = ConstructorCall.parse(sig);
-        }
-        catch (OperationParseException e2) {
-          throw new OperationParseException("The following method could not be parsed as either a constructor or a method call: "
-                  + sig + e.getMessage() + "\n" + e2.getMessage());
-        }
-        catch (AssertionError e2) {
-          throw new OperationParseException("The following method could not be parsed as either a constructor or a method call: "
-                  + sig + e.getMessage() + "\n" + e2.getMessage());
+        } catch (OperationParseException e2) {
+          throw new OperationParseException(
+              "The following method could not be parsed as either a constructor or a method call: "
+                  + sig
+                  + e.getMessage()
+                  + "\n"
+                  + e2.getMessage());
+        } catch (AssertionError e2) {
+          throw new OperationParseException(
+              "The following method could not be parsed as either a constructor or a method call: "
+                  + sig
+                  + e.getMessage()
+                  + "\n"
+                  + e2.getMessage());
         }
       }
       Type outputType = operation.getOutputType();

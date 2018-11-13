@@ -233,7 +233,8 @@ public class CoveredClassTest {
             GenInputsAbstract.observers, "observer", "//.*", null);
 
     Set<String> multiRunDeterministicMethodSignatures =
-        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.multiRunDeterministic, "multiRunDeterminstic", "//.*", null);
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.multiRunDeterministic, "multiRunDeterminstic", "//.*", null);
 
     // Maps each class type to the observer methods in it.
     MultiMap<Type, TypedOperation> observerMap;
@@ -255,7 +256,8 @@ public class CoveredClassTest {
     MultiMap<Type, TypedOperation> multiRunDeterministicMethodMap;
     try {
       multiRunDeterministicMethodMap =
-          operationModel.getTypedOperationFromFullyQualifiedSignatures(multiRunDeterministicMethodSignatures);
+          operationModel.getTypedOperationFromFullyQualifiedSignatures(
+              multiRunDeterministicMethodSignatures);
     } catch (OperationParseException e) {
       System.out.printf("Parse error while reading multiRunDeterministicMethods: %s%n", e);
       System.exit(1);
@@ -266,7 +268,6 @@ public class CoveredClassTest {
     for (Type keyType : multiRunDeterministicMethodMap.keySet()) {
       multiRunDeterminsticMethods.addAll(multiRunDeterministicMethodMap.getValues(keyType));
     }
-
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator =
