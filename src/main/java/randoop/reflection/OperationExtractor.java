@@ -6,9 +6,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.TreeSet;
-import randoop.BugInRandoopException;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.SpecificationCollection;
+import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.MethodCall;
@@ -124,15 +124,15 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param operation the operation to instantiate
    * @return operation instantiated to match {@code classType} if the declaring type is generic and
    *     {@code classType} is not; the unmodified operation otherwise
-   * @throws BugInRandoopException if there is no substitution that unifies the declaring type with
-   *     {@code classType} or a supertype
+   * @throws RandoopBug if there is no substitution that unifies the declaring type with {@code
+   *     classType} or a supertype
    */
   private TypedClassOperation instantiateTypes(TypedClassOperation operation) {
     if (!classType.isGeneric() && operation.getDeclaringType().isGeneric()) {
       Substitution<ReferenceType> substitution =
           classType.getInstantiatingSubstitution(operation.getDeclaringType());
       if (substitution == null) { // No unifying substitution found
-        throw new BugInRandoopException(
+        throw new RandoopBug(
             String.format(
                 "Type %s for operation %s is not a subtype of an instantiation of declaring class of method %s",
                 classType, operation, operation.getDeclaringType()));
@@ -140,7 +140,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       operation = operation.apply(substitution);
       if (operation == null) {
         // No more details available because formal parameter {@code operation} was overwritten.
-        throw new BugInRandoopException("Instantiation of operation failed");
+        throw new RandoopBug("Instantiation of operation failed");
       }
     }
 
@@ -152,14 +152,14 @@ public class OperationExtractor extends DefaultClassVisitor {
    * operation.getDeclaringType()}; throws an exception if not.
    *
    * @param operation the operation for which types are to be checked
-   * @throws BugInRandoopException if field {@code classType} of this is not a subtype of {@code
+   * @throws RandoopBug if field {@code classType} of this is not a subtype of {@code
    *     operation.getDeclaringType()}
    */
   // TODO: poor name
   private void checkSubTypes(TypedClassOperation operation) {
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
     if (!classType.isSubtypeOf(declaringType)) {
-      throw new BugInRandoopException(
+      throw new RandoopBug(
           String.format(
               "Incompatible receiver type for operation %s:%n  %s [%s]%nis not a subtype of%n  %s [%s]",
               operation, classType, classType.getClass(), declaringType, declaringType.getClass()));

@@ -50,7 +50,7 @@ import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TransferQueue;
-import randoop.BugInRandoopException;
+import randoop.main.RandoopBug;
 
 /**
  * Defines type constants for classes in the JDK Collections.
@@ -293,8 +293,7 @@ public class JDKTypes {
       if (implementingType != null) {
         return implementingType;
       } else {
-        throw new BugInRandoopException(
-            "no implementing type for collection class: " + genericType);
+        throw new RandoopBug("no implementing type for collection class: " + genericType);
       }
     }
   }

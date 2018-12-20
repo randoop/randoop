@@ -4,8 +4,8 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import randoop.BugInRandoopException;
 import randoop.Globals;
+import randoop.main.RandoopBug;
 
 public class TestCoverageInfo {
 
@@ -92,7 +92,7 @@ public class TestCoverageInfo {
     try {
       return getCoverageInfoObject(clazz).getCoverageInfo();
     } catch (Exception e) {
-      throw new BugInRandoopException(e);
+      throw new RandoopBug(e);
     }
   }
 

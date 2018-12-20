@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
@@ -822,7 +822,7 @@ public class ForwardGenerator extends AbstractGenerator {
             "    isNonreceivingInitialization = %s%n",
             chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
         continue;
-        // throw new BugInRandoopException(
+        // throw new RandoopBug(
         //     "Selected null or primitive value as the receiver for a method call");
       }
 
@@ -838,7 +838,7 @@ public class ForwardGenerator extends AbstractGenerator {
       validResults.add(new VarAndSeq(randomVariable, s));
     }
     if (validResults.size() == 0) {
-      throw new BugInRandoopException(
+      throw new RandoopBug(
           String.format(
               "Failed to select %svariable with input type %s",
               (isReceiver ? "receiver " : ""), inputType));

@@ -3,6 +3,7 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -259,7 +260,13 @@ public final class ConstructorCall extends CallableOperation {
     try {
       con = classType.getRuntimeClass().getDeclaredConstructor(typeArguments);
     } catch (NoSuchMethodException e) {
-      String msg = "Constructor " + constructorString + " does not exist: " + e;
+      String msg =
+          "Constructor with arguments "
+              + Arrays.toString(typeArguments)
+              + " does not exist in "
+              + classType
+              + ": "
+              + e;
       throw new OperationParseException(msg);
     }
 

@@ -21,7 +21,6 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
-import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
@@ -40,6 +39,7 @@ import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
@@ -394,7 +394,7 @@ public class OperationModel {
         out.flush();
       }
     } catch (IOException e) {
-      throw new BugInRandoopException("Error while logging operations", e);
+      throw new RandoopBug("Error while logging operations", e);
     }
   }
 
@@ -625,7 +625,7 @@ public class OperationModel {
     try {
       objectConstructor = Object.class.getConstructor();
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("unable to load java.lang.Object() constructor", e);
+      throw new RandoopBug("unable to load java.lang.Object() constructor", e);
     }
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());

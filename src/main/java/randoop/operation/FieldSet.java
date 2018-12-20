@@ -3,12 +3,12 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
+import randoop.main.RandoopBug;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.SequenceExecutionException;
 import randoop.sequence.Variable;
@@ -52,7 +52,7 @@ public class FieldSet extends CallableOperation {
    * @param statementInput the inputs for statement
    * @param out the stream for printing output (unused)
    * @return outcome of access, either void normal execution or captured exception
-   * @throws BugInRandoopException if field access throws bug exception
+   * @throws RandoopBug if field access throws bug exception
    * @throws SequenceExecutionException if field access has type exception
    */
   @Override
@@ -67,7 +67,7 @@ public class FieldSet extends CallableOperation {
 
     try {
       field.setValue(instance, input);
-    } catch (BugInRandoopException | SequenceExecutionException e) {
+    } catch (RandoopBug | SequenceExecutionException e) {
       throw e;
     } catch (Throwable thrown) {
       return new ExceptionalExecution(thrown, 0);

@@ -276,8 +276,7 @@ public class ReplaceCallAgent {
   /**
    * Private exception class used to manage agent-specific errors.
    *
-   * <p>Analogous to {@code BugInRandoopException}, but that class is not available within the
-   * agent.
+   * <p>Analogous to {@code RandoopBug}, but that class is not available within the agent.
    */
   private static class BugInAgentException extends Throwable {
 

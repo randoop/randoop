@@ -3,7 +3,7 @@ package randoop.field;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
-import randoop.BugInRandoopException;
+import randoop.main.RandoopBug;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.SequenceExecutionException;
 import randoop.sequence.Variable;
@@ -101,7 +101,7 @@ public class AccessibleField {
    *
    * @param object instance to which field belongs, or null if field is static
    * @return reference to value of field
-   * @throws BugInRandoopException if field access throws {@link IllegalArgumentException} or {@link
+   * @throws RandoopBug if field access throws {@link IllegalArgumentException} or {@link
    *     IllegalAccessException}.
    */
   public Object getValue(Object object) {
@@ -111,7 +111,7 @@ public class AccessibleField {
     } catch (IllegalArgumentException e) {
       throw new SequenceExecutionException("Field access to object of wrong type: ", e);
     } catch (IllegalAccessException e) {
-      throw new BugInRandoopException("Access control violation for field: " + field.getName(), e);
+      throw new RandoopBug("Access control violation for field: " + field.getName(), e);
     }
     return ret;
   }
@@ -122,7 +122,7 @@ public class AccessibleField {
    *
    * @param object instance to which field belongs, or null if static
    * @param value new value to assign to field
-   * @throws BugInRandoopException if field access throws {@link IllegalArgumentException} or {@link
+   * @throws RandoopBug if field access throws {@link IllegalArgumentException} or {@link
    *     IllegalAccessException}.
    */
   public void setValue(Object object, Object value) {
@@ -132,7 +132,7 @@ public class AccessibleField {
     } catch (IllegalArgumentException e) {
       throw new SequenceExecutionException("Field set to object of wrong type", e);
     } catch (IllegalAccessException e) {
-      throw new BugInRandoopException("Access control violation for field: ", e);
+      throw new RandoopBug("Access control violation for field: ", e);
     }
   }
 

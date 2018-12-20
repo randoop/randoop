@@ -3,8 +3,8 @@ package randoop.sequence;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.TypedOperation;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
@@ -96,7 +96,7 @@ public class Value {
     } else if (valueType.equals(JavaTypes.INT_TYPE)) {
       rep = value.toString();
     } else {
-      throw new BugInRandoopException("type should be a nonreceiver type: " + valueType);
+      throw new RandoopBug("type should be a nonreceiver type: " + valueType);
     }
 
     // if a negative number parenthesize to avoid problems in casts
