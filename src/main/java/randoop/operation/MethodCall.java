@@ -238,7 +238,7 @@ public final class MethodCall extends CallableOperation {
     String methodString = classname + "." + opname + arguments;
     Type classType;
     try {
-      classType = Type.forName(classname);
+      classType = Type.getTypeforFullyQualifiedNameMaybeArray(classname);
     } catch (ClassNotFoundException e) {
       String msg =
           "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
@@ -263,7 +263,7 @@ public final class MethodCall extends CallableOperation {
                 + opname
                 + " with parameters "
                 + Arrays.toString(typeArguments)
-                + " does not exist in"
+                + " does not exist in "
                 + classType
                 + ": "
                 + e;

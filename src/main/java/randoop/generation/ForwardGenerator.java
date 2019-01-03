@@ -52,7 +52,7 @@ public class ForwardGenerator extends AbstractGenerator {
   private final Set<TypedOperation> observers;
 
   /** TODO */
-  private final Set<TypedOperation> nonMultiRunDeterministicMethods;
+  private final Set<TypedOperation> multiRunDeterministicMethods;
 
   /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
@@ -83,7 +83,7 @@ public class ForwardGenerator extends AbstractGenerator {
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
-      Set<TypedOperation> nonMultiRunDeterministicMethods,
+      Set<TypedOperation> multiRunDeterministicMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       RandoopListenerManager listenerManager,
@@ -91,7 +91,7 @@ public class ForwardGenerator extends AbstractGenerator {
     this(
         operations,
         observers,
-        nonMultiRunDeterministicMethods,
+        multiRunDeterministicMethods,
         limits,
         componentManager,
         null,
@@ -102,7 +102,7 @@ public class ForwardGenerator extends AbstractGenerator {
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
-      Set<TypedOperation> nonMultiRunDeterministicMethods,
+      Set<TypedOperation> multiRunDeterministicMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
@@ -111,7 +111,7 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
-    this.nonMultiRunDeterministicMethods = nonMultiRunDeterministicMethods;
+    this.multiRunDeterministicMethods = multiRunDeterministicMethods;
     this.allSequences = new LinkedHashSet<>();
     this.instantiator = componentManager.getTypeInstantiator();
 
@@ -355,7 +355,7 @@ public class ForwardGenerator extends AbstractGenerator {
     TypedOperation operation = operationSelector.selectOperation();
     Log.logPrintf("Selected operation: %s%n", operation.toString());
 
-    if (nonMultiRunDeterministicMethods.contains(operation)) {
+    if (!multiRunDeterministicMethods.contains(operation)) {
       return null; // Avoid calling this, but also cxing TODO, find a better way to do this.
     }
 

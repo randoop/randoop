@@ -106,12 +106,12 @@ public class SpecialCoveredClassTest {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     Set<TypedOperation> observers = new LinkedHashSet<>();
-    Set<TypedOperation> nonMultiRunDeterministicMethods = new LinkedHashSet<>();
+    Set<TypedOperation> multiRunDeterministicMethods = new LinkedHashSet<>();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
             observers,
-            nonMultiRunDeterministicMethods,
+            multiRunDeterministicMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
