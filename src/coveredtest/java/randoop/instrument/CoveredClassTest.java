@@ -234,7 +234,7 @@ public class CoveredClassTest {
 
     Set<String> multiRunDeterministicMethodSignatures =
         GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.multiRunDeterministic, "multiRunDeterminstic", "//.*", null);
+            GenInputsAbstract.multiRunDeterministicUser, "multiRunDeterminstic", "//.*", null);
 
     // Maps each class type to the observer methods in it.
     MultiMap<Type, TypedOperation> observerMap;

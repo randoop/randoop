@@ -350,10 +350,22 @@ public class GenTests extends GenInputsAbstract {
     Set<String> observerSignatures =
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.observers, "observer", "//.*", null);
-
-    Set<String> multiRunDeterministicMethodSignatures =
+    Set<String> multiRunDeterministicMethodSignatures = new LinkedHashSet<String>();
+    Set<String> multiRunDeterministicUserMethodSignatures =
         GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.multiRunDeterministic, "multiRunDeterministicMethod", "//.*", null);
+            GenInputsAbstract.multiRunDeterministicUser,
+            "multiRunDeterministicUserMethods",
+            "//.*",
+            null);
+    Set<String> multiRunDeterministicJDKMethodSignatures =
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.multiRunDeterministicJDK,
+            "multiRunDeterministicJDKMethods",
+            "//.*",
+            null);
+
+    multiRunDeterministicMethodSignatures.addAll(multiRunDeterministicUserMethodSignatures);
+    multiRunDeterministicMethodSignatures.addAll(multiRunDeterministicJDKMethodSignatures);
 
     MultiMap<Type, TypedOperation> observerMap;
     try {

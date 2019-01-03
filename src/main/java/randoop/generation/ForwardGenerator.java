@@ -888,6 +888,8 @@ public class ForwardGenerator extends AbstractGenerator {
         + ("subsumed_sequences.size()=" + subsumed_sequences.size())
         + ","
         + ("runtimePrimitivesSeen.size()=" + runtimePrimitivesSeen.size())
+        + ","
+        + ("multiRunDeterministicMethods.size()=" + multiRunDeterministicMethods.size())
         + ")";
   }
 }

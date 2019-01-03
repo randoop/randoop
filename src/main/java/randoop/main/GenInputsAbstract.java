@@ -2,7 +2,6 @@ package randoop.main;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -367,10 +366,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   /** cxing TODO */
-  @OptionGroup("MRD methods")
-  @Option("File containing MRD functions")
+  @OptionGroup("MRD user methods")
+  @Option("File containing user-defined MRD functions")
   // This file is used to populate RegressionCaptureGenerator.observer_map
-  public static Path multiRunDeterministic = Paths.get("/home/casey/omitmethods.txt");
+  public static Path multiRunDeterministicUser = null; // Paths.get("/home/casey/omitmethods.txt");
+
+  ///////////////////////////////////////////////////////////////////
+  /** cxing TODO */
+  @OptionGroup("MRD JDK methods")
+  @Option("File containing MRD functions from the JDK")
+  // This file is used to populate RegressionCaptureGenerator.observer_map
+  public static Path multiRunDeterministicJDK = null; // Paths.get("/home/casey/omitmethods.txt");
 
   /**
    * Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop
