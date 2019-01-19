@@ -263,18 +263,20 @@ public class ExecutableBooleanExpression {
    */
   private static String getCompilerErrorMessage(
       List<Diagnostic<? extends JavaFileObject>> diagnostics, String classText) {
-    StringBuilder msg = new StringBuilder("Condition method did not compile: ");
+    StringBuilder msg = new StringBuilder("Condition method did not compile:");
+    msg.append(Globals.lineSep);
     for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
       if (diag != null) {
         String diagMessage = diag.getMessage(null);
         if (diagMessage.contains("unreported exception")) {
-          msg.append(
+          diagMessage =
               String.format(
                   "expression threw exception %s",
-                  diagMessage.substring(0, diagMessage.indexOf(';'))));
-        } else {
-          msg.append(diagMessage);
+                  diagMessage.substring(0, diagMessage.indexOf(';')));
         }
+        msg.append(
+            String.format(
+                "%d:%d: %s%n", diag.getLineNumber(), diag.getColumnNumber(), diagMessage));
       }
     }
     msg.append(String.format("%nClass Declaration:%n%s", classText));
