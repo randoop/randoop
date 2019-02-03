@@ -157,21 +157,54 @@ added by hand): </p>
     <b>regression tests</b> that can be used to detect future bugs.
   </li>
 </ul>
+
 <p>
-You should fix the errors
-revealed by the error-revealing tests suite then rerun Randoop, until it
-generates no more error-revealing tests.  Then, you can run the regression
-tests whenever you
-change your source code, to be notified of any changes you make to the
-behavior of your program.  You can always re-run Randoop to check for new
-errors, to produce tests for newly-written code, or to regenerate tests
-after a code change that causes desirable behavior-changes.
+Here is a typical way to use Randoop:
+</p>
+
+<ol>
+  <li>
+    If Randoop outputs any error-revealing tests, fix the underlying
+    defects, then re-run Randoop and repeat until Randoop outputs no
+    error-revealing tests.
+  </li>
+  <li>
+    Add the regression tests to your project's test suite.
+  </li>
+  <li>Run the regression tests
+    whenever you change your project.  These tests will notify you of
+    changes to the behavior of your program.
+  </li>
+  <li>
+    For each test failure, <a href="#minimize">minimize the test case</a>
+    and then investigate the failure.
+    <ul>
+      <li>
+	If a test failure indicates you have introduced a code defect, fix
+	the defect.
+      </li>
+      <li>
+	If a test failure indicates that the test was overly brittle or
+	specific (for example, a method's output value has changed, but the
+	new value is as acceptable as the old value), then disregard the
+	test.
+      </li>
+    </ul>
+    If you disregarded any test (or if you added new code that you would
+    like to test), then re-run Randoop to generate a new regression test
+    suite that replaces the old one.
+  </li>
+</ol>
+
+<p>
+The paper <a href="https://homes.cs.washington.edu/~mernst/pubs/maintainable-tests-ase2011-abstract.html">"Scaling up automated test generation: Automatically generating maintainable regression unit tests for programs"</a> gives additional tips for how to use Randoop-generated tests over the lifetime of a project.
 </p>
 
 <p>
-Randoop's tests are not designed to be short or easy to read &mdash;
-but you will only read them on the rare
-occasions when they fail and reveal a bug or a regression failure.
+Randoop's tests are not designed to be short or easy to read.  A typical
+programmer will only ever examine very few Randoop tests &mdash; when they
+fail and reveal a bug or a regression failure.  A typical programmer will
+never modify Randoop tests by hand.
 </p>
 
 
@@ -1922,7 +1955,7 @@ inputs to methods:
 </ul>
 
 <p>This is the initial set of <i>seed</i> values used by Randoop: in
-addition to the above values, any primitive value returned at runtime
+addition to the above values, any value returned at runtime
 from a method call under test may be later used as input to another
 method call.</p>
 
@@ -2641,7 +2674,7 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->
-<!--  LocalWords:  usethreads testclass classlist myclasses hashcode
+<!--  LocalWords:  usethreads testclass classlist myclasses hashcode GRT
  -->
 <!--  LocalWords:  RandoopTest hashCode NullPointerException Throwable boolean
  -->
