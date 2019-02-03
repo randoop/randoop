@@ -350,22 +350,20 @@ public class GenTests extends GenInputsAbstract {
     Set<String> observerSignatures =
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.observers, "observer", "//.*", null);
-    Set<String> multiRunDeterministicMethodSignatures = new LinkedHashSet<String>();
-    Set<String> multiRunDeterministicUserMethodSignatures =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.multiRunDeterministicUser,
-            "multiRunDeterministicUserMethods",
+    Set<String> nonMultiRunDeterministicMethodSignatures = new LinkedHashSet<String>();
+    Set<String> nonMultiRunDeterministicUserMethodSignatures =
+        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.nonMultiRunDeterministicUser,
+            "nonMultiRunDeterministicUserMethods",
             "//.*",
             null);
-    Set<String> multiRunDeterministicJDKMethodSignatures =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.multiRunDeterministicJDK,
-            "multiRunDeterministicJDKMethods",
+    Set<String> nonMultiRunDeterministicJDKMethodSignatures =
+        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.nonMultiRunDeterministicJDK,
+            "nonMultiRunDeterministicJDKMethods",
             "//.*",
             null);
 
-    multiRunDeterministicMethodSignatures.addAll(multiRunDeterministicUserMethodSignatures);
-    multiRunDeterministicMethodSignatures.addAll(multiRunDeterministicJDKMethodSignatures);
+    nonMultiRunDeterministicMethodSignatures.addAll(nonMultiRunDeterministicUserMethodSignatures);
+    nonMultiRunDeterministicMethodSignatures.addAll(nonMultiRunDeterministicJDKMethodSignatures);
 
     MultiMap<Type, TypedOperation> observerMap;
     try {
@@ -382,20 +380,20 @@ public class GenTests extends GenInputsAbstract {
 
     // cxing TODO refactor
     // Maps each class type to the observer methods in it.
-    MultiMap<Type, TypedOperation> multiRunDeterministicMethodMap;
+    MultiMap<Type, TypedOperation> nonMultiRunDeterministicMethodMap;
     try {
-      multiRunDeterministicMethodMap =
+      nonMultiRunDeterministicMethodMap =
           operationModel.getTypedOperationFromFullyQualifiedSignatures(
-              multiRunDeterministicMethodSignatures);
+              nonMultiRunDeterministicMethodSignatures);
     } catch (OperationParseException e) {
-      System.out.printf("Parse error while reading multiRunDeterministicMethods: %s%n", e);
+      System.out.printf("Parse error while reading nonMultiRunDeterministicMethods: %s%n", e);
       System.exit(1);
       throw new Error("dead code");
     }
-    assert multiRunDeterministicMethodMap != null;
-    Set<TypedOperation> multiRunDeterminsticMethods = new LinkedHashSet<>();
-    for (Type keyType : multiRunDeterministicMethodMap.keySet()) {
-      multiRunDeterminsticMethods.addAll(multiRunDeterministicMethodMap.getValues(keyType));
+    assert nonMultiRunDeterministicMethodMap != null;
+    Set<TypedOperation> nonMultiRunDeterminsticMethods = new LinkedHashSet<>();
+    for (Type keyType : nonMultiRunDeterministicMethodMap.keySet()) {
+      nonMultiRunDeterminsticMethods.addAll(nonMultiRunDeterministicMethodMap.getValues(keyType));
     }
 
     /*
@@ -405,7 +403,7 @@ public class GenTests extends GenInputsAbstract {
         new ForwardGenerator(
             operations,
             observers,
-            multiRunDeterminsticMethods,
+            nonMultiRunDeterminsticMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,

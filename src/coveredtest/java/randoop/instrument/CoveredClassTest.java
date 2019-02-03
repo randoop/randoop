@@ -232,9 +232,8 @@ public class CoveredClassTest {
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.observers, "observer", "//.*", null);
 
-    Set<String> multiRunDeterministicMethodSignatures =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.multiRunDeterministicUser, "multiRunDeterminstic", "//.*", null);
+    Set<String> nonMultiRunDeterministicMethodSignatures =
+        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.nonMultiRunDeterministicUser, "nonMultiRunDeterminstic", "//.*", null);
 
     // Maps each class type to the observer methods in it.
     MultiMap<Type, TypedOperation> observerMap;
@@ -253,20 +252,20 @@ public class CoveredClassTest {
 
     // cxing TODO refactor
     // Maps each class type to the observer methods in it.
-    MultiMap<Type, TypedOperation> multiRunDeterministicMethodMap;
+    MultiMap<Type, TypedOperation> nonMultiRunDeterministicMethodMap;
     try {
-      multiRunDeterministicMethodMap =
+      nonMultiRunDeterministicMethodMap =
           operationModel.getTypedOperationFromFullyQualifiedSignatures(
-              multiRunDeterministicMethodSignatures);
+              nonMultiRunDeterministicMethodSignatures);
     } catch (OperationParseException e) {
-      System.out.printf("Parse error while reading multiRunDeterministicMethods: %s%n", e);
+      System.out.printf("Parse error while reading nonMultiRunDeterministicMethods: %s%n", e);
       System.exit(1);
       throw new Error("dead code");
     }
-    assert multiRunDeterministicMethodMap != null;
-    Set<TypedOperation> multiRunDeterminsticMethods = new LinkedHashSet<>();
-    for (Type keyType : multiRunDeterministicMethodMap.keySet()) {
-      multiRunDeterminsticMethods.addAll(multiRunDeterministicMethodMap.getValues(keyType));
+    assert nonMultiRunDeterministicMethodMap != null;
+    Set<TypedOperation> nonMultiRunDeterminsticMethods = new LinkedHashSet<>();
+    for (Type keyType : nonMultiRunDeterministicMethodMap.keySet()) {
+      nonMultiRunDeterminsticMethods.addAll(nonMultiRunDeterministicMethodMap.getValues(keyType));
     }
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
@@ -274,7 +273,7 @@ public class CoveredClassTest {
         new ForwardGenerator(
             model,
             observers,
-            multiRunDeterminsticMethods,
+            nonMultiRunDeterminsticMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
