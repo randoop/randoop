@@ -111,7 +111,7 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
-    this.nonMultiRunDeterministicMethods=  nonMultiRunDeterministicMethods;
+    this.nonMultiRunDeterministicMethods = nonMultiRunDeterministicMethods;
     this.allSequences = new LinkedHashSet<>();
     this.instantiator = componentManager.getTypeInstantiator();
 

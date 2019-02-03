@@ -352,12 +352,14 @@ public class GenTests extends GenInputsAbstract {
             GenInputsAbstract.observers, "observer", "//.*", null);
     Set<String> nonMultiRunDeterministicMethodSignatures = new LinkedHashSet<String>();
     Set<String> nonMultiRunDeterministicUserMethodSignatures =
-        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.nonMultiRunDeterministicUser,
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.nonMultiRunDeterministicUser,
             "nonMultiRunDeterministicUserMethods",
             "//.*",
             null);
     Set<String> nonMultiRunDeterministicJDKMethodSignatures =
-        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.nonMultiRunDeterministicJDK,
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.nonMultiRunDeterministicJDK,
             "nonMultiRunDeterministicJDKMethods",
             "//.*",
             null);
