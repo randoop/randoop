@@ -926,7 +926,8 @@ public class RandoopSystemTest {
         new CoverageChecker(
             options,
             "collectiongen.Day.valueOf(java.lang.String) exclude",
-            "collectiongen.AnInputClass.hashCode() ignore");
+            "collectiongen.AnInputClass.hashCode() ignore",
+            "collectiongen.Day.values() ignore");
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
     generateAndTest(

@@ -41,7 +41,6 @@ shadowJar {
   relocate 'com.sun.jna', 'coveredclass.com.sun.jna'
   relocate 'com.trilead.ssh2', 'coveredclass.com.trilead.ssh2'
   relocate 'de.regnis.q.sequence', 'coveredclass.de.regnis.q.sequence'
-  relocate 'edu.emory.mathcs.backport.java.util', 'coveredclass.edu.emory.mathcs.backport.java.util'
   relocate 'javassist', 'coveredclass.javassist'
   relocate 'net.fortuna.ical4j', 'coveredclass.net.fortuna.ical4j'
   relocate 'nu.xom', 'coveredclass.nu.xom'
