@@ -14,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 4.1.0, released May 23, 2018.
+This is the manual for Randoop version 4.1.1, released February 3, 2019.
 The Randoop homepage is
 <a href="https://randoop.github.io/randoop/">https://randoop.github.io/randoop/</a>.
 </p>
@@ -67,6 +67,7 @@ The Randoop homepage is
       <li><a href="#primitives">Specifying additional primitive values</a></li>
       <li><a href="#nondeterminism">Nondeterminism</a>
         <ul>
+          <li><a href="#nondeterminism-source">Finding the source of nondeterminism</a></li>
           <li><a href="#nondeterminism-command-line-arguments">Timeouts and other command-line arguments enable nondeterminism</a></li>
           <li><a href="#nondeterminism-changed-program">Changes to the program or its environment</a></li>
           <li><a href="#nondeterminism-in-program-under-test">Nondeterministic program under test</a></li>
@@ -156,21 +157,54 @@ added by hand): </p>
     <b>regression tests</b> that can be used to detect future bugs.
   </li>
 </ul>
+
 <p>
-You should fix the errors
-revealed by the error-revealing tests suite then rerun Randoop, until it
-generates no more error-revealing tests.  Then, you can run the regression
-tests whenever you
-change your source code, to be notified of any changes you make to the
-behavior of your program.  You can always re-run Randoop to check for new
-errors, to produce tests for newly-written code, or to regenerate tests
-after a code change that causes desirable behavior-changes.
+Here is a typical way to use Randoop:
+</p>
+
+<ol>
+  <li>
+    If Randoop outputs any error-revealing tests, fix the underlying
+    defects, then re-run Randoop and repeat until Randoop outputs no
+    error-revealing tests.
+  </li>
+  <li>
+    Add the regression tests to your project's test suite.
+  </li>
+  <li>Run the regression tests
+    whenever you change your project.  These tests will notify you of
+    changes to the behavior of your program.
+  </li>
+  <li>
+    For each test failure, <a href="#minimize">minimize the test case</a>
+    and then investigate the failure.
+    <ul>
+      <li>
+	If a test failure indicates you have introduced a code defect, fix
+	the defect.
+      </li>
+      <li>
+	If a test failure indicates that the test was overly brittle or
+	specific (for example, a method's output value has changed, but the
+	new value is as acceptable as the old value), then disregard the
+	test.
+      </li>
+    </ul>
+    If you disregarded any test (or if you added new code that you would
+    like to test), then re-run Randoop to generate a new regression test
+    suite that replaces the old one.
+  </li>
+</ol>
+
+<p>
+The paper <a href="https://homes.cs.washington.edu/~mernst/pubs/maintainable-tests-ase2011-abstract.html">"Scaling up automated test generation: Automatically generating maintainable regression unit tests for programs"</a> gives additional tips for how to use Randoop-generated tests over the lifetime of a project.
 </p>
 
 <p>
-Randoop's tests are not designed to be short or easy to read &mdash;
-but you will only read them on the rare
-occasions when they fail and reveal a bug or a regression failure.
+Randoop's tests are not designed to be short or easy to read.  A typical
+programmer will only ever examine very few Randoop tests &mdash; when they
+fail and reveal a bug or a regression failure.  A typical programmer will
+never modify Randoop tests by hand.
 </p>
 
 
@@ -182,22 +216,22 @@ Randoop runs on a Java 8 JVM.
 
 <p>
   Download and unzip the file
-  <a href="https://github.com/randoop/randoop/releases/download/v4.1.0/randoop-4.1.0.zip"><code>randoop-4.1.0.zip</code></a>.
+  <a href="https://github.com/randoop/randoop/releases/download/v4.1.1/randoop-4.1.1.zip"><code>randoop-4.1.1.zip</code></a>.
 <!-- from the
   <a href="https://github.com/randoop/randoop/releases/latest">latest
     release</a>.
 -->
 <!--
   This zip archive contains the Randoop jar file
-  <code>randoop-all-4.1.0.jar</code>, the Java agent jar files
-  (<code>covered-class-4.1.0.jar</code> and
-   <code>replacecall-4.1.0.jar</code>),
+  <code>randoop-all-4.1.1.jar</code>, the Java agent jar files
+  (<code>covered-class-4.1.1.jar</code> and
+   <code>replacecall-4.1.1.jar</code>),
   and this documentation.
 -->
   This manual uses <code>$(RANDOOP_PATH)</code> to refer to
   the path of the unzipped archive,
   and <code>$(RANDOOP_JAR)</code> to refer to
-  the location of <code>randoop-all-4.1.0.jar</code>
+  the location of <code>randoop-all-4.1.1.jar</code>
   within the unzipped archive.  You may set environment variables accordingly,
   but that is not required.
 </p>
@@ -329,7 +363,7 @@ java.util.TreeSet</pre>
 <p>
 and invoke Randoop as follows: </p>
 
-<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --time-limit=60</pre>
+<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --time-limit=60  --flaky-test-behavior=DISCARD</pre>
 
 
 <p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
@@ -364,7 +398,7 @@ RegressionTest will pass.
 </p>
 
 <pre class="code">
-java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.1.0.jar \
+java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.1.1.jar \
   randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:<em>myclasspath</em>
 </pre>
 
@@ -808,7 +842,7 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -cp randoop-all-4.1.0.jar randoop.main.Main minimize \
+java -cp randoop-all-4.1.1.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
@@ -1163,7 +1197,7 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Outputting-the-JUnit-tests">Outputting the JUnit tests
       <ul>
             <li id="option:testsperfile"><b>--testsperfile=</b><i>int</i>.
-             Maximum number of tests to write to each JUnit file [default 500]
+             Maximum number of tests to write to each JUnit file. [default 500]
             <li id="option:error-test-basename"><b>--error-test-basename=</b><i>string</i>.
              Base name (no ".java" suffix) of the JUnit file containing error-revealing tests [default ErrorTest]
             <li id="option:regression-test-basename"><b>--regression-test-basename=</b><i>string</i>.
@@ -1202,7 +1236,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  uninterpreted, and, so, is not run during generation. (The annotation <code>@AfterClass</code> is
  JUnit 4, and <code>@AfterAll</code> is JUnit 5.)
             <li id="option:junit-output-dir"><b>--junit-output-dir=</b><i>string</i>.
-             Name of the directory to which JUnit files should be written
+             Name of the directory to which JUnit files should be written.
             <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>.
              Run test generation without output. May be desirable when running with a visitor.
 
@@ -1283,7 +1317,7 @@ Randoop about your application, and that is how we recommend using Randoop.
              Classpath that includes dependencies needed to compile and run the JUnit test suite being
  minimized.
             <li id="option:minimizetimeout"><b>--minimizetimeout=</b><i>int</i>.
-             The maximum number of seconds allowed for the entire minimization process [default 600]
+             The maximum number of seconds allowed for the entire minimization process. [default 600]
             <li id="option:testsuitetimeout"><b>--testsuitetimeout=</b><i>int</i>.
              The maximum number of seconds allowed for the entire test suite to run. [default 30]
             <li id="option:verboseminimizer"><b>--verboseminimizer=</b><i>boolean</i>.
@@ -1333,13 +1367,13 @@ To use it:
 <ul>
   <li>When running Randoop, pass the following command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.1.0.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.1.0.jar
+-Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.1.1.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.1.1.jar
 </pre>
   </li>
-  <li>When running the generated tests, add the file <code>replacecall-4.1.0.jar</code> to the boot class path,
+  <li>When running the generated tests, add the file <code>replacecall-4.1.1.jar</code> to the boot class path,
     and pass the same command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.1.0.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.1.0.jar
+-Xbootclasspath/a:$(RANDOOP_PATH)/replacecall-4.1.1.jar -javaagent:$(RANDOOP_PATH)/replacecall-4.1.1.jar
 </pre>
 </li>
 </ul>
@@ -1383,7 +1417,7 @@ org.something.library.
 and run the agent with the <code>--dont-transform=<em>filename</em></code> command-line option:
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.1.0.jar=--dont-transform=replacecall-exclusions.txt
+-javaagent:$(RANDOOP_PATH)/replacecall-4.1.1.jar=--dont-transform=replacecall-exclusions.txt
 </pre>
 
 <p>
@@ -1398,7 +1432,7 @@ For diagnostic output (such as to see what classes are being transformed),
 run the agent with the <code>--debug</code> flag
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.1.0.jar=--debug
+-javaagent:$(RANDOOP_PATH)/replacecall-4.1.1.jar=--debug
 </pre>
 
 
@@ -1422,7 +1456,7 @@ types (replace the first method by the second).
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
--javaagent:$(RANDOOP_PATH)/replacecall-4.1.0.jar=--replacement-file=replacecall-replacements.txt
+-javaagent:$(RANDOOP_PATH)/replacecall-4.1.1.jar=--replacement-file=replacecall-replacements.txt
 </pre>
 
 <p>
@@ -1876,17 +1910,17 @@ exception escaping the method as the rep invariant being violated.
   For the <code>--require-covered-classes</code> option to work, the classes
   must be instrumented so Randoop can determine when they are covered.  To
   instrument classes for this filter, also use
-  the <code>covered-class-4.1.0.jar</code> by giving the following command-line
+  the <code>covered-class-4.1.1.jar</code> by giving the following command-line
   option for java
 </p>
 <pre><code>
--javaagent:$(RANDOOP_PATH)/covered-class-4.1.0.jar
+-javaagent:$(RANDOOP_PATH)/covered-class-4.1.1.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   (The instrumentation is not done on any JDK or JUnit classes.)
-  (The <code>covered-class-4.1.0.jar</code> file can be found in the
+  (The <code>covered-class-4.1.1.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
 </p>
@@ -1911,7 +1945,7 @@ inputs to methods:
 </ul>
 
 <p>This is the initial set of <i>seed</i> values used by Randoop: in
-addition to the above values, any primitive value returned at runtime
+addition to the above values, any value returned at runtime
 from a method call under test may be later used as input to another
 method call.</p>
 
@@ -2007,20 +2041,30 @@ command-line argument, Randoop outputs the same tests in the same order.
 </p>
 
 <p>
-If Randoop produces a different output when you run it twice, then there is
-some source of nondeterminism.  To diagnose the problem, run Randoop twice
-with the <a href="#option:log"><code>--log</code></a>
-and <a href="#option:selection-log"><code>--selection-log</code></a>
-command-line options.  Compare the logs across runs, and the first place
-that they differ will help you find the nondeterminism.  The remainder of
-this section gives several reasons you may discover.
-</p>
-
-<p>
 If you <em>want</em> Randoop to produce different test suites,
 run Randoop twice supplying
 different values for the
 <a href="#option:randomseed"><code>--randomseed</code></a> command-line argument.
+</p>
+
+
+<h3 id="nondeterminism-source">Finding the source of nondeterminism</h3>
+
+<p>
+If Randoop produces a different output when you run it twice, then there is
+some source of nondeterminism.  To diagnose the problem, run Randoop twice
+with the command-line options
+</p>
+<pre>
+  <a href="#option:log">--log</a>=randoop-log.txt <a href="#option:selection-log">--selection-log</a>=selection-log.txt
+</pre>
+<p>
+Compare the logs across runs, and the first place
+that they differ will help you find the nondeterminism.
+</p>
+
+<p>
+The remainder of this section gives several reasons you may discover.
 </p>
 
 
@@ -2473,8 +2517,10 @@ unit tests, so you should not call Randoop on such methods.
 
 <p>
 If Randoop encounters a flaky test, Randoop halts so that you
-can <a href="#nondeterminism-in-program-under-test">correct your invocation
-of Randoop</a>.
+can <a href="#nondeterminism-in-program-under-test">correct your invocation of
+Randoop</a>.  Another section of the manual
+gives <a href="#nondeterminism">steps for determining the source of
+nondeterminism</a>.
 </p>
 
 <p>
@@ -2618,7 +2664,7 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->
-<!--  LocalWords:  usethreads testclass classlist myclasses hashcode
+<!--  LocalWords:  usethreads testclass classlist myclasses hashcode GRT
  -->
 <!--  LocalWords:  RandoopTest hashCode NullPointerException Throwable boolean
  -->

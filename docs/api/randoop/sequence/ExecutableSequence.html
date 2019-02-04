@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExecutableSequence (randoop 4.1.0 API)</title>
+<title>ExecutableSequence (randoop 4.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExecutableSequence (randoop 4.1.0 API)";
+            parent.document.title="ExecutableSequence (randoop 4.1.1 API)";
         }
     }
     catch(err) {
@@ -183,7 +183,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr class="rowColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/ByteArrayOutputStream.html?is-external=true" title="class or interface in java.io">ByteArrayOutputStream</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#output_buffer">output_buffer</a></span></code>
-<div class="block">Captures output from the executed sequence</div>
+<div class="block">Captures output from the executed sequence.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -541,7 +541,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>output_buffer</h4>
 <pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/ByteArrayOutputStream.html?is-external=true" title="class or interface in java.io">ByteArrayOutputStream</a> output_buffer</pre>
-<div class="block">Captures output from the executed sequence</div>
+<div class="block">Captures output from the executed sequence.</div>
 </li>
 </ul>
 <a name="output_buffer_stream">
@@ -710,7 +710,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
          <li>execute the i-th statement, using reflection
          <li>call <code>visitor.visitAfter(this, i)</code>
        </ul>
-
    <li>For the last statement, check its specifications (pre-, post-, and throws-conditions).
  </ul>
 
