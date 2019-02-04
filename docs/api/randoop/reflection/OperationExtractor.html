@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OperationExtractor (randoop 4.1.0 API)</title>
+<title>OperationExtractor (randoop 4.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OperationExtractor (randoop 4.1.0 API)";
+            parent.document.title="OperationExtractor (randoop 4.1.1 API)";
         }
     }
     catch(err) {
@@ -158,7 +158,7 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection">OmitMethodsPredicate</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationExtractor.html#omitPredicate">omitPredicate</a></span></code>
-<div class="block">The predicate to test whether to omit an operation</div>
+<div class="block">The predicate to test whether to omit an operation.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -361,7 +361,7 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <li class="blockList">
 <h4>omitPredicate</h4>
 <pre>private&nbsp;<a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection">OmitMethodsPredicate</a> omitPredicate</pre>
-<div class="block">The predicate to test whether to omit an operation</div>
+<div class="block">The predicate to test whether to omit an operation.</div>
 </li>
 </ul>
 <a name="visibilityPredicate">
@@ -483,8 +483,7 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <dd>operation instantiated to match <code>classType</code> if the declaring type is generic and
      <code>classType</code> is not; the unmodified operation otherwise</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../randoop/BugInRandoopException.html" title="class in randoop">BugInRandoopException</a></code> - if there is no substitution that unifies the declaring type with
-     <code>classType</code> or a supertype</dd>
+<dd><code><a href="../../randoop/main/RandoopBug.html" title="class in randoop.main">RandoopBug</a></code> - if there is no substitution that unifies the declaring type with <code>classType</code> or a supertype</dd>
 </dl>
 </li>
 </ul>
@@ -500,7 +499,7 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>operation</code> - the operation for which types are to be checked</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../randoop/BugInRandoopException.html" title="class in randoop">BugInRandoopException</a></code> - if field <code>classType</code> of this is not a subtype of <code>operation.getDeclaringType()</code></dd>
+<dd><code><a href="../../randoop/main/RandoopBug.html" title="class in randoop.main">RandoopBug</a></code> - if field <code>classType</code> of this is not a subtype of <code>operation.getDeclaringType()</code></dd>
 </dl>
 </li>
 </ul>

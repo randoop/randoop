@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>AbstractGenerator (randoop 4.1.0 API)</title>
+<title>AbstractGenerator (randoop 4.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="AbstractGenerator (randoop 4.1.0 API)";
+            parent.document.title="AbstractGenerator (randoop 4.1.1 API)";
         }
     }
     catch(err) {
@@ -162,7 +162,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#dump_sequences">dump_sequences</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#dump_sequences">dump_sequences</a></span></code>
+<div class="block">If true, dump each sequence to the log file as it is generated.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a></code></td>
@@ -172,7 +174,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#invalidSequenceCount">invalidSequenceCount</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#invalidSequenceCount">invalidSequenceCount</a></span></code>
+<div class="block">Number of invalid sequences generated.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../randoop/main/GenInputsAbstract.Limits.html" title="class in randoop.main">GenInputsAbstract.Limits</a></code></td>
@@ -188,15 +192,21 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#num_failing_sequences">num_failing_sequences</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#num_failing_sequences">num_failing_sequences</a></span></code>
+<div class="block">Number of failing sequences generated.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#num_sequences_generated">num_sequences_generated</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#num_sequences_generated">num_sequences_generated</a></span></code>
+<div class="block">Number of sequences generated.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#num_steps">num_steps</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#num_steps">num_steps</a></span></code>
+<div class="block">Number of generation steps (each an attempt to generate and execute a new, distinct sequence).</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation">OperationHistoryLogInterface</a></code></td>
@@ -310,7 +320,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation">OperationHistoryLogInterface</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#getOperationHistory--">getOperationHistory</a></span>()</code>
-<div class="block">Return the operation history logger for this generator</div>
+<div class="block">Return the operation history logger for this generator.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -367,7 +377,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>(package private) void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#setCurrentSequence-randoop.sequence.Sequence-">setCurrentSequence</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;s)</code>
-<div class="block">Sets the current sequence during exploration</div>
+<div class="block">Sets the current sequence during exploration.</div>
 </td>
 </tr>
 <tr id="i14" class="altColor">
@@ -444,6 +454,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>dump_sequences</h4>
 <pre>public static&nbsp;boolean dump_sequences</pre>
+<div class="block">If true, dump each sequence to the log file as it is generated.</div>
 </li>
 </ul>
 <a name="num_steps">
@@ -453,6 +464,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>num_steps</h4>
 <pre>public&nbsp;int num_steps</pre>
+<div class="block">Number of generation steps (each an attempt to generate and execute a new, distinct sequence).</div>
 </li>
 </ul>
 <a name="num_sequences_generated">
@@ -462,6 +474,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>num_sequences_generated</h4>
 <pre>public&nbsp;int num_sequences_generated</pre>
+<div class="block">Number of sequences generated.</div>
 </li>
 </ul>
 <a name="num_failing_sequences">
@@ -471,6 +484,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>num_failing_sequences</h4>
 <pre>public&nbsp;int num_failing_sequences</pre>
+<div class="block">Number of failing sequences generated.</div>
 </li>
 </ul>
 <a name="invalidSequenceCount">
@@ -480,6 +494,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>invalidSequenceCount</h4>
 <pre>public&nbsp;int invalidSequenceCount</pre>
+<div class="block">Number of invalid sequences generated.</div>
 </li>
 </ul>
 <a name="startTime">
@@ -927,7 +942,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>setCurrentSequence</h4>
 <pre>void&nbsp;setCurrentSequence(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;s)</pre>
-<div class="block">Sets the current sequence during exploration</div>
+<div class="block">Sets the current sequence during exploration.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>s</code> - the current sequence</dd>
@@ -955,7 +970,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getOperationHistory</h4>
 <pre>public&nbsp;<a href="../../randoop/generation/OperationHistoryLogInterface.html" title="interface in randoop.generation">OperationHistoryLogInterface</a>&nbsp;getOperationHistory()</pre>
-<div class="block">Return the operation history logger for this generator</div>
+<div class="block">Return the operation history logger for this generator.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the operation history logger for this generator</dd>

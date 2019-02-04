@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceCompiler (randoop 4.1.0 API)</title>
+<title>SequenceCompiler (randoop 4.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceCompiler (randoop 4.1.0 API)";
+            parent.document.title="SequenceCompiler (randoop 4.1.1 API)";
         }
     }
     catch(err) {
@@ -136,7 +136,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/compile/SequenceClassLoader.html" title="class in randoop.compile">SequenceClassLoader</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#classLoader">classLoader</a></span></code>
-<div class="block">The <code>ClassLoader</code> for this compiler</div>
+<div class="block">The <code>ClassLoader</code> for this compiler.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -148,7 +148,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/compile/SequenceJavaFileManager.html" title="class in randoop.compile">SequenceJavaFileManager</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#fileManager">fileManager</a></span></code>
-<div class="block">The <code>FileManager</code> for this compiler</div>
+<div class="block">The <code>FileManager</code> for this compiler.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -254,7 +254,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>classLoader</h4>
 <pre>private final&nbsp;<a href="../../randoop/compile/SequenceClassLoader.html" title="class in randoop.compile">SequenceClassLoader</a> classLoader</pre>
-<div class="block">The <code>ClassLoader</code> for this compiler</div>
+<div class="block">The <code>ClassLoader</code> for this compiler.</div>
 </li>
 </ul>
 <a name="options">
@@ -284,7 +284,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>fileManager</h4>
 <pre>private final&nbsp;<a href="../../randoop/compile/SequenceJavaFileManager.html" title="class in randoop.compile">SequenceJavaFileManager</a> fileManager</pre>
-<div class="block">The <code>FileManager</code> for this compiler</div>
+<div class="block">The <code>FileManager</code> for this compiler.</div>
 </li>
 </ul>
 </li>
@@ -399,7 +399,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>T</code> - the class type</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>packageName</code> - the package of the class, null if default package</dd>
-<dd><code>classname</code> - the name of the class</dd>
+<dd><code>classname</code> - the name of the class, without the package</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <code>Class&lt;T&gt;</code> object with the class name</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>

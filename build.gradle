@@ -49,7 +49,7 @@ allprojects {
   }
 
   /* Randoop version number - added to generated jar files */
-  version = '4.1.0'
+  version = '4.1.1'
 
   configurations {
     // A collection of all plumelib dependencies required, so that all
