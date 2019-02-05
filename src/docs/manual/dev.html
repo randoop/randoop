@@ -784,26 +784,25 @@ The following commands do part of the work.
         buildRelease</code> step.
   </li>
   <li>
+    Wait for the <a href="https://travis-ci.org/randoop/randoop">Travis CI</a>
+    build to succeed.  (This takes about half an hour.)
+    If it fails, commit fixes, then wait again.
+  </li>
+  <li>
     Tag the release.
 <pre>
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
   git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
-    Wait for the <a href="https://travis-ci.org/randoop/randoop">Travis CI</a>
-    build to succeed.  (This takes about half an hour.)
-    If it fails, commit fixes, then re-tag and re-push tags
-    (adding <code>-f</code> to both commands).
   </li>
   <li>Follow the
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
-    click "Tags", click "add release notes" for the new tag,
+    click "Draft a new release", in the "Tag" text field, choose v<em>4.1.1</em>,
     name it "Randoop version <em>4.1.1</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
-    jar files from <code>build/libs</code> and the zip file from
-    <code>build/distributions</code> (it doesn't matter what order you upload
-    them in; they will be listed alphabetically on the release webpage)
+    the zip file from <code>build/distributions</code>,
     and, finally, click "publish release".
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
@@ -818,12 +817,6 @@ The following commands do part of the work.
       <li>
         Defects4J.  As of this writing, the Randoop version number appears only
         in files <code>init.sh</code> and <code>framework/test/README.md</code>.
-      </li>
-      <li>
-        MUSE.  Update the <code>integration-test2</code> repository
-        (the version number appears twice in the URL) and
-        optionally the <code>pascali-coverage</code> repository
-        (documentation only).
       </li>
     </ul>
   </li>
