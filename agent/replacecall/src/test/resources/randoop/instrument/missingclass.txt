@@ -1,1 +1,0 @@
-alpha.beta.Gamma randoop.mock.Gamma

@@ -1,3 +1,0 @@
-java.lang randoop.mock.java.lang
-java.awt randoop.mock.java.awt
-javax.swing randoop.mock.javax.swing
