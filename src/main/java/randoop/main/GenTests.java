@@ -523,8 +523,10 @@ public class GenTests extends GenInputsAbstract {
 
     if (this.sequenceCompileFailureCount > 0) {
       System.out.printf(
-          "%nUncompilable sequences generated (count: %d).%nPlease report at https://github.com/randoop/randoop/issues .%n",
-          this.sequenceCompileFailureCount);
+          "%nUncompilable sequences generated (count: %d).%n", this.sequenceCompileFailureCount);
+      System.out.println("Please report at https://github.com/randoop/randoop/issues ,");
+      System.out.println(
+          "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
     }
 
     // Operation history includes counts determined by getting regression sequences from explorer,

@@ -1116,7 +1116,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  <code>--no-error-revealing-tests</code> together with <code>--no-regression-tests</code>.
 
  <p>In the current implementation, the number of tests in the output can be substantially
- smaller than this limit. [default 100000000]
+ smaller than this limit. One reason is that Randoop does not output subsumed tests, which
+ appear as a subsequence of some longer test. [default 100000000]
             <li id="option:maxsize"><b>--maxsize=</b><i>int</i>.
              Do not generate tests with more than this many statements. [default 100]
             <li id="option:stop-on-error-test"><b>--stop-on-error-test=</b><i>boolean</i>.

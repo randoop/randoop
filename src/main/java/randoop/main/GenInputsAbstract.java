@@ -395,7 +395,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * {@code --no-error-revealing-tests} together with {@code --no-regression-tests}.
    *
    * <p>In the current implementation, the number of tests in the output can be substantially
-   * smaller than this limit.
+   * smaller than this limit. One reason is that Randoop does not output subsumed tests, which
+   * appear as a subsequence of some longer test.
    */
   @Option("Maximum number of tests to ouput")
   public static int output_limit = LIMIT_DEFAULT;
