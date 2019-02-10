@@ -21,7 +21,7 @@ It automatically creates unit tests for your classes, in JUnit format.
     * `coveredtest` - source for JUnit tests of the covered-class Java agent
     * `distribution` - resource files for creating the distribution zip file
     * `docs` - [documentation]("https://randoop.github.io/randoop/"), including the manual and resources
-    * `javadoc` - resource files for creating [docs/api](docs/api)
+    * `javadoc` - resource files for creating [API documentation](https://randoop.github.io/randoop/api/)
     * `main` - Randoop source code
     * `replacecalltest` - source for JUnit tests of the replacecall Java agent
     * `systemtest` - source for Randoop system tests
