@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>GenInputsAbstract (randoop 4.1.0 API)</title>
+<title>GenInputsAbstract (randoop 4.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="GenInputsAbstract (randoop 4.1.0 API)";
+            parent.document.title="GenInputsAbstract (randoop 4.1.1 API)";
         }
     }
     catch(err) {
@@ -372,7 +372,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#junit_output_dir">junit_output_dir</a></span></code>
-<div class="block">Name of the directory to which JUnit files should be written</div>
+<div class="block">Name of the directory to which JUnit files should be written.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -405,7 +405,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a></code></td>
+<td class="colFirst"><code>static org.plumelib.util.FileWriterWithName</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#log">log</a></span></code>
 <div class="block">A file to which to log lots of information.</div>
 </td>
@@ -532,7 +532,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a></code></td>
+<td class="colFirst"><code>static org.plumelib.util.FileWriterWithName</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#operation_history_log">operation_history_log</a></span></code>
 <div class="block">A file to which to log the operation usage history.</div>
 </td>
@@ -592,7 +592,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a></code></td>
+<td class="colFirst"><code>static org.plumelib.util.FileWriterWithName</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#selection_log">selection_log</a></span></code>
 <div class="block">A file to which to log selections; helps find sources of non-determinism.</div>
 </td>
@@ -640,7 +640,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#testsperfile">testsperfile</a></span></code>
-<div class="block">Maximum number of tests to write to each JUnit file</div>
+<div class="block">Maximum number of tests to write to each JUnit file.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -728,7 +728,9 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getClassnamesFromArgs--">getClassnamesFromArgs</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getClassnamesFromArgs--">getClassnamesFromArgs</a></span>()</code>
+<div class="block">Read names of classes under test, as provided with the --classlist command-line argument.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
@@ -1415,7 +1417,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>testsperfile</h4>
 <pre>public static&nbsp;int testsperfile</pre>
-<div class="block">Maximum number of tests to write to each JUnit file</div>
+<div class="block">Maximum number of tests to write to each JUnit file.</div>
 </li>
 </ul>
 <a name="error_test_basename">
@@ -1518,7 +1520,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>junit_output_dir</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> junit_output_dir</pre>
-<div class="block">Name of the directory to which JUnit files should be written</div>
+<div class="block">Name of the directory to which JUnit files should be written.</div>
 </li>
 </ul>
 <a name="dont_output_tests">
@@ -1643,7 +1645,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>log</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a> log</pre>
+<pre>public static&nbsp;org.plumelib.util.FileWriterWithName log</pre>
 <div class="block">A file to which to log lots of information. If not specified, no logging is done. Enabling the
  logs slows down Randoop.</div>
 </li>
@@ -1654,7 +1656,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>selection_log</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a> selection_log</pre>
+<pre>public static&nbsp;org.plumelib.util.FileWriterWithName selection_log</pre>
 <div class="block">A file to which to log selections; helps find sources of non-determinism. If not specified, no
  logging is done.</div>
 </li>
@@ -1665,7 +1667,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>operation_history_log</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html?is-external=true" title="class or interface in java.io">FileWriter</a> operation_history_log</pre>
+<pre>public static&nbsp;org.plumelib.util.FileWriterWithName operation_history_log</pre>
 <div class="block">A file to which to log the operation usage history.</div>
 </li>
 </ul>
@@ -1759,6 +1761,11 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>getClassnamesFromArgs</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getClassnamesFromArgs()</pre>
+<div class="block">Read names of classes under test, as provided with the --classlist command-line argument.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the classes provided via the --classlist command-line argument</dd>
+</dl>
 </li>
 </ul>
 <a name="getStringSetFromFile-java.nio.file.Path-java.lang.String-">

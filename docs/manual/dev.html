@@ -289,7 +289,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.1.0.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.1.1.jar</code></pre>
 
 
 
@@ -355,7 +355,7 @@ java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.ru
 
 You can minimize the test with a command like this:
 <pre>
-java -ea -cp randoop-all-4.1.0.jar randoop.main.Main minimize \
+java -ea -cp randoop-all-4.1.1.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.11.jar:.../randoop/classes/java/testInput/
 </pre>
 
@@ -373,8 +373,8 @@ A summary of the results is in the file <code>build/reports/jacoco/test/jacocoTe
 The overall coverage can be viewed by running the perl script: <code>scripts/show-coverage.pl</code>.
 This script will accept an optional argument of an alternative file location.
 Invoke the script with <code>-help</code> for a full list of options.
-If you are planning to update the Randoop coverage data spreadsheet <code>Randoop Coverage.xlsm</code>
-(location TBD) you will need to run the perl script: <code>scripts/prepare-coverage.pl</code>.
+If you are planning to create or update a Randoop coverage data spreadsheet (see below)
+you will need to run the perl script: <code>scripts/prepare-coverage.pl</code>.
 This tool reads the jacoco coverage data and converts it into into a csv file named
 "report-&lt;input file modifcation date&gt;.csv" in the current directory.
 This script will accept an optional argument of an alternative file location.
@@ -384,6 +384,12 @@ Invoke the script with <code>-help</code> for a full list of options.
   <li><a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage">Pascali</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/pascali-coverage/blob/master/README.md">README.md</a> for details.</li>
   <li><a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage">Toradocu</a>: See the file <a href="https://gitlab.cs.washington.edu/randoop/toradocu-coverage/blob/master/README.md">README.md</a> for details.</li>
 </ul>
+<p>
+After collecting the four sets of coverage data you will probably want to update an existing coverage
+spreadsheet or create a new one.  The tools needed and the current spreadsheets are located in the
+<a href="https://gitlab.cs.washington.edu/randoop/coverage-tools">coverage-tools</a> repository.
+See the file <a href="https://gitlab.cs.washington.edu/randoop/coverage-tools/blob/master/README.md">README.md</a>
+for details.</p>
 
 
 <h2 id="travis-tests">Running tests under Travis-CI, and reproducing them outside Travis</h2>
@@ -724,10 +730,10 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>4.1.0</em>
-NEWVERSION=<em>4.1.1</em></pre>
+OLDVERSION=<em>4.1.1</em>
+NEWVERSION=<em>4.1.2</em></pre>
     </li>
-    <li>Update the version number and date in these files:
+    <li>Update the version number <em>and date</em> in these files:
 <pre>
 build.gradle
 src/docs/CHANGES.txt
@@ -744,10 +750,11 @@ The following commands do part of the work.
 </pre>
     You still need to manually edit <code>src/docs/CHANGES.txt</code>:
     update the date and undo undesirable changes.
-    Also, double-check all changes.
+    Also, double-check all changes.<br/>
+    Don't commit your changes yet.
     </li>
-    <li>Add an exception for the Randoop zip file
-      to <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args</a>,
+    <li>Add two exceptions for the Randoop zip file
+      to <a href="https://github.com/plume-lib/checklink/blob/master/checklink-args.txt">checklink-args.txt</a>,
       for instance by editing local file <code>~/bin/src/checklink/checklink-args.txt</code>.
       Don't forget to commit and push your changes.
     </li>
@@ -792,7 +799,7 @@ The following commands do part of the work.
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
     click "Tags", click "add release notes" for the new tag,
-    name it "Randoop version <em>4.1.0</em>", use the changelog entry as the
+    name it "Randoop version <em>4.1.1</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
     jar files from <code>build/libs</code> and the zip file from
     <code>build/distributions</code> (it doesn't matter what order you upload
@@ -801,9 +808,9 @@ The following commands do part of the work.
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
-    Subject: Randoop version <em>4.1.0</em>
+    Subject: Randoop version <em>4.1.1</em>
     <br/>
-    Randoop <em>4.1.0</em> has been released and is available at
+    Randoop <em>4.1.1</em> has been released and is available at
     https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
   <li>Make pull requests against downstream projects that use Randoop.  In each, search for the old version number.
