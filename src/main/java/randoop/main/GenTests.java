@@ -1015,7 +1015,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /** Increments the count of sequence compilation failures. */
-  public void countSequenceCompileFailure() {
+  public void incrementSequenceCompileFailureCount() {
     this.sequenceCompileFailureCount++;
   }
 }
