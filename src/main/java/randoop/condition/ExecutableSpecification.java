@@ -7,8 +7,8 @@ import java.util.List;
  * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
  * allows the underlying Boolean expressions to be evaluated.
  *
- * <p>It is represented three collections: a collection of {@link ExecutableBooleanExpression} for
- * the {@link randoop.condition.specification.Precondition}, a collection of {@link
+ * <p>It is represented as three collections: a collection of {@link ExecutableBooleanExpression}
+ * for the {@link randoop.condition.specification.Precondition}, a collection of {@link
  * GuardPropertyPair} for the {@link randoop.condition.specification.Postcondition}, and a
  * collection of {@link GuardThrowsPair} for the {@link
  * randoop.condition.specification.ThrowsCondition} in a specification.
