@@ -148,7 +148,7 @@ public class SpecificationTranslator {
       AccessibleObject executable, boolean postState) {
     boolean isMethod = executable instanceof Method;
     Class<?> declaringClass = getDeclaringClass(executable);
-    // TODO: a constructor for an inner class has a receiver (which is not the declaring class)
+    // TODO: A constructor for an inner class has a receiver (which is not the declaring class).
     Class<?> receiverType = isMethod ? declaringClass : null;
     Class<?>[] parameterTypes = getParameterTypes(executable);
     Class<?> returnType =

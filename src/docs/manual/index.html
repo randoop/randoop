@@ -623,10 +623,13 @@ Violation of any of these contracts is highly likely to indicate an error.
 </p>
 
 <p>
-You can add additional contracts to Randoop.
+You can add additional contracts to Randoop, that will be checked for every object Randoop creates.
 Define a contract in directory
 <code>randoop/src/main/java/randoop/contract/</code>,
 and reference it in the constructor for <code>OperationModel</code>.
+You can also provide specifications of methods in your code to further help
+Randoop classify tests; see section
+<a href="#specifying-behavior">"Specifying expected code behavior"</a>.
 </p>
 
 

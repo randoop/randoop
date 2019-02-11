@@ -72,7 +72,8 @@ public class ExecutableSpecification {
    * Check all guard expressions of the method's full specification, which includes this {@link
    * ExecutableSpecification} and those of any overridden/implemented method.
    *
-   * @param args the argument values to test the guard expressions
+   * @param args the argument values to test the guard expressions; always includes a receiver (null
+   *     for static methods)
    * @return the table with entries for this operation
    * @see #checkPrestate(Object[], ExpectedOutcomeTable)
    */
@@ -98,7 +99,7 @@ public class ExecutableSpecification {
    *       randoop.condition.ExecutableSpecification#checkGuardPropertyPairs(java.lang.Object[])}.
    * </ol>
    *
-   * @param args the argument values
+   * @param args the argument values; always includes a receiver (null for static methods)
    * @param table the table to which the created entry is to be added
    */
   private void checkPrestate(Object[] args, ExpectedOutcomeTable table) {

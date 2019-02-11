@@ -599,18 +599,20 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     if (execSpec == null) {
       return new ExpectedOutcomeTable();
     }
-    return execSpec.checkPrestate(addNullReceiver(values));
+    return execSpec.checkPrestate(addNullReceiverIfStatic(values));
   }
 
   /**
-   * Fixes the argument array for checking an {@link Operation} -- inserting {@code null} as first
-   * argument when this operation is static.
+   * Inserts {@code null} as first argument when this operation is static.
+   *
+   * <p>This is necessary because the argument array for checking an {@link Operation} is always
+   * assumed to have a "receiver" argument, which is null (and ignored) for a static method.
    *
    * @param values the argument array for this operation
    * @return the corresponding operation array for checking a {@link
    *     randoop.condition.ExecutableBooleanExpression}
    */
-  private Object[] addNullReceiver(Object[] values) {
+  private Object[] addNullReceiverIfStatic(Object[] values) {
     Object[] args = values;
     if (this.isStatic()) {
       args = new Object[values.length + 1];
