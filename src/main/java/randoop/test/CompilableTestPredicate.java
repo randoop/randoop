@@ -76,6 +76,9 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     PackageDeclaration pkg = source.getPackage();
     String packageName = pkg == null ? null : pkg.getPackageName();
     boolean result = testSource(testClassName, source, packageName);
+    if (!result) {
+      genTests.incrementSequenceCompileFailureCount();
+    }
     if (!result && genTests != null) {
       // get result from last line of sequence
       ExecutionOutcome sequenceResult = sequence.getResult(sequence.size() - 1);
@@ -86,7 +89,6 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
           return result;
         }
       }
-      genTests.countSequenceCompileFailure();
     }
     return result;
   }
