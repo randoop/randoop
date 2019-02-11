@@ -63,6 +63,21 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.execSpec = null;
   }
 
+  /**
+   * Sets the specification; any previous value is ignored.
+   *
+   * @param execSpec the specification to use for this object
+   */
+  public void setExecutableSpecification(ExecutableSpecification execSpec) {
+    System.out.printf(
+        "setExecutableSpecification(%s) for %s [%s]%n", execSpec, this, this.getClass());
+    this.execSpec = execSpec;
+    System.out.printf(
+        "setExecutableSpecification(%s) post this=%s [%s]%n", execSpec, this, this.getClass());
+    System.out.printf(
+        "setExecutableSpecification(%s) post this.execSpec = %s%n", execSpec, this.execSpec);
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof TypedOperation)) {
@@ -137,7 +152,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   @Override
   public String toString() {
-    return getName() + " : " + inputTypes + " -> " + outputType;
+    String specString = (execSpec == null) ? "" : (" [spec: " + execSpec.toString() + "]");
+    return getName() + " : " + inputTypes + " -> " + outputType + specString;
   }
 
   @Override
@@ -608,15 +624,5 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       System.arraycopy(values, 0, args, 1, values.length);
     }
     return args;
-  }
-
-  /**
-   * Sets the specification; any previous value is ignored (so the method name {@code
-   * addExecutableSpecification} may be misleading).
-   *
-   * @param execSpec the specification to use for this object
-   */
-  public void addExecutableSpecification(ExecutableSpecification execSpec) {
-    this.execSpec = execSpec;
   }
 }

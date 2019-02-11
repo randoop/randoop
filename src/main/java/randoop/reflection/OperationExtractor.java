@@ -195,11 +195,12 @@ public class OperationExtractor extends DefaultClassVisitor {
         ExecutableSpecification execSpec =
             operationSpecifications.getExecutableSpecification(constructor);
         if (!execSpec.isEmpty()) {
-          operation.addExecutableSpecification(execSpec);
+          operation.setExecutableSpecification(execSpec);
         }
       }
       if (debug) {
-        System.out.println("OperationExtractor.visit: add operation " + operation);
+        System.out.printf(
+            "OperationExtractor.visit: add operation %s [%s]%n", operation, operation.getClass());
       }
       operations.add(operation);
     }
@@ -249,7 +250,7 @@ public class OperationExtractor extends DefaultClassVisitor {
         ExecutableSpecification execSpec =
             operationSpecifications.getExecutableSpecification(method);
         if (!execSpec.isEmpty()) {
-          operation.addExecutableSpecification(execSpec);
+          operation.setExecutableSpecification(execSpec);
         }
       }
       if (debug) {
