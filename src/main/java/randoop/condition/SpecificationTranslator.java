@@ -199,7 +199,10 @@ public class SpecificationTranslator {
       methodName.add(parameterType.getSimpleName());
     }
     return new RawSignature(
-        packageName, receiverType.getSimpleName(), methodName.toString(), expressionParameterTypes);
+        packageName,
+        (receiverType == null) ? "ClassName" : receiverType.getSimpleName(),
+        methodName.toString(),
+        expressionParameterTypes);
   }
 
   // In JDK 8, replace invocations of this by: executable.getDeclaringClass()
