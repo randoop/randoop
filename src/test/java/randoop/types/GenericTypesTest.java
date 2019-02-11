@@ -259,7 +259,7 @@ public class GenericTypesTest {
         subtype.isSubtypeOf(stringSuperType));
     assertEquals("superclass", stringSuperType, subtype.getSuperclass());
 
-    // try with example inspired by java.util.stream.Stream (which is Java 8)
+    // try with example inspired by java.util.stream.Stream (which was introduced in Java 8)
     GenericClassType genericStreamType = GenericClassType.forClass(Stream.class);
     InstantiatedType stringStreamType = genericStreamType.instantiate(JavaTypes.STRING_TYPE);
     GenericClassType genericBaseStreamType = GenericClassType.forClass(BaseStream.class);
