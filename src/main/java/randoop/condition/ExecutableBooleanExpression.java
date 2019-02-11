@@ -118,7 +118,15 @@ public class ExecutableBooleanExpression {
 
   @Override
   public String toString() {
-    return contractSource + " // " + comment;
+    if (comment == null || comment.isEmpty()) {
+      return String.format(
+          "ExecutableBooleanExpression{contractSource=%s, expressionMethod=%s}",
+          contractSource, expressionMethod);
+    } else {
+      return String.format(
+          "ExecutableBooleanExpression{contractSource=%s, comment=%s, expressionMethod=%s}",
+          contractSource, comment, expressionMethod);
+    }
   }
 
   /**
