@@ -220,16 +220,20 @@ Gradle allows you to run multiple tasks.  For instance, for a clean build,
 The tasks <code>cleanSite</code>, <code>publishSite</code> and <code>buildRelease</code>
 should not be run except while making a release, and so should never be run
 within a branch other than master.
-These tasks will delete and/or replace the GitHub pages site located in the <code>docs</code> directory of the repository.
+These tasks will delete and/or replace the GitHub pages site located in the <code>gh-pages</code> branch of the repository, which is checked out in a directory <code>randoop-branch-gh-pages</code> that is a sibling of <code>randoop</code>
+</p>
+
+<p>
 If you happen to run these commands, you should use git to revert to the previous version.
 For instance, the command
 </p>
 
 <pre><code>
-  git checkout -- docs/
+  git checkout -- .
 </code></pre>
 
 <p>
+in the <code>gh-pages</code> branch
 can be used to restore the files before they have been committed.
 </p>
 
@@ -691,7 +695,7 @@ task described below.
 <p>
   The website, including the manuals, can be found in <code>src/docs</code>.
   These files, along with the Javadoc API, are moved to the
-  <code>docs</code> directory by the <code>publishSite</code> task.
+  <code>gh-pages</code> branch by the <code>publishSite</code> task.
 </p>
 
 
@@ -766,7 +770,7 @@ The following commands do part of the work.
 </li>
 <li>Create the distribution files, commit, make a tag, and push.  This takes
   a while because it runs all the tests.  It also updates the project site in
-  the <code>docs</code> directory.
+  the <code>gh-pages</code> branch.
 <pre>
   ./gradlew clean buildRelease \
   && git add -A . \
