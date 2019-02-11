@@ -192,6 +192,7 @@ public class SpecificationTranslator {
     }
     StringJoiner methodName = new StringJoiner("_");
     methodName.add("signature");
+    methodName.add(receiverType.getSimpleName());
     for (Class<?> parameterType : parameterTypes) {
       methodName.add(parameterType.getSimpleName());
     }
