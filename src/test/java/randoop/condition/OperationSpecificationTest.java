@@ -200,7 +200,7 @@ public class OperationSpecificationTest {
     Constructor<?> reflectionConstructor = null;
     reflectionConstructor = c.getConstructor(int.class);
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
-    constructorOp.addExecutableSpecification(getConstructorConditions(reflectionConstructor));
+    constructorOp.setExecutableSpecification(getConstructorConditions(reflectionConstructor));
     Sequence sequence = new Sequence();
     sequence =
         sequence.extend(
@@ -217,7 +217,7 @@ public class OperationSpecificationTest {
     Method method = null;
     method = c.getDeclaredMethod("category", int.class);
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
-    methodOp.addExecutableSpecification(getMethodSpecification(method));
+    methodOp.setExecutableSpecification(getMethodSpecification(method));
 
     Sequence sequence = new Sequence();
     sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, 5));
@@ -236,7 +236,7 @@ public class OperationSpecificationTest {
     Method method = null;
     method = c.getDeclaredMethod("badness", ClassWithConditions.Range.class, int.class);
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
-    methodOp.addExecutableSpecification(getBadnessConditions(method));
+    methodOp.setExecutableSpecification(getBadnessConditions(method));
 
     Sequence sequence = new Sequence();
     sequence =

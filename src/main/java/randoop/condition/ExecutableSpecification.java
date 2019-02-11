@@ -7,12 +7,13 @@ import java.util.List;
  * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
  * allows the underlying Boolean expressions to be evaluated.
  *
- * <p>It is represented as the collection of all {@link ExecutableBooleanExpression}, {@link
- * GuardPropertyPair}, and {@link GuardThrowsPair} for the {@link
- * randoop.condition.specification.Precondition}, {@link
- * randoop.condition.specification.Postcondition}, and {@link
- * randoop.condition.specification.ThrowsCondition} objects defined on a single operation. Includes
- * specifications inherited from supertypes.
+ * <p>It is represented as three collections: a collection of {@link ExecutableBooleanExpression}
+ * for the {@link randoop.condition.specification.Precondition}, a collection of {@link
+ * GuardPropertyPair} for the {@link randoop.condition.specification.Postcondition}, and a
+ * collection of {@link GuardThrowsPair} for the {@link
+ * randoop.condition.specification.ThrowsCondition} in a specification.
+ *
+ * <p>It includes specifications inherited from supertypes.
  */
 public class ExecutableSpecification {
 
@@ -187,5 +188,12 @@ public class ExecutableSpecification {
       }
     }
     return true;
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "ExecutableSpecification:  preExpressions=%s  guardPropertyPairs=%s  guardThrowsPairs=%s",
+        preExpressions, guardPropertyPairs, guardThrowsPairs);
   }
 }
