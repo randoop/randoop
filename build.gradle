@@ -257,25 +257,21 @@ build.dependsOn compileAll
 
 /*
  * Configuration for using Error Prone linter.
- *
- * Only works in Java 8+.
  */
 import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
 tasks.withType(JavaCompile).each { t ->
-  if (JavaVersion.current().isJava8Compatible()) {
-    if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
-      t.toolChain ErrorProneToolChain.create(project)
-      t.options.compilerArgs += [
-        // Maybe NamedParameters is no longer supported?
-        // // undocumented, and suggestion seems bad
-	// '-Xep:NamedParameters:OFF',
- 	// Is always a false positive in my experience.
-	'-Xep:StringSplitter:OFF'
-        // TODO: uncomment once we run the Interning Checker on Randoop
-        // '-Xep:ReferenceEquality:OFF'
-        ]
-    }
+  if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
+    t.toolChain ErrorProneToolChain.create(project)
+    t.options.compilerArgs += [
+      // Maybe NamedParameters is no longer supported?
+      // // undocumented, and suggestion seems bad
+      // '-Xep:NamedParameters:OFF',
+      // Is always a false positive in my experience.
+      '-Xep:StringSplitter:OFF'
+      // TODO: uncomment once we run the Interning Checker on Randoop
+      // '-Xep:ReferenceEquality:OFF'
+      ]
   }
 }
 
@@ -691,16 +687,14 @@ javadoc {
 
 // Make Javadoc fail on warnings
 // From https://stackoverflow.com/a/49544352/173852
-if (JavaVersion.current().isJava8Compatible()) {
-    tasks.withType(Javadoc) {
-        // The '-quiet' as second argument is actually a hack,
-        // since the one paramater addStringOption doesn't seem to
-        // work, we extra add '-quiet', which is added anyway by
-        // gradle. See https://github.com/gradle/gradle/issues/2354
-        // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
-        // for information about the -Xwerror option.
-        options.addStringOption('Xwerror', '-quiet')
-    }
+tasks.withType(Javadoc) {
+    // The '-quiet' as second argument is actually a hack,
+    // since the one paramater addStringOption doesn't seem to
+    // work, we extra add '-quiet', which is added anyway by
+    // gradle. See https://github.com/gradle/gradle/issues/2354
+    // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
+    // for information about the -Xwerror option.
+    options.addStringOption('Xwerror', '-quiet')
 }
 
 configurations {
@@ -827,12 +821,8 @@ task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC'
   description "Adds options and TOC to documentation in src/docs"
   doLast {
     exec {
-      if (JavaVersion.current().isJava8Compatible()) {
-        environment PATH: "$System.env.PATH"
-        commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
-      } else {
-        commandLine "echo","WARNING: HTML validation of manuals is only run in Java 8+"
-      }
+      environment PATH: "$System.env.PATH"
+      commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
     }
   }
 }
@@ -920,8 +910,6 @@ task validateSite(dependsOn: 'html5validatorExists') {
       environment PATH: "$System.env.PATH"
       commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
     }
-  } else {
-    println "WARNING: HTML validation of site is only run in Java 8+."
   }
 }
 

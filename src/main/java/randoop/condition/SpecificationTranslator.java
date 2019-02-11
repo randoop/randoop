@@ -1,7 +1,6 @@
 package randoop.condition;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,9 +95,7 @@ public class SpecificationTranslator {
    * @return the translator object to convert the specifications for {@code executable}
    */
   static SpecificationTranslator createTranslator(
-      AccessibleObject executable,
-      OperationSpecification specification,
-      SequenceCompiler compiler) {
+      Executable executable, OperationSpecification specification, SequenceCompiler compiler) {
     Identifiers identifiers = specification.getIdentifiers();
 
     // Get expression method signatures.
@@ -146,14 +143,12 @@ public class SpecificationTranslator {
    * @param postState if true, include a variable for the return value in the signature
    * @return the {@link RawSignature} for a expression method of {@code executable}
    */
-  // In Java 8, change the type AccessibleObject to Executable.
-  private static RawSignature getExpressionSignature(
-      AccessibleObject executable, boolean postState) {
+  private static RawSignature getExpressionSignature(Executable executable, boolean postState) {
     boolean isMethod = executable instanceof Method;
-    Class<?> declaringClass = getDeclaringClass(executable);
+    Class<?> declaringClass = executable.getDeclaringClass();
     // TODO: A constructor for an inner class has a receiver (which is not the declaring class).
     Class<?> receiverType = isMethod ? declaringClass : null;
-    Class<?>[] parameterTypes = getParameterTypes(executable);
+    Class<?>[] parameterTypes = executable.getParameterTypes();
     Class<?> returnType =
         (!postState ? null : (isMethod ? ((Method) executable).getReturnType() : declaringClass));
     String packageName = renamedPackage(declaringClass.getPackage());
@@ -205,24 +200,6 @@ public class SpecificationTranslator {
         expressionParameterTypes);
   }
 
-  // In JDK 8, replace invocations of this by: executable.getDeclaringClass()
-  private static Class<?> getDeclaringClass(AccessibleObject executable) {
-    if (executable instanceof Method) {
-      return ((Method) executable).getDeclaringClass();
-    } else {
-      return ((Constructor<?>) executable).getDeclaringClass();
-    }
-  }
-
-  // In JDK 8, replace invocations of this by: executable.getParameterTypes()
-  private static Class<?>[] getParameterTypes(AccessibleObject executable) {
-    if (executable instanceof Method) {
-      return ((Method) executable).getParameterTypes();
-    } else {
-      return ((Constructor<?>) executable).getParameterTypes();
-    }
-  }
-
   /**
    * Gets the name of the package. If the package name begins with {@code "java."}, prefixes it by
    * {@code "randoop."}, since user classes cannot be added to the {@code java} package.
@@ -268,9 +245,7 @@ public class SpecificationTranslator {
    * @return the {@link ExecutableSpecification} for the given specification
    */
   public static ExecutableSpecification createExecutableSpecification(
-      AccessibleObject executable,
-      OperationSpecification specification,
-      SequenceCompiler compiler) {
+      Executable executable, OperationSpecification specification, SequenceCompiler compiler) {
     SpecificationTranslator st = createTranslator(executable, specification, compiler);
     return new ExecutableSpecification(
         st.getGuardExpressions(specification.getPreconditions()),
