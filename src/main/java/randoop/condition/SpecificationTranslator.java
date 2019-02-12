@@ -2,6 +2,7 @@ package randoop.condition;
 
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -106,7 +107,8 @@ public class SpecificationTranslator {
     List<String> parameterNames = new ArrayList<>();
 
     // Get expression method parameter declaration strings.
-    if (executable instanceof Method) { // TODO: inner class constructors have a receiver
+    // TODO: inner class constructors have a receiver
+    if (executable instanceof Method && Modifier.isStatic(((Method) executable).getModifiers())) {
       parameterNames.add(identifiers.getReceiverName());
     }
     parameterNames.addAll(identifiers.getParameterNames());

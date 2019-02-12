@@ -6,6 +6,7 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExecutableBooleanExpression;
+import randoop.sequence.DummyVariable;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 
@@ -48,6 +49,7 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
       Object[] inputValues = eseq.getRuntimeInputs(inputs);
       if (eseq.sequence.getStatement(finalIndex).getOperation().isStatic()) {
         inputValues = addNullReceiver(inputValues);
+        inputs.add(0, DummyVariable.DUMMY);
       }
 
       List<ExecutableBooleanExpression> failed = new ArrayList<>();
