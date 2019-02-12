@@ -105,8 +105,7 @@ public class SpecificationTranslator {
     List<String> parameterNames = new ArrayList<>();
 
     // Get expression method parameter declaration strings.
-    // TODO: inner class constructors have a receiver
-    if (executable instanceof Method) {
+    if (executable instanceof Method) { // TODO: inner class constructors have a receiver
       parameterNames.add(identifiers.getReceiverName());
     }
     parameterNames.addAll(identifiers.getParameterNames());
