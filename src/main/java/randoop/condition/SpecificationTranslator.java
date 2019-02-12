@@ -3,7 +3,6 @@ package randoop.condition;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -173,9 +172,6 @@ public class SpecificationTranslator {
    */
   private static RawSignature getRawSignature(
       String packageName, Class<?> receiverType, Class<?>[] parameterTypes, Class<?> returnType) {
-    System.out.printf(
-        "getRawSignature(%s, %s, %s, %s)%n",
-        packageName, receiverType, Arrays.toString(parameterTypes), returnType);
     final int shift = (receiverType != null) ? 1 : 0;
     final int length = parameterTypes.length + shift + (returnType != null ? 1 : 0);
     Class<?>[] expressionParameterTypes = new Class<?>[length];
