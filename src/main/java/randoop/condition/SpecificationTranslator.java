@@ -128,16 +128,17 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Create the {@link RawSignature} for the expression method for evaluating an expression for the
-   * given method or constructor.
+   * Create the {@link RawSignature} for evaluating an expression about a method call to the given
+   * method or constructor.
    *
    * <p>The parameter types of the RawSignature are the declaring class as the receiver type,
    * followed by the parameter types of {@code executable}, followed by the return type if {@code
-   * postState} is true and {@code executable} is not a void method.
+   * postState} is true and {@code executable} is not a void method. These are all needed, in case
+   * the expression refers to them.
    *
    * <p>Note: The declaring class of the expression method is actually determined by {@link
    * randoop.condition.ExecutableBooleanExpression#createMethod(RawSignature, String, String,
-   * SequenceCompiler)}
+   * SequenceCompiler)}.
    *
    * @param executable the method or constructor to which the expression belongs
    * @param postState if true, include a variable for the return value in the signature
