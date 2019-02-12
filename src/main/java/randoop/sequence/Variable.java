@@ -20,7 +20,7 @@ public class Variable implements Comparable<Variable> {
     this.index = i;
   }
 
-  // Do not use! Only for use by DummyVariable.
+  /** Do not use! Only for use by DummyVariable. */
   protected Variable() {
     index = 0;
     sequence = null;
