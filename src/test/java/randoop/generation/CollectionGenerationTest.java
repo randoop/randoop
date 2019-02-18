@@ -249,10 +249,10 @@ public class CollectionGenerationTest {
     // is(equalTo(6))));
   }
 
-  /*
+  /**
    * inspired by jfreechart case in Defects4J where Randoop trying to create an array of type
-   * Comparable<org.jfree.chart.plot.PlotOrientation>[].
-   * Tests that Comparable<String>[] is replaced with String[]
+   * Comparable<org.jfree.chart.plot.PlotOrientation>[]. Tests that Comparable<String>[] is replaced
+   * with String[]
    */
   @Test
   public void testInterfaceArray() {

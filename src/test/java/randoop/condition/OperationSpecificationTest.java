@@ -317,9 +317,7 @@ public class OperationSpecificationTest {
     return collection.getExecutableSpecification(method);
   }
 
-  /*
-   * Creates ExecutableSpecification including post-condition for constructor that will fail.
-   */
+  /** Creates ExecutableSpecification including post-condition for constructor that will fail. */
   private ExecutableSpecification getConstructorConditions(Constructor<?> constructor) {
 
     List<String> paramNames = new ArrayList<>();
