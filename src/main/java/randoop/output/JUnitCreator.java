@@ -427,15 +427,15 @@ public class JUnitCreator {
       bodyStatements.add(new ExpressionStmt(variableExpr));
 
       int classMethodCount = classMethodCounts.get(testClass);
-      NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
+      NameGenerator methodNameGen = new NameGenerator("test", 1, numDigits(classMethodCount));
 
-      while (methodGen.nameCount() < classMethodCount) {
+      while (methodNameGen.nameCount() < classMethodCount) {
         if (beforeEachBody != null) {
           bodyStatements.add(
               new ExpressionStmt(
                   new MethodCallExpr(new NameExpr(testVariable), BEFORE_EACH_METHOD)));
         }
-        String methodName = methodGen.next();
+        String methodName = methodNameGen.next();
 
         TryStmt tryStmt = new TryStmt();
         List<Statement> tryStatements = new ArrayList<>();

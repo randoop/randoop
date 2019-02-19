@@ -28,7 +28,8 @@ import randoop.reflection.RawSignature;
 public class ExecutableBooleanExpression {
 
   /** The name generator to use to generate class names. */
-  private static final NameGenerator nameGenerator = new NameGenerator("RandoopExpressionClass");
+  private static final NameGenerator classNameGenerator =
+      new NameGenerator("RandoopExpressionClass");
 
   /**
    * The {@code java.lang.reflect.Method} to test this expression. The method is static (it does not
@@ -65,7 +66,7 @@ public class ExecutableBooleanExpression {
    *
    * @param signature the signature for the expression method to be created. The class name of the
    *     expression method signature is ignored and a new name is generated using {@link
-   *     #nameGenerator}.
+   *     #classNameGenerator}.
    * @param declarations the parameter declaration string for the expression method to be created,
    *     including parameter names and wrapped in parentheses
    * @param expressionSource the source code for a Java expression to be used as the body of the
@@ -189,7 +190,7 @@ public class ExecutableBooleanExpression {
    * expression method.
    *
    * @param signature the signature for the expression method. The class name of the expression
-   *     method signature is ignored and a new name is generated using {@link #nameGenerator}.
+   *     method signature is ignored and a new name is generated using {@link #classNameGenerator}.
    * @param parameterDeclaration the parameter declaration string, including parameter names and
    *     wrapped in parentheses
    * @param expressionSource a Java expression that is the source code for the expression, in the
@@ -204,7 +205,7 @@ public class ExecutableBooleanExpression {
       String expressionSource,
       SequenceCompiler compiler) {
     String packageName = signature.getPackageName();
-    String classname = nameGenerator.next(); // ignore the class name in the signature
+    String classname = classNameGenerator.next(); // ignore the class name in the signature
     String classText =
         createConditionClassSource(
             signature.getName(), expressionSource, parameterDeclaration, packageName, classname);
