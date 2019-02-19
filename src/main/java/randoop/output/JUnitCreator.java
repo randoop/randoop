@@ -162,6 +162,14 @@ public class JUnitCreator {
     this.afterEachBody = text;
   }
 
+  /**
+   * Create a test class.
+   *
+   * @param testClassName the class name
+   * @param methodNameGen the generator that creates method names
+   * @param sequences the contents of the test methods
+   * @return the CompilationUnit for a test class
+   */
   public CompilationUnit createTestClass(
       String testClassName, NameGenerator methodNameGen, List<ExecutableSequence> sequences) {
     this.classMethodCounts.put(testClassName, sequences.size());
@@ -374,6 +382,7 @@ public class JUnitCreator {
    *
    * @param driverName the name for the driver class
    * @param testClassNames the names of the test classes in the suite
+   * @param numMethods the number of methods; used for zero-padding
    * @return the test driver class as a {@code String}
    */
   public String createTestDriver(String driverName, Set<String> testClassNames, int numMethods) {
