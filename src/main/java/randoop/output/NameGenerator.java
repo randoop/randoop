@@ -6,25 +6,20 @@ package randoop.output;
  */
 public class NameGenerator {
 
-  private int initialValue;
   private int counter;
   private String format;
 
-  /*
-   * Creates an instance that generates names beginning with prefix, count
-   * starting at the initialValue, and 0-padded to digits digits.
+  /**
+   * Creates an instance that generates names beginning with prefix, counts starting at the
+   * initialValue, and 0-padded to enough digits for {@code lastValue}.
    *
    * @param prefix a string to be used as the prefix for all generated names
-   *
    * @param initialValue integer starting value for name counter
-   *
-   * @param digits the minimum number of digits (determines 0-padding)
+   * @param lastValue the last expected number, to determine 0-padding; 0 for no padding
    */
-  NameGenerator(String prefix, int initialValue, int digits) {
-    this.initialValue = initialValue;
+  public NameGenerator(String prefix, int initialValue, int lastValue) {
     this.counter = initialValue;
-
-    this.format = prefix + formatString(digits);
+    this.format = prefix + "%" + (lastValue == 0 ? "" : ("0" + (Math.log10(lastValue) + 1))) + "d";
   }
 
   /*
@@ -40,26 +35,5 @@ public class NameGenerator {
     String name = String.format(format, counter);
     counter++;
     return name;
-  }
-
-  int nameCount() {
-    return counter - initialValue;
-  }
-
-  /**
-   * Returns the number of digits in the printed representation of the argument.
-   *
-   * @param n the number
-   * @return the number of digits in string form of given number
-   */
-  static int numDigits(int n) {
-    return (int) Math.log10(n) + 1;
-  }
-
-  private static String formatString(int numDigits) {
-    if (numDigits > 0) {
-      return "%0" + numDigits + "d";
-    }
-    return "%d";
   }
 }

@@ -55,6 +55,7 @@ import randoop.output.FailingTestFilter;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
 import randoop.output.MinimizerWriter;
+import randoop.output.NameGenerator;
 import randoop.output.RandoopOutputException;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
@@ -612,7 +613,8 @@ public class GenTests extends GenInputsAbstract {
         classSource = junitCreator.createTestSuite(driverName, testMap.keySet());
       } else {
         driverName = basename + "Driver";
-        classSource = junitCreator.createTestDriver(driverName, testMap.keySet());
+        classSource =
+            junitCreator.createTestDriver(driverName, testMap.keySet(), testSequences.size());
       }
       testFiles.add(
           codeWriter.writeUnmodifiedClassCode(
@@ -870,23 +872,25 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Creates the JUnit test classes for the given sequences, in AST (abstract syntax tree) form.
    *
-   * @param junitPrefix the class name prefix
+   * @param classNamePrefix the class name prefix
    * @param sequences the sequences for test methods of the created test classes
    * @param junitCreator the JUnit creator to create the abstract syntax trees for the test classes
    * @return mapping from a class name to the abstract syntax tree for the class
    */
   private LinkedHashMap<String, CompilationUnit> getTestASTMap(
-      String junitPrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
-
-    List<List<ExecutableSequence>> sequencePartition =
-        CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
+      String classNamePrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
 
     LinkedHashMap<String, CompilationUnit> testMap = new LinkedHashMap<>();
+
+    NameGenerator methodNameGenerator =
+        new NameGenerator(TEST_METHOD_NAME_PREFIX, 1, sequences.size());
+    List<List<ExecutableSequence>> sequencePartition =
+        CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
     for (int i = 0; i < sequencePartition.size(); i++) {
       List<ExecutableSequence> partition = sequencePartition.get(i);
-      String testClassName = junitPrefix + i;
+      String testClassName = classNamePrefix + i;
       CompilationUnit classAST =
-          junitCreator.createTestClass(testClassName, TEST_METHOD_NAME_PREFIX, partition);
+          junitCreator.createTestClass(testClassName, methodNameGenerator, sequences);
       testMap.put(testClassName, classAST);
     }
     return testMap;
