@@ -6,8 +6,11 @@ package randoop.output;
  */
 public class NameGenerator {
 
+  /** The number to use to generate the first name. */
   private int initialValue;
+  /** The number to use for the next name to generate. */
   private int counter;
+  /** The format string to generate a name; takes one integer parameter. */
   private String format;
 
   /**
