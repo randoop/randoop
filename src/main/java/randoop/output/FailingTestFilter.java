@@ -133,7 +133,10 @@ public class FailingTestFilter implements CodeWriter {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
 
-  /* Matches a variable declaration. Capturing group 1 is through the "=", 2 is the type, 3 is the initializer. */
+  /**
+   * Matches a variable declaration. Capturing group 1 is through the "=", 2 is the type, 3 is the
+   * initializer.
+   */
   private static final Pattern VARIABLE_DECLARATION_LINE =
       Pattern.compile(
           "^([ \t]*"

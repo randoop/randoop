@@ -377,7 +377,7 @@ public class GenTests extends GenInputsAbstract {
             listenerMgr,
             classesUnderTest);
 
-    /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
+    // log setup. TODO: handle environment variables like other methods in TestUtils do.
     operationModel.log();
     if (GenInputsAbstract.operation_history_log != null) {
       TestUtils.setOperationLog(new PrintWriter(GenInputsAbstract.operation_history_log), explorer);
@@ -454,7 +454,7 @@ public class GenTests extends GenInputsAbstract {
       componentMgr.log();
     }
 
-    /* Generate tests */
+    // Generate tests
     try {
       explorer.createAndClassifySequences();
     } catch (SequenceExceptionError e) {
@@ -472,7 +472,7 @@ public class GenTests extends GenInputsAbstract {
       throw new RandoopBug("Logging error", e);
     }
 
-    /* post generation */
+    // post generation
     if (GenInputsAbstract.dont_output_tests) {
       return true;
     }

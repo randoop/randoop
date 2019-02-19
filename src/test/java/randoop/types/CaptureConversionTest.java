@@ -42,7 +42,7 @@ public class CaptureConversionTest {
     }
   }
 
-  /*
+  /**
    * List tests check capture conversion where the type parameter of the generic type is bound by
    * Object. In this case, the GLB is trivial
    */
@@ -51,9 +51,7 @@ public class CaptureConversionTest {
     checkCapture(JDKTypes.LIST_TYPE, JavaTypes.STRING_TYPE, listOperations);
   }
 
-  /*
-   * Tests capture when wildcard bound is not a class type
-   */
+  /** Tests capture when wildcard bound is not a class type */
   @Test
   public void captureArrayTest() {
     checkCapture(
@@ -62,17 +60,16 @@ public class CaptureConversionTest {
         listOperations);
   }
 
-  /*
-   * Container tests involve a generic class with a type parameter T bound by Comparable<T>
-   */
+  /** Container tests involve a generic class with a type parameter T bound by Comparable<T> */
   @Test
   public void captureStringContainerTest() {
     checkCapture(containerType, JavaTypes.STRING_TYPE, containerOperations);
   }
 
-  /*
-   * This test makes the wildcard bound be the class Nonsense, which does not implement Comparable<Nonsense>
-   * but ends up with Container<Gibberish> where Gibberish extends Nonsense and implements Comparable<Gibberish>
+  /**
+   * This test makes the wildcard bound be the class Nonsense, which does not implement
+   * Comparable<Nonsense> but ends up with Container<Gibberish> where Gibberish extends Nonsense and
+   * implements Comparable<Gibberish>
    */
   @Test
   public void captureNonsenseContainerTest() {

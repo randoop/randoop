@@ -94,7 +94,7 @@ public class ExecutableSequence {
   // static, so initializing eagerly is not a large cost.
   private static PrintStream output_buffer_stream = new PrintStream(output_buffer);
 
-  /* Maps a value to the set of variables that hold it. */
+  /** Maps a value to the set of variables that hold it. */
   private IdentityMultiMap<Object, Variable> variableMap = new IdentityMultiMap<>();
 
   /**

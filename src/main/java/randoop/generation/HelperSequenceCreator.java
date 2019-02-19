@@ -73,7 +73,7 @@ class HelperSequenceCreator {
       if (componentType.isParameterized()) {
         // XXX build elementType default construction sequence here, if cannot build one then stop
         InstantiatedType creationType = getImplementingType((InstantiatedType) componentType);
-        /* If element type is C<T extends C<T>, so use T */
+        // If element type is C<T extends C<T>, so use T
         if (creationType.isRecursiveType()) {
           // XXX being incautious, argument type might be parameterized
           componentType =

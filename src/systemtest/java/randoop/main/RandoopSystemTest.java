@@ -64,7 +64,7 @@ public class RandoopSystemTest {
   @BeforeClass
   public static void setupClass() {
     String classpath = System.getProperty("java.class.path");
-    /* the current working directory for this test class */
+    // The current working directory for this test class.
     Path buildDir = Paths.get("").toAbsolutePath().normalize();
     systemTestEnvironmentManager =
         SystemTestEnvironmentManager.createSystemTestEnvironmentManager(classpath, buildDir);
@@ -593,7 +593,7 @@ public class RandoopSystemTest {
             "examples.Buggy.hashCode() ignore",
             "examples.Buggy.toString() ignore",
 
-            /* don't care about hashCode for compareTo input classes */
+            // don't care about hashCode for compareTo input classes
             "examples.Buggy.BuggyCompareToAntiSymmetric.hashCode() ignore",
             "examples.Buggy.BuggyCompareToEquals.hashCode() ignore",
             "examples.Buggy.BuggyCompareToReflexive.hashCode() ignore",
@@ -601,7 +601,8 @@ public class RandoopSystemTest {
             "examples.Buggy.BuggyCompareToTransitive.hashCode() ignore",
             "examples.Buggy.BuggyEqualsTransitive.hashCode() ignore",
 
-            /* These should be covered, but are in failing assertions and won't show up in JaCoCo results. */
+            // These should be covered, but are in failing assertions and won't show up in JaCoCo
+            // results.
             "examples.Buggy.BuggyCompareToAntiSymmetric.compareTo(java.lang.Object) exclude",
             "examples.Buggy.BuggyCompareToEquals.compareTo(java.lang.Object) exclude",
             "examples.Buggy.BuggyCompareToEquals.equals(java.lang.Object) exclude",

@@ -6,7 +6,9 @@ package randoop.output;
  */
 public class NameGenerator {
 
+  /** The number to use for the next name to generate. */
   private int counter;
+  /** The format string to generate a name; takes one integer parameter. */
   private String format;
 
   /**
@@ -23,7 +25,7 @@ public class NameGenerator {
         prefix + "%" + (lastValue == 0 ? "" : ("0" + ((int) (Math.log10(lastValue) + 1)))) + "d";
   }
 
-  /*
+  /**
    * Generates names without 0-padding on counter.
    *
    * @param prefix is a string to be used as a prefix for all names generated
