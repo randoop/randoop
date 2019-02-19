@@ -51,7 +51,7 @@ import org.plumelib.util.UtilPlume;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RandoopSystemTest {
 
-  final String lineSep = System.getProperty("line.separator");
+  final String lineSep = System.lineSeparator();
 
   // Keep this in synch with GenTests.NO_OPERATIONS_TO_TEST.  (Since we are avoiding dependencies
   // of the system tests on Randoop code, the tests can't directly use GenTests.NO_METHODS_TO_TEST.)

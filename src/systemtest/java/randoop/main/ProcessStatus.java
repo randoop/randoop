@@ -41,7 +41,7 @@ class ProcessStatus {
     this.outputLines = outputLines;
   }
 
-  static final String lineSep = System.getProperty("line.separator");
+  static final String lineSep = System.lineSeparator();
 
   /** Outputs a verbose representation of this. */
   public String dump() {
