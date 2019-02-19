@@ -744,7 +744,7 @@ public class GenTests extends GenInputsAbstract {
    */
   private void printSequenceExceptionError(AbstractGenerator explorer, SequenceExceptionError e) {
 
-    StringJoiner msg = new StringJoiner(System.getProperty("line.separator"));
+    StringJoiner msg = new StringJoiner(Globals.lineSep);
     msg.add("");
     msg.add("");
     msg.add("ERROR: Randoop stopped because of a flaky test.");
