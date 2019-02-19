@@ -6,18 +6,19 @@ package randoop.output;
  */
 public class NameGenerator {
 
+  /** The number to use to generate the first name. */
   private int initialValue;
+  /** The number to use for the next name to generate. */
   private int counter;
+  /** The format string to generate a name; takes one integer parameter. */
   private String format;
 
-  /*
-   * Creates an instance that generates names beginning with prefix, count
-   * starting at the initialValue, and 0-padded to digits digits.
+  /**
+   * Creates an instance that generates names beginning with prefix, count starting at the
+   * initialValue, and 0-padded to digits digits.
    *
    * @param prefix a string to be used as the prefix for all generated names
-   *
    * @param initialValue integer starting value for name counter
-   *
    * @param digits the minimum number of digits (determines 0-padding)
    */
   NameGenerator(String prefix, int initialValue, int digits) {
@@ -27,7 +28,7 @@ public class NameGenerator {
     this.format = prefix + formatString(digits);
   }
 
-  /*
+  /**
    * Generates names without 0-padding on counter.
    *
    * @param prefix is a string to be used as a prefix for all names generated

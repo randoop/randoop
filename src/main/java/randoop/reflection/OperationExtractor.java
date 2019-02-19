@@ -283,11 +283,10 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (!visibilityPredicate.isVisible(field.getDeclaringClass())) {
       if (Modifier.isStatic(mods) && Modifier.isFinal(mods)) {
         // XXX This is a stop-gap to handle potentially ambiguous inherited constants.
-        /* A static final field of a non-public class may be accessible via a subclass, but only
-         * if the field is not ambiguously inherited in the subclass. Without knowing for sure
-         * whether there are two inherited fields with the same name, we cannot decide which case
-         * is presented. So, assuming that there is an ambiguity and bailing on type.
-         */
+        // A static final field of a non-public class may be accessible via a subclass, but only
+        // if the field is not ambiguously inherited in the subclass. Without knowing for sure
+        // whether there are two inherited fields with the same name, we cannot decide which case
+        // is presented. So, assuming that there is an ambiguity and bailing on type.
         return;
       }
       if (!(declaringType.isGeneric() && classType.isInstantiationOf(declaringType))) {

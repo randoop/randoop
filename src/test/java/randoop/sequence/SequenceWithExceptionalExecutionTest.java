@@ -28,12 +28,15 @@ import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 
-/*
- * This test is to check behavior of sequence predicates on sequence that has an
- * ArrayStoreException due to attempting to assign an array element of the wrong type to an array.
- * A minimal example would be
- *   Collection<String>[] a = (Collection<String>[])new ArrayList[4];
- *   a[0] = new LinkedHashSet<>();
+/**
+ * This test is to check behavior of sequence predicates on sequence that has an ArrayStoreException
+ * due to attempting to assign an array element of the wrong type to an array. A minimal example
+ * would be
+ *
+ * <pre>{@code
+ * Collection<String>[] a = (Collection<String>[])new ArrayList[4];
+ * a[0] = new LinkedHashSet<>();
+ * }</pre>
  */
 public class SequenceWithExceptionalExecutionTest {
 

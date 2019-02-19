@@ -407,13 +407,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>The purpose is to shorten parameter lists and make them easier to read.
    */
   public static class Limits {
-    /* Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no limit. */
+    /**
+     * Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no
+     * limit.
+     */
     public int time_limit_millis;
-    /* Maximum number of attempts to generate a sequence. Must be non-negative. */
+    /** Maximum number of attempts to generate a sequence. Must be non-negative. */
     public int attempted_limit;
-    /* Maximum number of sequences to generate. Must be non-negative. */
+    /** Maximum number of sequences to generate. Must be non-negative. */
     public int generated_limit;
-    /* Maximum number of sequences to output. Must be non-negative. */
+    /** Maximum number of sequences to output. Must be non-negative. */
     public int output_limit;
 
     public Limits() {

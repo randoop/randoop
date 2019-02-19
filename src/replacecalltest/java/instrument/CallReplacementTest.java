@@ -29,7 +29,7 @@ public class CallReplacementTest {
     obj.checkValue(value);
   }
 
-  /* code borrowed from {@code createAndShowGUI()} in Oracle example components.DialogDemo */
+  // code borrowed from {@code createAndShowGUI()} in Oracle example components.DialogDemo
   @Test
   public void swingTest() {
     thrown = ExpectedException.none();
