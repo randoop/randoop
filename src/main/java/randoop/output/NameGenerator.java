@@ -1,7 +1,5 @@
 package randoop.output;
 
-import randoop.main.RandoopBug;
-
 /**
  * A NameGenerator generates a sequence of names as strings in the form "prefix"+i for integer i.
  * Pads the counter with zeros to ensure a minimum number of digits determined by field digits.
@@ -21,16 +19,8 @@ public class NameGenerator {
    */
   public NameGenerator(String prefix, int initialValue, int lastValue) {
     this.counter = initialValue;
-    this.format = prefix + "%" + (lastValue == 0 ? "" : ("0" + (Math.log10(lastValue) + 1))) + "d";
-    try {
-      String test = String.format(format, 22);
-    } catch (Exception e) {
-      throw new RandoopBug(
-          String.format(
-              "Bad format string: %s%n  prefix=%s, initialValue=%d, lastValue=%d",
-              this.format, prefix, initialValue, lastValue),
-          e);
-    }
+    this.format =
+        prefix + "%" + (lastValue == 0 ? "" : ("0" + ((int) (Math.log10(lastValue) + 1)))) + "d";
   }
 
   /*
