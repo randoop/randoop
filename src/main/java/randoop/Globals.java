@@ -10,7 +10,7 @@ public class Globals {
   public static final String RANDOOP_VERSION = "4.1.1";
 
   /** The system-specific line separator string. */
-  public static final String lineSep = System.getProperty("line.separator");
+  public static final String lineSep = System.lineSeparator();
 
   /** A PrintStream whose contents are ignored. */
   public static PrintStream blackHole;
