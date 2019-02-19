@@ -3,6 +3,7 @@ package randoop.test;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import randoop.ExceptionalExecution;
@@ -26,7 +27,7 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
   private final JUnitCreator junitCreator;
 
   /** The name generator for temporary class names. */
-  private final NameGenerator nameGenerator;
+  private final NameGenerator classNameGenerator;
 
   /** The {@link GenTests} instance that created this predicate. */
   private final GenTests genTests;
@@ -54,7 +55,7 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     options.add("-Xlint:none");
     this.compiler = new SequenceCompiler(sequenceClassLoader, options);
     this.junitCreator = junitCreator;
-    this.nameGenerator = new NameGenerator("RandoopTemporarySeqTest");
+    this.classNameGenerator = new NameGenerator("RandoopTemporarySeqTest");
     this.genTests = genTests;
   }
 
@@ -67,10 +68,9 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    */
   @Override
   public boolean test(ExecutableSequence sequence) {
-    String testClassName = nameGenerator.next();
+    String testClassName = classNameGenerator.next();
     String methodNamePrefix = "test";
-    List<ExecutableSequence> sequences = new ArrayList<>();
-    sequences.add(sequence);
+    List<ExecutableSequence> sequences = Collections.singletonList(sequence);
     CompilationUnit source =
         junitCreator.createTestClass(testClassName, methodNamePrefix, sequences);
     PackageDeclaration pkg = source.getPackage();

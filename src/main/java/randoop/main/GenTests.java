@@ -870,13 +870,13 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Creates the JUnit test classes for the given sequences, in AST (abstract syntax tree) form.
    *
-   * @param junitPrefix the class name prefix
+   * @param classNamePrefix the class name prefix
    * @param sequences the sequences for test methods of the created test classes
    * @param junitCreator the JUnit creator to create the abstract syntax trees for the test classes
    * @return mapping from a class name to the abstract syntax tree for the class
    */
   private LinkedHashMap<String, CompilationUnit> getTestASTMap(
-      String junitPrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
+      String classNamePrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
 
     List<List<ExecutableSequence>> sequencePartition =
         CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
@@ -884,7 +884,7 @@ public class GenTests extends GenInputsAbstract {
     LinkedHashMap<String, CompilationUnit> testMap = new LinkedHashMap<>();
     for (int i = 0; i < sequencePartition.size(); i++) {
       List<ExecutableSequence> partition = sequencePartition.get(i);
-      String testClassName = junitPrefix + i;
+      String testClassName = classNamePrefix + i;
       CompilationUnit classAST =
           junitCreator.createTestClass(testClassName, TEST_METHOD_NAME_PREFIX, partition);
       testMap.put(testClassName, classAST);
