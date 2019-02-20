@@ -29,6 +29,9 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
   /** The name generator for temporary class names. */
   private final NameGenerator classNameGenerator;
 
+  /** The name generator for test method names. */
+  private final NameGenerator methodNameGenerator;
+
   /** The {@link GenTests} instance that created this predicate. */
   private final GenTests genTests;
 
@@ -56,6 +59,7 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     this.compiler = new SequenceCompiler(sequenceClassLoader, options);
     this.junitCreator = junitCreator;
     this.classNameGenerator = new NameGenerator("RandoopTemporarySeqTest");
+    this.methodNameGenerator = new NameGenerator("test");
     this.genTests = genTests;
   }
 
@@ -69,10 +73,9 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
   @Override
   public boolean test(ExecutableSequence sequence) {
     String testClassName = classNameGenerator.next();
-    String methodNamePrefix = "test";
     List<ExecutableSequence> sequences = Collections.singletonList(sequence);
     CompilationUnit source =
-        junitCreator.createTestClass(testClassName, methodNamePrefix, sequences);
+        junitCreator.createTestClass(testClassName, methodNameGenerator, sequences);
     PackageDeclaration pkg = source.getPackage();
     String packageName = pkg == null ? null : pkg.getPackageName();
     boolean result = testSource(testClassName, source, packageName);

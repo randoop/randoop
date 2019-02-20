@@ -55,6 +55,7 @@ import randoop.output.FailingTestFilter;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
 import randoop.output.MinimizerWriter;
+import randoop.output.NameGenerator;
 import randoop.output.RandoopOutputException;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
@@ -612,7 +613,8 @@ public class GenTests extends GenInputsAbstract {
         classSource = junitCreator.createTestSuite(driverName, testMap.keySet());
       } else {
         driverName = basename + "Driver";
-        classSource = junitCreator.createTestDriver(driverName, testMap.keySet());
+        classSource =
+            junitCreator.createTestDriver(driverName, testMap.keySet(), testSequences.size());
       }
       testFiles.add(
           codeWriter.writeUnmodifiedClassCode(
@@ -878,15 +880,17 @@ public class GenTests extends GenInputsAbstract {
   private LinkedHashMap<String, CompilationUnit> getTestASTMap(
       String classNamePrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
 
+    LinkedHashMap<String, CompilationUnit> testMap = new LinkedHashMap<>();
+
+    NameGenerator methodNameGenerator =
+        new NameGenerator(TEST_METHOD_NAME_PREFIX, 1, sequences.size());
     List<List<ExecutableSequence>> sequencePartition =
         CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
-
-    LinkedHashMap<String, CompilationUnit> testMap = new LinkedHashMap<>();
     for (int i = 0; i < sequencePartition.size(); i++) {
       List<ExecutableSequence> partition = sequencePartition.get(i);
       String testClassName = classNamePrefix + i;
       CompilationUnit classAST =
-          junitCreator.createTestClass(testClassName, TEST_METHOD_NAME_PREFIX, partition);
+          junitCreator.createTestClass(testClassName, methodNameGenerator, sequences);
       testMap.put(testClassName, classAST);
     }
     return testMap;
