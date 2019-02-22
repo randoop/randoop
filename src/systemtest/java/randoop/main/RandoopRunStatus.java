@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * Captures the status of a Randoop run, along with status from the compilation of the
@@ -208,5 +209,16 @@ class RandoopRunStatus {
     }
 
     return new RandoopRunStatus(ps, operatorCount, regressionTestCount, errorTestCount);
+  }
+
+  @Override
+  public String toString() {
+    StringJoiner sb = new StringJoiner(System.lineSeparator());
+    sb.add("RandoopRunStatus:");
+    sb.add(String.format(" processStatus %s", processStatus));
+    sb.add(String.format("  operatorCount %s", operatorCount));
+    sb.add(String.format("  regressionTestCount %s", regressionTestCount));
+    sb.add(String.format("  errorTestCount %s", errorTestCount));
+    return sb.toString();
   }
 }

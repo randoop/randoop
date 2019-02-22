@@ -63,6 +63,15 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.execSpec = null;
   }
 
+  /**
+   * Sets the specification; any previous value is ignored.
+   *
+   * @param execSpec the specification to use for this object
+   */
+  public void setExecutableSpecification(ExecutableSpecification execSpec) {
+    this.execSpec = execSpec;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof TypedOperation)) {
@@ -137,7 +146,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   @Override
   public String toString() {
-    return getName() + " : " + inputTypes + " -> " + outputType;
+    String specString = (execSpec == null) ? "" : (" [spec: " + execSpec.toString() + "]");
+    return getName() + " : " + inputTypes + " -> " + outputType + specString;
   }
 
   @Override
@@ -589,18 +599,20 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     if (execSpec == null) {
       return new ExpectedOutcomeTable();
     }
-    return execSpec.checkPrestate(addNullReceiver(values));
+    return execSpec.checkPrestate(addNullReceiverIfStatic(values));
   }
 
   /**
-   * Fixes the argument array for checking an {@link Operation} -- inserting {@code null} as first
-   * argument when this operation is static.
+   * Inserts {@code null} as first argument when this operation is static.
+   *
+   * <p>This is necessary because the argument array for checking an {@link Operation} is always
+   * assumed to have a "receiver" argument, which is null (and ignored) for a static method.
    *
    * @param values the argument array for this operation
    * @return the corresponding operation array for checking a {@link
    *     randoop.condition.ExecutableBooleanExpression}
    */
-  private Object[] addNullReceiver(Object[] values) {
+  private Object[] addNullReceiverIfStatic(Object[] values) {
     Object[] args = values;
     if (this.isStatic()) {
       args = new Object[values.length + 1];
@@ -608,15 +620,5 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       System.arraycopy(values, 0, args, 1, values.length);
     }
     return args;
-  }
-
-  /**
-   * Sets the specification; any previous value is ignored (so the method name {@code
-   * addExecutableSpecification} may be misleading).
-   *
-   * @param execSpec the specification to use for this object
-   */
-  public void addExecutableSpecification(ExecutableSpecification execSpec) {
-    this.execSpec = execSpec;
   }
 }

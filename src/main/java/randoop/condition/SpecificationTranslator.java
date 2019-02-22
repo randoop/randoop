@@ -1,12 +1,12 @@
 package randoop.condition;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
@@ -94,9 +94,7 @@ public class SpecificationTranslator {
    * @return the translator object to convert the specifications for {@code executable}
    */
   static SpecificationTranslator createTranslator(
-      AccessibleObject executable,
-      OperationSpecification specification,
-      SequenceCompiler compiler) {
+      Executable executable, OperationSpecification specification, SequenceCompiler compiler) {
     Identifiers identifiers = specification.getIdentifiers();
 
     // Get expression method signatures.
@@ -129,51 +127,74 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Create the {@link RawSignature} for the expression method for evaluating an expression for the
-   * given method or constructor.
+   * Create the {@link RawSignature} for evaluating an expression about a method call to the given
+   * method or constructor.
    *
    * <p>The parameter types of the RawSignature are the declaring class as the receiver type,
    * followed by the parameter types of {@code executable}, followed by the return type if {@code
-   * postState} is true and {@code executable} is not a void method.
+   * postState} is true and {@code executable} is not a void method. These are all needed, in case
+   * the expression refers to them.
    *
    * <p>Note: The declaring class of the expression method is actually determined by {@link
-   * ExecutableBooleanExpression#createMethod(RawSignature, String, String, SequenceCompiler)}
+   * randoop.condition.ExecutableBooleanExpression#createMethod(RawSignature, String, String,
+   * SequenceCompiler)}.
    *
    * @param executable the method or constructor to which the expression belongs
    * @param postState if true, include a variable for the return value in the signature
    * @return the {@link RawSignature} for a expression method of {@code executable}
    */
-  // In Java 8, change the type AccessibleObject to Executable.
-  private static RawSignature getExpressionSignature(
-      AccessibleObject executable, boolean postState) {
+  private static RawSignature getExpressionSignature(Executable executable, boolean postState) {
     boolean isMethod = executable instanceof Method;
-    Class<?> declaringClass = getDeclaringClass(executable);
-    // TODO: a constructor for an inner class has a receiver (which is not the declaring class)
+    Class<?> declaringClass = executable.getDeclaringClass();
+    // TODO: A constructor for an inner class has a receiver (which is not the declaring class).
     Class<?> receiverType = isMethod ? declaringClass : null;
-    Class<?>[] parameterTypes = getParameterTypes(executable);
+    Class<?>[] parameterTypes = executable.getParameterTypes();
     Class<?> returnType =
         (!postState ? null : (isMethod ? ((Method) executable).getReturnType() : declaringClass));
     String packageName = renamedPackage(declaringClass.getPackage());
-    return ExecutableBooleanExpression.getRawSignature(
-        packageName, receiverType, parameterTypes, returnType);
+    return getRawSignature(packageName, receiverType, parameterTypes, returnType);
   }
 
-  // In JDK 8, replace invocations of this by: executable.getDeclaringClass()
-  private static Class<?> getDeclaringClass(AccessibleObject executable) {
-    if (executable instanceof Method) {
-      return ((Method) executable).getDeclaringClass();
-    } else {
-      return ((Constructor<?>) executable).getDeclaringClass();
+  /**
+   * Creates a {@link RawSignature} for an expression method.
+   *
+   * <p>Note that these signatures may be used more than once for different expression methods, and
+   * so {@link randoop.condition.ExecutableBooleanExpression#createMethod(RawSignature, String,
+   * String, SequenceCompiler)} replaces the classname to ensure a unique name.
+   *
+   * @param packageName the package name for the expression class
+   * @param receiverType the declaring class of the method or constructor, included first in
+   *     parameter types if non-null
+   * @param parameterTypes the parameter types for the original method or constructor
+   * @param returnType the return type for the method, or the declaring class for a constructor,
+   *     included last in parameter types if non-null
+   * @return the constructed post-expression method signature
+   */
+  private static RawSignature getRawSignature(
+      String packageName, Class<?> receiverType, Class<?>[] parameterTypes, Class<?> returnType) {
+    final int shift = (receiverType != null) ? 1 : 0;
+    final int length = parameterTypes.length + shift + (returnType != null ? 1 : 0);
+    Class<?>[] expressionParameterTypes = new Class<?>[length];
+    if (receiverType != null) {
+      expressionParameterTypes[0] = receiverType;
     }
-  }
-
-  // In JDK 8, replace invocations of this by: executable.getParameterTypes()
-  private static Class<?>[] getParameterTypes(AccessibleObject executable) {
-    if (executable instanceof Method) {
-      return ((Method) executable).getParameterTypes();
-    } else {
-      return ((Constructor<?>) executable).getParameterTypes();
+    System.arraycopy(parameterTypes, 0, expressionParameterTypes, shift, parameterTypes.length);
+    if (returnType != null) {
+      expressionParameterTypes[expressionParameterTypes.length - 1] = returnType;
     }
+    StringJoiner methodName = new StringJoiner("_");
+    methodName.add("signature");
+    if (receiverType != null) {
+      methodName.add(receiverType.getSimpleName());
+    }
+    for (Class<?> parameterType : parameterTypes) {
+      methodName.add(parameterType.getSimpleName());
+    }
+    return new RawSignature(
+        packageName,
+        (receiverType == null) ? "ClassName" : receiverType.getSimpleName(),
+        methodName.toString(),
+        expressionParameterTypes);
   }
 
   /**
@@ -221,9 +242,7 @@ public class SpecificationTranslator {
    * @return the {@link ExecutableSpecification} for the given specification
    */
   public static ExecutableSpecification createExecutableSpecification(
-      AccessibleObject executable,
-      OperationSpecification specification,
-      SequenceCompiler compiler) {
+      Executable executable, OperationSpecification specification, SequenceCompiler compiler) {
     SpecificationTranslator st = createTranslator(executable, specification, compiler);
     return new ExecutableSpecification(
         st.getGuardExpressions(specification.getPreconditions()),

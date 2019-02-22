@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
 
@@ -247,5 +248,17 @@ class RandoopOptions {
    */
   Set<@ClassGetName String> getClassnames() {
     return classnames;
+  }
+
+  @Override
+  public String toString() {
+    StringJoiner sb = new StringJoiner(System.lineSeparator());
+    sb.add(String.format("RandoopOptions"));
+    sb.add(String.format("  options %s", options));
+    sb.add(String.format("  classnames %s", classnames));
+    sb.add(String.format("  packageName %s", packageName));
+    sb.add(String.format("  regressionBasename %s", regressionBasename));
+    sb.add(String.format("  errorBasename %s", errorBasename));
+    return sb.toString();
   }
 }

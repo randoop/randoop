@@ -623,10 +623,13 @@ Violation of any of these contracts is highly likely to indicate an error.
 </p>
 
 <p>
-You can add additional contracts to Randoop.
+You can add additional contracts to Randoop, that will be checked for every object Randoop creates.
 Define a contract in directory
 <code>randoop/src/main/java/randoop/contract/</code>,
 and reference it in the constructor for <code>OperationModel</code>.
+You can also provide specifications of methods in your code to further help
+Randoop classify tests; see section
+<a href="#specifying-behavior">"Specifying expected code behavior"</a>.
 </p>
 
 
@@ -764,35 +767,39 @@ Here is how Randoop attempts to generate a test:
 <ul>
   <li>
     The time limit (<a href="#option:time-limit"><code>--time-limit</code></a>)
-    is reached, or
+    is reached.
   </li>
   <li>
-    the number of attempts to generate a sequence reaches the step limit
-    (<a href="#option:attempted-limit"><code>--attempted-limit</code></a>), or
+    The number of attempts to generate a sequence reaches the step limit
+    (<a href="#option:attempted-limit"><code>--attempted-limit</code></a>).
   </li>
   <li>
-    the number of generated sequences reaches the input limit
-
-    (<a href="#option:generated-limit"><code>--generated-limit</code></a>), or
+    The number of generated sequences reaches the input limit
+    (<a href="#option:generated-limit"><code>--generated-limit</code></a>).
   </li>
   <li>
-    the number of error-revealing and regression tests reaches the output
+    The number of error-revealing and regression tests reaches the output
     limit (<a href="#option:output-limit"><code>--output-limit</code></a>).
   </li>
   <li>
-    one error-revealing test is generated, and
+    One error-revealing test is generated, and
     <a href="#option:stop-on-error-test"><code>--stop-on-error-test=true</code></a>
     was supplied.
   </li>
   <li>
-    a custom <code>Stopper</code> was provided and it indicates that
+    A custom <code>Stopper</code> was provided and it indicates that
     generation should stop (see the Randoop code).
   </li>
   <li>
-    a <code>RandoopListenerManager</code>'s <code>IEventListener</code> it
+    A <code>RandoopListenerManager</code>'s <code>IEventListener</code> it
     indicates that generation should stop (see the Randoop code).
   </li>
 </ul>
+
+<p>
+  Randoop does not optimize to generate the best suite within these limits.
+  Rather, Randoop just halts when a limit is reached.
+</p>
 
 <p>
 Furthermore, see the <a href="#optiongroup:Threading">command-line options
@@ -1126,7 +1133,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  <code>--no-error-revealing-tests</code> together with <code>--no-regression-tests</code>.
 
  <p>In the current implementation, the number of tests in the output can be substantially
- smaller than this limit. [default 100000000]
+ smaller than this limit. One reason is that Randoop does not output subsumed tests, which
+ appear as a subsequence of some longer test. [default 100000000]
             <li id="option:maxsize"><b>--maxsize=</b><i>int</i>.
              Do not generate tests with more than this many statements. [default 100]
             <li id="option:stop-on-error-test"><b>--stop-on-error-test=</b><i>boolean</i>.
@@ -2610,6 +2618,7 @@ tests</a>.
   it easier for them to diagnose the problem, fix Randoop, and verify the
   fix.  This generally includes
 </p>
+<!-- If you update the below, also update ../../../.github/ISSUE_TEMPLATE . -->
   <ul>
     <li>the version of Randoop (please use the most recent released version,
       or the current version from the

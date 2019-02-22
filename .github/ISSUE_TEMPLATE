@@ -1,2 +1,12 @@
-Thanks for submitting an issue.  To ensure that your report is not missing important information, please see the instructions for submitting an issue:
-https://randoop.github.io/randoop/manual/#bug-reporting
+Thanks for submitting an issue.
+As explaind in the [instructions for submitting an issue](https://randoop.github.io/randoop/manual/#bug-reporting), please include at least the following information.
+
+The version of Randoop, the output of `java -version`, and the operating system version.
+
+The commands you ran, so that we can paste them into a command terminal.  Please don't omit any steps, including installing software or setting environment varibales.
+
+A transcript of all the output (as text, not a screenshot).
+
+What you expected to happen instead.
+
+Files that are used by the commands you ran.

@@ -92,7 +92,9 @@ public class Main {
     } catch (RandoopBug e) {
       System.out.println();
       System.out.println("Randoop failed in an unexpected way.");
-      System.out.println("Please report at https://github.com/randoop/randoop/issues .");
+      System.out.println("Please report at https://github.com/randoop/randoop/issues ,");
+      System.out.println(
+          "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
 
       // Calls to flush() do not untangle System.out and System.err;
       // probably an OS issue, not Java.  So we send printStackTrace()

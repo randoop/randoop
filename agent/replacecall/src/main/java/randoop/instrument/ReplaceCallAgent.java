@@ -198,12 +198,16 @@ public class ReplaceCallAgent {
       System.err.println(
           "For problems with the default replacements file, make sure that the"
               + " replacecall.jar file is on the bootclasspath.");
-      System.err.println("Otherwise, please report at https://github.com/randoop/randoop/issues .");
+      System.err.println("Otherwise, please report at https://github.com/randoop/randoop/issues ,");
+      System.err.println(
+          "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
       System.exit(1);
     } catch (Throwable e) {
       // Make sure that a message is printed for any stray exception
       System.err.println("Unexpected exception thrown by replacecall agent: " + e.getMessage());
-      System.err.println("Please report at https://github.com/randoop/randoop/issues .");
+      System.err.println("Please report at https://github.com/randoop/randoop/issues ,");
+      System.err.println(
+          "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
       System.exit(1);
     }
   }

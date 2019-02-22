@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.nio.file.FileSystem;
@@ -315,31 +316,31 @@ public class SpecificationCollection {
    *       randoop.condition.GuardThrowsPair}
    * </ul>
    *
-   * @param accessibleObject the reflection object for a constructor or method
+   * @param executable the reflection object for a constructor or method
    * @return the {@link ExecutableSpecification} for the specifications of the given method or
    *     constructor
    */
-  public ExecutableSpecification getExecutableSpecification(AccessibleObject accessibleObject) {
+  public ExecutableSpecification getExecutableSpecification(Executable executable) {
 
-    // Check if accessibleObject already has an ExecutableSpecification object
-    ExecutableSpecification execSpec = getExecutableSpecificationCache.get(accessibleObject);
+    // Check if executable already has an ExecutableSpecification object
+    ExecutableSpecification execSpec = getExecutableSpecificationCache.get(executable);
     if (execSpec != null) {
       return execSpec;
     }
 
     // Otherwise, build a new one.
-    OperationSpecification specification = specificationMap.get(accessibleObject);
+    OperationSpecification specification = specificationMap.get(executable);
     if (specification == null) {
       execSpec = new ExecutableSpecification();
     } else {
       execSpec =
           SpecificationTranslator.createExecutableSpecification(
-              accessibleObject, specification, compiler);
+              executable, specification, compiler);
     }
 
-    if (accessibleObject instanceof Method) {
-      Method method = (Method) accessibleObject;
-      Set<Method> parents = overridden.get(accessibleObject);
+    if (executable instanceof Method) {
+      Method method = (Method) executable;
+      Set<Method> parents = overridden.get(executable);
       // Parents is null in some tests.  Is it ever null other than that?
       if (parents == null) {
         Set<Method> sigSet = signatureToMethods.getValues(OperationSignature.of(method));
@@ -349,7 +350,7 @@ public class SpecificationCollection {
         }
       }
       if (parents == null) {
-        throw new Error("parents = null (test #2) for " + accessibleObject);
+        throw new Error("parents = null (test #2) for " + executable);
       }
       if (parents != null) {
         for (Method parent : parents) {
@@ -359,7 +360,7 @@ public class SpecificationCollection {
       }
     }
 
-    getExecutableSpecificationCache.put(accessibleObject, execSpec);
+    getExecutableSpecificationCache.put(executable, execSpec);
     return execSpec;
   }
 }

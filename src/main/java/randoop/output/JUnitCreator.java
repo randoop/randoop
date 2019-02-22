@@ -1,7 +1,5 @@
 package randoop.output;
 
-import static randoop.output.NameGenerator.numDigits;
-
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.TokenMgrError;
@@ -164,8 +162,16 @@ public class JUnitCreator {
     this.afterEachBody = text;
   }
 
+  /**
+   * Create a test class.
+   *
+   * @param testClassName the class name
+   * @param methodNameGen the generator that creates method names
+   * @param sequences the contents of the test methods
+   * @return the CompilationUnit for a test class
+   */
   public CompilationUnit createTestClass(
-      String testClassName, String testMethodPrefix, List<ExecutableSequence> sequences) {
+      String testClassName, NameGenerator methodNameGen, List<ExecutableSequence> sequences) {
     this.classMethodCounts.put(testClassName, sequences.size());
 
     CompilationUnit compilationUnit = new CompilationUnit();
@@ -243,8 +249,6 @@ public class JUnitCreator {
       }
     }
 
-    NameGenerator methodNameGen =
-        new NameGenerator(testMethodPrefix, 1, numDigits(sequences.size()));
     for (ExecutableSequence eseq : sequences) {
       MethodDeclaration testMethod = createTestMethod(testClassName, methodNameGen.next(), eseq);
       if (testMethod != null) {
@@ -378,9 +382,10 @@ public class JUnitCreator {
    *
    * @param driverName the name for the driver class
    * @param testClassNames the names of the test classes in the suite
+   * @param numMethods the number of methods; used for zero-padding
    * @return the test driver class as a {@code String}
    */
-  public String createTestDriver(String driverName, Set<String> testClassNames) {
+  public String createTestDriver(String driverName, Set<String> testClassNames, int numMethods) {
     CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
@@ -410,6 +415,7 @@ public class JUnitCreator {
     bodyStatements.add(new ExpressionStmt(variableExpr));
 
     NameGenerator instanceNameGen = new NameGenerator("t");
+    NameGenerator methodNameGen = new NameGenerator("test", 1, numMethods);
     for (String testClass : testClassNames) {
       if (beforeAllBody != null) {
         bodyStatements.add(
@@ -427,15 +433,14 @@ public class JUnitCreator {
       bodyStatements.add(new ExpressionStmt(variableExpr));
 
       int classMethodCount = classMethodCounts.get(testClass);
-      NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
 
-      while (methodGen.nameCount() < classMethodCount) {
+      for (int i = 0; i < classMethodCount; i++) {
         if (beforeEachBody != null) {
           bodyStatements.add(
               new ExpressionStmt(
                   new MethodCallExpr(new NameExpr(testVariable), BEFORE_EACH_METHOD)));
         }
-        String methodName = methodGen.next();
+        String methodName = methodNameGen.next();
 
         TryStmt tryStmt = new TryStmt();
         List<Statement> tryStatements = new ArrayList<>();

@@ -349,9 +349,9 @@ public class TestClassificationTest {
     }
   }
 
-  /*
-   * The tests generated here should throw an ArrayStoreException, which is a RuntimeException.
-   * Want to make that resulting sequence is not going into component manager.
+  /**
+   * The tests generated here should throw an ArrayStoreException, which is a RuntimeException. Want
+   * to make that resulting sequence is not going into component manager.
    */
   @Test
   public void regressionTestGeneration() {

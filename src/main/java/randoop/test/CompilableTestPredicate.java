@@ -3,6 +3,7 @@ package randoop.test;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import randoop.ExceptionalExecution;
@@ -26,7 +27,10 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
   private final JUnitCreator junitCreator;
 
   /** The name generator for temporary class names. */
-  private final NameGenerator nameGenerator;
+  private final NameGenerator classNameGenerator;
+
+  /** The name generator for test method names. */
+  private final NameGenerator methodNameGenerator;
 
   /** The {@link GenTests} instance that created this predicate. */
   private final GenTests genTests;
@@ -54,7 +58,8 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     options.add("-Xlint:none");
     this.compiler = new SequenceCompiler(sequenceClassLoader, options);
     this.junitCreator = junitCreator;
-    this.nameGenerator = new NameGenerator("RandoopTemporarySeqTest");
+    this.classNameGenerator = new NameGenerator("RandoopTemporarySeqTest");
+    this.methodNameGenerator = new NameGenerator("test");
     this.genTests = genTests;
   }
 
@@ -67,15 +72,16 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    */
   @Override
   public boolean test(ExecutableSequence sequence) {
-    String testClassName = nameGenerator.next();
-    String methodNamePrefix = "test";
-    List<ExecutableSequence> sequences = new ArrayList<>();
-    sequences.add(sequence);
+    String testClassName = classNameGenerator.next();
+    List<ExecutableSequence> sequences = Collections.singletonList(sequence);
     CompilationUnit source =
-        junitCreator.createTestClass(testClassName, methodNamePrefix, sequences);
+        junitCreator.createTestClass(testClassName, methodNameGenerator, sequences);
     PackageDeclaration pkg = source.getPackage();
     String packageName = pkg == null ? null : pkg.getPackageName();
     boolean result = testSource(testClassName, source, packageName);
+    if (!result) {
+      genTests.incrementSequenceCompileFailureCount();
+    }
     if (!result && genTests != null) {
       // get result from last line of sequence
       ExecutionOutcome sequenceResult = sequence.getResult(sequence.size() - 1);
@@ -86,7 +92,6 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
           return result;
         }
       }
-      genTests.countSequenceCompileFailure();
     }
     return result;
   }

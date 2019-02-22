@@ -288,7 +288,8 @@ public class OperationModel {
               break;
             default:
               throw new Error(
-                  "Unexpected error in GenTests.  Please report at https://github.com/randoop/randoop/issues .");
+                  "Unexpected error in GenTests.  Please report at https://github.com/randoop/randoop/issues , "
+                      + "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
           }
         }
       }

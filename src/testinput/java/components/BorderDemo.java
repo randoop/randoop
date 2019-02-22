@@ -45,7 +45,7 @@ import javax.swing.JFrame;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 
-/*
+/**
  * BorderDemo.java requires the following file:
  *    images/wavy.gif
  */

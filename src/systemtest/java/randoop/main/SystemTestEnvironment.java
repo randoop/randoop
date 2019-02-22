@@ -1,6 +1,7 @@
 package randoop.main;
 
 import java.nio.file.Path;
+import java.util.StringJoiner;
 
 /** Manages the environment for an individual system test method. */
 class SystemTestEnvironment {
@@ -131,5 +132,24 @@ class SystemTestEnvironment {
 
   public String getBootClassPath() {
     return bootclasspath;
+  }
+
+  @Override
+  public String toString() {
+    StringJoiner sb = new StringJoiner(System.lineSeparator());
+    sb.add(String.format("SystemTestEnvironment:"));
+    sb.add(String.format("  workingDir %s", workingDir));
+    sb.add(String.format("  sourceDir %s", sourceDir));
+    sb.add(String.format("  classDir %s", classDir));
+    sb.add(String.format("  jacocoDir %s", jacocoDir));
+    sb.add(String.format("  testClassPath %s", testClassPath));
+    sb.add(String.format("  bootclasspath %s", bootclasspath));
+    sb.add(String.format("  classpath %s", classpath));
+    sb.add(String.format("  jacocoAgentPath %s", jacocoAgentPath));
+    sb.add(String.format("   testInputClassDir %s", testInputClassDir));
+    sb.add(String.format("  javaAgentPath %s", javaAgentPath));
+    sb.add(String.format("  javaAgentArgumentString %s", javaAgentArgumentString));
+    sb.add(String.format("  javaAgentTestArgumentString %s", javaAgentTestArgumentString));
+    return sb.toString();
   }
 }

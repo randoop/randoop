@@ -55,7 +55,8 @@ import randoop.main.RandoopBug;
 /**
  * Defines type constants for classes in the JDK Collections.
  *
- * <p>These types should be maintained as new JDK versions are released. Updated for JDK 8.
+ * <p>These types should be maintained as new JDK versions are released. They have been updated for
+ * JDK 8.
  */
 public class JDKTypes {
   /** The {@link GenericClassType} for {@code Collection} */
