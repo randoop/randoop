@@ -1413,6 +1413,27 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.DONT_CARE, ExpectedTests.SOME, coverageChecker);
   }
 
+  /** TODO: cxing wip */
+  @Test
+  public void runFlakyTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("flaky-test");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("flaky.FlakyClass");
+    options.setOption("generated_limit", "1000");
+    options.setOption("output_limit", "1000");
+    options.setOption("flaky-test-behavior", "OUTPUT");
+
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+
+    generateAndTest(
+        testEnvironment,
+        options,
+        ExpectedTests.DONT_CARE,
+        ExpectedTests.DONT_CARE,
+        coverageChecker);
+  }
+
   /* Test based on classes from the olajgo library. Has an instantiation error for
       <N> randoop.types.CompoundFunction<N>.<init> : () -> randoop.types.CompoundFunction<N>
       and generates no sequences

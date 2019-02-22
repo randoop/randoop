@@ -9,6 +9,7 @@ import static randoop.reflection.SignatureParser.ID_STRING;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -57,6 +58,8 @@ public class FailingTestFilter implements CodeWriter {
   /** The underlying {@link randoop.output.JavaFileWriter} for writing a test class. */
   private final JavaFileWriter javaFileWriter;
 
+  private final HashSet<String> flakyTests;
+
   /**
    * Create a {@link FailingTestFilter} for which tests will be run in the environment and which
    * uses the given {@link JavaFileWriter} to output test classes.
@@ -67,6 +70,12 @@ public class FailingTestFilter implements CodeWriter {
   public FailingTestFilter(TestEnvironment testEnvironment, JavaFileWriter javaFileWriter) {
     this.testEnvironment = testEnvironment;
     this.javaFileWriter = javaFileWriter;
+    this.flakyTests = new HashSet<>();
+  }
+
+  @SuppressWarnings("unchecked")
+  public HashSet<String> getFlakyTests() {
+    return (HashSet<String>) flakyTests.clone();
   }
 
   /**
@@ -117,7 +126,8 @@ public class FailingTestFilter implements CodeWriter {
         } else if (status.timedOut) {
           throw new Error("Timed out: " + qualifiedClassname);
         } else {
-          classSource = commentFailingAssertions(packageName, classname, classSource, status);
+          classSource =
+              commentFailingAssertions(packageName, classname, classSource, status, flakyTests);
         }
       } finally {
         UtilPlume.deleteDir(workingDirectory.toFile());
@@ -230,12 +240,17 @@ public class FailingTestFilter implements CodeWriter {
    * @param classname the simple (unqualified) name of the test class
    * @param javaCode the source code for the test class; each assertion must be on its own line
    * @param status the {@link randoop.execution.RunCommand.Status} from running the test with JUnit
+   * @param flakyMethods TODO: cxing
    * @return the class source edited so that failing assertions are replaced by comments
    * @throws RandoopBug if {@code status} contains output for a failure not involving a
    *     Randoop-generated test method
    */
   private String commentFailingAssertions(
-      String packageName, String classname, String javaCode, Status status) {
+      String packageName,
+      String classname,
+      String javaCode,
+      Status status,
+      HashSet<String> flakyMethods) {
     assert !Objects.equals(packageName, "");
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
@@ -258,6 +273,7 @@ public class FailingTestFilter implements CodeWriter {
 
       // Check that the method name in the failure message is a test method.
       if (!methodName.matches(GenTests.TEST_METHOD_NAME_PREFIX + "\\d+")) {
+        flakyMethods.add(methodName);
         System.out.println();
         System.out.printf("Failure in commentFailingAssertions(%s, %s)%n", packageName, classname);
         System.out.printf("javaCode =%n%s%n", javaCode);

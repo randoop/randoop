@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -67,6 +69,7 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.SequenceExecutionException;
+import randoop.sequence.Statement;
 import randoop.test.CompilableTestPredicate;
 import randoop.test.ContractCheckingGenerator;
 import randoop.test.ContractSet;
@@ -88,6 +91,7 @@ import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
+import randoop.util.SimpleList;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */
@@ -550,6 +554,34 @@ public class GenTests extends GenInputsAbstract {
           codeWriter,
           GenInputsAbstract.regression_test_basename,
           "Regression");
+
+      // TODO cxing: Tally
+      HashMap<TypedOperation, Integer> testOccurrences = new HashMap<>();
+      HashMap<TypedOperation, Integer> flakyOccurrences = new HashMap<>();
+
+      // Tally occurrences of all methods for if-idf
+      // Each method is counted once if it appears in a sequence test.
+      for (ExecutableSequence es : explorer.getRegressionSequences()) {
+        HashSet<TypedOperation> ops = new HashSet<>();
+        SimpleList<Statement> statements = es.sequence.statements;
+        for (int i = 0; i < statements.size(); i++) {
+          ops.add(statements.get(i).getOperation());
+        }
+
+        for (TypedOperation to : ops) {
+          if (testOccurrences.containsKey(to)) {
+            testOccurrences.put(to, testOccurrences.get(to) + 1);
+          } else {
+            testOccurrences.put(to, 1);
+          }
+        }
+      }
+
+      HashSet<String> flakyTests = codeWriter.getFlakyTests();
+      /*for (ExecutableSequence es : explorer.getRegressionSequences()) {
+        if (es.)
+      }*/
+
     }
 
     if (GenInputsAbstract.progressdisplay) {
