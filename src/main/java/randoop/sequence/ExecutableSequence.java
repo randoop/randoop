@@ -402,7 +402,7 @@ public class ExecutableSequence {
 
       ExecutionOutcome r;
       try {
-        r = statement.execute(inputVariables, Globals.blackHole);
+        r = statement.execute(inputVariables);
       } catch (SequenceExecutionException e) {
         throw new SequenceExecutionException("Problem while executing " + statement, e);
       }

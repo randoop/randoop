@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
 import randoop.ExceptionalExecution;
@@ -24,7 +23,7 @@ class ArrayElementSet extends CallableOperation {
   }
 
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  public ExecutionOutcome execute(Object[] input) {
     assert input.length == 3
         : "array element assignment must have array, index and value as arguments";
     Object array = input[ARRAY];

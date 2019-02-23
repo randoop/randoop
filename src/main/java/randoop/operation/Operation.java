@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import randoop.reflection.ReflectionPredicate;
 import randoop.types.Type;
 
@@ -26,8 +25,8 @@ import randoop.types.Type;
  * by {@link NonreceiverTerm} objects.
  *
  * <p>When an Operation is used in a statement the actual inputs have to be identified. Execution of
- * the statement will call {@link CallableOperation#execute(Object[], PrintStream)} with concrete
- * values for each of the inputs.
+ * the statement will call {@link CallableOperation#execute(Object[])} with concrete values for each
+ * of the inputs.
  *
  * <p>To support text-based serialization, an implementing class C should also provide:
  *

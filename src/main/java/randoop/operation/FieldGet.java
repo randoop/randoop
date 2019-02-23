@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import randoop.ExceptionalExecution;
@@ -42,13 +41,12 @@ public class FieldGet extends CallableOperation {
    * is not valid or accessible.
    *
    * @param statementInput the inputs for statement
-   * @param out the stream for printing output (unused)
    * @return outcome of access
    * @throws RandoopBug if field access throws bug exception
    * @throws SequenceExecutionException if field access has a type exception
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
+  public ExecutionOutcome execute(Object[] statementInput) {
 
     // either 0 or 1 inputs. If none use null, otherwise give object.
     Object input = statementInput.length == 0 ? null : statementInput[0];

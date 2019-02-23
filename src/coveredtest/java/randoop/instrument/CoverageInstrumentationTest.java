@@ -67,9 +67,8 @@ public class CoverageInstrumentationTest {
     }
 
     // get class A
-    Class<?> cc = null;
     try {
-      cc = TypeNames.getTypeForName("instrument.testcase.CE");
+      TypeNames.getTypeForName("instrument.testcase.CE");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
@@ -213,9 +212,8 @@ public class CoverageInstrumentationTest {
       fail("can't access field " + e2);
     }
 
-    Object aobj = null;
     try {
-      aobj = acon.newInstance(bobj);
+      acon.newInstance(bobj);
     } catch (InstantiationException e) {
       fail("failed to instantiate" + e);
     } catch (IllegalAccessException e) {

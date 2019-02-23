@@ -7,7 +7,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -21,15 +20,12 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
@@ -185,17 +181,6 @@ public class SpecificationCollection {
   /** The type of {@code List<OperationSpecification>>}. */
   private static TypeToken<List<OperationSpecification>> LIST_OF_OS_TYPE_TOKEN =
       (new TypeToken<List<OperationSpecification>>() {});
-
-  public static void main(String[] args) throws IOException {
-    ZipFile zipFile = new ZipFile("C:/test.zip");
-
-    Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-    while (entries.hasMoreElements()) {
-      ZipEntry entry = entries.nextElement();
-      InputStream stream = zipFile.getInputStream(entry);
-    }
-  }
 
   /**
    * Reads {@link OperationSpecification} objects from the given file, and adds them to the other

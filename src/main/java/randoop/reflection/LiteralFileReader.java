@@ -82,7 +82,7 @@ public class LiteralFileReader {
             try {
               cls = TypeNames.getTypeForName(lines.get(1));
             } catch (ClassNotFoundException e) {
-              throwRecordSyntaxError(e, lines, 1);
+              throwRecordSyntaxError(e);
             }
             assert cls != null;
             ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(cls);
@@ -96,7 +96,7 @@ public class LiteralFileReader {
                 TypedOperation operation = NonreceiverTerm.parse(lines.get(i));
                 map.add(classType, new Sequence().extend(operation, new ArrayList<Variable>()));
               } catch (OperationParseException e) {
-                throwRecordSyntaxError(e, lines, i);
+                throwRecordSyntaxError(e);
               }
             }
           }
@@ -108,7 +108,8 @@ public class LiteralFileReader {
     return map;
   }
 
-  private static void throwRecordSyntaxError(Exception e, List<String> lines, int i) {
+  /** Throw an error with the given exception as its cause. */
+  private static void throwRecordSyntaxError(Exception e) {
     throw new Error(e);
   }
 

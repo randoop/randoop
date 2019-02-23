@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
 import randoop.ExecutionOutcome;
@@ -24,7 +23,7 @@ public class ReflectionArrayCreation extends CallableOperation {
   }
 
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  public ExecutionOutcome execute(Object[] input) {
     long startTime = System.currentTimeMillis();
     assert input.length == 0;
     Object arrayObject = Array.newInstance(this.elementType.getRuntimeClass(), this.length);

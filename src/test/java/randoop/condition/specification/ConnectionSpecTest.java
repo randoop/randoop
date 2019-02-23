@@ -3,7 +3,6 @@ package randoop.condition.specification;
 import static junit.framework.TestCase.fail;
 
 import com.google.gson.GsonBuilder;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +14,8 @@ public class ConnectionSpecTest {
   public void testSerialization() {
     Class<?> c = net.Connection.class;
 
-    Constructor<?> constructor;
     try {
-      constructor = c.getConstructor();
+      c.getConstructor();
     } catch (NoSuchMethodException e) {
       throw new Error(e);
     }
@@ -56,12 +54,6 @@ public class ConnectionSpecTest {
     Guard paramGuard = new Guard("the code must be positive", "code > 0");
     Precondition opParam = new Precondition("the code must be positive", paramGuard);
     List<Precondition> paramList = new ArrayList<>();
-    throwsGuard = new Guard("the connection is not open", "!receiver.isOpen()");
-    opThrows =
-        new ThrowsCondition(
-            "throws IllegalStateException if the connection is not open",
-            throwsGuard,
-            IllegalStateException.class.getCanonicalName());
 
     paramList.add(opParam);
     List<String> paramNames = new ArrayList<>();
@@ -89,7 +81,6 @@ public class ConnectionSpecTest {
     opSpec.addReturnSpecifications(retList);
     opList.add(opSpec);
 
-    String json =
-        new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(opList);
+    new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(opList);
   }
 }

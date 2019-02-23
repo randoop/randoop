@@ -188,7 +188,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
-                ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue}, null);
+                ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
                       "unexpected error invoking observer "

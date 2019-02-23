@@ -43,9 +43,7 @@ public class ConditionMethodTest {
     thrown.expect(RandoopSpecificationError.class);
     RawSignature signature =
         new RawSignature(null, "WrongIdentifierCondition", "test", new Class<?>[] {String.class});
-    ExecutableBooleanExpression simple =
-        createCondition(
-            signature, "(String s)", "t.length() > 2", "// condition has wrong identifier");
+    createCondition(signature, "(String s)", "t.length() > 2", "// condition has wrong identifier");
   }
 
   @Test
@@ -53,8 +51,7 @@ public class ConditionMethodTest {
     thrown.expect(RandoopSpecificationError.class);
     RawSignature signature =
         new RawSignature(null, "WrongTypeCondition", "test", new Class<?>[] {String.class});
-    ExecutableBooleanExpression simple =
-        createCondition(signature, "(String s)", "s.length()", "// int is not a boolean");
+    createCondition(signature, "(String s)", "s.length()", "// int is not a boolean");
   }
 
   @Test

@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import randoop.ExceptionalExecution;
@@ -50,13 +49,12 @@ public class FieldSet extends CallableOperation {
    * IllegalAccessException}).
    *
    * @param statementInput the inputs for statement
-   * @param out the stream for printing output (unused)
    * @return outcome of access, either void normal execution or captured exception
    * @throws RandoopBug if field access throws bug exception
    * @throws SequenceExecutionException if field access has type exception
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
+  public ExecutionOutcome execute(Object[] statementInput) {
 
     Object instance = null;
     Object input = statementInput[0];

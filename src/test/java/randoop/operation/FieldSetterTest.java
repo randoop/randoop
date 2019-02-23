@@ -83,7 +83,7 @@ public class FieldSetterTest {
     NormalExecution expectedExec = new NormalExecution(null, 0);
     Object[] inputs = new Object[1];
     inputs[0] = 24;
-    ExecutionOutcome actualExec = op.execute(inputs, null);
+    ExecutionOutcome actualExec = op.execute(inputs);
     assertTrue(
         "outcome of static field set should be normal execution",
         actualExec instanceof NormalExecution);
@@ -147,7 +147,7 @@ public class FieldSetterTest {
     inputs[0] = null;
     inputs[1] = 9;
     // null object
-    ExecutionOutcome nullOutcome = op.execute(inputs, null);
+    ExecutionOutcome nullOutcome = op.execute(inputs);
     assertTrue(
         "Expect null pointer exception",
         nullOutcome instanceof ExceptionalExecution
@@ -159,7 +159,7 @@ public class FieldSetterTest {
     inputs2[1] = 9;
     assertFalse("Initial value of field is not 9", 9 == (int) f.getValue(inputs2[0]));
     NormalExecution expectedExec = new NormalExecution(null, 0);
-    ExecutionOutcome actualExec = op.execute(inputs2, null);
+    ExecutionOutcome actualExec = op.execute(inputs2);
     assertTrue("outcome should be normal execution", actualExec instanceof NormalExecution);
     NormalExecution actualNExec = (NormalExecution) actualExec;
     assertTrue(

@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -264,14 +263,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * ResultOrException object and can output results to specified PrintStream.
    *
    * @param input array containing appropriate inputs to operation
-   * @param out stream to output results of execution; if null, nothing is printed
    * @return results of executing this statement
    */
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  public ExecutionOutcome execute(Object[] input) {
     assert input.length == inputTypes.size()
         : "operation execute expected " + inputTypes.size() + ", but got " + input.length;
 
-    return this.getOperation().execute(input, out);
+    return this.getOperation().execute(input);
   }
 
   /**

@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.AccessibleObject;
 import java.util.List;
 import randoop.ExecutionOutcome;
@@ -72,10 +71,9 @@ public abstract class CallableOperation implements Operation {
    * ResultOrException object and can output results to specified PrintStream.
    *
    * @param input array containing appropriate inputs to operation
-   * @param out stream to output results of execution; can be null if you don't want to print
    * @return results of executing this statement
    */
-  public abstract ExecutionOutcome execute(Object[] input, PrintStream out);
+  public abstract ExecutionOutcome execute(Object[] input);
 
   /**
    * Produces a Java source code representation of this statement and appends it to the given

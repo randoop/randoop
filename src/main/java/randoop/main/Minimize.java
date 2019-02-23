@@ -321,13 +321,7 @@ public class Minimize extends CommandHandler {
 
     // Minimize the Java test suite.
     minimizeTestSuite(
-        compilationUnit,
-        packageName,
-        minimizedFile,
-        classPath,
-        expectedOutput,
-        timeoutLimit,
-        verboseOutput);
+        compilationUnit, packageName, minimizedFile, classPath, expectedOutput, timeoutLimit);
 
     // Cleanup: simplify type names and sort the import statements.
     compilationUnit =
@@ -360,7 +354,6 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput whether or not to output information about minimization status
    * @throws IOException thrown if minimized method can't be written to file
    */
   private static void minimizeTestSuite(
@@ -369,8 +362,7 @@ public class Minimize extends CommandHandler {
       Path file,
       String classpath,
       Map<String, String> expectedOutput,
-      int timeoutLimit,
-      boolean verboseOutput)
+      int timeoutLimit)
       throws IOException {
     System.out.println("Minimizing test suite.");
 
@@ -1219,12 +1211,13 @@ public class Minimize extends CommandHandler {
   /** Contains the standard output, standard error, and exit status from running a process. */
   private static class Outputs {
     /** The standard output. */
-    private String stdout;
+    String stdout;
     /** The error output. */
-    private String errout;
+    @SuppressWarnings("UnusedVariable")
+    String errout;
 
     /** Exit value from running a process. */
-    private int exitValue;
+    int exitValue;
 
     /**
      * Create an Outputs object.
@@ -1233,7 +1226,7 @@ public class Minimize extends CommandHandler {
      * @param errout error output
      * @param exitValue exit value of process
      */
-    private Outputs(String stdout, String errout, int exitValue) {
+    Outputs(String stdout, String errout, int exitValue) {
       this.stdout = stdout;
       this.errout = errout;
       this.exitValue = exitValue;
@@ -1315,18 +1308,5 @@ public class Minimize extends CommandHandler {
   private static void printProgress(int currentTestIndex, int totalTests, String testName) {
     System.out.println(
         currentTestIndex + "/" + totalTests + " tests minimized, Minimized method: " + testName);
-  }
-
-  /**
-   * Print message, then print usage information.
-   *
-   * @param format the string format
-   * @param args the arguments
-   */
-  private void usage(String format, Object... args) {
-    System.out.print("ERROR: ");
-    System.out.printf(format, args);
-    System.out.println();
-    System.out.println(foptions.usage());
   }
 }
