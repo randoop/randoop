@@ -562,10 +562,12 @@ public class GenTests extends GenInputsAbstract {
 
       // Tally occurrences of all methods for if-idf
       // Each method is counted once if it appears in a sequence test.
+      // TODO: Add ERROR-REVEALING TESTS
       for (ExecutableSequence es : explorer.getRegressionSequences()) {
         HashSet<TypedOperation> ops = new HashSet<>();
         SimpleList<Statement> statements = es.sequence.statements;
         for (int i = 0; i < statements.size(); i++) {
+          if (!statements.get(i).getOperation().isMethodCall()) continue;
           ops.add(statements.get(i).getOperation());
         }
 
@@ -579,10 +581,32 @@ public class GenTests extends GenInputsAbstract {
       }
 
       HashSet<String> flakyTests = codeWriter.getFlakyTests();
-      /*for (ExecutableSequence es : explorer.getRegressionSequences()) {
-        if (es.)
-      }*/
+      System.out.println(flakyTests.size());
+      List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+      for (String flakyTestNum : flakyTests) {
+        int testNum = Integer.parseInt(flakyTestNum.substring(4)); // length of test
+        // Tests start at 001
+        ExecutableSequence flakyTest = regressionSequences.get(testNum - 1);
+        HashSet<TypedOperation> ops = new HashSet<>();
+        SimpleList<Statement> statements = flakyTest.sequence.statements;
+        for (int i = 0; i < statements.size(); i++) {
+          if (!statements.get(i).getOperation().isMethodCall()) continue;
+          ops.add(statements.get(i).getOperation());
+        }
 
+        for (TypedOperation to : ops) {
+          if (flakyOccurrences.containsKey(to)) {
+            flakyOccurrences.put(to, flakyOccurrences.get(to) + 1);
+          } else {
+            flakyOccurrences.put(to, 1);
+          }
+        }
+      }
+
+      for (TypedOperation to : testOccurrences.keySet()) {
+        System.out.println(
+            to.toParsableString() + "," + testOccurrences.get(to) + "," + flakyOccurrences.get(to));
+      }
     }
 
     if (GenInputsAbstract.progressdisplay) {

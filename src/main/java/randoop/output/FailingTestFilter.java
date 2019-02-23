@@ -94,7 +94,8 @@ public class FailingTestFilter implements CodeWriter {
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     int pass = 0; // Used to create unique working directory name.
-    boolean passing = GenInputsAbstract.flaky_test_behavior == FlakyTestAction.OUTPUT;
+    boolean passing =
+        false; // TODO cxing GenInputsAbstract.flaky_test_behavior == FlakyTestAction.OUTPUT;
 
     while (!passing) {
       Path workingDirectory = createWorkingDirectory(classname, pass);
@@ -276,7 +277,6 @@ public class FailingTestFilter implements CodeWriter {
 
       // Check that the method name in the failure message is a test method.
       if (!methodName.matches(GenTests.TEST_METHOD_NAME_PREFIX + "\\d+")) {
-        flakyMethods.add(methodName);
         System.out.println();
         System.out.printf("Failure in commentFailingAssertions(%s, %s)%n", packageName, classname);
         System.out.printf("javaCode =%n%s%n", javaCode);
@@ -292,6 +292,7 @@ public class FailingTestFilter implements CodeWriter {
         }
       }
 
+      flakyMethods.add(methodName);
       // Search for the stacktrace entry corresponding to the test method, and capture the line
       // number.
       Pattern linePattern =
