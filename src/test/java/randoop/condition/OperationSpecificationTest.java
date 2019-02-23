@@ -41,8 +41,7 @@ public class OperationSpecificationTest {
   @Test
   public void conditionTest() throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
-    Method method = null;
-    method = c.getDeclaredMethod("category", int.class);
+    Method method = c.getDeclaredMethod("category", int.class);
     ExecutableSpecification execSpec = getMethodSpecification(method);
 
     ClassWithConditions receiver = new ClassWithConditions(5);
@@ -197,8 +196,7 @@ public class OperationSpecificationTest {
 
   private ExecutableSequence createConstructorSequence(int initValue) throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
-    Constructor<?> reflectionConstructor = null;
-    reflectionConstructor = c.getConstructor(int.class);
+    Constructor<?> reflectionConstructor = c.getConstructor(int.class);
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
     constructorOp.setExecutableSpecification(getConstructorConditions(reflectionConstructor));
     Sequence sequence = new Sequence();
@@ -211,11 +209,9 @@ public class OperationSpecificationTest {
 
   private ExecutableSequence createCategorySequence(int value) throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
-    Constructor<?> reflectionConstructor = null;
-    reflectionConstructor = c.getConstructor(int.class);
+    Constructor<?> reflectionConstructor = c.getConstructor(int.class);
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
-    Method method = null;
-    method = c.getDeclaredMethod("category", int.class);
+    Method method = c.getDeclaredMethod("category", int.class);
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
     methodOp.setExecutableSpecification(getMethodSpecification(method));
 
@@ -233,8 +229,7 @@ public class OperationSpecificationTest {
 
   private ExecutableSequence createBadnessSequence() throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
-    Method method = null;
-    method = c.getDeclaredMethod("badness", ClassWithConditions.Range.class, int.class);
+    Method method = c.getDeclaredMethod("badness", ClassWithConditions.Range.class, int.class);
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
     methodOp.setExecutableSpecification(getBadnessConditions(method));
 

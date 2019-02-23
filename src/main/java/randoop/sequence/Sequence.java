@@ -665,7 +665,7 @@ public final class Sequence {
   public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
     List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
     if (possibleVars.isEmpty()) {
-      Statement lastStatement = this.statements.get(this.statements.size() - 1);
+      // Statement lastStatement = this.statements.get(this.statements.size() - 1);
       return null; // deal with the problem elsewhere.  TODO: fix so this cannot happen.
       // throw new RandoopBug(
       //     String.format(

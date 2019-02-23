@@ -99,7 +99,7 @@ public class CompilePredicateTest {
             + "        org.junit.Assert.assertNotNull(list_wildcard33);\n"
             + "    }\n"
             + "}";
-    CompilationUnit source = null;
+    CompilationUnit source;
     source = JavaParser.parse(new ByteArrayInputStream(failedCode.getBytes(UTF_8)));
     assertNotNull(source);
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator(null, null, null, null, null);
@@ -134,7 +134,7 @@ public class CompilePredicateTest {
             + "        }\n"
             + "    }\n"
             + "}";
-    CompilationUnit source = null;
+    CompilationUnit source;
     source = JavaParser.parse(new ByteArrayInputStream(compilableCode.getBytes(UTF_8)));
     assertNotNull(source);
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator("foo.bar", null, null, null, null);

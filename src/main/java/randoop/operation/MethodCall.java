@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -151,7 +150,7 @@ public final class MethodCall extends CallableOperation {
    *     ExceptionalExecution} if an exception thrown.
    */
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  public ExecutionOutcome execute(Object[] input) {
 
     Log.logPrintf("MethodCall.execute: this = %s%n", this);
 
@@ -178,7 +177,7 @@ public final class MethodCall extends CallableOperation {
 
     MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
 
-    return ReflectionExecutor.executeReflectionCode(code, out);
+    return ReflectionExecutor.executeReflectionCode(code);
   }
 
   /**
@@ -235,7 +234,6 @@ public final class MethodCall extends CallableOperation {
     String opname = prefix.substring(lastDotPos + 1);
     String arguments = signature.substring(openParPos + 1, closeParPos);
 
-    String methodString = classname + "." + opname + arguments;
     Type classType;
     try {
       classType = Type.forName(classname);

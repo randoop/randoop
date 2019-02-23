@@ -138,12 +138,4 @@ public class UtilTests extends TestCase {
       }
     }
   }
-
-  private int totalArrayCount(Map<Integer, Set<Object[]>> map) {
-    int result = 0;
-    for (int x : map.keySet()) {
-      result += map.get(x).size();
-    }
-    return result;
-  }
 }

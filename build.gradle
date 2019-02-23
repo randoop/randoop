@@ -200,6 +200,8 @@ dependencies {
    */
   testInputImplementation sourceSets.main.output
   testInputImplementation group: 'junit', name: 'junit', version: '4.+'
+
+  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
 }
 
 /*

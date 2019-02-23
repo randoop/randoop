@@ -204,14 +204,14 @@ public class OperationModelTest {
       if (operation.getOutputType().equals(JavaTypes.STRING_TYPE)) {
         inputs[0] = InheritedEnum.ONE;
         inputs[1] = 1;
-        outcome = operation.execute(inputs, null);
+        outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
         assertThat("outcome should be string \"one\"", (String) value, is(equalTo("one")));
 
         inputs[0] = InheritedEnum.TWO;
         inputs[1] = 1;
-        outcome = operation.execute(inputs, null);
+        outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
         assertThat("outcome should be string \"two\"", (String) value, is(equalTo("two")));
@@ -219,14 +219,14 @@ public class OperationModelTest {
       } else if (operation.getOutputType().equals(JavaTypes.INT_TYPE)) {
         inputs[0] = InheritedEnum.ONE;
         inputs[1] = "one";
-        outcome = operation.execute(inputs, null);
+        outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
         assertThat("outcome should be string \"one\"", (int) value, is(equalTo(1)));
 
         inputs[0] = InheritedEnum.TWO;
         inputs[1] = "two";
-        outcome = operation.execute(inputs, null);
+        outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
         assertThat("outcome should be string \"one\"", (int) value, is(equalTo(2)));
