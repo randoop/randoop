@@ -316,7 +316,7 @@ public class OperationModel {
   }
 
   /**
-   * Given a set of signatures, returns the operations for them. TODO CXING
+   * Given a set of signatures, returns the operations for them.
    *
    * @param fullyQualifiedSignatures the set of method signatures; typically comes from the {@code
    *     --observers} command-line option
@@ -335,14 +335,14 @@ public class OperationModel {
           operation = ConstructorCall.parse(sig);
         } catch (OperationParseException e2) {
           throw new OperationParseException(
-              "The following method could not be parsed as either a constructor or a method call: "
+              "The following method could not be parsed as neither a constructor nor a method call: "
                   + sig
                   + e.getMessage()
                   + "\n"
                   + e2.getMessage());
         } catch (AssertionError e2) {
           throw new OperationParseException(
-              "The following method could not be parsed as either a constructor or a method call: "
+              "The following method could not be parsed as neither a constructor nor a method call: "
                   + sig
                   + e.getMessage()
                   + "\n"

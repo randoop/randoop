@@ -365,20 +365,28 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Path observers = null;
 
   ///////////////////////////////////////////////////////////////////
-  /** cxing TODO */
-  @OptionGroup("MRD user methods")
-  @Option("File containing user-defined MRD functions")
+  /**
+   * File containing user non-multi run deterministic observer methods, each given as a <a
+   * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+   * signature</a> on a separate line. These methods will not be called when generating tests to
+   * avoid generating flaky tests.
+   */
+  @OptionGroup("nMRD user methods")
+  @Option("File containing user-defined non-MRD functions")
   // This file is used to populate RegressionCaptureGenerator.observer_map
-  public static Path nonMultiRunDeterministicUser =
-      null; // Paths.get("/home/casey/omitmethods.txt");
+  public static Path nonMultiRunDeterministicUser = null;
 
   ///////////////////////////////////////////////////////////////////
-  /** cxing TODO */
-  @OptionGroup("MRD JDK methods")
+  /**
+   * File containing JDK non-multi run deterministic observer methods, each given as a <a
+   * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+   * signature</a> on a separate line. These methods will not be called when generating tests to
+   * avoid generating flaky tests.
+   */
+  @OptionGroup("nMRD JDK methods")
   @Option("File containing MRD functions from the JDK")
   // This file is used to populate RegressionCaptureGenerator.observer_map
-  public static Path nonMultiRunDeterministicJDK =
-      null; // Paths.get("/home/casey/omitmethods.txt");
+  public static Path nonMultiRunDeterministicJDK = null;
 
   /**
    * Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop

@@ -254,7 +254,6 @@ public class CoveredClassTest {
       observers.addAll(observerMap.getValues(keyType));
     }
 
-    // cxing TODO refactor
     // Maps each class type to the observer methods in it.
     MultiMap<Type, TypedOperation> nonMultiRunDeterministicMethodMap;
     try {
@@ -266,7 +265,7 @@ public class CoveredClassTest {
       System.exit(1);
       throw new Error("dead code");
     }
-    assert nonMultiRunDeterministicMethodMap != null;
+
     Set<TypedOperation> nonMultiRunDeterminsticMethods = new LinkedHashSet<>();
     for (Type keyType : nonMultiRunDeterministicMethodMap.keySet()) {
       nonMultiRunDeterminsticMethods.addAll(nonMultiRunDeterministicMethodMap.getValues(keyType));

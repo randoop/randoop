@@ -1441,7 +1441,10 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.DONT_CARE, ExpectedTests.SOME, coverageChecker);
   }
 
-  /** TODO: cxing wip */
+  /**
+   * This test case checks that methods that cause flaky tests are excluded per the blacklist
+   * (unfortunately, there doesn't currently exist a good way to assert for flakiness.
+   */
   @Test
   public void runFlakyTest() {
     SystemTestEnvironment testEnvironment =
@@ -1451,8 +1454,15 @@ public class RandoopSystemTest {
     options.setOption("generated_limit", "1000");
     options.setOption("output_limit", "1000");
     options.setOption("flaky-test-behavior", "OUTPUT");
+    options.setOption("nonMultiRunDeterministicUser", "resources/systemTest/flakyclass_nmrd.txt");
 
-    CoverageChecker coverageChecker = new CoverageChecker(options);
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            "flaky.FlakyClass.getTwo() ignore",
+            "flaky.FlakyClass.getThree() ignore",
+            "flaky.FlakyClass.flakyDefaultHashCode() exclude",
+            "flaky.FlakyClass.multiply(int, int) ignore");
 
     generateAndTest(
         testEnvironment,

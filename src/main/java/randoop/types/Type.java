@@ -74,7 +74,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * TODO: cxing
+   * Returns the Type for a fully qualified name (that may or may not be a multi-dimensional array).
    *
    * @param fullyQualifiedName the fully qualified name of a type
    * @return the type object for the type with the name, null if none is found
@@ -87,7 +87,8 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * TODO: cxing
+   * Returns the Class for a fully qualified name (that may or may not be a multi-dimensional
+   * array).
    *
    * @param fullyQualifiedName the fully qualified name of a type
    * @return the type object for the type with the name, null if none is found
@@ -112,7 +113,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Does not support arrays TODO:cxing
+   * Returns the Class for a fully qualified name. Does not support arrays.
    *
    * @param fullyQualifiedName the fully qualified name of a type
    * @return the type object for the type with the name, null if none is found

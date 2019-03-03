@@ -94,8 +94,7 @@ public class FailingTestFilter implements CodeWriter {
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     int pass = 0; // Used to create unique working directory name.
-    boolean passing =
-        false; // TODO cxing GenInputsAbstract.flaky_test_behavior == FlakyTestAction.OUTPUT;
+    boolean passing = false;
 
     while (!passing) {
       Path workingDirectory = createWorkingDirectory(classname, pass);
@@ -244,7 +243,7 @@ public class FailingTestFilter implements CodeWriter {
    * @param classname the simple (unqualified) name of the test class
    * @param javaCode the source code for the test class; each assertion must be on its own line
    * @param status the {@link randoop.execution.RunCommand.Status} from running the test with JUnit
-   * @param flakyMethods TODO: cxing
+   * @param flakyTests output parameter to accumulate flaky tests. e.g. test005
    * @return the class source edited so that failing assertions are replaced by comments
    * @throws RandoopBug if {@code status} contains output for a failure not involving a
    *     Randoop-generated test method
@@ -254,7 +253,7 @@ public class FailingTestFilter implements CodeWriter {
       String classname,
       String javaCode,
       Status status,
-      HashSet<String> flakyMethods) {
+      HashSet<String> flakyTests) {
     assert !Objects.equals(packageName, "");
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
@@ -292,7 +291,7 @@ public class FailingTestFilter implements CodeWriter {
         }
       }
 
-      flakyMethods.add(methodName);
+      flakyTests.add(methodName);
       // Search for the stacktrace entry corresponding to the test method, and capture the line
       // number.
       Pattern linePattern =

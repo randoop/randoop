@@ -355,8 +355,9 @@ public class ForwardGenerator extends AbstractGenerator {
     TypedOperation operation = operationSelector.selectOperation();
     Log.logPrintf("Selected operation: %s%n", operation.toString());
 
+    // TODO: cxing - CR request: Is this the best way to do this?
     if (nonMultiRunDeterministicMethods.contains(operation)) {
-      return null; // Avoid calling this, but also cxing TODO, find a better way to do this.
+      return null; // Avoid calling this.
     }
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
