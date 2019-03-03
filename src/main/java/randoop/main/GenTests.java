@@ -1,5 +1,6 @@
 package randoop.main;
 
+import static java.util.Collections.reverseOrder;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import com.github.javaparser.ParseException;
@@ -19,10 +20,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.StringTokenizer;
@@ -68,6 +72,7 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.SequenceExecutionException;
+import randoop.sequence.Statement;
 import randoop.test.CompilableTestPredicate;
 import randoop.test.ContractCheckingGenerator;
 import randoop.test.ContractSet;
@@ -89,6 +94,7 @@ import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
+import randoop.util.SimpleList;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */
@@ -516,6 +522,60 @@ public class GenTests extends GenInputsAbstract {
           codeWriter,
           GenInputsAbstract.regression_test_basename,
           "Regression");
+
+      HashSet<String> flakyTests = codeWriter.getFlakyTests();
+
+      if (flakyTests.size() > 0) {
+        HashMap<TypedOperation, Integer> testOccurrences = new HashMap<>();
+        HashMap<TypedOperation, Integer> flakyOccurrences = new HashMap<>();
+
+        // Tally occurrences of all methods for if-idf
+        // Each method is counted once if it appears in a sequence test.
+        tallyOperationsInSequences(testOccurrences, explorer.getRegressionSequences());
+
+        // TODO: cxing handle Error Test Sequence tallying.
+        // tallyOperationsInSequences(testOccurrences, explorer.getErrorTestSequences());
+
+        List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+        for (String flakyTestNum : flakyTests) {
+          int testNum = Integer.parseInt(flakyTestNum.substring(4)); // length of test
+          // Tests start at 001
+          ExecutableSequence flakyTest = regressionSequences.get(testNum - 1);
+          HashSet<TypedOperation> ops = new HashSet<>();
+          SimpleList<Statement> statements = flakyTest.sequence.statements;
+          for (int i = 0; i < statements.size(); i++) {
+            if (!statements.get(i).getOperation().isMethodCall()) continue;
+            ops.add(statements.get(i).getOperation());
+          }
+
+          for (TypedOperation to : ops) {
+            if (flakyOccurrences.containsKey(to)) {
+              flakyOccurrences.put(to, flakyOccurrences.get(to) + 1);
+            } else {
+              flakyOccurrences.put(to, 1);
+            }
+          }
+        }
+
+        Map<String, Double> methodFlakyPercentage = new HashMap<>();
+        List<Entry<String, Double>> sortedMethodsbyFlakiness;
+
+        for (TypedOperation to : testOccurrences.keySet()) {
+          double flakyMethodOccurrences =
+              flakyOccurrences.containsKey(to) ? flakyOccurrences.get(to) : 0;
+          methodFlakyPercentage.put(
+              to.toParsableString(), flakyMethodOccurrences / testOccurrences.get(to));
+        }
+
+        sortedMethodsbyFlakiness = new ArrayList<>(methodFlakyPercentage.entrySet());
+        sortedMethodsbyFlakiness.sort(reverseOrder(Entry.comparingByValue()));
+
+        System.out.println();
+        System.out.println("Percentage of method flakiness in tests.");
+        for (Entry<String, Double> e : sortedMethodsbyFlakiness) {
+          System.out.println(e.getKey() + ":\t " + (e.getValue() * 100.0) + "%");
+        }
+      }
     }
 
     if (GenInputsAbstract.progressdisplay) {
@@ -535,6 +595,34 @@ public class GenTests extends GenInputsAbstract {
     explorer.getOperationHistory().outputTable();
 
     return true;
+  }
+
+  /**
+   * Tallies the number of sequences an operation occurs in.
+   *
+   * @param tallyMap the count map to increment for each operation
+   * @param sequences sequences to process for operations
+   */
+  private void tallyOperationsInSequences(
+      Map<TypedOperation, Integer> tallyMap, List<ExecutableSequence> sequences) {
+    for (ExecutableSequence es : sequences) {
+      HashSet<TypedOperation> ops = new HashSet<>();
+      SimpleList<Statement> statements = es.sequence.statements;
+      for (int i = 0; i < statements.size(); i++) {
+        if (!statements.get(i).getOperation().isMethodCall()) {
+          continue;
+        }
+        ops.add(statements.get(i).getOperation());
+      }
+
+      for (TypedOperation to : ops) {
+        if (tallyMap.containsKey(to)) {
+          tallyMap.put(to, tallyMap.get(to) + 1);
+        } else {
+          tallyMap.put(to, 1);
+        }
+      }
+    }
   }
 
   /**
