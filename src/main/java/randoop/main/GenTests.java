@@ -526,9 +526,11 @@ public class GenTests extends GenInputsAbstract {
       HashSet<String> flakyTests = codeWriter.getFlakyTests();
 
       if (flakyTests.size() > 0) {
-        // How often each operation appears in any test.
+        // How often each operation appears in any test.  (or maybe how many methods each operation
+        // appears in?)
         HashMap<TypedOperation, Integer> testOccurrences = new HashMap<>();
-        // How often each operation appears in a flaky test.
+        // How often each operation appears in a flaky test.  (or maybe how many flaky methods each
+        // operation appears in?)
         HashMap<TypedOperation, Integer> flakyOccurrences = new HashMap<>();
 
         // Tally occurrences of operations in all methods.
