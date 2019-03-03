@@ -103,6 +103,7 @@ public abstract class Type implements Comparable<Type> {
     Class<?> fullyQualifiedBaseType = forFullyQualifiedName(fullyQualifiedArrayParsedName[0]);
 
     if (arrayDimension > 0) {
+      // Make each dimension size zero, since it is ignored by getClass().
       int[] dimensions = new int[arrayDimension];
       return Array.newInstance(fullyQualifiedBaseType, dimensions).getClass();
     } else {
@@ -113,7 +114,7 @@ public abstract class Type implements Comparable<Type> {
   /**
    * Returns the Class for a fully qualified name. Does not support arrays.
    *
-   * @param fullyQualifiedName the fully qualified name of a type
+   * @param fullyQualifiedName the fully qualified name of a non-array type
    * @return the type object for the type with the name, null if none is found
    * @throws ClassNotFoundException if name is not a recognized type
    */
