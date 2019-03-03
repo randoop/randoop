@@ -134,7 +134,8 @@ public abstract class Type implements Comparable<Type> {
           throw e;
         }
         @SuppressWarnings("signature") // checked below & exception is handled
-        @ClassGetName String innerName =
+        @ClassGetName
+        String innerName =
             fullyQualifiedName.substring(0, pos) + "$" + fullyQualifiedName.substring(pos + 1);
         fullyQualifiedName = innerName;
         try {
