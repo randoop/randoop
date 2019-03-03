@@ -51,7 +51,7 @@ public class ForwardGenerator extends AbstractGenerator {
   /** The side-effect-free observer methods. */
   private final Set<TypedOperation> observers;
 
-  /** TODO */
+  /** The non-multi-run-deterministic method blacklist. */
   private final Set<TypedOperation> nonMultiRunDeterministicMethods;
 
   /** Sequences that are used in other sequences (and are thus redundant) */

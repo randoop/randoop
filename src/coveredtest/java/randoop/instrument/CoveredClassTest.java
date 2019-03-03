@@ -235,7 +235,7 @@ public class CoveredClassTest {
     Set<String> nonMultiRunDeterministicMethodSignatures =
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.nonMultiRunDeterministicUser,
-            "nonMultiRunDeterminstic",
+            "nonMultiRunDeterministic",
             "//.*",
             null);
 
@@ -266,9 +266,9 @@ public class CoveredClassTest {
       throw new Error("dead code");
     }
 
-    Set<TypedOperation> nonMultiRunDeterminsticMethods = new LinkedHashSet<>();
+    Set<TypedOperation> nonMultiRunDeterministicMethods = new LinkedHashSet<>();
     for (Type keyType : nonMultiRunDeterministicMethodMap.keySet()) {
-      nonMultiRunDeterminsticMethods.addAll(nonMultiRunDeterministicMethodMap.getValues(keyType));
+      nonMultiRunDeterministicMethods.addAll(nonMultiRunDeterministicMethodMap.getValues(keyType));
     }
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
@@ -276,7 +276,7 @@ public class CoveredClassTest {
         new ForwardGenerator(
             model,
             observers,
-            nonMultiRunDeterminsticMethods,
+            nonMultiRunDeterministicMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,

@@ -106,10 +106,6 @@ public abstract class Type implements Comparable<Type> {
     } else {
       return fullyQualifiedBaseType;
     }
-    /*for (int i = 0; i < arrayDimension; i++) {
-      processedFullyQualifiedName = Array.newInstance(processedFullyQualifiedName, 0).getClass();
-    }*/
-    // return processedFullyQualifiedName;
   }
 
   /**

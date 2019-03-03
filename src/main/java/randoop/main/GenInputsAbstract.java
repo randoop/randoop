@@ -373,7 +373,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @OptionGroup("nMRD user methods")
   @Option("File containing user-defined non-MRD functions")
-  // This file is used to populate RegressionCaptureGenerator.observer_map
   public static Path nonMultiRunDeterministicUser = null;
 
   ///////////////////////////////////////////////////////////////////
@@ -385,7 +384,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @OptionGroup("nMRD JDK methods")
   @Option("File containing MRD functions from the JDK")
-  // This file is used to populate RegressionCaptureGenerator.observer_map
   public static Path nonMultiRunDeterministicJDK = null;
 
   /**
