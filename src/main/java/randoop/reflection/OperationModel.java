@@ -334,14 +334,14 @@ public class OperationModel {
           operation = ConstructorCall.parse(sig);
         } catch (OperationParseException e2) {
           throw new OperationParseException(
-              "The following method could not be parsed as neither a constructor nor a method call: "
+              "The following method could not be parsed as a constructor or method call: "
                   + sig
                   + e.getMessage()
                   + "\n"
                   + e2.getMessage());
         } catch (AssertionError e2) {
           throw new OperationParseException(
-              "The following method could not be parsed as neither a constructor nor a method call: "
+              "The following method could not be parsed as a constructor or method call: "
                   + sig
                   + e.getMessage()
                   + "\n"
