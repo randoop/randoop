@@ -58,6 +58,7 @@ public class FailingTestFilter implements CodeWriter {
   /** The underlying {@link randoop.output.JavaFileWriter} for writing a test class. */
   private final JavaFileWriter javaFileWriter;
 
+  /** The collection of flaky tests in string format (e.g. test005). */
   private final HashSet<String> flakyTests;
 
   /**
@@ -73,6 +74,11 @@ public class FailingTestFilter implements CodeWriter {
     this.flakyTests = new HashSet<>();
   }
 
+  /**
+   * Retrieves a shallow copy of the flaky test collection.
+   *
+   * @return shallow copy of the flaky test collection
+   */
   @SuppressWarnings("unchecked")
   public HashSet<String> getFlakyTests() {
     return (HashSet<String>) flakyTests.clone();
