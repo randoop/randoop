@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.WildcardType;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 
@@ -70,6 +71,77 @@ public abstract class Type implements Comparable<Type> {
       c = Class.forName(typeName);
     }
     return Type.forClass(c);
+  }
+
+  /**
+   * Returns the Type for a fully qualified name (that may or may not be a multi-dimensional array).
+   *
+   * @param fullyQualifiedName the fully qualified name of a type
+   * @return the type object for the type with the name, null if none is found
+   * @throws ClassNotFoundException if name is not a recognized type
+   */
+  public static Type getTypeforFullyQualifiedNameMaybeArray(@ClassGetName String fullyQualifiedName)
+      throws ClassNotFoundException {
+    Class<?> className = forFullyQualifiedNameMaybeArray(fullyQualifiedName);
+    return className.isArray() ? ArrayType.forClass(className) : Type.forClass(className);
+  }
+
+  /**
+   * Returns the Class for a fully qualified name (that may or may not be a multi-dimensional
+   * array).
+   *
+   * @param fullyQualifiedName the fully qualified name of a type
+   * @return the type object for the type with the name, null if none is found
+   * @throws ClassNotFoundException if name is not a recognized type
+   */
+  public static Class<?> forFullyQualifiedNameMaybeArray(@ClassGetName String fullyQualifiedName)
+      throws ClassNotFoundException {
+    String[] fullyQualifiedArrayParsedName = fullyQualifiedName.split("\\[");
+    int arrayDimension = fullyQualifiedArrayParsedName.length - 1;
+    Class<?> fullyQualifiedBaseType = forFullyQualifiedName(fullyQualifiedArrayParsedName[0]);
+
+    if (arrayDimension > 0) {
+      int[] dimensions = new int[arrayDimension];
+      return Array.newInstance(fullyQualifiedBaseType, dimensions).getClass();
+    } else {
+      return fullyQualifiedBaseType;
+    }
+  }
+
+  /**
+   * Returns the Class for a fully qualified name. Does not support arrays.
+   *
+   * @param fullyQualifiedName the fully qualified name of a type
+   * @return the type object for the type with the name, null if none is found
+   * @throws ClassNotFoundException if name is not a recognized type
+   */
+  private static Class<?> forFullyQualifiedName(String fullyQualifiedName)
+      throws ClassNotFoundException {
+    Class<?> c = PrimitiveTypes.classForName(fullyQualifiedName);
+    if (c != null) {
+      return c;
+    }
+
+    try {
+      return Class.forName(fullyQualifiedName);
+    } catch (ClassNotFoundException e) {
+      while (true) {
+        int pos = fullyQualifiedName.lastIndexOf('.');
+        if (pos < 0) {
+          throw e;
+        }
+        @SuppressWarnings("signature") // checked below & exception is handled
+        @ClassGetName
+        String innerName =
+            fullyQualifiedName.substring(0, pos) + "$" + fullyQualifiedName.substring(pos + 1);
+        fullyQualifiedName = innerName;
+        try {
+          return Class.forName(fullyQualifiedName);
+        } catch (ClassNotFoundException ee) {
+          continue; // nothing to do
+        }
+      }
+    }
   }
 
   /**

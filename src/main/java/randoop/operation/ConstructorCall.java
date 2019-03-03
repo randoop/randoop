@@ -240,7 +240,7 @@ public final class ConstructorCall extends CallableOperation {
 
     Type classType;
     try {
-      classType = Type.forName(classname);
+      classType = Type.getTypeforFullyQualifiedNameMaybeArray(classname);
     } catch (ClassNotFoundException e) {
       String msg =
           "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";

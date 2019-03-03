@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ArrayTypeTest {
@@ -89,5 +90,20 @@ public class ArrayTypeTest {
     rt = Type.forType(t);
     assertTrue("should be generic: " + rt, !rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
+  }
+
+  @Test
+  public void testFullyQualifiedArrayParsing() {
+    String testArray = "java.lang.Object[]";
+    String multiDimArray = "java.lang.Object[][][][][][][]";
+    try {
+      assertTrue(Type.getTypeforFullyQualifiedNameMaybeArray(testArray) instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedNameMaybeArray(testArray) == null);
+      assertTrue(Type.getTypeforFullyQualifiedNameMaybeArray(multiDimArray) instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedNameMaybeArray(multiDimArray) == null);
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
   }
 }
