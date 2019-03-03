@@ -526,10 +526,12 @@ public class GenTests extends GenInputsAbstract {
       HashSet<String> flakyTests = codeWriter.getFlakyTests();
 
       if (flakyTests.size() > 0) {
+        // How often each operation appears in any test.
         HashMap<TypedOperation, Integer> testOccurrences = new HashMap<>();
+        // How often each operation appears in a flaky test.
         HashMap<TypedOperation, Integer> flakyOccurrences = new HashMap<>();
 
-        // Tally occurrences of all methods for if-idf
+        // Tally occurrences of operations in all methods.
         // Each method is counted once if it appears in a sequence test.
         tallyOperationsInSequences(testOccurrences, explorer.getRegressionSequences());
 

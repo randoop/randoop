@@ -58,7 +58,7 @@ public class FailingTestFilter implements CodeWriter {
   /** The underlying {@link randoop.output.JavaFileWriter} for writing a test class. */
   private final JavaFileWriter javaFileWriter;
 
-  /** The collection of flaky tests in string format (e.g. test005). */
+  /** Method names for flaky tests (e.g., "test005"). */
   private final HashSet<String> flakyTests;
 
   /**
@@ -77,7 +77,7 @@ public class FailingTestFilter implements CodeWriter {
   /**
    * Retrieves a shallow copy of the flaky test collection.
    *
-   * @return shallow copy of the flaky test collection
+   * @return a shallow copy of the flaky test collection
    */
   @SuppressWarnings("unchecked")
   public HashSet<String> getFlakyTests() {
@@ -245,7 +245,8 @@ public class FailingTestFilter implements CodeWriter {
    * @param classname the simple (unqualified) name of the test class
    * @param javaCode the source code for the test class; each assertion must be on its own line
    * @param status the {@link randoop.execution.RunCommand.Status} from running the test with JUnit
-   * @param flakyTests output parameter to accumulate flaky tests. e.g. test005
+   * @param flakyTests names of flaky tests, e.g., "test005". This is an output parameter that is
+   *     augmented by this methodx
    * @return the class source edited so that failing assertions are replaced by comments
    * @throws RandoopBug if {@code status} contains output for a failure not involving a
    *     Randoop-generated test method
@@ -294,6 +295,7 @@ public class FailingTestFilter implements CodeWriter {
       }
 
       flakyTests.add(methodName);
+
       // Search for the stacktrace entry corresponding to the test method, and capture the line
       // number.
       Pattern linePattern =
@@ -349,7 +351,7 @@ public class FailingTestFilter implements CodeWriter {
       javaCodeLines[lineNumber - 1] = flakyLineReplacement(javaCodeLines[lineNumber - 1]);
     }
 
-    // XXX For efficiency, have this method return the array and redo writeClass so that it writes
+    // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
     // from array (?).
     return UtilPlume.join(javaCodeLines, Globals.lineSep);
   }
