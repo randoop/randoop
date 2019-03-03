@@ -12,7 +12,6 @@ public class ArrayTypeTest {
 
   @Test
   public void testAssignability() {
-    ArrayList<String>[] al = new ArrayList[] {};
     Type intArrType = ArrayType.ofComponentType(new PrimitiveType(int.class));
     Type shortArrType = ArrayType.ofComponentType(new PrimitiveType(short.class));
     Type strALArrType =
@@ -63,7 +62,7 @@ public class ArrayTypeTest {
   public void testConstructionFromHarvest() throws NoSuchMethodException {
     Class<?> c = ArrayHarvest.class;
 
-    Method m = null;
+    Method m;
     java.lang.reflect.Type t;
     Type rt;
 

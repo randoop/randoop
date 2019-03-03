@@ -64,7 +64,7 @@ class MethodCoverageMap {
       if (classCoverage.getMethodCounter().getCoveredCount() > 0) {
         String className = getClassName(names, classCoverage);
         for (IMethodCoverage methodCoverage : classCoverage.getMethods()) {
-          String methodName = getMethodName(names, classCoverage, className, methodCoverage);
+          String methodName = getMethodName(names, classCoverage, methodCoverage);
           ICounter methodCounter = methodCoverage.getMethodCounter();
           if (methodCounter.getCoveredCount() > 0) {
             coverageMap.put(className, methodName, methodCounter);
@@ -109,10 +109,7 @@ class MethodCoverageMap {
    * @return the method name
    */
   private static String getMethodName(
-      JavaNames names,
-      IClassCoverage classCoverage,
-      String className,
-      IMethodCoverage methodCoverage) {
+      JavaNames names, IClassCoverage classCoverage, IMethodCoverage methodCoverage) {
     return names.getQualifiedMethodName(
         classCoverage.getName(),
         methodCoverage.getName(),

@@ -309,7 +309,6 @@ public class OperationModel {
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     for (String sig : observerSignatures) {
       TypedClassOperation operation = MethodCall.parse(sig);
-      Type outputType = operation.getOutputType();
       observerMap.add(operation.getDeclaringType(), operation);
     }
     return observerMap;

@@ -106,7 +106,6 @@ public class FailingTestFilter implements CodeWriter {
           classSource =
               commentCatchStatements(
                   packageName,
-                  classname,
                   classSource,
                   e.getDiagnostics().getDiagnostics(),
                   workingDirectory,
@@ -160,7 +159,6 @@ public class FailingTestFilter implements CodeWriter {
    * errors exist. Ignores compilation warnings.
    *
    * @param packageName the package name of the test class
-   * @param classname the simple (unqualified) name of the test class
    * @param javaCode the source code for the test class; each assertion must be on its own line
    * @param diagnostics the errors and warnings from compiling the class
    * @param destinationDir the directory that contains the source code, used only for debugging
@@ -171,13 +169,11 @@ public class FailingTestFilter implements CodeWriter {
    */
   private String commentCatchStatements(
       String packageName,
-      String classname,
       String javaCode,
       List<Diagnostic<? extends JavaFileObject>> diagnostics,
       Path destinationDir,
       FileCompiler.FileCompilerException e) {
     assert !Objects.equals(packageName, "");
-    String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     String[] javaCodeLines = javaCode.split(Globals.lineSep);
 
@@ -412,7 +408,6 @@ public class FailingTestFilter implements CodeWriter {
    */
   private String flakyLineReplacement(String flakyLine) {
     Matcher varDeclMatcher = VARIABLE_DECLARATION_LINE.matcher(flakyLine);
-    String commentedLine;
     if (varDeclMatcher.matches()) {
       String varType = varDeclMatcher.group(2);
       String newInitializer;
