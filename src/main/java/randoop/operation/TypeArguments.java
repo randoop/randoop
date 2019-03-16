@@ -32,8 +32,7 @@ class TypeArguments {
       argTypes = new Class<?>[argsStrs.length];
       for (int i = 0; i < argsStrs.length; i++) {
         @SuppressWarnings("signature") // uncheckable string manipulation
-        @ClassGetName
-        String typeName = argsStrs[i].trim();
+        @ClassGetName String typeName = argsStrs[i].trim();
 
         try {
           argTypes[i] = Type.forFullyQualifiedNameMaybeArray(typeName);

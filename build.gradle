@@ -13,12 +13,6 @@ plugins {
   id 'jacoco'
 
   /*
-   * Plugin that applies Google-Java-format to the Java files in the project.
-   * https://github.com/sherter/google-java-format-gradle-plugin
-   */
-  id 'com.github.sherter.google-java-format' version '0.8'
-
-  /*
    * Plugin that applies Google's Error Prone linter (http://errorprone.info/).
    * https://github.com/tbroyer/gradle-errorprone-plugin
    * Elsewhere this file excludes src/testinput from directories examined by Error Prone.
@@ -26,7 +20,11 @@ plugins {
    * There is no separate target to just run Error Prone.
    */
   id "net.ltgt.errorprone-base" version "0.0.16"
+
+  id 'org.ajoberstar.grgit' version '2.3.0' apply false
 }
+
+import org.ajoberstar.grgit.Grgit
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
 // It is not run in the main build because the Checker Framework is incompatible with Error Prone.
@@ -205,33 +203,6 @@ dependencies {
 }
 
 /*
- * Configuration for formatting
- */
-googleJavaFormat {
-  toolVersion '1.7'
-  exclude '**/CloneVisitor.java'
-}
-
-tasks.googleJavaFormat {
-  group 'Formatting'
-  description = "Reformat Java source code with Google-Java-format"
-  exclude 'src/testinput'
-}
-
-tasks.verifyGoogleJavaFormat {
-  group 'Formatting'
-  description = "Check Java source code formatting with Google-Java-format"
-  exclude 'src/testinput'
-}
-
-// This is annoying to happen on every build:  it may delete import statements
-// if there are certain types of syntax errors in the source code.
-// // should verifyGoogleJavaFormat before compiling
-// tasks.withType(JavaCompile) {
-//   dependsOn 'googleJavaFormat' // task name conflicts with plugin name
-// }
-
-/*
  * Configuration for compilation.
  */
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
@@ -275,6 +246,60 @@ tasks.withType(JavaCompile).each { t ->
       // '-Xep:ReferenceEquality:OFF'
       ]
   }
+}
+
+
+/*
+ * Configuration for formatting
+ */
+
+task getCodeFormatScripts {
+  description "Obtain the run-google-java-format scripts"
+  doLast {
+    if (! new File("$projectDir/build/utils/.run-google-java-format").exists()) {
+      def rgjfGit = Grgit.clone(dir: "$projectDir/build/utils/.run-google-java-format", uri: 'https://github.com/plume-lib/run-google-java-format.git')
+    } else {
+      def rgjfGit = Grgit.open(dir: "$projectDir/build/utils/.run-google-java-format")
+      rgjfGit.pull()
+    }
+  }
+}
+
+task pythonIsInstalled(type: Exec) {
+  description "Check that the python executable is installed."
+  executable = "python"
+  args "--version"
+}
+
+task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], group: 'Formatting') {
+  description "Check whether the Java source code is properly formatted"
+  def javaFiles = fileTree("$projectDir").matching{
+    include "**/*.java" exclude "src/testinput/**" exclude "build/**" exclude "**/CloneVisitor.java"
+  } as List
+  def pythonArgs = javaFiles.clone()
+  pythonArgs.add(0, "$projectDir/build/utils/.run-google-java-format/check-google-java-format.py")
+
+  commandLine "python"
+  args pythonArgs
+  ignoreExitValue true
+
+  doLast {
+    if (execResult.exitValue != 0) {
+      throw new GradleException("Found improper formatting, try running:  ./gradlew reformat")
+    }
+  }
+}
+
+task reformat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], group: 'Formatting') {
+  description "Format the Java source code according to the Google Java Format style"
+  def javaFiles = fileTree("$projectDir").matching{
+    include "**/*.java" exclude "src/testinput/**" exclude "build/**" exclude "**/CloneVisitor.java"
+  } as List
+  def pythonArgs = javaFiles.clone()
+  pythonArgs.add(0, "$projectDir/build/utils/.run-google-java-format/run-google-java-format.py")
+
+  commandLine "python"
+  args pythonArgs
 }
 
 
@@ -442,7 +467,6 @@ task extractJacocoAgent(type: Copy) {
 }
 
 /*
- * Configuration of the systemTest task.
  * Runs JUnit over all classes in systemTest sourceSet.
  * JUnit tests assume that working directories can be found in the build directory.
  */
@@ -504,8 +528,7 @@ tasks.withType(Test) {
 }
 
 /*
- * Configuration of task to write HTML reports into build/reports/allTests for
- * all tests.
+ * Write HTML reports into build/reports/allTests for all tests.
  * [
  *   Note that this may not work correctly if different Test tasks use the same
  *   test classes. Fine here because sourceSets use different packages for test
@@ -750,19 +773,14 @@ javadoc.doLast {
  */
 build.dependsOn javadoc
 
-/*
- * Configuration of updateUserTOC task to update the table-of-contents for the
- * user documentation.
- */
+/* Update the table-of-contents for the user documentation. */
 task updateUserTOC( type:Exec, dependsOn: [ 'cloneLibs' ]) {
   executable file("$buildDir/utils/html-tools/html-update-toc")
   args  file("${projectDir}/src/docs/manual/index.html")
   environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
 }
 
-/* Configuration of task updateDevTOC to update table of contents in developer
- * documentation.
- */
+/* Update table of contents in developer documentation. */
 task updateDevTOC( type:Exec, dependsOn: ['cloneLibs' ]) {
   executable file("$buildDir/utils/html-tools/html-update-toc")
   args file("${projectDir}/src/docs/manual/dev.html")
@@ -815,8 +833,7 @@ task html5validatorExists {
 }
 
 /*
- * Configuration of manual task to generate/update and move documentation into
- * build/docs directory.
+ * Generate/update and move documentation into build/docs directory.
  */
 task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC', 'html5validatorExists']) {
   group 'Documentation'
