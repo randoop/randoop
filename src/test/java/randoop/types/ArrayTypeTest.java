@@ -98,6 +98,7 @@ public class ArrayTypeTest {
     String multiDimObjectArraySignature = "java.lang.Object[][][][][][][]";
     String primitiveArraySignature = "int[]";
     String nonArraySignature = "java.lang.Object";
+    String primitiveNonArraySignature = "double";
 
     // Following should be parsed as 'java.util.Formatter$BigDecimalLayoutForm'
     String innerClassArraySignature = "java.util.Formatter$BigDecimalLayoutForm[][]";
@@ -121,6 +122,11 @@ public class ArrayTypeTest {
       assertFalse(
           Type.getTypeforFullyQualifiedNameMaybeArray(nonArraySignature) instanceof ArrayType);
       assertFalse(Type.forFullyQualifiedNameMaybeArray(nonArraySignature) == null);
+
+      assertFalse(
+          Type.getTypeforFullyQualifiedNameMaybeArray(primitiveNonArraySignature)
+              instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedNameMaybeArray(primitiveNonArraySignature) == null);
 
       assertTrue(
           Type.getTypeforFullyQualifiedNameMaybeArray(innerClassArraySignature)
