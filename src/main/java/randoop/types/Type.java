@@ -77,7 +77,8 @@ public abstract class Type implements Comparable<Type> {
    * Returns the Type for a fully qualified name (that may or may not be a multi-dimensional array).
    *
    * @param fullyQualifiedName the fully qualified name of a type. Array names such as {@code int[]}
-   *     or {@code java.lang.String[][]} are also fully-qualified names.
+   *     or {@code java.lang.String[][]} are also fully-qualified names. Arrays definitions with
+   *     sizes {@code int[3][]} are NOT supported.
    * @return the type object for the type with the name, null if none is found
    * @throws ClassNotFoundException if name is not a recognized type
    */
@@ -92,7 +93,8 @@ public abstract class Type implements Comparable<Type> {
    * array).
    *
    * @param fullyQualifiedName the fully qualified name of a type. Array names such as {@code int[]}
-   *     or {@code java.lang.String[][]} are also fully-qualified names.
+   *     or {@code java.lang.String[][]} are also fully-qualified names. Arrays definitions with
+   *     sizes {@code int[3][]} are NOT supported.
    * @return the type object for the type with the name, null if none is found
    * @throws ClassNotFoundException if name is not a recognized type
    */
@@ -130,18 +132,17 @@ public abstract class Type implements Comparable<Type> {
     } catch (ClassNotFoundException e) {
       while (true) {
         int pos = fullyQualifiedName.lastIndexOf('.');
-        if (pos < 0) {
+        if (pos == -1) { // not found
           throw e;
         }
         @SuppressWarnings("signature") // checked below & exception is handled
-        @ClassGetName
-        String innerName =
+        @ClassGetName String innerName =
             fullyQualifiedName.substring(0, pos) + "$" + fullyQualifiedName.substring(pos + 1);
         fullyQualifiedName = innerName;
         try {
           return Class.forName(fullyQualifiedName);
         } catch (ClassNotFoundException ee) {
-          continue; // nothing to do
+          // nothing to do
         }
       }
     }
