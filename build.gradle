@@ -467,7 +467,6 @@ task extractJacocoAgent(type: Copy) {
 }
 
 /*
- * Configuration of the systemTest task.
  * Runs JUnit over all classes in systemTest sourceSet.
  * JUnit tests assume that working directories can be found in the build directory.
  */
@@ -529,8 +528,7 @@ tasks.withType(Test) {
 }
 
 /*
- * Configuration of task to write HTML reports into build/reports/allTests for
- * all tests.
+ * Write HTML reports into build/reports/allTests for all tests.
  * [
  *   Note that this may not work correctly if different Test tasks use the same
  *   test classes. Fine here because sourceSets use different packages for test
@@ -775,19 +773,14 @@ javadoc.doLast {
  */
 build.dependsOn javadoc
 
-/*
- * Configuration of updateUserTOC task to update the table-of-contents for the
- * user documentation.
- */
+/* Update the table-of-contents for the user documentation. */
 task updateUserTOC( type:Exec, dependsOn: [ 'cloneLibs' ]) {
   executable file("$buildDir/utils/html-tools/html-update-toc")
   args  file("${projectDir}/src/docs/manual/index.html")
   environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
 }
 
-/* Configuration of task updateDevTOC to update table of contents in developer
- * documentation.
- */
+/* Update table of contents in developer documentation. */
 task updateDevTOC( type:Exec, dependsOn: ['cloneLibs' ]) {
   executable file("$buildDir/utils/html-tools/html-update-toc")
   args file("${projectDir}/src/docs/manual/dev.html")
@@ -840,8 +833,7 @@ task html5validatorExists {
 }
 
 /*
- * Configuration of manual task to generate/update and move documentation into
- * build/docs directory.
+ * Generate/update and move documentation into build/docs directory.
  */
 task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC', 'html5validatorExists']) {
   group 'Documentation'
