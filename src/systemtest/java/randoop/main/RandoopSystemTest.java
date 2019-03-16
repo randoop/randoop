@@ -1973,45 +1973,45 @@ public class RandoopSystemTest {
       RandoopRunStatus runStatus,
       String packageName) {
     TestRunStatus regressionRunDesc = null;
-    switch (expectedRegression) {
-      case SOME:
-        assertThat("...has regression tests", runStatus.regressionTestCount, is(greaterThan(0)));
-        String regressionBasename = options.getRegressionBasename();
-        try {
-          regressionRunDesc = TestRunStatus.runTests(environment, packageName, regressionBasename);
-        } catch (IOException e) {
-          fail("Exception collecting coverage from regression tests: " + e.getMessage());
+    if (expectedRegression == ExpectedTests.NONE) {
+      if (runStatus.regressionTestCount != 0) {
+        fail(
+            "Test suite should have no regression tests, but has " + runStatus.regressionTestCount);
+      }
+    } else if (expectedRegression == ExpectedTests.SOME
+        || (expectedRegression == ExpectedTests.DONT_CARE && runStatus.regressionTestCount > 0)) {
+      assertThat("...has regression tests", runStatus.regressionTestCount, is(greaterThan(0)));
+      String regressionBasename = options.getRegressionBasename();
+      try {
+        regressionRunDesc = TestRunStatus.runTests(environment, packageName, regressionBasename);
+      } catch (IOException e) {
+        fail("Exception collecting coverage from regression tests: " + e.getMessage());
+      }
+      if (regressionRunDesc.processStatus.exitStatus != 0) {
+        for (String line : regressionRunDesc.processStatus.outputLines) {
+          System.err.println(line);
         }
-        if (regressionRunDesc.processStatus.exitStatus != 0) {
-          for (String line : regressionRunDesc.processStatus.outputLines) {
-            System.err.println(line);
-          }
-          System.err.printf("environment = %s%n", environment);
-          System.err.printf("options = %s%n", options);
-          System.err.printf("expectedRegression = %s%n", expectedRegression);
-          System.err.printf("runStatus = %s%n", runStatus);
-          System.err.printf("packageName = %s%n", packageName);
-          fail("JUnit should exit properly");
+        System.err.printf("environment = %s%n", environment);
+        System.err.printf("options = %s%n", options);
+        System.err.printf("expectedRegression = %s%n", expectedRegression);
+        System.err.printf("runStatus = %s%n", runStatus);
+        System.err.printf("packageName = %s%n", packageName);
+        fail("JUnit should exit properly");
+      }
+      if (regressionRunDesc.testsSucceed != regressionRunDesc.testsRun) {
+        for (String line : regressionRunDesc.processStatus.outputLines) {
+          System.err.println(line);
         }
-        if (regressionRunDesc.testsSucceed != regressionRunDesc.testsRun) {
-          for (String line : regressionRunDesc.processStatus.outputLines) {
-            System.err.println(line);
-          }
-          fail(
-              "All regression tests should pass, but "
-                  + regressionRunDesc.testsFail
-                  + " regression tests failed");
-        }
-        break;
-      case NONE:
-        if (runStatus.regressionTestCount != 0) {
-          fail(
-              "Test suite should have no regression tests, but has "
-                  + runStatus.regressionTestCount);
-        }
-        break;
-      case DONT_CARE:
-        break;
+        fail(
+            "All regression tests should pass, but "
+                + regressionRunDesc.testsFail
+                + " regression tests failed");
+      }
+    } else if (expectedRegression == ExpectedTests.DONT_CARE
+        && runStatus.regressionTestCount == 0) {
+      // nothing to do
+    } else {
+      throw new Error("Unexpected fallthrough");
     }
     return regressionRunDesc;
   }

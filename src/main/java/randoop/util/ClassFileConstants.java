@@ -148,8 +148,7 @@ public class ClassFileConstants {
       throw new Error("IOException while reading '" + classname + "': " + e.getMessage());
     }
     @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
-    @ClassGetName
-    String resultClassname = jc.getClassName();
+    @ClassGetName String resultClassname = jc.getClassName();
     result.classname = resultClassname;
 
     // Get all of the constants from the pool
