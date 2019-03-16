@@ -172,6 +172,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FlakyTestAction flaky_test_behavior = FlakyTestAction.HALT;
 
   /**
+   * How many suspected flaky methods to print out (sorted by likelihood) upon flaky test
+   * generation. A flaky test is one that behaves differently on different executions.
+   */
+  @Option("Maximum number of suspected flaky methods to print")
+  public static int num_suspected_flaky_test_to_output = 20;
+
+  /**
    * Whether to output error-revealing tests. Disables all output when used with {@code
    * --no-regression-tests}. Restricting output can result in long runs if the default values of
    * {@code --generated-limit} and {@code --time-limit} are used.
