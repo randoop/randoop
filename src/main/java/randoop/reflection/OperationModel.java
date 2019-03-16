@@ -332,23 +332,16 @@ public class OperationModel {
       } catch (OperationParseException e) {
         try {
           operation = ConstructorCall.parse(sig);
-        } catch (OperationParseException e2) {
+        } catch (OperationParseException | AssertionError e2) {
           throw new OperationParseException(
-              "The following method could not be parsed as neither a constructor nor a method call: "
+              "Could not parse text as a method or constructor call: "
                   + sig
+                  + Globals.lineSep
                   + e.getMessage()
-                  + "\n"
-                  + e2.getMessage());
-        } catch (AssertionError e2) {
-          throw new OperationParseException(
-              "The following method could not be parsed as neither a constructor nor a method call: "
-                  + sig
-                  + e.getMessage()
-                  + "\n"
+                  + Globals.lineSep
                   + e2.getMessage());
         }
       }
-      Type outputType = operation.getOutputType();
       operationMap.add(operation.getDeclaringType(), operation);
     }
     return operationMap;
