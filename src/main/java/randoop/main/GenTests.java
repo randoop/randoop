@@ -526,43 +526,38 @@ public class GenTests extends GenInputsAbstract {
       HashSet<String> flakyTests = codeWriter.getFlakyTests();
 
       if (flakyTests.size() > 0) {
-        // How often each operation appears in any test.  (or maybe how many methods each operation
-        // appears in?)
-        HashMap<TypedOperation, Integer> testOccurrences = new HashMap<>();
-        // How often each operation appears in a flaky test.  (or maybe how many flaky methods each
-        // operation appears in?)
-        HashMap<TypedOperation, Integer> flakyOccurrences = new HashMap<>();
+        List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
 
-        // Tally occurrences of operations in all methods.
-        // Each method is counted once if it appears in a sequence test.
-        tallyOperationsInSequences(testOccurrences, explorer.getRegressionSequences());
+        // How many tests an operation occurs in.
+        Map<TypedOperation, Integer> testOccurrences;
+
+        // Tally occurrences of operations in all tests.
+        // Each method is counted exactly once if it appears in a sequence test.
+        testOccurrences = tallyOperationsInSequences(regressionSequences);
+
+        // How many flaky tests an operation occurs in.
+        Map<TypedOperation, Integer> flakyOccurrences;
 
         // TODO: cxing handle Error Test Sequence tallying.
         // tallyOperationsInSequences(testOccurrences, explorer.getErrorTestSequences());
 
-        List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+        List<ExecutableSequence> flakySequences = new ArrayList<>();
         for (String flakyTestNum : flakyTests) {
-          int testNum = Integer.parseInt(flakyTestNum.substring(4)); // length of test
+          int testNum = Integer.parseInt(flakyTestNum.substring(4)); // length of "test"
           // Tests start at 001
-          ExecutableSequence flakyTest = regressionSequences.get(testNum - 1);
-          HashSet<TypedOperation> ops = new HashSet<>();
-          SimpleList<Statement> statements = flakyTest.sequence.statements;
-          for (int i = 0; i < statements.size(); i++) {
-            if (!statements.get(i).getOperation().isMethodCall()) continue;
-            ops.add(statements.get(i).getOperation());
-          }
-
-          for (TypedOperation to : ops) {
-            if (flakyOccurrences.containsKey(to)) {
-              flakyOccurrences.put(to, flakyOccurrences.get(to) + 1);
-            } else {
-              flakyOccurrences.put(to, 1);
-            }
-          }
+          ExecutableSequence flakySequence = regressionSequences.get(testNum - 1);
+          flakySequences.add(flakySequence);
         }
 
+        // Tally occurrences of operations in flaky tests.
+        // Each method is counted exactly once if it appears in a flaky test.
+        flakyOccurrences = tallyOperationsInSequences(flakySequences);
+
+        // if-idf metric
+        // Our heuristic for probability of whether a method is flaky
+        //  is equal to the ratio of the number of flaky tests a method M occurs
+        //  in divided by the number of total tests M occurs in.
         Map<String, Double> methodFlakyPercentage = new HashMap<>();
-        List<Entry<String, Double>> sortedMethodsbyFlakiness;
 
         for (TypedOperation to : testOccurrences.keySet()) {
           double flakyMethodOccurrences =
@@ -571,13 +566,29 @@ public class GenTests extends GenInputsAbstract {
               to.toParsableString(), flakyMethodOccurrences / testOccurrences.get(to));
         }
 
-        sortedMethodsbyFlakiness = new ArrayList<>(methodFlakyPercentage.entrySet());
-        sortedMethodsbyFlakiness.sort(reverseOrder(Entry.comparingByValue()));
+        // Sort in descending order by value.
+        List<Entry<String, Double>> sortedMethodsByFlakiness =
+            new ArrayList<>(methodFlakyPercentage.entrySet());
+        sortedMethodsByFlakiness.sort(reverseOrder(Entry.comparingByValue()));
 
         System.out.println();
-        System.out.println("Percentage of method flakiness in tests.");
-        for (Entry<String, Double> e : sortedMethodsbyFlakiness) {
-          System.out.println(e.getKey() + ":\t " + (e.getValue() * 100.0) + "%");
+        System.out.println("Flaky tests were generated. The following methods,");
+        System.out.println("in decreasing order of likelihood, are the most likely culprits.");
+        System.out.println("Please determine whether the following methods may exhibit");
+        System.out.println("different behavior on separate runs of the same code");
+        System.out.println(
+            "and add those methods to the non-multi-run deterministic method blacklist.");
+        System.out.println("If you are unsure, consider adding one method at a time to the");
+        System.out.println("non-multi-run deterministic method blacklist and re-running Randoop");
+        System.out.println("until no flaky tests are generated.");
+        System.out.println();
+
+        for (int i = 0;
+            i < GenInputsAbstract.num_suspected_flaky_test_to_output
+                && i < sortedMethodsByFlakiness.size();
+            i++) {
+          Entry<String, Double> method = sortedMethodsByFlakiness.get(i);
+          System.out.println(method.getKey() + ":\t " + (method.getValue() * 100.0) + "%");
         }
       }
     }
@@ -602,19 +613,26 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Tallies the number of sequences an operation occurs in.
+   * Counts the number of sequences an operation occurs in. A sequence contributes 1 to the tally of
+   * operation Op if Op appears at least once in the sequence. Further occurrences in the same
+   * sequence (past the initial occurrence) do not contribute to the tally.
    *
-   * @param tallyMap the count map to increment for each operation
    * @param sequences sequences to process for operations
+   * @return the output count map to increment for each operation For each operation, the map maps
+   *     to the number of sequences in which the operation occurs at least once.
    */
-  private void tallyOperationsInSequences(
-      Map<TypedOperation, Integer> tallyMap, List<ExecutableSequence> sequences) {
+  private Map<TypedOperation, Integer> tallyOperationsInSequences(
+      List<ExecutableSequence> sequences) {
+    Map<TypedOperation, Integer> tallyMap = new HashMap<>();
+
     for (ExecutableSequence es : sequences) {
+      // Ensure that each operation is only counted once per sequence.
       HashSet<TypedOperation> ops = new HashSet<>();
+
       SimpleList<Statement> statements = es.sequence.statements;
       for (int i = 0; i < statements.size(); i++) {
         if (!statements.get(i).getOperation().isMethodCall()) {
-          continue;
+          continue; // We only care about methods.
         }
         ops.add(statements.get(i).getOperation());
       }
@@ -627,6 +645,7 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     }
+    return tallyMap;
   }
 
   /**
