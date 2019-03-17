@@ -20,11 +20,7 @@ plugins {
    * There is no separate target to just run Error Prone.
    */
   id "net.ltgt.errorprone-base" version "0.0.16"
-
-  id 'org.ajoberstar.grgit' version '2.3.0' apply false
 }
-
-import org.ajoberstar.grgit.Grgit
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
 // It is not run in the main build because the Checker Framework is incompatible with Error Prone.
