@@ -20,11 +20,7 @@ plugins {
    * There is no separate target to just run Error Prone.
    */
   id "net.ltgt.errorprone-base" version "0.0.16"
-
-  id 'org.ajoberstar.grgit' version '2.3.0' apply false
 }
-
-import org.ajoberstar.grgit.Grgit
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
 // It is not run in the main build because the Checker Framework is incompatible with Error Prone.
@@ -256,11 +252,18 @@ tasks.withType(JavaCompile).each { t ->
 task getCodeFormatScripts {
   description "Obtain the run-google-java-format scripts"
   doLast {
-    if (! new File("$projectDir/build/utils/.run-google-java-format").exists()) {
-      def rgjfGit = Grgit.clone(dir: "$projectDir/build/utils/.run-google-java-format", uri: 'https://github.com/plume-lib/run-google-java-format.git')
+    def rgjfDir = "$buildDir/utils/run-google-java-format"
+    if ( ! new File(rgjfDir).exists() ) {
+      exec {
+        commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/run-google-java-format.git", rgjfDir
+      }
     } else {
-      def rgjfGit = Grgit.open(dir: "$projectDir/build/utils/.run-google-java-format")
-      rgjfGit.pull()
+      // Ignore exit value so this does not halt the build when not connected to the Internet.
+      exec {
+        workingDir rgjfDir
+        ignoreExitValue true
+        commandLine 'git', 'pull', '-q'
+      }
     }
   }
 }
@@ -277,7 +280,7 @@ task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled
     include "**/*.java" exclude "src/testinput/**" exclude "build/**" exclude "**/CloneVisitor.java"
   } as List
   def pythonArgs = javaFiles.clone()
-  pythonArgs.add(0, "$projectDir/build/utils/.run-google-java-format/check-google-java-format.py")
+  pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/check-google-java-format.py")
 
   commandLine "python"
   args pythonArgs
@@ -296,7 +299,7 @@ task reformat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], 
     include "**/*.java" exclude "src/testinput/**" exclude "build/**" exclude "**/CloneVisitor.java"
   } as List
   def pythonArgs = javaFiles.clone()
-  pythonArgs.add(0, "$projectDir/build/utils/.run-google-java-format/run-google-java-format.py")
+  pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/run-google-java-format.py")
 
   commandLine "python"
   args pythonArgs
