@@ -82,9 +82,9 @@ public abstract class Type implements Comparable<Type> {
    * @return the type object for the type with the name, null if none is found
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Type getTypeforFullyQualifiedNameMaybeArray(@ClassGetName String fullyQualifiedName)
+  public static Type getTypeforFullyQualifiedName(@ClassGetName String fullyQualifiedName)
       throws ClassNotFoundException {
-    Class<?> className = forFullyQualifiedNameMaybeArray(fullyQualifiedName);
+    Class<?> className = forFullyQualifiedName(fullyQualifiedName);
     return className.isArray() ? ArrayType.forClass(className) : Type.forClass(className);
   }
 
@@ -98,11 +98,12 @@ public abstract class Type implements Comparable<Type> {
    * @return the type object for the type with the name, null if none is found
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Class<?> forFullyQualifiedNameMaybeArray(@ClassGetName String fullyQualifiedName)
+  public static Class<?> forFullyQualifiedName(@ClassGetName String fullyQualifiedName)
       throws ClassNotFoundException {
     String[] fullyQualifiedArrayParsedName = fullyQualifiedName.split("\\[");
     int arrayDimension = fullyQualifiedArrayParsedName.length - 1;
-    Class<?> fullyQualifiedBaseType = forFullyQualifiedName(fullyQualifiedArrayParsedName[0]);
+    Class<?> fullyQualifiedBaseType =
+        forFullyQualifiedNameNonArray(fullyQualifiedArrayParsedName[0]);
 
     if (arrayDimension > 0) {
       // Make each dimension size zero, since it is ignored by getClass().
@@ -120,7 +121,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the type object for the type with the name, null if none is found
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  private static Class<?> forFullyQualifiedName(String fullyQualifiedName)
+  private static Class<?> forFullyQualifiedNameNonArray(String fullyQualifiedName)
       throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.classForName(fullyQualifiedName);
     if (c != null) {

@@ -35,7 +35,7 @@ class TypeArguments {
         @ClassGetName String typeName = argsStrs[i].trim();
 
         try {
-          argTypes[i] = Type.forFullyQualifiedNameMaybeArray(typeName);
+          argTypes[i] = Type.forFullyQualifiedName(typeName);
         } catch (ClassNotFoundException e) {
           throw new OperationParseException("Class " + typeName + " is not on classpath");
         }

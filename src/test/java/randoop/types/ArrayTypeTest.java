@@ -106,37 +106,37 @@ public class ArrayTypeTest {
 
     try {
       assertTrue(
-          Type.getTypeforFullyQualifiedNameMaybeArray(objectArraySignature) instanceof ArrayType);
-      assertFalse(Type.forFullyQualifiedNameMaybeArray(objectArraySignature) == null);
+          Type.getTypeforFullyQualifiedName(objectArraySignature) instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedName(objectArraySignature) == null);
 
       assertTrue(
-          Type.getTypeforFullyQualifiedNameMaybeArray(multiDimObjectArraySignature)
+          Type.getTypeforFullyQualifiedName(multiDimObjectArraySignature)
               instanceof ArrayType);
-      assertFalse(Type.forFullyQualifiedNameMaybeArray(multiDimObjectArraySignature) == null);
+      assertFalse(Type.forFullyQualifiedName(multiDimObjectArraySignature) == null);
 
       assertTrue(
-          Type.getTypeforFullyQualifiedNameMaybeArray(primitiveArraySignature)
+          Type.getTypeforFullyQualifiedName(primitiveArraySignature)
               instanceof ArrayType);
-      assertFalse(Type.forFullyQualifiedNameMaybeArray(primitiveArraySignature) == null);
+      assertFalse(Type.forFullyQualifiedName(primitiveArraySignature) == null);
 
       assertFalse(
-          Type.getTypeforFullyQualifiedNameMaybeArray(nonArraySignature) instanceof ArrayType);
-      assertFalse(Type.forFullyQualifiedNameMaybeArray(nonArraySignature) == null);
+          Type.getTypeforFullyQualifiedName(nonArraySignature) instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedName(nonArraySignature) == null);
 
       assertFalse(
-          Type.getTypeforFullyQualifiedNameMaybeArray(primitiveNonArraySignature)
+          Type.getTypeforFullyQualifiedName(primitiveNonArraySignature)
               instanceof ArrayType);
-      assertFalse(Type.forFullyQualifiedNameMaybeArray(primitiveNonArraySignature) == null);
+      assertFalse(Type.forFullyQualifiedName(primitiveNonArraySignature) == null);
 
       assertTrue(
-          Type.getTypeforFullyQualifiedNameMaybeArray(innerClassArraySignature)
+          Type.getTypeforFullyQualifiedName(innerClassArraySignature)
               instanceof ArrayType);
-      assertFalse(Type.forFullyQualifiedNameMaybeArray(innerClassArraySignature) == null);
+      assertFalse(Type.forFullyQualifiedName(innerClassArraySignature) == null);
 
       assertFalse(
-          Type.getTypeforFullyQualifiedNameMaybeArray(innerClassNonArraySignature)
+          Type.getTypeforFullyQualifiedName(innerClassNonArraySignature)
               instanceof ArrayType);
-      assertFalse(Type.forFullyQualifiedNameMaybeArray(innerClassNonArraySignature) == null);
+      assertFalse(Type.forFullyQualifiedName(innerClassNonArraySignature) == null);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
       Assert.fail();
@@ -144,13 +144,13 @@ public class ArrayTypeTest {
 
     String invalidArrayInnerClass = "java.util.Formatter$IDontExist[][]";
     try {
-      Type.forFullyQualifiedNameMaybeArray(invalidArrayInnerClass);
+      Type.forFullyQualifiedName(invalidArrayInnerClass);
       Assert.fail();
     } catch (ClassNotFoundException e) {
       // Good
     }
     try {
-      Type.getTypeforFullyQualifiedNameMaybeArray(invalidArrayInnerClass);
+      Type.getTypeforFullyQualifiedName(invalidArrayInnerClass);
       Assert.fail();
     } catch (ClassNotFoundException e) {
       // Good
