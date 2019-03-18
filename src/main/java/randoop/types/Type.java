@@ -62,7 +62,7 @@ public abstract class Type implements Comparable<Type> {
    * t.getRuntimeClass().getName()}.
    *
    * @param typeName the name of a type
-   * @return the type object for the type with the name, null if none is found
+   * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
   public static Type forName(@ClassGetName String typeName) throws ClassNotFoundException {
@@ -79,7 +79,7 @@ public abstract class Type implements Comparable<Type> {
    * @param fullyQualifiedName the fully qualified name of a type. Array names such as {@code int[]}
    *     or {@code java.lang.String[][]} are also fully qualified names. However, array definitions
    *     with sizes, such as {@code int[3][]}, are not fully qualified names.
-   * @return the type object for the type with the name, null if none is found
+   * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
   public static Type getTypeforFullyQualifiedName(@ClassGetName String fullyQualifiedName)
@@ -95,7 +95,7 @@ public abstract class Type implements Comparable<Type> {
    * @param fullyQualifiedName the fully qualified name of a type. Array names such as {@code int[]}
    *     or {@code java.lang.String[][]} are also fully qualified names. However, array definitions
    *     with sizes, such as {@code int[3][]}, are not fully qualified names.
-   * @return the type object for the type with the name, null if none is found
+   * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
   public static Class<?> forFullyQualifiedName(@ClassGetName String fullyQualifiedName)
@@ -118,7 +118,7 @@ public abstract class Type implements Comparable<Type> {
    * Returns the Class for a fully qualified name. Does not support arrays.
    *
    * @param fullyQualifiedName the fully qualified name of a non-array type
-   * @return the type object for the type with the name, null if none is found
+   * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
   private static Class<?> forFullyQualifiedNameNonArray(String fullyQualifiedName)
