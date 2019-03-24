@@ -523,17 +523,16 @@ public class GenTests extends GenInputsAbstract {
           GenInputsAbstract.regression_test_basename,
           "Regression");
 
-      HashSet<String> flakyTests = codeWriter.getFlakyTests();
+      HashSet<String> flakyTests = codeWriter.getFlakyTestNames();
 
       if (flakyTests.size() > 0) {
         List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
 
         // How many tests an operation occurs in.
-        Map<TypedOperation, Integer> testOccurrences;
-
         // Tally occurrences of operations in all tests.
         // Each method is counted exactly once if it appears in a sequence test.
-        testOccurrences = tallyOperationsInSequences(regressionSequences);
+        Map<TypedOperation, Integer> testOccurrences =
+            tallyOperationsInSequences(regressionSequences);
 
         // How many flaky tests an operation occurs in.
         Map<TypedOperation, Integer> flakyOccurrences;
@@ -553,10 +552,14 @@ public class GenTests extends GenInputsAbstract {
         // Each method is counted exactly once if it appears in a flaky test.
         flakyOccurrences = tallyOperationsInSequences(flakySequences);
 
-        // if-idf metric
+        // tf-idf metric
         // Our heuristic for probability of whether a method is flaky
         //  is equal to the ratio of the number of flaky tests a method M occurs
         //  in divided by the number of total tests M occurs in.
+        // The result is multiplied by 100.0 to obtain a percentage.
+
+        // Maps from a fully-qualified method signature to the above
+        //  percentage.
         Map<String, Double> methodFlakyPercentage = new HashMap<>();
 
         for (TypedOperation to : testOccurrences.keySet()) {
@@ -575,20 +578,17 @@ public class GenTests extends GenInputsAbstract {
         System.out.println("Flaky tests were generated. The following methods,");
         System.out.println("in decreasing order of likelihood, are the most likely culprits.");
         System.out.println("Please determine whether the following methods may exhibit");
-        System.out.println("different behavior on separate runs of the same code");
-        System.out.println(
-            "and add those methods to the non-multi-run deterministic method blacklist.");
-        System.out.println("If you are unsure, consider adding one method at a time to the");
-        System.out.println("non-multi-run deterministic method blacklist and re-running Randoop");
-        System.out.println("until no flaky tests are generated.");
+        System.out.println("different behavior on separate runs of the same code.");
+        // TODO cxing: add nmrd-blacklist comment suggestion for user.
         System.out.println();
 
+        // Output methods by ranking from most likely to least likely to be flaky.
         for (int i = 0;
-            i < GenInputsAbstract.num_suspected_flaky_test_to_output
+            i < GenInputsAbstract.num_suspected_flaky_methods_to_output
                 && i < sortedMethodsByFlakiness.size();
             i++) {
           Entry<String, Double> method = sortedMethodsByFlakiness.get(i);
-          System.out.println(method.getKey() + ":\t " + (method.getValue() * 100.0) + "%");
+          System.out.println((i + 1) + ".\t" + method.getKey());
         }
       }
     }
@@ -618,7 +618,7 @@ public class GenTests extends GenInputsAbstract {
    * sequence (past the initial occurrence) do not contribute to the tally.
    *
    * @param sequences sequences to process for operations
-   * @return the output count map to increment for each operation For each operation, the map maps
+   * @return the output count map to increment for each operation. For each operation, the map maps
    *     to the number of sequences in which the operation occurs at least once.
    */
   private Map<TypedOperation, Integer> tallyOperationsInSequences(

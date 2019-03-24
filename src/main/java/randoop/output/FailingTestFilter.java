@@ -59,7 +59,7 @@ public class FailingTestFilter implements CodeWriter {
   private final JavaFileWriter javaFileWriter;
 
   /** Method names for flaky tests (e.g., "test005"). */
-  private final HashSet<String> flakyTests;
+  private final HashSet<String> flakyTestNames;
 
   /**
    * Create a {@link FailingTestFilter} for which tests will be run in the environment and which
@@ -71,17 +71,16 @@ public class FailingTestFilter implements CodeWriter {
   public FailingTestFilter(TestEnvironment testEnvironment, JavaFileWriter javaFileWriter) {
     this.testEnvironment = testEnvironment;
     this.javaFileWriter = javaFileWriter;
-    this.flakyTests = new HashSet<>();
+    this.flakyTestNames = new HashSet<>();
   }
 
   /**
-   * Retrieves a shallow copy of the flaky test collection.
+   * Retrieves a shallow copy of the set of flaky test names. e.g. HashSet{"test001", "test002"}
    *
    * @return a shallow copy of the flaky test collection
    */
-  @SuppressWarnings("unchecked")
-  public HashSet<String> getFlakyTests() {
-    return (HashSet<String>) flakyTests.clone();
+  public HashSet<String> getFlakyTestNames() {
+    return new HashSet<>(flakyTestNames);
   }
 
   /**
@@ -132,7 +131,7 @@ public class FailingTestFilter implements CodeWriter {
           throw new Error("Timed out: " + qualifiedClassname);
         } else {
           classSource =
-              commentFailingAssertions(packageName, classname, classSource, status, flakyTests);
+              commentFailingAssertions(packageName, classname, classSource, status, flakyTestNames);
         }
       } finally {
         UtilPlume.deleteDir(workingDirectory.toFile());
@@ -246,7 +245,7 @@ public class FailingTestFilter implements CodeWriter {
    * @param javaCode the source code for the test class; each assertion must be on its own line
    * @param status the {@link randoop.execution.RunCommand.Status} from running the test with JUnit
    * @param flakyTests names of flaky tests, e.g., "test005". This is an output parameter that is
-   *     augmented by this methodx
+   *     augmented by this method.
    * @return the class source edited so that failing assertions are replaced by comments
    * @throws RandoopBug if {@code status} contains output for a failure not involving a
    *     Randoop-generated test method

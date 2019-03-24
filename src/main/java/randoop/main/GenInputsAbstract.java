@@ -176,7 +176,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * generation. A flaky test is one that behaves differently on different executions.
    */
   @Option("Maximum number of suspected flaky methods to print")
-  public static int num_suspected_flaky_test_to_output = 20;
+  public static int num_suspected_flaky_methods_to_output = 10;
 
   /**
    * Whether to output error-revealing tests. Disables all output when used with {@code
