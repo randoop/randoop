@@ -20,6 +20,10 @@ plugins {
    * There is no separate target to just run Error Prone.
    */
   id "net.ltgt.errorprone-base" version "0.0.16"
+
+  // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
+  id 'se.patrikerdes.use-latest-versions' version '0.2.9'
+  id 'com.github.ben-manes.versions' version '0.21.0'
 }
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
