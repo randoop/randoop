@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '4.0.4'
+  id 'com.github.johnrengelman.shadow' version '5.0.0'
   id 'java'
   id 'eclipse'
   id 'idea'
@@ -56,7 +56,7 @@ allprojects {
   }
 
   dependencies {
-    compile "org.checkerframework:checker-qual:2.6.0"
+    compile "org.checkerframework:checker-qual:2.7.0"
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     plumelib 'org.plumelib:bcel-util:1.1.4'
@@ -160,7 +160,8 @@ dependencies {
   implementation files(project(':replacecall').sourceSets.main.output)
 
   /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files.
-   * TODO: Update now that we no longer support JDK7. */
+   * TODO: Update now that we no longer support JDK7.
+   * Note that updating will require code changes due to JavaParser API changes. */
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
 
   /* Jacoco measures coverage of classes and methods under test. */
@@ -168,10 +169,10 @@ dependencies {
   implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.3', classifier: 'runtime'
 
   /* sourceSet test uses JUnit and some use testInput source set */
-  testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.11'
+  testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.12'
   testImplementation group: 'junit', name: 'junit', version: '4.+'
   testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.6.0'
+  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.7.0'
   testImplementation sourceSets.testInput.output
 
   /*
@@ -196,7 +197,7 @@ dependencies {
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.3'
-  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.6.0'
+  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.7.0'
   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
