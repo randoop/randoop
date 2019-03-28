@@ -18,7 +18,7 @@ class SystemTestEnvironmentManager {
   /** The default directory name for test jacocoagent files. */
   private static final String JACOCO_DIR_NAME = "jacoco";
 
-  /** The classpath for the systemtest. */
+  /** The classpath for the systemTest. */
   final String classpath;
 
   /** The root for the system test working directories. */

@@ -15,7 +15,7 @@ plugins {
   /*
    * Plugin that applies Google's Error Prone linter (http://errorprone.info/).
    * https://github.com/tbroyer/gradle-errorprone-plugin
-   * Elsewhere this file excludes src/testinput from directories examined by Error Prone.
+   * Elsewhere this file excludes src/testInput from directories examined by Error Prone.
    * To run Error Prone, do:  ./gradlew compileJava
    * There is no separate target to just run Error Prone.
    */
@@ -86,49 +86,23 @@ sourceSets {
   /* JUnit tests that must be run with -javaagent */
   /* JUnit tests are run in nondeterministic order, but system tests are
      run in deterministic order. */
-  coveredTest {
-    java {
-      srcDir 'src/coveredtest/java'
-    }
-    resources {
-      srcDir 'src/coveredtest/resources'
-    }
-  }
-
-  replacecallTest {
-    java {
-      srcDir 'src/replacecalltest/java'
-    }
-    resources {
-      srcDir 'src/replacecalltest/resources'
-    }
-  }
+  coveredTest
+  replacecallTest
 
   /* system tests */
   systemTest {
-    java {
-      srcDir 'src/systemtest/java'
-    }
     resources {
-      srcDir 'src/systemtest/resources'
-      srcDir 'src/testinput/resources'
+      srcDir 'src/testInput/resources'
     }
     output.dir(workingDirectories, builtBy: 'generateWorkingDirs')
   }
 
   /* Code sets used by system tests. There are no actual tests here. */
-  testInput {
-    java {
-      srcDir 'src/testinput/java'
-    }
-    resources {
-      srcDir 'src/testinput/resources'
-    }
-  }
+  testInput 
 
   test {
     resources {
-      srcDir 'src/testinput/resources'
+      srcDir 'src/testInput/resources'
     }
   }
 }
@@ -202,7 +176,7 @@ dependencies {
 
   /*
    * sourceSet testInput depends on output of main.
-   * Also, src/testinput/java/ps1/RatPolyTest.java uses JUnit
+   * Also, src/testInput/java/ps1/RatPolyTest.java uses JUnit
    */
   testInputImplementation sourceSets.main.output
   testInputImplementation group: 'junit', name: 'junit', version: '4.+'
@@ -289,7 +263,7 @@ task pythonIsInstalled(type: Exec) {
 task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], group: 'Formatting') {
   description "Check whether the Java source code is properly formatted"
   def javaFiles = fileTree("$projectDir").matching{
-    include "**/*.java" exclude "src/testinput/**" exclude "build/**" exclude "**/CloneVisitor.java"
+    include "**/*.java" exclude "src/testInput/**" exclude "build/**" exclude "**/CloneVisitor.java"
   } as List
   def pythonArgs = javaFiles.clone()
   pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/check-google-java-format.py")
@@ -308,7 +282,7 @@ task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled
 task reformat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], group: 'Formatting') {
   description "Format the Java source code according to the Google Java Format style"
   def javaFiles = fileTree("$projectDir").matching{
-    include "**/*.java" exclude "src/testinput/**" exclude "build/**" exclude "**/CloneVisitor.java"
+    include "**/*.java" exclude "src/testInput/**" exclude "build/**" exclude "**/CloneVisitor.java"
   } as List
   def pythonArgs = javaFiles.clone()
   pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/run-google-java-format.py")
@@ -327,10 +301,10 @@ clean.dependsOn ':covered-class:clean'
 /*
  * Configuration for testing.
  * In terms of build, we have two kinds of tests, both using JUnit.
- *   * Those in src/coveredtest require the covered-class Java agent.
+ *   * Those in src/coveredTest require the covered-class Java agent.
  *   * Those in src/test are run without the agent.
  *     This second group includes tests that run the full Randoop over
- *     classes that (mostly) are located in src/testinput.
+ *     classes that (mostly) are located in src/testInput.
  */
 
 /*
@@ -416,7 +390,7 @@ task replacecallTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.replacecallTest.output.resourcesDir
   testClassesDirs = sourceSets.replacecallTest.output.classesDirs
   classpath = sourceSets.replacecallTest.runtimeClasspath + files("$buildDir/libs/replacecall-${version}.jar")
-  // use the replacecall agent using the exclusions file from replacecalltest/resources
+  // use the replacecall agent using the exclusions file from replacecallTest/resources
   jvmArgs "-javaagent:$buildDir/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt,--debug"
   jvmArgs "-Xbootclasspath/a:$buildDir/libs/replacecall-${version}.jar"
   testLogging {
@@ -533,7 +507,7 @@ tasks.withType(Test) {
 
   /*
    * Pass along any system properties that begin with "randoop."
-   * Used by randoop.main.RandoopOptions in systemtest.
+   * Used by randoop.main.RandoopOptions in systemTest.
    */
   System.properties.each { k,v->
         if (k.startsWith("randoop.")) {
@@ -957,14 +931,14 @@ task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishS
 task tags(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testinput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testInput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
 task tagsNoTests(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-scripts/sort-directory-order | grep -v /testinput/ | xargs etags"
+  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-scripts/sort-directory-order | grep -v /testInput/ | xargs etags"
 }
 
 /* Run checklink */

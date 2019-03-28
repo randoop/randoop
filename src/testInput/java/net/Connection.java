@@ -2,7 +2,7 @@ package net;
 
 /**
  * Note: this file is a slighly modified version of the tutorial file for Toradocu, and was used to
- * generate the {@code net_Connection} class at the top level of the testinput source set.
+ * generate the {@code net_Connection} class at the top level of the testInput source set.
  * If this class is modified, it should be run through Toradocu again to generate that input file
  * again.
  */

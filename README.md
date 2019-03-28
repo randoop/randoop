@@ -18,15 +18,15 @@ It automatically creates unit tests for your classes, in JUnit format.
 * `lib` - jar files for local copies of libraries not available via Maven
 * `scripts` - git hook scripts
 * `src` - source directories for Randoop, including
-    * `coveredtest` - source for JUnit tests of the covered-class Java agent
+    * `coveredTest` - source for JUnit tests of the covered-class Java agent
     * `distribution` - resource files for creating the distribution zip file
     * `docs` - [documentation]("https://randoop.github.io/randoop/"), including the manual and resources
     * `javadoc` - resource files for creating [API documentation](https://randoop.github.io/randoop/api/)
     * `main` - Randoop source code
-    * `replacecalltest` - source for JUnit tests of the replacecall Java agent
-    * `systemtest` - source for Randoop system tests
+    * `replacecallTest` - source for JUnit tests of the replacecall Java agent
+    * `systemTest` - source for Randoop system tests
     * `test` - source for JUnit tests of Randoop
-    * `testinput` - source for libraries used in Randoop testing
+    * `testInput` - source for libraries used in Randoop testing
 
 The source directories follow the conventions of the Gradle Java plugin, where
 each directory has a _java_ subdirectory containing Java source, and,

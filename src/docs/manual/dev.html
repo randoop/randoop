@@ -311,7 +311,7 @@ For instance,
 </p>
 <pre><code>    ./gradlew test --tests="*GenericTypesTest"
     # You can include "run" in the test name, but still use a leading "*"
-    ./gradlew systemtest --tests="*Collection*"
+    ./gradlew systemTest --tests="*Collection*"
 </code></pre>
 
 <p>
@@ -326,7 +326,7 @@ by setting the system properties
 For instance:
 </p>
 
-<pre><code>  ./gradlew systemtest --tests="*Collection*" \
+<pre><code>  ./gradlew systemTest --tests="*Collection*" \
     -Drandoop.selection.log=selection-log.txt -Drandoop.operation.history.log=operation-log.txt
 </code></pre>
 <p>
@@ -353,7 +353,7 @@ If Randoop generates an unexpected test (for example, Randoop's test suite outpu
 you can run the test with commands like these:
 
 <pre>
-javac -cp .:junit-4.11.jar -sourcepath .:.../randoop/src/testinput/java/ ErrorTest.java
+javac -cp .:junit-4.11.jar -sourcepath .:.../randoop/src/testInput/java/ ErrorTest.java
 java -cp .:junit-4.11.jar:.../randoop/build/classes/java/testInput/ org.junit.runner.JUnitCore ErrorTest
 </pre>
 
@@ -441,8 +441,8 @@ cd randoop-fork-USER-branch-BRANCHNAME
   As you add new functionality to Randoop, you should also add new tests.
   Randoop has three kinds of tests:
   tests of Randoop internal classes (under directory <code>src/test</code>),
-  tests of Randoop Java agents (under directories <code>src/coveredtest</code>
-  and <code>src/replacecalltest</code>), and
+  tests of Randoop Java agents (under directories <code>src/coveredTest</code>
+  and <code>src/replacecallTest</code>), and
   system tests that run Randoop on input classes.
   All of the tests are written as JUnit classes, but are separate because each
   needs to be executed differently.
@@ -486,11 +486,11 @@ of that particular class in a similar way.
 
 <p>
   The system tests are test methods of class <code>randoop.main.RandoopSystemTest</code>
-  in the <code>src/systemtest</code> directory.
+  in the <code>src/systemTest</code> directory.
   Each test uses one or more input classes from the <i>testInput</i> source set,
-  which resides in the <code>src/testinput/java</code> subdirectory.
+  which resides in the <code>src/testInput/java</code> subdirectory.
   (System tests are run with a different classpath than the other tests, and
-  will only take input classes from <code>src/testinput</code>.)
+  will only take input classes from <code>src/testInput</code>.)
   So, to set up a new system test, you need to add any new input classes, and add
   a new test method to the system test class.
 </p>
@@ -1385,7 +1385,7 @@ in <a href="../api/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam plugin agentTest gradle taskName RandoopSystemTest plugins gitignore randoop changelog RandoopGradle cd OLDVERSION NEWVERSION unpushed mv subprojects src agenttest  testinput systemtest FieldGetter FieldSetter PublicField init var1 var2 var3 var4 var5 resultAt3 assertTrue o2 testInput str FieldGet FieldSet AccessibleField NonreceiverTerm ArrayCreation InstantiatedType linkedListType ConcreteTypes ReferenceType substLL getTypeSubstitution TypedOperation forConstructor createPrimitiveInitialization forMethod treeSetType substTS gradlew subproject validateManual TODO checklink txt boolean wildcards wcTS substWC syncA substA implementors IndexOutOfBoundsException deterministically sudo qqy jdk perl html5validator sourceset cp sourcepath ErrorTest suitepath ErrorTest0 suiteclasspath Defects4j md Pascali mdernst ubuntu jdk8 BRANCHNAME javadoc validateAPI valdateSite preplace buildRelease applyCaptureConversion forArgs getTypeParameters
+<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam plugin agentTest gradle taskName RandoopSystemTest plugins gitignore randoop changelog RandoopGradle cd OLDVERSION NEWVERSION unpushed mv subprojects src agenttest  testInput systemTest FieldGetter FieldSetter PublicField init var1 var2 var3 var4 var5 resultAt3 assertTrue o2 testInput str FieldGet FieldSet AccessibleField NonreceiverTerm ArrayCreation InstantiatedType linkedListType ConcreteTypes ReferenceType substLL getTypeSubstitution TypedOperation forConstructor createPrimitiveInitialization forMethod treeSetType substTS gradlew subproject validateManual TODO checklink txt boolean wildcards wcTS substWC syncA substA implementors IndexOutOfBoundsException deterministically sudo qqy jdk perl html5validator sourceset cp sourcepath ErrorTest suitepath ErrorTest0 suiteclasspath Defects4j md Pascali mdernst ubuntu jdk8 BRANCHNAME javadoc validateAPI valdateSite preplace buildRelease applyCaptureConversion forArgs getTypeParameters
  -->
 <!--  LocalWords:  google JDK's testAdd LinkedList addFirst TreeSet MethodCall th
  -->
