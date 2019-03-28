@@ -710,9 +710,9 @@ task described below.
   there are no changes needed:
 </p>
 <ol>
-  <li>Optionally update dependencies; see occurrences
-    of <code>version</code> in file <code>build.gradle</code>.
-    Do this in a branch, and make a pull request.
+  <li>In a branch, update dependencies by running:
+    <pre>./gradlew useLatestVersions</pre>
+    Make a pull request to see if anything breaks.
   </li>
   <li>Ensure that your clone is up to date:
     <pre>git pull</pre>

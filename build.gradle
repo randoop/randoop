@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '4.0.4'
+  id 'com.github.johnrengelman.shadow' version '5.0.0'
   id 'java'
   id 'eclipse'
   id 'idea'
@@ -20,6 +20,10 @@ plugins {
    * There is no separate target to just run Error Prone.
    */
   id "net.ltgt.errorprone-base" version "0.0.16"
+
+  // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
+  id 'se.patrikerdes.use-latest-versions' version '0.2.9'
+  id 'com.github.ben-manes.versions' version '0.21.0'
 }
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
@@ -52,7 +56,7 @@ allprojects {
   }
 
   dependencies {
-    compile "org.checkerframework:checker-qual:2.6.0"
+    compile "org.checkerframework:checker-qual:2.7.0"
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     plumelib 'org.plumelib:bcel-util:1.1.4'
@@ -149,13 +153,15 @@ dependencies {
   implementation configurations.plumelib
 
   implementation 'org.apache.commons:commons-exec:1.3'
+  implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
   implementation group: 'commons-io', name: 'commons-io', version: '2.6'
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
   implementation group: 'junit', name: 'junit', version: '4.+'
   implementation files(project(':replacecall').sourceSets.main.output)
 
   /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files.
-   * TODO: Update now that we no longer support JDK7. */
+   * TODO: Update now that we no longer support JDK7.
+   * Note that updating will require code changes due to JavaParser API changes. */
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
 
   /* Jacoco measures coverage of classes and methods under test. */
@@ -163,9 +169,10 @@ dependencies {
   implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.3', classifier: 'runtime'
 
   /* sourceSet test uses JUnit and some use testInput source set */
-  testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.11'
+  testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.12'
   testImplementation group: 'junit', name: 'junit', version: '4.+'
   testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.7.0'
   testImplementation sourceSets.testInput.output
 
   /*
@@ -190,6 +197,7 @@ dependencies {
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.3'
+  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.7.0'
   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
