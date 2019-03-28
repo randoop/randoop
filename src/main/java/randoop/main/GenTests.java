@@ -528,14 +528,10 @@ public class GenTests extends GenInputsAbstract {
       if (flakyTestNames.size() > 0) {
         List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
 
-        // How many tests an operation occurs in.
-        // Tally occurrences of operations in all tests.
-        // Each method is counted exactly once if it appears in a sequence test.
+        // How many tests an operation occurs in (regardless of how many times it appears in that
+        // test).
         Map<TypedOperation, Integer> testOccurrences =
             tallyOperationsInSequences(regressionSequences);
-
-        // How many flaky tests an operation occurs in.
-        Map<TypedOperation, Integer> flakyOccurrences;
 
         // TODO: cxing handle Error Test Sequence tallying.
         // tallyOperationsInSequences(testOccurrences, explorer.getErrorTestSequences());
@@ -548,9 +544,9 @@ public class GenTests extends GenInputsAbstract {
           flakySequences.add(flakySequence);
         }
 
-        // Tally occurrences of operations in flaky tests.
-        // Each method is counted exactly once if it appears in a flaky test.
-        flakyOccurrences = tallyOperationsInSequences(flakySequences);
+        // How many tests an operation occurs in (regardless of how many times it appears in that
+        // flaky test).
+        Map<TypedOperation, Integer> flakyOccurrences = tallyOperationsInSequences(flakySequences);
 
         // tf-idf metric
         // Our heuristic for probability of whether a method is flaky
@@ -613,13 +609,11 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Counts the number of sequences an operation occurs in. A sequence contributes 1 to the tally of
-   * operation Op if Op appears at least once in the sequence. Further occurrences in the same
-   * sequence (past the initial occurrence) do not contribute to the tally.
+   * Counts the number of sequences an operation occurs in.
    *
    * @param sequences sequences to process for operations
-   * @return the output count map to increment for each operation. For each operation, the map maps
-   *     to the number of sequences in which the operation occurs at least once.
+   * @return a map from each operation to the number of sequences in which the operation occurs at
+   *     least once
    */
   private Map<TypedOperation, Integer> tallyOperationsInSequences(
       List<ExecutableSequence> sequences) {
