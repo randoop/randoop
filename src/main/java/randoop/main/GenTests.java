@@ -166,7 +166,7 @@ public class GenTests extends GenInputsAbstract {
   private int sequenceCompileFailureCount = 0;
 
   /** TypedOperationHeuristic is a wrapper around a TypedOperation and a heuristic. */
-  class TypedOperationHeuristic {
+  private static class TypedOperationHeuristic {
     public double heuristic;
     public TypedOperation operation;
 
