@@ -167,9 +167,18 @@ public class GenTests extends GenInputsAbstract {
 
   /** TypedOperationHeuristic is a wrapper around a TypedOperation and a heuristic. */
   private static class TypedOperationHeuristic {
+    // Heuristic value of the TypedOperation; e.g. tf-idf.
     public double heuristic;
+
+    // The wrapped operation.
     public TypedOperation operation;
 
+    /**
+     * Constructor to populate heuristic and operation
+     *
+     * @param heuristic heuristic value of operation
+     * @param operation wrapped operation
+     */
     public TypedOperationHeuristic(double heuristic, TypedOperation operation) {
       this.heuristic = heuristic;
       this.operation = operation;
