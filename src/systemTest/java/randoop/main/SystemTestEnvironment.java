@@ -30,7 +30,7 @@ class SystemTestEnvironment {
   /** The path of the JaCoCo agent. */
   private final Path jacocoAgentPath;
 
-  /** The path of the testinput class files. */
+  /** The path of the testInput class files. */
   private final Path testInputClassDir;
 
   /** the path to the java agent. null by default. */

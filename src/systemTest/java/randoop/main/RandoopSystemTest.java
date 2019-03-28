@@ -128,7 +128,7 @@ public class RandoopSystemTest {
    *    This object will also set options for output directories and logging, so only options
    *    affecting generation are needed.
    *
-   *    Input files should be placed in src/systemtest/resources (or src/inputtest/resources if they
+   *    Input files should be placed in src/systemTest/resources (or src/inputtest/resources if they
    *    relate to classes in the inputTest source set), and can be used in option using the path
    *    prefix resources/systemTest/.
    *
