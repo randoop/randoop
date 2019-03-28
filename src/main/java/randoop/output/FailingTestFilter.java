@@ -75,9 +75,10 @@ public class FailingTestFilter implements CodeWriter {
   }
 
   /**
-   * Retrieves a shallow copy of the set of flaky test names. e.g. HashSet{"test001", "test002"}
+   * Returns set of flaky test names. Each element has the form testNNN where N are digits; for
+   * example, "test002".
    *
-   * @return a shallow copy of the flaky test collection
+   * @return the flaky test names
    */
   public HashSet<String> getFlakyTestNames() {
     return new HashSet<>(flakyTestNames);

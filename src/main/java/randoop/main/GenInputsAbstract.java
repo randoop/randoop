@@ -172,11 +172,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FlakyTestAction flaky_test_behavior = FlakyTestAction.HALT;
 
   /**
-   * How many suspected flaky methods to print out (sorted by likelihood) upon flaky test
-   * generation. A flaky test is one that behaves differently on different executions.
+   * How many suspected side-effecting or nondeterministic methods (from the program under test) to
+   * print.
    */
-  @Option("Maximum number of suspected flaky methods to print")
-  public static int num_suspected_flaky_methods_to_output = 10;
+  @Option("Number of suspected nondeterministic methods to print")
+  public static int nondeterministic_methods_to_output = 10;
 
   /**
    * Whether to output error-revealing tests. Disables all output when used with {@code

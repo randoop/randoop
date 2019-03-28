@@ -523,9 +523,9 @@ public class GenTests extends GenInputsAbstract {
           GenInputsAbstract.regression_test_basename,
           "Regression");
 
-      HashSet<String> flakyTests = codeWriter.getFlakyTestNames();
+      HashSet<String> flakyTestNames = codeWriter.getFlakyTestNames();
 
-      if (flakyTests.size() > 0) {
+      if (flakyTestNames.size() > 0) {
         List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
 
         // How many tests an operation occurs in.
@@ -541,8 +541,8 @@ public class GenTests extends GenInputsAbstract {
         // tallyOperationsInSequences(testOccurrences, explorer.getErrorTestSequences());
 
         List<ExecutableSequence> flakySequences = new ArrayList<>();
-        for (String flakyTestNum : flakyTests) {
-          int testNum = Integer.parseInt(flakyTestNum.substring(4)); // length of "test"
+        for (String flakyTestName : flakyTestNames) {
+          int testNum = Integer.parseInt(flakyTestName.substring(4)); // length of "test"
           // Tests start at 001
           ExecutableSequence flakySequence = regressionSequences.get(testNum - 1);
           flakySequences.add(flakySequence);
@@ -584,7 +584,7 @@ public class GenTests extends GenInputsAbstract {
 
         // Output methods by ranking from most likely to least likely to be flaky.
         for (int i = 0;
-            i < GenInputsAbstract.num_suspected_flaky_methods_to_output
+            i < GenInputsAbstract.nondeterministic_methods_to_output
                 && i < sortedMethodsByFlakiness.size();
             i++) {
           Entry<String, Double> method = sortedMethodsByFlakiness.get(i);
