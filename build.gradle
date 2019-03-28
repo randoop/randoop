@@ -86,6 +86,8 @@ sourceSets {
   /* JUnit tests that must be run with -javaagent */
   /* JUnit tests are run in nondeterministic order, but system tests are
      run in deterministic order. */
+  coveredTest
+  replacecallTest
 
   /* system tests */
   systemTest {
@@ -94,6 +96,9 @@ sourceSets {
     }
     output.dir(workingDirectories, builtBy: 'generateWorkingDirs')
   }
+
+  /* Code sets used by system tests. There are no actual tests here. */
+  testInput 
 
   test {
     resources {
