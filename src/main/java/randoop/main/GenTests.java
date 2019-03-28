@@ -167,10 +167,10 @@ public class GenTests extends GenInputsAbstract {
 
   /** TypedOperationHeuristic is a wrapper around a TypedOperation and a heuristic. */
   private static class TypedOperationHeuristic {
-    // Heuristic value of the TypedOperation; e.g. tf-idf.
+    /** Heuristic value of the TypedOperation; e.g. tf-idf. */
     public double heuristic;
 
-    // The wrapped operation.
+    /** The wrapped operation. */
     public TypedOperation operation;
 
     /**
@@ -185,11 +185,12 @@ public class GenTests extends GenInputsAbstract {
     }
   }
 
-  // Comparator used for sorting by heuristic.
+  /** Comparator used for sorting by heuristic. */
   private static final Comparator<TypedOperationHeuristic> heuristicSortComparator =
       (TypedOperationHeuristic t, TypedOperationHeuristic t1) ->
           Double.valueOf(t.heuristic).compareTo(t1.heuristic);
 
+  /** Default GenTests constructor with default messages */
   public GenTests() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
