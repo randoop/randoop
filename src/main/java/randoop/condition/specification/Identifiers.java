@@ -1,6 +1,6 @@
 package randoop.condition.specification;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -70,7 +70,7 @@ public class Identifiers {
    * receiver and return value.
    */
   public Identifiers() {
-    this(new ArrayList<String>());
+    this(Collections.emptyList());
   }
 
   /**
