@@ -19,7 +19,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -45,7 +44,8 @@ public class SpecificationTranslatorTest {
   @Test
   public void testPrintWriterAppend() {
     Method method = getPrintWriterAppendMethod();
-    List<String> parameterList = Collections.singletonList("c");
+    List<String> parameterList = new ArrayList<>();
+    parameterList.add("c");
     Identifiers identifiers = new Identifiers(parameterList);
     OperationSpecification opSpec = new OperationSpecification(null, identifiers);
     SpecificationTranslator sig =
@@ -91,7 +91,8 @@ public class SpecificationTranslatorTest {
             "returns this writer",
             Util.replaceWords(conditionText, sig.getReplacementMap()));
     postConditions.add(condition);
-    List<Variable> inputList = Collections.singletonList(sequence.getLastVariable());
+    List<Variable> inputList = new ArrayList<>(sequence.getInputs(sequence.size() - 1));
+    inputList.add(sequence.getLastVariable());
     PostConditionCheck check = new PostConditionCheck(postConditions, inputList);
 
     assertThat("pre-statement should be empty", check.toCodeStringPreStatement(), is(equalTo("")));
