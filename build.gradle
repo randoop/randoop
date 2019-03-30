@@ -857,9 +857,7 @@ task validateAPI(type: Exec, dependsOn: ['javadoc', 'html5validatorExists']) {
     environment PATH: "$System.env.PATH"
     commandLine "html5validator", "--root", file("${buildDir}/docs/api")
   } else {
-    doFirst {
-      println "WARNING: HTML validation of API is only run in Java 9+."
-    }
+    commandLine "echo", "WARNING: HTML validation of API is only run in Java 9+."
   }
 }
 
