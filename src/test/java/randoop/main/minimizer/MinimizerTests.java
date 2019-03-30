@@ -21,14 +21,16 @@ public class MinimizerTests {
 
   static {
     Path dir = Paths.get(System.getProperty("user.dir")).getParent().getParent();
-    // a 5-second timeout is not enough (!)
-    Minimize.Outputs outputs = Minimize.runProcess("./gradlew -q printJunitJarPath", dir, 10);
+    // a 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis (!)
+    Minimize.Outputs outputs = Minimize.runProcess("./gradlew -q printJunitJarPath", dir, 15);
     if (outputs.isFailure()) {
       System.out.println(outputs.diagnostics());
-      outputs = Minimize.runProcess("./gradlew printJunitJarPath", dir, 10);
+      outputs = Minimize.runProcess("./gradlew printJunitJarPath", dir, 15);
       System.out.println(outputs.diagnostics());
       if (outputs.isFailure()) {
         System.exit(1);
+      } else {
+        System.out.println("Second try set JUNIT_JAR to " + outputs.stdout);
       }
     }
     JUNIT_JAR = outputs.stdout;
