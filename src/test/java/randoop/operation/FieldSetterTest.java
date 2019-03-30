@@ -103,7 +103,8 @@ public class FieldSetterTest {
     Field field = c.getField("oneField");
     AccessibleField f = new AccessibleField(field, declaringType);
     Type fieldType = new NonParameterizedType(field.getDeclaringClass());
-    List<Type> setInputTypeList = Collections.singletonList(declaringType);
+    List<Type> setInputTypeList = new ArrayList<>();
+    setInputTypeList.add(declaringType);
     setInputTypeList.add(fieldType);
     FieldSet setOp = new FieldSet(f);
     TypedOperation op =
@@ -133,7 +134,8 @@ public class FieldSetterTest {
         new TypedTermOperation(
             new NonreceiverTerm(JavaTypes.INT_TYPE, 24), new TypeTuple(), JavaTypes.INT_TYPE);
     Sequence seq1 = seq0.extend(initOp, new ArrayList<Variable>());
-    List<Variable> vars = Collections.singletonList(new Variable(seq1, 0));
+    ArrayList<Variable> vars = new ArrayList<>();
+    vars.add(new Variable(seq1, 0));
     vars.add(new Variable(seq1, 1));
     Statement st_op = new Statement(op);
     st_op.appendCode(null, vars, b);
