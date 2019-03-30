@@ -9,6 +9,7 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import org.junit.Test;
@@ -49,11 +50,9 @@ public class SequenceWithExceptionalExecutionTest {
     TypedOperation lengthTerm =
         TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(JavaTypes.INT_TYPE, 4));
     sequence = sequence.extend(lengthTerm, new ArrayList<Variable>());
-    List<Variable> input = new ArrayList<>();
-    input.add(sequence.getLastVariable());
+    List<Variable> input = Collections.singletonList(sequence.getLastVariable());
     sequence = sequence.extend(TypedOperation.createArrayCreation(rawArrayType), input);
-    input = new ArrayList<>();
-    input.add(sequence.getLastVariable());
+    input = Collections.singletonList(sequence.getLastVariable());
     sequence = sequence.extend(TypedOperation.createCast(rawArrayType, arrayType), input);
     int arrayValueIndex = sequence.getLastVariable().index;
 

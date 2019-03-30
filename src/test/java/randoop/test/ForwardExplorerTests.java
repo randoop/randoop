@@ -5,6 +5,7 @@ import static randoop.main.GenInputsAbstract.require_classname_in_test;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,8 +64,7 @@ public class ForwardExplorerTests {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
-    List<Class<?>> classes = new ArrayList<>();
-    classes.add(Long.class);
+    List<Class<?>> classes = Collections.singletonList(Long.class);
 
     final List<TypedOperation> model = getConcreteOperations(classes);
 

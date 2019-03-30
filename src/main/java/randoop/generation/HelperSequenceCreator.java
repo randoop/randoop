@@ -328,8 +328,7 @@ class HelperSequenceCreator {
     creationSequence = creationSequence.extend(creationOperation, input);
 
     TypedOperation castOperation = TypedOperation.createCast(rawArrayType, arrayType);
-    input = new ArrayList<>();
-    input.add(creationSequence.getLastVariable());
+    input = Collections.singletonList(creationSequence.getLastVariable());
     creationSequence = creationSequence.extend(castOperation, input);
     return creationSequence;
   }
@@ -393,8 +392,7 @@ class HelperSequenceCreator {
       throw new RandoopBug("Can't find \"noneOf\" method for EnumSet: ", e);
     }
     MethodCall op = new MethodCall(method);
-    List<Type> paramTypes = new ArrayList<>();
-    paramTypes.add(JavaTypes.CLASS_TYPE);
+    List<Type> paramTypes = Collections.singletonList(JavaTypes.CLASS_TYPE);
     return new TypedClassOperation(op, creationType, new TypeTuple(paramTypes), creationType);
   }
 

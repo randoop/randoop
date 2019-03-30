@@ -3,6 +3,7 @@ package randoop.util;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -105,8 +106,8 @@ public class SimpleListTest {
 
   @Test
   public void emptyLOL() {
-    List<SimpleList<String>> lists = new ArrayList<>();
-    lists.add(new SimpleArrayList<>(new ArrayList<String>()));
+    List<SimpleList<String>> lists =
+        Collections.singletonList(new SimpleArrayList<>(new ArrayList<String>()));
     SimpleList<String> sl = new ListOfLists<>(lists);
 
     assertTrue("should be no elements", sl.isEmpty());
