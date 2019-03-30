@@ -377,7 +377,7 @@ public class GenTests extends GenInputsAbstract {
             listenerMgr,
             classesUnderTest);
 
-    // log setup. TODO: handle environment variables like other methods in TestUtils do.
+    // log setup.
     operationModel.log();
     if (GenInputsAbstract.operation_history_log != null) {
       TestUtils.setOperationLog(new PrintWriter(GenInputsAbstract.operation_history_log), explorer);
