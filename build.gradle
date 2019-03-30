@@ -929,9 +929,7 @@ task validateSite(dependsOn: 'html5validatorExists') {
       commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
     }
   } else {
-    doFirst {
-      println "WARNING: HTML validation of API documentation is only run in Java 9+."
-    }
+    commandLine "echo", "WARNING: HTML validation of API documentation is only run in Java 9+."
   }
 }
 

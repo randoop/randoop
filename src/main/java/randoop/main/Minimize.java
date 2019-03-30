@@ -918,7 +918,7 @@ public class Minimize extends CommandHandler {
    * @param file the file to be compiled and executed
    * @param userClassPath dependencies and complete classpath to compile and run the Java program
    * @param packageName the package that the Java file is in
-   * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @param timeoutLimit number of seconds allowed for the Java program to run
    * @return standard output from running the Java file
    */
   private static String runJavaFile(
@@ -988,7 +988,7 @@ public class Minimize extends CommandHandler {
    *
    * @param command the input command to be run
    * @param executionDir the directory where the process commands should be executed
-   * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @param timeoutLimit number of seconds allowed for the command to run
    * @return an {@code Outputs} object containing the standard and error output
    */
   public static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
