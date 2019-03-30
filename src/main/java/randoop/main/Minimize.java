@@ -144,12 +144,6 @@ public class Minimize extends CommandHandler {
   /** Path separator as defined by the system, used to separate elements of the classpath. */
   private static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
-  /**
-   * System class path, a part of the classpath that is used to compile and run the input test
-   * suite.
-   */
-  private static final String SYSTEM_CLASS_PATH = System.getProperty("java.class.path");
-
   /** The suffix to postpend onto the name of the minimized file and class. */
   private static final String SUFFIX = "Minimized";
 
@@ -907,9 +901,7 @@ public class Minimize extends CommandHandler {
     Path executionDir = getExecutionDirectory(file, packageName);
 
     // Command to compile the input Java file.
-    String command = "javac -classpath " + SYSTEM_CLASS_PATH;
-    // Add current directory to class path.
-    command += PATH_SEPARATOR + ".";
+    String command = "javac -classpath .";
     if (classpath != null) {
       // Add specified classpath to command.
       command += PATH_SEPARATOR + classpath;
@@ -942,7 +934,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Classpath for running the Java file.
-    String classpath = SYSTEM_CLASS_PATH + PATH_SEPARATOR + dirPath;
+    String classpath = dirPath;
     if (userClassPath != null) {
       classpath += PATH_SEPARATOR + userClassPath;
     }
@@ -1000,7 +992,7 @@ public class Minimize extends CommandHandler {
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return an {@code Outputs} object containing the standard and error output
    */
-  private static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
+  public static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
     if (executionDir != null && executionDir.toString().isEmpty()) {
       // Execute command in the default directory.
       executionDir = null;
@@ -1209,15 +1201,14 @@ public class Minimize extends CommandHandler {
   }
 
   /** Contains the standard output, standard error, and exit status from running a process. */
-  private static class Outputs {
+  public static class Outputs {
     /** The standard output. */
-    String stdout;
+    public final String stdout;
     /** The error output. */
-    @SuppressWarnings("UnusedVariable")
-    String errout;
+    public final String errout;
 
     /** Exit value from running a process. 0 is success, other values are failure. */
-    int exitValue;
+    public final int exitValue;
 
     /**
      * Create an Outputs object.

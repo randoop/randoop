@@ -531,6 +531,11 @@ task testReport(type: TestReport) {
   reportOn tasks.withType(Test)
 }
 
+task printJunitJarPath {
+    description "Print the path to junit.jar"
+    doFirst { println project.configurations.compile.find { it.name.startsWith("junit") } }
+}
+
 //****************** Building distribution *****************
 
 /*

@@ -16,6 +16,24 @@ public class MinimizerTests {
   /** Directory containing test inputs: suites to be minimized and goal minimized versions. */
   private static final String testDir = "test" + fileSeparator + "minimizer" + fileSeparator;
 
+  /** The junit.jar file. */
+  private static final String JUNIT_JAR;
+
+  static {
+    System.out.println("Working Directory = " + System.getProperty("user.dir"));
+    Minimize.Outputs outputs =
+        Minimize.runProcess(
+            "./gradlew -q printJunitJarPath", Paths.get(System.getProperty("user.dir")), 2);
+    if (outputs.exitValue != 0) {
+      System.out.println(
+          "`./gradlew -q printJunitJarPath` in " + System.getProperty("user.dir") + ": ");
+      System.out.println(outputs.stdout);
+      System.out.println(outputs.errout);
+      System.exit(1);
+    }
+    JUNIT_JAR = outputs.stdout;
+  }
+
   /**
    * Test the minimizer with an input file. Uses no extra classpath dependencies and a timeout of 30
    * seconds.
@@ -54,7 +72,7 @@ public class MinimizerTests {
 
     String classPath = null;
     if (dependencies != null) {
-      classPath = "";
+      classPath = JUNIT_JAR;
       for (String s : dependencies) {
         Path file = Paths.get(s);
         classPath += (pathSeparator + file.toAbsolutePath().toString());
