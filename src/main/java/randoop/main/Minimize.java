@@ -144,12 +144,6 @@ public class Minimize extends CommandHandler {
   /** Path separator as defined by the system, used to separate elements of the classpath. */
   private static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
-  /**
-   * System class path, a part of the classpath that is used to compile and run the input test
-   * suite.
-   */
-  private static final String SYSTEM_CLASS_PATH = System.getProperty("java.class.path");
-
   /** The suffix to postpend onto the name of the minimized file and class. */
   private static final String SUFFIX = "Minimized";
 
@@ -910,9 +904,7 @@ public class Minimize extends CommandHandler {
     Path executionDir = getExecutionDirectory(file, packageName);
 
     // Command to compile the input Java file.
-    String command = "javac -classpath " + SYSTEM_CLASS_PATH;
-    // Add current directory to class path.
-    command += PATH_SEPARATOR + ".";
+    String command = "javac -classpath .";
     if (classpath != null) {
       // Add specified classpath to command.
       command += PATH_SEPARATOR + classpath;
@@ -945,7 +937,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Classpath for running the Java file.
-    String classpath = SYSTEM_CLASS_PATH + PATH_SEPARATOR + dirPath;
+    String classpath = dirPath;
     if (userClassPath != null) {
       classpath += PATH_SEPARATOR + userClassPath;
     }

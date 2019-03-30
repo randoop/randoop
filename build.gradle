@@ -535,6 +535,11 @@ task testReport(type: TestReport) {
   reportOn tasks.withType(Test)
 }
 
+task printJunitJarPath {
+    description "Print the path to junit.jar"
+    doFirst { println configurations.junit.asPath }
+}
+
 //****************** Building distribution *****************
 
 /*
