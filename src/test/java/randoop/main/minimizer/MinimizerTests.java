@@ -24,9 +24,12 @@ public class MinimizerTests {
     // a 5-second timeout is not enough (!)
     Minimize.Outputs outputs = Minimize.runProcess("./gradlew -q printJunitJarPath", dir, 10);
     if (outputs.isFailure()) {
+      System.out.println(outputs.diagnostics());
       outputs = Minimize.runProcess("./gradlew printJunitJarPath", dir, 10);
       System.out.println(outputs.diagnostics());
-      System.exit(1);
+      if (outputs.isFailure()) {
+        System.exit(1);
+      }
     }
     JUNIT_JAR = outputs.stdout;
   }
