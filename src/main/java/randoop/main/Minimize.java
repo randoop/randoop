@@ -1240,6 +1240,17 @@ public class Minimize extends CommandHandler {
     boolean isFailure() {
       return !isSuccess();
     }
+
+    /** Verbose toString(). */
+    String diagnostics() {
+      return String.join(
+          Globals.lineSep,
+          "exit status: " + exitValue + "  " + (isSuccess() ? "(success)" : "(failure)"),
+          "standard output: ",
+          stdout,
+          "error output: ",
+          errout);
+    }
   }
 
   /**
