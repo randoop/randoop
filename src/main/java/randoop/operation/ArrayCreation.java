@@ -64,9 +64,10 @@ public class ArrayCreation extends CallableOperation {
   }
 
   @Override
+  // The argument array contains a single Integer.
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "requires array dimension as input";
-    int length = Integer.parseInt(input[0].toString());
+    int length = ((Integer) input[0]).intValue();
     long startTime = System.currentTimeMillis();
     Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
     long totalTime = System.currentTimeMillis() - startTime;
