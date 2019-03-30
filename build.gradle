@@ -913,11 +913,12 @@ task validateSite(dependsOn: 'html5validatorExists') {
     }
   } else if (JavaVersion.current().isJava8Compatible()) {
     // Before JDK9, Javadoc did not create proper HTML 5.
-    println "WARNING: HTML validation of API documentation is only run in Java 9+."
     exec {
       environment PATH: "$System.env.PATH"
       commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
     }
+  } else {
+    commandLine "echo", "WARNING: HTML validation of API documentation is only run in Java 9+."
   }
 }
 
