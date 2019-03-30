@@ -999,7 +999,7 @@ public class Minimize extends CommandHandler {
    * @param timeoutLimit number of seconds allowed for the command to run
    * @return an {@code Outputs} object containing the standard and error output
    */
-  private static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
+  public static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
     if (executionDir != null && executionDir.toString().isEmpty()) {
       // Execute command in the default directory.
       executionDir = null;
@@ -1208,14 +1208,14 @@ public class Minimize extends CommandHandler {
   }
 
   /** Contains the standard output, standard error, and exit status from running a process. */
-  private static class Outputs {
+  public static class Outputs {
     /** The standard output. */
-    String stdout;
+    public final String stdout;
     /** The error output. */
-    String errout;
+    public final String errout;
 
     /** Exit value from running a process. 0 is success, other values are failure. */
-    int exitValue;
+    public final int exitValue;
 
     /**
      * Create an Outputs object.
@@ -1231,17 +1231,17 @@ public class Minimize extends CommandHandler {
     }
 
     /** Return true if the command succeeded. */
-    boolean isSuccess() {
+    public boolean isSuccess() {
       return exitValue == 0;
     }
 
     /** Return true if the command failed. */
-    boolean isFailure() {
+    public boolean isFailure() {
       return !isSuccess();
     }
 
     /** Verbose toString(). */
-    String diagnostics() {
+    public String diagnostics() {
       return String.join(
           Globals.lineSep,
           "exit status: " + exitValue + "  " + (isSuccess() ? "(success)" : "(failure)"),
