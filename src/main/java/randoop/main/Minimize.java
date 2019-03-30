@@ -302,8 +302,8 @@ public class Minimize extends CommandHandler {
     // Write the compilation unit to the minimized file.
     writeToFile(compilationUnit, minimizedFile);
 
-    // Compile the Java file and check that the exit value is 0.
-    if (compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit) != 0) {
+    // Compile the Java file
+    if (!compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit)) {
       System.err.println("Error when compiling file " + file + ". Aborting.");
       return false;
     }
@@ -874,8 +874,7 @@ public class Minimize extends CommandHandler {
       Map<String, String> expectedOutput,
       int timeoutLimit) {
 
-    // Zero exit status means success.
-    if (compileJavaFile(file, classpath, packageName, timeoutLimit) != 0) {
+    if (!compileJavaFile(file, classpath, packageName, timeoutLimit)) {
       return false;
     }
 
@@ -893,9 +892,9 @@ public class Minimize extends CommandHandler {
    * @param classpath dependencies and complete classpath to compile and run the Java program
    * @param packageName the package that the Java file is in
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @return exit value of compiling the Java file
+   * @return true if compilation succeeded
    */
-  private static int compileJavaFile(
+  private static boolean compileJavaFile(
       Path file, String classpath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
     Path executionDir = getExecutionDirectory(file, packageName);
@@ -910,7 +909,7 @@ public class Minimize extends CommandHandler {
     command += " " + file.toAbsolutePath().toString();
 
     // Compile specified Java file.
-    return runProcess(command, executionDir, timeoutLimit).exitValue;
+    return runProcess(command, executionDir, timeoutLimit).isSuccess();
   }
 
   /**
@@ -1221,6 +1220,27 @@ public class Minimize extends CommandHandler {
       this.stdout = stdout;
       this.errout = errout;
       this.exitValue = exitValue;
+    }
+
+    /** Return true if the command succeeded. */
+    boolean isSuccess() {
+      return exitValue == 0;
+    }
+
+    /** Return true if the command failed. */
+    boolean isFailure() {
+      return !isSuccess();
+    }
+
+    /** Verbose toString(). */
+    String diagnostics() {
+      return String.join(
+          Globals.lineSep,
+          "exit status: " + exitValue + "  " + (isSuccess() ? "(success)" : "(failure)"),
+          "standard output: ",
+          stdout,
+          "error output: ",
+          errout);
     }
   }
 
