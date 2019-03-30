@@ -1216,7 +1216,7 @@ public class Minimize extends CommandHandler {
     @SuppressWarnings("UnusedVariable")
     String errout;
 
-    /** Exit value from running a process. */
+    /** Exit value from running a process. 0 is success, other values are failure. */
     int exitValue;
 
     /**
