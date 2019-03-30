@@ -21,17 +21,14 @@ public class MinimizerTests {
 
   static {
     Path dir = Paths.get(System.getProperty("user.dir")).getParent().getParent();
-    System.out.println("Working Directory = " + dir);
     // a 5-second timeout is not enough (!)
     Minimize.Outputs outputs = Minimize.runProcess("./gradlew -q printJunitJarPath", dir, 10);
     if (outputs.isFailure()) {
       outputs = Minimize.runProcess("./gradlew printJunitJarPath", dir, 10);
-      System.out.println("`./gradlew printJunitJarPath` in " + dir + ": ");
       System.out.println(outputs.diagnostics());
       System.exit(1);
     }
     JUNIT_JAR = outputs.stdout;
-    System.out.println("JUNIT_JAR = " + JUNIT_JAR);
   }
 
   /**
