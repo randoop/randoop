@@ -303,8 +303,11 @@ public class Minimize extends CommandHandler {
     writeToFile(compilationUnit, minimizedFile);
 
     // Compile the Java file
-    if (!compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit)) {
+    Outputs compilationOutput =
+        compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
+    if (compilationOutput.isFailure()) {
       System.err.println("Error when compiling file " + file + ". Aborting.");
+      System.err.println(compilationOutput.diagnostics());
       return false;
     }
 
@@ -874,7 +877,8 @@ public class Minimize extends CommandHandler {
       Map<String, String> expectedOutput,
       int timeoutLimit) {
 
-    if (!compileJavaFile(file, classpath, packageName, timeoutLimit)) {
+    Outputs compilationOutput = compileJavaFile(file, classpath, packageName, timeoutLimit);
+    if (compilationOutput.isFailure()) {
       return false;
     }
 
@@ -892,9 +896,9 @@ public class Minimize extends CommandHandler {
    * @param classpath dependencies and complete classpath to compile and run the Java program
    * @param packageName the package that the Java file is in
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @return true if compilation succeeded
+   * @return the result of compilation (includes status and output)
    */
-  private static boolean compileJavaFile(
+  private static Outputs compileJavaFile(
       Path file, String classpath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
     Path executionDir = getExecutionDirectory(file, packageName);
@@ -909,7 +913,7 @@ public class Minimize extends CommandHandler {
     command += " " + file.toAbsolutePath().toString();
 
     // Compile specified Java file.
-    return runProcess(command, executionDir, timeoutLimit).isSuccess();
+    return runProcess(command, executionDir, timeoutLimit);
   }
 
   /**
@@ -1018,7 +1022,7 @@ public class Minimize extends CommandHandler {
     try {
       executor.execute(cmdLine, resultHandler);
     } catch (IOException e) {
-      return new Outputs("", "Exception starting process", 1);
+      return Outputs.failure(cmdLine, "Exception starting process");
     }
 
     int exitValue = -1;
@@ -1027,7 +1031,7 @@ public class Minimize extends CommandHandler {
       exitValue = resultHandler.getExitValue();
     } catch (InterruptedException e) {
       if (!watchdog.killedProcess()) {
-        return new Outputs("", "Process was interrupted while waiting.", 1);
+        return Outputs.failure(cmdLine, "Process was interrupted while waiting.");
       }
     }
     boolean timedOut = executor.isFailure(exitValue) && watchdog.killedProcess();
@@ -1038,22 +1042,22 @@ public class Minimize extends CommandHandler {
     try {
       stdOutputString = outStream.toString();
     } catch (RuntimeException e) {
-      return new Outputs("", "Exception getting process standard output", 1);
+      return Outputs.failure(cmdLine, "Exception getting process standard output");
     }
 
     try {
       errOutputString = errStream.toString();
     } catch (RuntimeException e) {
-      return new Outputs("", "Exception getting process error output", 1);
+      return Outputs.failure(cmdLine, "Exception getting process error output");
     }
 
     if (timedOut) {
-      return new Outputs("", "Process timed out after " + timeoutLimit + " seconds.", 1);
+      return Outputs.failure(cmdLine, "Process timed out after " + timeoutLimit + " seconds.");
     }
 
     // Collect and return the results from the standard output and error
     // output.
-    return new Outputs(stdOutputString, errOutputString, exitValue);
+    return new Outputs(cmdLine, exitValue, stdOutputString, errOutputString);
   }
 
   /**
@@ -1199,27 +1203,55 @@ public class Minimize extends CommandHandler {
     compilationUnit.setImports(imports);
   }
 
-  /** Contains the standard output, standard error, and exit status from running a process. */
+  /**
+   * Contains the command line, exit status, standard output, and standard error from running a
+   * process.
+   */
   public static class Outputs {
+    /** The command that was run. */
+    public final String command;
+    /** Exit value from running a process. 0 is success, other values are failure. */
+    public final int exitValue;
     /** The standard output. */
     public final String stdout;
     /** The error output. */
     public final String errout;
 
-    /** Exit value from running a process. 0 is success, other values are failure. */
-    public final int exitValue;
+    /**
+     * Create an Outputs object.
+     *
+     * @param command the command that was run
+     * @param exitValue exit value of process
+     * @param stdout standard output
+     * @param errout error output
+     */
+    Outputs(String command, int exitValue, String stdout, String errout) {
+      this.command = command;
+      this.exitValue = exitValue;
+      this.stdout = stdout;
+      this.errout = errout;
+    }
 
     /**
      * Create an Outputs object.
      *
+     * @param command the command that was run
+     * @param exitValue exit value of process
      * @param stdout standard output
      * @param errout error output
-     * @param exitValue exit value of process
      */
-    Outputs(String stdout, String errout, int exitValue) {
-      this.stdout = stdout;
-      this.errout = errout;
-      this.exitValue = exitValue;
+    Outputs(CommandLine command, int exitValue, String stdout, String errout) {
+      this(command.toString(), exitValue, stdout, errout);
+    }
+
+    /**
+     * Create an Outputs object representing a failed execution.
+     *
+     * @param command the command that was run
+     * @param errout error output
+     */
+    static Outputs failure(CommandLine command, String errout) {
+      return new Outputs(command.toString(), 1, "", errout);
     }
 
     /** Return true if the command succeeded. */
@@ -1236,6 +1268,7 @@ public class Minimize extends CommandHandler {
     public String diagnostics() {
       return String.join(
           Globals.lineSep,
+          "command: " + command,
           "exit status: " + exitValue + "  " + (isSuccess() ? "(success)" : "(failure)"),
           "standard output: ",
           stdout,
