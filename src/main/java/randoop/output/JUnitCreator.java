@@ -354,9 +354,9 @@ public class JUnitCreator {
 
     ClassOrInterfaceDeclaration suiteClass =
         new ClassOrInterfaceDeclaration(Modifier.PUBLIC, false, suiteClassName);
-    List<AnnotationExpr> annotations =
-        Collections.singletonList(
-            new SingleMemberAnnotationExpr(new NameExpr("RunWith"), new NameExpr("Suite.class")));
+    List<AnnotationExpr> annotations = new ArrayList<>();
+    annotations.add(
+        new SingleMemberAnnotationExpr(new NameExpr("RunWith"), new NameExpr("Suite.class")));
     StringBuilder classList = new StringBuilder();
     Iterator<String> testIterator = testClassNames.iterator();
     if (testIterator.hasNext()) {
