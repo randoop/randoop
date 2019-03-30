@@ -1,6 +1,7 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -308,6 +309,7 @@ public class TypeInstantiator {
    * @param substitution the substitution to be extended
    * @return the list of substitutions, empty if none are found
    */
+  @SuppressWarnings("MixedMutabilityReturnType")
   private List<Substitution<ReferenceType>> collectSubstitutions(
       List<TypeVariable> typeParameters, Substitution<ReferenceType> substitution) {
     /*
@@ -347,7 +349,7 @@ public class TypeInstantiator {
 
         List<List<ReferenceType>> nonGenCandidates = getCandidateTypeLists(nongenericParameters);
         if (nonGenCandidates.isEmpty()) {
-          return new ArrayList<>();
+          return Collections.emptyList();
         }
         ListEnumerator<ReferenceType> enumerator = new ListEnumerator<>(nonGenCandidates);
         while (enumerator.hasNext()) {
@@ -378,7 +380,7 @@ public class TypeInstantiator {
       // if there are no type parameters with generic bounds, can select others independently
       substitution = selectAndExtend(nongenericParameters, substitution);
       if (substitution == null) {
-        return new ArrayList<>();
+        return Collections.emptyList();
       }
       substitutionList.add(substitution);
     }
@@ -442,6 +444,7 @@ public class TypeInstantiator {
     List<Substitution<ReferenceType>> substitutionList = new ArrayList<>();
     List<List<ReferenceType>> candidateTypes = getCandidateTypeLists(parameters);
     if (candidateTypes.isEmpty()) {
+      // cannot use `Collections.emptyList()` because clients will add elements to the returned list
       return new ArrayList<>();
     }
     ListEnumerator<ReferenceType> enumerator = new ListEnumerator<>(candidateTypes);
@@ -465,13 +468,14 @@ public class TypeInstantiator {
    * @return the list of candidate lists for the parameters; returns the empty list if any parameter
    *     has no candidates
    */
+  @SuppressWarnings("MixedMutabilityReturnType")
   private List<List<ReferenceType>> getCandidateTypeLists(List<TypeVariable> parameters) {
     List<List<ReferenceType>> candidateTypes = new ArrayList<>();
     for (TypeVariable typeArgument : parameters) {
       List<ReferenceType> candidates = selectCandidates(typeArgument);
       if (candidates.isEmpty()) {
         Log.logPrintf("No candidate types for %s%n", typeArgument);
-        return new ArrayList<>();
+        return Collections.emptyList();
       }
       candidateTypes.add(candidates);
     }
