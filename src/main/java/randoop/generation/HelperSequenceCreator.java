@@ -321,7 +321,7 @@ class HelperSequenceCreator {
     TypedOperation lengthTerm =
         TypedOperation.createNonreceiverInitialization(
             new NonreceiverTerm(JavaTypes.INT_TYPE, length));
-    creationSequence = creationSequence.extend(lengthTerm, new ArrayList<Variable>());
+    creationSequence = creationSequence.extend(lengthTerm, Collections.emptyList());
     input.add(creationSequence.getLastVariable());
 
     TypedOperation creationOperation = TypedOperation.createArrayCreation(rawArrayType);
