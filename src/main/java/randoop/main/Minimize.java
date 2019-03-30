@@ -308,9 +308,12 @@ public class Minimize extends CommandHandler {
     // Write the compilation unit to the minimized file.
     writeToFile(compilationUnit, minimizedFile);
 
-    // Compile the Java file
-    if (!compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit)) {
+    // Compile the original Java file (it has not been minimized yet).
+    Outputs compilationOutput =
+        compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
+    if (compilationOutput.isFailure()) {
       System.err.println("Error when compiling file " + file + ". Aborting.");
+      System.err.println(compilationOutput.diagnostics());
       return false;
     }
 
@@ -880,7 +883,8 @@ public class Minimize extends CommandHandler {
       Map<String, String> expectedOutput,
       int timeoutLimit) {
 
-    if (!compileJavaFile(file, classpath, packageName, timeoutLimit)) {
+    Outputs compilationOutput = compileJavaFile(file, classpath, packageName, timeoutLimit);
+    if (compilationOutput.isFailure()) {
       return false;
     }
 
@@ -898,9 +902,9 @@ public class Minimize extends CommandHandler {
    * @param classpath dependencies and complete classpath to compile and run the Java program
    * @param packageName the package that the Java file is in
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @return true if compilation succeeded
+   * @return the result of compilation (includes status and output)
    */
-  private static boolean compileJavaFile(
+  private static Outputs compileJavaFile(
       Path file, String classpath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
     Path executionDir = getExecutionDirectory(file, packageName);
@@ -917,7 +921,7 @@ public class Minimize extends CommandHandler {
     command += " " + file.toAbsolutePath().toString();
 
     // Compile specified Java file.
-    return runProcess(command, executionDir, timeoutLimit).isSuccess();
+    return runProcess(command, executionDir, timeoutLimit);
   }
 
   /**
