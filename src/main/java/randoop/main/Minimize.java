@@ -1223,17 +1223,17 @@ public class Minimize extends CommandHandler {
     }
 
     /** Return true if the command succeeded. */
-    boolean isSuccess() {
+    public boolean isSuccess() {
       return exitValue == 0;
     }
 
     /** Return true if the command failed. */
-    boolean isFailure() {
+    public boolean isFailure() {
       return !isSuccess();
     }
 
     /** Verbose toString(). */
-    String diagnostics() {
+    public String diagnostics() {
       return String.join(
           Globals.lineSep,
           "exit status: " + exitValue + "  " + (isSuccess() ? "(success)" : "(failure)"),

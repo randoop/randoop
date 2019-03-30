@@ -20,15 +20,12 @@ public class MinimizerTests {
   private static final String JUNIT_JAR;
 
   static {
-    System.out.println("Working Directory = " + System.getProperty("user.dir"));
-    Minimize.Outputs outputs =
-        Minimize.runProcess(
-            "./gradlew -q printJunitJarPath", Paths.get(System.getProperty("user.dir")), 2);
-    if (outputs.exitValue != 0) {
-      System.out.println(
-          "`./gradlew -q printJunitJarPath` in " + System.getProperty("user.dir") + ": ");
-      System.out.println(outputs.stdout);
-      System.out.println(outputs.errout);
+    Path dir = Paths.get(System.getProperty("user.dir")).getParent().getParent();
+    System.out.println("Working Directory = " + dir);
+    Minimize.Outputs outputs = Minimize.runProcess("./gradlew -q printJunitJarPath", dir, 2);
+    if (outputs.isFailure()) {
+      System.out.println("`./gradlew -q printJunitJarPath` in " + dir + ": ");
+      System.out.println(outputs.diagnostics());
       System.exit(1);
     }
     JUNIT_JAR = outputs.stdout;
