@@ -302,7 +302,7 @@ public class Minimize extends CommandHandler {
     // Write the compilation unit to the minimized file.
     writeToFile(compilationUnit, minimizedFile);
 
-    // Compile the Java file
+    // Compile the original Java file (it has not been minimized yet).
     Outputs compilationOutput =
         compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
     if (compilationOutput.isFailure()) {
