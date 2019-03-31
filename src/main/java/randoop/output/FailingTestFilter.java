@@ -245,7 +245,7 @@ public class FailingTestFilter implements CodeWriter {
    * @param classname the simple (unqualified) name of the test class
    * @param javaCode the source code for the test class; each assertion must be on its own line
    * @param status the {@link randoop.execution.RunCommand.Status} from running the test with JUnit
-   * @param flakyTests names of flaky tests, e.g., "test005". This is an output parameter that is
+   * @param flakyTests names of flaky tests, e.g. "test005". This is an output parameter that is
    *     augmented by this method.
    * @return the class source edited so that failing assertions are replaced by comments
    * @throws RandoopBug if {@code status} contains output for a failure not involving a
