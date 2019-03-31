@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
@@ -24,8 +25,7 @@ public class TypeTupleTest {
 
   @Test
   public void singletonTest() {
-    List<Type> pl1 = new ArrayList<>();
-    pl1.add(JavaTypes.INT_TYPE);
+    List<Type> pl1 = Collections.singletonList(JavaTypes.INT_TYPE);
     TypeTuple ct1 = new TypeTuple(pl1);
     TypeTuple ct2 = new TypeTuple(pl1);
     assertEquals("singletons should be same", ct1, ct2);

@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -54,8 +55,7 @@ public class FieldSetterTest {
     Field field = c.getField("fourField");
     AccessibleField f = new AccessibleField(field, declaringType);
     Type fieldType = new PrimitiveType(field.getType());
-    List<Type> setInputTypeList = new ArrayList<>();
-    setInputTypeList.add(fieldType);
+    List<Type> setInputTypeList = Collections.singletonList(fieldType);
     FieldSet setOp = new FieldSet(f);
     TypedOperation op =
         new TypedClassOperation(
@@ -72,8 +72,7 @@ public class FieldSetterTest {
         new TypedTermOperation(
             new NonreceiverTerm(JavaTypes.INT_TYPE, 24), new TypeTuple(), JavaTypes.INT_TYPE);
     Sequence seq0 = new Sequence().extend(initOp, new ArrayList<Variable>());
-    ArrayList<Variable> vars = new ArrayList<>();
-    vars.add(new Variable(seq0, 0));
+    List<Variable> vars = Collections.singletonList(new Variable(seq0, 0));
     Statement st_op = new Statement(op);
     st_op.appendCode(null, vars, b);
     assertEquals("Expect assignment to static field", expected, b.toString());

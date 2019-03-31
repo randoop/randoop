@@ -98,8 +98,7 @@ public class TypeInstantiator {
     assert operation.isConstructorCall() : "only call with constructors of SortedSet subtype";
 
     TypeVariable parameter = operation.getDeclaringType().getTypeParameters().get(0);
-    List<TypeVariable> parameters = new ArrayList<>();
-    parameters.add(parameter);
+    List<TypeVariable> parameters = Collections.singletonList(parameter);
 
     TypeTuple opInputTypes = operation.getInputTypes();
 
@@ -493,8 +492,7 @@ public class TypeInstantiator {
     ParameterBound lowerBound = selectLowerBound(argument);
     ParameterBound upperBound = selectUpperBound(argument);
 
-    List<TypeVariable> typeVariableList = new ArrayList<>();
-    typeVariableList.add(argument);
+    List<TypeVariable> typeVariableList = Collections.singletonList(argument);
     List<ReferenceType> typeList = new ArrayList<>();
     for (Type inputType : inputTypes) {
       if (inputType.isReferenceType()) {

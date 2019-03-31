@@ -8,6 +8,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -257,8 +258,7 @@ public class OperationSpecificationTest {
    * @param method the method for which to get the specification
    */
   private ExecutableSpecification getMethodSpecification(Method method) {
-    List<String> paramNames = new ArrayList<>();
-    paramNames.add("value");
+    List<String> paramNames = Collections.singletonList("value");
     OperationSpecification spec =
         new OperationSpecification(OperationSignature.of(method), new Identifiers(paramNames));
 
@@ -315,8 +315,7 @@ public class OperationSpecificationTest {
   /** Creates ExecutableSpecification including post-condition for constructor that will fail. */
   private ExecutableSpecification getConstructorConditions(Constructor<?> constructor) {
 
-    List<String> paramNames = new ArrayList<>();
-    paramNames.add("value");
+    List<String> paramNames = Collections.singletonList("value");
     OperationSpecification spec =
         new OperationSpecification(OperationSignature.of(constructor), new Identifiers(paramNames));
     List<Precondition> preSpecifications = new ArrayList<>();
