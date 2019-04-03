@@ -345,7 +345,11 @@ public abstract class AbstractGenerator {
     }
 
     if (GenInputsAbstract.progressdisplay && progressDisplay != null) {
-      progressDisplay.displayWithTime();
+      if (GenInputsAbstract.deterministic) {
+        progressDisplay.displayWithoutTime();
+      } else {
+        progressDisplay.displayWithTime();
+      }
       progressDisplay.shouldStop = true;
     }
 
