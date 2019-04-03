@@ -1249,22 +1249,35 @@ public class Minimize extends CommandHandler {
      *
      * @param command the command that was run
      * @param errout error output
+     * @return an Outputs object representing a failed execution
      */
     static Outputs failure(CommandLine command, String errout) {
       return new Outputs(command.toString(), 1, "", errout);
     }
 
-    /** Return true if the command succeeded. */
+    /**
+     * Return true if the command succeeded.
+     *
+     * @return true if the command succeeded
+     */
     public boolean isSuccess() {
       return exitValue == 0;
     }
 
-    /** Return true if the command failed. */
+    /**
+     * Return true if the command failed.
+     *
+     * @return true if the command failed
+     */
     public boolean isFailure() {
       return !isSuccess();
     }
 
-    /** Verbose toString(). */
+    /**
+     * Verbose toString().
+     *
+     * @return a verbose multi-line string representation of this object, for dbugging
+     */
     public String diagnostics() {
       return String.join(
           Globals.lineSep,
