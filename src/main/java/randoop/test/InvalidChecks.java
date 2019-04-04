@@ -40,7 +40,7 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   @Override
   public Set<Check> checks() {
     if (check != null) {
-      return Collections.<Check>singleton(check);
+      return Collections.singleton(check);
     } else {
       return Collections.emptySet();
     }
