@@ -35,7 +35,7 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
    */
   public ErrorRevealingChecks(Check check) {
     validateCheck(check);
-    this.checks = Collections.<Check>singleton(check);
+    this.checks = Collections.singleton(check);
   }
 
   /**
