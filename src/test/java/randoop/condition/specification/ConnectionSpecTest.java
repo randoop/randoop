@@ -5,6 +5,7 @@ import static junit.framework.TestCase.fail;
 import com.google.gson.GsonBuilder;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
@@ -36,8 +37,7 @@ public class ConnectionSpecTest {
             "throws IllegalStateException if the connection is already open",
             throwsGuard,
             IllegalStateException.class.getCanonicalName());
-    List<ThrowsCondition> throwsList = new ArrayList<>();
-    throwsList.add(opThrows);
+    List<ThrowsCondition> throwsList = Collections.singletonList(opThrows);
     OperationSignature opOpen = OperationSignature.of(mOpen);
     OperationSpecification opSpec = new OperationSpecification(opOpen, new Identifiers());
     opSpec.addThrowsConditions(throwsList);
@@ -56,8 +56,7 @@ public class ConnectionSpecTest {
     List<Precondition> paramList = new ArrayList<>();
 
     paramList.add(opParam);
-    List<String> paramNames = new ArrayList<>();
-    paramNames.add("code");
+    List<String> paramNames = Collections.singletonList("code");
     OperationSignature opSend = OperationSignature.of(mSend);
     opSpec = new OperationSpecification(opSend, new Identifiers(paramNames));
     opSpec.addParamSpecifications(paramList);
@@ -74,8 +73,7 @@ public class ConnectionSpecTest {
     Property property = new Property("received value is non-negative", "result >= 0");
     Postcondition opReturn =
         new Postcondition("returns non-negative received value", returnGuard, property);
-    List<Postcondition> retList = new ArrayList<>();
-    retList.add(opReturn);
+    List<Postcondition> retList = Collections.singletonList(opReturn);
     OperationSignature opReceive = OperationSignature.of(mReceive);
     opSpec = new OperationSpecification(opReceive, new Identifiers());
     opSpec.addReturnSpecifications(retList);

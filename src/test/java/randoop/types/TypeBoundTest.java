@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -193,8 +192,7 @@ public class TypeBoundTest {
   private boolean checkBound(TypeVariable typeParameter, ReferenceType candidateType) {
     ParameterBound lowerBound = typeParameter.getLowerTypeBound();
     ParameterBound upperBound = typeParameter.getUpperTypeBound();
-    List<TypeVariable> typeParameters = new ArrayList<>();
-    typeParameters.add(typeParameter);
+    List<TypeVariable> typeParameters = Collections.singletonList(typeParameter);
     Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, candidateType);
     return lowerBound.isLowerBound(candidateType, substitution)
         && upperBound.isUpperBound(candidateType, substitution);

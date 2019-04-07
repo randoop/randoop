@@ -62,14 +62,14 @@ class RandoopOptions {
     options.unsetFlag("minimize-error-test");
     options.setFlag("print-erroneous-file");
 
-    // Use value from environment variable if command-line argument was not set
+    // Use value from Java property if command-line argument was not set
     String selectionLog = System.getProperty("randoop.selection.log");
     // System.out.println("selection log = " + selectionLog);
     if (selectionLog != null && !selectionLog.isEmpty()) {
       options.setOption("selection-log", selectionLog);
     }
 
-    // Use value from environment variable if command-line argument was not set
+    // Use value from Java property if command-line argument was not set
     String operationLog = System.getProperty("randoop.operation.history.log");
     // System.out.println("operation log = " + operationLog);
     if (operationLog != null && !operationLog.isEmpty()) {

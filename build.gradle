@@ -15,7 +15,7 @@ plugins {
   /*
    * Plugin that applies Google's Error Prone linter (http://errorprone.info/).
    * https://github.com/tbroyer/gradle-errorprone-plugin
-   * Elsewhere this file excludes src/testinput from directories examined by Error Prone.
+   * Elsewhere this file excludes src/testInput from directories examined by Error Prone.
    * To run Error Prone, do:  ./gradlew compileJava
    * There is no separate target to just run Error Prone.
    */
@@ -86,49 +86,23 @@ sourceSets {
   /* JUnit tests that must be run with -javaagent */
   /* JUnit tests are run in nondeterministic order, but system tests are
      run in deterministic order. */
-  coveredTest {
-    java {
-      srcDir 'src/coveredtest/java'
-    }
-    resources {
-      srcDir 'src/coveredtest/resources'
-    }
-  }
-
-  replacecallTest {
-    java {
-      srcDir 'src/replacecalltest/java'
-    }
-    resources {
-      srcDir 'src/replacecalltest/resources'
-    }
-  }
+  coveredTest
+  replacecallTest
 
   /* system tests */
   systemTest {
-    java {
-      srcDir 'src/systemtest/java'
-    }
     resources {
-      srcDir 'src/systemtest/resources'
-      srcDir 'src/testinput/resources'
+      srcDir 'src/testInput/resources'
     }
     output.dir(workingDirectories, builtBy: 'generateWorkingDirs')
   }
 
   /* Code sets used by system tests. There are no actual tests here. */
-  testInput {
-    java {
-      srcDir 'src/testinput/java'
-    }
-    resources {
-      srcDir 'src/testinput/resources'
-    }
-  }
+  testInput 
 
   test {
     resources {
-      srcDir 'src/testinput/resources'
+      srcDir 'src/testInput/resources'
     }
   }
 }
@@ -138,6 +112,8 @@ configurations {
    * Used to manage javaagent jar file
    */
   jacocoagent
+
+  junit
 
   /*
    * The agent tests are JUnit tests run with the covered-class-agent, so
@@ -150,13 +126,15 @@ configurations {
 }
 
 dependencies {
+  junit group: 'junit', name: 'junit', version: '4.+'
+
   implementation configurations.plumelib
 
   implementation 'org.apache.commons:commons-exec:1.3'
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
   implementation group: 'commons-io', name: 'commons-io', version: '2.6'
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
-  implementation group: 'junit', name: 'junit', version: '4.+'
+  implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
 
   /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files.
@@ -170,7 +148,7 @@ dependencies {
 
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.12'
-  testImplementation group: 'junit', name: 'junit', version: '4.+'
+  testImplementation configurations.junit.dependencies
   testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   testImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.7.0'
   testImplementation sourceSets.testInput.output
@@ -193,7 +171,7 @@ dependencies {
   systemTestImplementation configurations.plumelib
   systemTestImplementation group: 'commons-io', name: 'commons-io', version: '2.6'
   systemTestImplementation 'org.apache.commons:commons-exec:1.3'
-  systemTestImplementation group: 'junit', name: 'junit', version: '4.+'
+  systemTestImplementation configurations.junit.dependencies
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.3'
@@ -202,10 +180,10 @@ dependencies {
 
   /*
    * sourceSet testInput depends on output of main.
-   * Also, src/testinput/java/ps1/RatPolyTest.java uses JUnit
+   * Also, src/testInput/java/ps1/RatPolyTest.java uses JUnit
    */
   testInputImplementation sourceSets.main.output
-  testInputImplementation group: 'junit', name: 'junit', version: '4.+'
+  testInputImplementation configurations.junit.dependencies
 
   errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
 }
@@ -289,7 +267,7 @@ task pythonIsInstalled(type: Exec) {
 task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], group: 'Formatting') {
   description "Check whether the Java source code is properly formatted"
   def javaFiles = fileTree("$projectDir").matching{
-    include "**/*.java" exclude "src/testinput/**" exclude "build/**" exclude "**/CloneVisitor.java"
+    include "**/*.java" exclude "src/testInput/**" exclude "build/**" exclude "**/CloneVisitor.java"
   } as List
   def pythonArgs = javaFiles.clone()
   pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/check-google-java-format.py")
@@ -308,7 +286,7 @@ task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled
 task reformat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], group: 'Formatting') {
   description "Format the Java source code according to the Google Java Format style"
   def javaFiles = fileTree("$projectDir").matching{
-    include "**/*.java" exclude "src/testinput/**" exclude "build/**" exclude "**/CloneVisitor.java"
+    include "**/*.java" exclude "src/testInput/**" exclude "build/**" exclude "**/CloneVisitor.java"
   } as List
   def pythonArgs = javaFiles.clone()
   pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/run-google-java-format.py")
@@ -327,10 +305,10 @@ clean.dependsOn ':covered-class:clean'
 /*
  * Configuration for testing.
  * In terms of build, we have two kinds of tests, both using JUnit.
- *   * Those in src/coveredtest require the covered-class Java agent.
+ *   * Those in src/coveredTest require the covered-class Java agent.
  *   * Those in src/test are run without the agent.
  *     This second group includes tests that run the full Randoop over
- *     classes that (mostly) are located in src/testinput.
+ *     classes that (mostly) are located in src/testInput.
  */
 
 /*
@@ -416,7 +394,7 @@ task replacecallTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.replacecallTest.output.resourcesDir
   testClassesDirs = sourceSets.replacecallTest.output.classesDirs
   classpath = sourceSets.replacecallTest.runtimeClasspath + files("$buildDir/libs/replacecall-${version}.jar")
-  // use the replacecall agent using the exclusions file from replacecalltest/resources
+  // use the replacecall agent using the exclusions file from replacecallTest/resources
   jvmArgs "-javaagent:$buildDir/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt,--debug"
   jvmArgs "-Xbootclasspath/a:$buildDir/libs/replacecall-${version}.jar"
   testLogging {
@@ -533,7 +511,7 @@ tasks.withType(Test) {
 
   /*
    * Pass along any system properties that begin with "randoop."
-   * Used by randoop.main.RandoopOptions in systemtest.
+   * Used by randoop.main.RandoopOptions in systemTest.
    */
   System.properties.each { k,v->
         if (k.startsWith("randoop.")) {
@@ -555,6 +533,11 @@ task testReport(type: TestReport) {
   description "Creates HTML reports for tests results"
   destinationDir = file("$buildDir/reports/allTests")
   reportOn tasks.withType(Test)
+}
+
+task printJunitJarPath {
+    description "Print the path to junit.jar"
+    doFirst { println configurations.junit.asPath }
 }
 
 //****************** Building distribution *****************
@@ -939,11 +922,12 @@ task validateSite(dependsOn: 'html5validatorExists') {
     }
   } else if (JavaVersion.current().isJava8Compatible()) {
     // Before JDK9, Javadoc did not create proper HTML 5.
-    println "WARNING: HTML validation of API documentation is only run in Java 9+."
     exec {
       environment PATH: "$System.env.PATH"
       commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
     }
+  } else {
+    commandLine "echo", "WARNING: HTML validation of API documentation is only run in Java 9+."
   }
 }
 
@@ -957,14 +941,14 @@ task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishS
 task tags(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testinput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testInput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
 task tagsNoTests(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-scripts/sort-directory-order | grep -v /testinput/ | xargs etags"
+  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-scripts/sort-directory-order | grep -v /testInput/ | xargs etags"
 }
 
 /* Run checklink */

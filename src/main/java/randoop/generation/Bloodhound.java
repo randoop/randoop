@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import org.plumelib.util.CollectionsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -221,7 +222,7 @@ public class Bloodhound implements TypedOperationSelector {
   private void logMethodWeights() {
     if (GenInputsAbstract.bloodhound_logging) {
       System.out.println("Method name: method weight");
-      for (TypedOperation typedOperation : methodWeights.keySet()) {
+      for (TypedOperation typedOperation : new TreeSet<>(methodWeights.keySet())) {
         System.out.println(typedOperation.getName() + ": " + methodWeights.get(typedOperation));
       }
       System.out.println("--------------------------");

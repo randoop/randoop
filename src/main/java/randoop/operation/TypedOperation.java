@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import randoop.ExecutionOutcome;
@@ -290,6 +291,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public abstract TypedOperation applyCaptureConversion();
 
+  // Implementation note: clients mutate the list, so don't use Collections.emptyList.
   public List<TypeVariable> getTypeParameters() {
     return new ArrayList<>();
   }
@@ -529,8 +531,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return an operation to create an array of the given type
    */
   public static TypedOperation createArrayCreation(ArrayType arrayType) {
-    List<Type> typeList = new ArrayList<>();
-    typeList.add(JavaTypes.INT_TYPE);
+    List<Type> typeList = Collections.singletonList(JavaTypes.INT_TYPE);
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new ArrayCreation(arrayType), inputTypes, arrayType);
   }
@@ -543,8 +544,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return an operation that casts the input type to the result type
    */
   public static TypedOperation createCast(Type fromType, Type toType) {
-    List<Type> typeList = new ArrayList<>();
-    typeList.add(fromType);
+    List<Type> typeList = Collections.singletonList(fromType);
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new UncheckedCast(toType), inputTypes, toType);
   }

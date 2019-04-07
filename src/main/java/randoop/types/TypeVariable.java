@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -103,8 +104,7 @@ public abstract class TypeVariable extends ParameterType {
    */
   private static Substitution<ReferenceType> getSubstitution(
       TypeVariable variable, ReferenceType otherType) {
-    List<TypeVariable> variableList = new ArrayList<>();
-    variableList.add(variable);
+    List<TypeVariable> variableList = Collections.singletonList(variable);
     return Substitution.forArgs(variableList, otherType);
   }
 

@@ -8,6 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import randoop.ExceptionalExecution;
@@ -73,8 +74,7 @@ public class FieldGetterTest {
     TypedOperation rhs = createGetter(field, fieldType, classType);
 
     // types
-    List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(classType);
+    List<Type> inputTypes = Collections.singletonList(classType);
     assertEquals(
         "Input types should just be declaring class",
         new TypeTuple(inputTypes),
@@ -97,8 +97,7 @@ public class FieldGetterTest {
     TypedOperation consOp = new TypedClassOperation(cons, classType, new TypeTuple(), classType);
     Sequence seqInit = new Sequence().extend(consOp, new ArrayList<Variable>());
 
-    ArrayList<Variable> vars = new ArrayList<>();
-    vars.add(new Variable(seqInit, 0));
+    List<Variable> vars = Collections.singletonList(new Variable(seqInit, 0));
     // bind getter "call" to initialization
     Statement st_rhs = new Statement(rhs);
     Sequence seq = seqInit.extend(rhs, vars);
@@ -106,8 +105,7 @@ public class FieldGetterTest {
     Variable var1 = new Variable(seq, 0);
     // - second variable is for value
     Variable var2 = new Variable(seq, 1);
-    vars = new ArrayList<>();
-    vars.add(var1);
+    vars = Collections.singletonList(var1);
     StringBuilder b = new StringBuilder();
     st_rhs.appendCode(var2, vars, b);
     assertEquals("Expect initialization of variable from static field", expected, b.toString());

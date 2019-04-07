@@ -39,6 +39,7 @@ import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.VoidType;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -201,10 +202,10 @@ public class JUnitCreator {
     // class declaration
     ClassOrInterfaceDeclaration classDeclaration =
         new ClassOrInterfaceDeclaration(Modifier.PUBLIC, false, testClassName);
-    List<AnnotationExpr> annotations = new ArrayList<>();
-    annotations.add(
-        new SingleMemberAnnotationExpr(
-            new NameExpr("FixMethodOrder"), new NameExpr("MethodSorters.NAME_ASCENDING")));
+    List<AnnotationExpr> annotations =
+        Collections.singletonList(
+            new SingleMemberAnnotationExpr(
+                new NameExpr("FixMethodOrder"), new NameExpr("MethodSorters.NAME_ASCENDING")));
     classDeclaration.setAnnotations(annotations);
 
     List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
@@ -256,8 +257,7 @@ public class JUnitCreator {
       }
     }
     classDeclaration.setMembers(bodyDeclarations);
-    List<TypeDeclaration> types = new ArrayList<>();
-    types.add(classDeclaration);
+    List<TypeDeclaration> types = Collections.singletonList(classDeclaration);
     compilationUnit.setTypes(types);
 
     return compilationUnit;
@@ -274,12 +274,12 @@ public class JUnitCreator {
   private MethodDeclaration createTestMethod(
       String className, String methodName, ExecutableSequence testSequence) {
     MethodDeclaration method = new MethodDeclaration(Modifier.PUBLIC, new VoidType(), methodName);
-    List<AnnotationExpr> annotations = new ArrayList<>();
-    annotations.add(new MarkerAnnotationExpr(new NameExpr("Test")));
+    List<AnnotationExpr> annotations =
+        Collections.singletonList(new MarkerAnnotationExpr(new NameExpr("Test")));
     method.setAnnotations(annotations);
 
-    List<ReferenceType> throwsList = new ArrayList<>();
-    throwsList.add(new ReferenceType(new ClassOrInterfaceType("Throwable")));
+    List<ReferenceType> throwsList =
+        Collections.singletonList(new ReferenceType(new ClassOrInterfaceType("Throwable")));
     method.setThrows(throwsList);
 
     BlockStmt body = new BlockStmt();
@@ -328,8 +328,8 @@ public class JUnitCreator {
   private MethodDeclaration createFixture(
       String annotation, int modifiers, String methodName, BlockStmt body) {
     MethodDeclaration method = new MethodDeclaration(modifiers, new VoidType(), methodName);
-    List<AnnotationExpr> annotations = new ArrayList<>();
-    annotations.add(new MarkerAnnotationExpr(new NameExpr(annotation)));
+    List<AnnotationExpr> annotations =
+        Collections.singletonList(new MarkerAnnotationExpr(new NameExpr(annotation)));
     method.setAnnotations(annotations);
     method.setBody(body);
     return method;
@@ -371,8 +371,7 @@ public class JUnitCreator {
         new SingleMemberAnnotationExpr(
             new NameExpr("Suite.SuiteClasses"), new NameExpr("{ " + classList + " }")));
     suiteClass.setAnnotations(annotations);
-    List<TypeDeclaration> types = new ArrayList<>();
-    types.add(suiteClass);
+    List<TypeDeclaration> types = Collections.singletonList(suiteClass);
     compilationUnit.setTypes(types);
     return compilationUnit.toString();
   }
@@ -407,8 +406,7 @@ public class JUnitCreator {
     VariableDeclarator variableDecl =
         new VariableDeclarator(
             new VariableDeclaratorId(failureVariableName), new BooleanLiteralExpr(false));
-    List<VariableDeclarator> variableList = new ArrayList<>();
-    variableList.add(variableDecl);
+    List<VariableDeclarator> variableList = Collections.singletonList(variableDecl);
     VariableDeclarationExpr variableExpr =
         new VariableDeclarationExpr(
             new PrimitiveType(PrimitiveType.Primitive.Boolean), variableList);
@@ -427,8 +425,7 @@ public class JUnitCreator {
           new VariableDeclarator(
               new VariableDeclaratorId(testVariable),
               new ObjectCreationExpr(null, new ClassOrInterfaceType(testClass), null));
-      variableList = new ArrayList<>();
-      variableList.add(variableDecl);
+      variableList = Collections.singletonList(variableDecl);
       variableExpr = new VariableDeclarationExpr(new ClassOrInterfaceType(testClass), variableList);
       bodyStatements.add(new ExpressionStmt(variableExpr));
 
@@ -443,9 +440,9 @@ public class JUnitCreator {
         String methodName = methodNameGen.next();
 
         TryStmt tryStmt = new TryStmt();
-        List<Statement> tryStatements = new ArrayList<>();
-        tryStatements.add(
-            new ExpressionStmt(new MethodCallExpr(new NameExpr(testVariable), methodName)));
+        List<Statement> tryStatements =
+            Collections.singletonList(
+                new ExpressionStmt(new MethodCallExpr(new NameExpr(testVariable), methodName)));
         BlockStmt tryBlock = new BlockStmt();
 
         tryBlock.setStmts(tryStatements);
@@ -466,8 +463,7 @@ public class JUnitCreator {
 
         catchBlock.setStmts(catchStatements);
         catchClause.setCatchBlock(catchBlock);
-        List<CatchClause> catches = new ArrayList<>();
-        catches.add(catchClause);
+        List<CatchClause> catches = Collections.singletonList(catchClause);
         tryStmt.setCatchs(catches);
         bodyStatements.add(tryStmt);
 
@@ -485,25 +481,23 @@ public class JUnitCreator {
     }
 
     BlockStmt exitCall = new BlockStmt();
-    List<Expression> args = new ArrayList<>();
-    args.add(new IntegerLiteralExpr("1"));
-    List<Statement> exitStatement = new ArrayList<>();
-    exitStatement.add(new ExpressionStmt(new MethodCallExpr(new NameExpr("System"), "exit", args)));
+    List<Expression> args = Collections.singletonList(new IntegerLiteralExpr("1"));
+    List<Statement> exitStatement =
+        Collections.singletonList(
+            new ExpressionStmt(new MethodCallExpr(new NameExpr("System"), "exit", args)));
     exitCall.setStmts(exitStatement);
     bodyStatements.add(new IfStmt(new NameExpr(failureVariableName), exitCall, null));
 
     BlockStmt body = new BlockStmt();
     body.setStmts(bodyStatements);
     mainMethod.setBody(body);
-    List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
-    bodyDeclarations.add(mainMethod);
+    List<BodyDeclaration> bodyDeclarations = Collections.singletonList(mainMethod);
 
     ClassOrInterfaceDeclaration driverClass =
         new ClassOrInterfaceDeclaration(Modifier.PUBLIC, false, driverName);
     driverClass.setMembers(bodyDeclarations);
 
-    List<TypeDeclaration> types = new ArrayList<>();
-    types.add(driverClass);
+    List<TypeDeclaration> types = Collections.singletonList(driverClass);
     compilationUnit.setTypes(types);
     return compilationUnit.toString();
   }

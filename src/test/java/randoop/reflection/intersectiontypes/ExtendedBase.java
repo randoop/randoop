@@ -1,6 +1,6 @@
 package randoop.reflection.intersectiontypes;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ExtendedBase<T, F extends Interval & RandomAccessible<T>>
@@ -19,6 +19,6 @@ public class ExtendedBase<T, F extends Interval & RandomAccessible<T>>
 
   @Override
   public List<T> m(final F f) {
-    return new ArrayList<T>();
+    return Collections.emptyList();
   }
 }

@@ -518,10 +518,10 @@ public abstract class Type implements Comparable<Type> {
   @Override
   public int compareTo(Type type) {
     String name1 = this.getCanonicalName();
-    String name2 = this.getCanonicalName();
+    String name2 = type.getCanonicalName();
     if (name1 != null && name2 != null) {
       return this.getCanonicalName().compareTo(type.getCanonicalName());
     }
-    return this.getRuntimeClass().getName().compareTo(this.getRuntimeClass().getName());
+    return this.getRuntimeClass().getName().compareTo(type.getRuntimeClass().getName());
   }
 }

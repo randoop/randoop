@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,12 +35,10 @@ public class ListOfListsSelectorTest {
     List<SimpleList<Integer>> emptyList = new ArrayList<>();
     empty = new ListOfLists<>(emptyList);
 
-    List<SimpleList<Integer>> l1ListList = new ArrayList<>();
-    l1ListList.add(l1List);
+    List<SimpleList<Integer>> l1ListList = Collections.singletonList(l1List);
     l1 = new ListOfLists<>(l1ListList);
 
-    List<SimpleList<Integer>> l3ListList = new ArrayList<>();
-    l3ListList.add(l3List);
+    List<SimpleList<Integer>> l3ListList = Collections.singletonList(l3List);
     l3 = new ListOfLists<>(l3ListList);
 
     List<SimpleList<Integer>> l1l2ListList = new ArrayList<>();

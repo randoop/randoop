@@ -120,7 +120,7 @@ public final class ObserverEqValue extends ObjectContract {
     return 1;
   }
 
-  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE));
+  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

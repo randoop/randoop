@@ -232,8 +232,7 @@ Randoop runs on a Java 8 JVM.
   the path of the unzipped archive,
   and <code>$(RANDOOP_JAR)</code> to refer to
   the location of <code>randoop-all-4.1.1.jar</code>
-  within the unzipped archive.  You may set environment variables accordingly,
-  but that is not required.
+  within the unzipped archive.
 </p>
 
 <p>
@@ -945,7 +944,8 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>Setting this option to <code>DISCARD</code> or <code>OUTPUT</code> should be considered a last resort.
  Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
- and a better solution is not to call Randoop on such methods; see section "Nondeterminism" in
+ and a better solution is not to call Randoop on such methods; see section <a
+ href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
  the Randoop manual. [default HALT]
 <ul>
   <li><b>HALT</b> Randoop halts with a diagnostic message.
@@ -2056,6 +2056,7 @@ If you <em>want</em> Randoop to produce different test suites,
 run Randoop twice supplying
 different values for the
 <a href="#option:randomseed"><code>--randomseed</code></a> command-line argument.
+This is a good practice, to yield an overall test suite with better coverage.
 </p>
 
 
