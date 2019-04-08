@@ -32,6 +32,7 @@ public class EqualsTransitive extends ObjectContract {
     return 3;
   }
 
+  /** The arguments to which this contract can be applied. */
   static TypeTuple inputTypes =
       new TypeTuple(
           Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));

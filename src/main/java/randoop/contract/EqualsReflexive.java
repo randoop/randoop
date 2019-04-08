@@ -30,6 +30,7 @@ public final class EqualsReflexive extends ObjectContract {
     return 1;
   }
 
+  /** The arguments to which this contract can be applied. */
   static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override

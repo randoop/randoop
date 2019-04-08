@@ -1,6 +1,10 @@
 package randoop.main;
 
-/** Thrown to indicate exceptional behavior that definitely indicates a bug in Randoop. */
+/**
+ * Thrown to indicate exceptional behavior that definitely indicates a bug in Randoop.
+ *
+ * @see randoop.main.RandoopUsageError
+ */
 public class RandoopBug extends RuntimeException {
 
   private static final long serialVersionUID = -5508231959912731870L;
