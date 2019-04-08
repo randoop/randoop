@@ -583,19 +583,39 @@ public class OperationModel {
       OmitMethodsPredicate omitPredicate)
       throws SignatureParseException {
     for (String sig : methodSignatures) {
-      AccessibleObject accessibleObject =
-          SignatureParser.parse(sig, visibility, reflectionPredicate);
-      if (accessibleObject != null) {
-        TypedClassOperation operation;
-        if (accessibleObject instanceof Constructor) {
-          operation = TypedOperation.forConstructor((Constructor) accessibleObject);
-        } else {
-          operation = TypedOperation.forMethod((Method) accessibleObject);
-        }
-        if (!omitPredicate.shouldOmit(operation)) {
-          operations.add(operation);
-        }
+      TypedClassOperation operation = signatureToOperation(sig, visibility, reflectionPredicate);
+      if (!omitPredicate.shouldOmit(operation)) {
+        operations.add(operation);
       }
+    }
+  }
+
+  /**
+   * Given a signature, returns the method or constructor it represents.
+   *
+   * @param signature the operation's signature, in Randoop's format
+   * @param visibility the visibility predicate
+   * @param reflectionPredicate the reflection predicate
+   * @return the method or constructor that the signature represents
+   */
+  public static TypedClassOperation signatureToOperation(
+      String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate) {
+    AccessibleObject accessibleObject;
+    try {
+      accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
+    } catch (SignatureParseException e) {
+      throw new Error(e); // TODO
+    }
+    if (accessibleObject == null) {
+      throw new Error(
+          String.format(
+              "accessibleObject is null for %s, %s, %s",
+              signature, visibility, reflectionPredicate));
+    }
+    if (accessibleObject instanceof Constructor) {
+      return TypedOperation.forConstructor((Constructor) accessibleObject);
+    } else {
+      return TypedOperation.forMethod((Method) accessibleObject);
     }
   }
 
