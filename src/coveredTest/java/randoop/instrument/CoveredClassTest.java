@@ -235,7 +235,7 @@ public class CoveredClassTest {
     // Maps each class type to the observer methods in it.
     MultiMap<Type, TypedOperation> observerMap;
     try {
-      observerMap = operationModel.getObservers(observerSignatures);
+      observerMap = operationModel.readOperations(observerSignatures);
     } catch (OperationParseException e) {
       System.out.printf("Parse error while reading observers: %s%n", e);
       System.exit(1);
