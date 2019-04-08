@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -80,16 +81,13 @@ public class SequenceCompilerTest {
         new MethodDeclaration(PUBLIC, new PrimitiveType(PrimitiveType.Primitive.Int), "zero");
     ReturnStmt statement = new ReturnStmt(new IntegerLiteralExpr("0"));
     BlockStmt body = new BlockStmt();
-    List<Statement> statements = new ArrayList<>();
-    statements.add(statement);
+    List<Statement> statements = Collections.singletonList(statement);
     body.setStmts(statements);
     method.setBody(body);
 
-    List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
-    bodyDeclarations.add(method);
+    List<BodyDeclaration> bodyDeclarations = Collections.singletonList(method);
     classDeclaration.setMembers(bodyDeclarations);
-    List<TypeDeclaration> types = new ArrayList<>();
-    types.add(classDeclaration);
+    List<TypeDeclaration> types = Collections.singletonList(classDeclaration);
     compilationUnit.setTypes(types);
     return compilationUnit.toString();
   }
@@ -134,8 +132,7 @@ public class SequenceCompilerTest {
     Statement statement = new ReturnStmt(new IntegerLiteralExpr("0"));
     BlockStmt body = new BlockStmt();
     List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
-    List<Statement> statements = new ArrayList<>();
-    statements.add(statement);
+    List<Statement> statements = Collections.singletonList(statement);
     body.setStmts(statements);
     method.setBody(body);
     bodyDeclarations.add(method);
@@ -143,15 +140,14 @@ public class SequenceCompilerTest {
     method =
         new MethodDeclaration(
             Modifier.PUBLIC, new PrimitiveType(PrimitiveType.Primitive.Int), "one");
-    List<VariableDeclarator> variableList = new ArrayList<>();
-    variableList.add(
-        new VariableDeclarator(new VariableDeclaratorId("i"), new StringLiteralExpr("one")));
+    List<VariableDeclarator> variableList =
+        Collections.singletonList(
+            new VariableDeclarator(new VariableDeclaratorId("i"), new StringLiteralExpr("one")));
     VariableDeclarationExpr expression =
         new VariableDeclarationExpr(new PrimitiveType(PrimitiveType.Primitive.Int), variableList);
     statement = new ExpressionStmt(expression);
     body = new BlockStmt();
-    statements = new ArrayList<>();
-    statements.add(statement);
+    statements = Collections.singletonList(statement);
     body.setStmts(statements);
     method.setBody(body);
     bodyDeclarations.add(method);
@@ -161,15 +157,13 @@ public class SequenceCompilerTest {
             Modifier.PUBLIC, new PrimitiveType(PrimitiveType.Primitive.Int), "two");
     statement = new ReturnStmt(new StringLiteralExpr("one"));
     body = new BlockStmt();
-    statements = new ArrayList<>();
-    statements.add(statement);
+    statements = Collections.singletonList(statement);
     body.setStmts(statements);
     method.setBody(body);
 
     bodyDeclarations.add(method);
     classDeclaration.setMembers(bodyDeclarations);
-    List<TypeDeclaration> types = new ArrayList<>();
-    types.add(classDeclaration);
+    List<TypeDeclaration> types = Collections.singletonList(classDeclaration);
     compilationUnit.setTypes(types);
     return compilationUnit.toString();
   }

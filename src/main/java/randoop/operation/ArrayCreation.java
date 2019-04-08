@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
@@ -65,9 +64,10 @@ public class ArrayCreation extends CallableOperation {
   }
 
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  // The argument array contains a single Integer.
+  public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "requires array dimension as input";
-    int length = Integer.parseInt(input[0].toString());
+    int length = ((Integer) input[0]).intValue();
     long startTime = System.currentTimeMillis();
     Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
     long totalTime = System.currentTimeMillis() - startTime;

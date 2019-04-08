@@ -81,6 +81,7 @@ public class ClassReflectionTest {
     sequence = sequence.extend(nextOp);
     sequence = sequence.extend(constructorOp, new Variable(sequence, 0));
 
+    @SuppressWarnings("UnusedVariable")
     randoop.test.ClassWithInnerClass.A a4 = classWithInnerClass1.new A("blah", 29);
     sequence =
         sequence.extend(

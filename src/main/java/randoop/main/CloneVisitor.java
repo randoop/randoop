@@ -68,6 +68,7 @@ import java.util.List;
  * CloneVisitor is a visitor which makes a deep copy of a JavaParser AST node. Unlike the
  * CloneVisitor provided by JavaParser 2.4.0, this class also copies each node's orphan comments.
  */
+@SuppressWarnings("UnusedVariable")
 public class CloneVisitor implements GenericVisitor<Node, Object> {
 
 	/**

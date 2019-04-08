@@ -6,13 +6,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ArrayTypeTest {
 
   @Test
   public void testAssignability() {
-    ArrayList<String>[] al = new ArrayList[] {};
     Type intArrType = ArrayType.ofComponentType(new PrimitiveType(int.class));
     Type shortArrType = ArrayType.ofComponentType(new PrimitiveType(short.class));
     Type strALArrType =
@@ -63,7 +63,7 @@ public class ArrayTypeTest {
   public void testConstructionFromHarvest() throws NoSuchMethodException {
     Class<?> c = ArrayHarvest.class;
 
-    Method m = null;
+    Method m;
     java.lang.reflect.Type t;
     Type rt;
 
@@ -90,5 +90,61 @@ public class ArrayTypeTest {
     rt = Type.forType(t);
     assertTrue("should be generic: " + rt, !rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
+  }
+
+  @Test
+  public void testFullyQualifiedArrayParsing() {
+    String objectArraySignature = "java.lang.Object[]";
+    String multiDimObjectArraySignature = "java.lang.Object[][][][][][][]";
+    String primitiveArraySignature = "int[]";
+    String nonArraySignature = "java.lang.Object";
+    String primitiveNonArraySignature = "double";
+
+    // Following should be parsed as 'java.util.Formatter$BigDecimalLayoutForm'
+    String innerClassArraySignature = "java.util.Formatter$BigDecimalLayoutForm[][]";
+    String innerClassNonArraySignature = "java.util.Formatter$BigDecimalLayoutForm";
+
+    try {
+      assertTrue(Type.getTypeforFullyQualifiedName(objectArraySignature) instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedName(objectArraySignature) == null);
+
+      assertTrue(
+          Type.getTypeforFullyQualifiedName(multiDimObjectArraySignature) instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedName(multiDimObjectArraySignature) == null);
+
+      assertTrue(Type.getTypeforFullyQualifiedName(primitiveArraySignature) instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedName(primitiveArraySignature) == null);
+
+      assertFalse(Type.getTypeforFullyQualifiedName(nonArraySignature) instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedName(nonArraySignature) == null);
+
+      assertFalse(
+          Type.getTypeforFullyQualifiedName(primitiveNonArraySignature) instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedName(primitiveNonArraySignature) == null);
+
+      assertTrue(Type.getTypeforFullyQualifiedName(innerClassArraySignature) instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedName(innerClassArraySignature) == null);
+
+      assertFalse(
+          Type.getTypeforFullyQualifiedName(innerClassNonArraySignature) instanceof ArrayType);
+      assertFalse(Type.forFullyQualifiedName(innerClassNonArraySignature) == null);
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
+
+    String invalidArrayInnerClass = "java.util.Formatter$IDontExist[][]";
+    try {
+      Type.forFullyQualifiedName(invalidArrayInnerClass);
+      Assert.fail();
+    } catch (ClassNotFoundException e) {
+      // Good
+    }
+    try {
+      Type.getTypeforFullyQualifiedName(invalidArrayInnerClass);
+      Assert.fail();
+    } catch (ClassNotFoundException e) {
+      // Good
+    }
   }
 }

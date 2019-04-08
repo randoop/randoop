@@ -6,26 +6,24 @@
  */
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '2.0.4'
+  id 'com.github.johnrengelman.shadow' version '5.0.0'
   id 'java'
   id 'eclipse'
   id 'idea'
   id 'jacoco'
 
   /*
-   * Plugin that applies Google-Java-format to the Java files in the project.
-   * https://github.com/sherter/google-java-format-gradle-plugin
-   */
-  id 'com.github.sherter.google-java-format' version '0.7.1'
-
-  /*
    * Plugin that applies Google's Error Prone linter (http://errorprone.info/).
    * https://github.com/tbroyer/gradle-errorprone-plugin
-   * Elsewhere this file excludes src/testinput from directories examined by Error Prone.
+   * Elsewhere this file excludes src/testInput from directories examined by Error Prone.
    * To run Error Prone, do:  ./gradlew compileJava
    * There is no separate target to just run Error Prone.
    */
   id "net.ltgt.errorprone-base" version "0.0.16"
+
+  // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
+  id 'se.patrikerdes.use-latest-versions' version '0.2.9'
+  id 'com.github.ben-manes.versions' version '0.21.0'
 }
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
@@ -49,7 +47,7 @@ allprojects {
   }
 
   /* Randoop version number - added to generated jar files */
-  version = '4.1.0'
+  version = '4.1.1'
 
   configurations {
     // A collection of all plumelib dependencies required, so that all
@@ -58,15 +56,19 @@ allprojects {
   }
 
   dependencies {
-    compile "org.checkerframework:checker-qual:2.5.7"
+    compile "org.checkerframework:checker-qual:2.7.0"
 
-    plumelib 'org.plumelib:bcel-util:1.1.3'
+    // https://mvnrepository.com/artifact/org.plumelib/bcel-util
+    plumelib 'org.plumelib:bcel-util:1.1.4'
     // To use a local version comment out line above and uncomment line below.
-    //plumelib files("${rootDir}/libs/bcel-util-all.jar")
+    // plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
+    // https://mvnrepository.com/artifact/org.plumelib/options
     plumelib 'org.plumelib:options:1.0.1'
-    plumelib 'org.plumelib:plume-util:1.0.5'
-    plumelib 'org.plumelib:reflection-util:0.0.1'
+    // https://mvnrepository.com/artifact/org.plumelib/plume-util
+    plumelib 'org.plumelib:plume-util:1.0.6'
+    // https://mvnrepository.com/artifact/org.plumelib/reflection-util
+    plumelib 'org.plumelib:reflection-util:0.0.2'
   }
 }
 
@@ -84,49 +86,23 @@ sourceSets {
   /* JUnit tests that must be run with -javaagent */
   /* JUnit tests are run in nondeterministic order, but system tests are
      run in deterministic order. */
-  coveredTest {
-    java {
-      srcDir 'src/coveredtest/java'
-    }
-    resources {
-      srcDir 'src/coveredtest/resources'
-    }
-  }
-
-  replacecallTest {
-    java {
-      srcDir 'src/replacecalltest/java'
-    }
-    resources {
-      srcDir 'src/replacecalltest/resources'
-    }
-  }
+  coveredTest
+  replacecallTest
 
   /* system tests */
   systemTest {
-    java {
-      srcDir 'src/systemtest/java'
-    }
     resources {
-      srcDir 'src/systemtest/resources'
-      srcDir 'src/testinput/resources'
+      srcDir 'src/testInput/resources'
     }
     output.dir(workingDirectories, builtBy: 'generateWorkingDirs')
   }
 
   /* Code sets used by system tests. There are no actual tests here. */
-  testInput {
-    java {
-      srcDir 'src/testinput/java'
-    }
-    resources {
-      srcDir 'src/testinput/resources'
-    }
-  }
+  testInput 
 
   test {
     resources {
-      srcDir 'src/testinput/resources'
+      srcDir 'src/testInput/resources'
     }
   }
 }
@@ -136,6 +112,8 @@ configurations {
    * Used to manage javaagent jar file
    */
   jacocoagent
+
+  junit
 
   /*
    * The agent tests are JUnit tests run with the covered-class-agent, so
@@ -148,26 +126,31 @@ configurations {
 }
 
 dependencies {
+  junit group: 'junit', name: 'junit', version: '4.+'
+
   implementation configurations.plumelib
 
   implementation 'org.apache.commons:commons-exec:1.3'
-  implementation group: 'commons-io', name: 'commons-io', version: '2.4'
-  implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
-  implementation group: 'junit', name: 'junit', version: '4.+'
+  implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+  implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+  implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
+  implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
 
-  /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files. */
+  /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files.
+   * TODO: Update now that we no longer support JDK7.
+   * Note that updating will require code changes due to JavaParser API changes. */
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
 
   /* Jacoco measures coverage of classes and methods under test. */
-  implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.9'
-  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.9', classifier: 'runtime'
+  implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
+  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.3', classifier: 'runtime'
 
   /* sourceSet test uses JUnit and some use testInput source set */
-  testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.5'
-  testImplementation group: 'backport-util-concurrent', name: 'backport-util-concurrent', version: '2.1'
-  testImplementation group: 'junit', name: 'junit', version: '4.+'
+  testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.12'
+  testImplementation configurations.junit.dependencies
   testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.7.0'
   testImplementation sourceSets.testInput.output
 
   /*
@@ -180,54 +163,30 @@ dependencies {
 
   replacecallTestImplementation files(project(':replacecall').sourceSets.main.output)
 
-  jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.7.201606060606'
+  jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.3'
 
   /*
    * source set systemTest
    */
   systemTestImplementation configurations.plumelib
-  systemTestImplementation group: 'commons-io', name: 'commons-io', version: '2.4'
+  systemTestImplementation group: 'commons-io', name: 'commons-io', version: '2.6'
   systemTestImplementation 'org.apache.commons:commons-exec:1.3'
-  systemTestImplementation group: 'junit', name: 'junit', version: '4.+'
+  systemTestImplementation configurations.junit.dependencies
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.7.201606060606'
-  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.7.7.201606060606'
+  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
+  systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.3'
+  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.7.0'
   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
    * sourceSet testInput depends on output of main.
-   * Also, src/testinput/java/ps1/RatPolyTest.java uses JUnit
+   * Also, src/testInput/java/ps1/RatPolyTest.java uses JUnit
    */
   testInputImplementation sourceSets.main.output
-  testInputImplementation group: 'junit', name: 'junit', version: '4.+'
-}
+  testInputImplementation configurations.junit.dependencies
 
-/*
- * Configuration for formatting
- */
-googleJavaFormat {
-  toolVersion '1.6'
-  exclude '**/CloneVisitor.java'
+  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
 }
-
-tasks.googleJavaFormat {
-  group 'Formatting'
-  description = "Reformat Java source code with Google-Java-format"
-  exclude 'src/testinput'
-}
-
-tasks.verifyGoogleJavaFormat {
-  group 'Formatting'
-  description = "Check Java source code formatting with Google-Java-format"
-  exclude 'src/testinput'
-}
-
-// This is annoying to happen on every build:  it may delete import statements
-// if there are certain types of syntax errors in the source code.
-// // should verifyGoogleJavaFormat before compiling
-// tasks.withType(JavaCompile) {
-//   dependsOn 'googleJavaFormat' // task name conflicts with plugin name
-// }
 
 /*
  * Configuration for compilation.
@@ -257,26 +216,83 @@ build.dependsOn compileAll
 
 /*
  * Configuration for using Error Prone linter.
- *
- * Only works in Java 8+.
  */
 import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
 tasks.withType(JavaCompile).each { t ->
-  if (JavaVersion.current().isJava8Compatible()) {
-    if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
-      t.toolChain ErrorProneToolChain.create(project)
-      t.options.compilerArgs += [
-        // Maybe NamedParameters is no longer supported?
-        // // undocumented, and suggestion seems bad
-	// '-Xep:NamedParameters:OFF',
- 	// Is always a false positive in my experience.
-	'-Xep:StringSplitter:OFF'
-        // TODO: uncomment once we run the Interning Checker on Randoop
-        // '-Xep:ReferenceEquality:OFF'
-        ]
+  if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
+    t.toolChain ErrorProneToolChain.create(project)
+    t.options.compilerArgs += [
+      // Maybe NamedParameters is no longer supported?
+      // // undocumented, and suggestion seems bad
+      // '-Xep:NamedParameters:OFF',
+      // Is always a false positive in my experience.
+      '-Xep:StringSplitter:OFF'
+      // TODO: uncomment once we run the Interning Checker on Randoop
+      // '-Xep:ReferenceEquality:OFF'
+      ]
+  }
+}
+
+
+/*
+ * Configuration for formatting
+ */
+
+task getCodeFormatScripts {
+  description "Obtain the run-google-java-format scripts"
+  doLast {
+    def rgjfDir = "$buildDir/utils/run-google-java-format"
+    if ( ! new File(rgjfDir).exists() ) {
+      exec {
+        commandLine 'git', 'clone', '--depth', '1', "https://github.com/plume-lib/run-google-java-format.git", rgjfDir
+      }
+    } else {
+      // Ignore exit value so this does not halt the build when not connected to the Internet.
+      exec {
+        workingDir rgjfDir
+        ignoreExitValue true
+        commandLine 'git', 'pull', '-q'
+      }
     }
   }
+}
+
+task pythonIsInstalled(type: Exec) {
+  description "Check that the python executable is installed."
+  executable = "python"
+  args "--version"
+}
+
+task checkFormat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], group: 'Formatting') {
+  description "Check whether the Java source code is properly formatted"
+  def javaFiles = fileTree("$projectDir").matching{
+    include "**/*.java" exclude "src/testInput/**" exclude "build/**" exclude "**/CloneVisitor.java"
+  } as List
+  def pythonArgs = javaFiles.clone()
+  pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/check-google-java-format.py")
+
+  commandLine "python"
+  args pythonArgs
+  ignoreExitValue true
+
+  doLast {
+    if (execResult.exitValue != 0) {
+      throw new GradleException("Found improper formatting, try running:  ./gradlew reformat")
+    }
+  }
+}
+
+task reformat(type: Exec, dependsOn: [getCodeFormatScripts, pythonIsInstalled], group: 'Formatting') {
+  description "Format the Java source code according to the Google Java Format style"
+  def javaFiles = fileTree("$projectDir").matching{
+    include "**/*.java" exclude "src/testInput/**" exclude "build/**" exclude "**/CloneVisitor.java"
+  } as List
+  def pythonArgs = javaFiles.clone()
+  pythonArgs.add(0, "$projectDir/build/utils/run-google-java-format/run-google-java-format.py")
+
+  commandLine "python"
+  args pythonArgs
 }
 
 
@@ -289,10 +305,10 @@ clean.dependsOn ':covered-class:clean'
 /*
  * Configuration for testing.
  * In terms of build, we have two kinds of tests, both using JUnit.
- *   * Those in src/coveredtest require the covered-class Java agent.
+ *   * Those in src/coveredTest require the covered-class Java agent.
  *   * Those in src/test are run without the agent.
  *     This second group includes tests that run the full Randoop over
- *     classes that (mostly) are located in src/testinput.
+ *     classes that (mostly) are located in src/testInput.
  */
 
 /*
@@ -378,7 +394,7 @@ task replacecallTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.replacecallTest.output.resourcesDir
   testClassesDirs = sourceSets.replacecallTest.output.classesDirs
   classpath = sourceSets.replacecallTest.runtimeClasspath + files("$buildDir/libs/replacecall-${version}.jar")
-  // use the replacecall agent using the exclusions file from replacecalltest/resources
+  // use the replacecall agent using the exclusions file from replacecallTest/resources
   jvmArgs "-javaagent:$buildDir/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt,--debug"
   jvmArgs "-Xbootclasspath/a:$buildDir/libs/replacecall-${version}.jar"
   testLogging {
@@ -444,7 +460,6 @@ task extractJacocoAgent(type: Copy) {
 }
 
 /*
- * Configuration of the systemTest task.
  * Runs JUnit over all classes in systemTest sourceSet.
  * JUnit tests assume that working directories can be found in the build directory.
  */
@@ -496,7 +511,7 @@ tasks.withType(Test) {
 
   /*
    * Pass along any system properties that begin with "randoop."
-   * Used by randoop.main.RandoopOptions in systemtest.
+   * Used by randoop.main.RandoopOptions in systemTest.
    */
   System.properties.each { k,v->
         if (k.startsWith("randoop.")) {
@@ -506,8 +521,7 @@ tasks.withType(Test) {
 }
 
 /*
- * Configuration of task to write HTML reports into build/reports/allTests for
- * all tests.
+ * Write HTML reports into build/reports/allTests for all tests.
  * [
  *   Note that this may not work correctly if different Test tasks use the same
  *   test classes. Fine here because sourceSets use different packages for test
@@ -519,6 +533,11 @@ task testReport(type: TestReport) {
   description "Creates HTML reports for tests results"
   destinationDir = file("$buildDir/reports/allTests")
   reportOn tasks.withType(Test)
+}
+
+task printJunitJarPath {
+    description "Print the path to junit.jar"
+    doFirst { println configurations.junit.asPath }
 }
 
 //****************** Building distribution *****************
@@ -567,7 +586,6 @@ shadowJar {
   relocate 'com.sun.jna', 'randoop.com.sun.jna'
   relocate 'com.trilead.ssh2', 'randoop.com.trilead.ssh2'
   relocate 'de.regnis.q.sequence', 'randoop.de.regnis.q.sequence'
-  relocate 'edu.emory.mathcs.backport.java.util', 'randoop.edu.emory.mathcs.backport.java.util'
   relocate 'net.fortuna.ical4j', 'randoop.net.fortuna.ical4j'
   relocate 'nu.xom', 'randoop.nu.xom'
   relocate 'org.antlr', 'randoop.org.antlr'
@@ -602,9 +620,10 @@ task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']
 /********************* Building manual *******************/
 /*
  * The "manual" gradle target creates the contents of the manual directory
- * within src/, which will eventually be moved to project docs directory.
+ * within src/, which will eventually be moved to the gh-pages branch.
  *
  * Has structure:
+ * src/
  *   docs/
  *     api/ - contains javadoc for main source set
  *     manual/
@@ -691,23 +710,21 @@ javadoc {
 
 // Make Javadoc fail on warnings
 // From https://stackoverflow.com/a/49544352/173852
-if (JavaVersion.current().isJava8Compatible()) {
-    tasks.withType(Javadoc) {
-        // The '-quiet' as second argument is actually a hack,
-        // since the one paramater addStringOption doesn't seem to
-        // work, we extra add '-quiet', which is added anyway by
-        // gradle. See https://github.com/gradle/gradle/issues/2354
-        // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
-        // for information about the -Xwerror option.
-        options.addStringOption('Xwerror', '-quiet')
-    }
+tasks.withType(Javadoc) {
+    // The '-quiet' as second argument is actually a hack,
+    // since the one paramater addStringOption doesn't seem to
+    // work, we extra add '-quiet', which is added anyway by
+    // gradle. See https://github.com/gradle/gradle/issues/2354
+    // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
+    // for information about the -Xwerror option.
+    options.addStringOption('Xwerror', '-quiet')
 }
 
 configurations {
   requireJavadoc
 }
 dependencies {
-  compile group: 'org.plumelib', name: 'require-javadoc', version: '0.0.7'
+  compile group: 'org.plumelib', name: 'require-javadoc', version: '0.1.0'
 }
 task requireJavadoc(type: Javadoc) {
   description = 'Ensures that all Java elements have Javadoc documentation.'
@@ -739,7 +756,7 @@ javadoc.doLast {
   exec {
     commandLine preplace, "<dt><span class=\"memberNameLink\"><a href=\".*\\(\\)</a></span> - Constructor for enum [a-zA-Z0-9_.]*<a href=\".*</a></dt>", "", "build/docs/api/index-all.html"
   }
-  // Reduce size of diffs (when it's copied over to docs/api whech is under
+  // Reduce size of diffs (when it's copied over to gh-pages branch whech is under
   // version control).  Note that build/docs/api/ is the same as src/docs/api/.
   exec {
     commandLine preplace, "^<!-- Generated by javadoc \\(.* -->\$", "", "build/docs/api/"
@@ -754,19 +771,14 @@ javadoc.doLast {
  */
 build.dependsOn javadoc
 
-/*
- * Configuration of updateUserTOC task to update the table-of-contents for the
- * user documentation.
- */
+/* Update the table-of-contents for the user documentation. */
 task updateUserTOC( type:Exec, dependsOn: [ 'cloneLibs' ]) {
   executable file("$buildDir/utils/html-tools/html-update-toc")
   args  file("${projectDir}/src/docs/manual/index.html")
   environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
 }
 
-/* Configuration of task updateDevTOC to update table of contents in developer
- * documentation.
- */
+/* Update table of contents in developer documentation. */
 task updateDevTOC( type:Exec, dependsOn: ['cloneLibs' ]) {
   executable file("$buildDir/utils/html-tools/html-update-toc")
   args file("${projectDir}/src/docs/manual/dev.html")
@@ -819,20 +831,15 @@ task html5validatorExists {
 }
 
 /*
- * Configuration of manual task to generate/update and move documentation into
- * build/docs directory.
+ * Generate/update and move documentation into build/docs directory.
  */
 task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC', 'html5validatorExists']) {
   group 'Documentation'
   description "Adds options and TOC to documentation in src/docs"
   doLast {
     exec {
-      if (JavaVersion.current().isJava8Compatible()) {
-        environment PATH: "$System.env.PATH"
-        commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
-      } else {
-        commandLine "echo","WARNING: HTML validation of manuals is only run in Java 8+"
-      }
+      environment PATH: "$System.env.PATH"
+      commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
     }
   }
 }
@@ -841,16 +848,16 @@ build.dependsOn manual
 
 /*
  * Applies HTML5 validator to API javadoc.
- * Note: prior to Java 9, javadoc does not comply with HTML5.
  */
 task validateAPI(type: Exec, dependsOn: ['javadoc', 'html5validatorExists']) {
   group 'Documentation'
   description "Run html5validator to find HTML errors in API documentation"
+  // Prior to Java 9, javadoc does not comply with HTML5.
   if (JavaVersion.current().isJava9Compatible()) {
     environment PATH: "$System.env.PATH"
     commandLine "html5validator", "--root", file("${buildDir}/docs/api")
   } else {
-    commandLine "echo", "WARNING: HTML validation of API is only run in Java 9+"
+    commandLine "echo", "WARNING: HTML validation of API is only run in Java 9+."
   }
 }
 
@@ -863,7 +870,7 @@ task validateAPI(type: Exec, dependsOn: ['javadoc', 'html5validatorExists']) {
 task cleanSite {
   group=null
   description 'Removes all files from the project pages directory (CAUTION!)'
-  def siteDir = file("${projectDir}/docs")
+  def siteDir = file("${projectDir}/../randoop-branch-gh-pages")
   def oldSiteFiles = fileTree(siteDir) {
     exclude 'README.md'
   }
@@ -874,7 +881,7 @@ task cleanSite {
 
 /*
  * Publishes changes to the project documentation to the project pages directory
- * (docs). This task ensures that all old site files are removed, new API
+ * (gh-pages branch). This task ensures that all old site files are removed, new API
  * documentation is generated, the manual is updated, and the HTML has been
  * validated.
  *
@@ -887,7 +894,7 @@ task cleanSite {
 task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) {
   group 'Publishing'
   description 'Publish changes to site files and javadoc to the project pages directory'
-  def siteDir = file("${projectDir}/docs")
+  def siteDir = file("${projectDir}/../randoop-branch-gh-pages")
   def buildDocsDir = file("${buildDir}/docs") // include any built docs (e.g., api)
   def newSiteFiles = fileTree("${projectDir}/src/docs") {
     exclude 'README.md'
@@ -908,17 +915,19 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) 
  */
 task validateSite(dependsOn: 'html5validatorExists') {
   description "Run html5validator to find HTML errors in site files (excludes manual and api)"
-  if (JavaVersion.current().isJava8Compatible()) {
+  if (JavaVersion.current().isJava9Compatible()) {
+    exec {
+      environment PATH: "$System.env.PATH"
+      commandLine "html5validator", "--root", "src/docs/"
+    }
+  } else if (JavaVersion.current().isJava8Compatible()) {
+    // Before JDK9, Javadoc did not create proper HTML 5.
     exec {
       environment PATH: "$System.env.PATH"
       commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
     }
-    exec {
-      environment PATH: "$System.env.PATH"
-      commandLine "html5validator", "--root", "docs/", "--ignore", "docs/api"
-    }
   } else {
-    println "WARNING: HTML validation of site is only run in Java 8+"
+    commandLine "echo", "WARNING: HTML validation of API documentation is only run in Java 9+."
   }
 }
 
@@ -932,14 +941,14 @@ task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishS
 task tags(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testinput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testInput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
 task tagsNoTests(type: Exec, dependsOn: 'cloneLibs') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-scripts/sort-directory-order | grep -v /testinput/ | xargs etags"
+  commandLine "bash", "-c", "find src/ -name *.java | $buildDir/utils/plume-scripts/sort-directory-order | grep -v /testInput/ | xargs etags"
 }
 
 /* Run checklink */
@@ -954,7 +963,7 @@ task checklink(type: Exec, dependsOn: 'cloneLibs') {
 
 task installGitHooks(type: Copy) {
   group=null
-  description "Installs git hooks for pre-commit and managing docs permissions"
+  description "Installs git hooks for pre-commit"
   from 'scripts/'
   into '.git/hooks'
 }

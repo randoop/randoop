@@ -53,7 +53,6 @@ public final class ObserverEqValue extends ObjectContract {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;
-    Type type = Type.forClass(value.getClass());
     assert isLiteralValue(value)
         : String.format(
             "Cannot represent %s [%s] as a literal; observer = %s",
@@ -121,7 +120,7 @@ public final class ObserverEqValue extends ObjectContract {
     return 1;
   }
 
-  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE));
+  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

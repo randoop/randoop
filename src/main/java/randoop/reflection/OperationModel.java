@@ -287,7 +287,8 @@ public class OperationModel {
               break;
             default:
               throw new Error(
-                  "Unexpected error in GenTests.  Please report at https://github.com/randoop/randoop/issues .");
+                  "Unexpected error in GenTests.  Please report at https://github.com/randoop/randoop/issues , "
+                      + "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
           }
         }
       }
@@ -307,7 +308,6 @@ public class OperationModel {
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     for (String sig : observerSignatures) {
       TypedClassOperation operation = MethodCall.parse(sig);
-      Type outputType = operation.getOutputType();
       observerMap.add(operation.getDeclaringType(), operation);
     }
     return observerMap;

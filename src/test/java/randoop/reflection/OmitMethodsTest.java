@@ -3,7 +3,7 @@ package randoop.reflection;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -159,8 +159,7 @@ public class OmitMethodsTest {
   }
 
   private Set<TypedOperation> getOperations(ClassOrInterfaceType type, Pattern omitpattern) {
-    List<Pattern> omitList = new ArrayList<>();
-    omitList.add(omitpattern);
+    List<Pattern> omitList = Collections.singletonList(omitpattern);
     OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(omitList);
     VisibilityPredicate visibility =
         new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection");

@@ -201,32 +201,6 @@ public final class Randomness {
   }
 
   /**
-   * Performs a binary search on a cumulative weight distribution and returns the corresponding
-   * index i such that {@code cumulativeWeights.get(i) < point <= cumulativeWeights.get(i + 1)} for
-   * {@code 0 <= i < cumulativeWeights.length}.
-   *
-   * @param cumulativeWeights the cumulative weight distribution to search through. The ith element
-   *     is the cumulative weight of all elements before the ith (that is, exclusive rather than
-   *     inclusive). The last (i+1)th element is the weight of all elements.
-   * @param point the value used to find the index within the cumulative weight distribution
-   * @return the index corresponding to point's location in the cumulative weight distribution
-   */
-  private static int binarySearchForIndex(double[] cumulativeWeights, double point) {
-    int low = 0;
-    int high = cumulativeWeights.length;
-    int mid = (low + high) / 2;
-    while (!(cumulativeWeights[mid] < point && point <= cumulativeWeights[mid + 1])) {
-      if (cumulativeWeights[mid] < point) {
-        low = mid;
-      } else {
-        high = mid;
-      }
-      mid = (low + high) / 2;
-    }
-    return mid;
-  }
-
-  /**
    * Return a random member of the set, selected uniformly at random.
    *
    * @param <T> the type of elements of the set param set the collection from which to choose an

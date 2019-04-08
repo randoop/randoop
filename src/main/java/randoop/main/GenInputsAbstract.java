@@ -165,7 +165,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>Setting this option to {@code DISCARD} or {@code OUTPUT} should be considered a last resort.
    * Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
-   * and a better solution is not to call Randoop on such methods; see section "Nondeterminism" in
+   * and a better solution is not to call Randoop on such methods; see section <a
+   * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
    * the Randoop manual.
    */
   @Option("What to do if a flaky test is generated")
@@ -395,7 +396,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * {@code --no-error-revealing-tests} together with {@code --no-regression-tests}.
    *
    * <p>In the current implementation, the number of tests in the output can be substantially
-   * smaller than this limit.
+   * smaller than this limit. One reason is that Randoop does not output subsumed tests, which
+   * appear as a subsequence of some longer test.
    */
   @Option("Maximum number of tests to ouput")
   public static int output_limit = LIMIT_DEFAULT;
@@ -406,13 +408,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>The purpose is to shorten parameter lists and make them easier to read.
    */
   public static class Limits {
-    /* Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no limit. */
+    /**
+     * Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no
+     * limit.
+     */
     public int time_limit_millis;
-    /* Maximum number of attempts to generate a sequence. Must be non-negative. */
+    /** Maximum number of attempts to generate a sequence. Must be non-negative. */
     public int attempted_limit;
-    /* Maximum number of sequences to generate. Must be non-negative. */
+    /** Maximum number of sequences to generate. Must be non-negative. */
     public int generated_limit;
-    /* Maximum number of sequences to output. Must be non-negative. */
+    /** Maximum number of sequences to output. Must be non-negative. */
     public int output_limit;
 
     public Limits() {

@@ -65,4 +65,18 @@ public class ContractSet {
   public boolean isEmpty() {
     return contractMap.isEmpty();
   }
+
+  @Override
+  public String toString() {
+    int cardinality = 0;
+    StringBuilder contractString = new StringBuilder("");
+    for (int i = 0; i <= maxArity; i++) {
+      List<ObjectContract> contracts = contractMap.get(i);
+      if (contracts != null) {
+        contractString.append(String.format("  arity %d: %s%n", i, contracts));
+        cardinality += contracts.size();
+      }
+    }
+    return String.format("ContractSet[size=%d]%n%s", cardinality, contractString.toString());
+  }
 }

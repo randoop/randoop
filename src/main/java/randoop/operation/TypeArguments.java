@@ -1,7 +1,7 @@
 package randoop.operation;
 
 import org.checkerframework.checker.signature.qual.ClassGetName;
-import randoop.reflection.TypeNames;
+import randoop.types.Type;
 
 /**
  * TypeArguments provides static methods for creating and recognizing strings representing the type
@@ -32,11 +32,10 @@ class TypeArguments {
       argTypes = new Class<?>[argsStrs.length];
       for (int i = 0; i < argsStrs.length; i++) {
         @SuppressWarnings("signature") // uncheckable string manipulation
-        @ClassGetName
-        String typeName = argsStrs[i].trim();
+        @ClassGetName String typeName = argsStrs[i].trim();
 
         try {
-          argTypes[i] = TypeNames.getTypeForName(typeName);
+          argTypes[i] = Type.forFullyQualifiedName(typeName);
         } catch (ClassNotFoundException e) {
           throw new OperationParseException("Class " + typeName + " is not on classpath");
         }

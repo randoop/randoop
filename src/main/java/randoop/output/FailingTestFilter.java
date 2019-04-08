@@ -97,7 +97,6 @@ public class FailingTestFilter implements CodeWriter {
           classSource =
               commentCatchStatements(
                   packageName,
-                  classname,
                   classSource,
                   e.getDiagnostics().getDiagnostics(),
                   workingDirectory,
@@ -133,7 +132,10 @@ public class FailingTestFilter implements CodeWriter {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
 
-  /* Matches a variable declaration. Capturing group 1 is through the "=", 2 is the type, 3 is the initializer. */
+  /**
+   * Matches a variable declaration. Capturing group 1 is through the "=", 2 is the type, 3 is the
+   * initializer.
+   */
   private static final Pattern VARIABLE_DECLARATION_LINE =
       Pattern.compile(
           "^([ \t]*"
@@ -147,7 +149,6 @@ public class FailingTestFilter implements CodeWriter {
    * errors exist. Ignores compilation warnings.
    *
    * @param packageName the package name of the test class
-   * @param classname the simple (unqualified) name of the test class
    * @param javaCode the source code for the test class; each assertion must be on its own line
    * @param diagnostics the errors and warnings from compiling the class
    * @param destinationDir the directory that contains the source code, used only for debugging
@@ -158,13 +159,11 @@ public class FailingTestFilter implements CodeWriter {
    */
   private String commentCatchStatements(
       String packageName,
-      String classname,
       String javaCode,
       List<Diagnostic<? extends JavaFileObject>> diagnostics,
       Path destinationDir,
       FileCompiler.FileCompilerException e) {
     assert !Objects.equals(packageName, "");
-    String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     String[] javaCodeLines = javaCode.split(Globals.lineSep);
 
@@ -187,7 +186,7 @@ public class FailingTestFilter implements CodeWriter {
       }
     }
 
-    // XXX For efficiency, have this method return the array and redo writeClass so that it writes
+    // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
     // from array (?).
     return UtilPlume.join(javaCodeLines, Globals.lineSep);
   }
@@ -328,7 +327,7 @@ public class FailingTestFilter implements CodeWriter {
       javaCodeLines[lineNumber - 1] = flakyLineReplacement(javaCodeLines[lineNumber - 1]);
     }
 
-    // XXX For efficiency, have this method return the array and redo writeClass so that it writes
+    // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
     // from array (?).
     return UtilPlume.join(javaCodeLines, Globals.lineSep);
   }
@@ -393,7 +392,6 @@ public class FailingTestFilter implements CodeWriter {
    */
   private String flakyLineReplacement(String flakyLine) {
     Matcher varDeclMatcher = VARIABLE_DECLARATION_LINE.matcher(flakyLine);
-    String commentedLine;
     if (varDeclMatcher.matches()) {
       String varType = varDeclMatcher.group(2);
       String newInitializer;

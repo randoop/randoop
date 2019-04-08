@@ -329,6 +329,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the immediate supertypes of this type
    */
+  @SuppressWarnings("MixedMutabilityReturnType")
   public List<ClassOrInterfaceType> getImmediateSupertypes() {
     if (this.isObject()) {
       return Collections.emptyList();

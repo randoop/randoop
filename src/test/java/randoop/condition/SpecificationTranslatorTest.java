@@ -184,7 +184,7 @@ public class SpecificationTranslatorTest {
     SpecificationCollection collection = SpecificationCollection.create(specList);
     ExecutableSpecification execSpec = collection.getExecutableSpecification(method);
     TypedClassOperation appendOp = TypedOperation.forMethod(method);
-    appendOp.addExecutableSpecification(execSpec);
+    appendOp.setExecutableSpecification(execSpec);
     Sequence sequence = createPrintWriterSequence(appendOp);
     ExecutableSequence eseq = new ExecutableSequence(sequence);
     eseq.execute(new DummyVisitor(), new DummyCheckGenerator());

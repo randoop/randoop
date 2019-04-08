@@ -7,8 +7,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.nio.file.FileSystem;
@@ -20,15 +20,12 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
@@ -185,17 +182,6 @@ public class SpecificationCollection {
   private static TypeToken<List<OperationSpecification>> LIST_OF_OS_TYPE_TOKEN =
       (new TypeToken<List<OperationSpecification>>() {});
 
-  public static void main(String[] args) throws IOException {
-    ZipFile zipFile = new ZipFile("C:/test.zip");
-
-    Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-    while (entries.hasMoreElements()) {
-      ZipEntry entry = entries.nextElement();
-      InputStream stream = zipFile.getInputStream(entry);
-    }
-  }
-
   /**
    * Reads {@link OperationSpecification} objects from the given file, and adds them to the other
    * two arguments, which are modified by side effect.
@@ -315,31 +301,31 @@ public class SpecificationCollection {
    *       randoop.condition.GuardThrowsPair}
    * </ul>
    *
-   * @param accessibleObject the reflection object for a constructor or method
+   * @param executable the reflection object for a constructor or method
    * @return the {@link ExecutableSpecification} for the specifications of the given method or
    *     constructor
    */
-  public ExecutableSpecification getExecutableSpecification(AccessibleObject accessibleObject) {
+  public ExecutableSpecification getExecutableSpecification(Executable executable) {
 
-    // Check if accessibleObject already has an ExecutableSpecification object
-    ExecutableSpecification execSpec = getExecutableSpecificationCache.get(accessibleObject);
+    // Check if executable already has an ExecutableSpecification object
+    ExecutableSpecification execSpec = getExecutableSpecificationCache.get(executable);
     if (execSpec != null) {
       return execSpec;
     }
 
     // Otherwise, build a new one.
-    OperationSpecification specification = specificationMap.get(accessibleObject);
+    OperationSpecification specification = specificationMap.get(executable);
     if (specification == null) {
       execSpec = new ExecutableSpecification();
     } else {
       execSpec =
           SpecificationTranslator.createExecutableSpecification(
-              accessibleObject, specification, compiler);
+              executable, specification, compiler);
     }
 
-    if (accessibleObject instanceof Method) {
-      Method method = (Method) accessibleObject;
-      Set<Method> parents = overridden.get(accessibleObject);
+    if (executable instanceof Method) {
+      Method method = (Method) executable;
+      Set<Method> parents = overridden.get(executable);
       // Parents is null in some tests.  Is it ever null other than that?
       if (parents == null) {
         Set<Method> sigSet = signatureToMethods.getValues(OperationSignature.of(method));
@@ -349,7 +335,7 @@ public class SpecificationCollection {
         }
       }
       if (parents == null) {
-        throw new Error("parents = null (test #2) for " + accessibleObject);
+        throw new Error("parents = null (test #2) for " + executable);
       }
       if (parents != null) {
         for (Method parent : parents) {
@@ -359,7 +345,7 @@ public class SpecificationCollection {
       }
     }
 
-    getExecutableSpecificationCache.put(accessibleObject, execSpec);
+    getExecutableSpecificationCache.put(executable, execSpec);
     return execSpec;
   }
 }

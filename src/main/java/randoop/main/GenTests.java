@@ -55,6 +55,7 @@ import randoop.output.FailingTestFilter;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
 import randoop.output.MinimizerWriter;
+import randoop.output.NameGenerator;
 import randoop.output.RandoopOutputException;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
@@ -376,7 +377,7 @@ public class GenTests extends GenInputsAbstract {
             listenerMgr,
             classesUnderTest);
 
-    /* log setup. TODO: handle environment variables like other methods in TestUtils do. */
+    // log setup.
     operationModel.log();
     if (GenInputsAbstract.operation_history_log != null) {
       TestUtils.setOperationLog(new PrintWriter(GenInputsAbstract.operation_history_log), explorer);
@@ -453,7 +454,7 @@ public class GenTests extends GenInputsAbstract {
       componentMgr.log();
     }
 
-    /* Generate tests */
+    // Generate tests
     try {
       explorer.createAndClassifySequences();
     } catch (SequenceExceptionError e) {
@@ -471,7 +472,7 @@ public class GenTests extends GenInputsAbstract {
       throw new RandoopBug("Logging error", e);
     }
 
-    /* post generation */
+    // post generation
     if (GenInputsAbstract.dont_output_tests) {
       return true;
     }
@@ -523,8 +524,10 @@ public class GenTests extends GenInputsAbstract {
 
     if (this.sequenceCompileFailureCount > 0) {
       System.out.printf(
-          "%nUncompilable sequences generated (count: %d).%nPlease report at https://github.com/randoop/randoop/issues .%n",
-          this.sequenceCompileFailureCount);
+          "%nUncompilable sequences generated (count: %d).%n", this.sequenceCompileFailureCount);
+      System.out.println("Please report at https://github.com/randoop/randoop/issues ,");
+      System.out.println(
+          "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
     }
 
     // Operation history includes counts determined by getting regression sequences from explorer,
@@ -610,7 +613,8 @@ public class GenTests extends GenInputsAbstract {
         classSource = junitCreator.createTestSuite(driverName, testMap.keySet());
       } else {
         driverName = basename + "Driver";
-        classSource = junitCreator.createTestDriver(driverName, testMap.keySet());
+        classSource =
+            junitCreator.createTestDriver(driverName, testMap.keySet(), testSequences.size());
       }
       testFiles.add(
           codeWriter.writeUnmodifiedClassCode(
@@ -742,7 +746,7 @@ public class GenTests extends GenInputsAbstract {
    */
   private void printSequenceExceptionError(AbstractGenerator explorer, SequenceExceptionError e) {
 
-    StringJoiner msg = new StringJoiner(System.getProperty("line.separator"));
+    StringJoiner msg = new StringJoiner(Globals.lineSep);
     msg.add("");
     msg.add("");
     msg.add("ERROR: Randoop stopped because of a flaky test.");
@@ -868,23 +872,24 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Creates the JUnit test classes for the given sequences, in AST (abstract syntax tree) form.
    *
-   * @param junitPrefix the class name prefix
+   * @param classNamePrefix the class name prefix
    * @param sequences the sequences for test methods of the created test classes
    * @param junitCreator the JUnit creator to create the abstract syntax trees for the test classes
    * @return mapping from a class name to the abstract syntax tree for the class
    */
   private LinkedHashMap<String, CompilationUnit> getTestASTMap(
-      String junitPrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
-
-    List<List<ExecutableSequence>> sequencePartition =
-        CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
+      String classNamePrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
 
     LinkedHashMap<String, CompilationUnit> testMap = new LinkedHashMap<>();
+
+    NameGenerator methodNameGenerator =
+        new NameGenerator(TEST_METHOD_NAME_PREFIX, 1, sequences.size());
+    List<List<ExecutableSequence>> sequencePartition =
+        CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
     for (int i = 0; i < sequencePartition.size(); i++) {
-      List<ExecutableSequence> partition = sequencePartition.get(i);
-      String testClassName = junitPrefix + i;
+      String testClassName = classNamePrefix + i;
       CompilationUnit classAST =
-          junitCreator.createTestClass(testClassName, TEST_METHOD_NAME_PREFIX, partition);
+          junitCreator.createTestClass(testClassName, methodNameGenerator, sequences);
       testMap.put(testClassName, classAST);
     }
     return testMap;
@@ -1013,7 +1018,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /** Increments the count of sequence compilation failures. */
-  public void countSequenceCompileFailure() {
+  public void incrementSequenceCompileFailureCount() {
     this.sequenceCompileFailureCount++;
   }
 }

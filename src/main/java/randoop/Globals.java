@@ -1,28 +1,32 @@
 package randoop;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 /** Various general global variables used throughout Randoop. */
 public class Globals {
 
   /** The version number for Randoop. */
-  public static final String RANDOOP_VERSION = "4.1.0";
+  public static final String RANDOOP_VERSION = "4.1.1";
 
   /** The system-specific line separator string. */
-  public static final String lineSep = System.getProperty("line.separator");
+  public static final String lineSep = System.lineSeparator();
 
   /** A PrintStream whose contents are ignored. */
   public static PrintStream blackHole;
 
-  private static final ByteArrayOutputStream bos;
+  /** Discards anything written to it. */
+  private static class NullOutputStream extends OutputStream {
+    @Override
+    public void write(int b) throws IOException {}
+  }
 
-  private static PrintStream oldStdErr;
+  // private static PrintStream realSystemErr;
 
   static {
-    oldStdErr = System.err;
-    bos = new ByteArrayOutputStream();
-    blackHole = new PrintStream(bos);
+    blackHole = new PrintStream(new NullOutputStream());
+    // realSystemErr = System.err;
     // System.setErr(blackHole);
   }
 

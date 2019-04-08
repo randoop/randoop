@@ -91,12 +91,14 @@ public class StreamRedirectThread extends Thread {
         outWriter.println(line);
       }
 
-      /*
-       * int nextChar; while (true) { nextChar = in.read(); if (nextChar == -1)
-       * break;
-       *
-       * out.write(nextChar); out.flush(); }
-       */
+      // int nextChar;
+      // while (true) {
+      //   nextChar = in.read();
+      //   if (nextChar == -1) break;
+      //   out.write(nextChar);
+      //   out.flush();
+      // }
+
       out.flush();
     } catch (IOException exc) {
       System.err.println("Child I/O Transfer - " + exc);

@@ -46,7 +46,7 @@ import java.util.Objects;
  * </pre>
  *
  * Method {@link
- * randoop.condition.SpecificationCollection#getExecutableSpecification(java.lang.reflect.AccessibleObject)}
+ * randoop.condition.SpecificationCollection#getExecutableSpecification(java.lang.reflect.Executable)}
  * translates specifications to an {@link randoop.condition.ExecutableSpecification} object that
  * allows the underlying Boolean expressions to be evaluated.
  */
