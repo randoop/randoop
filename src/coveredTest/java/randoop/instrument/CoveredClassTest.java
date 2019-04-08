@@ -228,14 +228,10 @@ public class CoveredClassTest {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
-    Set<String> observerSignatures =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.observers, "observer", "//.*", null);
-
     // Maps each class type to the observer methods in it.
     MultiMap<Type, TypedOperation> observerMap;
     try {
-      observerMap = operationModel.readOperations(observerSignatures);
+      observerMap = operationModel.readOperations(GenInputsAbstract.observers, false);
     } catch (OperationParseException e) {
       System.out.printf("Parse error while reading observers: %s%n", e);
       System.exit(1);

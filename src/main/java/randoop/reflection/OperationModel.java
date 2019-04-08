@@ -312,16 +312,17 @@ public class OperationModel {
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
         for (String line : er) {
           String sig = line.trim();
-          TypedClassOperation operation = signatureToOperation(sig);
-          Type outputType = operation.getOutputType();
+          TypedClassOperation operation =
+              signatureToOperation(
+                  sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
           observerMap.add(operation.getDeclaringType(), operation);
         }
       } catch (IOException e) {
         String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
         throw new RandoopUsageError(message, e);
       }
-      return observerMap;
     }
+    return observerMap;
   }
 
   /**

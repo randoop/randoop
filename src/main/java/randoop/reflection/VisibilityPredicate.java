@@ -10,6 +10,7 @@ public abstract class VisibilityPredicate {
 
   public static VisibilityPredicate IS_PUBLIC = new PublicVisibilityPredicate();
   public static VisibilityPredicate IS_NOT_PRIVATE = new NotPrivateVisibilityPredicate();
+  public static VisibilityPredicate IS_ANY = new AnyVisibilityPredicate();
 
   /**
    * Determines whether this VisibilityPredicate considers a {@link Class} visible.
@@ -45,6 +46,50 @@ public abstract class VisibilityPredicate {
    * @return whether this considers the field to be visible
    */
   public abstract boolean isVisible(Field f);
+
+  /** AnyVisibilityPredicate is a {@link VisibilityPredicate} that always returns true. */
+  public static class AnyVisibilityPredicate extends VisibilityPredicate {
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return true
+     */
+    @Override
+    public boolean isVisible(Class<?> c) {
+      return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return true
+     */
+    @Override
+    public boolean isVisible(Method m) {
+      return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return true
+     */
+    @Override
+    public boolean isVisible(Constructor<?> c) {
+      return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return true
+     */
+    @Override
+    public boolean isVisible(Field f) {
+      return true;
+    }
+  }
 
   /**
    * PublicVisibilityPredicate is a {@link VisibilityPredicate} that returns true in the case that
