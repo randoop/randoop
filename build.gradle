@@ -56,7 +56,7 @@ allprojects {
   }
 
   dependencies {
-    compile "org.checkerframework:checker-qual:2.7.0"
+    implementation "org.checkerframework:checker-qual:2.7.0"
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     plumelib 'org.plumelib:bcel-util:1.1.4'
@@ -724,7 +724,7 @@ configurations {
   requireJavadoc
 }
 dependencies {
-  compile group: 'org.plumelib', name: 'require-javadoc', version: '0.1.0'
+  implementation group: 'org.plumelib', name: 'require-javadoc', version: '0.1.0'
 }
 task requireJavadoc(type: Javadoc) {
   description = 'Ensures that all Java elements have Javadoc documentation.'
