@@ -8,8 +8,11 @@ import java.lang.reflect.Modifier;
 /** Interface for predicates that check whether a class or class member is considered visible. */
 public abstract class VisibilityPredicate {
 
+  /** A predicate that returns true for public elements. */
   public static VisibilityPredicate IS_PUBLIC = new PublicVisibilityPredicate();
+  /** A predicate that returns true for non-private elements. */
   public static VisibilityPredicate IS_NOT_PRIVATE = new NotPrivateVisibilityPredicate();
+  /** A predicate that always returns true. */
   public static VisibilityPredicate IS_ANY = new AnyVisibilityPredicate();
 
   /**
