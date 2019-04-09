@@ -345,13 +345,9 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    Set<String> observerSignatures =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.observers, "observer", "//.*", null);
-
     MultiMap<Type, TypedOperation> observerMap;
     try {
-      observerMap = operationModel.getObservers(observerSignatures);
+      observerMap = OperationModel.readOperations(GenInputsAbstract.observers, true);
     } catch (OperationParseException e) {
       System.out.printf("Error parsing observers: %s%n", e.getMessage());
       System.exit(1);
