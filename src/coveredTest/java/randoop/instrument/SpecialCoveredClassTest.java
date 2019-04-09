@@ -64,8 +64,6 @@ public class SpecialCoveredClassTest {
     VisibilityPredicate visibility = IS_PUBLIC;
     Set<String> omitFields = new HashSet<>();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
-    Set<String> methodSignatures =
-        GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.methodlist, "method list");
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
 
@@ -76,7 +74,6 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.omitmethods,
             classnames,
             coveredClassnames,
-            methodSignatures,
             classNameErrorHandler,
             GenInputsAbstract.literals_file);
 

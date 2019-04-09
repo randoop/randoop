@@ -9,10 +9,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.plumelib.util.EntryReader;
 import randoop.Globals;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
@@ -141,7 +141,6 @@ public class OperationModel {
       List<Pattern> omitMethods,
       Set<@ClassGetName String> classnames,
       Set<@ClassGetName String> coveredClassesGoalNames,
-      Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
       SpecificationCollection operationSpecifications)
@@ -165,7 +164,7 @@ public class OperationModel {
     model.addOperationsFromClasses(
         model.classTypes, visibility, reflectionPredicate, omitPredicate, operationSpecifications);
     model.addOperationsUsingSignatures(
-        methodSignatures, visibility, reflectionPredicate, omitPredicate);
+        GenInputsAbstract.methodlist, visibility, reflectionPredicate, omitPredicate);
     model.addObjectConstructor();
 
     return model;
@@ -181,7 +180,6 @@ public class OperationModel {
    *     members are used
    * @param classnames the names of classes under test
    * @param coveredClassnames the names of classes to be tested by exercised heuristic
-   * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
    * @return the operation model for the parameters
@@ -193,7 +191,6 @@ public class OperationModel {
       ReflectionPredicate reflectionPredicate,
       Set<@ClassGetName String> classnames,
       Set<@ClassGetName String> coveredClassnames,
-      Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
@@ -203,7 +200,6 @@ public class OperationModel {
         new ArrayList<Pattern>(),
         classnames,
         coveredClassnames,
-        methodSignatures,
         errorHandler,
         literalsFileList,
         null);
@@ -220,7 +216,6 @@ public class OperationModel {
    * @param omitMethods the patterns for operations that should be omitted
    * @param classnames the names of classes under test
    * @param coveredClassnames the names of classes to be tested by covered class heuristic
-   * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
    * @return the {@link OperationModel} constructed with the given arguments
@@ -233,7 +228,6 @@ public class OperationModel {
       List<Pattern> omitMethods,
       Set<@ClassGetName String> classnames,
       Set<@ClassGetName String> coveredClassnames,
-      Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
@@ -243,7 +237,6 @@ public class OperationModel {
         omitMethods,
         classnames,
         coveredClassnames,
-        methodSignatures,
         errorHandler,
         literalsFileList,
         null);
@@ -577,23 +570,19 @@ public class OperationModel {
    * @throws SignatureParseException if any signature is syntactically invalid
    */
   private void addOperationsUsingSignatures(
-      Set<String> methodSignatures,
+      Path methodSignatures_file,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate)
       throws SignatureParseException {
-    for (String sig : methodSignatures) {
-      AccessibleObject accessibleObject =
-          SignatureParser.parse(sig, visibility, reflectionPredicate);
-      if (accessibleObject != null) {
-        TypedClassOperation operation;
-        if (accessibleObject instanceof Constructor) {
-          operation = TypedOperation.forConstructor((Constructor) accessibleObject);
-        } else {
-          operation = TypedOperation.forMethod((Method) accessibleObject);
-        }
-        if (!omitPredicate.shouldOmit(operation)) {
-          operations.add(operation);
+    try (EntryReader reader = new EntryReader(methodSignatures_file, "(//|#).*$", null)) {
+      for (String line : reader) {
+        String sig = line.trim();
+        if (!sig.isEmpty()) {
+          TypedClassOperation operation = signatureToOperation(sig);
+          if (!omitPredicate.shouldOmit(operation)) {
+            operations.add(operation);
+          }
         }
       }
     }
