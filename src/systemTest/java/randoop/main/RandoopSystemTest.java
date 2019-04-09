@@ -1996,7 +1996,7 @@ public class RandoopSystemTest {
         System.err.printf("expectedRegression = %s%n", expectedRegression);
         System.err.printf("runStatus = %s%n", runStatus);
         System.err.printf("packageName = %s%n", packageName);
-        fail("JUnit should exit properly");
+        fail("JUnit should exit properly, see diagnostics above");
       }
       if (regressionRunDesc.testsSucceed != regressionRunDesc.testsRun) {
         for (String line : regressionRunDesc.processStatus.outputLines) {
