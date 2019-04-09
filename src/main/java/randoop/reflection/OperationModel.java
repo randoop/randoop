@@ -13,6 +13,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.plumelib.util.EntryReader;
 import randoop.Globals;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
@@ -40,7 +42,7 @@ import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
-import randoop.operation.MethodCall;
+import randoop.main.RandoopUsageError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -296,19 +298,29 @@ public class OperationModel {
   }
 
   /**
-   * Given a set of signatures, returns the operations for them.
+   * Given a file containing signatures, returns the operations for them.
    *
-   * @param observerSignatures the set of method signatures; typically comes from the {@code
-   *     --observers} command-line option
-   * @return a map from each class type to the set of observer methods in it
+   * @param file a file that contains method or constructor signatures, one per line
+   * @param onlyMethods if true, throw an exception if a constructor is read
+   * @return a map from each class type to the set of methods/constructors in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public MultiMap<Type, TypedOperation> getObservers(Set<String> observerSignatures)
+  public static MultiMap<Type, TypedOperation> readOperations(Path file, boolean onlyMethods)
       throws OperationParseException {
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
-    for (String sig : observerSignatures) {
-      TypedClassOperation operation = MethodCall.parse(sig);
-      observerMap.add(operation.getDeclaringType(), operation);
+    if (file != null) {
+      try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
+        for (String line : er) {
+          String sig = line.trim();
+          TypedClassOperation operation =
+              signatureToOperation(
+                  sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
+          observerMap.add(operation.getDeclaringType(), operation);
+        }
+      } catch (IOException e) {
+        String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
+        throw new RandoopUsageError(message, e);
+      }
     }
     return observerMap;
   }
