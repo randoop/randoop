@@ -9,7 +9,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
+import randoop.main.RandoopUsageError;
 import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
@@ -127,7 +130,6 @@ public class OperationModel {
    * @param classnames the names of classes under test
    * @param coveredClassesGoalNames the coverage goal: the names of classes to be tested by the
    *     covered class heuristic
-   * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
    * @param operationSpecifications the collection of operation specifications
@@ -563,7 +565,7 @@ public class OperationModel {
   /**
    * Adds an operation to this {@link OperationModel} for each of the method signatures.
    *
-   * @param methodSignatures the set of signatures
+   * @param methodSignatures_file the file containing the signatures; if null, do nothing
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the predicate for omitting operations
@@ -575,16 +577,30 @@ public class OperationModel {
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate)
       throws SignatureParseException {
+    if (methodSignatures_file == null) {
+      return;
+    }
     try (EntryReader reader = new EntryReader(methodSignatures_file, "(//|#).*$", null)) {
       for (String line : reader) {
         String sig = line.trim();
         if (!sig.isEmpty()) {
-          TypedClassOperation operation = signatureToOperation(sig);
-          if (!omitPredicate.shouldOmit(operation)) {
-            operations.add(operation);
+          AccessibleObject accessibleObject =
+              SignatureParser.parse(sig, visibility, reflectionPredicate);
+          if (accessibleObject != null) {
+            TypedClassOperation operation;
+            if (accessibleObject instanceof Constructor) {
+              operation = TypedOperation.forConstructor((Constructor) accessibleObject);
+            } else {
+              operation = TypedOperation.forMethod((Method) accessibleObject);
+            }
+            if (!omitPredicate.shouldOmit(operation)) {
+              operations.add(operation);
+            }
           }
         }
       }
+    } catch (IOException e) {
+      throw new RandoopUsageError("Problem reading file " + methodSignatures_file, e);
     }
   }
 

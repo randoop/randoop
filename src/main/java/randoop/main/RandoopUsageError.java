@@ -20,7 +20,7 @@ public class RandoopUsageError extends RuntimeException {
    * @param message the exception message
    * @param cause the causing exception
    */
-  RandoopUsageError(String message, Throwable cause) {
+  public RandoopUsageError(String message, Throwable cause) {
     super(message, cause);
   }
 }
