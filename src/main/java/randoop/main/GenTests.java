@@ -28,6 +28,7 @@ import java.util.StringJoiner;
 import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
@@ -246,9 +247,6 @@ public class GenTests extends GenInputsAbstract {
       classNameErrorHandler = new WarnOnBadClassName();
     }
 
-    Set<String> methodSignatures =
-        GenInputsAbstract.getStringSetFromFile(methodlist, "method list");
-
     String classpath = Globals.getClassPath();
 
     /*
@@ -277,7 +275,6 @@ public class GenTests extends GenInputsAbstract {
               omitmethods,
               classnames,
               coveredClassnames,
-              methodSignatures,
               classNameErrorHandler,
               GenInputsAbstract.literals_file,
               operationSpecifications);
@@ -683,8 +680,13 @@ public class GenTests extends GenInputsAbstract {
         for (String line : er) {
           String trimmed = line.trim();
           if (!trimmed.isEmpty()) {
-            Pattern pattern = Pattern.compile(trimmed);
-            result.add(pattern);
+            try {
+              Pattern pattern = Pattern.compile(trimmed);
+              result.add(pattern);
+            } catch (PatternSyntaxException e) {
+              throw new RandoopUsageError(
+                  "Bad regex " + trimmed + " while reading file " + file, e);
+            }
           }
         }
       } catch (IOException e) {
