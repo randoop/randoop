@@ -784,6 +784,17 @@ public class Minimize extends CommandHandler {
     return new ExpressionStmt(vd.getInit());
   }
 
+  /** Sorts a type by its name. */
+  private static class ClassOrInterfaceTypeComparator implements Comparator<ClassOrInterfaceType> {
+    @Override
+    public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
+      return o1.toString().compareTo(o2.toString());
+    }
+  }
+  /** Sorts a type by its name. */
+  private static ClassOrInterfaceTypeComparator classOrInterfaceTypeComparator =
+      new ClassOrInterfaceTypeComparator();
+
   /**
    * Simplify the type names in a compilation unit. For example, {@code java.lang.String} should be
    * simplified to {@code String}. If two different types have the same simple type name, then the
@@ -816,14 +827,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Set of fully-qualified type names that are used in variable declarations.
-    Set<ClassOrInterfaceType> fullyQualifiedNames =
-        new TreeSet<>(
-            new Comparator<ClassOrInterfaceType>() {
-              @Override
-              public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
-                return o1.toString().compareTo(o2.toString());
-              }
-            });
+    Set<ClassOrInterfaceType> fullyQualifiedNames = new TreeSet<>(classOrInterfaceTypeComparator);
     new ClassTypeVisitor().visit(compilationUnit, fullyQualifiedNames);
     CompilationUnit result = compilationUnit;
     for (ClassOrInterfaceType type : fullyQualifiedNames) {
@@ -1183,6 +1187,17 @@ public class Minimize extends CommandHandler {
     compilationUnit.setImports(importDeclarations);
   }
 
+  /** Sorts ImportDeclaration objects by their name. */
+  private static class ImportDeclarationComparator implements Comparator<ImportDeclaration> {
+    @Override
+    public int compare(ImportDeclaration o1, ImportDeclaration o2) {
+      return o1.getName().toString().compareTo(o2.getName().toString());
+    }
+  }
+  /** Sorts ImportDeclaration objects by their name. */
+  private static ImportDeclarationComparator importDeclarationComparator =
+      new ImportDeclarationComparator();
+
   /**
    * Sort a compilation unit's imports by name.
    *
@@ -1191,14 +1206,7 @@ public class Minimize extends CommandHandler {
   private static void sortImports(CompilationUnit compilationUnit) {
     List<ImportDeclaration> imports = compilationUnit.getImports();
 
-    Collections.sort(
-        imports,
-        new Comparator<ImportDeclaration>() {
-          @Override
-          public int compare(ImportDeclaration o1, ImportDeclaration o2) {
-            return o1.getName().toString().compareTo(o2.getName().toString());
-          }
-        });
+    Collections.sort(imports, importDeclarationComparator);
 
     compilationUnit.setImports(imports);
   }
