@@ -31,7 +31,7 @@ public final class NonreceiverTerm extends CallableOperation {
   /** The {@link Type} of this non-receiver term. */
   private final Type type;
 
-  /** The value of this non-receiver term. Must be null, a String, or a boxed primitive. */
+  /** The value of this non-receiver term. Must be null, a String, a boxed primitive, or a Class. */
   private final Object value;
 
   /**
@@ -69,10 +69,10 @@ public final class NonreceiverTerm extends CallableOperation {
             "String too long, length = " + ((String) value).length());
       }
     } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
-      // if it's not primitive, a string, or Class value then must be null
+      // if it's not a primitive, string, or Class value, then it must be null
       if (value != null) {
         throw new IllegalArgumentException(
-            "value must be null for non-primitive, non-string type " + type + " but was " + value);
+            "value must be null for type " + type + " but was " + value);
       }
     }
 
@@ -84,8 +84,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * Determines whether the given {@code Class<?>} is the type of a non-receiver term.
    *
    * @param c the {@code Class<?>} object
-   * @return true if the given type is primitive, boxed primitive, or {@code String}; false
-   *     otherwise
+   * @return true iff the given type is primitive, boxed primitive, {@code String}, or {@code Class}
    */
   public static boolean isNonreceiverType(Class<?> c) {
     return c.isPrimitive()
