@@ -3,7 +3,6 @@ package randoop.instrument;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.main.GenInputsAbstract.methodlist;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
@@ -194,8 +193,6 @@ public class CoveredClassTest {
     VisibilityPredicate visibility = IS_PUBLIC;
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
-    Set<String> methodSignatures =
-        GenInputsAbstract.getStringSetFromFile(methodlist, "method list");
 
     OperationModel operationModel;
     try {
@@ -206,7 +203,6 @@ public class CoveredClassTest {
               GenInputsAbstract.omitmethods,
               classnames,
               coveredClassnames,
-              methodSignatures,
               classNameErrorHandler,
               GenInputsAbstract.literals_file,
               null);
@@ -228,14 +224,10 @@ public class CoveredClassTest {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
-    Set<String> observerSignatures =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.observers, "observer", "//.*", null);
-
     // Maps each class type to the observer methods in it.
     MultiMap<Type, TypedOperation> observerMap;
     try {
-      observerMap = operationModel.getObservers(observerSignatures);
+      observerMap = operationModel.readOperations(GenInputsAbstract.observers, false);
     } catch (OperationParseException e) {
       System.out.printf("Parse error while reading observers: %s%n", e);
       System.exit(1);

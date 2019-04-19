@@ -45,6 +45,7 @@ public class CompareToSubs extends ObjectContract {
     return 3;
   }
 
+  /** The arguments to which this contract can be applied. */
   static TypeTuple inputTypes =
       new TypeTuple(
           Arrays.asList(

@@ -409,7 +409,6 @@ public class TestClassificationTest {
               GenInputsAbstract.omitmethods,
               classnames,
               new HashSet<String>(),
-              new HashSet<String>(),
               new ThrowClassNameError(),
               new ArrayList<String>());
     } catch (Exception e) {

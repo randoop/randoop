@@ -32,6 +32,7 @@ import java.util.StringJoiner;
 import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
@@ -55,7 +56,7 @@ import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.output.CodeWriter;
-import randoop.output.FailingTestFilter;
+import randoop.output.FailingAssertionCommentWriter;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
 import randoop.output.MinimizerWriter;
@@ -278,9 +279,6 @@ public class GenTests extends GenInputsAbstract {
       classNameErrorHandler = new WarnOnBadClassName();
     }
 
-    Set<String> methodSignatures =
-        GenInputsAbstract.getStringSetFromFile(methodlist, "method list");
-
     String classpath = Globals.getClassPath();
 
     /*
@@ -309,7 +307,6 @@ public class GenTests extends GenInputsAbstract {
               omitmethods,
               classnames,
               coveredClassnames,
-              methodSignatures,
               classNameErrorHandler,
               GenInputsAbstract.literals_file,
               operationSpecifications);
@@ -380,13 +377,9 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    Set<String> observerSignatures =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.observers, "observer", "//.*", null);
-
     MultiMap<Type, TypedOperation> observerMap;
     try {
-      observerMap = operationModel.getObservers(observerSignatures);
+      observerMap = OperationModel.readOperations(GenInputsAbstract.observers, true);
     } catch (OperationParseException e) {
       System.out.printf("Error parsing observers: %s%n", e.getMessage());
       System.exit(1);
@@ -541,7 +534,8 @@ public class GenTests extends GenInputsAbstract {
         testEnvironment.setReplaceCallAgent(agentPath, agentArgs);
       }
 
-      FailingTestFilter codeWriter = new FailingTestFilter(testEnvironment, javaFileWriter);
+      FailingAssertionCommentWriter codeWriter =
+          new FailingAssertionCommentWriter(testEnvironment, javaFileWriter);
       writeTestFiles(
           junitCreator,
           explorer.getRegressionSequences(),
@@ -835,8 +829,13 @@ public class GenTests extends GenInputsAbstract {
         for (String line : er) {
           String trimmed = line.trim();
           if (!trimmed.isEmpty()) {
-            Pattern pattern = Pattern.compile(trimmed);
-            result.add(pattern);
+            try {
+              Pattern pattern = Pattern.compile(trimmed);
+              result.add(pattern);
+            } catch (PatternSyntaxException e) {
+              throw new RandoopUsageError(
+                  "Bad regex " + trimmed + " while reading file " + file, e);
+            }
           }
         }
       } catch (IOException e) {

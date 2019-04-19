@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
@@ -32,10 +33,12 @@ public class OmitMethodsPredicate {
   private final List<Pattern> omitPatterns;
 
   /**
+   * Create a new OmitMethodsPredicate.
+   *
    * @param omitPatterns a list of regular expressions for method signatures. Null or the empty
    *     least mean to do no omissions.
    */
-  public OmitMethodsPredicate(List<Pattern> omitPatterns) {
+  public OmitMethodsPredicate(@Nullable List<Pattern> omitPatterns) {
     if (omitPatterns == null) {
       this.omitPatterns = new ArrayList<>();
     } else {

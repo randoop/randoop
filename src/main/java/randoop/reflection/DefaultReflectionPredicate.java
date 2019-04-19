@@ -5,8 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
 import randoop.CheckRep;
 import randoop.util.Log;
 
@@ -24,11 +23,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * The set of fully-qualified field names to omit from generated tests. See {@link
    * randoop.main.GenInputsAbstract#omit_field}.
    */
-  private Set<String> omitFields;
+  private Collection<String> omitFields;
 
   /** Create a reflection predicate. */
   public DefaultReflectionPredicate() {
-    this(new HashSet<String>());
+    this(null);
   }
 
   /**
@@ -37,7 +36,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * @param omitFields set of fully-qualified field names to omit
    */
-  public DefaultReflectionPredicate(Set<String> omitFields) {
+  public DefaultReflectionPredicate(Collection<String> omitFields) {
     super();
     this.omitFields = omitFields;
   }

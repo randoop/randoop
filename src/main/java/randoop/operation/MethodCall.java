@@ -209,8 +209,9 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * Parses a method call in a string descriptor and returns a {@link MethodCall} object. Should
-   * satisfy {@code parse(op.toParsableString()).equals(op)} for Operation op.
+   * Parses a method signature (<em>not</em> a representation of a call; there are no arguments, for
+   * example) and returns a {@link MethodCall} object. Should satisfy {@code
+   * parse(op.toParsableString()).equals(op)} for Operation op.
    *
    * @param signature a string descriptor
    * @return the method call operation for the given string descriptor
