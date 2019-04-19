@@ -236,15 +236,14 @@ public final class NonreceiverTerm extends CallableOperation {
     String valStr;
     if (value == null) {
       valStr = "null";
+    } else if (type.equals(JavaTypes.CHAR_TYPE)) {
+      valStr = Integer.toHexString((Character) value);
+    } else if (type.equals(JavaTypes.CLASS_TYPE)) {
+      valStr = ((Class<?>) value).getName() + ".class";
     } else {
+      valStr = value.toString();
       if (type.isString()) {
-        valStr = "\"" + StringEscapeUtils.escapeJava(value.toString()) + "\"";
-      } else if (type.equals(JavaTypes.CHAR_TYPE)) {
-        valStr = Integer.toHexString((Character) value);
-      } else if (type.equals(JavaTypes.CLASS_TYPE)) {
-        valStr = ((Class<?>) value).getName() + ".class";
-      } else {
-        valStr = value.toString();
+        valStr = "\"" + StringEscapeUtils.escapeJava(valStr) + "\"";
       }
     }
 
