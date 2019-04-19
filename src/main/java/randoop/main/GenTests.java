@@ -52,7 +52,7 @@ import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.output.CodeWriter;
-import randoop.output.FailingTestFilter;
+import randoop.output.FailingAssertionCommentWriter;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
 import randoop.output.MinimizerWriter;
@@ -502,7 +502,8 @@ public class GenTests extends GenInputsAbstract {
         testEnvironment.setReplaceCallAgent(agentPath, agentArgs);
       }
 
-      FailingTestFilter codeWriter = new FailingTestFilter(testEnvironment, javaFileWriter);
+      FailingAssertionCommentWriter codeWriter =
+          new FailingAssertionCommentWriter(testEnvironment, javaFileWriter);
       writeTestFiles(
           junitCreator,
           explorer.getRegressionSequences(),

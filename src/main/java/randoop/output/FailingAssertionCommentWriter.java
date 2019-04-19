@@ -27,16 +27,17 @@ import randoop.main.RandoopBug;
 import randoop.main.RandoopUsageError;
 
 /**
- * A {@link CodeWriter} that outputs JUnit tests with assertions that fail commented out. Intended
- * to be used with regression tests in order to filter flaky tests that pass within Randoop, but
- * fail when run from the command line.
+ * A {@link CodeWriter} that comments out failing assertions when outputting JUnit tests. This
+ * disables flaky tests that pass when run reflectively within Randoop, but fail when run from the
+ * command line. The whole test is not commented or removed, because the test might have side
+ * effects that later tests depend upon.
  *
  * <p>Writes the class, and then compiles and runs the tests to determine whether there are failing
  * assertions. Each failing assertion is replaced by a comment containing the code for the failing
  * assertion. Creates a clean temporary directory for each compilation/run of a test class to avoid
  * state effects due to files in the working directory.
  */
-public class FailingTestFilter implements CodeWriter {
+public class FailingAssertionCommentWriter implements CodeWriter {
 
   /**
    * A pattern matching the JUnit4 message indicating the total count of failures. Capturing group 1
@@ -58,13 +59,14 @@ public class FailingTestFilter implements CodeWriter {
   private final JavaFileWriter javaFileWriter;
 
   /**
-   * Create a {@link FailingTestFilter} for which tests will be run in the environment and which
-   * uses the given {@link JavaFileWriter} to output test classes.
+   * Create a {@link FailingAssertionCommentWriter} for which tests will be run in the environment
+   * and which uses the given {@link JavaFileWriter} to output test classes.
    *
    * @param testEnvironment the {@link TestEnvironment} for executing tests during filtering
    * @param javaFileWriter the {@link JavaFileWriter} to write {@code .java} files for the classes
    */
-  public FailingTestFilter(TestEnvironment testEnvironment, JavaFileWriter javaFileWriter) {
+  public FailingAssertionCommentWriter(
+      TestEnvironment testEnvironment, JavaFileWriter javaFileWriter) {
     this.testEnvironment = testEnvironment;
     this.javaFileWriter = javaFileWriter;
   }
