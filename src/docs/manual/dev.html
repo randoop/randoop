@@ -217,7 +217,7 @@ Gradle allows you to run multiple tasks.  For instance, for a clean build,
 <h2 id="publish-only-tasks">Release-only tasks</h2>
 
 <p>
-The tasks <code>cleanSite</code>, <code>publishSite</code> and <code>buildRelease</code>
+The tasks <code>cleanSite</code>, <code>publishSite</code>, and <code>buildRelease</code>
 should not be run except while making a release, and so should never be run
 within a branch other than master.
 These tasks will delete and/or replace the GitHub pages site located in the <code>gh-pages</code> branch of the repository, which is checked out in a directory <code>randoop-branch-gh-pages</code> that is a sibling of <code>randoop</code>
@@ -228,9 +228,7 @@ If you happen to run these commands, you should use git to revert to the previou
 For instance, the command
 </p>
 
-<pre><code>
-  git checkout -- .
-</code></pre>
+<pre><code>  git checkout -- .</code></pre>
 
 <p>
 in the <code>gh-pages</code> branch
@@ -706,21 +704,33 @@ task described below.
 <h1 id="making_new_dist">Releasing a new version of Randoop</h1>
 
 <p>
+  Prerequisites:
+</p>
+<ol>
+  <li>
+    The release process assumes that a sibling of your <code>randoop</code>
+    clone is another clone named <code>randoop-branch-gh-pages</code> that
+    has checked out the <code>gh-pages</code> branch.
+  </li>
+</ol>
+
+<p>
   To make a release from the master branch, follow these steps to ensure
   there are no changes needed:
 </p>
 <ol>
+  <li>Ensure that your clone is up to date:
+    <pre>git pull</pre>
+  </li>
   <li>In a branch, update dependencies by running:
     <pre>./gradlew useLatestVersions</pre>
     Make a pull request to see if anything breaks.
   </li>
-  <li>Ensure that your clone is up to date:
-    <pre>git pull</pre>
-  </li>
   <li>Compile, test, and build documentation.
     If there is any failure, fix them and start over.
     <pre>./gradlew clean build javadoc validateAPI manual validateSite</pre>
-    This takes around 30 minutes.  To shortcut it, omit <code>clean build</code>.
+    This takes around 30 minutes.  To shortcut it if no
+    dependencies were updated, omit <code>clean build</code>.
   </li>
   <li>Double-check that the changelog <code>src/docs/CHANGES.txt</code>
     contains all user-visible changes in
