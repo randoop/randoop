@@ -960,6 +960,11 @@ task checklink(type: Exec, dependsOn: 'cloneLibs') {
   commandLine 'bash', '-c', """
      checklink -q -r `grep -v '^#' build/utils/checklink/checklink-args.txt` https://randoop.github.io/randoop/ &> checklink-log.txt
   """
+  doLast {
+    if (new File("checklink-log.txt").length() > 0) {
+      ant.fail("See link-checking failures in file checklink-log.txt")
+    }
+  }
 }
 
 task installGitHooks(type: Copy) {
