@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CompilableTestPredicate (randoop 4.1.1 API)</title>
+<title>CompilableTestPredicate (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CompilableTestPredicate (randoop 4.1.1 API)";
+            parent.document.title="CompilableTestPredicate (randoop 4.1.2 API)";
         }
     }
     catch(err) {
@@ -135,27 +135,33 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>private <a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#classNameGenerator">classNameGenerator</a></span></code>
+<div class="block">The name generator for temporary class names.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/compile/SequenceCompiler.html" title="class in randoop.compile">SequenceCompiler</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#compiler">compiler</a></span></code>
 <div class="block">The compiler for sequence code.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/main/GenTests.html" title="class in randoop.main">GenTests</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#genTests">genTests</a></span></code>
 <div class="block">The <a href="../../randoop/main/GenTests.html" title="class in randoop.main"><code>GenTests</code></a> instance that created this predicate.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output">JUnitCreator</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#junitCreator">junitCreator</a></span></code>
 <div class="block">The <a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output"><code>JUnitCreator</code></a> to generate a class from a <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#nameGenerator">nameGenerator</a></span></code>
-<div class="block">The name generator for temporary class names.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#methodNameGenerator">methodNameGenerator</a></span></code>
+<div class="block">The name generator for test method names.</div>
 </td>
 </tr>
 </table>
@@ -255,14 +261,24 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function
 <div class="block">The <a href="../../randoop/output/JUnitCreator.html" title="class in randoop.output"><code>JUnitCreator</code></a> to generate a class from a <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a></div>
 </li>
 </ul>
-<a name="nameGenerator">
+<a name="classNameGenerator">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>nameGenerator</h4>
-<pre>private final&nbsp;<a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a> nameGenerator</pre>
+<h4>classNameGenerator</h4>
+<pre>private final&nbsp;<a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a> classNameGenerator</pre>
 <div class="block">The name generator for temporary class names.</div>
+</li>
+</ul>
+<a name="methodNameGenerator">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>methodNameGenerator</h4>
+<pre>private final&nbsp;<a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a> methodNameGenerator</pre>
+<div class="block">The name generator for test method names.</div>
 </li>
 </ul>
 <a name="genTests">

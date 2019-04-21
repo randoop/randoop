@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>GenInputsAbstract.Limits (randoop 4.1.1 API)</title>
+<title>GenInputsAbstract.Limits (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="GenInputsAbstract.Limits (randoop 4.1.1 API)";
+            parent.document.title="GenInputsAbstract.Limits (randoop 4.1.2 API)";
         }
     }
     catch(err) {
@@ -131,19 +131,27 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.Limits.html#attempted_limit">attempted_limit</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.Limits.html#attempted_limit">attempted_limit</a></span></code>
+<div class="block">Maximum number of attempts to generate a sequence.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.Limits.html#generated_limit">generated_limit</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.Limits.html#generated_limit">generated_limit</a></span></code>
+<div class="block">Maximum number of sequences to generate.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.Limits.html#output_limit">output_limit</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.Limits.html#output_limit">output_limit</a></span></code>
+<div class="block">Maximum number of sequences to output.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.Limits.html#time_limit_millis">time_limit_millis</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.Limits.html#time_limit_millis">time_limit_millis</a></span></code>
+<div class="block">Maximum time in milliseconds to spend in generation.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -205,6 +213,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>time_limit_millis</h4>
 <pre>public&nbsp;int time_limit_millis</pre>
+<div class="block">Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no
+ limit.</div>
 </li>
 </ul>
 <a name="attempted_limit">
@@ -214,6 +224,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>attempted_limit</h4>
 <pre>public&nbsp;int attempted_limit</pre>
+<div class="block">Maximum number of attempts to generate a sequence. Must be non-negative.</div>
 </li>
 </ul>
 <a name="generated_limit">
@@ -223,6 +234,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>generated_limit</h4>
 <pre>public&nbsp;int generated_limit</pre>
+<div class="block">Maximum number of sequences to generate. Must be non-negative.</div>
 </li>
 </ul>
 <a name="output_limit">
@@ -232,6 +244,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>output_limit</h4>
 <pre>public&nbsp;int output_limit</pre>
+<div class="block">Maximum number of sequences to output. Must be non-negative.</div>
 </li>
 </ul>
 </li>

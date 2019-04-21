@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Globals (randoop 4.1.1 API)</title>
+<title>Globals (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Globals (randoop 4.1.1 API)";
+            parent.document.title="Globals (randoop 4.1.2 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../randoop/ExecutionVisitor.html" title="interface in randoop"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../randoop/MultiVisitor.html" title="class in randoop"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../randoop/Globals.NullOutputStream.html" title="class in randoop"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../index.html?randoop/Globals.html" target="_top">Frames</a></li>
@@ -73,7 +73,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -117,6 +117,27 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private static class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.NullOutputStream.html" title="class in randoop">Globals.NullOutputStream</a></span></code>
+<div class="block">Discards anything written to it.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
@@ -136,30 +157,22 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/ByteArrayOutputStream.html?is-external=true" title="class or interface in java.io">ByteArrayOutputStream</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#bos">bos</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#COLWIDTH">COLWIDTH</a></span></code>
 <div class="block">Column width for printing messages.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#INDENTWIDTH">INDENTWIDTH</a></span></code>
 <div class="block">Number of spaces for leading indentation for printing messages.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#lineSep">lineSep</a></span></code>
 <div class="block">The system-specific line separator string.</div>
 </td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/Globals.html#oldStdErr">oldStdErr</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
@@ -265,24 +278,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>blackHole</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a> blackHole</pre>
 <div class="block">A PrintStream whose contents are ignored.</div>
-</li>
-</ul>
-<a name="bos">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>bos</h4>
-<pre>private static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/ByteArrayOutputStream.html?is-external=true" title="class or interface in java.io">ByteArrayOutputStream</a> bos</pre>
-</li>
-</ul>
-<a name="oldStdErr">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>oldStdErr</h4>
-<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a> oldStdErr</pre>
 </li>
 </ul>
 <a name="COLWIDTH">
@@ -394,7 +389,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="subNav">
 <ul class="navList">
 <li><a href="../randoop/ExecutionVisitor.html" title="interface in randoop"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../randoop/MultiVisitor.html" title="class in randoop"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../randoop/Globals.NullOutputStream.html" title="class in randoop"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../index.html?randoop/Globals.html" target="_top">Frames</a></li>
@@ -418,7 +413,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

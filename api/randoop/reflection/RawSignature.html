@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RawSignature (randoop 4.1.1 API)</title>
+<title>RawSignature (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RawSignature (randoop 4.1.1 API)";
+            parent.document.title="RawSignature (randoop 4.1.2 API)";
         }
     }
     catch(err) {
@@ -112,7 +112,7 @@ var activeTableTab = "activeTableTab";
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Represents the raw type signature for an <code>java.lang.reflect.AccessibleObject</code>. This
  signature consists of the classname as a fully-qualified raw type, the method name, and the
- argument types as fully-qualified raw types.
+ argument types as fully-qualified raw types. It does not include the method or constructor name.
 
  <p>The raw type signature for a constructor <code>C()</code> is <code>C()</code> instead of the reflection
  form <code>C.&lt;init&gt;()</code>. Also, the name and the classname of a constructor are the same.</div>

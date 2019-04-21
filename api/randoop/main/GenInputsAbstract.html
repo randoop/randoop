@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>GenInputsAbstract (randoop 4.1.1 API)</title>
+<title>GenInputsAbstract (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="GenInputsAbstract (randoop 4.1.1 API)";
+            parent.document.title="GenInputsAbstract (randoop 4.1.2 API)";
         }
     }
     catch(err) {
@@ -929,7 +929,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 
  <p>Setting this option to <code>DISCARD</code> or <code>OUTPUT</code> should be considered a last resort.
  Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
- and a better solution is not to call Randoop on such methods; see section "Nondeterminism" in
+ and a better solution is not to call Randoop on such methods; see section <a
+ href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
  the Randoop manual.</div>
 </li>
 </ul>
@@ -1241,7 +1242,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  <code>--no-error-revealing-tests</code> together with <code>--no-regression-tests</code>.
 
  <p>In the current implementation, the number of tests in the output can be substantially
- smaller than this limit.</div>
+ smaller than this limit. One reason is that Randoop does not output subsumed tests, which
+ appear as a subsequence of some longer test.</div>
 </li>
 </ul>
 <a name="maxsize">

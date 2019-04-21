@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Variable (randoop 4.1.1 API)</title>
+<title>Variable (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Variable (randoop 4.1.1 API)";
+            parent.document.title="Variable (randoop 4.1.2 API)";
         }
     }
     catch(err) {
@@ -110,6 +110,10 @@ var activeTableTab = "activeTableTab";
 <dt>All Implemented Interfaces:</dt>
 <dd><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html?is-external=true" title="class or interface in java.lang">Comparable</a>&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;</dd>
 </dl>
+<dl>
+<dt>Direct Known Subclasses:</dt>
+<dd><a href="../../randoop/sequence/DummyVariable.html" title="class in randoop.sequence">DummyVariable</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">Variable</span>
@@ -154,10 +158,18 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparab
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colOne" scope="col">Constructor and Description</th>
+<th class="colFirst" scope="col">Modifier</th>
+<th class="colLast" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#Variable-randoop.sequence.Sequence-int-">Variable</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;owner,
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#Variable--">Variable</a></span>()</code>
+<div class="block">Do not use! Only for use by DummyVariable.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Variable.html#Variable-randoop.sequence.Sequence-int-">Variable</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;owner,
         int&nbsp;i)</code>&nbsp;</td>
 </tr>
 </table>
@@ -292,11 +304,21 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparab
 <a name="Variable-randoop.sequence.Sequence-int-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>Variable</h4>
 <pre>public&nbsp;Variable(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;owner,
                 int&nbsp;i)</pre>
+</li>
+</ul>
+<a name="Variable--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>Variable</h4>
+<pre>protected&nbsp;Variable()</pre>
+<div class="block">Do not use! Only for use by DummyVariable.</div>
 </li>
 </ul>
 </li>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExecutableBooleanExpression (randoop 4.1.1 API)</title>
+<title>ExecutableBooleanExpression (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExecutableBooleanExpression (randoop 4.1.1 API)";
+            parent.document.title="ExecutableBooleanExpression (randoop 4.1.2 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":10,"i5":10,"i6":9,"i7":10,"i8":9,"i9":10,"i10":10};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":10,"i5":10,"i6":9,"i7":10,"i8":10,"i9":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -137,27 +137,27 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>private static <a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/ExecutableBooleanExpression.html#classNameGenerator">classNameGenerator</a></span></code>
+<div class="block">The name generator to use to generate class names.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/ExecutableBooleanExpression.html#comment">comment</a></span></code>
 <div class="block">The comment describing this expression.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/ExecutableBooleanExpression.html#contractSource">contractSource</a></span></code>
 <div class="block">The Java source code in <a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract"><code>ObjectContract</code></a> format.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/ExecutableBooleanExpression.html#expressionMethod">expressionMethod</a></span></code>
 <div class="block">The <code>java.lang.reflect.Method</code> to test this expression.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>private static <a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/ExecutableBooleanExpression.html#nameGenerator">nameGenerator</a></span></code>
-<div class="block">The name generator to use to generate class names.</div>
 </td>
 </tr>
 </table>
@@ -263,19 +263,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr id="i8" class="altColor">
-<td class="colFirst"><code>(package private) static <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/ExecutableBooleanExpression.html#getRawSignature-java.lang.String-java.lang.Class-java.lang.Class:A-java.lang.Class-">getRawSignature</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
-               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;receiverType,
-               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;[]&nbsp;parameterTypes,
-               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;returnType)</code>
-<div class="block">Creates a <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> for the expression method of the <a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition"><code>ExecutableBooleanExpression</code></a>.</div>
-</td>
-</tr>
-<tr id="i9" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/ExecutableBooleanExpression.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/ExecutableBooleanExpression.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -301,13 +292,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="nameGenerator">
+<a name="classNameGenerator">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>nameGenerator</h4>
-<pre>private static final&nbsp;<a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a> nameGenerator</pre>
+<h4>classNameGenerator</h4>
+<pre>private static final&nbsp;<a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a> classNameGenerator</pre>
 <div class="block">The name generator to use to generate class names.</div>
 </li>
 </ul>
@@ -386,7 +377,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>signature</code> - the signature for the expression method to be created. The class name of the
-     expression method signature is ignored and a new name is generated using <a href="../../randoop/condition/ExecutableBooleanExpression.html#nameGenerator"><code>nameGenerator</code></a>.</dd>
+     expression method signature is ignored and a new name is generated using <a href="../../randoop/condition/ExecutableBooleanExpression.html#classNameGenerator"><code>classNameGenerator</code></a>.</dd>
 <dd><code>declarations</code> - the parameter declaration string for the expression method to be created,
      including parameter names and wrapped in parentheses</dd>
 <dd><code>expressionSource</code> - the source code for a Java expression to be used as the body of the
@@ -528,7 +519,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>signature</code> - the signature for the expression method. The class name of the expression
-     method signature is ignored and a new name is generated using <a href="../../randoop/condition/ExecutableBooleanExpression.html#nameGenerator"><code>nameGenerator</code></a>.</dd>
+     method signature is ignored and a new name is generated using <a href="../../randoop/condition/ExecutableBooleanExpression.html#classNameGenerator"><code>classNameGenerator</code></a>.</dd>
 <dd><code>parameterDeclaration</code> - the parameter declaration string, including parameter names and
      wrapped in parentheses</dd>
 <dd><code>expressionSource</code> - a Java expression that is the source code for the expression, in the
@@ -566,7 +557,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a name="getCompilerErrorMessage-java.util.List-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>getCompilerErrorMessage</h4>
 <pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getCompilerErrorMessage(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/Diagnostic.html?is-external=true" title="class or interface in javax.tools">Diagnostic</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/javax/tools/JavaFileObject.html?is-external=true" title="class or interface in javax.tools">JavaFileObject</a>&gt;&gt;&nbsp;diagnostics,
@@ -579,34 +570,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>classText</code> - the source code of the expression class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the compiler error message string</dd>
-</dl>
-</li>
-</ul>
-<a name="getRawSignature-java.lang.String-java.lang.Class-java.lang.Class:A-java.lang.Class-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>getRawSignature</h4>
-<pre>static&nbsp;<a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a>&nbsp;getRawSignature(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
-                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;receiverType,
-                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;[]&nbsp;parameterTypes,
-                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;returnType)</pre>
-<div class="block">Creates a <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> for the expression method of the <a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition"><code>ExecutableBooleanExpression</code></a>.
-
- <p>Note that these signatures may be used more than once for different expression methods, and
- so <a href="../../randoop/condition/ExecutableBooleanExpression.html#createMethod-randoop.reflection.RawSignature-java.lang.String-java.lang.String-randoop.compile.SequenceCompiler-"><code>createMethod(RawSignature, String, String, SequenceCompiler)</code></a> replaces the classname
- to ensure a unique name.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>packageName</code> - the package name for the expression class</dd>
-<dd><code>receiverType</code> - the declaring class of the method or constructor, included first in
-     parameter types if non-null</dd>
-<dd><code>parameterTypes</code> - the parameter types for the original method or constructor</dd>
-<dd><code>returnType</code> - the return type for the method, or the declaring class for a constructor,
-     included last in parameter types if non-null</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the constructed post-expression method signature</dd>
 </dl>
 </li>
 </ul>

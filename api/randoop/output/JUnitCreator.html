@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>JUnitCreator (randoop 4.1.1 API)</title>
+<title>JUnitCreator (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="JUnitCreator (randoop 4.1.1 API)";
+            parent.document.title="JUnitCreator (randoop 4.1.2 API)";
         }
     }
     catch(err) {
@@ -280,14 +280,17 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>com.github.javaparser.ast.CompilationUnit</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/JUnitCreator.html#createTestClass-java.lang.String-java.lang.String-java.util.List-">createTestClass</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;testClassName,
-               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;testMethodPrefix,
-               <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;&nbsp;sequences)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/JUnitCreator.html#createTestClass-java.lang.String-randoop.output.NameGenerator-java.util.List-">createTestClass</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;testClassName,
+               <a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a>&nbsp;methodNameGen,
+               <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;&nbsp;sequences)</code>
+<div class="block">Create a test class.</div>
+</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/JUnitCreator.html#createTestDriver-java.lang.String-java.util.Set-">createTestDriver</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;driverName,
-                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;testClassNames)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/JUnitCreator.html#createTestDriver-java.lang.String-java.util.Set-int-">createTestDriver</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;driverName,
+                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;testClassNames,
+                int&nbsp;numMethods)</code>
 <div class="block">Create non-reflective test driver as a main class.</div>
 </td>
 </tr>
@@ -607,15 +610,24 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="createTestClass-java.lang.String-java.lang.String-java.util.List-">
+<a name="createTestClass-java.lang.String-randoop.output.NameGenerator-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createTestClass</h4>
 <pre>public&nbsp;com.github.javaparser.ast.CompilationUnit&nbsp;createTestClass(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;testClassName,
-                                                                 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;testMethodPrefix,
+                                                                 <a href="../../randoop/output/NameGenerator.html" title="class in randoop.output">NameGenerator</a>&nbsp;methodNameGen,
                                                                  <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;&nbsp;sequences)</pre>
+<div class="block">Create a test class.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>testClassName</code> - the class name</dd>
+<dd><code>methodNameGen</code> - the generator that creates method names</dd>
+<dd><code>sequences</code> - the contents of the test methods</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the CompilationUnit for a test class</dd>
+</dl>
 </li>
 </ul>
 <a name="createTestMethod-java.lang.String-java.lang.String-randoop.sequence.ExecutableSequence-">
@@ -678,19 +690,21 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="createTestDriver-java.lang.String-java.util.Set-">
+<a name="createTestDriver-java.lang.String-java.util.Set-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createTestDriver</h4>
 <pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;createTestDriver(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;driverName,
-                               <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;testClassNames)</pre>
+                               <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;testClassNames,
+                               int&nbsp;numMethods)</pre>
 <div class="block">Create non-reflective test driver as a main class.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>driverName</code> - the name for the driver class</dd>
 <dd><code>testClassNames</code> - the names of the test classes in the suite</dd>
+<dd><code>numMethods</code> - the number of methods; used for zero-padding</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the test driver class as a <code>String</code></dd>
 </dl>

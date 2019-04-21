@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>NameGenerator (randoop 4.1.1 API)</title>
+<title>NameGenerator (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,14 +12,14 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="NameGenerator (randoop 4.1.1 API)";
+            parent.document.title="NameGenerator (randoop 4.1.2 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":10,"i3":9};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -132,15 +132,15 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#counter">counter</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#counter">counter</a></span></code>
+<div class="block">The number to use for the next name to generate.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#format">format</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>private int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#initialValue">initialValue</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#format">format</a></span></code>
+<div class="block">The format string to generate a name; takes one integer parameter.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -157,12 +157,17 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#NameGenerator-java.lang.String-">NameGenerator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;prefix)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#NameGenerator-java.lang.String-">NameGenerator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;prefix)</code>
+<div class="block">Generates names without 0-padding on counter.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#NameGenerator-java.lang.String-int-int-">NameGenerator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;prefix,
              int&nbsp;initialValue,
-             int&nbsp;digits)</code>&nbsp;</td>
+             int&nbsp;lastValue)</code>
+<div class="block">Creates an instance that generates names beginning with prefix, counts starting at the
+ initialValue, and 0-padded to enough digits for <code>lastValue</code>.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -174,28 +179,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#formatString-int-">formatString</a></span>(int&nbsp;numDigits)</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code>(package private) int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#nameCount--">nameCount</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#next--">next</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>(package private) static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/NameGenerator.html#numDigits-int-">numDigits</a></span>(int&nbsp;n)</code>
-<div class="block">Returns the number of digits in the printed representation of the argument.</div>
-</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -219,15 +210,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="initialValue">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>initialValue</h4>
-<pre>private&nbsp;int initialValue</pre>
-</li>
-</ul>
 <a name="counter">
 <!--   -->
 </a>
@@ -235,6 +217,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>counter</h4>
 <pre>private&nbsp;int counter</pre>
+<div class="block">The number to use for the next name to generate.</div>
 </li>
 </ul>
 <a name="format">
@@ -244,6 +227,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>format</h4>
 <pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> format</pre>
+<div class="block">The format string to generate a name; takes one integer parameter.</div>
 </li>
 </ul>
 </li>
@@ -260,9 +244,17 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>NameGenerator</h4>
-<pre>NameGenerator(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;prefix,
-              int&nbsp;initialValue,
-              int&nbsp;digits)</pre>
+<pre>public&nbsp;NameGenerator(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;prefix,
+                     int&nbsp;initialValue,
+                     int&nbsp;lastValue)</pre>
+<div class="block">Creates an instance that generates names beginning with prefix, counts starting at the
+ initialValue, and 0-padded to enough digits for <code>lastValue</code>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>prefix</code> - a string to be used as the prefix for all generated names</dd>
+<dd><code>initialValue</code> - integer starting value for name counter</dd>
+<dd><code>lastValue</code> - the last expected number, to determine 0-padding; 0 for no padding</dd>
+</dl>
 </li>
 </ul>
 <a name="NameGenerator-java.lang.String-">
@@ -272,6 +264,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>NameGenerator</h4>
 <pre>public&nbsp;NameGenerator(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;prefix)</pre>
+<div class="block">Generates names without 0-padding on counter.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>prefix</code> - is a string to be used as a prefix for all names generated</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -285,44 +282,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a name="next--">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>next</h4>
 <pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;next()</pre>
-</li>
-</ul>
-<a name="nameCount--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>nameCount</h4>
-<pre>int&nbsp;nameCount()</pre>
-</li>
-</ul>
-<a name="numDigits-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>numDigits</h4>
-<pre>static&nbsp;int&nbsp;numDigits(int&nbsp;n)</pre>
-<div class="block">Returns the number of digits in the printed representation of the argument.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>n</code> - the number</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the number of digits in string form of given number</dd>
-</dl>
-</li>
-</ul>
-<a name="formatString-int-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>formatString</h4>
-<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;formatString(int&nbsp;numDigits)</pre>
 </li>
 </ul>
 </li>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>VisibilityPredicate (randoop 4.1.1 API)</title>
+<title>VisibilityPredicate (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="VisibilityPredicate (randoop 4.1.1 API)";
+            parent.document.title="VisibilityPredicate (randoop 4.1.2 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/reflection/TypeTupleSet.html" title="class in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/reflection/VisibilityPredicate.NotPrivateVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/reflection/VisibilityPredicate.AnyVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/reflection/VisibilityPredicate.html" target="_top">Frames</a></li>
@@ -108,7 +108,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../randoop/reflection/VisibilityPredicate.NotPrivateVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.NotPrivateVisibilityPredicate</a>, <a href="../../randoop/reflection/VisibilityPredicate.PackageVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.PackageVisibilityPredicate</a>, <a href="../../randoop/reflection/VisibilityPredicate.PublicVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.PublicVisibilityPredicate</a></dd>
+<dd><a href="../../randoop/reflection/VisibilityPredicate.AnyVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.AnyVisibilityPredicate</a>, <a href="../../randoop/reflection/VisibilityPredicate.NotPrivateVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.NotPrivateVisibilityPredicate</a>, <a href="../../randoop/reflection/VisibilityPredicate.PackageVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.PackageVisibilityPredicate</a>, <a href="../../randoop/reflection/VisibilityPredicate.PublicVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.PublicVisibilityPredicate</a></dd>
 </dl>
 <hr>
 <br>
@@ -135,19 +135,25 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/VisibilityPredicate.AnyVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.AnyVisibilityPredicate</a></span></code>
+<div class="block">AnyVisibilityPredicate is a <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection"><code>VisibilityPredicate</code></a> that always returns true.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/VisibilityPredicate.NotPrivateVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.NotPrivateVisibilityPredicate</a></span></code>
 <div class="block">NotPrivateVisibilityPredicate is a <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection"><code>VisibilityPredicate</code></a> that returns true in the case
  that the class/method/constructor/field is not declared to be private.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/VisibilityPredicate.PackageVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.PackageVisibilityPredicate</a></span></code>
 <div class="block">A predicate that tests for visibility of a class, method, constructor, or field relative to a
  particular package.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/VisibilityPredicate.PublicVisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate.PublicVisibilityPredicate</a></span></code>
 <div class="block">PublicVisibilityPredicate is a <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection"><code>VisibilityPredicate</code></a> that returns true in the case that
@@ -171,11 +177,21 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/VisibilityPredicate.html#IS_NOT_PRIVATE">IS_NOT_PRIVATE</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/VisibilityPredicate.html#IS_ANY">IS_ANY</a></span></code>
+<div class="block">A predicate that always returns true.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/VisibilityPredicate.html#IS_PUBLIC">IS_PUBLIC</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/VisibilityPredicate.html#IS_NOT_PRIVATE">IS_NOT_PRIVATE</a></span></code>
+<div class="block">A predicate that returns true for non-private elements.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/VisibilityPredicate.html#IS_PUBLIC">IS_PUBLIC</a></span></code>
+<div class="block">A predicate that returns true for public elements.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -262,15 +278,27 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>IS_PUBLIC</h4>
 <pre>public static&nbsp;<a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a> IS_PUBLIC</pre>
+<div class="block">A predicate that returns true for public elements.</div>
 </li>
 </ul>
 <a name="IS_NOT_PRIVATE">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>IS_NOT_PRIVATE</h4>
 <pre>public static&nbsp;<a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a> IS_NOT_PRIVATE</pre>
+<div class="block">A predicate that returns true for non-private elements.</div>
+</li>
+</ul>
+<a name="IS_ANY">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>IS_ANY</h4>
+<pre>public static&nbsp;<a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a> IS_ANY</pre>
+<div class="block">A predicate that always returns true.</div>
 </li>
 </ul>
 </li>
@@ -393,7 +421,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/reflection/TypeTupleSet.html" title="class in randoop.reflection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/reflection/VisibilityPredicate.NotPrivateVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/reflection/VisibilityPredicate.AnyVisibilityPredicate.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/reflection/VisibilityPredicate.html" target="_top">Frames</a></li>

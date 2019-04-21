@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SpecificationTranslator (randoop 4.1.1 API)</title>
+<title>SpecificationTranslator (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SpecificationTranslator (randoop 4.1.1 API)";
+            parent.document.title="SpecificationTranslator (randoop 4.1.2 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":9,"i5":10,"i6":9,"i7":9,"i8":10,"i9":9,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":9};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":9,"i5":10,"i6":9,"i7":10,"i8":10,"i9":10,"i10":10,"i11":9,"i12":10,"i13":10,"i14":10,"i15":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -110,7 +110,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">SpecificationTranslator</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">Method <a href="../../randoop/condition/SpecificationTranslator.html#createExecutableSpecification-java.lang.reflect.AccessibleObject-randoop.condition.specification.OperationSpecification-randoop.compile.SequenceCompiler-"><code>createExecutableSpecification(java.lang.reflect.AccessibleObject, randoop.condition.specification.OperationSpecification, randoop.compile.SequenceCompiler)</code></a> translates an <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> object
+<div class="block">Method <a href="../../randoop/condition/SpecificationTranslator.html#createExecutableSpecification-java.lang.reflect.Executable-randoop.condition.specification.OperationSpecification-randoop.compile.SequenceCompiler-"><code>createExecutableSpecification(java.lang.reflect.Executable, randoop.condition.specification.OperationSpecification, randoop.compile.SequenceCompiler)</code></a> translates an <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> object
  (which has preconditions, postconditions, and throws conditions) to its executable version,
  <a href="../../randoop/condition/ExecutableSpecification.html" title="class in randoop.condition"><code>ExecutableSpecification</code></a>.</div>
 </li>
@@ -233,7 +233,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/condition/ExecutableSpecification.html" title="class in randoop.condition">ExecutableSpecification</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#createExecutableSpecification-java.lang.reflect.AccessibleObject-randoop.condition.specification.OperationSpecification-randoop.compile.SequenceCompiler-">createExecutableSpecification</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>&nbsp;executable,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#createExecutableSpecification-java.lang.reflect.Executable-randoop.condition.specification.OperationSpecification-randoop.compile.SequenceCompiler-">createExecutableSpecification</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Executable.html?is-external=true" title="class or interface in java.lang.reflect">Executable</a>&nbsp;executable,
                              <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification">OperationSpecification</a>&nbsp;specification,
                              <a href="../../randoop/compile/SequenceCompiler.html" title="class in randoop.compile">SequenceCompiler</a>&nbsp;compiler)</code>
 <div class="block">Create the <a href="../../randoop/condition/ExecutableSpecification.html" title="class in randoop.condition"><code>ExecutableSpecification</code></a> object for the given <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a>
@@ -249,7 +249,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>(package private) static <a href="../../randoop/condition/SpecificationTranslator.html" title="class in randoop.condition">SpecificationTranslator</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#createTranslator-java.lang.reflect.AccessibleObject-randoop.condition.specification.OperationSpecification-randoop.compile.SequenceCompiler-">createTranslator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>&nbsp;executable,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#createTranslator-java.lang.reflect.Executable-randoop.condition.specification.OperationSpecification-randoop.compile.SequenceCompiler-">createTranslator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Executable.html?is-external=true" title="class or interface in java.lang.reflect">Executable</a>&nbsp;executable,
                 <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification">OperationSpecification</a>&nbsp;specification,
                 <a href="../../randoop/compile/SequenceCompiler.html" title="class in randoop.compile">SequenceCompiler</a>&nbsp;compiler)</code>
 <div class="block">Creates a <a href="../../randoop/condition/SpecificationTranslator.html" title="class in randoop.condition"><code>SpecificationTranslator</code></a> object to translate the <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> of <code>executable</code>.</div>
@@ -262,67 +262,68 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr id="i6" class="altColor">
-<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getDeclaringClass-java.lang.reflect.AccessibleObject-">getDeclaringClass</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>&nbsp;executable)</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private static <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getExpressionSignature-java.lang.reflect.AccessibleObject-boolean-">getExpressionSignature</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>&nbsp;executable,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getExpressionSignature-java.lang.reflect.Executable-boolean-">getExpressionSignature</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Executable.html?is-external=true" title="class or interface in java.lang.reflect">Executable</a>&nbsp;executable,
                       boolean&nbsp;postState)</code>
-<div class="block">Create the <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> for the expression method for evaluating an expression for the
- given method or constructor.</div>
+<div class="block">Create the <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> for evaluating an expression about a method call to the given
+ method or constructor.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition">ExecutableBooleanExpression</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getGuardExpressions-java.util.List-">getGuardExpressions</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/specification/Precondition.html" title="class in randoop.condition.specification">Precondition</a>&gt;&nbsp;preconditions)</code>
 <div class="block">Construct the list of <a href="../../randoop/condition/ExecutableBooleanExpression.html" title="class in randoop.condition"><code>ExecutableBooleanExpression</code></a> objects, one for each <a href="../../randoop/condition/specification/Precondition.html" title="class in randoop.condition.specification"><code>Precondition</code></a>.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getParameterTypes-java.lang.reflect.AccessibleObject-">getParameterTypes</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>&nbsp;executable)</code>&nbsp;</td>
-</tr>
-<tr id="i10" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>(package private) <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getPoststateExpressionDeclarations--">getPoststateExpressionDeclarations</a></span>()</code>
 <div class="block">Return the poststate expression method parameter declaration string.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>(package private) <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getPoststateExpressionSignature--">getPoststateExpressionSignature</a></span>()</code>
 <div class="block">Returns the poststate expression method signature from this object.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>(package private) <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getPrestateExpressionDeclaration--">getPrestateExpressionDeclaration</a></span>()</code>
 <div class="block">Return the prestate expression method parameter declaration string.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code>private static <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getRawSignature-java.lang.String-java.lang.Class-java.lang.Class:A-java.lang.Class-">getRawSignature</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
+               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;receiverType,
+               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;[]&nbsp;parameterTypes,
+               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;returnType)</code>
+<div class="block">Creates a <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> for an expression method.</div>
+</td>
+</tr>
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>(package private) <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getReplacementMap--">getReplacementMap</a></span>()</code>
 <div class="block">Returns the replacement map for the identifiers in the expression to the dummy variables
  expected in contract assertions.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../randoop/condition/GuardPropertyPair.html" title="class in randoop.condition">GuardPropertyPair</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getReturnConditions-java.util.List-">getReturnConditions</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/specification/Postcondition.html" title="class in randoop.condition.specification">Postcondition</a>&gt;&nbsp;postconditions)</code>
 <div class="block">Construct the list of <a href="../../randoop/condition/GuardPropertyPair.html" title="class in randoop.condition"><code>GuardPropertyPair</code></a> objects, one for each <a href="../../randoop/condition/specification/Postcondition.html" title="class in randoop.condition.specification"><code>Postcondition</code></a> in
  <code>postconditions</code>.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../randoop/condition/GuardThrowsPair.html" title="class in randoop.condition">GuardThrowsPair</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#getThrowsConditions-java.util.List-">getThrowsConditions</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/condition/specification/ThrowsCondition.html" title="class in randoop.condition.specification">ThrowsCondition</a>&gt;&nbsp;throwsConditions)</code>
 <div class="block">Construct the list of <a href="../../randoop/condition/GuardThrowsPair.html" title="class in randoop.condition"><code>GuardThrowsPair</code></a> objects, one for each <a href="../../randoop/condition/specification/ThrowsCondition.html" title="class in randoop.condition.specification"><code>ThrowsCondition</code></a> in
  <code>throwsConditions</code>.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/SpecificationTranslator.html#renamedPackage-java.lang.Package-">renamedPackage</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Package.html?is-external=true" title="class or interface in java.lang">Package</a>&nbsp;aPackage)</code>
 <div class="block">Gets the name of the package.</div>
@@ -469,13 +470,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="createTranslator-java.lang.reflect.AccessibleObject-randoop.condition.specification.OperationSpecification-randoop.compile.SequenceCompiler-">
+<a name="createTranslator-java.lang.reflect.Executable-randoop.condition.specification.OperationSpecification-randoop.compile.SequenceCompiler-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createTranslator</h4>
-<pre>static&nbsp;<a href="../../randoop/condition/SpecificationTranslator.html" title="class in randoop.condition">SpecificationTranslator</a>&nbsp;createTranslator(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>&nbsp;executable,
+<pre>static&nbsp;<a href="../../randoop/condition/SpecificationTranslator.html" title="class in randoop.condition">SpecificationTranslator</a>&nbsp;createTranslator(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Executable.html?is-external=true" title="class or interface in java.lang.reflect">Executable</a>&nbsp;executable,
                                                 <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification">OperationSpecification</a>&nbsp;specification,
                                                 <a href="../../randoop/compile/SequenceCompiler.html" title="class in randoop.compile">SequenceCompiler</a>&nbsp;compiler)</pre>
 <div class="block">Creates a <a href="../../randoop/condition/SpecificationTranslator.html" title="class in randoop.condition"><code>SpecificationTranslator</code></a> object to translate the <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a> of <code>executable</code>.</div>
@@ -489,21 +490,23 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="getExpressionSignature-java.lang.reflect.AccessibleObject-boolean-">
+<a name="getExpressionSignature-java.lang.reflect.Executable-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getExpressionSignature</h4>
-<pre>private static&nbsp;<a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a>&nbsp;getExpressionSignature(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>&nbsp;executable,
+<pre>private static&nbsp;<a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a>&nbsp;getExpressionSignature(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Executable.html?is-external=true" title="class or interface in java.lang.reflect">Executable</a>&nbsp;executable,
                                                    boolean&nbsp;postState)</pre>
-<div class="block">Create the <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> for the expression method for evaluating an expression for the
- given method or constructor.
+<div class="block">Create the <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> for evaluating an expression about a method call to the given
+ method or constructor.
 
  <p>The parameter types of the RawSignature are the declaring class as the receiver type,
- followed by the parameter types of <code>executable</code>, followed by the return type if <code>postState</code> is true and <code>executable</code> is not a void method.
+ followed by the parameter types of <code>executable</code>, followed by the return type if <code>postState</code> is true and <code>executable</code> is not a void method. These are all needed, in case
+ the expression refers to them.
 
- <p>Note: The declaring class of the expression method is actually determined by <a href="../../randoop/condition/ExecutableBooleanExpression.html#createMethod-randoop.reflection.RawSignature-java.lang.String-java.lang.String-randoop.compile.SequenceCompiler-"><code>ExecutableBooleanExpression.createMethod(RawSignature, String, String, SequenceCompiler)</code></a></div>
+ <p>Note: The declaring class of the expression method is actually determined by <a href="../../randoop/condition/ExecutableBooleanExpression.html#createMethod-randoop.reflection.RawSignature-java.lang.String-java.lang.String-randoop.compile.SequenceCompiler-"><code>ExecutableBooleanExpression.createMethod(RawSignature, String, String,
+ SequenceCompiler)</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>executable</code> - the method or constructor to which the expression belongs</dd>
@@ -513,22 +516,32 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="getDeclaringClass-java.lang.reflect.AccessibleObject-">
+<a name="getRawSignature-java.lang.String-java.lang.Class-java.lang.Class:A-java.lang.Class-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getDeclaringClass</h4>
-<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;getDeclaringClass(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>&nbsp;executable)</pre>
-</li>
-</ul>
-<a name="getParameterTypes-java.lang.reflect.AccessibleObject-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getParameterTypes</h4>
-<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;[]&nbsp;getParameterTypes(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>&nbsp;executable)</pre>
+<h4>getRawSignature</h4>
+<pre>private static&nbsp;<a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection">RawSignature</a>&nbsp;getRawSignature(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
+                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;receiverType,
+                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;[]&nbsp;parameterTypes,
+                                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;returnType)</pre>
+<div class="block">Creates a <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> for an expression method.
+
+ <p>Note that these signatures may be used more than once for different expression methods, and
+ so <a href="../../randoop/condition/ExecutableBooleanExpression.html#createMethod-randoop.reflection.RawSignature-java.lang.String-java.lang.String-randoop.compile.SequenceCompiler-"><code>ExecutableBooleanExpression.createMethod(RawSignature, String,
+ String, SequenceCompiler)</code></a> replaces the classname to ensure a unique name.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>packageName</code> - the package name for the expression class</dd>
+<dd><code>receiverType</code> - the declaring class of the method or constructor, included first in
+     parameter types if non-null</dd>
+<dd><code>parameterTypes</code> - the parameter types for the original method or constructor</dd>
+<dd><code>returnType</code> - the return type for the method, or the declaring class for a constructor,
+     included last in parameter types if non-null</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the constructed post-expression method signature</dd>
+</dl>
 </li>
 </ul>
 <a name="renamedPackage-java.lang.Package-">
@@ -566,13 +579,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="createExecutableSpecification-java.lang.reflect.AccessibleObject-randoop.condition.specification.OperationSpecification-randoop.compile.SequenceCompiler-">
+<a name="createExecutableSpecification-java.lang.reflect.Executable-randoop.condition.specification.OperationSpecification-randoop.compile.SequenceCompiler-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createExecutableSpecification</h4>
-<pre>public static&nbsp;<a href="../../randoop/condition/ExecutableSpecification.html" title="class in randoop.condition">ExecutableSpecification</a>&nbsp;createExecutableSpecification(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html?is-external=true" title="class or interface in java.lang.reflect">AccessibleObject</a>&nbsp;executable,
+<pre>public static&nbsp;<a href="../../randoop/condition/ExecutableSpecification.html" title="class in randoop.condition">ExecutableSpecification</a>&nbsp;createExecutableSpecification(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Executable.html?is-external=true" title="class or interface in java.lang.reflect">Executable</a>&nbsp;executable,
                                                                     <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification">OperationSpecification</a>&nbsp;specification,
                                                                     <a href="../../randoop/compile/SequenceCompiler.html" title="class in randoop.compile">SequenceCompiler</a>&nbsp;compiler)</pre>
 <div class="block">Create the <a href="../../randoop/condition/ExecutableSpecification.html" title="class in randoop.condition"><code>ExecutableSpecification</code></a> object for the given <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a>

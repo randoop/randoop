@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>LiteralFileReader (randoop 4.1.1 API)</title>
+<title>LiteralFileReader (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="LiteralFileReader (randoop 4.1.1 API)";
+            parent.document.title="LiteralFileReader (randoop 4.1.2 API)";
         }
     }
     catch(err) {
@@ -135,7 +135,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  Blank lines and comment lines (lines starting with "#") are ignored, both between records and
  inside records.
 
- <p>An example literals file appears in file randoop/systemtests/resources/literalsfile.txt.
+ <p>An example literals file appears in file randoop/systemTests/resources/literalsfile.txt.
 
  <p>LIMITATIONS:
 
@@ -193,9 +193,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#throwRecordSyntaxError-java.lang.Exception-java.util.List-int-">throwRecordSyntaxError</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e,
-                      <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;lines,
-                      int&nbsp;i)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/LiteralFileReader.html#throwRecordSyntaxError-java.lang.Exception-">throwRecordSyntaxError</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e)</code>
+<div class="block">Throw an error with the given exception as its cause.</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>private static void</code></td>
@@ -258,15 +258,18 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="throwRecordSyntaxError-java.lang.Exception-java.util.List-int-">
+<a name="throwRecordSyntaxError-java.lang.Exception-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>throwRecordSyntaxError</h4>
-<pre>private static&nbsp;void&nbsp;throwRecordSyntaxError(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e,
-                                           <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;lines,
-                                           int&nbsp;i)</pre>
+<pre>private static&nbsp;void&nbsp;throwRecordSyntaxError(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e)</pre>
+<div class="block">Throw an error with the given exception as its cause.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>e</code> - the cause</dd>
+</dl>
 </li>
 </ul>
 <a name="throwRecordSyntaxError-java.lang.String-java.util.List-int-">

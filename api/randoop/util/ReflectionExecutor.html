@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ReflectionExecutor (randoop 4.1.1 API)</title>
+<title>ReflectionExecutor (randoop 4.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ReflectionExecutor (randoop 4.1.1 API)";
+            parent.document.title="ReflectionExecutor (randoop 4.1.2 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -211,22 +211,19 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ReflectionExecutor.html#executeReflectionCode-randoop.util.ReflectionCode-java.io.PrintStream-">executeReflectionCode</a></span>(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code,
-                     <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a>&nbsp;out)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ReflectionExecutor.html#executeReflectionCode-randoop.util.ReflectionCode-">executeReflectionCode</a></span>(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code)</code>
 <div class="block">Executes <code>code.runReflectionCode()</code>, which sets <code>code</code>'s <code>.retVal</code> or <code>.exceptionThrown</code> field.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ReflectionExecutor.html#executeReflectionCodeThreaded-randoop.util.ReflectionCode-java.io.PrintStream-">executeReflectionCodeThreaded</a></span>(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code,
-                             <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a>&nbsp;out)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ReflectionExecutor.html#executeReflectionCodeThreaded-randoop.util.ReflectionCode-">executeReflectionCodeThreaded</a></span>(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code)</code>
 <div class="block">Executes code.runReflectionCode() in its own thread.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ReflectionExecutor.html#executeReflectionCodeUnThreaded-randoop.util.ReflectionCode-java.io.PrintStream-">executeReflectionCodeUnThreaded</a></span>(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code,
-                               <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a>&nbsp;out)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ReflectionExecutor.html#executeReflectionCodeUnThreaded-randoop.util.ReflectionCode-">executeReflectionCodeUnThreaded</a></span>(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code)</code>
 <div class="block">Executes code.runReflectionCode() in the current thread.</div>
 </td>
 </tr>
@@ -239,11 +236,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ReflectionExecutor.html#normalExecs--">normalExecs</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ReflectionExecutor.html#printExceptionDetails-java.lang.Throwable-java.io.PrintStream-">printExceptionDetails</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;e,
-                     <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a>&nbsp;out)</code>&nbsp;</td>
-</tr>
-<tr id="i8" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ReflectionExecutor.html#resetStatistics--">resetStatistics</a></span>()</code>&nbsp;</td>
 </tr>
@@ -413,67 +405,51 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre>public static&nbsp;double&nbsp;excepExecAvgMillis()</pre>
 </li>
 </ul>
-<a name="executeReflectionCode-randoop.util.ReflectionCode-java.io.PrintStream-">
+<a name="executeReflectionCode-randoop.util.ReflectionCode-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>executeReflectionCode</h4>
-<pre>public static&nbsp;<a href="../../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a>&nbsp;executeReflectionCode(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code,
-                                                     <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a>&nbsp;out)</pre>
+<pre>public static&nbsp;<a href="../../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a>&nbsp;executeReflectionCode(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code)</pre>
 <div class="block">Executes <code>code.runReflectionCode()</code>, which sets <code>code</code>'s <code>.retVal</code> or <code>.exceptionThrown</code> field.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>code</code> - the <a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util"><code>ReflectionCode</code></a> to be executed</dd>
-<dd><code>out</code> - stream to print exception details to or null</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the execution result</dd>
 </dl>
 </li>
 </ul>
-<a name="executeReflectionCodeThreaded-randoop.util.ReflectionCode-java.io.PrintStream-">
+<a name="executeReflectionCodeThreaded-randoop.util.ReflectionCode-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>executeReflectionCodeThreaded</h4>
-<pre>private static&nbsp;void&nbsp;executeReflectionCodeThreaded(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code,
-                                                  <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a>&nbsp;out)
+<pre>private static&nbsp;void&nbsp;executeReflectionCodeThreaded(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code)
                                            throws <a href="../../randoop/util/TimeoutExceededException.html" title="class in randoop.util">TimeoutExceededException</a></pre>
 <div class="block">Executes code.runReflectionCode() in its own thread.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>code</code> - the <a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util"><code>ReflectionCode</code></a> to be executed</dd>
-<dd><code>out</code> - ignored</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../randoop/util/TimeoutExceededException.html" title="class in randoop.util">TimeoutExceededException</a></code> - if execution times out</dd>
 </dl>
 </li>
 </ul>
-<a name="executeReflectionCodeUnThreaded-randoop.util.ReflectionCode-java.io.PrintStream-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>executeReflectionCodeUnThreaded</h4>
-<pre>private static&nbsp;void&nbsp;executeReflectionCodeUnThreaded(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code,
-                                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a>&nbsp;out)</pre>
-<div class="block">Executes code.runReflectionCode() in the current thread.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>code</code> - the <a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util"><code>ReflectionCode</code></a> to be executed</dd>
-<dd><code>out</code> - stream to print exception details to or null</dd>
-</dl>
-</li>
-</ul>
-<a name="printExceptionDetails-java.lang.Throwable-java.io.PrintStream-">
+<a name="executeReflectionCodeUnThreaded-randoop.util.ReflectionCode-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>printExceptionDetails</h4>
-<pre>private static&nbsp;void&nbsp;printExceptionDetails(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;e,
-                                          <a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a>&nbsp;out)</pre>
+<h4>executeReflectionCodeUnThreaded</h4>
+<pre>private static&nbsp;void&nbsp;executeReflectionCodeUnThreaded(<a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util">ReflectionCode</a>&nbsp;code)</pre>
+<div class="block">Executes code.runReflectionCode() in the current thread.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>code</code> - the <a href="../../randoop/util/ReflectionCode.html" title="class in randoop.util"><code>ReflectionCode</code></a> to be executed</dd>
+</dl>
 </li>
 </ul>
 </li>
