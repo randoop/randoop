@@ -776,22 +776,21 @@ NEWVERSION=<em>4.1.3</em></pre>
     </li>
   </ol>
 </li>
-<li>Create the distribution files, commit, make a tag, and push.  This takes
+<li>Create the distribution files, commit, and push.  This takes
   a while because it runs all the tests.  It also updates the project site in
   the <code>gh-pages</code> branch.
 <pre>
   ./gradlew clean buildRelease \
-  && git add -A . \
-  && git commit . -m "Update version to $NEWVERSION" \
-  && git push</pre>
+  && git add -A . && git commit . -m "Update version to $NEWVERSION" && git push \
+  && (cd ../randoop-branch-gh-pages && \
+  && git add -A . && git commit . -m "Update version to $NEWVERSION" && git push)</pre>
   This runs the tests again, so it takes about half an hour.
   </li>
   <li>
     Check that there are no broken links on the published website:
     <pre>./gradlew checklink</pre>
     This command creates file <code>checklink-log.txt</code>.
-    One error is expected: <code>404</code> because file <code>randoop-$NEWVERSION.zip</code>
-    does not exist yet.
+    One error is expected: <code>404</code> for the GitHub release, which has not been made yet.
         If there are any other errors, then fix them by updating URLs in
         Randoop or by suppressing a warning in
         file <code>checklink-args.txt</code>, which was mentioned above.
