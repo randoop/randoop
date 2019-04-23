@@ -1034,9 +1034,10 @@ public class GenTests extends GenInputsAbstract {
     List<List<ExecutableSequence>> sequencePartition =
         CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
     for (int i = 0; i < sequencePartition.size(); i++) {
+      List<ExecutableSequence> partition = sequencePartition.get(i);
       String testClassName = classNamePrefix + i;
       CompilationUnit classAST =
-          junitCreator.createTestClass(testClassName, methodNameGenerator, sequences);
+          junitCreator.createTestClass(testClassName, methodNameGenerator, partition);
       testMap.put(testClassName, classAST);
     }
     return testMap;

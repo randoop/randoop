@@ -8,7 +8,7 @@ import java.io.PrintStream;
 public class Globals {
 
   /** The version number for Randoop. */
-  public static final String RANDOOP_VERSION = "4.1.1";
+  public static final String RANDOOP_VERSION = "4.1.2";
 
   /** The system-specific line separator string. */
   public static final String lineSep = System.lineSeparator();
