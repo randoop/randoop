@@ -553,12 +553,7 @@ public class GenTests extends GenInputsAbstract {
           PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
               new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
 
-          for (TypedOperation op : testOccurrences.keySet()) {
-            if (!flakyOccurrences.containsKey(op)) {
-              // A methods that appears in no flaky test is not the cause of
-              //  the flaky generated tests this run.
-              continue;
-            }
+          for (TypedOperation op : flakyOccurrences.keySet()) {
             double flakinessHeuristic = flakyOccurrences.get(op) / testOccurrences.get(op);
             RankedTypeOperation rankedMethod = new RankedTypeOperation(flakinessHeuristic, op);
             methodHeuristicPriorityQueue.add(rankedMethod);
