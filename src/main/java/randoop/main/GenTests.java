@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -55,6 +54,7 @@ import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
+import randoop.operation.TypedOperation.RankedTypeOperation;
 import randoop.output.CodeWriter;
 import randoop.output.FailingAssertionCommentWriter;
 import randoop.output.JUnitCreator;
@@ -166,32 +166,7 @@ public class GenTests extends GenInputsAbstract {
   /** The count of sequences that failed to compile. */
   private int sequenceCompileFailureCount = 0;
 
-  /** TypedOperationHeuristic is a wrapper around a TypedOperation and a heuristic. */
-  private static class TypedOperationHeuristic {
-    /** Heuristic value of the TypedOperation; e.g. tf-idf. */
-    public double heuristic;
-
-    /** The wrapped operation. */
-    public TypedOperation operation;
-
-    /**
-     * Constructor to populate heuristic and operation
-     *
-     * @param heuristic heuristic value of operation
-     * @param operation wrapped operation
-     */
-    public TypedOperationHeuristic(double heuristic, TypedOperation operation) {
-      this.heuristic = heuristic;
-      this.operation = operation;
-    }
-  }
-
-  /** Comparator used for sorting by heuristic. */
-  private static final Comparator<TypedOperationHeuristic> heuristicSortComparator =
-      (TypedOperationHeuristic t, TypedOperationHeuristic t1) ->
-          Double.valueOf(t.heuristic).compareTo(t1.heuristic);
-
-  /** Default GenTests constructor with default messages */
+  /** GenTests constructor that uses default messages */
   public GenTests() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
@@ -577,8 +552,8 @@ public class GenTests extends GenInputsAbstract {
 
         // Priority queue of methods ordered by its heuristic, highest removed first.
         // Default PriorityQueue is a min heap, so we need to reverse the comparator.
-        PriorityQueue<TypedOperationHeuristic> methodHeuristicPriorityQueue =
-            new PriorityQueue<>(heuristicSortComparator.reversed());
+        PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
+            new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
 
         for (TypedOperation to : testOccurrences.keySet()) {
           if (!flakyOccurrences.containsKey(to)) {
@@ -587,8 +562,7 @@ public class GenTests extends GenInputsAbstract {
             continue;
           }
           double flakinessHeuristic = flakyOccurrences.get(to) / testOccurrences.get(to);
-          TypedOperationHeuristic methodWithHeuristic =
-              new TypedOperationHeuristic(flakinessHeuristic, to);
+          RankedTypeOperation methodWithHeuristic = new RankedTypeOperation(flakinessHeuristic, to);
           methodHeuristicPriorityQueue.add(methodWithHeuristic);
         }
 
@@ -608,7 +582,7 @@ public class GenTests extends GenInputsAbstract {
         // Output top methods by ranking from most likely to least likely to be flaky
         int maxMethodsToOutput = GenInputsAbstract.nondeterministic_methods_to_output;
         for (int i = 0; i < maxMethodsToOutput && !methodHeuristicPriorityQueue.isEmpty(); i++) {
-          TypedOperationHeuristic methodWithHeuristic = methodHeuristicPriorityQueue.remove();
+          RankedTypeOperation methodWithHeuristic = methodHeuristicPriorityQueue.remove();
           System.out.println(methodWithHeuristic.operation.toParsableString());
         }
       }
