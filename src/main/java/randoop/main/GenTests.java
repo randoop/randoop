@@ -549,7 +549,7 @@ public class GenTests extends GenInputsAbstract {
           // Our heuristic for ranking possibly flaky methods. Method M's heuristic is:
           // ((number of flaky tests M occurs in) / (number of total tests M occurs in)
 
-          // Priority queue of methods ordered by its heuristic, highest first.
+          // Priority queue of methods ordered by tf-idf heuristic, highest first.
           PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
               new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
 
@@ -566,7 +566,6 @@ public class GenTests extends GenInputsAbstract {
 
           System.out.println("The following methods, in decreasing order of likelihood,");
           System.out.println("are the most likely to be the problem.");
-          // Output top methods by ranking from most likely to least likely to be flaky.
           for (int i = 0;
               i < GenInputsAbstract.nondeterministic_methods_to_output
                   && !methodHeuristicPriorityQueue.isEmpty();
