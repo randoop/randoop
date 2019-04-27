@@ -491,10 +491,6 @@ public class OperationModel {
         } else if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
           System.out.println(
               "Ignoring abstract " + c + " specified via --classlist or --testclass.");
-          // TODO: Why is this code here?  It's needed in order to make tests pass.
-          if (coveredClassesGoalNames.contains(classname)) {
-            coveredClassesGoal.add(c);
-          }
         } else {
           mgr.apply(c);
           if (coveredClassesGoalNames.contains(classname)) {
@@ -506,18 +502,9 @@ public class OperationModel {
 
     // Collect covered classes
     for (String classname : coveredClassesGoalNames) {
-      if (!classnames.contains(classname)) {
-        Class<?> c = getClass(classname, errorHandler);
-        if (c != null) {
-          if (!visibility.isVisible(c)) {
-            System.out.println(
-                "Ignoring non-visible " + c + " specified as --require-covered-classes target");
-          } else if (c.isInterface()) {
-            System.out.println("Ignoring " + c + " specified as --require-covered-classes target.");
-          } else {
-            coveredClassesGoal.add(c);
-          }
-        }
+      Class<?> c = getClass(classname, errorHandler);
+      if (c != null && !c.isInterface()) {
+        coveredClassesGoal.add(c);
       }
     }
   }
