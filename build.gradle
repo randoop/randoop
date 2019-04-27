@@ -24,6 +24,8 @@ plugins {
   // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
   id 'se.patrikerdes.use-latest-versions' version '0.2.9'
   id 'com.github.ben-manes.versions' version '0.21.0'
+
+  id 'org.aim42.htmlSanityCheck' version '1.1.0'
 }
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
@@ -848,6 +850,18 @@ task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC'
       }
     }
   }
+}
+
+// This is cross-platform and pulls in all required dependencies.  However,
+// it emits false positives and cannot be run in an automated build.
+// Output goes in ${buildDir}/reports/htmlSanityCheck/
+htmlSanityCheck {
+    // sourceDir = new File( "${projectDir}/src/docs/manual" )
+    sourceDir = new File( "${projectDir}/src/docs" )
+    sourceDocuments = fileTree(sourceDir) {
+        include "index.html", "projectideas.html", "publications.html", "manual/dev.html", "manual/index.html"
+    }
+    failOnErrors = true
 }
 
 build.dependsOn manual
