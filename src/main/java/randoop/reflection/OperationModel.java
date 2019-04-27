@@ -472,13 +472,10 @@ public class OperationModel {
     }
 
     // Collect classes under test
-    Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
     for (String classname : classnames) {
       Class<?> c = getClass(classname, errorHandler);
       // Note that c could be null if errorHandler just warns on bad names
-      if (c != null && !visitedClasses.contains(c)) {
-        visitedClasses.add(c);
-
+      if (c != null) {
         String discardReason = nonInstantiable(c, visibility);
         if (discardReason != null) {
           System.out.printf(
