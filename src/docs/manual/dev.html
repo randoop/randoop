@@ -732,6 +732,10 @@ task described below.
     This takes around 30 minutes.  To shortcut it if no
     dependencies were updated, omit <code>clean build</code>.
   </li>
+  <li>Run another HTML checker.  It suffers some false positive reports,
+    but if it produces any true reports, fix them and start over.
+    <pre>./gradlew htmlSanityCheck</pre>
+  </li>
   <li>Double-check that the changelog <code>src/docs/CHANGES.txt</code>
     contains all user-visible changes in
     <pre>git log v$OLDVERSION..</pre>
@@ -1130,7 +1134,7 @@ sequence that tests method <code>m(A a, B b)</code>, Randoop first
 finds and concatenates previously-generated sequences that create
 objects of type <code>A</code> and <code>B</code>, and then extends
 the concatenated sequence with a call of <code>m</code>. See
-<a href="http://homes.cs.washington.edu/~mernst/pubs/feedback-testgen-icse2007.pdf">Section
+<a href="https://homes.cs.washington.edu/~mernst/pubs/feedback-testgen-icse2007.pdf">Section
 2.2. of this paper</a> for more details.
 </p>
 <p>
