@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -55,6 +54,7 @@ import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
+import randoop.operation.TypedOperation.RankedTypeOperation;
 import randoop.output.CodeWriter;
 import randoop.output.FailingAssertionCommentWriter;
 import randoop.output.JUnitCreator;
@@ -166,32 +166,7 @@ public class GenTests extends GenInputsAbstract {
   /** The count of sequences that failed to compile. */
   private int sequenceCompileFailureCount = 0;
 
-  /** TypedOperationHeuristic is a wrapper around a TypedOperation and a heuristic. */
-  private static class TypedOperationHeuristic {
-    /** Heuristic value of the TypedOperation; e.g. tf-idf. */
-    public double heuristic;
-
-    /** The wrapped operation. */
-    public TypedOperation operation;
-
-    /**
-     * Constructor to populate heuristic and operation
-     *
-     * @param heuristic heuristic value of operation
-     * @param operation wrapped operation
-     */
-    public TypedOperationHeuristic(double heuristic, TypedOperation operation) {
-      this.heuristic = heuristic;
-      this.operation = operation;
-    }
-  }
-
-  /** Comparator used for sorting by heuristic. */
-  private static final Comparator<TypedOperationHeuristic> heuristicSortComparator =
-      (TypedOperationHeuristic t, TypedOperationHeuristic t1) ->
-          Double.valueOf(t.heuristic).compareTo(t1.heuristic);
-
-  /** Default GenTests constructor with default messages */
+  /** GenTests constructor that uses default messages */
   public GenTests() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
@@ -543,76 +518,68 @@ public class GenTests extends GenInputsAbstract {
           GenInputsAbstract.regression_test_basename,
           "Regression");
 
-      HashSet<String> flakyTestNames = codeWriter.getFlakyTestNames();
+      Set<String> flakyTestNames = codeWriter.getFlakyTestNames();
 
       if (flakyTestNames.size() > 0) {
-        List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
-
-        // How many tests an operation occurs in (regardless of how many times it appears in that
-        // test).
-        Map<TypedOperation, Integer> testOccurrences =
-            tallyOperationsInSequences(regressionSequences);
-
-        // TODO: cxing handle Error Test Sequence tallying.
-        //  Currently, we don't rerun Error Test Sequences and cannot determine
-        //  flakiness heuristics.
-        // tallyOperationsInSequences(testOccurrences, explorer.getErrorTestSequences());
-
-        List<ExecutableSequence> flakySequences = new ArrayList<>();
-        for (String flakyTestName : flakyTestNames) {
-          int testNum = Integer.parseInt(flakyTestName.substring(4)); // length of "test"
-          // Tests start at 001.
-          ExecutableSequence flakySequence = regressionSequences.get(testNum - 1);
-          flakySequences.add(flakySequence);
-        }
-
-        // How many tests an operation occurs in (regardless of how many times it appears in that
-        // flaky test).
-        Map<TypedOperation, Integer> flakyOccurrences = tallyOperationsInSequences(flakySequences);
-
-        // tf-idf metric
-        // Our heuristic for ranking possibly flaky methods. A method's heuristic
-        //  is equal to the ratio of the number of flaky tests a method M occurs
-        //  in divided by the number of total tests M occurs in.
-
-        // Priority queue of methods ordered by its heuristic, highest removed first.
-        // Default PriorityQueue is a min heap, so we need to reverse the comparator.
-        PriorityQueue<TypedOperationHeuristic> methodHeuristicPriorityQueue =
-            new PriorityQueue<>(heuristicSortComparator.reversed());
-
-        for (TypedOperation to : testOccurrences.keySet()) {
-          if (!flakyOccurrences.containsKey(to)) {
-            // Methods that don't appear in flaky tests aren't the cause of
-            //  the flaky generated tests this run.
-            continue;
-          }
-          double flakinessHeuristic = flakyOccurrences.get(to) / testOccurrences.get(to);
-          TypedOperationHeuristic methodWithHeuristic =
-              new TypedOperationHeuristic(flakinessHeuristic, to);
-          methodHeuristicPriorityQueue.add(methodWithHeuristic);
-        }
-
         System.out.println();
         System.out.println("Flaky tests were generated. This means that your program contains");
-        System.out.println("nondeterministic methods. The following methods, in decreasing");
-        System.out.println("order of likelihood, are the most likely to be nondeterministic.");
+        System.out.println("methods that are nondeterministic or have non-local side effects.");
+
+        if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
+          List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+
+          // How many flaky tests an operation occurs in (regardless of how many times it appears in
+          // that test).
+          Map<TypedOperation, Integer> testOccurrences =
+              countSequencesPerOperation(regressionSequences);
+
+          // TODO: cxing handle Error Test Sequence tallying.
+          //  Currently, we don't rerun Error Test Sequences and cannot determine
+          //  flakiness heuristics.
+          // countSequencesPerOperation(testOccurrences, explorer.getErrorTestSequences());
+
+          List<ExecutableSequence> flakySequences =
+              regressionTestNamesToSequences(flakyTestNames, regressionSequences);
+          // How many tests an operation occurs in (regardless of how many times it appears in that
+          // flaky test).
+          Map<TypedOperation, Integer> flakyOccurrences =
+              countSequencesPerOperation(flakySequences);
+
+          // tf-idf metric
+          // Our heuristic for ranking possibly flaky methods. Method M's heuristic is:
+          // ((number of flaky tests M occurs in) / (number of total tests M occurs in)
+
+          // Priority queue of methods ordered by tf-idf heuristic, highest first.
+          PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
+              new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
+
+          for (TypedOperation op : flakyOccurrences.keySet()) {
+            double flakinessHeuristic = flakyOccurrences.get(op) / testOccurrences.get(op);
+            RankedTypeOperation rankedMethod = new RankedTypeOperation(flakinessHeuristic, op);
+            methodHeuristicPriorityQueue.add(rankedMethod);
+          }
+
+          System.out.println("The following methods, in decreasing order of likelihood,");
+          System.out.println("are the most likely to be the problem.");
+          for (int i = 0;
+              i < GenInputsAbstract.nondeterministic_methods_to_output
+                  && !methodHeuristicPriorityQueue.isEmpty();
+              i++) {
+            RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
+            System.out.println("  " + rankedMethod.operation.toParsableString());
+          }
+        }
+
         System.out.println(
-            "Please refer to https://randoop.github.io/randoop/manual/#nondeterminism");
+            "To prevent the generation of flaky tests, see section 'Nondeterministic program");
         System.out.println(
-            "in the section 'Nondeterministic program under test' for steps to prevent");
-        System.out.println("the generation of flaky tests.");
+            "under test' at https://randoop.github.io/randoop/manual/#nondeterminism .");
+        System.out.println();
         // TODO cxing: add nmrd-blacklist comment suggestion for user and edit the manual
         // accordingly
         System.out.println();
-
-        // Output top methods by ranking from most likely to least likely to be flaky
-        int maxMethodsToOutput = GenInputsAbstract.nondeterministic_methods_to_output;
-        for (int i = 0; i < maxMethodsToOutput && !methodHeuristicPriorityQueue.isEmpty(); i++) {
-          TypedOperationHeuristic methodWithHeuristic = methodHeuristicPriorityQueue.remove();
-          System.out.println(methodWithHeuristic.operation.toParsableString());
-        }
       }
-    }
+    } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
@@ -634,13 +601,33 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Counts the number of sequences an operation occurs in.
+   * Given a collection of test names of the form "test005", returns the corresponding elements from
+   * the given list.
    *
-   * @param sequences sequences to process for operations
-   * @return a map from each operation to the number of sequences in which the operation occurs at
-   *     least once
+   * @param testNames names of the torm "test005"
+   * @param sequences regression test sequences, numbered sequentially
+   * @return the sequences corresponding to the test names
    */
-  private Map<TypedOperation, Integer> tallyOperationsInSequences(
+  private List<ExecutableSequence> regressionTestNamesToSequences(
+      Iterable<String> testNames, List<ExecutableSequence> sequences) {
+    List<ExecutableSequence> result = new ArrayList<>();
+    for (String testName : testNames) {
+      int testNum = Integer.parseInt(testName.substring(4)); // length of "test"
+      // Tests start at 001, not 000, so subtract 1.
+      ExecutableSequence sequence = sequences.get(testNum - 1);
+      result.add(sequence);
+    }
+    return result;
+  }
+
+  /**
+   * Counts the number of sequences each operation occurs in.
+   *
+   * @param sequences a list of sequences
+   * @return a map from operation to the number of sequences in which the operation occurs at least
+   *     once
+   */
+  private Map<TypedOperation, Integer> countSequencesPerOperation(
       List<ExecutableSequence> sequences) {
     // Map from method call operations to number of sequences it occurs in.
     Map<TypedOperation, Integer> tallyMap = new HashMap<>();
@@ -660,21 +647,20 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Constructs a set of operations appearing in an Executable Sequence. Non-method call operations
-   * are excluded.
+   * Constructs a set of method-call operations appearing in an Executable Sequence. Non-method-call
+   * operations are excluded.
    *
-   * @param es input ExecutableSequence of operations
-   * @return the set of method call operations
+   * @param es an ExecutableSequence
+   * @return the set of method call operations in {@code es}
    */
   private Set<TypedOperation> getOperationsInSequence(ExecutableSequence es) {
     HashSet<TypedOperation> ops = new HashSet<>();
 
     SimpleList<Statement> statements = es.sequence.statements;
     for (int i = 0; i < statements.size(); i++) {
-      if (!statements.get(i).getOperation().isMethodCall()) {
-        continue;
+      if (statements.get(i).getOperation().isMethodCall()) {
+        ops.add(statements.get(i).getOperation());
       }
-      ops.add(statements.get(i).getOperation());
     }
     return ops;
   }

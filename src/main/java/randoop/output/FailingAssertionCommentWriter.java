@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
@@ -77,13 +78,13 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   }
 
   /**
-   * Returns set of flaky test names. Each element has the form testNNN where N are digits; for
+   * Returns the set of flaky test names. Each element has the form testNNN where N are digits; for
    * example, "test002".
    *
    * @return the flaky test names
    */
-  public HashSet<String> getFlakyTestNames() {
-    return new HashSet<>(flakyTestNames);
+  public TreeSet<String> getFlakyTestNames() {
+    return new TreeSet<>(flakyTestNames);
   }
 
   /**
@@ -102,7 +103,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     int pass = 0; // Used to create unique working directory name.
-    boolean passing = false;
+    boolean passing = false; // true if all tests pass
 
     while (!passing) {
       Path workingDirectory = createWorkingDirectory(classname, pass);
