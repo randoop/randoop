@@ -711,6 +711,13 @@ javadoc {
     linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
   }
   failOnError = true  // does not fail on warnings
+  doLast {
+    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+      if (!new File("src/docs/api").exists() ) {
+        ant.symlink(resource: "../../build/docs/api", link: "src/docs/api")
+      }
+    }
+  }
 }
 
 // Make Javadoc fail on warnings
