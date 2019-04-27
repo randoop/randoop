@@ -1,4 +1,5 @@
 # Nondeterministic
 ^java\.util\.Collections\.shuffle\(java\.util\.List\)$
 # Long-running
-org.apache.commons.math3.analysis.differentiation.DSCompiler.getCompiler\(int,int\)
+# org.apache.commons.math3.analysis.differentiation.DSCompiler.getCompiler\(int,int\)
+^org.apache.commons.math3.analysis.differentiation.
