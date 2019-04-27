@@ -33,6 +33,11 @@ class RandoopRunStatus {
 
   /** The number of generated error-revealing tests. */
   final int errorTestCount;
+  
+  /** The top suspected {@code GenInputsAbstract.nondeterministic_methods_to_output}
+   * "flaky" nondeterministic methods to output.
+   */
+  final List<String> suspectedFlakyMethodNames;
 
   /**
    * Creates a {@link RandoopRunStatus} object with the given {@link ProcessStatus}, operator count,
@@ -44,11 +49,12 @@ class RandoopRunStatus {
    * @param errorTestCount the number of generated error-revealing tests
    */
   private RandoopRunStatus(
-      ProcessStatus processStatus, int operatorCount, int regressionTestCount, int errorTestCount) {
+      ProcessStatus processStatus, int operatorCount, int regressionTestCount, int errorTestCount, List<String> suspectedFlakyMethodNames) {
     this.processStatus = processStatus;
     this.operatorCount = operatorCount;
     this.regressionTestCount = regressionTestCount;
     this.errorTestCount = errorTestCount;
+    this.suspectedFlakyMethodNames = suspectedFlakyMethodNames;
   }
 
   /**
@@ -194,9 +200,14 @@ class RandoopRunStatus {
     int operatorCount = 0;
     int regressionTestCount = 0;
     int errorTestCount = 0;
+    List<String> suspectedFlakyMethodNames = new ArrayList<>();
 
     for (String line : ps.outputLines) {
-      if (line.contains("PUBLIC MEMBERS=") || line.contains("test count:")) {
+      
+      if (line.contains("Possibly flaky:")) {
+        suspectedFlakyMethodNames.add(line.split(":  ")[1]);
+      }
+      else if (line.contains("PUBLIC MEMBERS=") || line.contains("test count:")) {
         int count = Integer.valueOf(line.replaceFirst("\\D*(\\d*).*", "$1"));
         if (line.contains("PUBLIC MEMBERS=")) {
           operatorCount = count;
@@ -208,7 +219,7 @@ class RandoopRunStatus {
       }
     }
 
-    return new RandoopRunStatus(ps, operatorCount, regressionTestCount, errorTestCount);
+    return new RandoopRunStatus(ps, operatorCount, regressionTestCount, errorTestCount, suspectedFlakyMethodNames);
   }
 
   @Override
