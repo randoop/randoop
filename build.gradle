@@ -73,6 +73,8 @@ allprojects {
   }
 }
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 /******
  * Configuration specific to Randoop and not agents.
  * Configuration for agent FOO appears in agents/FOO/FOO.gradle .
@@ -830,6 +832,7 @@ task html5validatorExists {
         }
     }
 }
+html5validatorExists.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
 /*
  * Generate/update and move documentation into build/docs directory.
@@ -838,9 +841,11 @@ task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC'
   group 'Documentation'
   description "Adds options and TOC to documentation in src/docs"
   doLast {
-    exec {
-      environment PATH: "$System.env.PATH"
-      commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
+    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+      exec {
+	environment PATH: "$System.env.PATH"
+	commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
+      }
     }
   }
 }
@@ -861,6 +866,7 @@ task validateAPI(type: Exec, dependsOn: ['javadoc', 'html5validatorExists']) {
     commandLine "echo", "WARNING: HTML validation of API is only run in Java 9+."
   }
 }
+validateAPI.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
 
 /*
@@ -931,6 +937,7 @@ task validateSite(dependsOn: 'html5validatorExists') {
     commandLine "echo", "WARNING: HTML validation of API documentation is only run in Java 9+."
   }
 }
+validateSite.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
 task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishSite', 'validateSite', 'distributionZip' ]) {
   group 'Publishing'
