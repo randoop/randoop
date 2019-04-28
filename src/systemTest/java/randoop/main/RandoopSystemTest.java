@@ -1867,7 +1867,8 @@ public class RandoopSystemTest {
    *   <li>runs Randoop and compiles the generated tests,
    *   <li>checks that the number of generated tests meets the expectation (none or some),
    *   <li>runs any generated tests,
-   *   <li>checks that types of tests run as expected.
+   *   <li>checks that types of tests run as expected,
+   *   <li>checks that flaky methods are identified as expected (if provided).
    * </ol>
    *
    * @param environment the working environment
@@ -1875,6 +1876,7 @@ public class RandoopSystemTest {
    * @param expectedRegression the minimum expected number of regression tests
    * @param expectedError the minimum expected number of error tests
    * @param coverageChecker the expected code coverage checker
+   * @param expectedFlakyMethodNames the expected flaky method names that must appear in this order
    */
   private void generateAndTest(
       SystemTestEnvironment environment,
@@ -1890,6 +1892,7 @@ public class RandoopSystemTest {
 
     RandoopRunStatus runStatus = generateAndCompile(environment, options, false);
 
+    // Assert that the flaky methods identified are present and in the order expected.
     if (expectedFlakyMethodNames != null) {
       List<String> generatedFlakyMethodNames = runStatus.suspectedFlakyMethodNames;
       assert (generatedFlakyMethodNames.size() >= expectedFlakyMethodNames.size());

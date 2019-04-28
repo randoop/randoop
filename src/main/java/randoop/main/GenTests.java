@@ -518,67 +518,8 @@ public class GenTests extends GenInputsAbstract {
           GenInputsAbstract.regression_test_basename,
           "Regression");
 
-      Set<String> flakyTestNames = codeWriter.getFlakyTestNames();
-
-      if (flakyTestNames.size() > 0) {
-        System.out.println();
-        System.out.println("Flaky tests were generated. This means that your program contains");
-        System.out.println("methods that are nondeterministic or have non-local side effects.");
-
-        if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
-          List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
-
-          // How many flaky tests an operation occurs in (regardless of how many times it appears in
-          // that test).
-          Map<TypedOperation, Integer> testOccurrences =
-              countSequencesPerOperation(regressionSequences);
-
-          // TODO: cxing handle Error Test Sequence tallying.
-          //  Currently, we don't rerun Error Test Sequences and cannot determine
-          //  flakiness heuristics.
-          // countSequencesPerOperation(testOccurrences, explorer.getErrorTestSequences());
-
-          List<ExecutableSequence> flakySequences =
-              regressionTestNamesToSequences(flakyTestNames, regressionSequences);
-          // How many tests an operation occurs in (regardless of how many times it appears in that
-          // flaky test).
-          Map<TypedOperation, Integer> flakyOccurrences =
-              countSequencesPerOperation(flakySequences);
-
-          // tf-idf metric
-          // Our heuristic for ranking possibly flaky methods. Method M's heuristic is:
-          // ((number of flaky tests M occurs in) / (number of total tests M occurs in)
-
-          // Priority queue of methods ordered by tf-idf heuristic, highest first.
-          PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
-              new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
-
-          for (TypedOperation op : flakyOccurrences.keySet()) {
-            double flakinessHeuristic = flakyOccurrences.get(op) / testOccurrences.get(op);
-            RankedTypeOperation rankedMethod = new RankedTypeOperation(flakinessHeuristic, op);
-            methodHeuristicPriorityQueue.add(rankedMethod);
-          }
-
-          System.out.println("The following methods, in decreasing order of likelihood,");
-          System.out.println("are the most likely to be the problem.");
-          for (int i = 0;
-              i < GenInputsAbstract.nondeterministic_methods_to_output
-                  && !methodHeuristicPriorityQueue.isEmpty();
-              i++) {
-            RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
-            System.out.println("  Possibly flaky:  " + rankedMethod.operation.toParsableString());
-          }
-        }
-
-        System.out.println(
-            "To prevent the generation of flaky tests, see section 'Nondeterministic program");
-        System.out.println(
-            "under test' at https://randoop.github.io/randoop/manual/#nondeterminism .");
-        System.out.println();
-        // TODO cxing: add nmrd-blacklist comment suggestion for user and edit the manual
-        // accordingly
-        System.out.println();
-      }
+      processAndOutputFlakyMethods(
+          codeWriter.getFlakyTestNames(), explorer.getRegressionSequences());
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
@@ -601,14 +542,81 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
+   * Outputs suspected flaky methods by using the Term Frequency - Inverse Document Frequency
+   * (tf-idf) metric.
+   *
+   * @param flakyTestNames the set of flaky test names of the form "test005"
+   * @param sequences the list of sequences (error or regression)
+   */
+  private void processAndOutputFlakyMethods(
+      Set<String> flakyTestNames, List<ExecutableSequence> sequences) {
+
+    if (flakyTestNames.size() > 0) {
+      System.out.println();
+      System.out.println("Flaky tests were generated. This means that your program contains");
+      System.out.println("methods that are nondeterministic or have non-local side effects.");
+
+      if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
+        // How many flaky tests an operation occurs in (regardless of how many times it appears in
+        // that test).
+        Map<TypedOperation, Integer> testOccurrences = countSequencesPerOperation(sequences);
+
+        // TODO: cxing handle Error Test Sequence tallying.
+        //  Currently, we don't rerun Error Test Sequences and cannot determine
+        //  flakiness heuristics.
+        // countSequencesPerOperation(testOccurrences, explorer.getErrorTestSequences());
+
+        List<ExecutableSequence> flakySequences = testNamesToSequences(flakyTestNames, sequences);
+        // How many tests an operation occurs in (regardless of how many times it appears in that
+        // flaky test).
+        Map<TypedOperation, Integer> flakyOccurrences = countSequencesPerOperation(flakySequences);
+
+        // tf-idf metric
+        // Our heuristic for ranking possibly flaky methods. Method M's heuristic is:
+        // ((number of flaky tests M occurs in) / (number of total tests M occurs in)
+
+        // Priority queue of methods ordered by tf-idf heuristic, highest first.
+        PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
+            new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
+
+        for (TypedOperation op : flakyOccurrences.keySet()) {
+          double flakinessHeuristic = flakyOccurrences.get(op) / testOccurrences.get(op);
+          RankedTypeOperation rankedMethod = new RankedTypeOperation(flakinessHeuristic, op);
+          methodHeuristicPriorityQueue.add(rankedMethod);
+        }
+
+        System.out.println("The following methods, in decreasing order of likelihood,");
+        System.out.println("are the most likely to be the problem.");
+        for (int i = 0;
+            i < GenInputsAbstract.nondeterministic_methods_to_output
+                && !methodHeuristicPriorityQueue.isEmpty();
+            i++) {
+          RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
+          System.out.println("  Possibly flaky:  " + rankedMethod.operation.toParsableString());
+        }
+      }
+
+      System.out.println(
+          "To prevent the generation of flaky tests, see section 'Nondeterministic program");
+      System.out.println(
+          "under test' at https://randoop.github.io/randoop/manual/#nondeterminism .");
+      System.out.println();
+      // TODO cxing: Separate PR: add nmrd-blacklist comment suggestion for
+      // user (actionable steps to take to avoid flaky test generation and edit the manual
+      // accordingly.
+      System.out.println();
+    }
+  }
+
+  /**
    * Given a collection of test names of the form "test005", returns the corresponding elements from
    * the given list.
    *
-   * @param testNames names of the torm "test005"
-   * @param sequences regression test sequences, numbered sequentially
+   * @param testNames names of the form "test005"
+   * @param sequences test sequences (error or regression), numbered sequentially
    * @return the sequences corresponding to the test names
    */
-  private List<ExecutableSequence> regressionTestNamesToSequences(
+  private List<ExecutableSequence> testNamesToSequences(
       Iterable<String> testNames, List<ExecutableSequence> sequences) {
     List<ExecutableSequence> result = new ArrayList<>();
     for (String testName : testNames) {
