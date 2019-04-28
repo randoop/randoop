@@ -1,3 +1,6 @@
+Build in a set of omitted methods that are nondeterministic or long-running.
+
+
 Version 4.1.2, released April 21, 2019
 
 Bug fixes, improve documentation and diagnostics.

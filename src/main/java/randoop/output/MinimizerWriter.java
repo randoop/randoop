@@ -38,7 +38,11 @@ public class MinimizerWriter implements CodeWriter {
     // Minimize the error-revealing test that has been output.
     try {
       Minimize.mainMinimize(
-          testFile, Minimize.suiteclasspath, Minimize.testsuitetimeout, Minimize.verboseminimizer);
+          testFile,
+          // Minimize.testsuitetimeout is set only if the main Randoop command is "minimize".
+          System.getProperty("java.class.path"),
+          Minimize.testsuitetimeout,
+          Minimize.verboseminimizer);
     } catch (IOException e) {
       throw new RandoopOutputException(e);
     }

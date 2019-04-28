@@ -6,6 +6,7 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -238,6 +239,11 @@ public class GenTests extends GenInputsAbstract {
     omitmethods.addAll(readOmitMethods(omitmethods_file));
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
       omitmethods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
+    }
+    if (!GenInputsAbstract.omitmethods_no_defaults) {
+      String omDefaultsFileName = "/omitmethods-defaults.txt";
+      InputStream inputStream = GenTests.class.getResourceAsStream(omDefaultsFileName);
+      omitmethods.addAll(readOmitMethods(inputStream, omDefaultsFileName));
     }
 
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
@@ -668,32 +674,56 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Returns patterns read from the given file.
+   * Returns patterns read from the given user-provided file.
    *
-   * @param file the file to read from, may be null
-   * @return contents of the file, as a set of Patterns
+   * @param file the file to read from, may be null (in which case this returns an empty list)
+   * @return contents of the file, as a list of Patterns
    */
   private List<Pattern> readOmitMethods(Path file) {
-    List<Pattern> result = new ArrayList<>();
-    // Read method omissions from user-provided file
     if (file != null) {
       try (EntryReader er = new EntryReader(file.toFile(), "^#.*", null)) {
-        for (String line : er) {
-          String trimmed = line.trim();
-          if (!trimmed.isEmpty()) {
-            try {
-              Pattern pattern = Pattern.compile(trimmed);
-              result.add(pattern);
-            } catch (PatternSyntaxException e) {
-              throw new RandoopUsageError(
-                  "Bad regex " + trimmed + " while reading file " + file, e);
-            }
-          }
-        }
+        return readOmitMethods(er);
       } catch (IOException e) {
-        System.out.println("Error reading omitmethods-list file " + file + ":");
-        System.out.println(e.getMessage());
-        System.exit(1);
+        throw new RandoopUsageError("Error reading omitmethods-list file " + file + ":", e);
+      }
+    }
+    return new ArrayList<>();
+  }
+
+  /**
+   * Returns patterns read from the given stream.
+   *
+   * @param is the stream from which to read
+   * @param filename the file name to use in diagnostic messages
+   * @return contents of the file, as a list of Patterns
+   */
+  private List<Pattern> readOmitMethods(InputStream is, String filename) {
+    // Read method omissions from user-provided file
+    try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
+      return readOmitMethods(er);
+    } catch (IOException e) {
+      throw new RandoopBug("Error reading omitmethods from " + filename, e);
+    }
+  }
+
+  /**
+   * Returns patterns read from the given EntryReader.
+   *
+   * @param er the EntryReader to read from.
+   * @return contents of the file, as a list of Patterns
+   */
+  private List<Pattern> readOmitMethods(EntryReader er) {
+    List<Pattern> result = new ArrayList<>();
+    for (String line : er) {
+      String trimmed = line.trim();
+      if (!trimmed.isEmpty()) {
+        try {
+          Pattern pattern = Pattern.compile(trimmed);
+          result.add(pattern);
+        } catch (PatternSyntaxException e) {
+          throw new RandoopUsageError(
+              "Bad regex " + trimmed + " while reading file " + er.getFileName(), e);
+        }
       }
     }
     return result;

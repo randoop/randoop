@@ -254,7 +254,7 @@ public class Minimize extends CommandHandler {
    */
   public static boolean mainMinimize(
       Path file, String classPath, int timeoutLimit, boolean verboseOutput) throws IOException {
-    System.out.println("Minimizing: " + file + ".");
+    System.out.println("Minimizing: " + file);
 
     if (verboseOutput) {
       System.out.println("Reading and parsing file.");

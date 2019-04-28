@@ -101,8 +101,7 @@ There is a separate <a href="dev.html">Randoop Developer's Manual</a>.
 
 <h1 id="Introduction">Introduction</h1>
 
-<p> Writing tests is a difficult and time-consuming activity, and yet
-it is a crucial part of good software engineering. Randoop
+<p> Writing tests is important, but difficult and time-consuming. Randoop
 automatically generates unit tests for Java classes.
 Randoop has had many
 successful applications, especially with library classes (such as
@@ -376,9 +375,9 @@ Randoop creates two different main test suites, in classes
 <code>ErrorTest</code> and <code>RegressionTest</code>. Compile and run the tests.
 (The classpath should include the code under test, the generated tests, and
 JUnit files <code>junit.jar</code> and <code>hamcrest-core.jar</code>.
-Classes in <code>java.util.*</code> are always on the Java classpath, so they
-are not needed in this particular example, but are shown because you will
-usually need to supply them.)
+Classes in <code>java.util.*</code> are always on the Java classpath, so the
+<em>myclasspath</em> part is not needed in this particular example, but it is
+shown because you will usually need to supply it.)
 </p>
 
 <pre class="code">export JUNITPATH=.../junit.jar:.../hamcrest-core.jar
@@ -414,7 +413,7 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
        member named by <a href="#option:methodlist"><code>--methodlist</code></a>.
   </li>
   <li> <i>M</i> does not match any of the patterns given
-       via <a href="#option:omitmethods"><code>--omitmethods</code></a>.
+       via <a href="#option:omitmethods"><code>--omitmethods</code></a>
        or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>.
        </li>
   <li> All of the following are accessible from the package of the tests
@@ -921,10 +920,6 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:omitmethods-file"><b>--omitmethods-file=</b><i>filename</i>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>--omitmethods</code>, and the default omissions.
-            <li id="option:dont-omit-replaced-methods"><b>--dont-omit-replaced-methods=</b><i>boolean</i>.
-             Include methods that are otherwise omitted by default. Unless you set this to true, every
- method replaced by the <code>replacecall</code> agent is treated as if it had been supplied as an
- argument to <code>--omitmethods</code>. [default false]
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
              A fully-qualified field name of a field to be excluded from test generation. An accessible
  field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
