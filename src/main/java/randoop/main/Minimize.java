@@ -288,19 +288,10 @@ public class Minimize extends CommandHandler {
       // No package declaration.
     }
 
-    // Create a new file; the file and the class within will have
-    // "Minimized" postpended.
-    String fileNameStr = file.toAbsolutePath().toString();
-    String minimizedFileName =
-        new StringBuilder(fileNameStr).insert(fileNameStr.lastIndexOf('.'), SUFFIX).toString();
-    Path minimizedFile = Paths.get(minimizedFileName);
-
-    // Rename the overall class to [original class name][suffix].
-    String origClassName = FilenameUtils.getBaseName(file.toString());
-    new ClassRenamingVisitor().visit(compilationUnit, new String[] {origClassName, SUFFIX});
-
-    // Write the compilation unit to the minimized file.
-    writeToFile(compilationUnit, minimizedFile);
+    String oldClassName = FilenameUtils.removeExtension(file.getFileName().toString());
+    String newClassName = oldClassName + SUFFIX;
+    Path minimizedFile =
+        ClassRenamingVisitor.copyAndRename(file, compilationUnit, oldClassName, newClassName);
 
     // Compile the original Java file (it has not been minimized yet).
     Outputs compilationOutput =
@@ -1131,7 +1122,7 @@ public class Minimize extends CommandHandler {
    * @param file file to write to
    * @throws IOException thrown if write to file fails
    */
-  private static void writeToFile(CompilationUnit compilationUnit, Path file) throws IOException {
+  public static void writeToFile(CompilationUnit compilationUnit, Path file) throws IOException {
     // Write the compilation unit to the file.
     try (BufferedWriter bw = Files.newBufferedWriter(file, UTF_8)) {
       bw.write(compilationUnit.toString());
