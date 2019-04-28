@@ -208,7 +208,6 @@ class RandoopRunStatus {
     List<String> suspectedFlakyMethodNames = new ArrayList<>();
 
     for (String line : ps.outputLines) {
-
       if (line.contains("Possibly flaky:")) {
         suspectedFlakyMethodNames.add(line.split(":  ")[1]);
       } else if (line.contains("PUBLIC MEMBERS=") || line.contains("test count:")) {

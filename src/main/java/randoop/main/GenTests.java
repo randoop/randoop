@@ -566,7 +566,7 @@ public class GenTests extends GenInputsAbstract {
                   && !methodHeuristicPriorityQueue.isEmpty();
               i++) {
             RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
-            System.out.println("  " + rankedMethod.operation.toParsableString());
+            System.out.println("  Possibly flaky:  " + rankedMethod.operation.toParsableString());
           }
         }
 
