@@ -676,8 +676,8 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Returns patterns read from the given user-provided file.
    *
-   * @param file the file to read from, may be null
-   * @return contents of the file, as a set of Patterns
+   * @param file the file to read from, may be null (in which case this returns an empty list)
+   * @return contents of the file, as a list of Patterns
    */
   private List<Pattern> readOmitMethods(Path file) {
     if (file != null) {
@@ -693,8 +693,9 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Returns patterns read from the given stream.
    *
-   * @param filename the file to read from, may be null
-   * @return contents of the file, as a set of Patterns
+   * @param is the stream from which to read
+   * @param filename the file name to use in diagnostic messages
+   * @return contents of the file, as a list of Patterns
    */
   private List<Pattern> readOmitMethods(InputStream is, String filename) {
     // Read method omissions from user-provided file
@@ -705,6 +706,12 @@ public class GenTests extends GenInputsAbstract {
     }
   }
 
+  /**
+   * Returns patterns read from the given EntryReader.
+   *
+   * @param er the EntryReader to read from.
+   * @return contents of the file, as a list of Patterns
+   */
   private List<Pattern> readOmitMethods(EntryReader er) {
     List<Pattern> result = new ArrayList<>();
     for (String line : er) {
