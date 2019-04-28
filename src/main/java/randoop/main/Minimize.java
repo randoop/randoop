@@ -100,7 +100,7 @@ public class Minimize extends CommandHandler {
 
   /** The Java file whose failing tests will be minimized. */
   @SuppressWarnings("WeakerAccess")
-  @OptionGroup(value = "Test case minimization options")
+  @OptionGroup(value = "Test case minimization")
   @Option("File containing the JUnit test suite to be minimized")
   public static String suitepath;
 
