@@ -193,14 +193,14 @@ public class ForwardGenerator extends AbstractGenerator {
 
     eSeq.gentime = gentime1 + gentime2;
 
-    if (eSeq.gentime > 1000000) {
+    if (eSeq.gentime > 1000000000L) {
       System.out.printf(
           "Long generation time %d msec (= %d + %d) for%n",
-          eSeq.gentime / 1000, gentime1 / 1000, gentime2 / 1000);
+          eSeq.gentime / 1000000, gentime1 / 1000000, gentime2 / 1000000);
       System.out.println(eSeq.sequence);
     }
-    if (eSeq.exectime > 1000000) {
-      System.out.printf("Long execution time %d msec for%n", eSeq.exectime);
+    if (eSeq.exectime > 10 * 1000000000L) {
+      System.out.printf("Long execution time %d sec for%n", eSeq.exectime / 1000000000);
       System.out.println(eSeq.sequence);
     }
 
