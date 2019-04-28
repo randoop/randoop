@@ -499,6 +499,8 @@ public class OperationModel {
   /**
    * Is this type instantiable? It must be visible, non-abstract, and not an interface.
    *
+   * @param c the type to test for instantiability
+   * @param visibility the visibility predicate
    * @return null if this class is instantiable to test, otherwise a string with a discard reason
    */
   public String nonInstantiable(Class<?> c, VisibilityPredicate visibility) {
