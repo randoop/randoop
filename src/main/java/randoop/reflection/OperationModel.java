@@ -472,30 +472,17 @@ public class OperationModel {
     }
 
     // Collect classes under test
-    Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
     for (String classname : classnames) {
       Class<?> c = getClass(classname, errorHandler);
       // Note that c could be null if errorHandler just warns on bad names
-      if (c != null && !visitedClasses.contains(c)) {
-        visitedClasses.add(c);
-
-        // ignore interfaces and non-visible classes
-        if (!visibility.isVisible(c)) {
-          System.out.println(
-              "Ignoring non-visible " + c + " specified via --classlist or --testclass.");
-        } else if (c.isInterface()) {
-          System.out.println(
-              "Ignoring "
-                  + c
-                  + " specified via --classlist or --testclass; provide classes, not interfaces.");
-        } else if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
-          System.out.println(
-              "Ignoring abstract " + c + " specified via --classlist or --testclass.");
+      if (c != null) {
+        String discardReason = nonInstantiable(c, visibility);
+        if (discardReason != null) {
+          System.out.printf(
+              "Cannot instantiate %s %s specified via --testclass or --classlist.",
+              discardReason, c.getName());
         } else {
           mgr.apply(c);
-          if (coveredClassesGoalNames.contains(classname)) {
-            coveredClassesGoal.add(c);
-          }
         }
       }
     }
@@ -506,6 +493,25 @@ public class OperationModel {
       if (c != null && !c.isInterface()) {
         coveredClassesGoal.add(c);
       }
+    }
+  }
+
+  /**
+   * Is this type instantiable? It must be visible, non-abstract, and not an interface.
+   *
+   * @param c the type to test for instantiability
+   * @param visibility the visibility predicate
+   * @return null if this class is instantiable to test, otherwise a string with a discard reason
+   */
+  public String nonInstantiable(Class<?> c, VisibilityPredicate visibility) {
+    if (c.isInterface()) {
+      return "interface";
+    } else if (!visibility.isVisible(c)) {
+      return "non-visible";
+    } else if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
+      return "abstract";
+    } else {
+      return null;
     }
   }
 
