@@ -479,7 +479,7 @@ public class OperationModel {
         String discardReason = nonInstantiable(c, visibility);
         if (discardReason != null) {
           System.out.printf(
-              "Cannot instantiate %s %s specified via --testclass or --classlist.",
+              "Cannot instantiate %s %s specified via --testclass or --classlist.%n",
               discardReason, c.getName());
         } else {
           mgr.apply(c);
@@ -503,7 +503,7 @@ public class OperationModel {
    * @param visibility the visibility predicate
    * @return null if this class is instantiable to test, otherwise a string with a discard reason
    */
-  public String nonInstantiable(Class<?> c, VisibilityPredicate visibility) {
+  public static String nonInstantiable(Class<?> c, VisibilityPredicate visibility) {
     if (c.isInterface()) {
       return "interface";
     } else if (!visibility.isVisible(c)) {

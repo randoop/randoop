@@ -106,7 +106,7 @@ public class GenTests extends GenInputsAbstract {
   private static final String commandGrammar = "gentests OPTIONS";
 
   private static final String where =
-      "At least one of `--testclass', `--classlist', or `--methodlist' is specified.";
+      "At least one of `--testclass', `--testjar', `--classlist', or `--methodlist' is specified.";
 
   private static final String summary =
       "Uses feedback-directed random test generation to generate "
@@ -114,7 +114,7 @@ public class GenTests extends GenInputsAbstract {
 
   private static final String input =
       "One or more names of classes to test. A class to test can be specified "
-          + "via the `--testclass=<CLASSNAME>' or `--classlist=<FILENAME>' options.";
+          + "via the `--testclass', `--testjar', or `--classlist' options.";
 
   private static final String output =
       "Two JUnit test suites (each as one or more Java source files): "
@@ -208,17 +208,6 @@ public class GenTests extends GenInputsAbstract {
     /*
      * Setup model of classes under test
      */
-    // Get names of classes under test
-    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs();
-
-    // Get names of classes that must be covered by output tests
-    @SuppressWarnings("signature") // TOOD: read from file, no guarantee strings are @ClassGetName
-    Set<@ClassGetName String> coveredClassnames =
-        GenInputsAbstract.getStringSetFromFile(require_covered_classes, "coverage class names");
-
-    // Get names of fields to be omitted
-    Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
-    omitFields.addAll(omit_field);
 
     VisibilityPredicate visibility;
     if (GenInputsAbstract.junit_package_name == null) {
@@ -235,6 +224,18 @@ public class GenTests extends GenInputsAbstract {
       visibility =
           new VisibilityPredicate.PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
+
+    // Get names of classes under test
+    Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
+
+    // Get names of classes that must be covered by output tests
+    @SuppressWarnings("signature") // TOOD: read from file, no guarantee strings are @ClassGetName
+    Set<@ClassGetName String> coveredClassnames =
+        GenInputsAbstract.getStringSetFromFile(require_covered_classes, "coverage class names");
+
+    // Get names of fields to be omitted
+    Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
+    omitFields.addAll(omit_field);
 
     omitmethods.addAll(readOmitMethods(omitmethods_file));
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
