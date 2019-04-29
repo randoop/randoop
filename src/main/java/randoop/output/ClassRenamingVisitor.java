@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import org.apache.commons.io.FilenameUtils;
 import randoop.main.Minimize;
+import randoop.main.RandoopBug;
 import randoop.main.RandoopUsageError;
 
 /** JavaParser visitor to rename classes. */
@@ -60,9 +61,9 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
     try (FileInputStream inputStream = new FileInputStream(file.toFile())) {
       compilationUnit = JavaParser.parse(inputStream);
     } catch (ParseException e) {
-      throw new RandoopUsageError("Error parsing Java file: " + file, e);
+      throw new RandoopBug("Error parsing Java file: " + file, e);
     } catch (IOException e) {
-      throw new RandoopUsageError("Error reading Java file: " + file, e);
+      throw new RandoopBug("Error reading Java file: " + file, e);
     }
     return copyAndRename(
         file,

@@ -148,6 +148,17 @@ public class Minimize extends CommandHandler {
   private static final String SUFFIX = "Minimized";
 
   /**
+   * Given a .java filename for non-minimized tests, returns the simple name of the class containing
+   * the minimized tests.
+   *
+   * @param file the .java filename for non-minimized tests
+   * @return the simple class name for the minimized tests
+   */
+  public static String minimizedClassName(Path file) {
+    return FilenameUtils.removeExtension(file.getFileName().toString()) + SUFFIX;
+  }
+
+  /**
    * Check that the required parameters have been specified by the command-line options and then
    * call the mainMinimize method.
    *
