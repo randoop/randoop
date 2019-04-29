@@ -42,12 +42,14 @@ class RandoopRunStatus {
 
   /**
    * Creates a {@link RandoopRunStatus} object with the given {@link ProcessStatus}, operator count,
-   * and generated test counts.
+   * generated test counts, and suspected flaky method names.
    *
    * @param processStatus the status of Randoop execution
    * @param operatorCount the number of operators used in generation
    * @param regressionTestCount the number of generated regression tests
    * @param errorTestCount the number of generated error-revealing tests
+   * @param suspectedFlakyMethodNames the generated list of suspected flaky methods (in descending
+   *     order of tf-idf)
    */
   private RandoopRunStatus(
       ProcessStatus processStatus,

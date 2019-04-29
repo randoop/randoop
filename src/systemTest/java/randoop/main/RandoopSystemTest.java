@@ -1026,8 +1026,8 @@ public class RandoopSystemTest {
   }
 
   /**
-   * This test case checks that methods that cause flaky tests are excluded per the blacklist
-   * (unfortunately, there doesn't currently exist a good way to assert for flakiness.
+   * This test case checks that methods that cause flaky tests are categorized as flaky per the
+   * tf-idf metric.
    */
   @Test
   public void runFlakyTest() {
@@ -1042,10 +1042,10 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            "flaky.FlakyClass.getTwo() ignore",
-            "flaky.FlakyClass.getThree() ignore",
+            "flaky.FlakyClass.getTwo() include",
+            "flaky.FlakyClass.getThree() include",
             "flaky.FlakyClass.flakyDefaultHashCode() ignore",
-            "flaky.FlakyClass.multiply(int, int) ignore");
+            "flaky.FlakyClass.multiply(int, int) include");
 
     List<String> expectedFlakyMethodsInOrder = new ArrayList<>();
     expectedFlakyMethodsInOrder.add("flaky.FlakyClass.flakyDefaultHashCode()");
@@ -1868,7 +1868,7 @@ public class RandoopSystemTest {
    *   <li>checks that the number of generated tests meets the expectation (none or some),
    *   <li>runs any generated tests,
    *   <li>checks that types of tests run as expected,
-   *   <li>checks that flaky methods are identified as expected (if provided).
+   *   <li>checks that suspected flaky methods are identified as expected (if provided).
    * </ol>
    *
    * @param environment the working environment
@@ -1876,7 +1876,8 @@ public class RandoopSystemTest {
    * @param expectedRegression the minimum expected number of regression tests
    * @param expectedError the minimum expected number of error tests
    * @param coverageChecker the expected code coverage checker
-   * @param expectedFlakyMethodNames the expected flaky method names that must appear in this order
+   * @param expectedFlakyMethodNames the expected suspected flaky method names that must appear in
+   *     this order
    */
   private void generateAndTest(
       SystemTestEnvironment environment,

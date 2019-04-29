@@ -594,10 +594,8 @@ public class GenTests extends GenInputsAbstract {
 
         System.out.println("The following methods, in decreasing order of likelihood,");
         System.out.println("are the most likely to be the problem.");
-        for (int i = 0;
-            i < GenInputsAbstract.nondeterministic_methods_to_output
-                && !methodHeuristicPriorityQueue.isEmpty();
-            i++) {
+        int maxMethodsToOutput = GenInputsAbstract.nondeterministic_methods_to_output;
+        for (int i = 0; i < maxMethodsToOutput && !methodHeuristicPriorityQueue.isEmpty(); i++) {
           RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
           System.out.println("  Possibly flaky:  " + rankedMethod.operation.toParsableString());
         }
