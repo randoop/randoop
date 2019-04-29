@@ -1,8 +1,12 @@
 package randoop.output;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import randoop.main.Minimize;
+import randoop.main.RandoopBug;
 
 /**
  * A {@link CodeWriter} that, for an error-revealing test class, writes both the original and
@@ -45,6 +49,14 @@ public class MinimizerWriter implements CodeWriter {
           Minimize.verboseminimizer);
     } catch (IOException e) {
       throw new RandoopOutputException(e);
+    }
+
+    Path minimizedFile = Minimize.minimizedFile(testFile);
+    try {
+      Files.move(testFile, minimizedFile, REPLACE_EXISTING);
+    } catch (IOException e) {
+      throw new RandoopBug(
+          String.format("Problem while renaming %s to %s", testFile, minimizedFile), e);
     }
 
     return testFile;
