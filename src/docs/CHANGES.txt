@@ -2,7 +2,7 @@ Version 4.1.3, released ??
 
 Randoop reports methods under test that may be nondeterministic or
 dependent on side-effected global state.  Command-line option
---nondeterministic-methods-to-output control how many suspicious methods
+--nondeterministic-methods-to-output controls how many suspicious methods
 Randoop reports.
 
 
