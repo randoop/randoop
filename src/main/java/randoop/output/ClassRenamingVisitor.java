@@ -63,7 +63,6 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
     } catch (ParseException e) {
       throw new RandoopBug("Error parsing Java file: " + file, e);
     } catch (IOException e) {
-      e.printStackTrace();
       throw new RandoopBug("Error reading Java file: " + file, e);
     }
     return copyAndRename(
