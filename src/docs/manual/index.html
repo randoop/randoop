@@ -101,8 +101,7 @@ There is a separate <a href="dev.html">Randoop Developer's Manual</a>.
 
 <h1 id="Introduction">Introduction</h1>
 
-<p> Writing tests is a difficult and time-consuming activity, and yet
-it is a crucial part of good software engineering. Randoop
+<p> Writing tests is important, but difficult and time-consuming. Randoop
 automatically generates unit tests for Java classes.
 Randoop has had many
 successful applications, especially with library classes (such as
@@ -376,9 +375,9 @@ Randoop creates two different main test suites, in classes
 <code>ErrorTest</code> and <code>RegressionTest</code>. Compile and run the tests.
 (The classpath should include the code under test, the generated tests, and
 JUnit files <code>junit.jar</code> and <code>hamcrest-core.jar</code>.
-Classes in <code>java.util.*</code> are always on the Java classpath, so they
-are not needed in this particular example, but are shown because you will
-usually need to supply them.)
+Classes in <code>java.util.*</code> are always on the Java classpath, so the
+<em>myclasspath</em> part is not needed in this particular example, but it is
+shown because you will usually need to supply it.)
 </p>
 
 <pre class="code">export JUNITPATH=.../junit.jar:.../hamcrest-core.jar
@@ -408,13 +407,15 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
 </p>
 
 <ol>
-  <li> <i>M</i> is declared in a class that is named
-       by <a href="#option:testclass"><code>--testclass</code></a> or
-       <a href="#option:classlist"><code>--classlist</code></a>, or is a
+  <li> <i>M</i> is declared in a class that is named by
+       <a href="#option:testclass"><code>--testclass</code></a>,
+       <a href="#option:testjar"><code>--testjar</code></a>, or
+       <a href="#option:classlist"><code>--classlist</code></a>,
+       or is a
        member named by <a href="#option:methodlist"><code>--methodlist</code></a>.
   </li>
   <li> <i>M</i> does not match any of the patterns given
-       via <a href="#option:omitmethods"><code>--omitmethods</code></a>.
+       via <a href="#option:omitmethods"><code>--omitmethods</code></a>
        or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>.
        </li>
   <li> All of the following are accessible from the package of the tests
@@ -889,8 +890,11 @@ Randoop about your application, and that is how we recommend using Randoop.
       <ul>
             <li id="option:testclass"><b>--testclass=</b><i>string</i> <code>[+]</code>.
              The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
- in addition to any specified using <code>--classlist</code>, and must be accessible from the package
- of the tests (set with <code>--junit-package-name</code>).
+ in addition to any specified using <code>--testjar</code> or <code>--classlist</code>, and must be
+ accessible from the package of the tests (set with <code>--junit-package-name</code>).
+            <li id="option:testjar"><b>--testjar=</b><i>filename</i> <code>[+]</code>.
+             Treat every class in the given jar file as a class to test. The jarfile must be on the
+ classpath.
             <li id="option:classlist"><b>--classlist=</b><i>filename</i>.
              File that lists classes to test. All of their methods are methods under test.
 
@@ -898,12 +902,20 @@ Randoop about your application, and that is how we recommend using Randoop.
  line. See an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt">
  example</a>. These classes are tested in addition to any specified using <code>--testclass</code>.
  All classes must be accessible from the package of the tests (set with <code>--junit-package-name</code>).
+            <li id="option:omit-classes"><b>--omit-classes=</b><i>regex</i> <code>[+]</code>.
+             A regex that indicates classes that should not be classes to test, even if included by some
+ other command-line option. The regex is matched against fully-qualified class names. If the
+ regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the beginning and
+ the end of the class name.
+            <li id="option:omit-classes-file"><b>--omit-classes-file=</b><i>filename</i>.
+             A file containing a list of regular expressions that indicate classes not to test. These
+ patterns are used along with those provided with <code>--omit-classes</code>.
             <li id="option:methodlist"><b>--methodlist=</b><i>filename</i>.
              A file containing a list of methods and constructors to test, each given as a <a
  href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
  signature</a> on a separate line.
 
- <p>These methods augment any methods from classes given by the <code>--testclass</code> or <code>--classlist</code> options.
+ <p>These methods augment any methods from classes given by the <code>--testclass</code>, <code>--testjar</code>, and <code>--classlist</code> options.
 
  <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
  file</a>.
@@ -916,15 +928,11 @@ Randoop about your application, and that is how we recommend using Randoop.
  signature</a> matches the regular expression, or a method inherited from a superclass or
  interface whose signature matches the regular expression.
 
- <p>If the regular expression contains anchors "<code>^</code>" and "<code>$</code>", they refer to the
+ <p>If the regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the
  beginning and the end of the signature string.
             <li id="option:omitmethods-file"><b>--omitmethods-file=</b><i>filename</i>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>--omitmethods</code>, and the default omissions.
-            <li id="option:dont-omit-replaced-methods"><b>--dont-omit-replaced-methods=</b><i>boolean</i>.
-             Include methods that are otherwise omitted by default. Unless you set this to true, every
- method replaced by the <code>replacecall</code> agent is treated as if it had been supplied as an
- argument to <code>--omitmethods</code>. [default false]
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
              A fully-qualified field name of a field to be excluded from test generation. An accessible
  field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
@@ -1319,7 +1327,7 @@ Randoop about your application, and that is how we recommend using Randoop.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
  forcefully. Only meaningful if <code>--usethreads</code> is also specified. [default 5000]
       </ul>
-  <li id="optiongroup:Test-case-minimization-options">Test case minimization options
+  <li id="optiongroup:Test-case-minimization">Test case minimization
       <ul>
             <li id="option:suitepath"><b>--suitepath=</b><i>string</i>.
              The Java file whose failing tests will be minimized.
@@ -1891,7 +1899,11 @@ exception escaping the method as the rep invariant being violated.
 
 <p>
   Randoop generates tests that use methods, constructors, and fields of classes
-  given using the <code>--testclass</code> and <code>--classlist</code> options.
+  given using the
+  <a href="#option:testclass"><code>--testclass</code></a>,
+  <a href="#option:testjar"><code>--testjar</code></a>, and
+  <a href="#option:classlist"><code>--classlist</code></a>,
+  options.
   Any given test may involve one or more of the classes.
 </p>
 

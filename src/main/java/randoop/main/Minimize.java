@@ -100,7 +100,7 @@ public class Minimize extends CommandHandler {
 
   /** The Java file whose failing tests will be minimized. */
   @SuppressWarnings("WeakerAccess")
-  @OptionGroup(value = "Test case minimization options")
+  @OptionGroup(value = "Test case minimization")
   @Option("File containing the JUnit test suite to be minimized")
   public static String suitepath;
 
@@ -146,6 +146,17 @@ public class Minimize extends CommandHandler {
 
   /** The suffix to postpend onto the name of the minimized file and class. */
   private static final String SUFFIX = "Minimized";
+
+  /**
+   * Given a .java filename for non-minimized tests, returns the simple name of the class containing
+   * the minimized tests.
+   *
+   * @param file the .java filename for non-minimized tests
+   * @return the simple class name for the minimized tests
+   */
+  public static String minimizedClassName(Path file) {
+    return FilenameUtils.removeExtension(file.getFileName().toString()) + SUFFIX;
+  }
 
   /**
    * Check that the required parameters have been specified by the command-line options and then
@@ -254,7 +265,7 @@ public class Minimize extends CommandHandler {
    */
   public static boolean mainMinimize(
       Path file, String classPath, int timeoutLimit, boolean verboseOutput) throws IOException {
-    System.out.println("Minimizing: " + file + ".");
+    System.out.println("Minimizing: " + file);
 
     if (verboseOutput) {
       System.out.println("Reading and parsing file.");
@@ -288,19 +299,10 @@ public class Minimize extends CommandHandler {
       // No package declaration.
     }
 
-    // Create a new file; the file and the class within will have
-    // "Minimized" postpended.
-    String fileNameStr = file.toAbsolutePath().toString();
-    String minimizedFileName =
-        new StringBuilder(fileNameStr).insert(fileNameStr.lastIndexOf('.'), SUFFIX).toString();
-    Path minimizedFile = Paths.get(minimizedFileName);
-
-    // Rename the overall class to [original class name][suffix].
-    String origClassName = FilenameUtils.getBaseName(file.toString());
-    new ClassRenamingVisitor().visit(compilationUnit, new String[] {origClassName, SUFFIX});
-
-    // Write the compilation unit to the minimized file.
-    writeToFile(compilationUnit, minimizedFile);
+    String oldClassName = FilenameUtils.removeExtension(file.getFileName().toString());
+    String newClassName = oldClassName + SUFFIX;
+    Path minimizedFile =
+        ClassRenamingVisitor.copyAndRename(file, compilationUnit, oldClassName, newClassName);
 
     // Compile the original Java file (it has not been minimized yet).
     Outputs compilationOutput =
@@ -1131,7 +1133,7 @@ public class Minimize extends CommandHandler {
    * @param file file to write to
    * @throws IOException thrown if write to file fails
    */
-  private static void writeToFile(CompilationUnit compilationUnit, Path file) throws IOException {
+  public static void writeToFile(CompilationUnit compilationUnit, Path file) throws IOException {
     // Write the compilation unit to the file.
     try (BufferedWriter bw = Files.newBufferedWriter(file, UTF_8)) {
       bw.write(compilationUnit.toString());

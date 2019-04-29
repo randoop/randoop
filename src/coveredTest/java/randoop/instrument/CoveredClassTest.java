@@ -184,13 +184,13 @@ public class CoveredClassTest {
   }
 
   private ForwardGenerator getGeneratorForTest() {
-    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
+    VisibilityPredicate visibility = IS_PUBLIC;
+    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.require_covered_classes, "coverage class names");
     Set<String> omitFields =
         GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "field list");
-    VisibilityPredicate visibility = IS_PUBLIC;
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
 

@@ -69,7 +69,7 @@ public class ExecutableSequence {
 
   /**
    * How long it took to generate this sequence in nanoseconds, excluding execution time. Must be
-   * directly set by the generator that creates this object (No code in this class sets its value.)
+   * directly set by the generator that creates this object. No code in this class sets its value.
    */
   public long gentime = -1;
 
