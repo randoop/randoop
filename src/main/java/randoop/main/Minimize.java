@@ -155,7 +155,7 @@ public class Minimize extends CommandHandler {
    * @return the simple class name for the minimized tests
    */
   public static String minimizedClassName(Path file) {
-    return FilenameUtils.removeExtension(file.getFileName().toString()) + SUFFIX + ".java";
+    return FilenameUtils.removeExtension(file.getFileName().toString()) + SUFFIX;
   }
 
   /**
