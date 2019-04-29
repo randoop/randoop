@@ -53,13 +53,10 @@ public class MinimizerWriter implements CodeWriter {
 
     Path minimizedFile = Minimize.minimizedFile(testFile);
     try {
-      System.out.printf("Renaming %s to %s%n", testFile, minimizedFile);
       Files.move(minimizedFile, testFile, REPLACE_EXISTING);
     } catch (IOException e) {
-      System.out.printf("Renaming failed!%n");
-      e.printStackTrace();
       throw new RandoopBug(
-          String.format("Problem while renaming %s to %s", testFile, minimizedFile), e);
+          String.format("Problem while renaming %s to %s", minimizedFile, testFile), e);
     }
 
     return testFile;
