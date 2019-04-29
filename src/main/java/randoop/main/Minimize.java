@@ -153,10 +153,8 @@ public class Minimize extends CommandHandler {
    * @param file the original .java filename
    * @return the filename for the minimized file
    */
-  public static Path minimizedFile(Path file) {
-    String oldClassName = FilenameUtils.removeExtension(file.getFileName().toString());
-    String newClassName = oldClassName + SUFFIX;
-    return file.resolveSibling(newClassName + ".java");
+  public static String minimizedClassName(Path file) {
+    return FilenameUtils.removeExtension(file.getFileName().toString()) + SUFFIX + ".java";
   }
 
   /**

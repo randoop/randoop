@@ -1,7 +1,5 @@
 package randoop.output;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,9 +49,12 @@ public class MinimizerWriter implements CodeWriter {
       throw new RandoopOutputException(e);
     }
 
-    Path minimizedFile = Minimize.minimizedFile(testFile);
+    String minimizedClassName = Minimize.minimizedClassName(testFile);
+    Path minimizedFile = testFile.resolveSibling(minimizedClassName + ".java");
     try {
-      Files.move(minimizedFile, testFile, REPLACE_EXISTING);
+      Path testFile2 = ClassRenamingVisitor.copyAndRename(minimizedFile, classname);
+      assert testFile.equals(testFile2);
+      Files.delete(minimizedFile);
     } catch (IOException e) {
       throw new RandoopBug(
           String.format("Problem while renaming %s to %s", minimizedFile, testFile), e);
