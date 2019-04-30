@@ -901,6 +901,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Read names of classes under test, as provided with the --classlist command-line argument.
    *
+   * @param visibility the visibility predicate
    * @return the classes provided via the --classlist command-line argument
    */
   @SuppressWarnings("signature") // TODO: reading from file; no guarantee strings are @ClassGetName
@@ -917,7 +918,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Read names of classes from a jar file. Ignores interfaces, abstract classes, and non-visible
    * classes.
    *
-   * @return the classes in the jar file
+   * @param jarFile the jar file from which to read classes
+   * @param visibility the visibility predicate
+   * @return the names of classes in the jar file
    */
   @SuppressWarnings("signature") // string manipulation
   public static Set<@ClassGetName String> getClassnamesFromJarFile(

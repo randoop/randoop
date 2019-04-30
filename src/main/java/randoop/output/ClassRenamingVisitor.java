@@ -77,6 +77,7 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
    *
    * @param file the original Java file
    * @param compilationUnit the original Java file, parsed
+   * @param oldClassName the new class name
    * @param newClassName the new class name
    * @return the newly-created file
    */
