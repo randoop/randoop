@@ -35,10 +35,12 @@ class RandoopRunStatus {
   final int errorTestCount;
 
   /**
-   * The top suspected {@code GenInputsAbstract.nondeterministic_methods_to_output} "flaky"
-   * nondeterministic methods to output.
+   * The top suspected "flaky" nondeterministic methods to output. The size is no greater than
+   * {@link GenInputsAbstract#nondeterministic_methods_to_output}.
    */
   final List<String> suspectedFlakyMethodNames;
+
+  public static final String POSSIBLY_FLAKY_PREFIX = "  Possibly flaky:  ";
 
   /**
    * Creates a {@link RandoopRunStatus} object with the given {@link ProcessStatus}, operator count,
@@ -48,8 +50,7 @@ class RandoopRunStatus {
    * @param operatorCount the number of operators used in generation
    * @param regressionTestCount the number of generated regression tests
    * @param errorTestCount the number of generated error-revealing tests
-   * @param suspectedFlakyMethodNames the generated list of suspected flaky methods (in descending
-   *     order of tf-idf)
+   * @param suspectedFlakyMethodNames the suspected flaky methods (in descending order of tf-idf)
    */
   private RandoopRunStatus(
       ProcessStatus processStatus,
@@ -210,8 +211,8 @@ class RandoopRunStatus {
     List<String> suspectedFlakyMethodNames = new ArrayList<>();
 
     for (String line : ps.outputLines) {
-      if (line.contains("Possibly flaky:")) {
-        suspectedFlakyMethodNames.add(line.split(":  ")[1]);
+      if (line.startsWith(POSSIBLY_FLAKY_PREFIX)) {
+        suspectedFlakyMethodNames.add(line.substring(POSSIBLY_FLAKY_PREFIX.length()));
       } else if (line.contains("PUBLIC MEMBERS=") || line.contains("test count:")) {
         int count = Integer.valueOf(line.replaceFirst("\\D*(\\d*).*", "$1"));
         if (line.contains("PUBLIC MEMBERS=")) {

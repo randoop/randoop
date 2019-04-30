@@ -516,17 +516,22 @@ public class GenTests extends GenInputsAbstract {
         testEnvironment.setReplaceCallAgent(agentPath, agentArgs);
       }
 
+      List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+
       FailingAssertionCommentWriter codeWriter =
           new FailingAssertionCommentWriter(testEnvironment, javaFileWriter);
       writeTestFiles(
           junitCreator,
-          explorer.getRegressionSequences(),
+          regressionSequences,
           codeWriter,
           GenInputsAbstract.regression_test_basename,
           "Regression");
 
+      // TODO: cxing handle Error Test Sequence tallying.
+      //  Currently, we don't rerun Error Test Sequences, so we do not know whether they are flaky.
       processAndOutputFlakyMethods(
-          codeWriter.getFlakyTestNames(), explorer.getRegressionSequences());
+          testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
+          regressionSequences);
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
@@ -548,69 +553,63 @@ public class GenTests extends GenInputsAbstract {
     return true;
   }
 
+  public static final String POSSIBLY_FLAKY_PREFIX = "  Possibly flaky:  ";
+
   /**
-   * Outputs suspected flaky methods by using the Term Frequency - Inverse Document Frequency
-   * (tf-idf) metric.
+   * Outputs suspected flaky methods by using the tf-idf metric (Term Frequency - Inverse Document
+   * Frequency), which is:
    *
-   * @param flakyTestNames the set of flaky test names of the form "test005"
-   * @param sequences the list of sequences (error or regression)
+   * <pre>(number of flaky tests M occurs in) / (number of total tests M occurs in)</pre>
+   *
+   * @param flakySequences the flaky test sequences
+   * @param sequences all the sequences (flaky and non-flaky)
    */
   private void processAndOutputFlakyMethods(
-      Set<String> flakyTestNames, List<ExecutableSequence> sequences) {
+      List<ExecutableSequence> flakySequences, List<ExecutableSequence> sequences) {
 
-    if (flakyTestNames.size() > 0) {
-      System.out.println();
-      System.out.println("Flaky tests were generated. This means that your program contains");
-      System.out.println("methods that are nondeterministic or have non-local side effects.");
+    if (flakySequences.isEmpty()) {
+      return;
+    }
 
-      if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
-        // How many flaky tests an operation occurs in (regardless of how many times it appears in
-        // that test).
-        Map<TypedOperation, Integer> testOccurrences = countSequencesPerOperation(sequences);
+    System.out.println();
+    System.out.println("Flaky tests were generated. This means that your program contains");
+    System.out.println("methods that are nondeterministic or depend on non-local state.");
 
-        // TODO: cxing handle Error Test Sequence tallying.
-        //  Currently, we don't rerun Error Test Sequences and cannot determine
-        //  flakiness heuristics.
-        // countSequencesPerOperation(testOccurrences, explorer.getErrorTestSequences());
+    if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
+      // How many flaky tests an operation occurs in (regardless of how many times it appears in
+      // that test).
+      Map<TypedOperation, Integer> testOccurrences = countSequencesPerOperation(sequences);
 
-        List<ExecutableSequence> flakySequences = testNamesToSequences(flakyTestNames, sequences);
-        // How many tests an operation occurs in (regardless of how many times it appears in that
-        // flaky test).
-        Map<TypedOperation, Integer> flakyOccurrences = countSequencesPerOperation(flakySequences);
+      // How many tests an operation occurs in (regardless of how many times it appears in that
+      // flaky test).
+      Map<TypedOperation, Integer> flakyOccurrences = countSequencesPerOperation(flakySequences);
 
-        // tf-idf metric
-        // Our heuristic for ranking possibly flaky methods. Method M's heuristic is:
-        // ((number of flaky tests M occurs in) / (number of total tests M occurs in)
-
-        // Priority queue of methods ordered by tf-idf heuristic, highest first.
-        PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
-            new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
-
-        for (TypedOperation op : flakyOccurrences.keySet()) {
-          double flakinessHeuristic = flakyOccurrences.get(op) / testOccurrences.get(op);
-          RankedTypeOperation rankedMethod = new RankedTypeOperation(flakinessHeuristic, op);
-          methodHeuristicPriorityQueue.add(rankedMethod);
-        }
-
-        System.out.println("The following methods, in decreasing order of likelihood,");
-        System.out.println("are the most likely to be the problem.");
-        int maxMethodsToOutput = GenInputsAbstract.nondeterministic_methods_to_output;
-        for (int i = 0; i < maxMethodsToOutput && !methodHeuristicPriorityQueue.isEmpty(); i++) {
-          RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
-          System.out.println("  Possibly flaky:  " + rankedMethod.operation.toParsableString());
-        }
+      // Priority queue of methods ordered by tf-idf heuristic, highest first.
+      PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
+          new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
+      for (TypedOperation op : flakyOccurrences.keySet()) {
+        double tfIdfMetric = flakyOccurrences.get(op) / testOccurrences.get(op);
+        RankedTypeOperation rankedMethod = new RankedTypeOperation(tfIdfMetric, op);
+        methodHeuristicPriorityQueue.add(rankedMethod);
       }
 
-      System.out.println(
-          "To prevent the generation of flaky tests, see section 'Nondeterministic program");
-      System.out.println(
-          "under test' at https://randoop.github.io/randoop/manual/#nondeterminism .");
-      System.out.println();
-      // TODO cxing: Separate PR: add nmrd-blacklist comment suggestion for
-      // user (actionable steps to take to avoid flaky test generation and edit the manual
-      // accordingly.
-      System.out.println();
+      System.out.println("The following methods, in decreasing order of likelihood,");
+      System.out.println("are the most likely to be the problem.");
+      int maxMethodsToOutput = GenInputsAbstract.nondeterministic_methods_to_output;
+      for (int i = 0; i < maxMethodsToOutput && !methodHeuristicPriorityQueue.isEmpty(); i++) {
+        RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
+        System.out.println(POSSIBLY_FLAKY_PREFIX + rankedMethod.operation.toParsableString());
+      }
     }
+
+    System.out.println(
+        "To prevent the generation of flaky tests, see section 'Nondeterministic program");
+    System.out.println("under test' at https://randoop.github.io/randoop/manual/#nondeterminism .");
+    System.out.println();
+    // TODO cxing: Separate PR: add nmrd-blacklist comment suggestion for
+    // user (actionable steps to take to avoid flaky test generation) and edit the manual
+    // accordingly.
+    System.out.println();
   }
 
   /**

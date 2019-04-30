@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
@@ -1868,7 +1869,7 @@ public class RandoopSystemTest {
    *   <li>checks that the number of generated tests meets the expectation (none or some),
    *   <li>runs any generated tests,
    *   <li>checks that types of tests run as expected,
-   *   <li>checks that suspected flaky methods are identified as expected (if provided).
+   *   <li>checks that suspected flaky methods are identified as expected.
    * </ol>
    *
    * @param environment the working environment
@@ -1894,12 +1895,10 @@ public class RandoopSystemTest {
     RandoopRunStatus runStatus = generateAndCompile(environment, options, false);
 
     // Assert that the flaky methods identified are present and in the order expected.
-    if (expectedFlakyMethodNames != null) {
-      List<String> generatedFlakyMethodNames = runStatus.suspectedFlakyMethodNames;
-      assert (generatedFlakyMethodNames.size() >= expectedFlakyMethodNames.size());
-      for (int i = 0; i < expectedFlakyMethodNames.size(); i++) {
-        assert (generatedFlakyMethodNames.get(i).equals(expectedFlakyMethodNames.get(i)));
-      }
+    List<String> generatedFlakyMethodNames = runStatus.suspectedFlakyMethodNames;
+    assert (generatedFlakyMethodNames.size() >= expectedFlakyMethodNames.size());
+    for (int i = 0; i < expectedFlakyMethodNames.size(); i++) {
+      assert (generatedFlakyMethodNames.get(i).equals(expectedFlakyMethodNames.get(i)));
     }
 
     String packageName = options.getPackageName();
@@ -1936,7 +1935,13 @@ public class RandoopSystemTest {
       ExpectedTests expectedError,
       CoverageChecker coverageChecker) {
 
-    generateAndTest(environment, options, expectedRegression, expectedError, coverageChecker, null);
+    generateAndTest(
+        environment,
+        options,
+        expectedRegression,
+        expectedError,
+        coverageChecker,
+        Collections.emptyList());
   }
 
   /**
@@ -1954,12 +1959,7 @@ public class RandoopSystemTest {
       ExpectedTests expectedRegression,
       ExpectedTests expectedError) {
     generateAndTest(
-        environment,
-        options,
-        expectedRegression,
-        expectedError,
-        new CoverageChecker(options),
-        null);
+        environment, options, expectedRegression, expectedError, new CoverageChecker(options));
   }
 
   /**

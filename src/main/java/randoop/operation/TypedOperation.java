@@ -627,10 +627,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public static class RankedTypeOperation {
     /** Ranking value for the TypedOperation. */
-    public double ranking;
+    public final double ranking;
 
     /** The wrapped operation. */
-    public TypedOperation operation;
+    public final TypedOperation operation;
 
     /**
      * Constructor to populate ranking and operation.
