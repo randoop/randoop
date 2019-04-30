@@ -729,6 +729,7 @@ tasks.withType(Javadoc) {
     // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
     // for information about the -Xwerror option.
     options.addStringOption('Xwerror', '-quiet')
+    options.addStringOption('verbose', '-quiet')
 }
 
 configurations {
