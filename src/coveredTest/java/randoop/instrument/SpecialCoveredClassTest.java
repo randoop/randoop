@@ -57,11 +57,11 @@ public class SpecialCoveredClassTest {
     GenInputsAbstract.output_limit = 5000;
     randoop.util.Randomness.setSeed(0);
 
-    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
+    VisibilityPredicate visibility = IS_PUBLIC;
+    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.require_covered_classes, "coverage class names");
-    VisibilityPredicate visibility = IS_PUBLIC;
     Set<String> omitFields = new HashSet<>();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 

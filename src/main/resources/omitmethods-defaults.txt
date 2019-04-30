@@ -1,0 +1,6 @@
+# Nondeterministic
+^java\.util\.Collections\.shuffle\(java\.util\.List\)$
+# Long-running.  With sufficiently small arguments, can be fast.
+# org.apache.commons.math3.analysis.differentiation.DSCompiler.getCompiler\(int,int\)
+^org.apache.commons.math3.analysis.differentiation.
+^org.apache.commons.math3.analysis.integration.

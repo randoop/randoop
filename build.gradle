@@ -24,6 +24,8 @@ plugins {
   // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
   id 'se.patrikerdes.use-latest-versions' version '0.2.9'
   id 'com.github.ben-manes.versions' version '0.21.0'
+
+  id 'org.aim42.htmlSanityCheck' version '1.1.1'
 }
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
@@ -72,6 +74,8 @@ allprojects {
     plumelib 'org.plumelib:reflection-util:0.0.2'
   }
 }
+
+import org.apache.tools.ant.taskdefs.condition.Os
 
 /******
  * Configuration specific to Randoop and not agents.
@@ -707,15 +711,21 @@ javadoc {
     linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
   }
   failOnError = true  // does not fail on warnings
+  doLast {
+    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+      if (!new File("src/docs/api").exists() ) {
+        ant.symlink(resource: "../../build/docs/api", link: "src/docs/api")
+      }
+    }
+  }
 }
 
 // Make Javadoc fail on warnings
 // From https://stackoverflow.com/a/49544352/173852
 tasks.withType(Javadoc) {
     // The '-quiet' as second argument is actually a hack,
-    // since the one paramater addStringOption doesn't seem to
-    // work, we extra add '-quiet', which is added anyway by
-    // gradle. See https://github.com/gradle/gradle/issues/2354
+    // since the one-paramater addStringOption doesn't
+    // work. See https://github.com/gradle/gradle/issues/2354
     // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
     // for information about the -Xwerror option.
     options.addStringOption('Xwerror', '-quiet')
@@ -830,6 +840,7 @@ task html5validatorExists {
         }
     }
 }
+html5validatorExists.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
 /*
  * Generate/update and move documentation into build/docs directory.
@@ -838,11 +849,25 @@ task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC'
   group 'Documentation'
   description "Adds options and TOC to documentation in src/docs"
   doLast {
-    exec {
-      environment PATH: "$System.env.PATH"
-      commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
+    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+      exec {
+	environment PATH: "$System.env.PATH"
+	commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
+      }
     }
   }
+}
+
+// This is cross-platform and pulls in all required dependencies.  However,
+// it emits false positives and cannot be run in an automated build.
+// Output goes in ${buildDir}/reports/htmlSanityCheck/
+htmlSanityCheck {
+    // sourceDir = new File( "${projectDir}/src/docs/manual" )
+    sourceDir = new File( "${projectDir}/src/docs" )
+    sourceDocuments = fileTree(sourceDir) {
+        include "index.html", "projectideas.html", "publications.html", "manual/dev.html", "manual/index.html"
+    }
+    failOnErrors = true
 }
 
 build.dependsOn manual
@@ -861,6 +886,7 @@ task validateAPI(type: Exec, dependsOn: ['javadoc', 'html5validatorExists']) {
     commandLine "echo", "WARNING: HTML validation of API is only run in Java 9+."
   }
 }
+validateAPI.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
 
 /*
@@ -931,6 +957,7 @@ task validateSite(dependsOn: 'html5validatorExists') {
     commandLine "echo", "WARNING: HTML validation of API documentation is only run in Java 9+."
   }
 }
+validateSite.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
 task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishSite', 'validateSite', 'distributionZip' ]) {
   group 'Publishing'
