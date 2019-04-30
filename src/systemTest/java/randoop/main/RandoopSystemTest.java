@@ -1025,6 +1025,40 @@ public class RandoopSystemTest {
     generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
+  /**
+   * This test case checks that methods that cause flaky tests are categorized as flaky per the
+   * tf-idf metric.
+   */
+  @Test
+  public void runFlakyTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("flaky-test");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("flaky.FlakyClass");
+    options.setOption("generated_limit", "1000");
+    options.setOption("output_limit", "1000");
+    options.setOption("flaky-test-behavior", "OUTPUT");
+
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            "flaky.FlakyClass.getTwo() include",
+            "flaky.FlakyClass.getThree() include",
+            "flaky.FlakyClass.flakyDefaultHashCode() ignore",
+            "flaky.FlakyClass.multiply(int, int) include");
+
+    List<String> expectedFlakyMethodsInOrder = new ArrayList<>();
+    expectedFlakyMethodsInOrder.add("flaky.FlakyClass.flakyDefaultHashCode()");
+
+    generateAndTest(
+        testEnvironment,
+        options,
+        ExpectedTests.DONT_CARE,
+        ExpectedTests.DONT_CARE,
+        coverageChecker,
+        expectedFlakyMethodsInOrder);
+  }
+
   /** Test for inserted test fixtures. */
   @Test
   public void runFixtureTest() {
@@ -1833,26 +1867,40 @@ public class RandoopSystemTest {
    *   <li>runs Randoop and compiles the generated tests,
    *   <li>checks that the number of generated tests meets the expectation (none or some),
    *   <li>runs any generated tests,
-   *   <li>checks that types of tests run as expected.
+   *   <li>checks that types of tests run as expected,
+   *   <li>checks that suspected flaky methods are identified as expected (if provided).
    * </ol>
    *
    * @param environment the working environment
    * @param options the Randoop command-line arguments
    * @param expectedRegression the minimum expected number of regression tests
    * @param expectedError the minimum expected number of error tests
+   * @param coverageChecker the expected code coverage checker
+   * @param expectedFlakyMethodNames the expected suspected flaky method names that must appear in
+   *     this order
    */
   private void generateAndTest(
       SystemTestEnvironment environment,
       RandoopOptions options,
       ExpectedTests expectedRegression,
       ExpectedTests expectedError,
-      CoverageChecker coverageChecker) {
+      CoverageChecker coverageChecker,
+      List<String> expectedFlakyMethodNames) {
 
     if (expectedError == ExpectedTests.NONE) {
       options.setFlag("stop-on-error-test");
     }
 
     RandoopRunStatus runStatus = generateAndCompile(environment, options, false);
+
+    // Assert that the flaky methods identified are present and in the order expected.
+    if (expectedFlakyMethodNames != null) {
+      List<String> generatedFlakyMethodNames = runStatus.suspectedFlakyMethodNames;
+      assert (generatedFlakyMethodNames.size() >= expectedFlakyMethodNames.size());
+      for (int i = 0; i < expectedFlakyMethodNames.size(); i++) {
+        assert (generatedFlakyMethodNames.get(i).equals(expectedFlakyMethodNames.get(i)));
+      }
+    }
 
     String packageName = options.getPackageName();
 
@@ -1863,6 +1911,32 @@ public class RandoopSystemTest {
         runErrorTests(environment, options, expectedError, runStatus, packageName);
 
     coverageChecker.checkCoverage(regressionRunDesc, errorRunDesc);
+  }
+
+  /**
+   * Runs a standard system test:
+   *
+   * <ol>
+   *   <li>runs Randoop and compiles the generated tests,
+   *   <li>checks that the number of generated tests meets the expectation (none or some),
+   *   <li>runs any generated tests,
+   *   <li>checks that types of tests run as expected.
+   * </ol>
+   *
+   * @param environment the working environment
+   * @param options the Randoop command-line arguments
+   * @param expectedRegression the minimum expected number of regression tests
+   * @param expectedError the minimum expected number of error tests
+   * @param coverageChecker the expected code coverage checker
+   */
+  private void generateAndTest(
+      SystemTestEnvironment environment,
+      RandoopOptions options,
+      ExpectedTests expectedRegression,
+      ExpectedTests expectedError,
+      CoverageChecker coverageChecker) {
+
+    generateAndTest(environment, options, expectedRegression, expectedError, coverageChecker, null);
   }
 
   /**
@@ -1880,7 +1954,12 @@ public class RandoopSystemTest {
       ExpectedTests expectedRegression,
       ExpectedTests expectedError) {
     generateAndTest(
-        environment, options, expectedRegression, expectedError, new CoverageChecker(options));
+        environment,
+        options,
+        expectedRegression,
+        expectedError,
+        new CoverageChecker(options),
+        null);
   }
 
   /**
