@@ -5,6 +5,7 @@ import com.github.javaparser.ast.PackageDeclaration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -76,8 +77,8 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     List<ExecutableSequence> sequences = Collections.singletonList(sequence);
     CompilationUnit source =
         junitCreator.createTestClass(testClassName, methodNameGenerator, sequences);
-    PackageDeclaration pkg = source.getPackage();
-    String packageName = pkg == null ? null : pkg.getPackageName();
+    Optional<PackageDeclaration> oPkg = source.getPackageDeclaration();
+    String packageName = oPkg.isPresent() ? oPkg.get().getName().toString() : null;
     boolean result = testSource(testClassName, source, packageName);
     if (!result) {
       genTests.incrementSequenceCompileFailureCount();

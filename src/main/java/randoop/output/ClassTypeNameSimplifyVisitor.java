@@ -1,9 +1,11 @@
 package randoop.output;
 
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import java.util.Optional;
 
 /** JavaParser Visitor to simplify type names. */
 public class ClassTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInterfaceType> {
@@ -26,10 +28,14 @@ public class ClassTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInte
 
     // If the class type is a generic types, visit each one of the
     // parameter types as well.
-    for (Type argType : classType.getTypeArgs()) {
-      ReferenceType rType = (ReferenceType) argType;
-      if (rType.getType() instanceof ClassOrInterfaceType) {
-        this.visit((ClassOrInterfaceType) rType.getType(), type);
+
+    Optional<NodeList<Type>> oTypes = classType.getTypeArguments();
+    if (oTypes.isPresent()) {
+      for (Type argType : oTypes.get()) {
+        ReferenceType rType = (ReferenceType) argType;
+        if (rType instanceof ClassOrInterfaceType) {
+          this.visit((ClassOrInterfaceType) rType, type);
+        }
       }
     }
   }

@@ -1,7 +1,8 @@
 package randoop.output;
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -39,7 +40,7 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
    */
   @Override
   public void visit(ClassOrInterfaceDeclaration n, Void arg) {
-    if (n.getName().equals(oldName)) {
+    if (n.getName().toString().equals(oldName)) {
       n.setName(newName);
     }
   }
@@ -47,6 +48,8 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
   ///
   /// Static methods
   ///
+
+  private static final JavaParser javaParser = new JavaParser();
 
   /**
    * Copies a file to a new name, renaming the class. Does not affect the original file.
@@ -59,9 +62,17 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
 
     CompilationUnit compilationUnit;
     try (FileInputStream inputStream = new FileInputStream(file.toFile())) {
-      compilationUnit = JavaParser.parse(inputStream);
-    } catch (ParseException e) {
-      throw new RandoopBug("Error parsing Java file: " + file, e);
+      ParseResult<CompilationUnit> parseCompilationUnit = javaParser.parse(inputStream);
+      if (parseCompilationUnit.isSuccessful()) {
+        compilationUnit = parseCompilationUnit.getResult().get();
+      } else {
+        StringBuilder sb = new StringBuilder("Error parsing Java file: ");
+        sb.append(file);
+        for (Problem problem : parseCompilationUnit.getProblems()) {
+          sb.append(problem);
+        }
+        throw new RandoopBug(sb.toString());
+      }
     } catch (IOException e) {
       throw new RandoopBug("Error reading Java file: " + file, e);
     }
