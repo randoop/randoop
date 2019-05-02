@@ -136,8 +136,10 @@ public class Minimize extends CommandHandler {
   @Option("Verbose, flag for verbose output")
   public static boolean verboseminimizer = false;
 
+  /** An instance of a Java parser. */
   private static final JavaParser javaParser = new JavaParser();
 
+  /** Create the handler for Randoop's {@code minimize} command. */
   Minimize() {
     super(
         "minimize",
@@ -1420,6 +1422,7 @@ public class Minimize extends CommandHandler {
    * This is stolen from JavaParser's PrettyPrintVisitor.printOrphanCommentsBeforeThisChildNode,
    * with light modifications.
    *
+   * @param node the node whose orphan comments to collect
    * @param result the list to add orphan comments to. Is side-effected by this method. The
    *     implementation uses this to minimize the diffs against upstream.
    */

@@ -10,6 +10,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 /** JavaParser visitor to simplify type names in method calls. */
 public class MethodTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInterfaceType> {
 
+  /** An instance of a Java parser. */
   private static final JavaParser javaParser = new JavaParser();
 
   /**

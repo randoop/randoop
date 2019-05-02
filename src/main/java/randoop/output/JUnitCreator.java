@@ -49,6 +49,7 @@ import randoop.sequence.ExecutableSequence;
 @SuppressWarnings("deprecation") // TODO: fix. "new ClassOrInterfaceType()" does not handle generics
 public class JUnitCreator {
 
+  /** An instance of a Java parser. */
   static JavaParser javaParser = new JavaParser();
 
   /** The "public" modifier. */
@@ -58,6 +59,7 @@ public class JUnitCreator {
   private final NodeList<Modifier> PUBLIC_STATIC =
       new NodeList<>(Modifier.publicModifier(), Modifier.staticModifier());
 
+  /** The package name. May be null, but may not be the empty string. */
   private final String packageName;
 
   /**

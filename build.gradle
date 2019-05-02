@@ -752,6 +752,7 @@ task requireJavadocPrivate(type: Javadoc) {
   options.memberLevel = JavadocMemberLevel.PRIVATE
   options.docletpath = project.sourceSets.main.compileClasspath as List
   options.doclet = "org.plumelib.javadoc.RequireJavadoc"
+  options.addStringOption('skip', 'CloneVisitor')
   // options.addStringOption('skip', 'ClassNotToCheck|OtherClass')
 }
 

@@ -10,6 +10,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 /** JavaParser visitor to simplify field access in a test method. */
 public class FieldAccessTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInterfaceType> {
 
+  /** An instance of a Java parser. */
   private static final JavaParser javaParser = new JavaParser();
 
   /**
