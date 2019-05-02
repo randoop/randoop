@@ -9,7 +9,7 @@
 // The only change is to add a call to addOrphanCommentsToNode after each call the setComment.
 
 /*
- * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
+ * Copyright (C) 2007-2010 Julio Vilmar Gesser.
  * Copyright (C) 2011, 2013-2016 The JavaParser Team.
  *
  * This file is part of JavaParser.
