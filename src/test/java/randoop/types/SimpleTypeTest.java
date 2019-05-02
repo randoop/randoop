@@ -3,7 +3,6 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -137,17 +136,13 @@ public class SimpleTypeTest {
    * expect.
    */
   @Test
-  public void testNames() {
+  public void testNames() throws ClassNotFoundException {
     Type t = new NonParameterizedType(String.class);
     assertEquals("name should match", "java.lang.String", t.getName());
     t = new NonParameterizedType(randoop.types.test.Subclass.class);
     assertEquals("name should match", "randoop.types.test.Subclass", t.getName());
-    try {
-      t = Type.forName("randoop.types.test.Subclass$Innerclass");
-      assertEquals("name should match", "randoop.types.test.Subclass.Innerclass", t.getName());
-    } catch (ClassNotFoundException e) {
-      fail("did not find inner class");
-    }
+    t = Type.forName("randoop.types.test.Subclass$Innerclass");
+    assertEquals("name should match", "randoop.types.test.Subclass.Innerclass", t.getName());
   }
 
   /**
@@ -168,7 +163,7 @@ public class SimpleTypeTest {
     Type longType = new PrimitiveType(long.class);
     Type shortType = new PrimitiveType(short.class);
 
-    assertTrue("void is primitive", (void.class).isPrimitive());
+    assertTrue("void is primitive", void.class.isPrimitive());
     assertFalse("void is not assignable from void", voidType.isAssignableFrom(voidType));
     assertFalse("void is not assignable from Object", voidType.isAssignableFrom(objectType));
     assertFalse("void is not assignable from boolean", voidType.isAssignableFrom(booleanType));
@@ -224,7 +219,7 @@ public class SimpleTypeTest {
         "Object is assignable from all types", objectType.isAssignableFrom(intArrayListType));
   }
 
-  /** Make sure boxing/unboxing conversions work in assignment */
+  /** Make sure boxing/unboxing conversions work in assignment. */
   @Test
   public void testBoxingUnboxingConversions() {
     Type booleanType = new PrimitiveType(boolean.class);

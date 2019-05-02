@@ -21,10 +21,10 @@ import javax.tools.StandardLocation;
  */
 public class SequenceJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
-  /** The class loader for managing Java classes in memory */
+  /** The class loader for managing Java classes in memory. */
   private final SequenceClassLoader classLoader;
 
-  /** The map from the location of a class file to the class object */
+  /** The map from the location of a class file to the class object. */
   private final HashMap<URI, JavaFileObject> fileObjects;
 
   /**

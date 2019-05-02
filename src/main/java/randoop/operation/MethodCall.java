@@ -1,10 +1,11 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.plumelib.util.ArraysPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -12,6 +13,7 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.util.Log;
 import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
@@ -148,7 +150,9 @@ public final class MethodCall extends CallableOperation {
    *     ExceptionalExecution} if an exception thrown.
    */
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  public ExecutionOutcome execute(Object[] input) {
+
+    Log.logPrintf("MethodCall.execute: this = %s%n", this);
 
     Object receiver = null;
     int paramsLength = input.length;
@@ -162,11 +166,18 @@ public final class MethodCall extends CallableOperation {
     Object[] params = new Object[paramsLength];
     for (int i = 0; i < params.length; i++) {
       params[i] = input[i + paramsStartIndex];
+      if (Log.isLoggingOn()) {
+        if (params[i] != null && params[i].getClass().isArray()) {
+          Log.logPrintf("  Param %d = %s%n", i, ArraysPlume.toString(params[i]));
+        } else {
+          Log.logPrintf("  Param %d = %s%n", i, params[i]);
+        }
+      }
     }
 
     MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
 
-    return ReflectionExecutor.executeReflectionCode(code, out);
+    return ReflectionExecutor.executeReflectionCode(code);
   }
 
   /**
@@ -198,14 +209,16 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * Parses a method call in a string descriptor and returns a {@link MethodCall} object. Should
-   * satisfy {@code parse(op.toParsableString()).equals(op)} for Operation op.
+   * Parses a method signature (<em>not</em> a representation of a call; there are no arguments, for
+   * example) and returns a {@link MethodCall} object. Should satisfy {@code
+   * parse(op.toParsableString()).equals(op)} for Operation op.
    *
    * @param signature a string descriptor
    * @return the method call operation for the given string descriptor
    * @throws OperationParseException if s does not match expected descriptor
    * @see OperationParser#parse(String)
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
@@ -222,27 +235,37 @@ public final class MethodCall extends CallableOperation {
     String opname = prefix.substring(lastDotPos + 1);
     String arguments = signature.substring(openParPos + 1, closeParPos);
 
-    String methodString = classname + "." + opname + arguments;
     Type classType;
     try {
-      classType = Type.forName(classname);
+      classType = Type.getTypeforFullyQualifiedName(classname);
     } catch (ClassNotFoundException e) {
-      String msg = "Class for method " + methodString + " not found: " + e;
+      String msg =
+          "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
       throw new OperationParseException(msg);
     }
 
-    Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
+    Class<?>[] typeArguments;
+    try {
+      typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
+    } catch (OperationParseException e) {
+      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
+    }
     Method m = null;
-    String msg = "Method " + methodString + " not found: ";
     try {
       m = classType.getRuntimeClass().getDeclaredMethod(opname, typeArguments);
     } catch (NoSuchMethodException e) {
-      msg += e;
-    }
-    if (m == null) {
       try {
         m = classType.getRuntimeClass().getMethod(opname, typeArguments);
-      } catch (NoSuchMethodException e) {
+      } catch (NoSuchMethodException e2) {
+        String msg =
+            "Method "
+                + opname
+                + " with parameters "
+                + Arrays.toString(typeArguments)
+                + " does not exist in "
+                + classType
+                + ": "
+                + e;
         throw new OperationParseException(msg);
       }
     }

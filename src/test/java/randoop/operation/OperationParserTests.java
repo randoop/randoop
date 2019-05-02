@@ -159,17 +159,29 @@ public class OperationParserTests {
       Type outputType) {
     String stStr = st.toParsableString(declaringType, inputTypes, outputType);
     TypedOperation stOp = new TypedClassOperation(st, declaringType, inputTypes, outputType);
-    System.out.println(stStr);
 
     checkOp(st, stStr, stOp);
   }
 
+  /**
+   * Ensures that:
+   *
+   * <ul>
+   *   <li>the parse of stOp:stStr is the same as st, and
+   *   <li>the toParsableString of the parsed value is the same as stStr.
+   * </ul>
+   *
+   * @param st an operation
+   * @param the stStr printed representation of st
+   * @param stOp the TypedOperation version of st
+   */
   private void checkOp(CallableOperation st, String stStr, TypedOperation stOp) {
+    String parseable = stOp.getClass().getSimpleName() + ":" + stStr;
     TypedOperation collectedOperation;
     try {
-      collectedOperation = OperationParser.parse(stOp.getClass().getSimpleName() + ":" + stStr);
+      collectedOperation = OperationParser.parse(parseable);
     } catch (OperationParseException e) {
-      throw new Error(e);
+      throw new Error(String.format("Problem with checkOp(%s, %s, %s)", st, stStr, stOp), e);
     }
 
     assertTrue(

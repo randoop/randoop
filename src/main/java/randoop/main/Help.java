@@ -67,9 +67,10 @@ public class Help extends CommandHandler {
 
       if (args.length != 1) {
         throw new RandoopUsageError(
-            "The `help' command must be followed by"
-                + " exactly one argument: the command that you"
-                + " want help on.");
+            String.format(
+                "The `help' command must be followed by exactly one argument:%n"
+                    + "the command that you want help on.%n"
+                    + "For a list of commands, invoke Randoop with argument: help"));
       }
 
       String command = args[0];
@@ -94,7 +95,7 @@ public class Help extends CommandHandler {
   protected static void introMessage(PrintStream out) {
     out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
     out.println();
-    out.println("Randoop  is a command-line tool that creates unit tests for Java.");
+    out.println("Randoop is a command-line tool that creates unit tests for Java.");
     out.println("It accepts one of the commands listed below. For the user manual,");
     out.println("please visit https://randoop.github.io/randoop/manual/index.html");
   }

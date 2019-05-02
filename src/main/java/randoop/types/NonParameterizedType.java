@@ -15,7 +15,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   private final Class<?> runtimeType;
 
   /**
-   * Create a {@link NonParameterizedType} object for the runtime class
+   * Create a {@link NonParameterizedType} object for the runtime class.
    *
    * @param runtimeType the runtime class for the type
    */

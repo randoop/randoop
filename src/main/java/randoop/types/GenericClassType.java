@@ -136,7 +136,7 @@ public class GenericClassType extends ParameterizedType {
    * {@inheritDoc}
    *
    * <p>Note that this method uses {@code Class.getSuperclass()} and does not preserve the
-   * relationship between the type parameters of a class and it's superclass, and should not be used
+   * relationship between the type parameters of a class and its superclass, and should not be used
    * when finding supertypes of types represented as {@link InstantiatedType} objects.
    */
   @Override
@@ -180,7 +180,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Returns the list of type parameters of this generic class
+   * Returns the list of type parameters of this generic class.
    *
    * @return the list of type parameters of this generic class
    */

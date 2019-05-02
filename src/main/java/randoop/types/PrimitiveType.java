@@ -7,7 +7,7 @@ package randoop.types;
  */
 public class PrimitiveType extends Type {
 
-  /** The runtime class of the primitive type */
+  /** The runtime class of the primitive type. */
   private final Class<?> runtimeClass;
 
   /**

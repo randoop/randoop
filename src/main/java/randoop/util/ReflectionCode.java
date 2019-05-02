@@ -68,7 +68,7 @@ public abstract class ReflectionCode {
     RandoopSecurityManager.Status oldStatus;
     {
       SecurityManager security = System.getSecurityManager();
-      if (security != null && security instanceof RandoopSecurityManager) {
+      if (security instanceof RandoopSecurityManager) {
         randoopsecurity = (RandoopSecurityManager) security;
         oldStatus = randoopsecurity.status;
         randoopsecurity.status = Status.ON;
@@ -137,6 +137,10 @@ public abstract class ReflectionCode {
 
     ReflectionCodeException(String msg) {
       super(msg);
+    }
+
+    ReflectionCodeException(String msg, Throwable cause) {
+      super(msg, cause);
     }
 
     ReflectionCodeException(Throwable cause) {

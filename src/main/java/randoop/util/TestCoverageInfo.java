@@ -4,9 +4,8 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import plume.Pair;
-import randoop.BugInRandoopException;
 import randoop.Globals;
+import randoop.main.RandoopBug;
 
 public class TestCoverageInfo {
 
@@ -14,10 +13,21 @@ public class TestCoverageInfo {
   public final int[] branchFalse;
   public final Map<String, Set<Integer>> methodToIndices;
 
-  public TestCoverageInfo(int numBranches, Map<String, Set<Integer>> map) {
-    if (numBranches < 0) throw new IllegalArgumentException();
-    branchTrue = new int[numBranches];
-    branchFalse = new int[numBranches];
+  // A pair of: branches covered, total branches in method
+  private static class BranchCov {
+    final int covered;
+    final int inMethod;
+
+    BranchCov(int covered, int inMethod) {
+      this.covered = covered;
+      this.inMethod = inMethod;
+    }
+  }
+
+  public TestCoverageInfo(int totalBranches, Map<String, Set<Integer>> map) {
+    if (totalBranches < 0) throw new IllegalArgumentException();
+    branchTrue = new int[totalBranches];
+    branchFalse = new int[totalBranches];
     methodToIndices = Collections.unmodifiableMap(map);
   }
 
@@ -27,9 +37,9 @@ public class TestCoverageInfo {
     int totalBranches = 0;
     for (Map.Entry<String, Set<Integer>> entry : methodToIndices.entrySet()) {
       String methodSignature = entry.getKey();
-      Pair<Integer, Integer> covAndTot = getCoverageInfo(methodSignature);
-      int branchesCovered = covAndTot.a;
-      int branchesInMethod = covAndTot.b;
+      BranchCov covAndTot = getCoverageInfo(methodSignature);
+      int branchesCovered = covAndTot.covered;
+      int branchesInMethod = covAndTot.inMethod;
       totalBranchesCovered += branchesCovered;
       totalBranches += branchesInMethod;
       double percentCovered = ((double) branchesCovered) / ((double) branchesInMethod);
@@ -57,7 +67,7 @@ public class TestCoverageInfo {
     return b.toString();
   }
 
-  private Pair<Integer, Integer> getCoverageInfo(String methodSignature) {
+  private BranchCov getCoverageInfo(String methodSignature) {
     Set<Integer> indices = methodToIndices.get(methodSignature);
     int totalBranches = indices.size() * 2;
     int branchesCovered = 0;
@@ -70,7 +80,7 @@ public class TestCoverageInfo {
       }
     }
     assert branchesCovered <= totalBranches;
-    return new Pair<>(branchesCovered, totalBranches);
+    return new BranchCov(branchesCovered, totalBranches);
   }
 
   public static String getCoverageInfo(Class<?> clazz) {
@@ -82,7 +92,7 @@ public class TestCoverageInfo {
     try {
       return getCoverageInfoObject(clazz).getCoverageInfo();
     } catch (Exception e) {
-      throw new BugInRandoopException(e);
+      throw new RandoopBug(e);
     }
   }
 

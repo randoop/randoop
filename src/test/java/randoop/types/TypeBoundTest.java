@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -16,10 +15,10 @@ import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
 import randoop.reflection.ClassVisitor;
-import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
+import randoop.reflection.VisibilityPredicate;
 
-/** Uses {@link WildcardBoundExamples} to test handling of type bounds involving variables */
+/** Uses {@link WildcardBoundExamples} to test handling of type bounds involving variables. */
 public class TypeBoundTest {
 
   @Test
@@ -193,8 +192,7 @@ public class TypeBoundTest {
   private boolean checkBound(TypeVariable typeParameter, ReferenceType candidateType) {
     ParameterBound lowerBound = typeParameter.getLowerTypeBound();
     ParameterBound upperBound = typeParameter.getUpperTypeBound();
-    List<TypeVariable> typeParameters = new ArrayList<>();
-    typeParameters.add(typeParameter);
+    List<TypeVariable> typeParameters = Collections.singletonList(typeParameter);
     Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, candidateType);
     return lowerBound.isLowerBound(candidateType, substitution)
         && upperBound.isUpperBound(candidateType, substitution);
@@ -203,7 +201,8 @@ public class TypeBoundTest {
   private Map<String, TypeVariable> getArgumentTypes(Class<?> classType) {
     Map<String, TypeVariable> arguments = new LinkedHashMap<>();
     ReflectionManager mgr =
-        new ReflectionManager(new PackageVisibilityPredicate(classType.getPackage().getName()));
+        new ReflectionManager(
+            new VisibilityPredicate.PackageVisibilityPredicate(classType.getPackage().getName()));
     mgr.apply(new ArgumentVisitor(arguments), classType);
     return arguments;
   }

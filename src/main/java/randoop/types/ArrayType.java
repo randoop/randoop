@@ -20,10 +20,10 @@ import java.util.Objects;
  */
 public class ArrayType extends ReferenceType {
 
-  /** The type of components in this array */
+  /** The type of components in this array. */
   private final Type componentType;
 
-  /** The runtime type for this array */
+  /** The runtime type for this array. */
   private final Class<?> runtimeClass;
 
   /**

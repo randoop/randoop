@@ -208,7 +208,6 @@ public class EnumReflectionTest {
     }
 
     Set<TypedOperation> actual = getConcreteOperations(c);
-    // TODO this should be 5, except for odd business of getting test(Object) when getting declared methods of constant class
     assertEquals("number of operations", 5, actual.size());
 
     for (TypedOperation op : actual) {
@@ -229,7 +228,7 @@ public class EnumReflectionTest {
   }
 
   private void checkOutcome(TypedOperation op, Object[] input, Object expected) {
-    ExecutionOutcome outcome = op.execute(input, System.out);
+    ExecutionOutcome outcome = op.execute(input);
     assertTrue(
         "should have normal execution, outcome: " + outcome, outcome instanceof NormalExecution);
     NormalExecution exec = (NormalExecution) outcome;

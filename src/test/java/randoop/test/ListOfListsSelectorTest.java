@@ -5,11 +5,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 public class ListOfListsSelectorTest {
@@ -24,22 +25,20 @@ public class ListOfListsSelectorTest {
   @BeforeClass
   public static void setUp() throws Exception {
 
-    ArrayListSimpleList<Integer> l1List = new ArrayListSimpleList<>();
-    ArrayListSimpleList<Integer> l2List = new ArrayListSimpleList<>();
+    SimpleArrayList<Integer> l1List = new SimpleArrayList<>();
+    SimpleArrayList<Integer> l2List = new SimpleArrayList<>();
     l2List.add(1);
-    ArrayListSimpleList<Integer> l3List = new ArrayListSimpleList<>();
+    SimpleArrayList<Integer> l3List = new SimpleArrayList<>();
     l3List.add(2);
     l3List.add(3);
 
     List<SimpleList<Integer>> emptyList = new ArrayList<>();
     empty = new ListOfLists<>(emptyList);
 
-    List<SimpleList<Integer>> l1ListList = new ArrayList<>();
-    l1ListList.add(l1List);
+    List<SimpleList<Integer>> l1ListList = Collections.singletonList(l1List);
     l1 = new ListOfLists<>(l1ListList);
 
-    List<SimpleList<Integer>> l3ListList = new ArrayList<>();
-    l3ListList.add(l3List);
+    List<SimpleList<Integer>> l3ListList = Collections.singletonList(l3List);
     l3 = new ListOfLists<>(l3ListList);
 
     List<SimpleList<Integer>> l1l2ListList = new ArrayList<>();
@@ -61,9 +60,7 @@ public class ListOfListsSelectorTest {
     l3l3l1l2 = new ListOfLists<>(l3l3l1l2ListList);
   }
 
-  /*
-   * Test method for 'randoop.util.ListOfLists.size()'
-   */
+  /** Test method for 'randoop.util.ListOfLists.size()' */
   @Test
   public void testSize() {
     assertEquals(empty.size(), 0);
@@ -83,9 +80,7 @@ public class ListOfListsSelectorTest {
     }
   }
 
-  /*
-   * Test method for 'randoop.util.ListOfLists.get(int)'
-   */
+  /** Test method for 'randoop.util.ListOfLists.get(int)' */
   @Test
   public void testGetElement() {
 

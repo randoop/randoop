@@ -2,12 +2,11 @@ package randoop.test;
 
 import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
@@ -17,8 +16,10 @@ import randoop.output.JUnitCreator;
 /** Test for compilation predicate. */
 public class CompilePredicateTest {
 
+  private static final JavaParser javaParser = new JavaParser();
+
   @Test
-  public void uncompilablePredicateTest() {
+  public void uncompilablePredicateTest() throws ParseException, UnsupportedEncodingException {
     String failedCode =
         "import org.junit.FixMethodOrder;\n"
             + "import org.junit.Test;\n"
@@ -100,23 +101,19 @@ public class CompilePredicateTest {
             + "        org.junit.Assert.assertNotNull(list_wildcard33);\n"
             + "    }\n"
             + "}";
-    CompilationUnit source = null;
-    try {
-      source = JavaParser.parse(new ByteArrayInputStream(failedCode.getBytes(UTF_8)));
-    } catch (ParseException e) {
-      fail("code did not parse");
-    } catch (UnsupportedEncodingException e) {
-      fail("unsupported encoding");
-    }
-    assertNotNull(source);
+    ParseResult<CompilationUnit> parseCU =
+        javaParser.parse(new ByteArrayInputStream(failedCode.getBytes(UTF_8)));
+    assertTrue(parseCU.isSuccessful());
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator(null, null, null, null, null);
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
 
-    assertFalse("predicate should fail on code", pred.testSource("CompRegression0", source, ""));
+    assertFalse(
+        "predicate should fail on code",
+        pred.testSource("CompRegression0", parseCU.getResult().get(), ""));
   }
 
   @Test
-  public void compilablePredicateTest() {
+  public void compilablePredicateTest() throws ParseException, UnsupportedEncodingException {
     String compilableCode =
         "package foo.bar;\n"
             + "\n"
@@ -133,26 +130,22 @@ public class CompilePredicateTest {
             + "    public void test001() throws Throwable {\n"
             + "        if (debug)\n"
             + "            System.out.format(\"%n%s%n\", \"TestClass0.test001\");\n"
-            + "        java2.util2.Collection collection0 = null;\n"
+            + "        java7.util7.Collection collection0 = null;\n"
             + "        try {\n"
-            + "            java2.util2.TreeSet treeSet1 = new java2.util2.TreeSet(collection0);\n"
+            + "            java7.util7.TreeSet treeSet1 = new java7.util7.TreeSet(collection0);\n"
             + "            org.junit.Assert.fail(\"Expected exception of type java.lang.NullPointerException\");\n"
             + "        } catch (java.lang.NullPointerException e) {\n"
             + "        }\n"
             + "    }\n"
             + "}";
-    CompilationUnit source = null;
-    try {
-      source = JavaParser.parse(new ByteArrayInputStream(compilableCode.getBytes(UTF_8)));
-    } catch (ParseException e) {
-      fail("code did not parse");
-    } catch (UnsupportedEncodingException e) {
-      fail("unsupported encoding");
-    }
-    assertNotNull(source);
+    ParseResult<CompilationUnit> parseCU =
+        javaParser.parse(new ByteArrayInputStream(compilableCode.getBytes(UTF_8)));
+    assertTrue(parseCU.isSuccessful());
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator("foo.bar", null, null, null, null);
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
 
-    assertTrue("predicate should pass on code", pred.testSource("TestClass0", source, "foo.bar"));
+    assertTrue(
+        "predicate should pass on code",
+        pred.testSource("TestClass0", parseCU.getResult().get(), "foo.bar"));
   }
 }

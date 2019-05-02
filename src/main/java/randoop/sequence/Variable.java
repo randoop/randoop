@@ -20,6 +20,12 @@ public class Variable implements Comparable<Variable> {
     this.index = i;
   }
 
+  /** Do not use! Only for use by DummyVariable. */
+  protected Variable() {
+    index = 0;
+    sequence = null;
+  }
+
   @Override
   public String toString() {
     return this.getName();
@@ -138,7 +144,13 @@ public class Variable implements Comparable<Variable> {
     return Character.toLowerCase(className.charAt(0)) + className.substring(1);
   }
 
-  public boolean canUseShortForm() {
-    return sequence.canUseShortForm();
+  /**
+   * True if this variable's value should be inlined as a literal at call sites, rather than
+   * referencing the variable.
+   *
+   * @return whether this variable's value should be inlined as a literal at call sites
+   */
+  public boolean shouldInlineLiterals() {
+    return sequence.shouldInlineLiterals();
   }
 }

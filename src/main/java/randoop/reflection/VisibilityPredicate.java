@@ -8,40 +8,91 @@ import java.lang.reflect.Modifier;
 /** Interface for predicates that check whether a class or class member is considered visible. */
 public abstract class VisibilityPredicate {
 
+  /** A predicate that returns true for public elements. */
   public static VisibilityPredicate IS_PUBLIC = new PublicVisibilityPredicate();
+  /** A predicate that returns true for non-private elements. */
   public static VisibilityPredicate IS_NOT_PRIVATE = new NotPrivateVisibilityPredicate();
+  /** A predicate that always returns true. */
+  public static VisibilityPredicate IS_ANY = new AnyVisibilityPredicate();
 
   /**
-   * Determines whether a {@link Class} object is considered visible.
+   * Determines whether this VisibilityPredicate considers a {@link Class} visible.
    *
    * @param c the class object to check
-   * @return true if predicate criteria determines the class is visible, false otherwise
+   * @return whether this considers the class to be visible
    */
   public abstract boolean isVisible(Class<?> c);
 
   /**
-   * Determines whether a {@link Method} object is considered visible.
+   * Determines whether this VisibilityPredicate considers a {@link Method} visible. Does not test
+   * the visibility of the containing class.
    *
    * @param m the Method object to check
-   * @return true if predicate criteria determines the method is visible, false otherwise
+   * @return whether this considers the method to be visible
    */
   public abstract boolean isVisible(Method m);
 
   /**
-   * Determines whether a {@link Constructor} object is considered visible.
+   * Determines whether this VisibilityPredicate considers a {@link Constructor} visible. Does not
+   * test the visibility of the containing class.
    *
    * @param c the constructor object to check
-   * @return true if predicate criteria determines the constructor is visible, false otherwise
+   * @return whether this considers the constructor to be visible
    */
   public abstract boolean isVisible(Constructor<?> c);
 
   /**
-   * Determines whether a {@link Field} object is considered visible.
+   * Determines whether this VisibilityPredicate considers a {@link Field} visible. Does not test
+   * the visibility of the containing class.
    *
    * @param f the field object to check
-   * @return true if predicate criteria determines the field is visible, false otherwise
+   * @return whether this considers the field to be visible
    */
   public abstract boolean isVisible(Field f);
+
+  /** AnyVisibilityPredicate is a {@link VisibilityPredicate} that always returns true. */
+  public static class AnyVisibilityPredicate extends VisibilityPredicate {
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return true
+     */
+    @Override
+    public boolean isVisible(Class<?> c) {
+      return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return true
+     */
+    @Override
+    public boolean isVisible(Method m) {
+      return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return true
+     */
+    @Override
+    public boolean isVisible(Constructor<?> c) {
+      return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return true
+     */
+    @Override
+    public boolean isVisible(Field f) {
+      return true;
+    }
+  }
 
   /**
    * PublicVisibilityPredicate is a {@link VisibilityPredicate} that returns true in the case that
@@ -100,11 +151,16 @@ public abstract class VisibilityPredicate {
 
   /**
    * A predicate that tests for visibility of a class, method, constructor, or field relative to a
-   * particular package. A top-level class is accessible from the package if it is public, or if it
-   * is package-private in the given package. Otherwise, an element is accessible from the package
-   * if it is either public, or, if in the same package, then not private.
+   * particular package.
    *
-   * <p>The predicate is used to determine what can be accessed from a Randoop generated JUnit test
+   * <ul>
+   *   <li>A top-level class is accessible from the package if it is public, or if it is
+   *       package-private in the given package.
+   *   <li>An element is accessible from the package if it is either public, or, if in the same
+   *       package, then not private.
+   * </ul>
+   *
+   * <p>The predicate is used to determine what can be accessed from a Randoop-generated JUnit test
    * in the given package. So, this class does not implement Java's full accessibility rules; those
    * for subclasses and default-visibility are not relevant to this predicate.
    */
@@ -180,10 +236,7 @@ public abstract class VisibilityPredicate {
      *     private is not set in modifiers, false otherwise
      */
     private boolean isVisible(int mods, Package otherPackage) {
-      String otherPackageName = "";
-      if (otherPackage != null) {
-        otherPackageName = otherPackage.getName();
-      }
+      String otherPackageName = (otherPackage == null) ? "" : otherPackage.getName();
       return Modifier.isPublic(mods)
           || (packageName.equals(otherPackageName) && !Modifier.isPrivate(mods));
     }

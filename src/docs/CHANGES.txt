@@ -1,4 +1,80 @@
-Version 4.0.0, released December ??, 2017
+Version 4.1.3, released ??
+
+Command-line argument changes:
+ * new --testjar, --omit-classes, and --omit-classes-file arguments to
+   make it easy to test all classes in a .jar file
+
+Build in a set of omitted methods that are nondeterministic or long-running.
+
+
+Version 4.1.2, released April 21, 2019
+
+Bug fixes, improve documentation and diagnostics.
+No user-visible behavior changes.
+
+
+Version 4.1.1, released February 3, 2019
+
+Minor bug fixes; no user-visible behavior changes.
+
+
+Version 4.1.0, released September 5, 2018
+
+Randoop requires Java 8; it no longer runs on a Java 7 JVM.
+
+New technique, "Bloodhound", for randomly selecting methods to test.  It
+weights each method under test based on the method's branch coverage and
+the number of times the method is chosen for a new sequence.  Enable it via
+--method-selection=BLOODHOUND .
+
+Command-line argument changes:
+ * renamed --small-tests to --input-selection=small-tests
+
+
+Version 4.0.4, released May 23, 2018
+
+Command-line argument changes:
+ * the --specifications command-line argument can now be a .zip file
+ * renamed --print-file-system-state to --print-erroneous-file
+
+Randoop's replacecalls agent can now replace constructors.
+
+More methods are now permitted as observers.
+
+Improved diagnostics when user supplies incorrect input to Randoop.
+
+Bug fixes.
+
+Improvements to documentation.
+
+
+Version 4.0.3, released April 10, 2018
+
+Fixed a bug caused by order of execution of variable initializers.
+
+
+Version 4.0.2, released April 8, 2018
+
+Adds the contract c.toArray().length == c.size() for Collections c.
+
+Make --omitmethods work for constructors as well as methods.
+
+Minor documentation improvements.
+
+
+Version 4.0.1, released March 25, 2018
+
+This release makes minor documentation fixes.  Two examples are:
+ * The manual provides a link to a newer Maven plug-in.
+ * The documentation of the test minimizer is more prominent.
+
+There are also code cleanups and minor bug fixes.
+
+
+Version 4.0.0, released February 28, 2018
+
+Many improvements to the manual, including improved instructions about
+debugging when Randoop does not produce good test suites.
 
 Randoop contains a test suite minimizer.  Given a test suite containing
 failing tests, it creates a test suite with smaller tests that fail the
@@ -21,69 +97,64 @@ called.
  * Randoop does not make direct calls to methods whose calls are replaced.
    You can disable this with option --dont-omit-replaced-methods.
 
+New command-line arguments:
+
+--operation-history-log writes a table of operations used during
+generation, to either a file or standard out.
+
+--print-file-system-state (default = false) writes any generated tests with
+compilation errors to standard out.
+
+--deterministic (default = false) makes Randoop is deterministic, producing
+the same test suite when run twice.  When set to false, Randoop may or may
+not produce the same test suite when run twice.  Use --randomseed to
+produce a different test suite.
+
+--cm-exception and --ncdf-exception control how Randoop classifies a test that
+throws a ConcurrentModificationException or NoClassDefFoundError exception.
+
+--attempted-limit is a new way to limit test generation.
+
+Changed command-line arguments:
+
+Some command-line options have been renamed:
+ --timelimit => --time-limit
+ --inputlimit => --generated-limit
+ --outputlimit => --output-limit
+ --timeout => --call-timout.
+ --include-if-classname-appears => --require-classname-in-test.
+ --include-if-class-exercised => --require-covered-classes.
+     File "exercised-class.jar" is now "covered-class.jar".
+ --noprogressdisplay => --progressdisplay=false.
+ --ignore-flaky-tests option => --flaky-test-behavior.  It is now an enum:
+     * HALT: Halt and give a diagnostic message (default).
+     * DISCARD: Discard the flaky test.
+     * OUTPUT: Output the flaky test.
+
 Command-line argument --omitmethods can now be supplied multiple times.  New
 argument --omitmethods-file enables providing many patterns in a file.
 
-Improves how --omitmethods works so that it matches against the signature
-of a method or constructor rather than java.lang.reflect.Method.toString().
-Also, omits the method throughout the inheritance hierarchy. See the
-documentation of --omitmethods in the user manual for details.
+Command-line arguments --omitmethods and --methodlist now match against a
+method/constructor signature rather than java.lang.reflect.Method.toString().
 
-Changes --methodlist to use method or constructor signatures similar to
-those used for --omitmethods. See the documentation of --methodlist in the
-user manual for details. Also, makes the handling of methods from
---methodlist consistent with what is done for methods of classes in
---testclass or --classlist.
+--omitmethods omits the method throughout the inheritance hierarchy.  See
+the documentation of --omitmethods in the user manual for details.
 
-Fixes a bug that required input using --testclass or --classlist, preventing
-exclusive use of --methodlist.
-
-New option --operation-history-log will write table of operation used during
-generation to either a file or standard out as indicated by the argument.
-
-Added the --print-file-system-state command-line argument (default = false).
-When set to true, any generated tests containing compilation errors
-will be copied to standard out.
-
-Renamed the --ignore-flaky-tests option to --flaky-test-behavior.  This is now
-an enum:
- * HALT: Halt and give a diagnostic message (default).
- * DISCARD: Discard the flaky test.
- * OUTPUT: Output the flaky test.
-
-Fixed a problem in progress reporting where the wrong count was being used for
-error-revealing sequences.
-
-Added the --deterministic command-line argument (default = false).  When
-set to true, Randoop is deterministic and produces the same test suite when
-run twice.  When set to false, Randoop may or may not produce the same test
-suite when run twice.  Use --randomseed to produce a different test suite.
+The handling of methods from --methodlist is now consistent with what is
+done for methods of classes in --testclass or --classlist.  See the
+documentation of --methodlist in the user manual for details.
 
 The --usethreads command-line option defaults to false.  This makes Randoop
 run faster and generate more tests, but Randoop will hang if it calls a
 method that does not terminate and return.
 
-New command-line options --cm-exception and --ncdf-exception control how
-Randoop classifies a test that throws a ConcurrentModificationException or
-NoClassDefFoundError exception.
+Notable bug fixes:
 
-Some command-line options have been renamed:
+Fixed a problem in progress reporting where the wrong count was being used for
+error-revealing sequences.
 
-The --timelimit command-line option has been renamed to --time-limit.
-The --inputlimit command-line option has been renamed to --generated-limit.
-The --outputlimit command-line option has been renamed to --output-limit.
-New --attempted-limit command-line option is a new way to limit test generation.
-The --timeout command-line option has been renamed to --call-timout.
-
-The option --include-if-classname-appears has been renamed to
---require-classname-in-test.
-The option --include-if-class-exercised has been renamed to
---require-covered-classes.  The "exercised-class.jar" is now "covered-class.jar".
-
-The option --noprogressdisplay has been renamed to --progressdisplay=false.
-
-Many improvements to the manual, including improved instructions about
-debugging when Randoop does not produce good test suites.
+Fixes a bug that required input using --testclass or --classlist, preventing
+exclusive use of --methodlist.
 
 
 Version 3.1.5, released April 28, 2017

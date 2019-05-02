@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -33,11 +32,10 @@ class UncheckedCast extends CallableOperation {
    * <p>Performs this cast on the first value of the input array.
    *
    * @param input array containing appropriate inputs to operation
-   * @param out stream to output results of execution; can be null if you don't want to print
    * @return the value cast to the type of this cast
    */
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "cast only takes one input";
     return new NormalExecution(type.getRuntimeClass().cast(input[0]), 0);
   }

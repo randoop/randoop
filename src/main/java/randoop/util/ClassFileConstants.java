@@ -15,7 +15,10 @@ import org.apache.bcel.classfile.ConstantFieldref;
 import org.apache.bcel.classfile.ConstantFloat;
 import org.apache.bcel.classfile.ConstantInteger;
 import org.apache.bcel.classfile.ConstantInterfaceMethodref;
+import org.apache.bcel.classfile.ConstantInvokeDynamic;
 import org.apache.bcel.classfile.ConstantLong;
+import org.apache.bcel.classfile.ConstantMethodHandle;
+import org.apache.bcel.classfile.ConstantMethodType;
 import org.apache.bcel.classfile.ConstantMethodref;
 import org.apache.bcel.classfile.ConstantNameAndType;
 import org.apache.bcel.classfile.ConstantPool;
@@ -30,6 +33,7 @@ import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
@@ -59,7 +63,7 @@ public class ClassFileConstants {
   static char c = 'a';
 
   public static class ConstantSet {
-    public String classname;
+    public @ClassGetName String classname;
     public Set<Integer> ints = new TreeSet<>();
     public Set<Long> longs = new TreeSet<>();
     public Set<Float> floats = new TreeSet<>();
@@ -143,7 +147,9 @@ public class ClassFileConstants {
     } catch (java.io.IOException e) {
       throw new Error("IOException while reading '" + classname + "': " + e.getMessage());
     }
-    result.classname = jc.getClassName();
+    @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
+    @ClassGetName String resultClassname = jc.getClassName();
+    result.classname = resultClassname;
 
     // Get all of the constants from the pool
     ConstantPool constant_pool = jc.getConstantPool();
@@ -155,6 +161,9 @@ public class ClassFileConstants {
           || c instanceof ConstantInterfaceMethodref
           || c instanceof ConstantMethodref
           || c instanceof ConstantNameAndType
+          || c instanceof ConstantMethodHandle
+          || c instanceof ConstantMethodType
+          || c instanceof ConstantInvokeDynamic
           || c instanceof ConstantUtf8) {
         continue;
       }
@@ -178,6 +187,7 @@ public class ClassFileConstants {
 
     // Process the code in each method looking for literals
     for (Method m : jc.getMethods()) {
+      @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
       MethodGen mg = new MethodGen(m, jc.getClassName(), pool);
       InstructionList il = mg.getInstructionList();
       if (il != null) {
@@ -368,23 +378,75 @@ public class ClassFileConstants {
                 break;
               }
 
-              // Push small constants (-1..5) on the stack. These literals are
-              // too common to bother mentioning
+              // Push small constants (-1..5) on the stack.
             case Const.DCONST_0:
+              {
+                result.doubles.add(Double.valueOf(0));
+                break;
+              }
             case Const.DCONST_1:
+              {
+                result.doubles.add(Double.valueOf(1));
+                break;
+              }
             case Const.FCONST_0:
+              {
+                result.floats.add(Float.valueOf(0));
+                break;
+              }
             case Const.FCONST_1:
+              {
+                result.floats.add(Float.valueOf(1));
+                break;
+              }
             case Const.FCONST_2:
+              {
+                result.floats.add(Float.valueOf(2));
+                break;
+              }
             case Const.ICONST_0:
+              {
+                result.ints.add(Integer.valueOf(0));
+                break;
+              }
             case Const.ICONST_1:
+              {
+                result.ints.add(Integer.valueOf(1));
+                break;
+              }
             case Const.ICONST_2:
+              {
+                result.ints.add(Integer.valueOf(2));
+                break;
+              }
             case Const.ICONST_3:
+              {
+                result.ints.add(Integer.valueOf(3));
+                break;
+              }
             case Const.ICONST_4:
+              {
+                result.ints.add(Integer.valueOf(4));
+                break;
+              }
             case Const.ICONST_5:
+              {
+                result.ints.add(Integer.valueOf(5));
+                break;
+              }
             case Const.ICONST_M1:
+              {
+                result.ints.add(Integer.valueOf(-1));
+                break;
+              }
             case Const.LCONST_0:
+              {
+                result.longs.add(Long.valueOf(0));
+                break;
+              }
             case Const.LCONST_1:
               {
+                result.longs.add(Long.valueOf(1));
                 break;
               }
 
@@ -490,6 +552,7 @@ public class ClassFileConstants {
             case Const.INVOKEVIRTUAL:
             case Const.INVOKESPECIAL:
             case Const.INVOKEINTERFACE:
+            case Const.INVOKEDYNAMIC:
               break;
 
               // Throws an exception.
@@ -540,6 +603,7 @@ public class ClassFileConstants {
             case Const.NEW:
             case Const.NOP:
             case Const.RET: // this is the internal JSR return
+            case Const.WIDE:
               break;
 
               // Make sure we didn't miss anything

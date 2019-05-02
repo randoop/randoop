@@ -2,9 +2,9 @@ package randoop.util;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import randoop.BugInRandoopException;
-import randoop.Globals;
+import java.util.Arrays;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 
 /** Static methods that log to GenInputsAbstract.log, if that is non-null. */
 public final class Log {
@@ -18,43 +18,6 @@ public final class Log {
   }
 
   /**
-   * Log to GenInputsAbstract.log, if that is non-null.
-   *
-   * @param s the string to output
-   */
-  public static void log(String s) {
-    if (!isLoggingOn()) {
-      return;
-    }
-
-    try {
-      GenInputsAbstract.log.write(s);
-      GenInputsAbstract.log.flush();
-    } catch (IOException e) {
-      throw new BugInRandoopException("Exception while writing to log", e);
-    }
-  }
-
-  /**
-   * Log to GenInputsAbstract.log, if that is non-null.
-   *
-   * @param s the string to output (followed by a newline)
-   */
-  public static void logLine(String s) {
-    if (!isLoggingOn()) {
-      return;
-    }
-
-    try {
-      GenInputsAbstract.log.write(s);
-      GenInputsAbstract.log.write(Globals.lineSep);
-      GenInputsAbstract.log.flush();
-    } catch (IOException e) {
-      throw new BugInRandoopException("Exception while writing to log", e);
-    }
-  }
-
-  /**
    * Log using {@code String.format} to GenInputsAbstract.log, if that is non-null.
    *
    * @param fmt the format string
@@ -65,11 +28,26 @@ public final class Log {
       return;
     }
 
+    String msg;
     try {
-      GenInputsAbstract.log.write(String.format(fmt, args));
+      msg = String.format(fmt, args);
+    } catch (Throwable t) {
+      logPrintf("A user-defined toString() method failed.%n");
+      Class<?>[] argTypes = new Class<?>[args.length];
+      for (int i = 0; i < args.length; i++) {
+        argTypes[i] = args[i].getClass();
+      }
+      logPrintf("  fmt = %s%n", fmt);
+      logPrintf("  arg types = %s%n", Arrays.toString(argTypes));
+      logStackTrace(t);
+      return;
+    }
+
+    try {
+      GenInputsAbstract.log.write(msg);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      throw new BugInRandoopException("Exception while writing to log", e);
+      throw new RandoopBug("Exception while writing to log", e);
     }
   }
 
@@ -90,7 +68,7 @@ public final class Log {
       pw.flush();
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      throw new BugInRandoopException("Exception while writing to log", e);
+      throw new RandoopBug("Exception while writing to log", e);
     }
   }
 }

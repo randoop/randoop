@@ -1,16 +1,16 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import plume.Pair;
-import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
@@ -24,16 +24,17 @@ import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /** Randoop's forward, component-based generator. */
@@ -48,6 +49,7 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final LinkedHashSet<Sequence> allSequences;
 
+  /** The side-effect-free observer methods. */
   private final Set<TypedOperation> observers;
 
   /** Sequences that are used in other sequences (and are thus redundant) */
@@ -65,6 +67,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
   private final TypeInstantiator instantiator;
 
+  /** How to select sequences as input for creating new sequences. */
+  private final InputSequenceSelector inputSequenceSelector;
+
+  /** How to select the method to use for creating a new sequence. */
+  private final TypedOperationSelector operationSelector;
+
   // The set of all primitive values seen during generation and execution
   // of sequences. This set is used to tell if a new primitive value has
   // been generated, to add the value to the components.
@@ -75,8 +83,9 @@ public class ForwardGenerator extends AbstractGenerator {
       Set<TypedOperation> observers,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
-      RandoopListenerManager listenerManager) {
-    this(operations, observers, limits, componentManager, null, listenerManager);
+      RandoopListenerManager listenerManager,
+      Set<ClassOrInterfaceType> classesUnderTest) {
+    this(operations, observers, limits, componentManager, null, listenerManager, classesUnderTest);
   }
 
   public ForwardGenerator(
@@ -85,7 +94,8 @@ public class ForwardGenerator extends AbstractGenerator {
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
-      RandoopListenerManager listenerManager) {
+      RandoopListenerManager listenerManager,
+      Set<ClassOrInterfaceType> classesUnderTest) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
@@ -93,6 +103,40 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
+
+    switch (GenInputsAbstract.method_selection) {
+      case UNIFORM:
+        this.operationSelector = new UniformRandomMethodSelection(operations);
+        break;
+      case BLOODHOUND:
+        this.operationSelector = new Bloodhound(operations, classesUnderTest);
+        break;
+      default:
+        throw new Error("This can't happen");
+    }
+
+    switch (GenInputsAbstract.input_selection) {
+      case SMALL_TESTS:
+        inputSequenceSelector = new SmallTestsSequenceSelection();
+        break;
+      case UNIFORM:
+        inputSequenceSelector = new UniformRandomSequenceSelection();
+        break;
+      default:
+        throw new Error(
+            "Case statement does not handle all InputSelectionModes: "
+                + GenInputsAbstract.input_selection);
+    }
+  }
+
+  /**
+   * Take action based on the given {@link Sequence} that was classified as a regression test.
+   *
+   * @param sequence the new sequence that was classified as a regression test
+   */
+  @Override
+  public void newRegressionTestHook(Sequence sequence) {
+    operationSelector.newRegressionTestHook(sequence);
   }
 
   /**
@@ -173,35 +217,35 @@ public class ForwardGenerator extends AbstractGenerator {
   private void determineActiveIndices(ExecutableSequence seq) {
 
     if (seq.hasNonExecutedStatements()) {
-      Log.logLine("Sequence has non-executed statements: excluding from extension pool.");
-      Log.logLine(
-          "Non-executed statement: " + seq.statementToCodeString(seq.getNonExecutedIndex()));
+      Log.logPrintf("Sequence has non-executed statements: excluding from extension pool.%n");
+      Log.logPrintf(
+          "Non-executed statement: %s%n", seq.statementToCodeString(seq.getNonExecutedIndex()));
       seq.sequence.clearAllActiveFlags();
       return;
     }
 
     if (seq.hasFailure()) {
-      Log.logLine("Sequence has failure: excluding from extension pool.");
-      Log.logLine("Failing sequence: " + seq.toCodeString());
+      Log.logPrintf("Sequence has failure: excluding from extension pool.%n");
+      Log.logPrintf("Failing sequence: %s%n", seq.toCodeString());
       seq.sequence.clearAllActiveFlags();
       return;
     }
 
     if (seq.hasInvalidBehavior()) {
-      Log.logLine(
-          "Sequence has invalid behavior ("
-              + seq.getChecks()
-              + "): discarding and excluding from extension pool.");
-      Log.logLine("Invalid sequence: " + seq.toCodeString());
+      Log.logPrintf(
+          "Sequence has invalid behavior (%s): discarding and excluding from extension pool.%n",
+          seq.getChecks());
+      Log.logPrintf("Invalid sequence: %s%n", seq.toCodeString());
       seq.sequence.clearAllActiveFlags();
       return;
     }
 
     if (!seq.isNormalExecution()) {
       int i = seq.getNonNormalExecutionIndex();
-      Log.logLine("Excluding from extension pool due to exception or failure in statement " + i);
-      Log.logLine("  Statement: " + seq.statementToCodeString(i));
-      Log.logLine("  Result: " + seq.getResult(i));
+      Log.logPrintf(
+          "Excluding from extension pool due to exception or failure in statement %s%n", i);
+      Log.logPrintf("  Statement: %s%n", seq.statementToCodeString(i));
+      Log.logPrintf("  Result: %s%n", seq.getResult(i));
       seq.sequence.clearAllActiveFlags();
       return;
     }
@@ -214,7 +258,7 @@ public class ForwardGenerator extends AbstractGenerator {
       NormalExecution e = (NormalExecution) seq.getResult(i);
       Object runtimeValue = e.getRuntimeValue();
       if (runtimeValue == null) {
-        Log.logLine("Making index " + i + " inactive (value is null)");
+        Log.logPrintf("Making index " + i + " inactive (value is null)%n");
         seq.sequence.clearActiveFlag(i);
         continue;
       }
@@ -225,17 +269,22 @@ public class ForwardGenerator extends AbstractGenerator {
       // that produces the value.)
       Sequence stmts = seq.sequence;
       Statement stmt = stmts.statements.get(i);
-      if (stmt.isMethodCall() && observers.contains(stmt.getOperation())) {
+      boolean isObserver = stmt.isMethodCall() && observers.contains(stmt.getOperation());
+      Log.logPrintf("isObserver => %s for %s%n", isObserver, stmt);
+      if (isObserver) {
         List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
-        int receiver = inputVars.get(0);
-        seq.sequence.clearActiveFlag(receiver);
+        for (Integer inputIndex : inputVars) {
+          seq.sequence.clearActiveFlag(inputIndex);
+        }
       }
 
       // If its runtime value is a primitive value, clear its active flag,
       // and if the value is new, add a sequence corresponding to that value.
+      // This yields shorter tests than using the full sequence that produced
+      // the value.
       Class<?> objectClass = runtimeValue.getClass();
       if (NonreceiverTerm.isNonreceiverType(objectClass) && !objectClass.equals(Class.class)) {
-        Log.logLine("Making index " + i + " inactive (value is a primitive)");
+        Log.logPrintf("Making index " + i + " inactive (value is a primitive)%n");
         seq.sequence.clearActiveFlag(i);
 
         boolean looksLikeObjToString =
@@ -254,30 +303,44 @@ public class ForwardGenerator extends AbstractGenerator {
           componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));
         }
       } else {
-        Log.logLine("Making index " + i + " active.");
+        Log.logPrintf("Making index " + i + " active.%n");
       }
     }
   }
 
   /**
-   * Tries to create and execute a new sequence. If the sequence is new (not already in the
-   * specified component manager), then it is executed and added to the manager's sequences. If the
-   * sequence created is already in the manager's sequences, this method has no effect, and returns
-   * null.
+   * Tries to create a new sequence. If the sequence is new (not already in the specified component
+   * manager), then it is added to the manager's sequences.
+   *
+   * <p>This method returns null if:
+   *
+   * <ul>
+   *   <li>it selects an operation but cannot generate inputs for the operation
+   *   <li>it creates too large a method
+   *   <li>it creates a duplicate sequence
+   * </ul>
+   *
+   * This method modifies the list of operations that represent the set of methods under tests.
+   * Specifically, if the selected operation used for creating a new and unique sequence is a
+   * parameterless operation (a static constant method or no-argument constructor) it is removed
+   * from the list of operations. Such a method will return the same thing every time it is invoked
+   * (unless it's nondeterministic, but Randoop should not be run on nondeterministic methods). Once
+   * invoked, its result is in the pool and there is no need to call the operation again and so we
+   * will remove it from the list of operations.
    *
    * @return a new sequence, or null
    */
   private ExecutableSequence createNewUniqueSequence() {
 
-    Log.logLine("-------------------------------------------");
+    Log.logPrintf("-------------------------------------------%n");
 
     if (this.operations.isEmpty()) {
       return null;
     }
 
-    // Select a StatementInfo
-    TypedOperation operation = Randomness.randomMember(this.operations);
-    Log.logLine("Selected operation: " + operation.toString());
+    // Select the next operation to use in constructing a new sequence.
+    TypedOperation operation = operationSelector.selectOperation();
+    Log.logPrintf("Selected operation: %s%n", operation.toString());
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
@@ -290,7 +353,7 @@ public class ForwardGenerator extends AbstractGenerator {
           }
         } else {
           operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-          Log.logLine("Instantiation error for operation " + operation);
+          Log.logPrintf("Instantiation error for operation %s%n", operation);
           Log.logStackTrace(e);
           System.out.println("Instantiation error for operation " + operation);
           operation = null;
@@ -302,52 +365,50 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // add flags here
-    InputsAndSuccessFlag sequences;
+    InputsAndSuccessFlag inputs;
     try {
-      sequences = selectInputs(operation);
+      inputs = selectInputs(operation);
     } catch (Throwable e) {
       if (GenInputsAbstract.fail_on_generation_error) {
         throw new RandoopGenerationError(operation, e);
       } else {
         operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-        Log.logLine("Error selecting inputs for operation: " + operation);
+        Log.logPrintf("Error selecting inputs for operation: %s%n", operation);
         Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
         e.printStackTrace();
-        sequences = null;
+        return null;
       }
     }
-    if (sequences == null) {
-      return null;
-    }
 
-    if (!sequences.success) {
+    if (!inputs.success) {
       operationHistory.add(operation, OperationOutcome.NO_INPUTS_FOUND);
-      Log.logLine("Failed to find inputs for operation: " + operation);
+      Log.logPrintf("Failed to find inputs for operation: %s%n", operation);
       return null;
     }
 
-    Sequence concatSeq = Sequence.concatenate(sequences.sequences);
+    Sequence concatSeq = Sequence.concatenate(inputs.sequences);
 
     // Figure out input variables.
-    List<Variable> inputs = new ArrayList<>();
-    for (Integer oneinput : sequences.indices) {
-      Variable v = concatSeq.getVariable(oneinput);
-      inputs.add(v);
+    List<Variable> inputVars = new ArrayList<>();
+    for (Integer inputIndex : inputs.indices) {
+      Variable v = concatSeq.getVariable(inputIndex);
+      inputVars.add(v);
     }
 
-    Sequence newSequence = concatSeq.extend(operation, inputs);
+    Sequence newSequence = concatSeq.extend(operation, inputVars);
 
     // With .5 probability, do a primitive value heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
       newSequence = repeat(newSequence, operation, times);
-      Log.log("repeat-heuristic>>>" + times + newSequence.toCodeString());
+      Log.logPrintf("repeat-heuristic>>> %s %s%n", times, newSequence.toCodeString());
     }
 
-    // If parameterless operation, subsequence inputs will all be redundant, so just remove it from
-    // list of operations. These can only be static constant methods or no-argument constructors.
-    // XXX OK if we know constant, otherwise may depend on static state
+    // A parameterless operation (a static constant method or no-argument constructor) returns the
+    // same thing every time it is invoked. Since we have just invoked it, its result will be in the
+    // pool.
+    // There is no need to call this operation again, so remove it from the list of operations.
     if (operation.getInputTypes().isEmpty()) {
       operationHistory.add(operation, OperationOutcome.REMOVED);
       operations.remove(operation);
@@ -356,39 +417,31 @@ public class ForwardGenerator extends AbstractGenerator {
     // Discard if sequence is larger than size limit
     if (newSequence.size() > GenInputsAbstract.maxsize) {
       operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-      Log.logLine(
-          "Sequence discarded because size "
-              + newSequence.size()
-              + " exceeds maximum allowed size "
-              + GenInputsAbstract.maxsize);
+      Log.logPrintf(
+          "Sequence discarded because size %d exceeds maximum allowed size %d%n",
+          newSequence.size(), GenInputsAbstract.maxsize);
       return null;
     }
 
     randoopConsistencyTests(newSequence);
 
+    // Discard if sequence is a duplicate.
     if (this.allSequences.contains(newSequence)) {
       operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-      Log.logLine("Sequence discarded because the same sequence was previously created.");
+      Log.logPrintf("Sequence discarded because the same sequence was previously created.%n");
       return null;
     }
 
     this.allSequences.add(newSequence);
 
-    for (Sequence s : sequences.sequences) {
-      s.lastTimeUsed = java.lang.System.currentTimeMillis();
-    }
-
     randoopConsistencyTest2(newSequence);
 
-    if (Log.isLoggingOn()) { // guard so that avoid building string representation of sequence
-      Log.logLine(
-          String.format("Successfully created new unique sequence:%n%s%n", newSequence.toString()));
-    }
+    Log.logPrintf("Successfully created new unique sequence:%n%s%n", newSequence.toString());
 
     // Keep track of any input sequences that are used in this sequence.
 
-    // A test that consists of one of these sequences are probably redundant.
-    subsumed_sequences.addAll(sequences.sequences);
+    // A test that is a subsequence of the new one is redundant.
+    subsumed_sequences.addAll(inputs.sequences);
 
     return new ExecutableSequence(newSequence);
   }
@@ -481,19 +534,24 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
-  // This method is responsible for doing two things:
-  //
-  // 1. Selecting at random a collection of sequences that can be used to
-  // create input values for the given statement, and
-  //
-  // 2. Selecting at random valid indices to the above sequence specifying
-  // the values to be used as input to the statement.
-  //
-  // The selected sequences and indices are wrapped in an InputsAndSuccessFlag
-  // object and returned. If an appropriate collection of sequences and indices
-  // was not found (e.g. because there are no sequences in the componentManager
-  // that create values of some type required by the statement), the success
-  // flag of the returned object is false.
+  /**
+   * This method is responsible for doing two things:
+   *
+   * <ol>
+   *   <li>Selecting at random a collection of sequences that can be used to create input values for
+   *       the given statement, and
+   *   <li>Selecting at random valid indices to the above sequence specifying the values to be used
+   *       as input to the statement.
+   * </ol>
+   *
+   * <p>The selected sequences and indices are wrapped in an InputsAndSuccessFlag object and
+   * returned. If an appropriate collection of sequences and indices was not found (e.g. because
+   * there are no sequences in the componentManager that create values of some type required by the
+   * statement), the success flag of the returned object is false.
+   *
+   * @param operation the statement to analyze
+   * @return the selected sequences and indices
+   */
   @SuppressWarnings("unchecked")
   private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
 
@@ -501,7 +559,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // statement given as a parameter to the selectInputs method.
 
     TypeTuple inputTypes = operation.getInputTypes();
-    Log.logLine("selectInputs:  inputTypes=" + inputTypes);
+    Log.logPrintf("selectInputs:  inputTypes=%s%n", inputTypes);
 
     // The rest of the code in this method will attempt to create
     // a sequence that creates at least one value of type T for
@@ -549,7 +607,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // true if statement st represents an instance method, and we are
       // currently selecting a value to act as the receiver for the method.
-      boolean isReceiver = (i == 0 && (operation.isMessage()) && (!operation.isStatic()));
+      boolean isReceiver = (i == 0 && operation.isMessage() && !operation.isStatic());
 
       // If alias ratio is given, attempt with some probability to use a
       // variable already in S.
@@ -566,8 +624,7 @@ public class ForwardGenerator extends AbstractGenerator {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
-          candidateVars.add(
-              new ArrayListSimpleList<>(new ArrayList<>(typesToVars.getValues(match))));
+          candidateVars.add(new SimpleArrayList<Integer>(typesToVars.getValues(match)));
         }
 
         // If any type-compatible variables found, pick one at random as the
@@ -586,9 +643,9 @@ public class ForwardGenerator extends AbstractGenerator {
       if (!isReceiver
           && GenInputsAbstract.null_ratio != 0
           && Randomness.weightedCoinFlip(GenInputsAbstract.null_ratio)) {
-        Log.logLine("null-ratio option given. Randomly decided to use null as input.");
+        Log.logPrintf("null-ratio option given. Randomly decided to use null as input.%n");
         TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
-        Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
+        Sequence seq = new Sequence().extend(st, Collections.emptyList());
         variables.add(totStatements);
         sequences.add(seq);
         assert seq.size() == 1;
@@ -611,11 +668,12 @@ public class ForwardGenerator extends AbstractGenerator {
         // 1. If T=inputTypes[i] is an array type, ask the component manager for all sequences
         // of type T (list l1), but also try to directly build some sequences
         // that create arrays (list l2).
-        Log.logLine("Array creation heuristic: will create helper array of type " + inputType);
+        Log.logPrintf("Array creation heuristic: will create helper array of type %s%n", inputType);
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
         SimpleList<Sequence> l2 =
             HelperSequenceCreator.createArraySequence(componentManager, inputType);
         candidates = new ListOfLists<>(l1, l2);
+        Log.logPrintf("Array creation heuristic: " + candidates.size() + " candidates%n");
 
       } else if (inputType.isParameterized()
           && ((InstantiatedType) inputType)
@@ -624,8 +682,8 @@ public class ForwardGenerator extends AbstractGenerator {
         InstantiatedType classType = (InstantiatedType) inputType;
 
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
-        Log.logLine("Collection creation heuristic: will create helper of type " + classType);
-        ArrayListSimpleList<Sequence> l2 = new ArrayListSimpleList<>();
+        Log.logPrintf("Collection creation heuristic: will create helper of type %s%n", classType);
+        SimpleArrayList<Sequence> l2 = new SimpleArrayList<>();
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
         if (creationSequence != null) {
@@ -637,26 +695,27 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // 2. COMMON CASE: ask the component manager for all sequences that
         // yield the required type.
-        Log.logLine("Will query component set for objects of type " + inputType);
+        Log.logPrintf("Will query component set for objects of type %s%n", inputType);
         candidates = componentManager.getSequencesForType(operation, i, isReceiver);
       }
       assert candidates != null;
-      Log.logLine("number of candidate components: " + candidates.size());
+      Log.logPrintf("number of candidate components: %s%n", candidates.size());
 
       if (candidates.isEmpty()) {
         // We were not able to find (or create) any sequences of type inputTypes[i].
         // Try to use null if allowed.
         if (isReceiver) {
-          Log.logLine("No sequences of receiver type.");
+          Log.logPrintf("No sequences of receiver type.%n");
           return new InputsAndSuccessFlag(false, null, null);
         } else if (GenInputsAbstract.forbid_null) {
-          Log.logLine(
-              "No sequences of type, and forbid-null option is true. Failed to create new sequence.");
+          Log.logPrintf(
+              "No sequences of type, and forbid-null option is true. Failed to create new sequence.%n");
           return new InputsAndSuccessFlag(false, null, null);
         } else {
-          Log.logLine("Found no sequences of required type; will use null as " + i + "-th input");
+          Log.logPrintf(
+              "Found no sequences of required type; will use null as " + i + "-th input%n");
           TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
-          Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
+          Sequence seq = new Sequence().extend(st, Collections.emptyList());
           variables.add(totStatements);
           sequences.add(seq);
           assert seq.size() == 1;
@@ -669,9 +728,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // At this point, we have a list of candidate sequences and need to select a
       // randomly-chosen sequence from the list.
-      Pair<Variable, Sequence> varAndSeq = randomVariable(candidates, inputType, isReceiver);
-      Variable randomVariable = varAndSeq.a;
-      Sequence chosenSeq = varAndSeq.b;
+      VarAndSeq varAndSeq = randomVariable(candidates, inputType, isReceiver);
+      Variable randomVariable = varAndSeq.var;
+      Sequence chosenSeq = varAndSeq.seq;
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {
@@ -696,18 +755,40 @@ public class ForwardGenerator extends AbstractGenerator {
     return new InputsAndSuccessFlag(true, sequences, variables);
   }
 
-  Pair<Variable, Sequence> randomVariable(
-      SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
+  // A pair of a variable and a sequence
+  private static class VarAndSeq {
+    final Variable var;
+    final Sequence seq;
+
+    VarAndSeq(Variable var, Sequence seq) {
+      this.var = var;
+      this.seq = seq;
+    }
+  }
+
+  /**
+   * Return a variable of the given type.
+   *
+   * @param candidates the list to choose from (I think?)
+   * @param inputType the type of the chosen variable/sequence
+   * @param isReceiver whether the value will be used as a receiver
+   * @return a random variable of the given type, chosen from the candidates
+   */
+  VarAndSeq randomVariable(SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
+    // Log.logPrintf("entering randomVariable(%s)%n", inputType);
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
 
-      Sequence chosenSeq;
-      if (GenInputsAbstract.small_tests) {
-        chosenSeq = Randomness.randomMemberWeighted(candidates);
-      } else {
-        chosenSeq = Randomness.randomMember(candidates);
-      }
+      // if (Log.isLoggingOn()) {
+      //   Log.logPrintf("randomVariable: %d candidates%n", candidates.size());
+      //   for (int j = 0; j < candidates.size(); j++) {
+      //     String candIndented
+      //         = candidates.get(j).toString().trim().replace("\n", "\n            ");
+      //     Log.logPrintf("  cand #%d: %s%n", j, candIndented);
+      //   }
+      // }
 
-      Log.logLine("chosenSeq: " + chosenSeq);
+      Sequence chosenSeq = inputSequenceSelector.selectInputSequence(candidates);
+      Log.logPrintf("chosenSeq: %s%n", chosenSeq);
 
       // TODO: the last statement might not be active -- it might not create a usable variable of
       // such a type.  An example is a void method that is called with only null arguments.
@@ -726,8 +807,8 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
       if (isReceiver
-          && ((chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
-              || randomVariable.getType().isPrimitive()))) {
+          && (chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
+              || randomVariable.getType().isPrimitive())) {
         System.out.println();
         System.out.println("Selected null or a primitive as the receiver for a method call.");
         // System.out.printf("  operation = %s%n", operation);
@@ -742,23 +823,23 @@ public class ForwardGenerator extends AbstractGenerator {
             "    isNonreceivingInitialization = %s%n",
             chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
         continue;
-        // throw new BugInRandoopException(
+        // throw new RandoopBug(
         //     "Selected null or primitive value as the receiver for a method call");
       }
 
-      return new Pair<>(randomVariable, chosenSeq);
+      return new VarAndSeq(randomVariable, chosenSeq);
     }
     // Can't get here unless isReceiver is true.  TODO: fix design so this cannot happen.
     assert isReceiver;
     // Try every element of the list, in order.
-    List<Pair<Variable, Sequence>> validResults = new ArrayList<>();
+    List<VarAndSeq> validResults = new ArrayList<>();
     for (int i = 0; i < candidates.size(); i++) {
       Sequence s = candidates.get(i);
       Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);
-      validResults.add(new Pair<>(randomVariable, s));
+      validResults.add(new VarAndSeq(randomVariable, s));
     }
     if (validResults.size() == 0) {
-      throw new BugInRandoopException(
+      throw new RandoopBug(
           String.format(
               "Failed to select %svariable with input type %s",
               (isReceiver ? "receiver " : ""), inputType));

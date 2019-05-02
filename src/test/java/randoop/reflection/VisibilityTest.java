@@ -44,14 +44,9 @@ public class VisibilityTest {
    * same package
    */
   @Test
-  public void testStandardPackagePrivateVisibility() {
+  public void testStandardPackagePrivateVisibility() throws ClassNotFoundException {
 
-    Class<?> c = null;
-    try {
-      c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
-    } catch (ClassNotFoundException e) {
-      fail("can't access class-under-test: PackagePrivateClass");
-    }
+    Class<?> c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
@@ -104,7 +99,7 @@ public class VisibilityTest {
     }
 
     VisibilityPredicate visibility =
-        new PackageVisibilityPredicate("randoop.reflection.visibilitytest");
+        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection.visibilitytest");
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
@@ -159,13 +154,8 @@ public class VisibilityTest {
    * public visibility
    */
   @Test
-  public void testPublicOnlyPackagePrivateVisibility() {
-    Class<?> c = null;
-    try {
-      c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
-    } catch (ClassNotFoundException e) {
-      fail("can't access class-under-test: PackagePrivateClass");
-    }
+  public void testPublicOnlyPackagePrivateVisibility() throws ClassNotFoundException {
+    Class<?> c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
@@ -203,7 +193,7 @@ public class VisibilityTest {
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
       int mods = m.getModifiers() & Modifier.methodModifiers();
-      if (!m.isBridge() && !m.isSynthetic() && (isPubliclyVisible(mods))) {
+      if (!m.isBridge() && !m.isSynthetic() && isPubliclyVisible(mods)) {
         expectedMethods.add(m);
       }
     }
@@ -308,7 +298,7 @@ public class VisibilityTest {
     assertFalse("should have nonempty expected  method set", expectedMethods.isEmpty());
 
     VisibilityPredicate visibility =
-        new PackageVisibilityPredicate("randoop.reflection.visibilitytest");
+        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection.visibilitytest");
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
@@ -404,7 +394,7 @@ public class VisibilityTest {
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
       int mods = m.getModifiers();
-      if (!m.isBridge() && !m.isSynthetic() && (Modifier.isPublic(mods))) {
+      if (!m.isBridge() && !m.isSynthetic() && Modifier.isPublic(mods)) {
         expectedMethods.add(m);
       }
     }
@@ -458,13 +448,10 @@ public class VisibilityTest {
   }
 
   @Test
-  public void checkFieldAccessibility() {
-    Class<?> c = null;
-    try {
-      c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
-    } catch (ClassNotFoundException e) {
-      fail("can't access class-under-test: PackagePrivateClass");
-    }
+  public void checkFieldAccessibility()
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+          InvocationTargetException {
+    Class<?> c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     Constructor<?> con = null;
@@ -478,31 +465,21 @@ public class VisibilityTest {
 
     con.setAccessible(true);
 
-    Object o = null;
-    try {
-      o = con.newInstance(10);
-    } catch (InstantiationException e) {
-      fail("constructor failed");
-    } catch (IllegalAccessException e) {
-      fail("cannot access constructor");
-    } catch (IllegalArgumentException e) {
-      fail("bad argument to constructor");
-    } catch (InvocationTargetException e) {
-      fail("constructor threw exception");
-    }
+    Object o = con.newInstance(10);
 
     for (Field f : c.getDeclaredFields()) {
       int mods = f.getModifiers() & Modifier.fieldModifiers();
       if (isPackageVisible(mods)) {
         List<TypedOperation> ops = getOperations(f, declaringType);
         for (TypedOperation op : ops) {
+          @SuppressWarnings("UnusedVariable")
           ExecutionOutcome result;
           if (op.getInputTypes().size() == 2) {
             Object[] input = new Object[] {o, 10};
-            result = op.execute(input, null);
+            result = op.execute(input);
           } else {
             Object[] input = new Object[] {o};
-            result = op.execute(input, null);
+            result = op.execute(input);
           }
         }
       }

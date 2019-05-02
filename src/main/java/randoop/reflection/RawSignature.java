@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 
 /**
  * Represents the raw type signature for an {@code java.lang.reflect.AccessibleObject}. This
  * signature consists of the classname as a fully-qualified raw type, the method name, and the
- * argument types as fully-qualified raw types.
+ * argument types as fully-qualified raw types. It does not include the method or constructor name.
  *
  * <p>The raw type signature for a constructor {@code C()} is {@code C()} instead of the reflection
  * form {@code C.<init>()}. Also, the name and the classname of a constructor are the same.
@@ -113,9 +113,9 @@ public class RawSignature {
     }
 
     return ((packageName == null) ? "" : packageName + ".")
-        + ((classname.equals(name)) ? name : classname + "." + name)
+        + (classname.equals(name) ? name : classname + "." + name)
         + "("
-        + UtilMDE.join(typeNames, ",")
+        + UtilPlume.join(typeNames, ",")
         + ")";
   }
 
@@ -171,7 +171,7 @@ public class RawSignature {
     for (int i = 0; i < parameterTypes.length; i++) {
       paramDeclarations.add(parameterTypes[i].getCanonicalName() + " " + parameterNames.get(i));
     }
-    return "(" + UtilMDE.join(paramDeclarations, ", ") + ")";
+    return "(" + UtilPlume.join(paramDeclarations, ", ") + ")";
   }
 
   /**

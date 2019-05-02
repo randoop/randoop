@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import plume.EntryReader;
+import org.plumelib.util.EntryReader;
 import randoop.Globals;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
@@ -41,6 +41,7 @@ public class ForwardExplorerPerformanceTest {
     optionsCache.restoreState();
   }
 
+  @SuppressWarnings("ModifiedButNotUsed")
   private static long performanceMultiplier() {
     String foo = "make sure that the loop doesn't get optimized away";
     List<String> list = new ArrayList<>();

@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import randoop.reflection.ReflectionPredicate;
 import randoop.types.Type;
 
@@ -18,7 +17,7 @@ import randoop.types.Type;
  * is the list of input types, and T is the output type. The input types are represented by an
  * ordered list of {@link Type} objects, and the output type is a single {@link Type} object.
  *
- * <p>For a non-static method call or instance field access, the first input type is always the
+ * <p>For a non-static method call or an instance field access, the first input type is always the
  * declaring class of the method or field. If we have a method {@code int A.m(double d)}, it is
  * represented as an operation m : [A, double] &rarr; int. A value, such as an int or enum constant,
  * can be represented as an operation with no input types, and its own type as the output type. So,
@@ -26,8 +25,8 @@ import randoop.types.Type;
  * by {@link NonreceiverTerm} objects.
  *
  * <p>When an Operation is used in a statement the actual inputs have to be identified. Execution of
- * the statement will call {@link CallableOperation#execute(Object[], PrintStream)} with concrete
- * values for each of the inputs.
+ * the statement will call {@link CallableOperation#execute(Object[])} with concrete values for each
+ * of the inputs.
  *
  * <p>To support text-based serialization, an implementing class C should also provide:
  *

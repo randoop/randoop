@@ -6,18 +6,27 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
@@ -56,8 +65,8 @@ public class SpecificationCollection {
   /**
    * Creates a {@link SpecificationCollection} for the given specification map.
    *
-   * <p>This constructor is used internally. It is only accessible to allow testing. Clients should
-   * use {@link #create(List)} instead.
+   * <p>This constructor is used internally. It is only accessible (package-protected) to allow
+   * testing. Clients should use {@link #create(List)} instead.
    *
    * @param specificationMap the map from method or constructor to {@link OperationSpecification}
    * @param signatureToMethods the multimap from a signature to methods with with the signature
@@ -80,47 +89,18 @@ public class SpecificationCollection {
   /**
    * Creates a {@link SpecificationCollection} from the list of JSON specification files.
    *
-   * @param specificationFiles the files of serialized specifications
+   * @param specificationFiles files containing serialized specifications
    * @return the {@link SpecificationCollection} built from the serialized {@link
    *     OperationSpecification} objects, or null if the argument is null
    */
-  public static SpecificationCollection create(List<File> specificationFiles) {
+  public static SpecificationCollection create(List<Path> specificationFiles) {
     if (specificationFiles == null) {
       return null;
     }
     MultiMap<OperationSignature, Method> signatureToMethods = new MultiMap<>();
     Map<AccessibleObject, OperationSpecification> specificationMap = new LinkedHashMap<>();
-    for (File specificationFile : specificationFiles) {
-
-      /*
-       * Read the specifications from the file
-       */
-      List<OperationSpecification> specificationList = readSpecificationFile(specificationFile);
-
-      try {
-        for (OperationSpecification specification : specificationList) {
-          OperationSignature operation = specification.getOperation();
-
-          // Check for bad input
-          if (operation == null) {
-            throw new Error("operation is null for specification " + specification);
-          }
-          if (specification.getIdentifiers().hasDuplicatedName()) {
-            throw new RandoopConditionError(
-                "Duplicate name in specification: " + specification.getOperation());
-          }
-
-          AccessibleObject accessibleObject = getAccessibleObject(operation);
-          specificationMap.put(accessibleObject, specification);
-          if (accessibleObject instanceof Method) {
-            OperationSignature signature = OperationSignature.of(accessibleObject);
-            signatureToMethods.add(signature, (Method) accessibleObject);
-          }
-        }
-      } catch (RandoopConditionError e) {
-        e.setFile(specificationFile);
-        throw e;
-      }
+    for (Path specificationFile : specificationFiles) {
+      readSpecificationFile(specificationFile, specificationMap, signatureToMethods);
     }
     Map<AccessibleObject, Set<Method>> overridden = buildOverridingMap(signatureToMethods);
     return new SpecificationCollection(specificationMap, signatureToMethods, overridden);
@@ -177,7 +157,7 @@ public class SpecificationCollection {
    */
   private static AccessibleObject getAccessibleObject(OperationSignature operation) {
     if (operation.isValid()) {
-      List<String> paramTypeNames = operation.getParameterTypeNames();
+      List<@ClassGetName String> paramTypeNames = operation.getParameterTypeNames();
       Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
       try {
         for (int i = 0; i < argTypes.length; i++) {
@@ -190,7 +170,8 @@ public class SpecificationCollection {
           return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
         }
       } catch (Throwable e) {
-        throw new RandoopConditionError("Could not load specification operation: " + operation, e);
+        throw new RandoopSpecificationError(
+            "Could not load specification operation: " + operation, e);
       }
     }
     return null;
@@ -202,29 +183,103 @@ public class SpecificationCollection {
       (new TypeToken<List<OperationSpecification>>() {});
 
   /**
-   * Reads a list of {@link OperationSpecification} objects from the given file.
+   * Reads {@link OperationSpecification} objects from the given file, and adds them to the other
+   * two arguments, which are modified by side effect.
    *
-   * @param specificationFile the JSON file ofON {@link OperationSpecification} objects
-   * @return the list of {@link OperationSpecification} object from the file
+   * @param specificationFile the JSON file of {@link OperationSpecification} objects
+   * @param specificationMap side-effected by this method
+   * @param signatureToMethods side-effected by this method
    */
   @SuppressWarnings("unchecked")
-  private static List<OperationSpecification> readSpecificationFile(File specificationFile) {
+  private static void readSpecificationFile(
+      Path specificationFile,
+      Map<AccessibleObject, OperationSpecification> specificationMap,
+      MultiMap<OperationSignature, Method> signatureToMethods) {
+    if (specificationFile.toString().toLowerCase().endsWith(".zip")) {
+      readSpecificationZipFile(specificationFile, specificationMap, signatureToMethods);
+      return;
+    }
 
-    try {
-      List<OperationSpecification> specificationList = new ArrayList<>();
-      Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-      try (BufferedReader reader = Files.newBufferedReader(specificationFile.toPath(), UTF_8)) {
-        specificationList.addAll(
-            (List<OperationSpecification>) gson.fromJson(reader, LIST_OF_OS_TYPE_TOKEN.getType()));
+    Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+    try (BufferedReader reader = Files.newBufferedReader(specificationFile, UTF_8)) {
+      List<OperationSpecification> specificationList =
+          gson.fromJson(reader, LIST_OF_OS_TYPE_TOKEN.getType());
+
+      for (OperationSpecification specification : specificationList) {
+        OperationSignature operation = specification.getOperation();
+
+        // Check for bad input
+        if (operation == null) {
+          throw new Error("operation is null for specification " + specification);
+        }
+        String duplicateName = specification.getIdentifiers().duplicateName();
+        if (duplicateName != null) {
+          throw new RandoopSpecificationError(
+              "Duplicate name \"" + duplicateName + "\" in specification: " + specification);
+        }
+
+        AccessibleObject accessibleObject = getAccessibleObject(operation);
+        specificationMap.put(accessibleObject, specification);
+        if (accessibleObject instanceof Method) {
+          OperationSignature signature = OperationSignature.of(accessibleObject);
+          signatureToMethods.add(signature, (Method) accessibleObject);
+        }
       }
-      return specificationList;
     } catch (IOException e) {
-      throw new RandoopConditionError("Unable to read specification file " + specificationFile, e);
-    } catch (RandoopConditionError e) {
+      throw new RandoopSpecificationError(
+          "Unable to read specification file " + specificationFile, e);
+    } catch (RandoopSpecificationError e) {
       e.setFile(specificationFile);
       throw e;
     } catch (Throwable e) {
-      throw new RandoopConditionError("Bad specification file " + specificationFile, e);
+      e.printStackTrace();
+      throw new RandoopSpecificationError("Bad specification file " + specificationFile, e);
+    }
+  }
+
+  /**
+   * Reads {@link OperationSpecification} objects from all the subfiles of the given zip file, and
+   * adds them to the other two arguments, which are modified by side effect.
+   *
+   * @param specificationZipFile a zip file containing files that contain {@link
+   *     OperationSpecification} objects
+   * @param specificationMap side-effected by this method
+   * @param signatureToMethods side-effected by this method
+   */
+  private static void readSpecificationZipFile(
+      Path specificationZipFile,
+      final Map<AccessibleObject, OperationSpecification> specificationMap,
+      final MultiMap<OperationSignature, Method> signatureToMethods) {
+    Map<String, ?> myEmptyMap = Collections.emptyMap();
+    FileSystem zipFS;
+    try {
+      URI uri = URI.create("jar:" + specificationZipFile.toUri().toString());
+      zipFS = FileSystems.newFileSystem(uri, myEmptyMap);
+      for (Path root : zipFS.getRootDirectories()) {
+        Files.walkFileTree(
+            root,
+            new SimpleFileVisitor<Path>() {
+              @Override
+              public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                  throws IOException {
+                // You can do anything you want with the path here
+                readSpecificationFile(file, specificationMap, signatureToMethods);
+                return FileVisitResult.CONTINUE;
+              }
+
+              @Override
+              public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                  throws IOException {
+                if (dir.endsWith("__MACOSX")) {
+                  return FileVisitResult.SKIP_SUBTREE;
+                }
+                return super.preVisitDirectory(dir, attrs);
+              }
+            });
+      }
+    } catch (IOException e) {
+      throw new RandoopSpecificationError(
+          "Unable to read specification file " + specificationZipFile, e);
     }
   }
 
@@ -246,31 +301,31 @@ public class SpecificationCollection {
    *       randoop.condition.GuardThrowsPair}
    * </ul>
    *
-   * @param accessibleObject the reflection object for a constructor or method
+   * @param executable the reflection object for a constructor or method
    * @return the {@link ExecutableSpecification} for the specifications of the given method or
    *     constructor
    */
-  public ExecutableSpecification getExecutableSpecification(AccessibleObject accessibleObject) {
+  public ExecutableSpecification getExecutableSpecification(Executable executable) {
 
-    // Check if accessibleObject already has an ExecutableSpecification object
-    ExecutableSpecification execSpec = getExecutableSpecificationCache.get(accessibleObject);
+    // Check if executable already has an ExecutableSpecification object
+    ExecutableSpecification execSpec = getExecutableSpecificationCache.get(executable);
     if (execSpec != null) {
       return execSpec;
     }
 
     // Otherwise, build a new one.
-    OperationSpecification specification = specificationMap.get(accessibleObject);
+    OperationSpecification specification = specificationMap.get(executable);
     if (specification == null) {
       execSpec = new ExecutableSpecification();
     } else {
       execSpec =
           SpecificationTranslator.createExecutableSpecification(
-              accessibleObject, specification, compiler);
+              executable, specification, compiler);
     }
 
-    if (accessibleObject instanceof Method) {
-      Method method = (Method) accessibleObject;
-      Set<Method> parents = overridden.get(accessibleObject);
+    if (executable instanceof Method) {
+      Method method = (Method) executable;
+      Set<Method> parents = overridden.get(executable);
       // Parents is null in some tests.  Is it ever null other than that?
       if (parents == null) {
         Set<Method> sigSet = signatureToMethods.getValues(OperationSignature.of(method));
@@ -280,7 +335,7 @@ public class SpecificationCollection {
         }
       }
       if (parents == null) {
-        throw new Error("parents = null (test #2) for " + accessibleObject);
+        throw new Error("parents = null (test #2) for " + executable);
       }
       if (parents != null) {
         for (Method parent : parents) {
@@ -290,7 +345,7 @@ public class SpecificationCollection {
       }
     }
 
-    getExecutableSpecificationCache.put(accessibleObject, execSpec);
+    getExecutableSpecificationCache.put(executable, execSpec);
     return execSpec;
   }
 }

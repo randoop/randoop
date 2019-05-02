@@ -1,7 +1,5 @@
 package randoop.instrument;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Method;
@@ -10,28 +8,30 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.bcel.generic.Type;
 import org.plumelib.bcelutil.BcelUtil;
-import plume.EntryReader;
+import org.plumelib.util.EntryReader;
 
 /**
  * Provides the methods {@link #readReplacements(Reader, String)} and {@link
- * #readReplacements(File)} that read a replacecall agent replacement file and populate the method
+ * #readReplacements(Path)} that read a replacecall agent replacement file and populate the method
  * replacement map used by the agent. See the <a
  * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
  * documentation</a> for the file format.
  */
 public class ReplacementFileReader {
 
-  /** Regex for Java identifiers */
+  /** Regex for Java identifiers. */
   public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**
@@ -78,9 +78,11 @@ public class ReplacementFileReader {
    * @throws IOException if there is an error reading the file
    * @see #readReplacements(Reader, String)
    */
-  static ConcurrentHashMap<MethodSignature, MethodSignature> readReplacements(File replacementFile)
+  static HashMap<MethodSignature, MethodSignature> readReplacements(Path replacementFile)
       throws IOException, ReplacementFileException {
-    return readReplacements(new FileReader(replacementFile), replacementFile.getName());
+    return readReplacements(
+        Files.newBufferedReader(replacementFile, StandardCharsets.UTF_8),
+        replacementFile.toString());
   }
 
   /**
@@ -94,9 +96,9 @@ public class ReplacementFileReader {
    * @return the method replacement map constructed from the file
    * @throws IOException if there is an error while reading the file
    */
-  static ConcurrentHashMap<MethodSignature, MethodSignature> readReplacements(
-      Reader in, String filename) throws ReplacementFileException, IOException {
-    ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap = new ConcurrentHashMap<>();
+  static HashMap<MethodSignature, MethodSignature> readReplacements(Reader in, String filename)
+      throws ReplacementFileException, IOException {
+    HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
     try (EntryReader reader = new EntryReader(in, filename, "//.*$", null)) {
       for (String line : reader) {
         String trimmed = line.trim();
@@ -155,7 +157,7 @@ public class ReplacementFileReader {
    *     class is not found, or the method does not exist
    */
   private static void addMethodReplacement(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      HashMap<MethodSignature, MethodSignature> replacementMap,
       String originalSignature,
       String replacementSignature)
       throws ReplacementException, NoSuchMethodException, ClassNotFoundException {
@@ -194,7 +196,7 @@ public class ReplacementFileReader {
    * @throws ReplacementException if a replacement already exists for {@code original}
    */
   private static void addReplacement(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      HashMap<MethodSignature, MethodSignature> replacementMap,
       MethodSignature original,
       MethodSignature replacement)
       throws ReplacementException {
@@ -230,9 +232,7 @@ public class ReplacementFileReader {
    *     the classpath
    */
   private static void addReplacementsForClassOrPackage(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
-      String original,
-      String replacement)
+      HashMap<MethodSignature, MethodSignature> replacementMap, String original, String replacement)
       throws ReplacementException, IOException, ClassNotFoundException {
 
     // Check whether the replacement string corresponds to a class (that can be loaded)
@@ -278,7 +278,7 @@ public class ReplacementFileReader {
    * @throws ReplacementException if a replacement method is not static, or has no matching original
    */
   private static void addReplacementsForClass(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      HashMap<MethodSignature, MethodSignature> replacementMap,
       String originalClassname,
       Class<?> replacementClass)
       throws ReplacementException {
@@ -328,19 +328,19 @@ public class ReplacementFileReader {
    * bootclasspath to find the replacement package.
    *
    * <p>Visits each class of the package on the classpath and applies {@link
-   * #addReplacementsForClass(ConcurrentHashMap, String, Class)} to add the method replacements.
+   * #addReplacementsForClass(HashMap, String, Class)} to add the method replacements.
    *
-   * <p>Contrasts with {@link #addReplacementsForPackage(ConcurrentHashMap, String, String,
-   * ClassLoader)} that searches for the package using a class loader.
+   * <p>Contrasts with {@link #addReplacementsForPackage(HashMap, String, String, ClassLoader)} that
+   * searches for the package using a class loader.
    *
    * @param replacementMap the method replacement map to which new replacements are added
    * @param originalPackage the original package name
    * @param replacementPackage the replacement package name
    * @throws ReplacementException if no package corresponding to the replacement is found
-   * @see #addReplacementsForClassOrPackage(ConcurrentHashMap, String, String)
+   * @see #addReplacementsForClassOrPackage(HashMap, String, String)
    */
   private static void addReplacementsForPackage(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      HashMap<MethodSignature, MethodSignature> replacementMap,
       String originalPackage,
       String replacementPackage)
       throws ReplacementException, ClassNotFoundException {
@@ -348,30 +348,30 @@ public class ReplacementFileReader {
     String javaHome = System.getProperty("java.home");
 
     // Explore the whole classpath to ensure all replacements are found.
-    for (String pathString : bootclasspath.split(File.pathSeparator)) {
+    for (String pathString : bootclasspath.split(java.io.File.pathSeparator)) {
       // Replacements won't be found in java.home.
       if (pathString.startsWith(javaHome)) {
         continue;
       }
-      File file = new File(pathString);
-      if (!file.exists()) {
+      Path file = Paths.get(pathString);
+      if (!Files.exists(file)) {
         continue;
       }
-      if (file.isDirectory()) {
-        Path path = file.toPath();
-        Path replacementPath = path.resolve(replacementPackage.replace('.', File.separatorChar));
+      if (Files.isDirectory(file)) {
+        Path path = file;
+        Path replacementPath =
+            path.resolve(replacementPackage.replace('.', java.io.File.separatorChar));
         if (Files.exists(replacementPath) && Files.isDirectory(replacementPath)) {
           addReplacementsForPackage(
-              replacementMap, originalPackage, replacementPackage, replacementPath.toFile());
+              replacementMap, originalPackage, replacementPackage, replacementPath);
         }
       } else { // or a jar file
         try {
-          JarFile jarFile = new JarFile(file);
+          JarFile jarFile = new JarFile(file.toFile());
           addReplacementsFromAllClassesOfPackage(
               replacementMap, originalPackage, replacementPackage, jarFile);
         } catch (IOException e) {
-          throw new ReplacementException(
-              "Error reading jar file from boot classpath: " + file.getName(), e);
+          throw new ReplacementException("Error reading jar file from boot classpath: " + file, e);
         }
       }
     }
@@ -382,10 +382,10 @@ public class ReplacementFileReader {
    * {@code ClassLoader} to find the replacement package.
    *
    * <p>Visits each class of the package on the classpath and applies {@link
-   * #addReplacementsForClass(ConcurrentHashMap, String, Class)} to add the method replacements.
+   * #addReplacementsForClass(HashMap, String, Class)} to add the method replacements.
    *
-   * <p>Contrasts with {@link #addReplacementsForPackage(ConcurrentHashMap, String, String)} that
-   * searches for the package on the boot classpath.
+   * <p>Contrasts with {@link #addReplacementsForPackage(HashMap, String, String)} that searches for
+   * the package on the boot classpath.
    *
    * @param replacementMap the method replacement map to which new replacements are added
    * @param originalPackage the original package name
@@ -393,10 +393,10 @@ public class ReplacementFileReader {
    * @param loader the {@code ClassLoader}
    * @throws IOException if no package corresponding to replacement is found
    * @throws ReplacementException if no replacements are found in the replacement package
-   * @see #addReplacementsForClassOrPackage(ConcurrentHashMap, String, String)
+   * @see #addReplacementsForClassOrPackage(HashMap, String, String)
    */
   private static void addReplacementsForPackage(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      HashMap<MethodSignature, MethodSignature> replacementMap,
       String originalPackage,
       String replacementPackage,
       ClassLoader loader)
@@ -414,11 +414,12 @@ public class ReplacementFileReader {
           addReplacementsFromAllClassesOfPackage(
               replacementMap, originalPackage, replacementPackage, jarFile);
         } else {
-          // The subclass for directories is an internal Java class and its use results in compiler warnings.
+          // The subclass for directories is an internal Java class and its use results in compiler
+          // warnings.
           // It seems to work to assume that connection is a directory, and let an exception occur
           // if it is not.
-          File path = new File(URLDecoder.decode(url.getPath(), "UTF-8"));
-          if (path.exists() && path.isDirectory()) {
+          Path path = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
+          if (Files.exists(path) && Files.isDirectory(path)) {
             addReplacementsForPackage(replacementMap, originalPackage, replacementPackage, path);
             found = true;
           }
@@ -450,25 +451,25 @@ public class ReplacementFileReader {
    * @param replacementDirectory the directory for the replacement package, must be non-null
    * @throws ReplacementException if a replacement method is not valid
    * @throws ClassNotFoundException if a replacement or package class is not found
-   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String)
-   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String, ClassLoader)
+   * @see #addReplacementsForPackage(HashMap, String, String)
+   * @see #addReplacementsForPackage(HashMap, String, String, ClassLoader)
    */
   private static void addReplacementsForPackage(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      HashMap<MethodSignature, MethodSignature> replacementMap,
       String originalPackage,
       String replacementPackage,
-      File replacementDirectory)
+      Path replacementDirectory)
       throws ReplacementException, ClassNotFoundException {
 
-    for (String filename : replacementDirectory.list()) {
+    for (String filename : replacementDirectory.toFile().list()) {
       if (filename.endsWith(".class")) {
         final String classname = filename.substring(0, filename.length() - 6);
         final String originalClassname = originalPackage + "." + classname;
         final String replacementClassname = replacementPackage + "." + classname;
         addReplacementsForClass(replacementMap, originalClassname, replacementClassname);
       } else {
-        File subdirectory = new File(replacementDirectory, filename);
-        if (subdirectory.exists() && subdirectory.isDirectory()) {
+        Path subdirectory = new java.io.File(replacementDirectory.toFile(), filename).toPath();
+        if (Files.exists(subdirectory) && Files.isDirectory(subdirectory)) {
           addReplacementsForPackage(
               replacementMap,
               originalPackage + filename,
@@ -481,18 +482,18 @@ public class ReplacementFileReader {
 
   /**
    * For each class of the replacement package in the given jar file, calls {@link
-   * #addReplacementsForClass(ConcurrentHashMap, String, String)} to add method replacements from
-   * the original package to the replacement package.
+   * #addReplacementsForClass(HashMap, String, String)} to add method replacements from the original
+   * package to the replacement package.
    *
    * @param replacementMap the method replacement map to which new replacements are added
    * @param originalPackage the original package name
    * @param replacementPackage the replacement package name
    * @param jarFile the jar file to search
-   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String)
-   * @see #addReplacementsForPackage(ConcurrentHashMap, String, String, ClassLoader)
+   * @see #addReplacementsForPackage(HashMap, String, String)
+   * @see #addReplacementsForPackage(HashMap, String, String, ClassLoader)
    */
   private static void addReplacementsFromAllClassesOfPackage(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      HashMap<MethodSignature, MethodSignature> replacementMap,
       String originalPackage,
       String replacementPackage,
       JarFile jarFile)
@@ -522,7 +523,7 @@ public class ReplacementFileReader {
    * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
    */
   private static void addReplacementsForClass(
-      ConcurrentHashMap<MethodSignature, MethodSignature> replacementMap,
+      HashMap<MethodSignature, MethodSignature> replacementMap,
       String originalClassname,
       String replacementClassname)
       throws ClassNotFoundException, ReplacementException {
@@ -536,7 +537,7 @@ public class ReplacementFileReader {
 
   /**
    * Exception to represent an error discovered while reading a replacement file. Used to represent
-   * errors within the reader methods where file name and line details are not available. Repackaged
+   * errors within the reader methods where file name and line number are not available. Repackaged
    * as a {@link ReplacementFileException} in {@link ReplacementFileReader#readReplacements(Reader,
    * String)}.
    */

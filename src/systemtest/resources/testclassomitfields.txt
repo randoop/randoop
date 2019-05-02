@@ -1,3 +1,0 @@
-java2.util2.Collections.EMPTY_SET
-java2.util2.Collections.EMPTY_LIST
-java2.util2.Collections.EMPTY_MAP

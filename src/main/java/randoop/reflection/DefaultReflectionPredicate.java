@@ -5,15 +5,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
 import randoop.CheckRep;
 import randoop.util.Log;
 
 /**
- * Default implementations of methods that indicate whether a class, method, constructor, or field
- * should be used in Randoop's exploration. Returns true for public members, with some exceptions
- * (see {@link #doNotUseSpecialCase} method).
+ * Default implementations of methods that indicate what is "under test": whether a class, method,
+ * constructor, or field should be used in Randoop's exploration. Returns true for public members,
+ * with some exceptions (see {@link #doNotUseSpecialCase} method).
  *
  * <p>If a method has the {@code @CheckRep} annotation, returns false (the method will be used as a
  * contract checker, not as a method under test).
@@ -24,11 +23,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * The set of fully-qualified field names to omit from generated tests. See {@link
    * randoop.main.GenInputsAbstract#omit_field}.
    */
-  private Set<String> omitFields;
+  private Collection<String> omitFields;
 
   /** Create a reflection predicate. */
   public DefaultReflectionPredicate() {
-    this(new HashSet<String>());
+    this(null);
   }
 
   /**
@@ -37,7 +36,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * @param omitFields set of fully-qualified field names to omit
    */
-  public DefaultReflectionPredicate(Set<String> omitFields) {
+  public DefaultReflectionPredicate(Collection<String> omitFields) {
     super();
     this.omitFields = omitFields;
   }
@@ -70,10 +69,8 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
         && paramTypes.length == 1
         && paramTypes[0].isArray()
         && paramTypes[0].getComponentType().equals(String.class)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: main method not applicable to unit testing.");
-      }
+      // Main method is not applicable to unit testing.
+      Log.logPrintf("Will not use main method: %s%n", m);
       return false;
     }
 
@@ -81,23 +78,18 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       if (discardBridge(m)) {
         return false;
       } else {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Using visibility bridge method: " + m.toString());
-        }
+        Log.logPrintf("Using visibility bridge method: %s%n", m);
       }
     }
 
     if (!m.isBridge() && m.isSynthetic()) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: it's a synthetic method");
-      }
+      Log.logPrintf("Will not use synthetic method: %s%n", m);
       return false;
     }
 
-    // This is a special case handled here to avoid printing the reason for exclusion.
-    // Most Object methods are excluded. Allow getClass. Equals is used in contracts.
-    // The rest are problematic (toString), involve threads, waiting, or are somehow problematic.
+    // Within Object, consider only getClass to be under test (even if not specified by user).
+    // Exclude all other methods.  They involve threads, waiting, or are somehow problematic
+    // (e.g. toString).
     if (m.getDeclaringClass().equals(java.lang.Object.class)) {
       return m.getName().equals("getClass");
     }
@@ -113,10 +105,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
     String reason = doNotUseSpecialCase(m);
     if (reason != null) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: " + reason);
-      }
+      Log.logPrintf("Will not use: %s%n  reason: %s%n", m, reason);
       return false;
     }
 
@@ -154,10 +143,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    */
   private boolean discardBridge(Method m) {
     if (!isVisibilityBridge(m)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: it's a bridge method");
-      }
+      Log.logPrintf("Will not use bridge method: %s%n", m);
       return true;
     } else if (m.getDeclaringClass().isAnonymousClass()
         && m.getDeclaringClass().getEnclosingClass() != null
@@ -171,32 +157,50 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * Determines whether a bridge method is a <i>visibility</i> bridge, which allows access to a
    * definition of the method in a non-visible superclass.
    *
-   * <p>To recognize a visibility bridge, it is sufficient to run up the superclass chain and
-   * confirm that the visibility of the class changes to non-public. If it does not, then the bridge
-   * method is not a visibility bridge.
+   * <p>The method is a visibility bridge if this class is public and some superclass defines the
+   * method as non-public.
    *
    * @param m the bridge method to test
-   * @return true if {@code m} is not a visibility bridge, and false otherwise
+   * @return true iff {@code m} is a visibility bridge
    * @throws Error if a {@link SecurityException} is thrown when accessing superclass methods
    */
   private boolean isVisibilityBridge(Method m) throws Error {
-    Method method = m;
     Class<?> c = m.getDeclaringClass();
     if (!isPublic(c)) {
       return false;
     }
-    while (c != null && isPublic(c) && method != null && method.isBridge()) {
-      c = c.getSuperclass();
-      try {
-        method = c.getDeclaredMethod(m.getName(), m.getParameterTypes());
-      } catch (NoSuchMethodException e) {
-        method = null;
-      } catch (SecurityException e) {
-        String msg = "Cannot access method " + m.getName() + " in class " + c.getCanonicalName();
-        throw new Error(msg);
+    c = c.getSuperclass();
+    while (c != null) {
+      if (!isPublic(c) && definesNonBridgeMethod(c, m)) {
+        // System.out.printf("class %s defines non-bridge method %s%n", c, m);
+        return true;
       }
+      c = c.getSuperclass();
     }
-    return !isPublic(c);
+    // System.out.printf("Never found superclass with definition of %s%n", m);
+    return false;
+  }
+
+  /**
+   * Returns true if the class defines the given method, not as a bridge method. Returns false if
+   * the class does not define the given method, or if the class defines the method as a bridge
+   * method. Ignores inheritance of methods.
+   *
+   * @param c the possibly-containing class
+   * @param goalMethod the method to search for
+   * @return true if the class defines the method
+   */
+  private boolean definesNonBridgeMethod(Class<?> c, Method goalMethod) {
+    try {
+      Method defined = c.getDeclaredMethod(goalMethod.getName(), goalMethod.getParameterTypes());
+      return !defined.isBridge();
+    } catch (NoSuchMethodException e) {
+      return false;
+    } catch (SecurityException e) {
+      String msg =
+          "Cannot access method " + goalMethod.getName() + " in class " + c.getCanonicalName();
+      throw new Error(msg);
+    }
   }
 
   /**
@@ -303,23 +307,15 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     String name = f.getDeclaringClass().getName() + "." + f.getName();
 
     if (omitFields == null) { // No omitFields were given
-      if (Log.isLoggingOn()) {
-        Log.logLine(String.format("Field '%s' included, no omit-field arguments", name));
-      }
+      Log.logPrintf("Field '%s' included, no omit-field arguments%n", name);
       return true;
     }
 
     boolean result = !omitFields.contains(name);
-    if (Log.isLoggingOn()) {
-      if (result) {
-        if (Log.isLoggingOn()) {
-          Log.logLine(String.format("Field '%s' does not match omit-field, including field", name));
-        }
-      } else {
-        if (Log.isLoggingOn()) {
-          Log.logLine(String.format("Field '%s' matches omit-field, not including field", name));
-        }
-      }
+    if (result) {
+      Log.logPrintf("Field '%s' does not match omit-field, including field%n", name);
+    } else {
+      Log.logPrintf("Field '%s' matches omit-field, not including field%n", name);
     }
     return result;
   }

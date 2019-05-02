@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
-import randoop.BugInRandoopException;
+import randoop.main.RandoopBug;
 
 /** A set of checks, including at most one ExceptionCheck. */
 public class RegressionChecks implements TestChecks<RegressionChecks> {
@@ -55,7 +55,7 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
   @Override
   public void add(Check check) {
     if (this == EMPTY) {
-      throw new BugInRandoopException("Don't add to EMPTY");
+      throw new RandoopBug("Don't add to EMPTY");
     }
     if (check instanceof ExceptionCheck) {
       if (exceptionCheck != null) {

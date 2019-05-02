@@ -10,13 +10,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ import randoop.util.Util;
 
 public class SpecificationTranslatorTest {
 
-  //cases: static method, non-static method, check return, parameters, and receiver
+  // cases: static method, non-static method, check return, parameters, and receiver
 
   @Test
   public void testPrintWriterAppend() {
@@ -109,7 +110,7 @@ public class SpecificationTranslatorTest {
     try {
       method = c.getDeclaredMethod("append", char.class);
     } catch (NoSuchMethodException e) {
-      fail("could not load PrintWriter.append(char)");
+      throw new AssertionError("could not load PrintWriter.append(char)", e);
     }
     return method;
   }
@@ -144,7 +145,7 @@ public class SpecificationTranslatorTest {
     try {
       constructor = c.getDeclaredConstructor(String.class);
     } catch (NoSuchMethodException e) {
-      fail("could not load constructor");
+      throw new AssertionError("could not load constructor", e);
     }
     return TypedOperation.forConstructor(constructor);
   }
@@ -152,8 +153,8 @@ public class SpecificationTranslatorTest {
   @Test
   public void testSignatureFromFile() {
     String specFileName = "test/randoop/condition/java-io-PrintWriter.json";
-    File specFile = new File(specFileName);
-    List<File> specList = new ArrayList<>();
+    Path specFile = Paths.get(specFileName);
+    List<Path> specList = new ArrayList<>();
     specList.add(specFile);
     OperationSpecification specification = readSpecificationsForTest(specFile);
     Method method = getPrintWriterAppendMethod();
@@ -183,7 +184,7 @@ public class SpecificationTranslatorTest {
     SpecificationCollection collection = SpecificationCollection.create(specList);
     ExecutableSpecification execSpec = collection.getExecutableSpecification(method);
     TypedClassOperation appendOp = TypedOperation.forMethod(method);
-    appendOp.addExecutableSpecification(execSpec);
+    appendOp.setExecutableSpecification(execSpec);
     Sequence sequence = createPrintWriterSequence(appendOp);
     ExecutableSequence eseq = new ExecutableSequence(sequence);
     eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
@@ -198,18 +199,18 @@ public class SpecificationTranslatorTest {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSpecification readSpecificationsForTest(File specFile) {
+  private OperationSpecification readSpecificationsForTest(Path specFile) {
     List<OperationSpecification> specificationList = new ArrayList<>();
     Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
     TypeToken<List<OperationSpecification>> typeToken =
         (new TypeToken<List<OperationSpecification>>() {});
-    try (BufferedReader reader = Files.newBufferedReader(specFile.toPath(), UTF_8)) {
+    try (BufferedReader reader = Files.newBufferedReader(specFile, UTF_8)) {
       specificationList.addAll(
           (List<OperationSpecification>) gson.fromJson(reader, typeToken.getType()));
     } catch (FileNotFoundException e) {
-      fail("could not find spec file");
+      throw new AssertionError("could not find spec file", e);
     } catch (IOException e) {
-      fail("exception while loading spec file");
+      throw new AssertionError("exception while loading spec file", e);
     }
     assertThat("spec file has 8 specs", specificationList.size(), is(equalTo(8)));
     assertThat(

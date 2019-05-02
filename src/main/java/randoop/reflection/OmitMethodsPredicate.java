@@ -1,6 +1,5 @@
 package randoop.reflection;
 
-import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -8,6 +7,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
@@ -33,10 +33,12 @@ public class OmitMethodsPredicate {
   private final List<Pattern> omitPatterns;
 
   /**
+   * Create a new OmitMethodsPredicate.
+   *
    * @param omitPatterns a list of regular expressions for method signatures. Null or the empty
    *     least mean to do no omissions.
    */
-  public OmitMethodsPredicate(List<Pattern> omitPatterns) {
+  public OmitMethodsPredicate(@Nullable List<Pattern> omitPatterns) {
     if (omitPatterns == null) {
       this.omitPatterns = new ArrayList<>();
     } else {
@@ -54,6 +56,8 @@ public class OmitMethodsPredicate {
    * @return true if the signature matches an omit pattern, and false otherwise
    */
   private boolean shouldOmitExact(TypedClassOperation operation) {
+    Log.logPrintf("shouldOmitExact(%s)%n", operation);
+
     // Nothing to do if there are no patterns.
     if (omitPatterns.isEmpty()) {
       return false;
@@ -67,11 +71,9 @@ public class OmitMethodsPredicate {
 
     for (Pattern pattern : omitPatterns) {
       boolean result = pattern.matcher(signature).find();
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            String.format(
-                "Comparing '%s' against pattern '%s' = %b%n", signature, pattern, result));
-      }
+      Log.logPrintf("shouldOmitExact(%s) with regex %s => %s%n", operation, pattern, result);
+
+      Log.logPrintf("Comparing '%s' against pattern '%s' = %b%n", signature, pattern, result);
       if (result) {
         return true;
       }
@@ -88,6 +90,8 @@ public class OmitMethodsPredicate {
    *     an omit pattern, false otherwise
    */
   boolean shouldOmit(final TypedClassOperation operation) {
+    Log.logPrintf("shouldOmit: testing %s%n", operation);
+
     // Done if there are no patterns
     if (omitPatterns.isEmpty()) {
       return false;
@@ -104,20 +108,34 @@ public class OmitMethodsPredicate {
     while (!typeQueue.isEmpty()) {
       ClassOrInterfaceType type = typeQueue.remove();
       if (!visited.add(type)) {
-        continue; // visited already contains type
+        continue;
       }
 
+      Log.logPrintf("looking for %s in %s%n", signature.getName(), type.getRuntimeClass());
+      Log.logPrintf("  typeQueue.size() = %d%n", typeQueue.size());
+
       // Try to get the method for type
-      Method method;
+      boolean exists = false;
       try {
-        method =
-            type.getRuntimeClass().getMethod(signature.getName(), signature.getParameterTypes());
+        type.getRuntimeClass().getMethod(signature.getName(), signature.getParameterTypes());
+        exists = true;
       } catch (NoSuchMethodException e) {
-        method = null;
+        Log.logPrintf(
+            "no method for %s in %s%n", signature, type.getRuntimeClass().getSimpleName());
+      }
+      if (!exists && signature.getName().equals(type.getRuntimeClass().getSimpleName())) {
+        try {
+          type.getRuntimeClass().getConstructor(signature.getParameterTypes());
+          exists = true;
+        } catch (NoSuchMethodException e) {
+          // nothing to do
+          Log.logPrintf(
+              "no constructor for %s in %s%n", signature, type.getRuntimeClass().getSimpleName());
+        }
       }
 
       // If type has the method
-      if (method != null) {
+      if (exists) {
         // Create the operation and test whether it is matched by an omit pattern
         TypedClassOperation superTypeOperation = operation.getOperationForType(type);
         if (shouldOmitExact(superTypeOperation)) {

@@ -2,10 +2,9 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
@@ -309,7 +308,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return the set of all supertypes of this type
    */
   public Collection<ClassOrInterfaceType> getSuperTypes() {
-    Collection<ClassOrInterfaceType> supertypes = new HashSet<>();
+    Collection<ClassOrInterfaceType> supertypes = new ArrayList<>();
     if (this.isObject()) {
       return supertypes;
     }
@@ -326,15 +325,16 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Return the set of immediate supertypes of this type
+   * Return the immediate supertypes of this type.
    *
-   * @return the set of immediate supertypes of this type
+   * @return the immediate supertypes of this type
    */
-  public Set<ClassOrInterfaceType> getImmediateSupertypes() {
-    Set<ClassOrInterfaceType> supertypes = new HashSet<>();
+  @SuppressWarnings("MixedMutabilityReturnType")
+  public List<ClassOrInterfaceType> getImmediateSupertypes() {
     if (this.isObject()) {
-      return supertypes;
+      return Collections.emptyList();
     }
+    List<ClassOrInterfaceType> supertypes = new ArrayList<>();
     ClassOrInterfaceType superclass = this.getSuperclass();
     supertypes.add(superclass);
     supertypes.addAll(this.getInterfaces());
@@ -410,7 +410,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public boolean isSubtypeOf(Type otherType) {
     if (debug) {
-      System.out.printf("ClassOrInterfaceType.isSubtypeOf(%s, %s)%n", this, otherType);
+      System.out.printf(
+          "ClassOrInterfaceType.isSubtypeOf(%s, %s) [%s, %s]%n",
+          this, otherType, this.getClass(), otherType.getClass());
     }
 
     // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
@@ -425,6 +427,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       System.out.printf("isSubtypeOf: about to call super.isSubtypeOf%n");
     }
     if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+    if ((this instanceof NonParameterizedType)
+        && otherType.isGeneric()
+        && (this.getRuntimeClass() == otherType.getRuntimeClass())) {
       return true;
     }
 
@@ -444,7 +451,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (otherType.isInterface()) {
       for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
         if (debug) {
-          System.out.printf("  isSubtypeOf iface: %s%n", iface);
+          System.out.printf("  isSubtypeOf iface: %s [%s]%n", iface, iface.getClass());
         }
 
         if (iface.equals(otherType)) {

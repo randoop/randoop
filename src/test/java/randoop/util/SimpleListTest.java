@@ -3,6 +3,7 @@ package randoop.util;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -18,7 +19,7 @@ public class SimpleListTest {
       al.add("str" + i);
     }
 
-    SimpleList<String> sl = new ArrayListSimpleList<>(al);
+    SimpleList<String> sl = new SimpleArrayList<>(al);
 
     for (int i = 0; i < sl.size(); i++) {
       assertTrue("element should be in original", al.contains(sl.get(i)));
@@ -32,7 +33,7 @@ public class SimpleListTest {
       al.add("str" + i);
     }
 
-    SimpleList<String> sl = new OneMoreElementList<>(new ArrayListSimpleList<>(al), "str" + 100);
+    SimpleList<String> sl = new OneMoreElementList<>(new SimpleArrayList<>(al), "str" + 100);
 
     al.add("str" + 100);
 
@@ -56,7 +57,7 @@ public class SimpleListTest {
 
     for (int i = 0; i < 100; i++) {
       if (partitions.contains(i)) {
-        lists.add(new ArrayListSimpleList<>(sub));
+        lists.add(new SimpleArrayList<>(sub));
         sub = new ArrayList<>();
       }
       String str = "str" + i;
@@ -65,7 +66,7 @@ public class SimpleListTest {
     }
 
     if (!sub.isEmpty()) {
-      lists.add(new ArrayListSimpleList<>(sub));
+      lists.add(new SimpleArrayList<>(sub));
     }
 
     SimpleList<String> sl = new ListOfLists<>(lists);
@@ -81,7 +82,7 @@ public class SimpleListTest {
     List<SimpleList<String>> lists = new ArrayList<>();
     ArrayList<String> al = new ArrayList<>();
 
-    SimpleList<String> base = new ArrayListSimpleList<>(new ArrayList<String>());
+    SimpleList<String> base = new SimpleArrayList<>(new ArrayList<String>());
 
     int i;
     for (i = 0; i < 50; i++) {
@@ -90,7 +91,7 @@ public class SimpleListTest {
       al.add(v);
     }
     lists.add(base);
-    lists.add(new ArrayListSimpleList<>(new ArrayList<String>()));
+    lists.add(new SimpleArrayList<>(new ArrayList<String>()));
     base = new ListOfLists<>(lists);
     for (i = 55; i < 70; i++) {
       String v = "str" + i;
@@ -105,8 +106,8 @@ public class SimpleListTest {
 
   @Test
   public void emptyLOL() {
-    List<SimpleList<String>> lists = new ArrayList<>();
-    lists.add(new ArrayListSimpleList<>(new ArrayList<String>()));
+    List<SimpleList<String>> lists =
+        Collections.singletonList(new SimpleArrayList<>(new ArrayList<String>()));
     SimpleList<String> sl = new ListOfLists<>(lists);
 
     assertTrue("should be no elements", sl.isEmpty());

@@ -1,6 +1,5 @@
 package randoop.sequence;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import randoop.ExecutionOutcome;
@@ -14,8 +13,10 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * Statement represents a statement involving an operation (or term), and the list of inputs for the
- * statement. The inputs are variables, but are represented by indexing into the enclosing sequence.
+ * Statement represents a Java statement, such as a method call {@code Foo f = m(i1...iN)} or a
+ * declaration {@code int x = 0}. The statement's data includes an operation and the list of inputs
+ * for the operation. The inputs to the operation are variables, but are represented by indexing
+ * into the enclosing sequence.
  */
 public final class Statement {
 
@@ -41,7 +42,7 @@ public final class Statement {
   }
 
   /**
-   * Creates a statement based on the given operation
+   * Creates a statement based on the given operation.
    *
    * @param operation the operation for action of this statement
    */
@@ -95,7 +96,7 @@ public final class Statement {
    *
    * @param variable the {@link Variable} to be used if an initialization
    * @param inputs the input list for the operation of the statement
-   * @param b the {@code StringBuilder} to which code text is appended.
+   * @param b the {@code StringBuilder} to which code text is appended
    * @see Sequence#appendCode(StringBuilder, int)
    */
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
@@ -156,11 +157,10 @@ public final class Statement {
    * execute performs the operation of the statement for the input variables and returns outcome.
    *
    * @param inputs list of objects to use as inputs to execution
-   * @param out stream for any output
    * @return object representing outcome of computation
    */
-  public ExecutionOutcome execute(Object[] inputs, PrintStream out) {
-    return operation.execute(inputs, out);
+  public ExecutionOutcome execute(Object[] inputs) {
+    return operation.execute(inputs);
   }
 
   /**
@@ -204,17 +204,16 @@ public final class Statement {
   }
 
   /**
-   * getShortForm constructs code expression of the operation for substitution into argument lists
-   * as opposed to using variable.
+   * Returns a printed representation of the value as a literal, rather than as a variable
+   * reference.
    *
-   * @return string containing code to access the value of the operation/term
+   * @return string containing code for a literal value
    */
   // Historical note:
   // Do not use the short output format if the value is null, because
   // the variable type may disambiguate among overloaded methods.
-  // (It would be even nicer to use the short output format unless
-  // disambiguation is truly needed.)
-  public String getShortForm() {
+  // (It would be even nicer to add a cast where the null is used.)
+  public String getInlinedForm() {
     if (isNonreceivingInitialization() && !isNullInitialization()) {
       return Value.toCodeString(operation.getValue());
     }

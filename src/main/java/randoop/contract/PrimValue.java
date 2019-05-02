@@ -52,7 +52,7 @@ public final class PrimValue extends ObjectContract {
   }
 
   /**
-   * @param value the value for the expression. Must be a primitive value or string.
+   * @param value the value for the expression. Must be a primitive value or string
    * @param printMode the print mode in which the check is written as an assertion
    */
   public PrimValue(Object value, PrintMode printMode) {
@@ -79,7 +79,8 @@ public final class PrimValue extends ObjectContract {
     return 1;
   }
 
-  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE));
+  /** The arguments to which this contract can be applied. */
+  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

@@ -26,7 +26,7 @@ public final class ObserverEqValue extends ObjectContract {
   /** The observer method. */
   public TypedOperation observer;
 
-  /** The runtime value of the observer. This variable holds a primitive value or String. */
+  /** The run-time value of the observer. This variable holds a primitive value or String. */
   public Object value;
 
   @Override
@@ -53,14 +53,24 @@ public final class ObserverEqValue extends ObjectContract {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;
-    Type type = Type.forClass(this.value.getClass());
-    assert (this.value == null) || type.isBoxedPrimitive() || type.isString()
-        : "obs value/class = "
-            + this.value
-            + "/"
-            + this.value.getClass()
-            + " observer = "
-            + observer;
+    assert isLiteralValue(value)
+        : String.format(
+            "Cannot represent %s [%s] as a literal; observer = %s",
+            value, value.getClass(), observer);
+  }
+
+  /**
+   * Returns true if the argument can be written as a literal in Java source code.
+   *
+   * @param value the value to be tested
+   * @return true if the argument can be written as a literal in Java source code
+   */
+  public static boolean isLiteralValue(Object value) {
+    if (value == null) {
+      return false;
+    }
+    Type type = Type.forClass(value.getClass());
+    return type.isBoxedPrimitive() || type.isClass() || type.isString();
   }
 
   @Override
@@ -74,8 +84,8 @@ public final class ObserverEqValue extends ObjectContract {
     if (value == null) {
       b.append(String.format("assertNull(\"x0.%s() == null\", x0.%s());", methodname, methodname));
     } else if (observer.getOutputType().isPrimitive()
-        && (!value.equals(Double.NaN))
-        && (!value.equals(Float.NaN))) {
+        && !value.equals(Double.NaN)
+        && !value.equals(Float.NaN)) {
       if (observer.getOutputType().runtimeClassIs(boolean.class)) {
         assert value.equals(true) || value.equals(false);
         if (value.equals(true)) {
@@ -110,7 +120,8 @@ public final class ObserverEqValue extends ObjectContract {
     return 1;
   }
 
-  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE));
+  /** The arguments to which this contract can be applied. */
+  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

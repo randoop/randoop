@@ -1,6 +1,5 @@
 package randoop.compile;
 
-import static java.lang.reflect.Modifier.PUBLIC;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -8,12 +7,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.body.VariableDeclaratorId;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
@@ -26,7 +26,6 @@ import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import javax.tools.Diagnostic;
@@ -35,8 +34,11 @@ import org.junit.Test;
 
 public class SequenceCompilerTest {
 
+  /** The "public" and "static" modifiers. */
+  private final NodeList<Modifier> PUBLIC = new NodeList<>(Modifier.publicModifier());
+
   @Test
-  public void compilableTest() {
+  public void compilableTest() throws ClassNotFoundException {
 
     SequenceClassLoader classLoader = new SequenceClassLoader(getClass().getClassLoader());
     SequenceCompiler compiler = getSequenceCompiler(classLoader);
@@ -52,9 +54,7 @@ public class SequenceCompilerTest {
       if (e.getCause() != null) System.out.print(": " + e.getCause().getMessage());
       System.out.println();
       printDiagnostics(System.out, e.getDiagnostics().getDiagnostics());
-      fail("compilation failed");
-    } catch (ClassNotFoundException e) {
-      fail("couldn't load class");
+      throw new AssertionError("compilation failed", e);
     }
 
     try {
@@ -79,19 +79,16 @@ public class SequenceCompilerTest {
     ClassOrInterfaceDeclaration classDeclaration =
         new ClassOrInterfaceDeclaration(PUBLIC, false, "Simple");
     MethodDeclaration method =
-        new MethodDeclaration(PUBLIC, new PrimitiveType(PrimitiveType.Primitive.Int), "zero");
+        new MethodDeclaration(PUBLIC, new PrimitiveType(PrimitiveType.Primitive.INT), "zero");
     ReturnStmt statement = new ReturnStmt(new IntegerLiteralExpr("0"));
     BlockStmt body = new BlockStmt();
-    List<Statement> statements = new ArrayList<>();
-    statements.add(statement);
-    body.setStmts(statements);
+    NodeList<Statement> statements = new NodeList<>(statement);
+    body.setStatements(statements);
     method.setBody(body);
 
-    List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
-    bodyDeclarations.add(method);
+    NodeList<BodyDeclaration<?>> bodyDeclarations = new NodeList<>(method);
     classDeclaration.setMembers(bodyDeclarations);
-    List<TypeDeclaration> types = new ArrayList<>();
-    types.add(classDeclaration);
+    NodeList<TypeDeclaration<?>> types = new NodeList<>(classDeclaration);
     compilationUnit.setTypes(types);
     return compilationUnit.toString();
   }
@@ -131,47 +128,38 @@ public class SequenceCompilerTest {
         new ClassOrInterfaceDeclaration(PUBLIC, false, "SimplyBad");
 
     MethodDeclaration method =
-        new MethodDeclaration(
-            Modifier.PUBLIC, new PrimitiveType(PrimitiveType.Primitive.Int), "zero");
+        new MethodDeclaration(PUBLIC, new PrimitiveType(PrimitiveType.Primitive.INT), "zero");
     Statement statement = new ReturnStmt(new IntegerLiteralExpr("0"));
     BlockStmt body = new BlockStmt();
-    List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
-    List<Statement> statements = new ArrayList<>();
-    statements.add(statement);
-    body.setStmts(statements);
+    NodeList<BodyDeclaration<?>> bodyDeclarations = new NodeList<>();
+    NodeList<Statement> statements = new NodeList<>(statement);
+    body.setStatements(statements);
     method.setBody(body);
     bodyDeclarations.add(method);
 
-    method =
-        new MethodDeclaration(
-            Modifier.PUBLIC, new PrimitiveType(PrimitiveType.Primitive.Int), "one");
-    List<VariableDeclarator> variableList = new ArrayList<>();
-    variableList.add(
-        new VariableDeclarator(new VariableDeclaratorId("i"), new StringLiteralExpr("one")));
-    VariableDeclarationExpr expression =
-        new VariableDeclarationExpr(new PrimitiveType(PrimitiveType.Primitive.Int), variableList);
+    method = new MethodDeclaration(PUBLIC, new PrimitiveType(PrimitiveType.Primitive.INT), "one");
+    NodeList<VariableDeclarator> variableList =
+        new NodeList<>(
+            new VariableDeclarator(
+                new PrimitiveType(PrimitiveType.Primitive.INT), "i", new StringLiteralExpr("one")));
+    VariableDeclarationExpr expression = new VariableDeclarationExpr(variableList);
     statement = new ExpressionStmt(expression);
     body = new BlockStmt();
-    statements = new ArrayList<>();
-    statements.add(statement);
-    body.setStmts(statements);
+    statements = new NodeList<>(statement);
+    body.setStatements(statements);
     method.setBody(body);
     bodyDeclarations.add(method);
 
-    method =
-        new MethodDeclaration(
-            Modifier.PUBLIC, new PrimitiveType(PrimitiveType.Primitive.Int), "two");
+    method = new MethodDeclaration(PUBLIC, new PrimitiveType(PrimitiveType.Primitive.INT), "two");
     statement = new ReturnStmt(new StringLiteralExpr("one"));
     body = new BlockStmt();
-    statements = new ArrayList<>();
-    statements.add(statement);
-    body.setStmts(statements);
+    statements = new NodeList<>(statement);
+    body.setStatements(statements);
     method.setBody(body);
 
     bodyDeclarations.add(method);
     classDeclaration.setMembers(bodyDeclarations);
-    List<TypeDeclaration> types = new ArrayList<>();
-    types.add(classDeclaration);
+    NodeList<TypeDeclaration<?>> types = new NodeList<>(classDeclaration);
     compilationUnit.setTypes(types);
     return compilationUnit.toString();
   }

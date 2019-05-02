@@ -1,8 +1,9 @@
 package randoop.main;
 
 /**
- * Indicates a user error in invoking Randoop. Randoop prints the message and also prints how to get
- * help.
+ * Indicates a user error in invoking Randoop.
+ *
+ * @see randoop.main.RandoopBug
  */
 public class RandoopUsageError extends RuntimeException {
 
@@ -23,7 +24,7 @@ public class RandoopUsageError extends RuntimeException {
    * @param message the exception message
    * @param cause the causing exception
    */
-  RandoopUsageError(String message, Throwable cause) {
+  public RandoopUsageError(String message, Throwable cause) {
     super(message, cause);
   }
 }

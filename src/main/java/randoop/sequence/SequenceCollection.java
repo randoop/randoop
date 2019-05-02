@@ -14,43 +14,40 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 /**
- * A collection of sequences that makes its efficient to ask for all the sequences that create a
- * value of a given type.
- *
- * <p>RANDOOP IMPLEMENTATION NOTE.
- *
- * <p>When creating new sequences, Randoop often needs to search for all the previously-generated
- * sequences that create one or more values of a given type. Since this set can contain thousands of
- * sequences. Profiling showed that finding these sequences was a bottleneck in generation.
- *
- * <p>This class makes the above search faster by maintaining two data structures:
- *
- * <ul>
- *   <li>A map from types to the sets of all sequences that create one or more values of exactly the
- *       given type.
- *   <li>A set of all the types that can be created with the existing set of sequences. The set is
- *       maintained as a {@link SubTypeSet} that allows for quick queries about can-be-used-as
- *       relationships among the types in the set.
- * </ul>
- *
- * To find all the sequences that create values of a given type, Randoop first uses the {@code
- * SubTypeSet} to find the set {@code S} of feasible subtypes in set of sequences, and returns the
- * range of {@code S} in the sequence map.
+ * A collection of sequences that makes it efficient to ask for all the sequences that create a
+ * value of a given type. This implements Randoop's pool. A SequenceCollection is the main field of
+ * {@link randoop.generation.ComponentManager}.
  */
+// Randoop often needs to find all the previously-generated sequences that create values of a
+// given type. When Randoop kept all previously-generated sequences together, in a single
+// collection, profiling showed that finding these sequences was a bottleneck in generation.
+// This class makes the above search faster.
+//
+// To find all the sequences that create values of a given type, Randoop first uses the {@code
+// SubTypeSet} to find the set {@code T} of feasible subtypes, and returns the range of {@code T}
+// (that is, all the sequences mapped to by any t&isin;T) in the sequence map.
 public class SequenceCollection {
 
-  // We make it a list to make it easier to pick out an element at random.
-  private Map<Type, ArrayListSimpleList<Sequence>> sequenceMap = new LinkedHashMap<>();
+  /** For each type, all the sequences that produce one or more values of exactly the given type. */
+  private Map<Type, SimpleArrayList<Sequence>> sequenceMap = new LinkedHashMap<>();
 
+  /**
+   * A set of all the types that can be created with the sequences in this. This is the same as
+   * {@code sequenceMap.keySet()}, but provides additional operations.
+   */
   private SubTypeSet typeSet = new SubTypeSet(false);
 
-  private Set<Type> sequenceTypes = new TreeSet<>();
+  /**
+   * A set of all the types that can be created with the sequences in this, and all their
+   * supertypes. Thus, this may be larger than {@link #typeSet}.
+   */
+  private Set<Type> typesAndSupertypes = new TreeSet<>();
 
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
@@ -64,9 +61,9 @@ public class SequenceCollection {
           "sequenceMap.keySet()="
               + Globals.lineSep
               + sequenceMap.keySet()
-              + ", typeSet.typesWithsequences="
+              + ", typeSet.types="
               + Globals.lineSep
-              + typeSet.typesWithsequences;
+              + typeSet.types;
       throw new IllegalStateException(b);
     }
   }
@@ -77,7 +74,7 @@ public class SequenceCollection {
 
   /** Removes all sequences from this collection. */
   public void clear() {
-    if (Log.isLoggingOn()) Log.logLine("Clearing sequence collection.");
+    Log.logPrintf("Clearing sequence collection.%n");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
     sequenceCount = 0;
@@ -123,8 +120,8 @@ public class SequenceCollection {
    * @param components the sequences to add
    */
   public void addAll(SequenceCollection components) {
-    for (ArrayListSimpleList<Sequence> s : components.sequenceMap.values()) {
-      for (Sequence seq : s.theList) {
+    for (SimpleArrayList<Sequence> s : components.sequenceMap.values()) {
+      for (Sequence seq : s) {
         add(seq);
       }
     }
@@ -139,13 +136,13 @@ public class SequenceCollection {
    * value is deemed useful or not is left up to the client.
    *
    * <p>Note that this takes into consideration only the assigned value for each statement. If a
-   * statement might side-effect some variable, then that variable is considered as an output from
-   * its own statement, not the one that side-effects it.
+   * statement might side-effect some variable V, then V is considered as an output from the
+   * statement that declares/creates V, not the one that side-effects V.
    *
    * <p>(An alternative would be to only use outputs from the last statement, and include its inputs
    * as well. That alternative is not implemented. It would probably be faster, but it would not
    * handle the case of a method side-effecting a variable that that was not explicitly passed to
-   * it. Is that case important?
+   * it. That case probably isn't important/common.)
    *
    * @param sequence the sequence to add to this collection
    */
@@ -161,9 +158,10 @@ public class SequenceCollection {
               + argument.getType().getName();
       if (sequence.isActive(argument.getDeclIndex())) {
         Type type = formalTypes.get(i);
-        sequenceTypes.add(type);
+        typesAndSupertypes.add(type);
         if (type.isClassOrInterfaceType()) {
-          sequenceTypes.addAll(((ClassOrInterfaceType) type).getSuperTypes());
+          // This adds all the supertypes, not just immediate ones.
+          typesAndSupertypes.addAll(((ClassOrInterfaceType) type).getSuperTypes());
         }
         typeSet.add(type);
         updateCompatibleMap(sequence, type);
@@ -173,18 +171,18 @@ public class SequenceCollection {
   }
 
   /**
-   * Add an entry from the given type to the sequence to the map.
+   * Add the entry (type, sequeence) to sequenceMap.
    *
    * @param sequence the sequence
    * @param type the {@link Type}
    */
   private void updateCompatibleMap(Sequence sequence, Type type) {
-    ArrayListSimpleList<Sequence> set = this.sequenceMap.get(type);
+    SimpleArrayList<Sequence> set = this.sequenceMap.get(type);
     if (set == null) {
-      set = new ArrayListSimpleList<>();
+      set = new SimpleArrayList<>();
       this.sequenceMap.put(type, set);
     }
-    if (Log.isLoggingOn()) Log.logLine("Adding sequence of type " + type);
+    Log.logPrintf("Adding sequence of type %s of length %d%n", type, sequence.size());
     boolean added = set.add(sequence);
     assert added;
     sequenceCount++;
@@ -208,9 +206,7 @@ public class SequenceCollection {
       throw new IllegalArgumentException("type cannot be null.");
     }
 
-    if (Log.isLoggingOn()) {
-      Log.logPrintf("getSequencesForType(%s, %s, %s)%n", type, exactMatch, onlyReceivers);
-    }
+    Log.logPrintf("getSequencesForType(%s, %s, %s)%n", type, exactMatch, onlyReceivers);
 
     List<SimpleList<Sequence>> resultList = new ArrayList<>();
 
@@ -221,26 +217,22 @@ public class SequenceCollection {
       }
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
-        Log.logLine(
-            "candidate compatibleType (isNonreceiverType="
-                + compatibleType.isNonreceiverType()
-                + "): "
-                + compatibleType);
+        Log.logPrintf(
+            "candidate compatibleType (isNonreceiverType=%s): %s%n",
+            compatibleType.isNonreceiverType(), compatibleType);
         if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
-          resultList.add(this.sequenceMap.get(compatibleType));
+          SimpleArrayList<Sequence> newMethods = this.sequenceMap.get(compatibleType);
+          Log.logPrintf("  Adding %d methods.%n", newMethods.size());
+          resultList.add(newMethods);
         }
       }
     }
 
     if (resultList.isEmpty()) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("getSequencesForType: found no sequences matching type " + type);
-      }
+      Log.logPrintf("getSequencesForType: found no sequences matching type %s%n", type);
     }
     SimpleList<Sequence> selector = new ListOfLists<>(resultList);
-    if (Log.isLoggingOn()) {
-      Log.logLine("getSequencesForType: returning " + selector.size() + " sequences.");
-    }
+    Log.logPrintf("getSequencesForType(%s) => %s sequences.%n", type, selector.size());
     return selector;
   }
 
@@ -251,13 +243,27 @@ public class SequenceCollection {
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<>();
-    for (ArrayListSimpleList<Sequence> a : sequenceMap.values()) {
-      result.addAll(a.theList);
+    for (SimpleArrayList<Sequence> a : sequenceMap.values()) {
+      result.addAll(a);
     }
     return result;
   }
 
   public TypeInstantiator getTypeInstantiator() {
-    return new TypeInstantiator(sequenceTypes);
+    return new TypeInstantiator(typesAndSupertypes);
+  }
+
+  public void log() {
+    if (!Log.isLoggingOn()) {
+      return;
+    }
+    for (Type t : sequenceMap.keySet()) {
+      SimpleArrayList<Sequence> a = sequenceMap.get(t);
+      int asize = a.size();
+      Log.logPrintf("Type %s: %d sequences%n", t, asize);
+      for (int i = 0; i < asize; i++) {
+        Log.logPrintf("  #%d: %s%n", i, a.get(i).toString().trim().replace("\n", "\n       "));
+      }
+    }
   }
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class OneMoreElementList<T> extends SimpleList<T> implements Serializable {
+public final class OneMoreElementList<T> implements SimpleList<T>, Serializable {
 
   private static final long serialVersionUID = 1332963552183905833L;
 
@@ -24,6 +24,11 @@ public final class OneMoreElementList<T> extends SimpleList<T> implements Serial
   }
 
   @Override
+  public boolean isEmpty() {
+    return size == 0;
+  }
+
+  @Override
   public T get(int index) {
     if (index < size - 1) {
       return list.get(index);
@@ -39,6 +44,7 @@ public final class OneMoreElementList<T> extends SimpleList<T> implements Serial
     if (index == size - 1) { // is lastElement
       return this;
     }
+    // Not the last element, so recurse.
     if (index < size - 1) {
       return list.getSublist(index);
     }

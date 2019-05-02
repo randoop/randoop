@@ -1,14 +1,13 @@
 package randoop.test;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import plume.EntryReader;
+import org.plumelib.util.EntryReader;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
@@ -31,9 +30,9 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
         classes.add(Class.forName(entry));
       }
     } catch (IOException e) {
-      fail("exception while reading class names");
+      throw new AssertionError("exception while reading class names", e);
     } catch (ClassNotFoundException e) {
-      fail("couldn't load class");
+      throw new AssertionError("couldn't load class", e);
     }
 
     List<TypedOperation> model = getConcreteOperations(classes);

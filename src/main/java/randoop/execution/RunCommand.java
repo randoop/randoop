@@ -1,8 +1,8 @@
 package randoop.execution;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.exec.CommandLine;
@@ -10,12 +10,12 @@ import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.util.Log;
 
 /**
- * Class providing the {@link #run(List, File, long)} method to run a command in a separate process
+ * Class providing the {@link #run(List, Path, long)} method to run a command in a separate process
  * with a timeout.
  */
 public class RunCommand {
@@ -31,7 +31,7 @@ public class RunCommand {
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
    */
-  static Status run(List<String> command, File workingDirectory, long timeout)
+  static Status run(List<String> command, Path workingDirectory, long timeout)
       throws CommandException {
 
     String[] args = command.toArray(new String[0]);
@@ -40,7 +40,7 @@ public class RunCommand {
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
     DefaultExecutor executor = new DefaultExecutor();
-    executor.setWorkingDirectory(workingDirectory);
+    executor.setWorkingDirectory(workingDirectory.toFile());
 
     ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
     executor.setWatchdog(watchdog);
@@ -51,7 +51,7 @@ public class RunCommand {
     executor.setStreamHandler(streamHandler);
 
     Log.logPrintf("RunCommand.run():%n");
-    Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilMDE.join(command, " "));
+    Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilPlume.join(command, " "));
     Log.logPrintf("  timeout=%s, environment: %s%n", timeout, System.getenv());
 
     try {
@@ -104,7 +104,7 @@ public class RunCommand {
     /** The output from running the command. */
     public final List<String> standardOutputLines;
 
-    /** The error output from running the command */
+    /** The error output from running the command. */
     public final List<String> errorOutputLines;
 
     /**
@@ -138,7 +138,7 @@ public class RunCommand {
       sb.append(
           String.format(
               "Status for command \"%s\" = %d (timedOut=%s)",
-              UtilMDE.join(command, " "), exitStatus, timedOut));
+              UtilPlume.join(command, " "), exitStatus, timedOut));
       describeLines("stdout", standardOutputLines, sb);
       describeLines("stderr", errorOutputLines, sb);
       return sb.toString();
@@ -156,7 +156,7 @@ public class RunCommand {
         sb.append(", ");
         sb.append(source);
         sb.append("=\"");
-        sb.append(UtilMDE.join(lines, Globals.lineSep));
+        sb.append(UtilPlume.join(lines, Globals.lineSep));
         sb.append("\"");
         sb.append(Globals.lineSep);
       } else {
@@ -170,7 +170,7 @@ public class RunCommand {
 
   /**
    * Exception representing an error that occured while running a process with {@link
-   * RunCommand#run(List, File, long)}.
+   * RunCommand#run(List, Path, long)}.
    */
   public static class CommandException extends Throwable {
 

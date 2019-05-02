@@ -1,8 +1,6 @@
 package randoop.reflection;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Method;
@@ -26,14 +24,17 @@ import randoop.types.TypeTuple;
  */
 public class VisibilityBridgeTest {
 
-  // can't compare method of superclass directly to method of subclass
-  // so need to convert to abstraction to allow list search
-  private static class FormalMethod {
+  /**
+   * Represents a method signature: its name, parameter types, and return type. This is needed
+   * because we can't use equals() to compare a method of superclass directly to a method of
+   * subclass. This method has an equals() method, permitting list search.
+   */
+  private static class MethodSignature {
     private Type returnType;
     private String name;
     private TypeTuple parameterTypes;
 
-    FormalMethod(Method m, ClassOrInterfaceType declaringType) {
+    MethodSignature(Method m, ClassOrInterfaceType declaringType) {
       this.returnType = Type.forClass(m.getReturnType());
       this.name = m.getName();
       List<Type> paramTypes = new ArrayList<>();
@@ -46,7 +47,7 @@ public class VisibilityBridgeTest {
       this.parameterTypes = new TypeTuple(paramTypes);
     }
 
-    FormalMethod(TypedOperation op) {
+    MethodSignature(TypedOperation op) {
       this.returnType = op.getOutputType();
       this.parameterTypes = op.getInputTypes();
       this.name = op.getOperation().getName();
@@ -54,10 +55,10 @@ public class VisibilityBridgeTest {
 
     @Override
     public boolean equals(Object obj) {
-      if (!(obj instanceof FormalMethod)) {
+      if (!(obj instanceof MethodSignature)) {
         return false;
       }
-      FormalMethod m = (FormalMethod) obj;
+      MethodSignature m = (MethodSignature) obj;
       return this.returnType.equals(m.returnType)
           && this.name.equals(m.name)
           && this.parameterTypes.equals(m.parameterTypes);
@@ -83,38 +84,33 @@ public class VisibilityBridgeTest {
    * bridge, which looks like an "inherited" public method of package private class.
    */
   @Test
-  public void testVisibilityBridge() {
+  public void testVisibilityBridge() throws ClassNotFoundException {
     Class<?> sub = PackageSubclass.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(sub);
 
     // should only inherit public non-synthetic methods of package private superclass
-    List<FormalMethod> include = new ArrayList<>();
-    try {
-      Class<?> sup = Class.forName("randoop.reflection.visibilitytest.PackagePrivateBase");
-      for (Method m : sup.getDeclaredMethods()) {
-        if (Modifier.isPublic(m.getModifiers()) && !m.isBridge() && !m.isSynthetic()) {
-          include.add(new FormalMethod(m, declaringType));
-        }
+    List<MethodSignature> superclassMethods = new ArrayList<>();
+    Class<?> sup = Class.forName("randoop.reflection.visibilitytest.PackagePrivateBase");
+    for (Method m : sup.getDeclaredMethods()) {
+      if (Modifier.isPublic(m.getModifiers()) && !m.isBridge() && !m.isSynthetic()) {
+        superclassMethods.add(new MethodSignature(m, declaringType));
       }
-    } catch (ClassNotFoundException e) {
-      fail("test failed because unable to find base class");
     }
 
-    Set<TypedOperation> actualOps = getConcreteOperations(sub);
-    assertEquals(
-        "expect operations count to be inherited methods plus constructor",
-        include.size() + 2,
-        actualOps.size());
-
-    List<FormalMethod> actual = new ArrayList<>();
-    for (TypedOperation op : actualOps) {
+    List<MethodSignature> subclassMethods = new ArrayList<>();
+    for (TypedOperation op : getConcreteOperations(sub)) {
       if (op.isMethodCall()) {
-        actual.add(new FormalMethod(op));
+        subclassMethods.add(new MethodSignature(op));
       }
     }
 
-    for (FormalMethod m : include) {
-      assertTrue("method " + m.getName() + " should occur", actual.contains(m));
+    for (MethodSignature m : superclassMethods) {
+      assertTrue(
+          "superclass method "
+              + m.getName()
+              + " should occur in subclassMethods: "
+              + subclassMethods,
+          subclassMethods.contains(m));
     }
   }
 
@@ -127,13 +123,11 @@ public class VisibilityBridgeTest {
       ReflectionPredicate reflectionPredicate,
       VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor =
         new OperationExtractor(classType, reflectionPredicate, visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(extractor);
     manager.apply(c);
-    operations.addAll(extractor.getOperations());
-    return operations;
+    return new LinkedHashSet<>(extractor.getOperations());
   }
 }

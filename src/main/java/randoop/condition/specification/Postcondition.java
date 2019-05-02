@@ -30,9 +30,10 @@ import java.util.Objects;
  */
 public class Postcondition extends SpecificationClause {
 
-  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other
+  // tools
 
-  /** The post-condition */
+  /** The post-condition. */
   private final Property property;
 
   /** Gson serialization requires a default constructor. */

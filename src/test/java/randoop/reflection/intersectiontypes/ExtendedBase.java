@@ -1,11 +1,11 @@
 package randoop.reflection.intersectiontypes;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-/** Created by bjkeller on 12/5/16. */
 public class ExtendedBase<T, F extends Interval & RandomAccessible<T>>
     implements BaseInterface<T, F> {
+  @SuppressWarnings("UnusedVariable")
   private final Bumble bumble;
 
   public static enum Bumble {
@@ -19,6 +19,6 @@ public class ExtendedBase<T, F extends Interval & RandomAccessible<T>>
 
   @Override
   public List<T> m(final F f) {
-    return new ArrayList<T>();
+    return Collections.emptyList();
   }
 }

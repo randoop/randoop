@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 
 /**
  * Manages the substitution of concrete types for type variables and wildcards in an instantiation
@@ -19,7 +19,7 @@ import plume.UtilMDE;
  */
 public class Substitution<T> {
 
-  /** The substitution map */
+  /** The substitution map. */
   private Map<TypeVariable, T> map;
 
   /** map on reflection types - used for testing bounds */
@@ -53,13 +53,7 @@ public class Substitution<T> {
    */
   @SafeVarargs
   public static <T> Substitution<T> forArgs(List<TypeVariable> parameters, T... arguments) {
-    if (parameters.size() != arguments.length) {
-      throw new IllegalArgumentException(
-          "number of parameters and arguments must agree, have: "
-              + parameters.size()
-              + ", "
-              + arguments.length);
-    }
+    assert parameters.size() == arguments.length;
     Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {
       s.put(parameters.get(i), arguments[i]);
@@ -76,9 +70,7 @@ public class Substitution<T> {
    * @return the substitution that maps the type parameters to the corresponding type argument
    */
   public static <T> Substitution<T> forArgs(List<TypeVariable> parameters, List<T> arguments) {
-    if (parameters.size() != arguments.size()) {
-      throw new IllegalArgumentException("number of parameters and arguments must agree");
-    }
+    assert parameters.size() == arguments.size();
     Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {
       s.put(parameters.get(i), arguments.get(i));
@@ -117,7 +109,7 @@ public class Substitution<T> {
     for (Entry<TypeVariable, T> p : map.entrySet()) {
       pairs.add(p.getKey().toString() + " := " + p.getValue().toString());
     }
-    return "[" + UtilMDE.join(pairs, ", ") + "]";
+    return "[" + UtilPlume.join(pairs, ", ") + "]";
   }
 
   /**
@@ -201,8 +193,7 @@ public class Substitution<T> {
   /** Print the entries of this substitution to standard out. */
   public void print() {
     for (Entry<TypeVariable, T> entry : map.entrySet()) {
-      System.out.println(
-          entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());
+      System.out.println(entry.getKey() + "(" + entry.getKey() + ")" + " := " + entry.getValue());
     }
   }
 

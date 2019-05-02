@@ -2,9 +2,10 @@ package randoop.main;
 
 import java.util.ArrayList;
 import java.util.List;
-import randoop.BugInRandoopException;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.AbstractGenerator;
+import randoop.sequence.Sequence;
 
 /**
  * Main entry point for Randoop. Asks the command handlers who can handle the command given by the
@@ -65,7 +66,7 @@ public class Main {
       success = handler.handle(args2);
 
       if (!success) {
-        System.err.println("The command you issued returned a failing status flag.");
+        System.err.println("The Randoop command " + handler.fcommand + " failed.");
       }
 
     } catch (RandoopUsageError e) {
@@ -74,14 +75,26 @@ public class Main {
       if (e.getMessage() != null) {
         System.out.println(e.getMessage());
       }
-      System.out.println(
-          "To get help on this command, invoke Randoop with arguments: help " + handler.fcommand);
+      if (e instanceof RandoopCommandError) {
+        System.out.println(
+            "To get help on this command, invoke Randoop with arguments: help " + handler.fcommand);
+      }
       System.exit(1);
 
-    } catch (BugInRandoopException e) {
+    } catch (RandoopSpecificationError e) {
+
+      System.out.println();
+      if (e.getMessage() != null) {
+        System.out.println(e.getMessage());
+      }
+      System.exit(1);
+
+    } catch (RandoopBug e) {
       System.out.println();
       System.out.println("Randoop failed in an unexpected way.");
-      System.out.println("Please report at https://github.com/randoop/randoop/issues .");
+      System.out.println("Please report at https://github.com/randoop/randoop/issues ,");
+      System.out.println(
+          "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
 
       // Calls to flush() do not untangle System.out and System.err;
       // probably an OS issue, not Java.  So we send printStackTrace()
@@ -100,10 +113,15 @@ public class Main {
       if (!success) {
         System.out.println();
         System.out.println("Randoop failed.");
-        System.out.println("Last sequence under execution: ");
-        String[] lines = AbstractGenerator.currSeq.toString().split(Globals.lineSep);
-        for (String line : lines) {
-          System.out.println(line);
+        Sequence lastSequence = AbstractGenerator.currSeq;
+        if (lastSequence == null) {
+          System.out.println("No sequences generated.");
+        } else {
+          System.out.println("Last sequence under execution: ");
+          String[] lines = lastSequence.toString().split(Globals.lineSep);
+          for (String line : lines) {
+            System.out.println(line);
+          }
         }
         System.exit(1);
       }

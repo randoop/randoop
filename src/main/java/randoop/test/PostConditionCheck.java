@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.condition.ExecutableBooleanExpression;
 import randoop.contract.ObjectContractUtils;
@@ -13,10 +13,10 @@ import randoop.sequence.Variable;
 /** Represents the observed failure of a post-condition. */
 public class PostConditionCheck implements Check {
 
-  /** The post-condition */
+  /** The post-condition. */
   private final List<ExecutableBooleanExpression> postConditions;
 
-  /** The input variables for the condition */
+  /** The input variables for the condition. */
   private final Variable[] inputVariables;
 
   /**
@@ -62,7 +62,7 @@ public class PostConditionCheck implements Check {
     for (ExecutableBooleanExpression condition : postConditions) {
       conditionStrings.add(condition.getContractSource());
     }
-    return UtilMDE.join(conditionStrings, " && ");
+    return UtilPlume.join(conditionStrings, " && ");
   }
 
   @Override

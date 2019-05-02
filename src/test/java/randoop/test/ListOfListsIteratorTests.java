@@ -4,31 +4,26 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
 
 public class ListOfListsIteratorTests extends TestCase {
 
   public void test() {
 
-    ArrayListSimpleList<Integer> a1 = new ArrayListSimpleList<>();
+    SimpleArrayList<Integer> a1 = new SimpleArrayList<>();
     a1.add(1);
     a1.add(2);
 
-    ArrayListSimpleList<Integer> a2 = new ArrayListSimpleList<>();
+    SimpleArrayList<Integer> a2 = new SimpleArrayList<>();
 
-    ArrayListSimpleList<Integer> a3 = new ArrayListSimpleList<>();
+    SimpleArrayList<Integer> a3 = new SimpleArrayList<>();
     a3.add(3);
     a3.add(4);
     a3.add(5);
-
-    List<SimpleList<Integer>> level0 = new ArrayList<>();
-    level0.add(a1);
-    level0.add(a2);
-    level0.add(a3);
 
     for (int i = 0; i < 100; i++) {
 

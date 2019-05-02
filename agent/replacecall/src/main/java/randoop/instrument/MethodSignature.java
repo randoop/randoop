@@ -7,8 +7,9 @@ import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
 import org.plumelib.bcelutil.BcelUtil;
-import org.plumelib.bcelutil.JvmUtil;
-import plume.UtilMDE;
+import org.plumelib.reflection.ReflectionPlume;
+import org.plumelib.reflection.Signatures;
+import org.plumelib.util.UtilPlume;
 
 /**
  * Defines a method in a way that can be used to substitute method calls using BCEL. A method is
@@ -25,7 +26,7 @@ public class MethodSignature {
   /** simple method name */
   private final String name;
 
-  /** The parameter types */
+  /** The parameter types. */
   private final Type[] paramTypes;
 
   /** Cached {@link java.lang.reflect.Method} object for this {@link MethodSignature} */
@@ -149,7 +150,7 @@ public class MethodSignature {
    */
   @Override
   public String toString() {
-    return String.format("%s.%s(%s)", classname, name, UtilMDE.join(paramTypes, ", "));
+    return String.format("%s.%s(%s)", classname, name, UtilPlume.join(paramTypes, ", "));
   }
 
   /**
@@ -200,7 +201,8 @@ public class MethodSignature {
       params[i] = typeToClass(paramTypes[i]);
     }
 
-    // Note that Method.getMethod only returns public methods, so call Method.getDeclaredMethod first
+    // Note that Method.getMethod only returns public methods, so call Method.getDeclaredMethod
+    // first
 
     // First check if the method is declared in the class
     try {
@@ -226,8 +228,8 @@ public class MethodSignature {
    * @throws ClassNotFoundException if no {@code Class<?>} was found for the type
    */
   private Class<?> typeToClass(Type type) throws ClassNotFoundException {
-    String name = JvmUtil.fieldDescriptorToClassGetName(type.getSignature());
-    return UtilMDE.classForName(name);
+    String name = Signatures.fieldDescriptorToClassGetName(type.getSignature());
+    return ReflectionPlume.classForName(name);
   }
 
   /**

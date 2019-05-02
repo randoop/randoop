@@ -25,10 +25,13 @@ public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceTyp
 
     // If the class type is a generic types, visit each one of the
     // parameter types as well.
-    for (Type argType : n.getTypeArgs()) {
-      ReferenceType rType = (ReferenceType) argType;
-      if (rType.getType() instanceof ClassOrInterfaceType) {
-        this.visit((ClassOrInterfaceType) rType.getType(), params);
+
+    if (n.getTypeArguments().isPresent()) {
+      for (Type argType : n.getTypeArguments().get()) {
+        ReferenceType rType = (ReferenceType) argType;
+        if (rType instanceof ClassOrInterfaceType) {
+          this.visit((ClassOrInterfaceType) rType, params);
+        }
       }
     }
 
@@ -36,7 +39,7 @@ public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceTyp
     if (n.getScope() != null) {
       // Add a copy, so that modifying removing the scope later won't
       // affect this instance which is used for comparisons only.
-      params.add((ClassOrInterfaceType) n.clone());
+      params.add(n.clone());
     }
   }
 }

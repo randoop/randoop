@@ -11,9 +11,9 @@ import org.junit.Test;
 import randoop.TestValue;
 import randoop.generation.SeedSequences;
 import randoop.operation.TypedOperation;
-import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.TestValueExtractor;
+import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.JavaTypes;
@@ -26,7 +26,8 @@ public class SeedSequencesTests {
     Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
     ReflectionManager manager =
         new ReflectionManager(
-            new PackageVisibilityPredicate(this.getClass().getPackage().getName()));
+            new VisibilityPredicate.PackageVisibilityPredicate(
+                this.getClass().getPackage().getName()));
     manager.add(new TestValueExtractor(annotatedTestValues));
 
     try {
@@ -83,7 +84,8 @@ public class SeedSequencesTests {
     Set<Sequence> s4 = new LinkedHashSet<>();
     ReflectionManager managerS4 =
         new ReflectionManager(
-            new PackageVisibilityPredicate(this.getClass().getPackage().getName()));
+            new VisibilityPredicate.PackageVisibilityPredicate(
+                this.getClass().getPackage().getName()));
     managerS4.add(new TestValueExtractor(s4));
 
     managerS4.apply(TestValueExamples.class);

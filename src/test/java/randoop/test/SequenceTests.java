@@ -4,8 +4,6 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
-import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_ERROR;
-import static randoop.test.predicate.ExceptionBehaviorPredicate.IS_EXPECTED;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -34,7 +32,6 @@ import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
-import randoop.util.Util;
 
 /*
 Note: I disabled this test in the build script because the test-script includes the use of
@@ -115,10 +112,10 @@ public class SequenceTests {
 
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     VisibilityPredicate visibility = IS_PUBLIC;
-    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility, IS_EXPECTED);
+    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility);
     testGen =
         new ExtendGenerator(
-            new ContractCheckingGenerator(contracts, IS_ERROR),
+            new ContractCheckingGenerator(contracts),
             new RegressionCaptureGenerator(
                 expectation, new MultiMap<Type, TypedOperation>(), visibility, true));
   }
@@ -206,11 +203,11 @@ public class SequenceTests {
     b.append("Failure in test ").append(testId).append(": ").append(msg).append(".");
     b.append("").append(Globals.lineSep).append("Expected:").append(Globals.lineSep).append("");
     for (int i = 0; i < expected.size(); i++) {
-      b.append(i).append(": ").append(expected.get(i)).append(Util.newLine);
+      b.append(i).append(": ").append(expected.get(i)).append(Globals.lineSep);
     }
     b.append("").append(Globals.lineSep).append("Actual:").append(Globals.lineSep).append("");
     for (int i = 0; i < actual.size(); i++) {
-      b.append(i).append(": ").append(actual.get(i)).append(Util.newLine);
+      b.append(i).append(": ").append(actual.get(i)).append(Globals.lineSep);
     }
     return b.toString();
   }

@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.reflection.RawSignature;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
@@ -120,7 +120,7 @@ public class TypedClassOperation extends TypedOperation {
   @Override
   public String toString() {
     if (this.isGeneric()) {
-      String b = "<" + UtilMDE.join(this.getTypeParameters(), ",") + ">" + " ";
+      String b = "<" + UtilPlume.join(this.getTypeParameters(), ",") + ">" + " ";
       return b + super.toString();
     } else {
       return super.toString();
@@ -165,7 +165,8 @@ public class TypedClassOperation extends TypedOperation {
    *     another kind of operation
    */
   public RawSignature getRawSignature() {
-    // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably both
+    // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably
+    // both
     if (!this.isConstructorCall() && !this.isMethodCall()) {
       return null;
     }

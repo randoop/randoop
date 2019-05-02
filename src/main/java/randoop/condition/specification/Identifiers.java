@@ -1,11 +1,11 @@
 package randoop.condition.specification;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
@@ -30,7 +30,8 @@ import plume.UtilMDE;
  */
 public class Identifiers {
 
-  // NOTE: changing field names or @SerializedName annotations could affect integration with other tools
+  // NOTE: changing field names or @SerializedName annotations could affect integration with other
+  // tools
 
   /** The receiver name. */
   private final String receiverName;
@@ -69,7 +70,7 @@ public class Identifiers {
    * receiver and return value.
    */
   public Identifiers() {
-    this(new ArrayList<String>());
+    this(Collections.emptyList());
   }
 
   /**
@@ -100,15 +101,25 @@ public class Identifiers {
   }
 
   /**
-   * Indicates whether any identifier names occur more than once in this {@link Identifiers}.
+   * Returns an identifier name that occurs more than once in this {@link Identifiers}, or null if
+   * there are no duplicate names.
    *
-   * @return true if a name occurs more than once, false otherwise
+   * @return a name occurs more than once, or null if there are no duplicate names
    */
-  public boolean hasDuplicatedName() {
-    Set<String> names = new HashSet<>(parameters);
-    names.add(receiverName);
-    names.add(returnName);
-    return names.size() != parameters.size() + 2;
+  public String duplicateName() {
+    Set<String> names = new HashSet<>();
+    for (String name : parameters) {
+      if (!names.add(name)) {
+        return name;
+      }
+    }
+    if (!names.add(receiverName)) {
+      return receiverName;
+    }
+    if (!names.add(returnName)) {
+      return returnName;
+    }
+    return null;
   }
 
   @Override
@@ -135,7 +146,7 @@ public class Identifiers {
         + "\""
         + ", \"parameters\": "
         + "[ \""
-        + UtilMDE.join(parameters, "\", \"")
+        + UtilPlume.join(parameters, "\", \"")
         + "\"]"
         + ", \"returnName\": "
         + "\""

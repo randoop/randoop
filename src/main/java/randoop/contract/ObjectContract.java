@@ -3,13 +3,13 @@ package randoop.contract;
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.
 
-import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.main.ExceptionBehaviorClassifier;
 import randoop.main.GenInputsAbstract.BehaviorType;
+import randoop.main.RandoopBug;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 import randoop.test.Check;
@@ -54,16 +54,14 @@ public abstract class ObjectContract {
   public abstract TypeTuple getInputTypes();
 
   /**
-   * Evaluates the contract on the given values.
+   * Evaluates the contract on the given values. Returns {@code false} if the contract was violated.
+   * Returns {@code true} if the contract was satisfied or was not applicable.
    *
    * <p>When calling this method during execution of a test, Randoop guarantees that {@code objects}
    * does not contain any {@code null} objects, and that {@code objects.length == getArity()}.
    *
-   * <p>This method should return {@code true} if the contract was satisfied and {@code false} if it
-   * was violated.
-   *
    * @param objects the actual parameters to this contract
-   * @return true if this contract evaluates to true for the given values, and false otherwise
+   * @return false if the contract is violated, true otherwise
    * @throws Throwable if an exception is thrown in evaluation
    */
   public abstract boolean evaluate(Object... objects) throws Throwable;
@@ -113,17 +111,17 @@ public abstract class ObjectContract {
 
     if (Log.isLoggingOn()) {
       // Commented out because it makes the logs too big.  Uncomment when debugging this code.
-      // Log.logLine("Executed contract " + this.getClass());
-      // Log.logLine("  values (length %d) =%n", values.length);
+      // Log.logPrintf("Executed contract %s%n", this.getClass());
+      // Log.logPrintf("  values (length %d) =%n", values.length);
       // for (Object value : values) {
-      //   Log.logLine(
+      //   Log.logPrintf(
       //       "  %s @%s%n", toStringHandleExceptions(value), System.identityHashCode(value));
       // }
-      // Log.logLine("  Contract outcome = " + outcome);
+      // Log.logPrintf("  Contract outcome = %s%n", outcome);
     }
 
     if (outcome instanceof NormalExecution) {
-      boolean result = ((Boolean) (((NormalExecution) outcome).getRuntimeValue())).booleanValue();
+      boolean result = ((Boolean) ((NormalExecution) outcome).getRuntimeValue()).booleanValue();
       if (result) {
         return null;
       } else {
@@ -131,14 +129,11 @@ public abstract class ObjectContract {
       }
     } else if (outcome instanceof ExceptionalExecution) {
       Throwable e = ((ExceptionalExecution) outcome).getException();
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            String.format(
-                "checkContract(): Contract %s threw exception of class %s with message %s",
-                this, e.getClass(), e.getMessage()));
-      }
-      if (e instanceof BugInRandoopException) {
-        throw (BugInRandoopException) e;
+      Log.logPrintf(
+          "checkContract(): Contract %s threw exception of class %s with message %s%n",
+          this, e.getClass(), e.getMessage());
+      if (e instanceof RandoopBug) {
+        throw (RandoopBug) e;
       }
       if (e instanceof TimeoutExceededException) {
         // The index and name won't get used, but set them anyway.
@@ -146,10 +141,7 @@ public abstract class ObjectContract {
       }
 
       BehaviorType eseqBehavior = ExceptionBehaviorClassifier.classify(e, eseq);
-
-      if (Log.isLoggingOn()) {
-        Log.logLine("  ExceptionBehaviorClassifier.classify(e, eseq) => " + eseqBehavior);
-      }
+      Log.logPrintf("  ExceptionBehaviorClassifier.classify(e, eseq) => %s%n", eseqBehavior);
 
       if (eseqBehavior == BehaviorType.EXPECTED) {
         eseqBehavior = BehaviorType.INVALID;
@@ -188,7 +180,7 @@ public abstract class ObjectContract {
 
     } else {
       assert outcome instanceof NotExecuted;
-      throw new BugInRandoopException("Contract " + this + " failed to execute during evaluation");
+      throw new RandoopBug("Contract " + this + " failed to execute during evaluation");
     }
   }
 
@@ -206,11 +198,11 @@ public abstract class ObjectContract {
       // Note: the following alternative to the above line slightly improves coverage
       // varArray[i] = Randomness.randomMember(eseq.getVariables(values[i]));
 
-      //   Log.logLine(
+      //   Log.logPrintf(
       //       "values[%d] = %s @%s%n",
       //       i, toStringHandleExceptions(values[i]), System.identityHashCode(values[i]));
-      //   Log.logLine("  candidate variables = %s%n", variables);
-      //   Log.logLine(
+      //   Log.logPrintf("  candidate variables = %s%n", variables);
+      //   Log.logPrintf(
       //       "  varArray[%d] = %s @%s%n", i, varArray[i], System.identityHashCode(varArray[i]));
     }
 

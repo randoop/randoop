@@ -16,7 +16,7 @@ import randoop.util.Log;
  */
 class TypeExtractor extends DefaultClassVisitor {
 
-  /** The set of concrete types */
+  /** The set of concrete types. */
   private Set<Type> inputTypes;
 
   /** The visibility predicate for checking whether a type is visible in generated tests. */
@@ -98,9 +98,7 @@ class TypeExtractor extends DefaultClassVisitor {
       if (type.isPrimitive()) {
         type = ((PrimitiveType) type).toBoxedPrimitive();
       }
-      if (Log.isLoggingOn()) {
-        Log.logLine("Adding " + type + " as candidate parameter type");
-      }
+      Log.logPrintf("Adding %s as candidate parameter type%n", type);
       inputTypes.add(type);
     }
   }

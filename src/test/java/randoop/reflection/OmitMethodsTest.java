@@ -3,7 +3,7 @@ package randoop.reflection;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -13,7 +13,7 @@ import org.junit.Test;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 
-/** Tests for omitmethods filtering */
+/** Tests for omitmethods filtering. */
 public class OmitMethodsTest {
 
   private static ClassOrInterfaceType gType;
@@ -159,10 +159,10 @@ public class OmitMethodsTest {
   }
 
   private Set<TypedOperation> getOperations(ClassOrInterfaceType type, Pattern omitpattern) {
-    List<Pattern> omitList = new ArrayList<>();
-    omitList.add(omitpattern);
+    List<Pattern> omitList = Collections.singletonList(omitpattern);
     OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(omitList);
-    VisibilityPredicate visibility = new PackageVisibilityPredicate("randoop.reflection");
+    VisibilityPredicate visibility =
+        new VisibilityPredicate.PackageVisibilityPredicate("randoop.reflection");
     ReflectionManager mgr = new ReflectionManager(visibility);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     final OperationExtractor extractor =

@@ -1,6 +1,6 @@
 package randoop.test;
 
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
 /**
@@ -17,6 +17,10 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
   /**
    * Creates check that enforces expectation that an exception is thrown by the statement at the
    * statement index.
+   *
+   * <p>These are created before the test is classified as normal, exceptional, or invalid behavior.
+   * For example, this could be created with a TimeoutExceededException, but the sequence would
+   * later be classified as invalid.
    *
    * @param exception the expected exception
    * @param statementIndex the index of the statement in the sequence where exception is thrown
@@ -43,7 +47,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
               + "; message: "
               + exception.getMessage();
     }
-    String assertion = "org.junit.Assert.fail(\"" + UtilMDE.escapeNonJava(message) + "\")";
+    String assertion = "org.junit.Assert.fail(\"" + UtilPlume.escapeNonJava(message) + "\")";
     b.append(Globals.lineSep).append("  ").append(assertion).append(";").append(Globals.lineSep);
   }
 

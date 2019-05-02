@@ -47,11 +47,10 @@ import randoop.util.ProgressDisplay;
  *       represents whether the check passed or failed during the last execution of the sequence.
  * </ul>
  *
- * <p>Of the three pieces of data above, an ExecutableSequence only directly manages the first one,
- * i.e. the execution results. Other pieces of data, including checks and check evaluation results,
- * are added or removed by the client of the ExecutableSequence. One way of doing this is by
- * implementing an {@link ExecutionVisitor} and passing it as an argument to the {@code execute}
- * method.
+ * <p>An ExecutableSequence only directly manages the execution results. Other data, including
+ * checks and check evaluation results, are added or removed by the client of the
+ * ExecutableSequence. One way of doing this is by implementing an {@link ExecutionVisitor} and
+ * passing it as an argument to the {@code execute} method.
  */
 public class ExecutableSequence {
 
@@ -70,7 +69,7 @@ public class ExecutableSequence {
 
   /**
    * How long it took to generate this sequence in nanoseconds, excluding execution time. Must be
-   * directly set by the generator that creates this object (No code in this class sets its value.)
+   * directly set by the generator that creates this object. No code in this class sets its value.
    */
   public long gentime = -1;
 
@@ -87,12 +86,15 @@ public class ExecutableSequence {
    */
   private boolean hasNullInput = false;
 
-  /** Output buffer used to capture the output from the executed sequence */
+  /** Captures output from the executed sequence. */
+  // static, so initializing eagerly is not a large cost.
   private static ByteArrayOutputStream output_buffer = new ByteArrayOutputStream();
 
-  private static PrintStream ps_output_buffer = new PrintStream(output_buffer);
+  /** Used to populate {@link #output_buffer}. */
+  // static, so initializing eagerly is not a large cost.
+  private static PrintStream output_buffer_stream = new PrintStream(output_buffer);
 
-  /* Maps a value to the set of variables that hold it. */
+  /** Maps a value to the set of variables that hold it. */
   private IdentityMultiMap<Object, Variable> variableMap = new IdentityMultiMap<>();
 
   /**
@@ -152,8 +154,8 @@ public class ExecutableSequence {
       // Only print primitive declarations if the last/only statement
       // of the sequence.  Usually, primitive values are used as arguments:
       // e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
-      if (sequence.canUseShortForm()
-          && sequence.getStatement(i).getShortForm() != null
+      if (sequence.shouldInlineLiterals()
+          && sequence.getStatement(i).getInlinedForm() != null
           && i < sequence.size() - 1) {
         continue;
       }
@@ -242,19 +244,19 @@ public class ExecutableSequence {
    *         <li>execute the i-th statement, using reflection
    *         <li>call {@code visitor.visitAfter(this, i)}
    *       </ul>
-   *
    *   <li>For the last statement, check its specifications (pre-, post-, and throws-conditions).
-   *   <li>Execution stops if one of the following conditions holds:
-   *       <ul>
-   *         <li>All statements in the sequences have been executed.
-   *         <li>A pre-condition for the final statement fails
-   *         <li>A statement's execution results in an exception and {@code ignoreException==false}.
-   *         <li>A {@code null} input value is implicitly passed to the statement (i.e., not via
-   *             explicit declaration like x = null)
-   *         <li>After executing the i-th statement and calling the visitor's {@code visitAfter}
-   *             method, a {@code ContractViolation} check is present at index i.
-   *       </ul>
+   * </ul>
    *
+   * Execution stops if one of the following conditions holds:
+   *
+   * <ul>
+   *   <li>All statements in the sequences have been executed.
+   *   <li>A pre-condition for the final statement fails
+   *   <li>A statement's execution results in an exception and {@code ignoreException==false}.
+   *   <li>A {@code null} input value is implicitly passed to the statement (i.e., not via explicit
+   *       declaration like x = null)
+   *   <li>After executing the i-th statement and calling the visitor's {@code visitAfter} method, a
+   *       {@code ContractViolation} check is present at index i.
    * </ul>
    *
    * <p>After invoking this method, the client can query the outcome of executing each statement via
@@ -279,7 +281,7 @@ public class ExecutableSequence {
       for (int i = 0; i < this.sequence.size(); i++) {
 
         // Collect the input values to i-th statement.
-        Object[] inputValues = getRuntimeInputs(executionResults.theList, sequence.getInputs(i));
+        Object[] inputValues = getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {
           // This is the last statement in the sequence.
@@ -297,7 +299,7 @@ public class ExecutableSequence {
         }
 
         visitor.visitBeforeStatement(this, i);
-        executeStatement(sequence, executionResults.theList, i, inputValues);
+        executeStatement(sequence, executionResults.outcomes, i, inputValues);
 
         // make sure statement executed
         ExecutionOutcome statementResult = getResult(i);
@@ -339,7 +341,7 @@ public class ExecutableSequence {
   }
 
   public Object[] getRuntimeInputs(List<Variable> inputs) {
-    return getRuntimeInputs(executionResults.theList, inputs);
+    return getRuntimeInputs(executionResults.outcomes, inputs);
   }
 
   private Object[] getRuntimeInputs(List<ExecutionOutcome> outcome, List<Variable> inputs) {
@@ -361,7 +363,7 @@ public class ExecutableSequence {
    * @return array of values corresponding to variables
    */
   public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
-    return getRuntimeValuesForVars(vars, execution.theList);
+    return getRuntimeValuesForVars(vars, execution.outcomes);
   }
 
   private static Object[] getRuntimeValuesForVars(
@@ -391,8 +393,8 @@ public class ExecutableSequence {
       if (GenInputsAbstract.capture_output) {
         System.out.flush();
         System.err.flush();
-        System.setOut(ps_output_buffer);
-        System.setErr(ps_output_buffer);
+        System.setOut(output_buffer_stream);
+        System.setErr(output_buffer_stream);
       }
 
       // assert ((statement.isMethodCall() && !statement.isStatic()) ?
@@ -400,12 +402,13 @@ public class ExecutableSequence {
 
       ExecutionOutcome r;
       try {
-        r = statement.execute(inputVariables, Globals.blackHole);
+        r = statement.execute(inputVariables);
       } catch (SequenceExecutionException e) {
         throw new SequenceExecutionException("Problem while executing " + statement, e);
       }
       assert r != null;
       if (GenInputsAbstract.capture_output) {
+        output_buffer_stream.flush();
         System.setOut(orig_out);
         System.setErr(orig_err);
         r.set_output(output_buffer.toString());

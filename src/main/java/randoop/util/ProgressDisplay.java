@@ -1,10 +1,9 @@
 package randoop.util;
 
-import java.lang.InterruptedException;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import plume.UtilMDE;
+import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.RandoopListenerManager;
@@ -72,12 +71,15 @@ public class ProgressDisplay extends Thread {
 
   @Override
   public void run() {
+    long progressInterval = GenInputsAbstract.progressintervalmillis;
     while (true) {
       if (shouldStop) {
         clear();
         return;
       }
-      displayWithTime();
+      if (progressInterval > 0) {
+        displayWithTime();
+      }
       if (listenerMgr != null) {
         listenerMgr.progressThreadUpdateNotify();
       }
@@ -93,23 +95,24 @@ public class ProgressDisplay extends Thread {
         if (now - lastStepTime > exit_if_no_steps_after_milliseconds) {
           // TODO: The stack trace of this thread is not interesting.
           // This should print the stack trace of the thread that is running a test.
-          printStackTraceAndExit();
+          exitDueToNoSteps();
         }
       }
 
       try {
-        sleep(GenInputsAbstract.progressintervalmillis);
+        sleep(progressInterval > 0 ? progressInterval : 1000);
       } catch (InterruptedException e) {
         // hmm
       }
     }
   }
 
+  /** Exit due to too much time without taking a step. */
   // Ideally, on timeout we would terminate step() without shutting down the entire Randoop process.
   // That is not possible in general, unless the test is running in its own thread.
   // Thread.interrupt() just sets the thread's interrupt status.
   // So, tell the user to fix the problem or to run with --usethreads.
-  private void printStackTraceAndExit() {
+  private void exitDueToNoSteps() {
     System.out.println();
     System.out.println();
     System.out.printf(
@@ -177,7 +180,7 @@ public class ProgressDisplay extends Thread {
     if (noProgressOutput()) return;
     // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
-    System.out.print("\r" + UtilMDE.rpad("", 199)); // erase about 200 characters of text
+    System.out.print("\r" + UtilPlume.rpad("", 199)); // erase about 200 characters of text
     System.out.print("\r"); // return to beginning of line
     System.out.flush();
   }
@@ -214,12 +217,8 @@ public class ProgressDisplay extends Thread {
     }
     // System.out.println (status);
 
-    // if (Log.loggingOn) {
-    // Log.log("Free memory: "
-    // + java.lang.Runtime.getRuntime().freeMemory());
-    // Log.log("Used memory: "
-    // + (java.lang.Runtime.getRuntime().totalMemory() - java.lang.Runtime
-    // .getRuntime().freeMemory()));
-    // }
+    // Log.logPrintf("Free memory: %s%n", Runtime.getRuntime().freeMemory());
+    // Log.logPrintf("Used memory: %s%n",
+    //    Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
   }
 }

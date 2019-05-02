@@ -1,6 +1,7 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +27,7 @@ import randoop.util.Randomness;
 /** Function object to instantiate type parameters from a set of input types. */
 public class TypeInstantiator {
 
-  /** The set of input types for this model */
+  /** The set of input types for this model. */
   private final Set<Type> inputTypes;
 
   /**
@@ -72,9 +73,7 @@ public class TypeInstantiator {
 
     // if necessary, do capture conversion first
     if (operation != null && operation.hasWildcardTypes()) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Applying capture conversion to " + operation);
-      }
+      Log.logPrintf("Applying capture conversion to %s%n", operation);
       operation = operation.applyCaptureConversion();
     }
     if (operation != null) {
@@ -99,8 +98,7 @@ public class TypeInstantiator {
     assert operation.isConstructorCall() : "only call with constructors of SortedSet subtype";
 
     TypeVariable parameter = operation.getDeclaringType().getTypeParameters().get(0);
-    List<TypeVariable> parameters = new ArrayList<>();
-    parameters.add(parameter);
+    List<TypeVariable> parameters = Collections.singletonList(parameter);
 
     TypeTuple opInputTypes = operation.getInputTypes();
 
@@ -166,9 +164,7 @@ public class TypeInstantiator {
       if (!instantiatingType.isGeneric()) {
         return substitution;
       } else {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Didn't find types to satisfy bounds on generic type: " + declaringType);
-        }
+        Log.logPrintf("Didn't find types to satisfy bounds on generic type: %s%n", declaringType);
         return null;
       }
     }
@@ -312,6 +308,7 @@ public class TypeInstantiator {
    * @param substitution the substitution to be extended
    * @return the list of substitutions, empty if none are found
    */
+  @SuppressWarnings("MixedMutabilityReturnType")
   private List<Substitution<ReferenceType>> collectSubstitutions(
       List<TypeVariable> typeParameters, Substitution<ReferenceType> substitution) {
     /*
@@ -351,7 +348,7 @@ public class TypeInstantiator {
 
         List<List<ReferenceType>> nonGenCandidates = getCandidateTypeLists(nongenericParameters);
         if (nonGenCandidates.isEmpty()) {
-          return new ArrayList<>();
+          return Collections.emptyList();
         }
         ListEnumerator<ReferenceType> enumerator = new ListEnumerator<>(nonGenCandidates);
         while (enumerator.hasNext()) {
@@ -382,7 +379,7 @@ public class TypeInstantiator {
       // if there are no type parameters with generic bounds, can select others independently
       substitution = selectAndExtend(nongenericParameters, substitution);
       if (substitution == null) {
-        return new ArrayList<>();
+        return Collections.emptyList();
       }
       substitutionList.add(substitution);
     }
@@ -420,9 +417,7 @@ public class TypeInstantiator {
     for (TypeVariable typeArgument : parameters) {
       List<ReferenceType> candidates = selectCandidates(typeArgument);
       if (candidates.isEmpty()) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("No candidate types for " + typeArgument);
-        }
+        Log.logPrintf("No candidate types for %s%n", typeArgument);
         return null;
       }
       selectedTypes.add(Randomness.randomMember(candidates));
@@ -448,6 +443,7 @@ public class TypeInstantiator {
     List<Substitution<ReferenceType>> substitutionList = new ArrayList<>();
     List<List<ReferenceType>> candidateTypes = getCandidateTypeLists(parameters);
     if (candidateTypes.isEmpty()) {
+      // cannot use `Collections.emptyList()` because clients will add elements to the returned list
       return new ArrayList<>();
     }
     ListEnumerator<ReferenceType> enumerator = new ListEnumerator<>(candidateTypes);
@@ -471,15 +467,14 @@ public class TypeInstantiator {
    * @return the list of candidate lists for the parameters; returns the empty list if any parameter
    *     has no candidates
    */
+  @SuppressWarnings("MixedMutabilityReturnType")
   private List<List<ReferenceType>> getCandidateTypeLists(List<TypeVariable> parameters) {
     List<List<ReferenceType>> candidateTypes = new ArrayList<>();
     for (TypeVariable typeArgument : parameters) {
       List<ReferenceType> candidates = selectCandidates(typeArgument);
       if (candidates.isEmpty()) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("No candidate types for " + typeArgument);
-        }
-        return new ArrayList<>();
+        Log.logPrintf("No candidate types for %s%n", typeArgument);
+        return Collections.emptyList();
       }
       candidateTypes.add(candidates);
     }
@@ -497,8 +492,7 @@ public class TypeInstantiator {
     ParameterBound lowerBound = selectLowerBound(argument);
     ParameterBound upperBound = selectUpperBound(argument);
 
-    List<TypeVariable> typeVariableList = new ArrayList<>();
-    typeVariableList.add(argument);
+    List<TypeVariable> typeVariableList = Collections.singletonList(argument);
     List<ReferenceType> typeList = new ArrayList<>();
     for (Type inputType : inputTypes) {
       if (inputType.isReferenceType()) {

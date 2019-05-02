@@ -8,36 +8,31 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import randoop.BugInRandoopException;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.operation.TypedOperation;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
-import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
+import randoop.util.SimpleArrayList;
 import randoop.util.SimpleList;
-import randoop.util.WeightedElement;
 
 /**
- * Immutable.
- *
- * <p>A sequence of {@link Statement}s. Each element in the sequence represents a particular {@link
- * Statement}, like a method call {@code Foo f = m(i1...iN)} or a declaration {@code int x = 0}.
+ * An immutable sequence of {@link Statement}s.
  *
  * <p>This class represents only the structure of a well-formed sequence of statements, and does not
  * contain any information about the runtime behavior of the sequence. The class
  * randoop.ExecutableSequence adds functionality that executes the sequence.
  */
-public final class Sequence implements WeightedElement {
-
-  public double lastTimeUsed = java.lang.System.currentTimeMillis();
+public final class Sequence {
 
   /** The list of statements. */
   public final SimpleList<Statement> statements;
@@ -46,28 +41,19 @@ public final class Sequence implements WeightedElement {
    * The variables that are inputs or output for the last statement of this sequence: first the
    * return variable if any (ie, if the operation is non-void), then the input variables. These hold
    * the values "produced" by some statement of the sequence. Should be final but cannot because of
-   * serialization. This info is used by some generators.
+   * serialization.
    */
   private transient /*final*/ List<Variable> lastStatementVariables;
 
-  /**
-   * The types of the inputs and output for the last statement of this sequence: first the return
-   * type if any (ie, if the operation is non-void), then the input types. Should be final but
-   * cannot because of serialization. This info is used by some generators.
-   */
+  /** The types of elements of {@link #lastStatementVariables}. */
   private transient /*final*/ List<Type> lastStatementTypes;
 
-  private transient boolean allowShortForm;
-
-  /**
-   * The list of statement indices that as determined by construction define outputs of this
-   * sequence.
-   */
-  private List<Integer> outputIndices;
+  /** If true, inline primitive values rather than creating and using a variable. */
+  private transient boolean shouldInlineLiterals = true;
 
   /** Create a new, empty sequence. */
   public Sequence() {
-    this(new ArrayListSimpleList<Statement>(), 0, 0);
+    this(new SimpleArrayList<Statement>(), 0, 0);
   }
 
   /**
@@ -87,9 +73,6 @@ public final class Sequence implements WeightedElement {
     this.savedHashCode = hashCode;
     this.savedNetSize = netSize;
     this.computeLastStatementInfo();
-    this.outputIndices = new ArrayList<>();
-    this.allowShortForm = true;
-    this.outputIndices.add(this.statements.size() - 1);
     this.activeFlags = new BitSet(this.size());
     this.setAllActiveFlags();
     this.checkRep();
@@ -146,7 +129,7 @@ public final class Sequence implements WeightedElement {
    *
    * @param operation the operation for the sequence
    * @param inputSequences the sequences computing inputs to the operation
-   * @param indexes the indices of the inputs to the operation
+   * @param indexes the indices of the inputs to the operation; same length as inputSequences
    * @return the sequence that applies the operation to the given inputs
    */
   public static Sequence createSequence(
@@ -160,25 +143,12 @@ public final class Sequence implements WeightedElement {
     return inputSequence.extend(operation, inputs);
   }
 
-  public static Sequence createSequence(TypedOperation operation, Sequence inputSequence) {
+  public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
     List<Variable> inputs = new ArrayList<>();
-    for (int index : inputSequence.getOutputIndices()) {
-      inputs.add(inputSequence.getVariable(index));
+    for (int index : elementsSequence.getOutputIndices()) {
+      inputs.add(elementsSequence.sequence.getVariable(index));
     }
-    return inputSequence.extend(operation, inputs);
-  }
-
-  public static Sequence createSequence(List<Sequence> sequences, List<Integer> variables) {
-    assert sequences.size() == variables.size() : "must be one variable for each sequence";
-    Sequence sequence = Sequence.concatenate(sequences);
-    List<Integer> outputIndices = new ArrayList<>();
-    int size = 0;
-    for (int i = 0; i < sequences.size(); i++) {
-      outputIndices.add(size + variables.get(i));
-      size += sequences.get(i).size();
-    }
-    sequence.outputIndices = outputIndices;
-    return sequence;
+    return elementsSequence.sequence.extend(operation, inputs);
   }
 
   /**
@@ -196,7 +166,7 @@ public final class Sequence implements WeightedElement {
       indexList.add(getRelativeIndexForVariable(size(), v));
     }
     Statement statement = new Statement(operation, indexList);
-    int newNetSize = (operation.isNonreceivingValue()) ? this.savedNetSize : this.savedNetSize + 1;
+    int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
         new OneMoreElementList<>(this.statements, statement),
         this.savedHashCode + statement.hashCode(),
@@ -244,15 +214,6 @@ public final class Sequence implements WeightedElement {
       statements1.add(c.statements);
     }
     return new Sequence(new ListOfLists<>(statements1), newHashCode, newNetSize);
-  }
-
-  /*
-   * Weight is used by heuristic that favors smaller sequences so it makes sense
-   * to define weight as the inverse of size.
-   */
-  @Override
-  public double getWeight() {
-    return 1 / (double) size();
   }
 
   /**
@@ -323,18 +284,7 @@ public final class Sequence implements WeightedElement {
   @SuppressWarnings("ReferenceEquality")
   public Statement getCreatingStatement(Variable value) {
     if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
-    return statements.get((value).index);
-  }
-
-  /**
-   * Returns the list of output indices for use when sequences are dealt with compositionally. What
-   * is an output index is determined by how the sequence is created, but generally is the index of
-   * the last statement.
-   *
-   * @return the list of output indices for this sequence
-   */
-  public List<Integer> getOutputIndices() {
-    return outputIndices;
+    return statements.get(value.index);
   }
 
   /**
@@ -358,6 +308,7 @@ public final class Sequence implements WeightedElement {
    *
    * @return a string containing Java code for this sequence
    */
+  @SideEffectFree
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
@@ -365,7 +316,7 @@ public final class Sequence implements WeightedElement {
       // But do print them if they are the last statement;
       // otherwise, the sequence might print as the empty string.
       if (i != size() - 1) {
-        if (canUseShortForm() && getStatement(i).getShortForm() != null) {
+        if (shouldInlineLiterals() && getStatement(i).getInlinedForm() != null) {
           continue;
         }
       }
@@ -484,17 +435,14 @@ public final class Sequence implements WeightedElement {
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
     for (int i = 0; i < statements.size(); i++) {
-      if (!(statements.get(i).isNonreceivingInitialization())) {
+      if (!statements.get(i).isNonreceivingInitialization()) {
         netSize++;
       }
     }
     return netSize;
   }
 
-  /**
-   * Set lastStatementVariables and lastStatementTypes to their appropriate values. See
-   * documentation for these fields for more info.
-   */
+  /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
   private void computeLastStatementInfo() {
     this.lastStatementTypes = new ArrayList<>();
     this.lastStatementVariables = new ArrayList<>();
@@ -579,7 +527,7 @@ public final class Sequence implements WeightedElement {
         if (newRefConstraint == null) {
           throw new IllegalStateException();
         }
-        if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
+        if (!statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint)) {
           throw new IllegalArgumentException(
               i
                   + "th input constraint "
@@ -698,8 +646,8 @@ public final class Sequence implements WeightedElement {
       Statement s = statements.get(i.index);
       Type outputType = s.getOutputType();
       if (type.isAssignableFrom(outputType)
-          && (!(onlyReceivers && outputType.isNonreceiverType()))
-          && (!(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization()))) {
+          && !(onlyReceivers && outputType.isNonreceiverType())
+          && !(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization())) {
         possibleVars.add(i);
       }
     }
@@ -717,9 +665,9 @@ public final class Sequence implements WeightedElement {
   public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
     List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
     if (possibleVars.isEmpty()) {
-      Statement lastStatement = this.statements.get(this.statements.size() - 1);
+      // Statement lastStatement = this.statements.get(this.statements.size() - 1);
       return null; // deal with the problem elsewhere.  TODO: fix so this cannot happen.
-      // throw new BugInRandoopException(
+      // throw new RandoopBug(
       //     String.format(
       //         "Failed to select %svariable with input type %s from statement %s",
       //         (onlyReceivers ? "receiver " : ""), type, lastStatement));
@@ -749,13 +697,13 @@ public final class Sequence implements WeightedElement {
       if (isActive(i)) {
         Type outputType = s.getOutputType();
         if (type.isAssignableFrom(outputType)
-            && (!(onlyReceivers && outputType.isNonreceiverType()))) {
+            && !(onlyReceivers && outputType.isNonreceiverType())) {
           possibleIndices.add(i);
         }
       }
     }
     if (possibleIndices.isEmpty()) {
-      throw new BugInRandoopException(
+      throw new RandoopBug(
           "Failed to select variable with input type " + type + " from sequence " + this);
     }
 
@@ -820,7 +768,7 @@ public final class Sequence implements WeightedElement {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      if (!(operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
+      if (!operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint)) {
         String msg =
             i
                 + "th given type "
@@ -865,7 +813,7 @@ public final class Sequence implements WeightedElement {
    * Appends the statement at the given index to the {@code StringBuilder}.
    *
    * @param b the {@link StringBuilder} to which the code is appended
-   * @param index the position of the statement to print in this {@code Sequence}.
+   * @param index the position of the statement to print in this {@code Sequence}
    */
   public void appendCode(StringBuilder b, int index) {
     // Get strings representing the inputs to this statement.
@@ -1133,8 +1081,11 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Using compositional structure of this sequence, return the subsequence of this sequence that
-   * contains the statement at the given index.
+   * Return a subsequence of this sequence that contains the statement at the given index. It does
+   * not necessarily contain the first element of this sequence.
+   *
+   * <p>The result depends on the compositional structure of this sequence. The implementation
+   * avoids allocating new objects.
    *
    * @param index the statement position in this sequence
    * @return the sequence containing the index position
@@ -1154,29 +1105,29 @@ public final class Sequence implements WeightedElement {
       GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      throw new BugInRandoopException("Error while logging sequence", e);
+      throw new RandoopBug("Error while logging sequence", e);
     }
   }
 
   /**
-   * Indicate whether this sequence can be printed with variable values substituted for the variable
-   * in operation arguments. If true, the initialization of the variable will not be included in the
-   * sequence when dumped to a file.
+   * By default, every value used in a sequence is named as a variable. If this variable is true,
+   * then primitive literals are used inline as arguments, without an explicit variable and
+   * initialization.
    *
-   * @return true if the short form of variables can be used for this sequence, and false otherwise
+   * @return true if literals should be inlined in this sequence, and false otherwise
    */
-  boolean canUseShortForm() {
-    return allowShortForm;
+  boolean shouldInlineLiterals() {
+    return shouldInlineLiterals;
   }
 
+  // TODO: does this apply to the output value of this sequence, or to the input variables to this
+  // sequence, or both?  I think the output value, but I'm not sure.
   /**
-   * Disables the use of variable values as arguments in this sequence. This is a hack to deal with
-   * inability to determine when a variable definition is necessary because it is used more than
-   * once, which is an issue because post-conditions can use variables but don't have the abilility
-   * to use the short-form.
+   * Disables inlining of variable values as arguments in this sequence. This is a hack to give the
+   * variable a name, so that post-conditions can refer to it.
    */
-  public void disableShortForm() {
-    allowShortForm = false;
+  public void doNotInlineLiterals() {
+    shouldInlineLiterals = false;
   }
 
   /**

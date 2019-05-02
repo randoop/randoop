@@ -12,7 +12,7 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
-import randoop.BugInRandoopException;
+import randoop.main.RandoopBug;
 
 /**
  * A {@code java.lang.instrument.ClassTransformer} that instruments loaded classes to determine if
@@ -60,9 +60,8 @@ public class CoveredClassTransformer implements ClassFileTransformer {
 
     String qualifiedName = className.replace('/', '.');
 
-    // don't transform rt.jar classes
-    // list derived from jdk1.8.0_71
-    // include org.junit because tests were not running
+    // For performance reasons, don't transform rt.jar classes except
+    // java.awt and javax.swing.  (List derived from jdk1.8.0_71.)
     if (qualifiedName.startsWith("java.") // start of rt.jar name prefixes
         || qualifiedName.startsWith("javax.")
         || qualifiedName.startsWith("jdk.")
@@ -83,7 +82,8 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     // run environment classes
     if (qualifiedName.startsWith("org.junit.")
         || qualifiedName.startsWith("org.hamcrest.")
-        || qualifiedName.startsWith("org.gradle.")) {
+        || qualifiedName.startsWith("org.gradle.")
+        || qualifiedName.startsWith("worker.org.gradle.")) {
       return null;
     }
 
@@ -101,7 +101,7 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     try {
       cc = pool.makeClassIfNew(new ByteArrayInputStream(classfileBuffer));
     } catch (Exception e) {
-      throw new BugInRandoopException("Unable to instrument file: " + e);
+      throw new RandoopBug("Unable to instrument file: " + e);
     }
 
     if (cc.isFrozen() || cc.isInterface()) {
@@ -113,9 +113,9 @@ public class CoveredClassTransformer implements ClassFileTransformer {
     try {
       bytecode = cc.toBytecode();
     } catch (IOException e) {
-      throw new BugInRandoopException("Unable to convert instrumentation to bytecode: " + e);
+      throw new RandoopBug("Unable to convert instrumentation to bytecode: " + e);
     } catch (CannotCompileException e) {
-      throw new BugInRandoopException("Error in instrumentation code: " + e);
+      throw new RandoopBug("Error in instrumentation code: " + e);
     }
     cc.detach(); // done with class, remove from ClassPool
 

@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import randoop.BugInRandoopException;
+import randoop.main.RandoopBug;
 
 /** Stores the mutable state of a class, allowing it to be saved, printed and restored. */
 public class StaticCache {
@@ -12,7 +12,7 @@ public class StaticCache {
   /** The class for which static state is to be saved. */
   private final Class<?> declaringClass;
 
-  /** The map from static fields to a value */
+  /** The map from static fields to a value. */
   private final Map<Field, Object> valueMap;
 
   /**
@@ -44,7 +44,7 @@ public class StaticCache {
         try {
           value = field.get(null);
         } catch (IllegalAccessException e) {
-          throw new BugInRandoopException("unable to save value of field " + field.getName());
+          throw new RandoopBug("unable to save value of field " + field.getName());
         }
         valueMap.put(field, value);
       }
@@ -57,7 +57,7 @@ public class StaticCache {
       try {
         entry.getKey().set(null, entry.getValue());
       } catch (IllegalAccessException e) {
-        throw new BugInRandoopException("unable to save value of field " + entry.getKey());
+        throw new RandoopBug("unable to save value of field " + entry.getKey());
       }
     }
   }

@@ -1,14 +1,14 @@
 package randoop.test;
 
 import java.util.Set;
+import java.util.function.Predicate;
 import randoop.sequence.ExecutableSequence;
-import randoop.util.predicate.DefaultPredicate;
 
 /**
  * Checks whether the most recent execution of the {@link ExecutableSequence} covers any of the
  * classes in this predicate.
  */
-public class IncludeIfCoversPredicate extends DefaultPredicate<ExecutableSequence> {
+public class IncludeIfCoversPredicate implements Predicate<ExecutableSequence> {
 
   /** the set of classes to be covered */
   private Set<Class<?>> coveredClasses;

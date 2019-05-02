@@ -164,7 +164,7 @@ public class EnumConstantTest {
 
     // Execution
     NormalExecution exec = new NormalExecution(SimpleEnumForTests.ONE, 0);
-    NormalExecution actual = (NormalExecution) ec1.execute(new Object[0], null);
+    NormalExecution actual = (NormalExecution) ec1.execute(new Object[0]);
     assertTrue(
         "Execution should be simply returning value",
         exec.getRuntimeValue().equals(actual.getRuntimeValue())

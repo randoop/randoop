@@ -1,5 +1,6 @@
 package randoop.reflection.visibilitytest;
 
+@SuppressWarnings({"UnusedMethod", "UnusedNestedClass", "UnusedVariable"})
 public class PublicClass {
   public PublicClass(int i) {}
 
