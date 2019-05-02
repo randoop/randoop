@@ -9,9 +9,11 @@ import static randoop.reflection.SignatureParser.ID_STRING;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
@@ -58,6 +60,9 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   /** The underlying {@link randoop.output.JavaFileWriter} for writing a test class. */
   private final JavaFileWriter javaFileWriter;
 
+  /** Method names for flaky tests (e.g., "test005"). */
+  private final HashSet<String> flakyTestNames;
+
   /**
    * Create a {@link FailingAssertionCommentWriter} for which tests will be run in the environment
    * and which uses the given {@link JavaFileWriter} to output test classes.
@@ -69,6 +74,17 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       TestEnvironment testEnvironment, JavaFileWriter javaFileWriter) {
     this.testEnvironment = testEnvironment;
     this.javaFileWriter = javaFileWriter;
+    this.flakyTestNames = new HashSet<>();
+  }
+
+  /**
+   * Returns the set of flaky test names. Each element has the form testNNN where N are digits; for
+   * example, "test002".
+   *
+   * @return the flaky test names
+   */
+  public TreeSet<String> getFlakyTestNames() {
+    return new TreeSet<>(flakyTestNames);
   }
 
   /**
@@ -87,7 +103,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     int pass = 0; // Used to create unique working directory name.
-    boolean passing = GenInputsAbstract.flaky_test_behavior == FlakyTestAction.OUTPUT;
+    boolean passing = false; // true if all tests pass
 
     while (!passing) {
       Path workingDirectory = createWorkingDirectory(classname, pass);
@@ -118,7 +134,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         } else if (status.timedOut) {
           throw new Error("Timed out: " + qualifiedClassname);
         } else {
-          classSource = commentFailingAssertions(packageName, classname, classSource, status);
+          classSource =
+              commentFailingAssertions(packageName, classname, classSource, status, flakyTestNames);
         }
       } finally {
         UtilPlume.deleteDir(workingDirectory.toFile());
@@ -231,12 +248,18 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @param classname the simple (unqualified) name of the test class
    * @param javaCode the source code for the test class; each assertion must be on its own line
    * @param status the {@link randoop.execution.RunCommand.Status} from running the test with JUnit
+   * @param flakyTests names of flaky tests, e.g. "test005". This is an output parameter that is
+   *     augmented by this method.
    * @return the class source edited so that failing assertions are replaced by comments
    * @throws RandoopBug if {@code status} contains output for a failure not involving a
    *     Randoop-generated test method
    */
   private String commentFailingAssertions(
-      String packageName, String classname, String javaCode, Status status) {
+      String packageName,
+      String classname,
+      String javaCode,
+      Status status,
+      HashSet<String> flakyTests) {
     assert !Objects.equals(packageName, "");
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
@@ -273,6 +296,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
           throw new RandoopBug("Bad method name " + methodName + " in flaky-test filter: " + line);
         }
       }
+
+      flakyTests.add(methodName);
 
       // Search for the stacktrace entry corresponding to the test method, and capture the line
       // number.

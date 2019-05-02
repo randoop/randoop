@@ -35,20 +35,35 @@ class RandoopRunStatus {
   final int errorTestCount;
 
   /**
+   * The top suspected "flaky" nondeterministic methods to output. The size is no greater than
+   * {@link GenInputsAbstract#nondeterministic_methods_to_output}.
+   */
+  final List<String> suspectedFlakyMethodNames;
+
+  /** Is output to the user before each possibly flaky method. */
+  public static final String POSSIBLY_FLAKY_PREFIX = "  Possibly flaky:  ";
+
+  /**
    * Creates a {@link RandoopRunStatus} object with the given {@link ProcessStatus}, operator count,
-   * and generated test counts.
+   * generated test counts, and suspected flaky method names.
    *
    * @param processStatus the status of Randoop execution
    * @param operatorCount the number of operators used in generation
    * @param regressionTestCount the number of generated regression tests
    * @param errorTestCount the number of generated error-revealing tests
+   * @param suspectedFlakyMethodNames the suspected flaky methods (in descending order of tf-idf)
    */
   private RandoopRunStatus(
-      ProcessStatus processStatus, int operatorCount, int regressionTestCount, int errorTestCount) {
+      ProcessStatus processStatus,
+      int operatorCount,
+      int regressionTestCount,
+      int errorTestCount,
+      List<String> suspectedFlakyMethodNames) {
     this.processStatus = processStatus;
     this.operatorCount = operatorCount;
     this.regressionTestCount = regressionTestCount;
     this.errorTestCount = errorTestCount;
+    this.suspectedFlakyMethodNames = suspectedFlakyMethodNames;
   }
 
   /**
@@ -194,9 +209,12 @@ class RandoopRunStatus {
     int operatorCount = 0;
     int regressionTestCount = 0;
     int errorTestCount = 0;
+    List<String> suspectedFlakyMethodNames = new ArrayList<>();
 
     for (String line : ps.outputLines) {
-      if (line.contains("PUBLIC MEMBERS=") || line.contains("test count:")) {
+      if (line.startsWith(POSSIBLY_FLAKY_PREFIX)) {
+        suspectedFlakyMethodNames.add(line.substring(POSSIBLY_FLAKY_PREFIX.length()));
+      } else if (line.contains("PUBLIC MEMBERS=") || line.contains("test count:")) {
         int count = Integer.valueOf(line.replaceFirst("\\D*(\\d*).*", "$1"));
         if (line.contains("PUBLIC MEMBERS=")) {
           operatorCount = count;
@@ -208,7 +226,8 @@ class RandoopRunStatus {
       }
     }
 
-    return new RandoopRunStatus(ps, operatorCount, regressionTestCount, errorTestCount);
+    return new RandoopRunStatus(
+        ps, operatorCount, regressionTestCount, errorTestCount, suspectedFlakyMethodNames);
   }
 
   @Override

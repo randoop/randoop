@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import randoop.ExecutionOutcome;
@@ -619,4 +620,32 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     }
     return args;
   }
+
+  /**
+   * RankedTypedOperation is a wrapper around a TypedOperation and a number. The number represents a
+   * ranking or priority. The purpose of this class is to be put in a priority queue.
+   */
+  public static class RankedTypeOperation {
+    /** Ranking value for the TypedOperation. */
+    public final double ranking;
+
+    /** The wrapped operation. */
+    public final TypedOperation operation;
+
+    /**
+     * Constructor to populate ranking and operation.
+     *
+     * @param ranking value associated with the operation
+     * @param operation wrapped operation
+     */
+    public RankedTypeOperation(double ranking, TypedOperation operation) {
+      this.ranking = ranking;
+      this.operation = operation;
+    }
+  }
+
+  /** Comparator used for sorting by ranking. */
+  public static final Comparator<RankedTypeOperation> compareRankedTypeOperation =
+      (RankedTypeOperation t, RankedTypeOperation t1) ->
+          Double.valueOf(t.ranking).compareTo(t1.ranking);
 }
