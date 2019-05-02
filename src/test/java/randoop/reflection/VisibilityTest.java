@@ -46,8 +46,7 @@ public class VisibilityTest {
   @Test
   public void testStandardPackagePrivateVisibility() throws ClassNotFoundException {
 
-    Class<?> c = null;
-    c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
+    Class<?> c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
@@ -156,8 +155,7 @@ public class VisibilityTest {
    */
   @Test
   public void testPublicOnlyPackagePrivateVisibility() throws ClassNotFoundException {
-    Class<?> c = null;
-    c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
+    Class<?> c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
@@ -195,7 +193,7 @@ public class VisibilityTest {
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
       int mods = m.getModifiers() & Modifier.methodModifiers();
-      if (!m.isBridge() && !m.isSynthetic() && (isPubliclyVisible(mods))) {
+      if (!m.isBridge() && !m.isSynthetic() && isPubliclyVisible(mods)) {
         expectedMethods.add(m);
       }
     }
@@ -396,7 +394,7 @@ public class VisibilityTest {
     List<Method> expectedMethods = new ArrayList<>();
     for (Method m : c.getDeclaredMethods()) {
       int mods = m.getModifiers();
-      if (!m.isBridge() && !m.isSynthetic() && (Modifier.isPublic(mods))) {
+      if (!m.isBridge() && !m.isSynthetic() && Modifier.isPublic(mods)) {
         expectedMethods.add(m);
       }
     }
@@ -453,8 +451,7 @@ public class VisibilityTest {
   public void checkFieldAccessibility()
       throws ClassNotFoundException, InstantiationException, IllegalAccessException,
           InvocationTargetException {
-    Class<?> c = null;
-    c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
+    Class<?> c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     Constructor<?> con = null;
@@ -468,21 +465,21 @@ public class VisibilityTest {
 
     con.setAccessible(true);
 
-    Object o = null;
-    o = con.newInstance(10);
+    Object o = con.newInstance(10);
 
     for (Field f : c.getDeclaredFields()) {
       int mods = f.getModifiers() & Modifier.fieldModifiers();
       if (isPackageVisible(mods)) {
         List<TypedOperation> ops = getOperations(f, declaringType);
         for (TypedOperation op : ops) {
+          @SuppressWarnings("UnusedVariable")
           ExecutionOutcome result;
           if (op.getInputTypes().size() == 2) {
             Object[] input = new Object[] {o, 10};
-            result = op.execute(input, null);
+            result = op.execute(input);
           } else {
             Object[] input = new Object[] {o};
-            result = op.execute(input, null);
+            result = op.execute(input);
           }
         }
       }

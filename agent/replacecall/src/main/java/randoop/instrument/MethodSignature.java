@@ -7,7 +7,8 @@ import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
 import org.plumelib.bcelutil.BcelUtil;
-import org.plumelib.bcelutil.JvmUtil;
+import org.plumelib.reflection.ReflectionPlume;
+import org.plumelib.reflection.Signatures;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -25,7 +26,7 @@ public class MethodSignature {
   /** simple method name */
   private final String name;
 
-  /** The parameter types */
+  /** The parameter types. */
   private final Type[] paramTypes;
 
   /** Cached {@link java.lang.reflect.Method} object for this {@link MethodSignature} */
@@ -227,8 +228,8 @@ public class MethodSignature {
    * @throws ClassNotFoundException if no {@code Class<?>} was found for the type
    */
   private Class<?> typeToClass(Type type) throws ClassNotFoundException {
-    String name = JvmUtil.fieldDescriptorToClassGetName(type.getSignature());
-    return BcelUtil.classForName(name);
+    String name = Signatures.fieldDescriptorToClassGetName(type.getSignature());
+    return ReflectionPlume.classForName(name);
   }
 
   /**

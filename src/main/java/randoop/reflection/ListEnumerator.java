@@ -29,7 +29,7 @@ class ListEnumerator<T> implements Iterator<List<T>> {
   private final List<Iterator<T>> iterators;
   /** The partially constructed next value. */
   private final List<T> currentTypes;
-  /** The current position for which to select a value */
+  /** The current position for which to select a value. */
   private int nextList;
 
   /**

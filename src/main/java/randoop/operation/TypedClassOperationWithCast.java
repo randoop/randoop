@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -52,8 +51,8 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
    * that would be thrown in JVM execution is also thrown.
    */
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
-    ExecutionOutcome outcome = super.execute(input, out);
+  public ExecutionOutcome execute(Object[] input) {
+    ExecutionOutcome outcome = super.execute(input);
     if (outcome instanceof NormalExecution) {
       NormalExecution execution = (NormalExecution) outcome;
       Object result = null;

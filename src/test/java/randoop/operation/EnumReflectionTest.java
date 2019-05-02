@@ -228,7 +228,7 @@ public class EnumReflectionTest {
   }
 
   private void checkOutcome(TypedOperation op, Object[] input, Object expected) {
-    ExecutionOutcome outcome = op.execute(input, System.out);
+    ExecutionOutcome outcome = op.execute(input);
     assertTrue(
         "should have normal execution, outcome: " + outcome, outcome instanceof NormalExecution);
     NormalExecution exec = (NormalExecution) outcome;

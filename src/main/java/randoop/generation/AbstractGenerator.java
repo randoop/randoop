@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
@@ -11,7 +12,6 @@ import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MultiVisitor;
-import randoop.RandoopStat;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
@@ -21,7 +21,6 @@ import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
-import randoop.util.predicate.Predicate;
 
 /**
  * Algorithm template for implementing a test generator.
@@ -35,22 +34,24 @@ import randoop.util.predicate.Predicate;
  */
 public abstract class AbstractGenerator {
 
+  /** If true, dump each sequence to the log file as it is generated. */
   @OptionGroup(value = "AbstractGenerator unpublicized options", unpublicized = true)
   @Unpublicized
   @Option("Dump each sequence to the log file")
   public static boolean dump_sequences = false;
 
-  @RandoopStat(
-      "Number of generation steps (each an attempt to generate and execute a new, distinct sequence)")
+  /**
+   * Number of generation steps (each an attempt to generate and execute a new, distinct sequence).
+   */
   public int num_steps = 0;
 
-  @RandoopStat("Number of sequences generated.")
+  /** Number of sequences generated. */
   public int num_sequences_generated = 0;
 
-  @RandoopStat("Number of failing sequences generated.")
+  /** Number of failing sequences generated. */
   public int num_failing_sequences = 0;
 
-  @RandoopStat("Number of invalid sequences generated.")
+  /** Number of invalid sequences generated. */
   public int invalidSequenceCount = 0;
 
   /** When the generator started (millisecond-based system timestamp). */
@@ -344,7 +345,11 @@ public abstract class AbstractGenerator {
     }
 
     if (GenInputsAbstract.progressdisplay && progressDisplay != null) {
-      progressDisplay.displayWithTime();
+      if (GenInputsAbstract.deterministic) {
+        progressDisplay.displayWithoutTime();
+      } else {
+        progressDisplay.displayWithTime();
+      }
       progressDisplay.shouldStop = true;
     }
 
@@ -352,13 +357,15 @@ public abstract class AbstractGenerator {
       System.out.println();
       System.out.println("Normal method executions: " + ReflectionExecutor.normalExecs());
       System.out.println("Exceptional method executions: " + ReflectionExecutor.excepExecs());
-      System.out.println();
-      System.out.println(
-          "Average method execution time (normal termination):      "
-              + String.format("%.3g", ReflectionExecutor.normalExecAvgMillis()));
-      System.out.println(
-          "Average method execution time (exceptional termination): "
-              + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
+      if (!GenInputsAbstract.deterministic) {
+        System.out.println();
+        System.out.println(
+            "Average method execution time (normal termination):      "
+                + String.format("%.3g", ReflectionExecutor.normalExecAvgMillis()));
+        System.out.println(
+            "Average method execution time (exceptional termination): "
+                + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
+      }
     }
 
     // Notify listeners that exploration is ending.
@@ -426,7 +433,7 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Sets the current sequence during exploration
+   * Sets the current sequence during exploration.
    *
    * @param s the current sequence
    */
@@ -444,7 +451,7 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Return the operation history logger for this generator
+   * Return the operation history logger for this generator.
    *
    * @return the operation history logger for this generator
    */

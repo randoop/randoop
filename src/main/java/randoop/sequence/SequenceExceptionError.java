@@ -8,16 +8,16 @@ package randoop.sequence;
  */
 public class SequenceExceptionError extends Error {
 
-  /** ID for serialization */
+  /** ID for serialization. */
   private static final long serialVersionUID = 4778297090156993454L;
 
-  /** The exception thrown by the sequence */
+  /** The exception thrown by the sequence. */
   private Throwable e;
 
-  /** The test sequence */
+  /** The test sequence. */
   private ExecutableSequence testSequence;
 
-  /** The position of the statement that threw the exception */
+  /** The position of the statement that threw the exception. */
   private int position;
 
   /**

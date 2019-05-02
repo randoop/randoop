@@ -9,6 +9,7 @@ import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import org.junit.Test;
@@ -28,12 +29,15 @@ import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 
-/*
- * This test is to check behavior of sequence predicates on sequence that has an
- * ArrayStoreException due to attempting to assign an array element of the wrong type to an array.
- * A minimal example would be
- *   Collection<String>[] a = (Collection<String>[])new ArrayList[4];
- *   a[0] = new LinkedHashSet<>();
+/**
+ * This test is to check behavior of sequence predicates on sequence that has an ArrayStoreException
+ * due to attempting to assign an array element of the wrong type to an array. A minimal example
+ * would be
+ *
+ * <pre>{@code
+ * Collection<String>[] a = (Collection<String>[])new ArrayList[4];
+ * a[0] = new LinkedHashSet<>();
+ * }</pre>
  */
 public class SequenceWithExceptionalExecutionTest {
 
@@ -46,17 +50,15 @@ public class SequenceWithExceptionalExecutionTest {
     TypedOperation lengthTerm =
         TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(JavaTypes.INT_TYPE, 4));
     sequence = sequence.extend(lengthTerm, new ArrayList<Variable>());
-    List<Variable> input = new ArrayList<>();
-    input.add(sequence.getLastVariable());
+    List<Variable> input = Collections.singletonList(sequence.getLastVariable());
     sequence = sequence.extend(TypedOperation.createArrayCreation(rawArrayType), input);
-    input = new ArrayList<>();
-    input.add(sequence.getLastVariable());
+    input = Collections.singletonList(sequence.getLastVariable());
     sequence = sequence.extend(TypedOperation.createCast(rawArrayType, arrayType), input);
     int arrayValueIndex = sequence.getLastVariable().index;
 
     Constructor<?> constructor;
     try {
-      constructor = (LinkedHashSet.class).getConstructor();
+      constructor = LinkedHashSet.class.getConstructor();
     } catch (NoSuchMethodException e) {
       fail("couldn't get default constructor for LinkedHashSet: " + e.getMessage());
       throw new Error("Unreachable");

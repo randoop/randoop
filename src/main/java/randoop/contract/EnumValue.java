@@ -45,7 +45,7 @@ public final class EnumValue extends ObjectContract {
 
   @Override
   public TypeTuple getInputTypes() {
-    return new TypeTuple(Collections.<Type>singletonList(type));
+    return new TypeTuple(Collections.singletonList(type));
   }
 
   @Override

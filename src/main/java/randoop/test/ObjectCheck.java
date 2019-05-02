@@ -34,7 +34,7 @@ public class ObjectCheck implements Check {
   /** The contract that is checked. */
   private final ObjectContract contract;
 
-  /** The variables for the contract */
+  /** The variables for the contract. */
   private final Variable[] vars;
 
   /**

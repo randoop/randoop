@@ -1,9 +1,7 @@
 package randoop.util;
 
-import java.io.PrintStream;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
-import org.plumelib.util.ReflectionPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -80,20 +78,19 @@ public final class ReflectionExecutor {
    * .exceptionThrown} field.
    *
    * @param code the {@link ReflectionCode} to be executed
-   * @param out stream to print exception details to or null
    * @return the execution result
    */
-  public static ExecutionOutcome executeReflectionCode(ReflectionCode code, PrintStream out) {
+  public static ExecutionOutcome executeReflectionCode(ReflectionCode code) {
     long start = System.nanoTime();
     if (usethreads) {
       try {
-        executeReflectionCodeThreaded(code, out);
+        executeReflectionCodeThreaded(code);
       } catch (TimeoutExceededException e) {
         // Don't factor timeouts into the average execution times.  (Is that the right thing to do?)
         return new ExceptionalExecution(e, call_timeout * 1000);
       }
     } else {
-      executeReflectionCodeUnThreaded(code, out);
+      executeReflectionCodeUnThreaded(code);
     }
     long duration = System.nanoTime() - start;
 
@@ -118,11 +115,10 @@ public final class ReflectionExecutor {
    * Executes code.runReflectionCode() in its own thread.
    *
    * @param code the {@link ReflectionCode} to be executed
-   * @param out ignored
    * @throws TimeoutExceededException if execution times out
    */
-  @SuppressWarnings("deprecation")
-  private static void executeReflectionCodeThreaded(ReflectionCode code, PrintStream out)
+  @SuppressWarnings({"deprecation", "DeprecatedThreadMethods"})
+  private static void executeReflectionCodeThreaded(ReflectionCode code)
       throws TimeoutExceededException {
 
     RunnerThread runnerThread = new RunnerThread(null);
@@ -151,7 +147,8 @@ public final class ReflectionExecutor {
     } catch (java.lang.InterruptedException e) {
       throw new IllegalStateException(
           "A RunnerThread thread shouldn't be interrupted by anyone! "
-              + "(This may be a bug in Randoop; please report it at https://github.com/randoop/randoop/issues .)");
+              + "(This may be a bug in Randoop; please report it at https://github.com/randoop/randoop/issues , "
+              + "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .)");
     }
   }
 
@@ -159,9 +156,8 @@ public final class ReflectionExecutor {
    * Executes code.runReflectionCode() in the current thread.
    *
    * @param code the {@link ReflectionCode} to be executed
-   * @param out stream to print exception details to or null
    */
-  private static void executeReflectionCodeUnThreaded(ReflectionCode code, PrintStream out) {
+  private static void executeReflectionCodeUnThreaded(ReflectionCode code) {
     try {
       code.runReflectionCode();
       return;
@@ -176,26 +172,6 @@ public final class ReflectionExecutor {
       // printExceptionDetails(e, System.out);
 
       throw e;
-    }
-  }
-
-  private static void printExceptionDetails(Throwable e, PrintStream out) {
-    out.println("Exception thrown: " + e.toString());
-    out.println("Message: " + e.getMessage());
-    out.println("Stack trace: ");
-    try {
-      e.printStackTrace(out);
-    } catch (Throwable t) {
-      try {
-        // Workaround for http://bugs.sun.com/view_bug.do?bug_id=6973831
-        // Note that field Throwable.suppressedExceptions only exists in JDK 7.
-        Object eSuppressedExceptions = ReflectionPlume.getPrivateField(e, "suppressedExceptions");
-        if (eSuppressedExceptions == null) {
-          ReflectionPlume.setFinalField(e, "suppressedExceptions", new java.util.ArrayList<>());
-        }
-      } catch (NoSuchFieldException nsfe) {
-        out.println("This can't happen on JDK7 (can on JDK6): NoSuchFieldException " + nsfe);
-      }
     }
   }
 }

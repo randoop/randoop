@@ -28,7 +28,7 @@ import java.util.List;
  * patterns before starting generation.
  */
 public class MethodReplacements {
-  /** The list of signature strings */
+  /** The list of signature strings. */
   private static List<String> signatureList = new ArrayList<>();
 
   /** The string with the path to the replacecall agent. */

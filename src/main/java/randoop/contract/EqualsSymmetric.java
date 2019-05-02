@@ -3,7 +3,6 @@ package randoop.contract;
 import java.util.Arrays;
 import randoop.Globals;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** The contract: {@code o1.equals(o2) ==> o2.equals(o1)}. */
@@ -30,8 +29,9 @@ public final class EqualsSymmetric extends ObjectContract {
     return 2;
   }
 
+  /** The arguments to which this contract can be applied. */
   static TypeTuple inputTypes =
-      new TypeTuple(Arrays.<Type>asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
+      new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

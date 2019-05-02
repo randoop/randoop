@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Objects;
 import org.plumelib.util.UtilPlume;
@@ -32,7 +31,7 @@ public final class NonreceiverTerm extends CallableOperation {
   /** The {@link Type} of this non-receiver term. */
   private final Type type;
 
-  /** The value of this non-receiver term. Must be null, a String, or a boxed primitive. */
+  /** The value of this non-receiver term. Must be null, a String, a boxed primitive, or a Class. */
   private final Object value;
 
   /**
@@ -70,10 +69,10 @@ public final class NonreceiverTerm extends CallableOperation {
             "String too long, length = " + ((String) value).length());
       }
     } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
-      // if it's not primitive, a string, or Class value then must be null
+      // if it's not a primitive, string, or Class value, then it must be null
       if (value != null) {
         throw new IllegalArgumentException(
-            "value must be null for non-primitive, non-string type " + type + " but was " + value);
+            "value must be null for type " + type + " but was " + value);
       }
     }
 
@@ -85,8 +84,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * Determines whether the given {@code Class<?>} is the type of a non-receiver term.
    *
    * @param c the {@code Class<?>} object
-   * @return true if the given type is primitive, boxed primitive, or {@code String}; false
-   *     otherwise
+   * @return true iff the given type is primitive, boxed primitive, {@code String}, or {@code Class}
    */
   public static boolean isNonreceiverType(Class<?> c) {
     return c.isPrimitive()
@@ -95,7 +93,7 @@ public final class NonreceiverTerm extends CallableOperation {
         || c.equals(Class.class);
   }
 
-  /** Indicates whether this object is equal to o */
+  /** Indicates whether this object is equal to o. */
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof NonreceiverTerm)) {
@@ -109,13 +107,13 @@ public final class NonreceiverTerm extends CallableOperation {
     return this.type.equals(other.type) && Util.equalsWithNull(this.value, other.value);
   }
 
-  /** Returns a hash code value for this NonreceiverTerm */
+  /** Returns a hash code value for this NonreceiverTerm. */
   @Override
   public int hashCode() {
     return this.type.hashCode() + (this.value == null ? 0 : this.value.hashCode());
   }
 
-  /** Returns string representation of this NonreceiverTerm */
+  /** Returns string representation of this NonreceiverTerm. */
   @Override
   public String toString() {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
@@ -135,7 +133,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return {@link NormalExecution} object enclosing value of this non-receiver term
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
+  public ExecutionOutcome execute(Object[] statementInput) {
     assert statementInput.length == 0;
     return new NormalExecution(this.value, 0);
   }
@@ -238,15 +236,14 @@ public final class NonreceiverTerm extends CallableOperation {
     String valStr;
     if (value == null) {
       valStr = "null";
+    } else if (type.equals(JavaTypes.CHAR_TYPE)) {
+      valStr = Integer.toHexString((Character) value);
+    } else if (type.equals(JavaTypes.CLASS_TYPE)) {
+      valStr = ((Class<?>) value).getName() + ".class";
     } else {
+      valStr = value.toString();
       if (type.isString()) {
-        valStr = "\"" + StringEscapeUtils.escapeJava(value.toString()) + "\"";
-      } else if (type.equals(JavaTypes.CHAR_TYPE)) {
-        valStr = Integer.toHexString((Character) value);
-      } else if (type.equals(JavaTypes.CLASS_TYPE)) {
-        valStr = ((Class<?>) value).getName() + ".class";
-      } else {
-        valStr = value.toString();
+        valStr = "\"" + StringEscapeUtils.escapeJava(valStr) + "\"";
       }
     }
 
@@ -261,6 +258,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return the non-receiver term for the given string descriptor
    * @throws OperationParseException if string does not represent valid object
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String s) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');

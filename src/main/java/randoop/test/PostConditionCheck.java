@@ -13,10 +13,10 @@ import randoop.sequence.Variable;
 /** Represents the observed failure of a post-condition. */
 public class PostConditionCheck implements Check {
 
-  /** The post-condition */
+  /** The post-condition. */
   private final List<ExecutableBooleanExpression> postConditions;
 
-  /** The input variables for the condition */
+  /** The input variables for the condition. */
   private final Variable[] inputVariables;
 
   /**

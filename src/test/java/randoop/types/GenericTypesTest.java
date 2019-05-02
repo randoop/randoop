@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
@@ -259,7 +259,7 @@ public class GenericTypesTest {
         subtype.isSubtypeOf(stringSuperType));
     assertEquals("superclass", stringSuperType, subtype.getSuperclass());
 
-    // try with example inspired by java.util.stream.Stream (which is Java 8)
+    // try with example inspired by java.util.stream.Stream (which was introduced in Java 8)
     GenericClassType genericStreamType = GenericClassType.forClass(Stream.class);
     InstantiatedType stringStreamType = genericStreamType.instantiate(JavaTypes.STRING_TYPE);
     GenericClassType genericBaseStreamType = GenericClassType.forClass(BaseStream.class);
@@ -280,8 +280,7 @@ public class GenericTypesTest {
     ParameterBound bound = ParameterBound.forType(ReferenceType.forClass(Number.class));
     WildcardType wildcardType = new WildcardType(bound, true);
     TypeArgument argument = new WildcardArgument(wildcardType);
-    List<TypeArgument> arguments = new ArrayList<>();
-    arguments.add(argument);
+    List<TypeArgument> arguments = Collections.singletonList(argument);
     InstantiatedType list = new InstantiatedType(JDKTypes.LIST_TYPE, arguments);
     InstantiatedType arraylist = new InstantiatedType(JDKTypes.ARRAY_LIST_TYPE, arguments);
 

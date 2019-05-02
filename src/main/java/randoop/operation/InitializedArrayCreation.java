@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
@@ -60,7 +59,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @return {@link NormalExecution} object containing constructed array
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
+  public ExecutionOutcome execute(Object[] statementInput) {
     if (statementInput.length > length) {
       throw new IllegalArgumentException(
           "Too many arguments: " + statementInput.length + ", capacity: " + length);
@@ -154,6 +153,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @throws OperationParseException if string does not have expected form
    * @see OperationParser#parse(String)
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String str) throws OperationParseException {
     int openBr = str.indexOf('[');
     int closeBr = str.indexOf(']');

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import randoop.Globals;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /** The contract: {@code c.toArray().length == c.size()} for all Collections c. */
@@ -34,7 +33,8 @@ public final class SizeToArrayLength extends ObjectContract {
     return 1;
   }
 
-  static TypeTuple inputTypes = new TypeTuple(Arrays.<Type>asList(JavaTypes.COLLECTION_TYPE));
+  /** The arguments to which this contract can be applied. */
+  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.COLLECTION_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

@@ -13,7 +13,7 @@ Libraries used by Randoop:
   lib/ (various licenses, see individual jar files)
 
 Experimental subject programs (not part of Randoop's implementation)
-  systemtests/ (various licenses)
+  systemTests/ (various licenses)
   tests/ (various licenses)
 
 Copyright @ 2010 Massachusetts Institute of Technology

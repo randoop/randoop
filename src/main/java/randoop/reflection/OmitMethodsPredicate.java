@@ -1,7 +1,5 @@
 package randoop.reflection;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,6 +7,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
@@ -34,10 +33,12 @@ public class OmitMethodsPredicate {
   private final List<Pattern> omitPatterns;
 
   /**
+   * Create a new OmitMethodsPredicate.
+   *
    * @param omitPatterns a list of regular expressions for method signatures. Null or the empty
    *     least mean to do no omissions.
    */
-  public OmitMethodsPredicate(List<Pattern> omitPatterns) {
+  public OmitMethodsPredicate(@Nullable List<Pattern> omitPatterns) {
     if (omitPatterns == null) {
       this.omitPatterns = new ArrayList<>();
     } else {
@@ -116,8 +117,7 @@ public class OmitMethodsPredicate {
       // Try to get the method for type
       boolean exists = false;
       try {
-        Method method =
-            type.getRuntimeClass().getMethod(signature.getName(), signature.getParameterTypes());
+        type.getRuntimeClass().getMethod(signature.getName(), signature.getParameterTypes());
         exists = true;
       } catch (NoSuchMethodException e) {
         Log.logPrintf(
@@ -125,8 +125,7 @@ public class OmitMethodsPredicate {
       }
       if (!exists && signature.getName().equals(type.getRuntimeClass().getSimpleName())) {
         try {
-          Constructor<?> constructor =
-              type.getRuntimeClass().getConstructor(signature.getParameterTypes());
+          type.getRuntimeClass().getConstructor(signature.getParameterTypes());
           exists = true;
         } catch (NoSuchMethodException e) {
           // nothing to do

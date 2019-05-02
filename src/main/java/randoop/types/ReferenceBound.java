@@ -5,7 +5,7 @@ import java.util.Objects;
 /** Represents a bound on a type variable where the bound is a {@link ReferenceType}. */
 public abstract class ReferenceBound extends ParameterBound {
 
-  /** The type for this bound */
+  /** The type for this bound. */
   private final ReferenceType boundType;
 
   /**

@@ -1,4 +1,31 @@
-Version 4.1.0, released ??, 2018
+Version 4.1.3, released ??
+
+Command-line argument changes:
+ * new --testjar, --omit-classes, and --omit-classes-file arguments to
+   make it easy to test all classes in a .jar file
+
+Build in a set of omitted methods that are nondeterministic or long-running.
+
+
+Version 4.1.2, released April 21, 2019
+
+Bug fixes, improve documentation and diagnostics.
+No user-visible behavior changes.
+
+
+Version 4.1.1, released February 3, 2019
+
+Minor bug fixes; no user-visible behavior changes.
+
+
+Version 4.1.0, released September 5, 2018
+
+Randoop requires Java 8; it no longer runs on a Java 7 JVM.
+
+New technique, "Bloodhound", for randomly selecting methods to test.  It
+weights each method under test based on the method's branch coverage and
+the number of times the method is chosen for a new sequence.  Enable it via
+--method-selection=BLOODHOUND .
 
 Command-line argument changes:
  * renamed --small-tests to --input-selection=small-tests

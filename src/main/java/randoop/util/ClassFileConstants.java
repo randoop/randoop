@@ -33,6 +33,7 @@ import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
 import randoop.types.JavaTypes;
@@ -62,7 +63,7 @@ public class ClassFileConstants {
   static char c = 'a';
 
   public static class ConstantSet {
-    public String classname;
+    public @ClassGetName String classname;
     public Set<Integer> ints = new TreeSet<>();
     public Set<Long> longs = new TreeSet<>();
     public Set<Float> floats = new TreeSet<>();
@@ -146,7 +147,9 @@ public class ClassFileConstants {
     } catch (java.io.IOException e) {
       throw new Error("IOException while reading '" + classname + "': " + e.getMessage());
     }
-    result.classname = jc.getClassName();
+    @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
+    @ClassGetName String resultClassname = jc.getClassName();
+    result.classname = resultClassname;
 
     // Get all of the constants from the pool
     ConstantPool constant_pool = jc.getConstantPool();
@@ -184,6 +187,7 @@ public class ClassFileConstants {
 
     // Process the code in each method looking for literals
     for (Method m : jc.getMethods()) {
+      @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
       MethodGen mg = new MethodGen(m, jc.getClassName(), pool);
       InstructionList il = mg.getInstructionList();
       if (il != null) {

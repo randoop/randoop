@@ -8,9 +8,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import randoop.BugInRandoopException;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
@@ -166,7 +167,7 @@ public final class Sequence {
       indexList.add(getRelativeIndexForVariable(size(), v));
     }
     Statement statement = new Statement(operation, indexList);
-    int newNetSize = (operation.isNonreceivingValue()) ? this.savedNetSize : this.savedNetSize + 1;
+    int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
         new OneMoreElementList<>(this.statements, statement),
         this.savedHashCode + statement.hashCode(),
@@ -300,7 +301,7 @@ public final class Sequence {
   @SuppressWarnings("ReferenceEquality")
   public Statement getCreatingStatement(Variable value) {
     if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
-    return statements.get((value).index);
+    return statements.get(value.index);
   }
 
   /**
@@ -324,6 +325,7 @@ public final class Sequence {
    *
    * @return a string containing Java code for this sequence
    */
+  @SideEffectFree
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
@@ -450,7 +452,7 @@ public final class Sequence {
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
     for (int i = 0; i < statements.size(); i++) {
-      if (!(statements.get(i).isNonreceivingInitialization())) {
+      if (!statements.get(i).isNonreceivingInitialization()) {
         netSize++;
       }
     }
@@ -542,7 +544,7 @@ public final class Sequence {
         if (newRefConstraint == null) {
           throw new IllegalStateException();
         }
-        if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
+        if (!statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint)) {
           throw new IllegalArgumentException(
               i
                   + "th input constraint "
@@ -661,8 +663,8 @@ public final class Sequence {
       Statement s = statements.get(i.index);
       Type outputType = s.getOutputType();
       if (type.isAssignableFrom(outputType)
-          && (!(onlyReceivers && outputType.isNonreceiverType()))
-          && (!(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization()))) {
+          && !(onlyReceivers && outputType.isNonreceiverType())
+          && !(onlyReceivers && getCreatingStatement(i).isNonreceivingInitialization())) {
         possibleVars.add(i);
       }
     }
@@ -680,9 +682,9 @@ public final class Sequence {
   public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
     List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
     if (possibleVars.isEmpty()) {
-      Statement lastStatement = this.statements.get(this.statements.size() - 1);
+      // Statement lastStatement = this.statements.get(this.statements.size() - 1);
       return null; // deal with the problem elsewhere.  TODO: fix so this cannot happen.
-      // throw new BugInRandoopException(
+      // throw new RandoopBug(
       //     String.format(
       //         "Failed to select %svariable with input type %s from statement %s",
       //         (onlyReceivers ? "receiver " : ""), type, lastStatement));
@@ -712,13 +714,13 @@ public final class Sequence {
       if (isActive(i)) {
         Type outputType = s.getOutputType();
         if (type.isAssignableFrom(outputType)
-            && (!(onlyReceivers && outputType.isNonreceiverType()))) {
+            && !(onlyReceivers && outputType.isNonreceiverType())) {
           possibleIndices.add(i);
         }
       }
     }
     if (possibleIndices.isEmpty()) {
-      throw new BugInRandoopException(
+      throw new RandoopBug(
           "Failed to select variable with input type " + type + " from sequence " + this);
     }
 
@@ -783,7 +785,7 @@ public final class Sequence {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      if (!(operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
+      if (!operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint)) {
         String msg =
             i
                 + "th given type "
@@ -1120,7 +1122,7 @@ public final class Sequence {
       GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
-      throw new BugInRandoopException("Error while logging sequence", e);
+      throw new RandoopBug("Error while logging sequence", e);
     }
   }
 

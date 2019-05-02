@@ -17,13 +17,13 @@ import java.util.Objects;
  */
 class CaptureTypeVariable extends TypeVariable {
 
-  /** The ID counter for capture conversion variables */
+  /** The ID counter for capture conversion variables. */
   private static int count = 0;
 
-  /** The integer ID of this capture variable */
+  /** The integer ID of this capture variable. */
   private final int varID;
 
-  /** The wildcard */
+  /** The wildcard. */
   private final WildcardArgument wildcard;
 
   /**

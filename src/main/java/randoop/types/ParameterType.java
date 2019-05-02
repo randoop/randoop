@@ -12,10 +12,10 @@ import java.util.Set;
  */
 public abstract class ParameterType extends ReferenceType {
 
-  /** The lower bound on this type */
+  /** The lower bound on this type. */
   private ParameterBound lowerBound;
 
-  /** The upper bound on this type */
+  /** The upper bound on this type. */
   private ParameterBound upperBound;
 
   ParameterType() {

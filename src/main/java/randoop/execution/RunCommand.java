@@ -104,7 +104,7 @@ public class RunCommand {
     /** The output from running the command. */
     public final List<String> standardOutputLines;
 
-    /** The error output from running the command */
+    /** The error output from running the command. */
     public final List<String> errorOutputLines;
 
     /**

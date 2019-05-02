@@ -13,13 +13,16 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import randoop.BugInRandoopException;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.plumelib.util.EntryReader;
 import randoop.Globals;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
@@ -38,7 +41,8 @@ import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.MethodCall;
+import randoop.main.RandoopBug;
+import randoop.main.RandoopUsageError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -83,10 +87,10 @@ public class OperationModel {
   /** Set of object contracts used to generate tests. */
   private ContractSet contracts;
 
-  /** Set of concrete operations extracted from classes */
+  /** Set of concrete operations extracted from classes. */
   private final Set<TypedOperation> operations;
 
-  /** For debugging only */
+  /** For debugging only. */
   private List<Pattern> omitMethods;
 
   /** Create an empty model of test context. */
@@ -125,7 +129,6 @@ public class OperationModel {
    * @param classnames the names of classes under test
    * @param coveredClassesGoalNames the coverage goal: the names of classes to be tested by the
    *     covered class heuristic
-   * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
    * @param operationSpecifications the collection of operation specifications
@@ -137,9 +140,8 @@ public class OperationModel {
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       List<Pattern> omitMethods,
-      Set<String> classnames,
-      Set<String> coveredClassesGoalNames,
-      Set<String> methodSignatures,
+      Set<@ClassGetName String> classnames,
+      Set<@ClassGetName String> coveredClassesGoalNames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
       SpecificationCollection operationSpecifications)
@@ -163,7 +165,7 @@ public class OperationModel {
     model.addOperationsFromClasses(
         model.classTypes, visibility, reflectionPredicate, omitPredicate, operationSpecifications);
     model.addOperationsUsingSignatures(
-        methodSignatures, visibility, reflectionPredicate, omitPredicate);
+        GenInputsAbstract.methodlist, visibility, reflectionPredicate, omitPredicate);
     model.addObjectConstructor();
 
     return model;
@@ -179,7 +181,6 @@ public class OperationModel {
    *     members are used
    * @param classnames the names of classes under test
    * @param coveredClassnames the names of classes to be tested by exercised heuristic
-   * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
    * @return the operation model for the parameters
@@ -189,9 +190,8 @@ public class OperationModel {
   static OperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      Set<String> classnames,
-      Set<String> coveredClassnames,
-      Set<String> methodSignatures,
+      Set<@ClassGetName String> classnames,
+      Set<@ClassGetName String> coveredClassnames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
@@ -201,7 +201,6 @@ public class OperationModel {
         new ArrayList<Pattern>(),
         classnames,
         coveredClassnames,
-        methodSignatures,
         errorHandler,
         literalsFileList,
         null);
@@ -218,7 +217,6 @@ public class OperationModel {
    * @param omitMethods the patterns for operations that should be omitted
    * @param classnames the names of classes under test
    * @param coveredClassnames the names of classes to be tested by covered class heuristic
-   * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
    * @return the {@link OperationModel} constructed with the given arguments
@@ -229,9 +227,8 @@ public class OperationModel {
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       List<Pattern> omitMethods,
-      Set<String> classnames,
-      Set<String> coveredClassnames,
-      Set<String> methodSignatures,
+      Set<@ClassGetName String> classnames,
+      Set<@ClassGetName String> coveredClassnames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
       throws NoSuchMethodException, SignatureParseException {
@@ -241,7 +238,6 @@ public class OperationModel {
         omitMethods,
         classnames,
         coveredClassnames,
-        methodSignatures,
         errorHandler,
         literalsFileList,
         null);
@@ -285,7 +281,8 @@ public class OperationModel {
               break;
             default:
               throw new Error(
-                  "Unexpected error in GenTests.  Please report at https://github.com/randoop/randoop/issues .");
+                  "Unexpected error in GenTests.  Please report at https://github.com/randoop/randoop/issues , "
+                      + "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
           }
         }
       }
@@ -293,20 +290,29 @@ public class OperationModel {
   }
 
   /**
-   * Given a set of signatures, returns the operations for them.
+   * Given a file containing signatures, returns the operations for them.
    *
-   * @param observerSignatures the set of method signatures; typically comes from the {@code
-   *     --observers} command-line option
-   * @return a map from each class type to the set of observer methods in it
+   * @param file a file that contains method or constructor signatures, one per line
+   * @param onlyMethods if true, throw an exception if a constructor is read
+   * @return a map from each class type to the set of methods/constructors in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public MultiMap<Type, TypedOperation> getObservers(Set<String> observerSignatures)
+  public static MultiMap<Type, TypedOperation> readOperations(Path file, boolean onlyMethods)
       throws OperationParseException {
     MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
-    for (String sig : observerSignatures) {
-      TypedClassOperation operation = MethodCall.parse(sig);
-      Type outputType = operation.getOutputType();
-      observerMap.add(operation.getDeclaringType(), operation);
+    if (file != null) {
+      try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
+        for (String line : er) {
+          String sig = line.trim();
+          TypedClassOperation operation =
+              signatureToOperation(
+                  sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
+          observerMap.add(operation.getDeclaringType(), operation);
+        }
+      } catch (IOException e) {
+        String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
+        throw new RandoopUsageError(message, e);
+      }
     }
     return observerMap;
   }
@@ -392,7 +398,7 @@ public class OperationModel {
         out.flush();
       }
     } catch (IOException e) {
-      throw new BugInRandoopException("Error while logging operations", e);
+      throw new RandoopBug("Error while logging operations", e);
     }
   }
 
@@ -452,8 +458,8 @@ public class OperationModel {
   private void addClassTypes(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      Set<String> classnames,
-      Set<String> coveredClassesGoalNames,
+      Set<@ClassGetName String> classnames,
+      Set<@ClassGetName String> coveredClassesGoalNames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList) {
     ReflectionManager mgr = new ReflectionManager(visibility);
@@ -466,58 +472,59 @@ public class OperationModel {
     }
 
     // Collect classes under test
-    Set<Class<?>> visitedClasses = new LinkedHashSet<>(); // consider each class just once
     for (String classname : classnames) {
       Class<?> c = getClass(classname, errorHandler);
       // Note that c could be null if errorHandler just warns on bad names
-      if (c != null && !visitedClasses.contains(c)) {
-        visitedClasses.add(c);
-
-        // ignore interfaces and non-visible classes
-        if (!visibility.isVisible(c)) {
-          System.out.println(
-              "Ignoring non-visible " + c + " specified via --classlist or --testclass.");
-        } else if (c.isInterface()) {
-          System.out.println(
-              "Ignoring "
-                  + c
-                  + " specified via --classlist or --testclass; provide classes, not interfaces.");
-        } else if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
-          System.out.println(
-              "Ignoring abstract " + c + " specified via --classlist or --testclass.");
-          // TODO: Why is this code here?  It's needed in order to make tests pass.
-          if (coveredClassesGoalNames.contains(classname)) {
-            coveredClassesGoal.add(c);
-          }
+      if (c != null) {
+        String discardReason = nonInstantiable(c, visibility);
+        if (discardReason != null) {
+          System.out.printf(
+              "Cannot instantiate %s %s specified via --testclass or --classlist.%n",
+              discardReason, c.getName());
         } else {
           mgr.apply(c);
-          if (coveredClassesGoalNames.contains(classname)) {
-            coveredClassesGoal.add(c);
-          }
         }
       }
     }
 
     // Collect covered classes
     for (String classname : coveredClassesGoalNames) {
-      if (!classnames.contains(classname)) {
-        Class<?> c = getClass(classname, errorHandler);
-        if (c != null) {
-          if (!visibility.isVisible(c)) {
-            System.out.println(
-                "Ignoring non-visible " + c + " specified as --require-covered-classes target");
-          } else if (c.isInterface()) {
-            System.out.println("Ignoring " + c + " specified as --require-covered-classes target.");
-          } else {
-            coveredClassesGoal.add(c);
-          }
-        }
+      Class<?> c = getClass(classname, errorHandler);
+      if (c != null && !c.isInterface()) {
+        coveredClassesGoal.add(c);
       }
     }
   }
 
-  /* May return null if errorHandler just warns on bad names. */
-  private static Class<?> getClass(String classname, ClassNameErrorHandler errorHandler) {
+  /**
+   * Is this type instantiable? It must be visible, non-abstract, and not an interface.
+   *
+   * @param c the type to test for instantiability
+   * @param visibility the visibility predicate
+   * @return null if this class is instantiable to test, otherwise a string with a discard reason
+   */
+  public static String nonInstantiable(Class<?> c, VisibilityPredicate visibility) {
+    if (c.isInterface()) {
+      return "interface";
+    } else if (!visibility.isVisible(c)) {
+      return "non-visible";
+    } else if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
+      return "abstract";
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Returns the class whose name is {@code classname}. A wrapper around Class.forName.
+   *
+   * @param classname the name of a class or primitive type
+   * @param errorHandler is called if no such class exists
+   * @return the Class whose name is {@code classname}. May return null if {@code errorHandler} just
+   *     warns on bad names.
+   */
+  private static @Nullable Class<?> getClass(
+      @ClassGetName String classname, ClassNameErrorHandler errorHandler) {
     try {
       return TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException e) {
@@ -560,32 +567,63 @@ public class OperationModel {
   /**
    * Adds an operation to this {@link OperationModel} for each of the method signatures.
    *
-   * @param methodSignatures the set of signatures
+   * @param methodSignatures_file the file containing the signatures; if null, do nothing
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the predicate for omitting operations
    * @throws SignatureParseException if any signature is syntactically invalid
    */
   private void addOperationsUsingSignatures(
-      Set<String> methodSignatures,
+      Path methodSignatures_file,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate)
       throws SignatureParseException {
-    for (String sig : methodSignatures) {
-      AccessibleObject accessibleObject =
-          SignatureParser.parse(sig, visibility, reflectionPredicate);
-      if (accessibleObject != null) {
-        TypedClassOperation operation;
-        if (accessibleObject instanceof Constructor) {
-          operation = TypedOperation.forConstructor((Constructor) accessibleObject);
-        } else {
-          operation = TypedOperation.forMethod((Method) accessibleObject);
-        }
-        if (!omitPredicate.shouldOmit(operation)) {
-          operations.add(operation);
+    if (methodSignatures_file == null) {
+      return;
+    }
+    try (EntryReader reader = new EntryReader(methodSignatures_file, "(//|#).*$", null)) {
+      for (String line : reader) {
+        String sig = line.trim();
+        if (!sig.isEmpty()) {
+          TypedClassOperation operation =
+              signatureToOperation(sig, visibility, reflectionPredicate);
+          if (!omitPredicate.shouldOmit(operation)) {
+            operations.add(operation);
+          }
         }
       }
+    } catch (IOException e) {
+      throw new RandoopUsageError("Problem reading file " + methodSignatures_file, e);
+    }
+  }
+
+  /**
+   * Given a signature, returns the method or constructor it represents.
+   *
+   * @param signature the operation's signature, in Randoop's format
+   * @param visibility the visibility predicate
+   * @param reflectionPredicate the reflection predicate
+   * @return the method or constructor that the signature represents
+   */
+  public static TypedClassOperation signatureToOperation(
+      String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate) {
+    AccessibleObject accessibleObject;
+    try {
+      accessibleObject = SignatureParser.parse(signature, visibility, reflectionPredicate);
+    } catch (SignatureParseException e) {
+      throw new RandoopUsageError("Could not parse signature " + signature, e);
+    }
+    if (accessibleObject == null) {
+      throw new Error(
+          String.format(
+              "accessibleObject is null for %s, typically due to predicates: %s, %s",
+              signature, visibility, reflectionPredicate));
+    }
+    if (accessibleObject instanceof Constructor) {
+      return TypedOperation.forConstructor((Constructor) accessibleObject);
+    } else {
+      return TypedOperation.forMethod((Method) accessibleObject);
     }
   }
 
@@ -595,7 +633,7 @@ public class OperationModel {
     try {
       objectConstructor = Object.class.getConstructor();
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("unable to load java.lang.Object() constructor", e);
+      throw new RandoopBug("unable to load java.lang.Object() constructor", e);
     }
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());

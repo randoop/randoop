@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import javax.tools.JavaFileObject;
+import org.checkerframework.checker.signature.qual.BinaryName;
 
 /**
  * A {@code ClassLoader} for loading classes managed in memory.
@@ -14,7 +15,7 @@ import javax.tools.JavaFileObject;
  */
 public final class SequenceClassLoader extends ClassLoader {
 
-  /** The map from fully-qualified class name to the class object */
+  /** The map from fully-qualified class name to the class object. */
   private final HashMap<String, JavaFileObject> classes;
 
   /**
@@ -35,7 +36,8 @@ public final class SequenceClassLoader extends ClassLoader {
    * @throws ClassNotFoundException if the class is not found
    */
   @Override
-  protected Class<?> findClass(final String qualifiedClassName) throws ClassNotFoundException {
+  protected Class<?> findClass(final @BinaryName String qualifiedClassName)
+      throws ClassNotFoundException {
     JavaFileObject file = classes.get(qualifiedClassName);
     if (file != null) {
       byte[] bytes = ((SequenceJavaFileObject) file).getByteCode();

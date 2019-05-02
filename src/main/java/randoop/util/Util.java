@@ -3,7 +3,6 @@ package randoop.util;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.plumelib.bcelutil.JvmUtil;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 
@@ -48,7 +47,7 @@ public final class Util {
     if (o1 == null) {
       return o2 == null;
     }
-    return o2 != null && (o1.equals(o2));
+    return o2 != null && o1.equals(o2);
   }
 
   /**
@@ -164,43 +163,6 @@ public final class Util {
       string = string.substring(i + 1);
       firstLine = false;
     }
-  }
-
-  public static String createArgListJVML(Class<?>[] paramClasses) {
-    StringBuilder b = new StringBuilder();
-    b.append("(");
-    for (int i = 0; i < paramClasses.length; i++) {
-      Class<?> cls = paramClasses[i];
-
-      // If primitive, Class.getName() returns the keyword. Convert to JVML.
-      if (cls.isPrimitive()) {
-        b.append(JvmUtil.primitiveTypeNameToFieldDescriptor(cls.getName()));
-        continue;
-      }
-
-      boolean isArray = cls.isArray();
-
-      // If primitive array, Class.getName() gives the JML representation.
-      if (isArray && cls.isPrimitive()) {
-        b.append(cls.getName());
-        continue;
-      }
-
-      // If object array, Class.getName() returns almost the JVML
-      // representation,
-      // except for the element class, which uses "." instead of "/" to separate
-      // package names.
-      if (isArray) {
-        b.append(cls.getName().replace('.', '/'));
-        continue;
-      }
-
-      // Is object, non-array. Class.getName() returns foo.bar.Baz. Convert to
-      // JVML.
-      b.append(JvmUtil.binaryNameToFieldDescriptor(paramClasses[i].getName()));
-    }
-    b.append(")");
-    return b.toString();
   }
 
   /**

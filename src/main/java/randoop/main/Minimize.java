@@ -100,7 +100,7 @@ public class Minimize extends CommandHandler {
 
   /** The Java file whose failing tests will be minimized. */
   @SuppressWarnings("WeakerAccess")
-  @OptionGroup(value = "Test case minimization options")
+  @OptionGroup(value = "Test case minimization")
   @Option("File containing the JUnit test suite to be minimized")
   public static String suitepath;
 
@@ -112,7 +112,7 @@ public class Minimize extends CommandHandler {
   @Option("Classpath to compile and run the JUnit test suite")
   public static String suiteclasspath;
 
-  /** The maximum number of seconds allowed for the entire minimization process */
+  /** The maximum number of seconds allowed for the entire minimization process. */
   @SuppressWarnings("WeakerAccess")
   @Option("Timeout, in seconds, for the whole minimization process")
   public static int minimizetimeout = 600;
@@ -144,14 +144,19 @@ public class Minimize extends CommandHandler {
   /** Path separator as defined by the system, used to separate elements of the classpath. */
   private static final String PATH_SEPARATOR = System.getProperty("path.separator");
 
-  /**
-   * System class path, a part of the classpath that is used to compile and run the input test
-   * suite.
-   */
-  private static final String SYSTEM_CLASS_PATH = System.getProperty("java.class.path");
-
   /** The suffix to postpend onto the name of the minimized file and class. */
   private static final String SUFFIX = "Minimized";
+
+  /**
+   * Given a .java filename for non-minimized tests, returns the simple name of the class containing
+   * the minimized tests.
+   *
+   * @param file the .java filename for non-minimized tests
+   * @return the simple class name for the minimized tests
+   */
+  public static String minimizedClassName(Path file) {
+    return FilenameUtils.removeExtension(file.getFileName().toString()) + SUFFIX;
+  }
 
   /**
    * Check that the required parameters have been specified by the command-line options and then
@@ -260,7 +265,7 @@ public class Minimize extends CommandHandler {
    */
   public static boolean mainMinimize(
       Path file, String classPath, int timeoutLimit, boolean verboseOutput) throws IOException {
-    System.out.println("Minimizing: " + file + ".");
+    System.out.println("Minimizing: " + file);
 
     if (verboseOutput) {
       System.out.println("Reading and parsing file.");
@@ -294,23 +299,17 @@ public class Minimize extends CommandHandler {
       // No package declaration.
     }
 
-    // Create a new file; the file and the class within will have
-    // "Minimized" postpended.
-    String fileNameStr = file.toAbsolutePath().toString();
-    String minimizedFileName =
-        new StringBuilder(fileNameStr).insert(fileNameStr.lastIndexOf('.'), SUFFIX).toString();
-    Path minimizedFile = Paths.get(minimizedFileName);
+    String oldClassName = FilenameUtils.removeExtension(file.getFileName().toString());
+    String newClassName = oldClassName + SUFFIX;
+    Path minimizedFile =
+        ClassRenamingVisitor.copyAndRename(file, compilationUnit, oldClassName, newClassName);
 
-    // Rename the overall class to [original class name][suffix].
-    String origClassName = FilenameUtils.getBaseName(file.toString());
-    new ClassRenamingVisitor().visit(compilationUnit, new String[] {origClassName, SUFFIX});
-
-    // Write the compilation unit to the minimized file.
-    writeToFile(compilationUnit, minimizedFile);
-
-    // Compile the Java file and check that the exit value is 0.
-    if (compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit) != 0) {
+    // Compile the original Java file (it has not been minimized yet).
+    Outputs compilationOutput =
+        compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
+    if (compilationOutput.isFailure()) {
       System.err.println("Error when compiling file " + file + ". Aborting.");
+      System.err.println(compilationOutput.diagnostics());
       return false;
     }
 
@@ -321,13 +320,7 @@ public class Minimize extends CommandHandler {
 
     // Minimize the Java test suite.
     minimizeTestSuite(
-        compilationUnit,
-        packageName,
-        minimizedFile,
-        classPath,
-        expectedOutput,
-        timeoutLimit,
-        verboseOutput);
+        compilationUnit, packageName, minimizedFile, classPath, expectedOutput, timeoutLimit);
 
     // Cleanup: simplify type names and sort the import statements.
     compilationUnit =
@@ -360,7 +353,6 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput whether or not to output information about minimization status
    * @throws IOException thrown if minimized method can't be written to file
    */
   private static void minimizeTestSuite(
@@ -369,8 +361,7 @@ public class Minimize extends CommandHandler {
       Path file,
       String classpath,
       Map<String, String> expectedOutput,
-      int timeoutLimit,
-      boolean verboseOutput)
+      int timeoutLimit)
       throws IOException {
     System.out.println("Minimizing test suite.");
 
@@ -453,8 +444,7 @@ public class Minimize extends CommandHandler {
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
 
-      // Remove the current statement. We will re-insert simplifications
-      // of it.
+      // Remove the current statement. We will re-insert simplifications of it.
       statements.remove(i);
 
       // Obtain a list of possible replacements for the current statement.
@@ -462,8 +452,7 @@ public class Minimize extends CommandHandler {
       boolean replacementFound = false;
       for (Statement stmt : replacements) {
         // Add replacement statement to the method's body.
-        // If stmt is null, don't add anything since null represents
-        // removal of the statement.
+        // If stmt is null, don't add anything since null represents removal of the statement.
         if (stmt != null) {
           statements.add(i, stmt);
         }
@@ -795,6 +784,17 @@ public class Minimize extends CommandHandler {
     return new ExpressionStmt(vd.getInit());
   }
 
+  /** Sorts a type by its name. */
+  private static class ClassOrInterfaceTypeComparator implements Comparator<ClassOrInterfaceType> {
+    @Override
+    public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
+      return o1.toString().compareTo(o2.toString());
+    }
+  }
+  /** Sorts a type by its name. */
+  private static ClassOrInterfaceTypeComparator classOrInterfaceTypeComparator =
+      new ClassOrInterfaceTypeComparator();
+
   /**
    * Simplify the type names in a compilation unit. For example, {@code java.lang.String} should be
    * simplified to {@code String}. If two different types have the same simple type name, then the
@@ -827,14 +827,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Set of fully-qualified type names that are used in variable declarations.
-    Set<ClassOrInterfaceType> fullyQualifiedNames =
-        new TreeSet<>(
-            new Comparator<ClassOrInterfaceType>() {
-              @Override
-              public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
-                return o1.toString().compareTo(o2.toString());
-              }
-            });
+    Set<ClassOrInterfaceType> fullyQualifiedNames = new TreeSet<>(classOrInterfaceTypeComparator);
     new ClassTypeVisitor().visit(compilationUnit, fullyQualifiedNames);
     CompilationUnit result = compilationUnit;
     for (ClassOrInterfaceType type : fullyQualifiedNames) {
@@ -888,8 +881,8 @@ public class Minimize extends CommandHandler {
       Map<String, String> expectedOutput,
       int timeoutLimit) {
 
-    // Zero exit status means success.
-    if (compileJavaFile(file, classpath, packageName, timeoutLimit) != 0) {
+    Outputs compilationOutput = compileJavaFile(file, classpath, packageName, timeoutLimit);
+    if (compilationOutput.isFailure()) {
       return false;
     }
 
@@ -907,17 +900,15 @@ public class Minimize extends CommandHandler {
    * @param classpath dependencies and complete classpath to compile and run the Java program
    * @param packageName the package that the Java file is in
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @return exit value of compiling the Java file
+   * @return the result of compilation (includes status and output)
    */
-  private static int compileJavaFile(
+  private static Outputs compileJavaFile(
       Path file, String classpath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
     Path executionDir = getExecutionDirectory(file, packageName);
 
     // Command to compile the input Java file.
-    String command = "javac -classpath " + SYSTEM_CLASS_PATH;
-    // Add current directory to class path.
-    command += PATH_SEPARATOR + ".";
+    String command = "javac -classpath .";
     if (classpath != null) {
       // Add specified classpath to command.
       command += PATH_SEPARATOR + classpath;
@@ -926,7 +917,7 @@ public class Minimize extends CommandHandler {
     command += " " + file.toAbsolutePath().toString();
 
     // Compile specified Java file.
-    return runProcess(command, executionDir, timeoutLimit).exitValue;
+    return runProcess(command, executionDir, timeoutLimit);
   }
 
   /**
@@ -935,7 +926,7 @@ public class Minimize extends CommandHandler {
    * @param file the file to be compiled and executed
    * @param userClassPath dependencies and complete classpath to compile and run the Java program
    * @param packageName the package that the Java file is in
-   * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @param timeoutLimit number of seconds allowed for the Java program to run
    * @return standard output from running the Java file
    */
   private static String runJavaFile(
@@ -950,7 +941,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Classpath for running the Java file.
-    String classpath = SYSTEM_CLASS_PATH + PATH_SEPARATOR + dirPath;
+    String classpath = dirPath;
     if (userClassPath != null) {
       classpath += PATH_SEPARATOR + userClassPath;
     }
@@ -1005,10 +996,10 @@ public class Minimize extends CommandHandler {
    *
    * @param command the input command to be run
    * @param executionDir the directory where the process commands should be executed
-   * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @param timeoutLimit number of seconds allowed for the command to run
    * @return an {@code Outputs} object containing the standard and error output
    */
-  private static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
+  public static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
     if (executionDir != null && executionDir.toString().isEmpty()) {
       // Execute command in the default directory.
       executionDir = null;
@@ -1035,7 +1026,7 @@ public class Minimize extends CommandHandler {
     try {
       executor.execute(cmdLine, resultHandler);
     } catch (IOException e) {
-      return new Outputs("", "Exception starting process", 1);
+      return Outputs.failure(cmdLine, "Exception starting process");
     }
 
     int exitValue = -1;
@@ -1044,7 +1035,7 @@ public class Minimize extends CommandHandler {
       exitValue = resultHandler.getExitValue();
     } catch (InterruptedException e) {
       if (!watchdog.killedProcess()) {
-        return new Outputs("", "Process was interrupted while waiting.", 1);
+        return Outputs.failure(cmdLine, "Process was interrupted while waiting.");
       }
     }
     boolean timedOut = executor.isFailure(exitValue) && watchdog.killedProcess();
@@ -1055,22 +1046,22 @@ public class Minimize extends CommandHandler {
     try {
       stdOutputString = outStream.toString();
     } catch (RuntimeException e) {
-      return new Outputs("", "Exception getting process standard output", 1);
+      return Outputs.failure(cmdLine, "Exception getting process standard output");
     }
 
     try {
       errOutputString = errStream.toString();
     } catch (RuntimeException e) {
-      return new Outputs("", "Exception getting process error output", 1);
+      return Outputs.failure(cmdLine, "Exception getting process error output");
     }
 
     if (timedOut) {
-      return new Outputs("", "Process timed out after " + timeoutLimit + " seconds.", 1);
+      return Outputs.failure(cmdLine, "Process timed out after " + timeoutLimit + " seconds.");
     }
 
     // Collect and return the results from the standard output and error
     // output.
-    return new Outputs(stdOutputString, errOutputString, exitValue);
+    return new Outputs(cmdLine, exitValue, stdOutputString, errOutputString);
   }
 
   /**
@@ -1140,7 +1131,7 @@ public class Minimize extends CommandHandler {
    * @param file file to write to
    * @throws IOException thrown if write to file fails
    */
-  private static void writeToFile(CompilationUnit compilationUnit, Path file) throws IOException {
+  public static void writeToFile(CompilationUnit compilationUnit, Path file) throws IOException {
     // Write the compilation unit to the file.
     try (BufferedWriter bw = Files.newBufferedWriter(file, UTF_8)) {
       bw.write(compilationUnit.toString());
@@ -1196,6 +1187,17 @@ public class Minimize extends CommandHandler {
     compilationUnit.setImports(importDeclarations);
   }
 
+  /** Sorts ImportDeclaration objects by their name. */
+  private static class ImportDeclarationComparator implements Comparator<ImportDeclaration> {
+    @Override
+    public int compare(ImportDeclaration o1, ImportDeclaration o2) {
+      return o1.getName().toString().compareTo(o2.getName().toString());
+    }
+  }
+  /** Sorts ImportDeclaration objects by their name. */
+  private static ImportDeclarationComparator importDeclarationComparator =
+      new ImportDeclarationComparator();
+
   /**
    * Sort a compilation unit's imports by name.
    *
@@ -1204,39 +1206,95 @@ public class Minimize extends CommandHandler {
   private static void sortImports(CompilationUnit compilationUnit) {
     List<ImportDeclaration> imports = compilationUnit.getImports();
 
-    Collections.sort(
-        imports,
-        new Comparator<ImportDeclaration>() {
-          @Override
-          public int compare(ImportDeclaration o1, ImportDeclaration o2) {
-            return o1.getName().toString().compareTo(o2.getName().toString());
-          }
-        });
+    Collections.sort(imports, importDeclarationComparator);
 
     compilationUnit.setImports(imports);
   }
 
-  /** Contains the standard output, standard error, and exit status from running a process. */
-  private static class Outputs {
+  /**
+   * Contains the command line, exit status, standard output, and standard error from running a
+   * process.
+   */
+  public static class Outputs {
+    /** The command that was run. */
+    public final String command;
+    /** Exit value from running a process. 0 is success, other values are failure. */
+    public final int exitValue;
     /** The standard output. */
-    private String stdout;
+    public final String stdout;
     /** The error output. */
-    private String errout;
-
-    /** Exit value from running a process. */
-    private int exitValue;
+    public final String errout;
 
     /**
      * Create an Outputs object.
      *
+     * @param command the command that was run
+     * @param exitValue exit value of process
      * @param stdout standard output
      * @param errout error output
-     * @param exitValue exit value of process
      */
-    private Outputs(String stdout, String errout, int exitValue) {
+    Outputs(String command, int exitValue, String stdout, String errout) {
+      this.command = command;
+      this.exitValue = exitValue;
       this.stdout = stdout;
       this.errout = errout;
-      this.exitValue = exitValue;
+    }
+
+    /**
+     * Create an Outputs object.
+     *
+     * @param command the command that was run
+     * @param exitValue exit value of process
+     * @param stdout standard output
+     * @param errout error output
+     */
+    Outputs(CommandLine command, int exitValue, String stdout, String errout) {
+      this(command.toString(), exitValue, stdout, errout);
+    }
+
+    /**
+     * Create an Outputs object representing a failed execution.
+     *
+     * @param command the command that was run
+     * @param errout error output
+     * @return an Outputs object representing a failed execution
+     */
+    static Outputs failure(CommandLine command, String errout) {
+      return new Outputs(command.toString(), 1, "", errout);
+    }
+
+    /**
+     * Return true if the command succeeded.
+     *
+     * @return true if the command succeeded
+     */
+    public boolean isSuccess() {
+      return exitValue == 0;
+    }
+
+    /**
+     * Return true if the command failed.
+     *
+     * @return true if the command failed
+     */
+    public boolean isFailure() {
+      return !isSuccess();
+    }
+
+    /**
+     * Verbose toString().
+     *
+     * @return a verbose multi-line string representation of this object, for dbugging
+     */
+    public String diagnostics() {
+      return String.join(
+          Globals.lineSep,
+          "command: " + command,
+          "exit status: " + exitValue + "  " + (isSuccess() ? "(success)" : "(failure)"),
+          "standard output: ",
+          stdout,
+          "error output: ",
+          errout);
     }
   }
 
@@ -1285,7 +1343,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return the number of JUnit test methods in a compilation unit
+   * Return the number of JUnit test methods in a compilation unit.
    *
    * @param compilationUnit the compilation unit to count the number of unit test methods
    * @return the number of unit test methods in compilationUnit
@@ -1306,7 +1364,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Output the minimizer's current progress
+   * Output the minimizer's current progress.
    *
    * @param currentTestIndex the number of tests that have been minimized so far
    * @param totalTests the total number of tests in the input test suite
@@ -1315,18 +1373,5 @@ public class Minimize extends CommandHandler {
   private static void printProgress(int currentTestIndex, int totalTests, String testName) {
     System.out.println(
         currentTestIndex + "/" + totalTests + " tests minimized, Minimized method: " + testName);
-  }
-
-  /**
-   * Print message, then print usage information.
-   *
-   * @param format the string format
-   * @param args the arguments
-   */
-  private void usage(String format, Object... args) {
-    System.out.print("ERROR: ");
-    System.out.printf(format, args);
-    System.out.println();
-    System.out.println(foptions.usage());
   }
 }
