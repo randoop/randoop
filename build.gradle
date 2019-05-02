@@ -142,10 +142,7 @@ dependencies {
   implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
 
-  /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files.
-   * TODO: Update now that we no longer support JDK7.
-   * Note that updating will require code changes due to JavaParser API changes. */
-  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
+  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.13.10'
 
   /* Jacoco measures coverage of classes and methods under test. */
   implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
@@ -755,6 +752,7 @@ task requireJavadocPrivate(type: Javadoc) {
   options.memberLevel = JavadocMemberLevel.PRIVATE
   options.docletpath = project.sourceSets.main.compileClasspath as List
   options.doclet = "org.plumelib.javadoc.RequireJavadoc"
+  options.addStringOption('skip', 'CloneVisitor')
   // options.addStringOption('skip', 'ClassNotToCheck|OtherClass')
 }
 
