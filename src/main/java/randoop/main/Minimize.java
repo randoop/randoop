@@ -444,8 +444,7 @@ public class Minimize extends CommandHandler {
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
 
-      // Remove the current statement. We will re-insert simplifications
-      // of it.
+      // Remove the current statement. We will re-insert simplifications of it.
       statements.remove(i);
 
       // Obtain a list of possible replacements for the current statement.
@@ -453,8 +452,7 @@ public class Minimize extends CommandHandler {
       boolean replacementFound = false;
       for (Statement stmt : replacements) {
         // Add replacement statement to the method's body.
-        // If stmt is null, don't add anything since null represents
-        // removal of the statement.
+        // If stmt is null, don't add anything since null represents removal of the statement.
         if (stmt != null) {
           statements.add(i, stmt);
         }
