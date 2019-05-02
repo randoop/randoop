@@ -40,6 +40,7 @@ class RandoopRunStatus {
    */
   final List<String> suspectedFlakyMethodNames;
 
+  /** Is output to the user before each possibly flaky method. */
   public static final String POSSIBLY_FLAKY_PREFIX = "  Possibly flaky:  ";
 
   /**
