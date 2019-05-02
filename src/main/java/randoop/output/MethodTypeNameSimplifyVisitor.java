@@ -6,7 +6,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-/** JavaParser visitor to simplify type names in method calls */
+/** JavaParser visitor to simplify type names in method calls. */
 public class MethodTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInterfaceType> {
   /**
    * Visit every method call expression. Simplify the type name by removing the scope component if

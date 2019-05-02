@@ -2,10 +2,10 @@ package randoop.generation;
 
 /** Representations for outcomes after an operation is selected during generation. */
 public enum OperationOutcome {
-  /** A sequence was generated and output as an Error-revealing sequence */
+  /** A sequence was generated and output as an Error-revealing sequence. */
   ERROR_SEQUENCE,
 
-  /** A sequence was generated and output as a regression test sequence */
+  /** A sequence was generated and output as a regression test sequence. */
   REGRESSION_SEQUENCE,
 
   /** No sequence was generated because no inputs could be found. */

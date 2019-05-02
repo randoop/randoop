@@ -20,7 +20,7 @@ public class MissingExceptionCheck implements Check {
    */
   private final List<List<ThrowsClause>> expected;
 
-  /** The index of the statement where the exception should be thrown */
+  /** The index of the statement where the exception should be thrown. */
   private final int index;
 
   /**

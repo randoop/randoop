@@ -32,8 +32,7 @@ public class OperationTest {
         operation.getClassname(),
         is(equalTo("randoop.condition.ClassWithConditions")));
 
-    Method method = null;
-    method = c.getMethod("category", int.class);
+    Method method = c.getMethod("category", int.class);
     OperationSignature methodOperation = OperationSignature.of(method);
     assertFalse("operation is not a constructor", methodOperation.isConstructor());
   }

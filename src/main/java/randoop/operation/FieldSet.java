@@ -1,14 +1,13 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
+import randoop.main.RandoopBug;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.SequenceExecutionException;
 import randoop.sequence.Variable;
@@ -50,13 +49,12 @@ public class FieldSet extends CallableOperation {
    * IllegalAccessException}).
    *
    * @param statementInput the inputs for statement
-   * @param out the stream for printing output (unused)
    * @return outcome of access, either void normal execution or captured exception
-   * @throws BugInRandoopException if field access throws bug exception
+   * @throws RandoopBug if field access throws bug exception
    * @throws SequenceExecutionException if field access has type exception
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
+  public ExecutionOutcome execute(Object[] statementInput) {
 
     Object instance = null;
     Object input = statementInput[0];
@@ -67,7 +65,7 @@ public class FieldSet extends CallableOperation {
 
     try {
       field.setValue(instance, input);
-    } catch (BugInRandoopException | SequenceExecutionException e) {
+    } catch (RandoopBug | SequenceExecutionException e) {
       throw e;
     } catch (Throwable thrown) {
       return new ExceptionalExecution(thrown, 0);
@@ -111,7 +109,7 @@ public class FieldSet extends CallableOperation {
   }
 
   /**
-   * Returns the string descriptor for field that can be parsed by
+   * Returns the string descriptor for field that can be parsed by.
    *
    * @return the parsable string descriptor for this setter
    */
@@ -128,6 +126,7 @@ public class FieldSet extends CallableOperation {
    * @return the field setter for the given string descriptor
    * @throws OperationParseException if descr does not have expected form
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field set statement: ";
 

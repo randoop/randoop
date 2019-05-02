@@ -35,7 +35,7 @@ public abstract class ExecutionOutcome {
   }
 
   /**
-   * Set the output of the statement
+   * Set the output of the statement.
    *
    * @param output the statement output
    */
@@ -44,7 +44,7 @@ public abstract class ExecutionOutcome {
   }
 
   /**
-   * Retrieve the output of the statement
+   * Retrieve the output of the statement.
    *
    * @return the statement output
    */

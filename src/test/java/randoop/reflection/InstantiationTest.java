@@ -28,7 +28,7 @@ import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 
-/** Tests instantiation of type parameters by OperationModel */
+/** Tests instantiation of type parameters by OperationModel. */
 public class InstantiationTest {
 
   @Test
@@ -284,12 +284,11 @@ public class InstantiationTest {
   }
   */
 
-  private OperationModel createModel(Set<String> names, String packageName) {
+  private OperationModel createModel(Set<String> classnames, String packageName) {
     VisibilityPredicate visibility =
         new VisibilityPredicate.PackageVisibilityPredicate(packageName);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> coveredClassnames = new LinkedHashSet<>();
-    Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -298,9 +297,8 @@ public class InstantiationTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
-              names,
+              classnames,
               coveredClassnames,
-              methodSignatures,
               errorHandler,
               literalsFileList);
     } catch (SignatureParseException e) {

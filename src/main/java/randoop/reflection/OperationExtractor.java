@@ -6,9 +6,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.TreeSet;
-import randoop.BugInRandoopException;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.SpecificationCollection;
+import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.MethodCall;
@@ -42,7 +42,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The reflection policy for collecting operations. */
   private final ReflectionPredicate reflectionPredicate;
 
-  /** The predicate to test whether to omit an operation */
+  /** The predicate to test whether to omit an operation. */
   private OmitMethodsPredicate omitPredicate;
 
   /** The predicate to test visibility. */
@@ -124,15 +124,15 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param operation the operation to instantiate
    * @return operation instantiated to match {@code classType} if the declaring type is generic and
    *     {@code classType} is not; the unmodified operation otherwise
-   * @throws BugInRandoopException if there is no substitution that unifies the declaring type with
-   *     {@code classType} or a supertype
+   * @throws RandoopBug if there is no substitution that unifies the declaring type with {@code
+   *     classType} or a supertype
    */
   private TypedClassOperation instantiateTypes(TypedClassOperation operation) {
     if (!classType.isGeneric() && operation.getDeclaringType().isGeneric()) {
       Substitution<ReferenceType> substitution =
           classType.getInstantiatingSubstitution(operation.getDeclaringType());
       if (substitution == null) { // No unifying substitution found
-        throw new BugInRandoopException(
+        throw new RandoopBug(
             String.format(
                 "Type %s for operation %s is not a subtype of an instantiation of declaring class of method %s",
                 classType, operation, operation.getDeclaringType()));
@@ -140,7 +140,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       operation = operation.apply(substitution);
       if (operation == null) {
         // No more details available because formal parameter {@code operation} was overwritten.
-        throw new BugInRandoopException("Instantiation of operation failed");
+        throw new RandoopBug("Instantiation of operation failed");
       }
     }
 
@@ -152,14 +152,14 @@ public class OperationExtractor extends DefaultClassVisitor {
    * operation.getDeclaringType()}; throws an exception if not.
    *
    * @param operation the operation for which types are to be checked
-   * @throws BugInRandoopException if field {@code classType} of this is not a subtype of {@code
+   * @throws RandoopBug if field {@code classType} of this is not a subtype of {@code
    *     operation.getDeclaringType()}
    */
   // TODO: poor name
   private void checkSubTypes(TypedClassOperation operation) {
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
     if (!classType.isSubtypeOf(declaringType)) {
-      throw new BugInRandoopException(
+      throw new RandoopBug(
           String.format(
               "Incompatible receiver type for operation %s:%n  %s [%s]%nis not a subtype of%n  %s [%s]",
               operation, classType, classType.getClass(), declaringType, declaringType.getClass()));
@@ -195,11 +195,12 @@ public class OperationExtractor extends DefaultClassVisitor {
         ExecutableSpecification execSpec =
             operationSpecifications.getExecutableSpecification(constructor);
         if (!execSpec.isEmpty()) {
-          operation.addExecutableSpecification(execSpec);
+          operation.setExecutableSpecification(execSpec);
         }
       }
       if (debug) {
-        System.out.println("OperationExtractor.visit: add operation " + operation);
+        System.out.printf(
+            "OperationExtractor.visit: add operation %s [%s]%n", operation, operation.getClass());
       }
       operations.add(operation);
     }
@@ -249,7 +250,7 @@ public class OperationExtractor extends DefaultClassVisitor {
         ExecutableSpecification execSpec =
             operationSpecifications.getExecutableSpecification(method);
         if (!execSpec.isEmpty()) {
-          operation.addExecutableSpecification(execSpec);
+          operation.setExecutableSpecification(execSpec);
         }
       }
       if (debug) {
@@ -282,11 +283,10 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (!visibilityPredicate.isVisible(field.getDeclaringClass())) {
       if (Modifier.isStatic(mods) && Modifier.isFinal(mods)) {
         // XXX This is a stop-gap to handle potentially ambiguous inherited constants.
-        /* A static final field of a non-public class may be accessible via a subclass, but only
-         * if the field is not ambiguously inherited in the subclass. Without knowing for sure
-         * whether there are two inherited fields with the same name, we cannot decide which case
-         * is presented. So, assuming that there is an ambiguity and bailing on type.
-         */
+        // A static final field of a non-public class may be accessible via a subclass, but only
+        // if the field is not ambiguously inherited in the subclass. Without knowing for sure
+        // whether there are two inherited fields with the same name, we cannot decide which case
+        // is presented. So, assuming that there is an ambiguity and bailing on type.
         return;
       }
       if (!(declaringType.isGeneric() && classType.isInstantiationOf(declaringType))) {
@@ -300,7 +300,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (getter != null) {
       operations.add(getter);
     }
-    if (!(Modifier.isFinal(mods))) {
+    if (!Modifier.isFinal(mods)) {
       TypedClassOperation operation =
           instantiateTypes(TypedOperation.createSetterForField(field, declaringType));
       if (operation != null) {

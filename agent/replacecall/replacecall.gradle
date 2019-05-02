@@ -43,7 +43,6 @@ shadowJar {
   relocate 'com.sun.jna', 'replacecall.com.sun.jna'
   relocate 'com.trilead.ssh2', 'replacecall.com.trilead.ssh2'
   relocate 'de.regnis.q.sequence', 'replacecall.de.regnis.q.sequence'
-  relocate 'edu.emory.mathcs.backport.java.util', 'replacecall.edu.emory.mathcs.backport.java.util'
   relocate 'net.fortuna.ical4j', 'replacecall.net.fortuna.ical4j'
   relocate 'nu.xom', 'replacecall.nu.xom'
   relocate 'org.antlr', 'replacecall.org.antlr'

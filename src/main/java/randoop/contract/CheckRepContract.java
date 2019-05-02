@@ -4,8 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
-import randoop.BugInRandoopException;
 import randoop.Globals;
+import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.JavaTypes;
@@ -81,7 +81,7 @@ public final class CheckRepContract extends ObjectContract {
         }
       } catch (IllegalArgumentException e) {
         // This will never happen.
-        throw new BugInRandoopException(e);
+        throw new RandoopBug(e);
       } catch (IllegalAccessException e) {
         throw new RuntimeException(e);
       } catch (InvocationTargetException e) {

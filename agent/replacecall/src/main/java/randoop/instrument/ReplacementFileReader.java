@@ -31,7 +31,7 @@ import org.plumelib.util.EntryReader;
  */
 public class ReplacementFileReader {
 
-  /** Regex for Java identifiers */
+  /** Regex for Java identifiers. */
   public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**

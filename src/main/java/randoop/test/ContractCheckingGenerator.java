@@ -73,6 +73,9 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
         return new ErrorRevealingChecks(obs);
       }
 
+      // TODO: The classification might be EXPECTED or INVALID.
+      // This does the same thing for both possibilities.  Is that correct behavior?
+
       // If exception not considered a failure, don't include checks
       return ErrorRevealingChecks.EMPTY;
 

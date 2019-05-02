@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 
 /**
  * Represents the signature of a method or constructor for an {@link OperationSpecification} so that
@@ -38,8 +39,8 @@ public class OperationSignature {
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
   // tools
 
-  /** The fully-qualified name of the declaring class of this operation */
-  private final String classname;
+  /** The fully-qualified name of the declaring class of this operation. */
+  private final @ClassGetName String classname;
 
   /**
    * The name of this operation. For a method, is its simple name. For a constructor, is the
@@ -47,11 +48,14 @@ public class OperationSignature {
    */
   private final String name;
 
-  /** The list of fully-qualified raw type names for the parameters of this operation */
-  private final List<String> parameterTypes;
+  /** The list of fully-qualified raw type names for the parameters of this operation. */
+  private final List<@ClassGetName String> parameterTypes;
 
   /** Gson serialization requires a default constructor. */
-  @SuppressWarnings("unused")
+  @SuppressWarnings({
+    "unused",
+    "signature" // default constructor for Gson
+  })
   private OperationSignature() {
     this.classname = "";
     this.name = "";
@@ -66,7 +70,8 @@ public class OperationSignature {
    * @param name the name of the method or constructor
    * @param parameterTypes the list of fully-qualified raw parameter type names
    */
-  private OperationSignature(String classname, String name, List<String> parameterTypes) {
+  private OperationSignature(
+      @ClassGetName String classname, String name, List<@ClassGetName String> parameterTypes) {
     this.classname = classname;
     this.name = name;
     this.parameterTypes = parameterTypes;
@@ -82,7 +87,9 @@ public class OperationSignature {
    *     parameter types
    */
   public static OperationSignature forConstructorName(
-      String classname, String simpleName, List<String> parameterTypes) {
+      @ClassGetName String classname,
+      String simpleName,
+      List<@ClassGetName String> parameterTypes) {
     return new OperationSignature(classname, simpleName, parameterTypes);
   }
 
@@ -97,7 +104,7 @@ public class OperationSignature {
    *     parameter types
    */
   public static OperationSignature forMethodName(
-      String classname, String name, List<String> parameterTypes) {
+      @ClassGetName String classname, String name, List<@ClassGetName String> parameterTypes) {
     return new OperationSignature(classname, name, parameterTypes);
   }
 
@@ -157,7 +164,7 @@ public class OperationSignature {
    *
    * @return the name of the declaring class of this operation
    */
-  public String getClassname() {
+  public @ClassGetName String getClassname() {
     return classname;
   }
 
@@ -175,7 +182,7 @@ public class OperationSignature {
    *
    * @return the list of parameter type names for this operation
    */
-  public List<String> getParameterTypeNames() {
+  public List<@ClassGetName String> getParameterTypeNames() {
     return parameterTypes;
   }
 
@@ -210,8 +217,8 @@ public class OperationSignature {
    * @param classes the array of {@code Class<?>} objects
    * @return the list of fully-qualified type names for the objects in {@code classes}
    */
-  private static List<String> getTypeNames(Class<?>[] classes) {
-    List<String> parameterTypes = new ArrayList<>();
+  private static List<@ClassGetName String> getTypeNames(Class<?>[] classes) {
+    List<@ClassGetName String> parameterTypes = new ArrayList<>();
     for (Class<?> aClass : classes) {
       parameterTypes.add(aClass.getName());
     }

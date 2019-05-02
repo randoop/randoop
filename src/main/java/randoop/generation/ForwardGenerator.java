@@ -1,16 +1,17 @@
 package randoop.generation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
@@ -632,7 +633,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // true if statement st represents an instance method, and we are
       // currently selecting a value to act as the receiver for the method.
-      boolean isReceiver = (i == 0 && (operation.isMessage()) && (!operation.isStatic()));
+      boolean isReceiver = (i == 0 && operation.isMessage() && !operation.isStatic());
 
       // If alias ratio is given, attempt with some probability to use a
       // variable already in S.
@@ -670,7 +671,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && Randomness.weightedCoinFlip(GenInputsAbstract.null_ratio)) {
         Log.logPrintf("null-ratio option given. Randomly decided to use null as input.%n");
         TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
-        Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
+        Sequence seq = new Sequence().extend(st, Collections.emptyList());
         variables.add(totStatements);
         sequences.add(seq);
         assert seq.size() == 1;
@@ -740,7 +741,7 @@ public class ForwardGenerator extends AbstractGenerator {
           Log.logPrintf(
               "Found no sequences of required type; will use null as " + i + "-th input%n");
           TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
-          Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
+          Sequence seq = new Sequence().extend(st, Collections.emptyList());
           variables.add(totStatements);
           sequences.add(seq);
           assert seq.size() == 1;
@@ -832,8 +833,8 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
       if (isReceiver
-          && ((chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
-              || randomVariable.getType().isPrimitive()))) {
+          && (chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
+              || randomVariable.getType().isPrimitive())) {
         System.out.println();
         System.out.println("Selected null or a primitive as the receiver for a method call.");
         // System.out.printf("  operation = %s%n", operation);
@@ -848,7 +849,7 @@ public class ForwardGenerator extends AbstractGenerator {
             "    isNonreceivingInitialization = %s%n",
             chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
         continue;
-        // throw new BugInRandoopException(
+        // throw new RandoopBug(
         //     "Selected null or primitive value as the receiver for a method call");
       }
 
@@ -864,7 +865,7 @@ public class ForwardGenerator extends AbstractGenerator {
       validResults.add(new VarAndSeq(randomVariable, s));
     }
     if (validResults.size() == 0) {
-      throw new BugInRandoopException(
+      throw new RandoopBug(
           String.format(
               "Failed to select %svariable with input type %s",
               (isReceiver ? "receiver " : ""), inputType));

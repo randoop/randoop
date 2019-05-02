@@ -20,7 +20,7 @@ class SequenceJavaFileObject extends SimpleJavaFileObject {
   /** The source code text. */
   private final String source;
 
-  /** The stream for reading the source code */
+  /** The stream for reading the source code. */
   private ByteArrayOutputStream byteStream;
 
   /**

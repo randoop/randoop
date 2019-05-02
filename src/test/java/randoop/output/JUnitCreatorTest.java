@@ -1,16 +1,5 @@
 package randoop.output;
 
-import java.util.ArrayList;
-import java.util.List;
-import randoop.ExecutionVisitor;
-import randoop.contract.PrimValue;
-import randoop.sequence.ExecutableSequence;
-import randoop.sequence.Sequence;
-import randoop.sequence.Variable;
-import randoop.test.ObjectCheck;
-import randoop.test.RegressionChecks;
-import randoop.test.TestCheckGenerator;
-
 /** Partial test -- disabled in build.gradle */
 public class JUnitCreatorTest {
   /*
@@ -47,7 +36,6 @@ public class JUnitCreatorTest {
       List<ExecutableSequence> sequences = getExecutableSequences();
       System.out.println(creator.createTestClass("TestClass", "testMethod", sequences));
     }
-  */
   private List<ExecutableSequence> getExecutableSequences() {
     List<ExecutableSequence> sequences = new ArrayList<>();
     ExecutionVisitor visitor = getExecutionVisitor();
@@ -86,4 +74,6 @@ public class JUnitCreatorTest {
       }
     };
   }
+  */
+
 }

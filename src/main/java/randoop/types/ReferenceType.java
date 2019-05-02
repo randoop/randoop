@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -162,8 +163,7 @@ public abstract class ReferenceType extends Type {
     }
     if (otherType.isVariable()) {
       TypeVariable variable = (TypeVariable) otherType;
-      List<TypeVariable> typeParameters = new ArrayList<>();
-      typeParameters.add(variable);
+      List<TypeVariable> typeParameters = Collections.singletonList(variable);
       Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, this);
       if (variable.getLowerTypeBound().isLowerBound(this, substitution)
           && variable.getUpperTypeBound().isUpperBound(this, substitution)) {

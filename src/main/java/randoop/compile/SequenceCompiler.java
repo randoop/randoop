@@ -18,7 +18,7 @@ import javax.tools.ToolProvider;
  */
 public class SequenceCompiler {
 
-  /** The {@code ClassLoader} for this compiler */
+  /** The {@code ClassLoader} for this compiler. */
   private final SequenceClassLoader classLoader;
 
   /** the options to the compiler */
@@ -27,7 +27,7 @@ public class SequenceCompiler {
   /** the Java compiler */
   private final JavaCompiler compiler;
 
-  /** The {@code FileManager} for this compiler */
+  /** The {@code FileManager} for this compiler. */
   private final SequenceJavaFileManager fileManager;
 
   /**
@@ -116,12 +116,15 @@ public class SequenceCompiler {
    * Loads the {@code Class<T>} object for the named class.
    *
    * @param packageName the package of the class, null if default package
-   * @param classname the name of the class
+   * @param classname the name of the class, without the package
    * @param <T> the class type
    * @return the {@code Class<T>} object with the class name
    * @throws ClassNotFoundException if the class cannot be loaded
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({
+    "unchecked",
+    "signature" // string concatenation
+  })
   public <T> Class<T> loadClass(String packageName, String classname)
       throws ClassNotFoundException {
     String qualifiedName = (packageName == null ? "" : (packageName + ".")) + classname;

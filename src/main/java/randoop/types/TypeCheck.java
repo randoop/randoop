@@ -4,7 +4,7 @@ import java.util.List;
 
 /** Predicate to check the type of a substitution for a list of type variables. */
 public class TypeCheck {
-  /** The type variables to check against */
+  /** The type variables to check against. */
   private final List<TypeVariable> parameters;
 
   /**
@@ -18,7 +18,7 @@ public class TypeCheck {
   }
 
   /**
-   * Builds a {@link TypeCheck} object for the parameters
+   * Builds a {@link TypeCheck} object for the parameters.
    *
    * @param parameters the list of of type parameters to be checked by the predicate
    */

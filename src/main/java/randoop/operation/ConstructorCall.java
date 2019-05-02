@@ -1,8 +1,8 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -162,11 +162,10 @@ public final class ConstructorCall extends CallableOperation {
    * stream for any output.
    *
    * @param statementInput is an array of values corresponding to signature of the constructor
-   * @param out is a stream for any output
-   * @see TypedOperation#execute(Object[], PrintStream)
+   * @see TypedOperation#execute(Object[])
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
+  public ExecutionOutcome execute(Object[] statementInput) {
 
     // if this is a constructor from a non-static inner class, then first argument must
     // be a superclass object that is non-null.  If null, then code should throw NPE, but
@@ -183,7 +182,7 @@ public final class ConstructorCall extends CallableOperation {
     ConstructorReflectionCode code =
         new ConstructorReflectionCode(this.constructor, statementInput);
 
-    return ReflectionExecutor.executeReflectionCode(code, out);
+    return ReflectionExecutor.executeReflectionCode(code);
   }
 
   /**
@@ -221,6 +220,7 @@ public final class ConstructorCall extends CallableOperation {
    * @throws OperationParseException if no constructor found for signature
    * @see OperationParser#parse(String)
    */
+  @SuppressWarnings("signature") // parsing
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
@@ -238,10 +238,9 @@ public final class ConstructorCall extends CallableOperation {
     assert opname.equals("<init>") : "expected init, saw " + opname;
     String arguments = signature.substring(openParPos + 1, closeParPos);
 
-    String constructorString = classname + "." + opname + arguments;
     Type classType;
     try {
-      classType = Type.forName(classname);
+      classType = Type.getTypeforFullyQualifiedName(classname);
     } catch (ClassNotFoundException e) {
       String msg =
           "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
@@ -258,7 +257,13 @@ public final class ConstructorCall extends CallableOperation {
     try {
       con = classType.getRuntimeClass().getDeclaredConstructor(typeArguments);
     } catch (NoSuchMethodException e) {
-      String msg = "Constructor " + constructorString + " does not exist: " + e;
+      String msg =
+          "Constructor with arguments "
+              + Arrays.toString(typeArguments)
+              + " does not exist in "
+              + classType
+              + ": "
+              + e;
       throw new OperationParseException(msg);
     }
 

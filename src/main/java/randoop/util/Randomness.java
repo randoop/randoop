@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 
 /**
  * A simple-to-use wrapper around {@link java.util.Random}.
@@ -146,7 +146,7 @@ public final class Randomness {
       T elt = list.get(i);
       double weight = weights.get(elt);
       if (weight < 0) {
-        throw new BugInRandoopException("Weight should be positive: " + weight);
+        throw new RandoopBug("Weight should be positive: " + weight);
       }
       totalWeight += weight;
     }
@@ -197,33 +197,7 @@ public final class Randomness {
     for (int i = 0; i < list.size(); i++) {
       System.out.printf("%d, %f%n", i, weights.get(list.get(i)));
     }
-    throw new BugInRandoopException("Unable to select random member");
-  }
-
-  /**
-   * Performs a binary search on a cumulative weight distribution and returns the corresponding
-   * index i such that {@code cumulativeWeights.get(i) < point <= cumulativeWeights.get(i + 1)} for
-   * {@code 0 <= i < cumulativeWeights.length}.
-   *
-   * @param cumulativeWeights the cumulative weight distribution to search through. The ith element
-   *     is the cumulative weight of all elements before the ith (that is, exclusive rather than
-   *     inclusive). The last (i+1)th element is the weight of all elements.
-   * @param point the value used to find the index within the cumulative weight distribution
-   * @return the index corresponding to point's location in the cumulative weight distribution
-   */
-  private static int binarySearchForIndex(double[] cumulativeWeights, double point) {
-    int low = 0;
-    int high = cumulativeWeights.length;
-    int mid = (low + high) / 2;
-    while (!(cumulativeWeights[mid] < point && point <= cumulativeWeights[mid + 1])) {
-      if (cumulativeWeights[mid] < point) {
-        low = mid;
-      } else {
-        high = mid;
-      }
-      mid = (low + high) / 2;
-    }
-    return mid;
+    throw new RandoopBug("Unable to select random member");
   }
 
   /**

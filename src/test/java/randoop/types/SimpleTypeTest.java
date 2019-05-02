@@ -163,7 +163,7 @@ public class SimpleTypeTest {
     Type longType = new PrimitiveType(long.class);
     Type shortType = new PrimitiveType(short.class);
 
-    assertTrue("void is primitive", (void.class).isPrimitive());
+    assertTrue("void is primitive", void.class.isPrimitive());
     assertFalse("void is not assignable from void", voidType.isAssignableFrom(voidType));
     assertFalse("void is not assignable from Object", voidType.isAssignableFrom(objectType));
     assertFalse("void is not assignable from boolean", voidType.isAssignableFrom(booleanType));
@@ -219,7 +219,7 @@ public class SimpleTypeTest {
         "Object is assignable from all types", objectType.isAssignableFrom(intArrayListType));
   }
 
-  /** Make sure boxing/unboxing conversions work in assignment */
+  /** Make sure boxing/unboxing conversions work in assignment. */
   @Test
   public void testBoxingUnboxingConversions() {
     Type booleanType = new PrimitiveType(boolean.class);

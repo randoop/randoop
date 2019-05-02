@@ -1,7 +1,5 @@
 package randoop.output;
 
-import static randoop.output.NameGenerator.numDigits;
-
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.TokenMgrError;
@@ -41,14 +39,15 @@ import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.VoidType;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import randoop.BugInRandoopException;
 import randoop.Globals;
+import randoop.main.RandoopBug;
 import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
@@ -75,28 +74,28 @@ public class JUnitCreator {
   /** The Java text for AfterEach method of generated test class. */
   private BlockStmt afterEachBody = null;
 
-  /** The JUnit annotation for the BeforeAll option */
+  /** The JUnit annotation for the BeforeAll option. */
   private static final String BEFORE_ALL = "BeforeClass";
 
-  /** The JUnit annotation for the AfterAll option */
+  /** The JUnit annotation for the AfterAll option. */
   private static final String AFTER_ALL = "AfterClass";
 
-  /** The JUnit annotation for the BeforeEach option */
+  /** The JUnit annotation for the BeforeEach option. */
   private static final String BEFORE_EACH = "Before";
 
-  /** The JUnit annotation for the AfterEach option */
+  /** The JUnit annotation for the AfterEach option. */
   private static final String AFTER_EACH = "After";
 
-  /** The method name for the BeforeAll option */
+  /** The method name for the BeforeAll option. */
   private static final String BEFORE_ALL_METHOD = "setupAll";
 
-  /** The method name for the AfterAll option */
+  /** The method name for the AfterAll option. */
   private static final String AFTER_ALL_METHOD = "teardownAll";
 
-  /** The method name for the BeforeEach option */
+  /** The method name for the BeforeEach option. */
   private static final String BEFORE_EACH_METHOD = "setup";
 
-  /** The method name for the AfterEach option */
+  /** The method name for the AfterEach option. */
   private static final String AFTER_EACH_METHOD = "teardown";
 
   public static JUnitCreator getTestCreator(
@@ -164,8 +163,16 @@ public class JUnitCreator {
     this.afterEachBody = text;
   }
 
+  /**
+   * Create a test class.
+   *
+   * @param testClassName the class name
+   * @param methodNameGen the generator that creates method names
+   * @param sequences the contents of the test methods
+   * @return the CompilationUnit for a test class
+   */
   public CompilationUnit createTestClass(
-      String testClassName, String testMethodPrefix, List<ExecutableSequence> sequences) {
+      String testClassName, NameGenerator methodNameGen, List<ExecutableSequence> sequences) {
     this.classMethodCounts.put(testClassName, sequences.size());
 
     CompilationUnit compilationUnit = new CompilationUnit();
@@ -195,10 +202,10 @@ public class JUnitCreator {
     // class declaration
     ClassOrInterfaceDeclaration classDeclaration =
         new ClassOrInterfaceDeclaration(Modifier.PUBLIC, false, testClassName);
-    List<AnnotationExpr> annotations = new ArrayList<>();
-    annotations.add(
-        new SingleMemberAnnotationExpr(
-            new NameExpr("FixMethodOrder"), new NameExpr("MethodSorters.NAME_ASCENDING")));
+    List<AnnotationExpr> annotations =
+        Collections.singletonList(
+            new SingleMemberAnnotationExpr(
+                new NameExpr("FixMethodOrder"), new NameExpr("MethodSorters.NAME_ASCENDING")));
     classDeclaration.setAnnotations(annotations);
 
     List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
@@ -243,8 +250,6 @@ public class JUnitCreator {
       }
     }
 
-    NameGenerator methodNameGen =
-        new NameGenerator(testMethodPrefix, 1, numDigits(sequences.size()));
     for (ExecutableSequence eseq : sequences) {
       MethodDeclaration testMethod = createTestMethod(testClassName, methodNameGen.next(), eseq);
       if (testMethod != null) {
@@ -252,8 +257,7 @@ public class JUnitCreator {
       }
     }
     classDeclaration.setMembers(bodyDeclarations);
-    List<TypeDeclaration> types = new ArrayList<>();
-    types.add(classDeclaration);
+    List<TypeDeclaration> types = Collections.singletonList(classDeclaration);
     compilationUnit.setTypes(types);
 
     return compilationUnit;
@@ -270,12 +274,12 @@ public class JUnitCreator {
   private MethodDeclaration createTestMethod(
       String className, String methodName, ExecutableSequence testSequence) {
     MethodDeclaration method = new MethodDeclaration(Modifier.PUBLIC, new VoidType(), methodName);
-    List<AnnotationExpr> annotations = new ArrayList<>();
-    annotations.add(new MarkerAnnotationExpr(new NameExpr("Test")));
+    List<AnnotationExpr> annotations =
+        Collections.singletonList(new MarkerAnnotationExpr(new NameExpr("Test")));
     method.setAnnotations(annotations);
 
-    List<ReferenceType> throwsList = new ArrayList<>();
-    throwsList.add(new ReferenceType(new ClassOrInterfaceType("Throwable")));
+    List<ReferenceType> throwsList =
+        Collections.singletonList(new ReferenceType(new ClassOrInterfaceType("Throwable")));
     method.setThrows(throwsList);
 
     BlockStmt body = new BlockStmt();
@@ -298,7 +302,7 @@ public class JUnitCreator {
       System.out.println(
           "Parse error while creating test method " + className + "." + methodName + " for block ");
       System.out.println(sequenceBlockString);
-      throw new BugInRandoopException("Parse error while creating test method", e);
+      throw new RandoopBug("Parse error while creating test method", e);
     } catch (TokenMgrError e) {
       System.out.println(
           "Lexical error while creating test method " + className + "." + methodName);
@@ -324,8 +328,8 @@ public class JUnitCreator {
   private MethodDeclaration createFixture(
       String annotation, int modifiers, String methodName, BlockStmt body) {
     MethodDeclaration method = new MethodDeclaration(modifiers, new VoidType(), methodName);
-    List<AnnotationExpr> annotations = new ArrayList<>();
-    annotations.add(new MarkerAnnotationExpr(new NameExpr(annotation)));
+    List<AnnotationExpr> annotations =
+        Collections.singletonList(new MarkerAnnotationExpr(new NameExpr(annotation)));
     method.setAnnotations(annotations);
     method.setBody(body);
     return method;
@@ -367,8 +371,7 @@ public class JUnitCreator {
         new SingleMemberAnnotationExpr(
             new NameExpr("Suite.SuiteClasses"), new NameExpr("{ " + classList + " }")));
     suiteClass.setAnnotations(annotations);
-    List<TypeDeclaration> types = new ArrayList<>();
-    types.add(suiteClass);
+    List<TypeDeclaration> types = Collections.singletonList(suiteClass);
     compilationUnit.setTypes(types);
     return compilationUnit.toString();
   }
@@ -378,9 +381,10 @@ public class JUnitCreator {
    *
    * @param driverName the name for the driver class
    * @param testClassNames the names of the test classes in the suite
+   * @param numMethods the number of methods; used for zero-padding
    * @return the test driver class as a {@code String}
    */
-  public String createTestDriver(String driverName, Set<String> testClassNames) {
+  public String createTestDriver(String driverName, Set<String> testClassNames, int numMethods) {
     CompilationUnit compilationUnit = new CompilationUnit();
     if (packageName != null) {
       compilationUnit.setPackage(new PackageDeclaration(new NameExpr(packageName)));
@@ -402,14 +406,14 @@ public class JUnitCreator {
     VariableDeclarator variableDecl =
         new VariableDeclarator(
             new VariableDeclaratorId(failureVariableName), new BooleanLiteralExpr(false));
-    List<VariableDeclarator> variableList = new ArrayList<>();
-    variableList.add(variableDecl);
+    List<VariableDeclarator> variableList = Collections.singletonList(variableDecl);
     VariableDeclarationExpr variableExpr =
         new VariableDeclarationExpr(
             new PrimitiveType(PrimitiveType.Primitive.Boolean), variableList);
     bodyStatements.add(new ExpressionStmt(variableExpr));
 
     NameGenerator instanceNameGen = new NameGenerator("t");
+    NameGenerator methodNameGen = new NameGenerator("test", 1, numMethods);
     for (String testClass : testClassNames) {
       if (beforeAllBody != null) {
         bodyStatements.add(
@@ -421,26 +425,24 @@ public class JUnitCreator {
           new VariableDeclarator(
               new VariableDeclaratorId(testVariable),
               new ObjectCreationExpr(null, new ClassOrInterfaceType(testClass), null));
-      variableList = new ArrayList<>();
-      variableList.add(variableDecl);
+      variableList = Collections.singletonList(variableDecl);
       variableExpr = new VariableDeclarationExpr(new ClassOrInterfaceType(testClass), variableList);
       bodyStatements.add(new ExpressionStmt(variableExpr));
 
       int classMethodCount = classMethodCounts.get(testClass);
-      NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
 
-      while (methodGen.nameCount() < classMethodCount) {
+      for (int i = 0; i < classMethodCount; i++) {
         if (beforeEachBody != null) {
           bodyStatements.add(
               new ExpressionStmt(
                   new MethodCallExpr(new NameExpr(testVariable), BEFORE_EACH_METHOD)));
         }
-        String methodName = methodGen.next();
+        String methodName = methodNameGen.next();
 
         TryStmt tryStmt = new TryStmt();
-        List<Statement> tryStatements = new ArrayList<>();
-        tryStatements.add(
-            new ExpressionStmt(new MethodCallExpr(new NameExpr(testVariable), methodName)));
+        List<Statement> tryStatements =
+            Collections.singletonList(
+                new ExpressionStmt(new MethodCallExpr(new NameExpr(testVariable), methodName)));
         BlockStmt tryBlock = new BlockStmt();
 
         tryBlock.setStmts(tryStatements);
@@ -461,8 +463,7 @@ public class JUnitCreator {
 
         catchBlock.setStmts(catchStatements);
         catchClause.setCatchBlock(catchBlock);
-        List<CatchClause> catches = new ArrayList<>();
-        catches.add(catchClause);
+        List<CatchClause> catches = Collections.singletonList(catchClause);
         tryStmt.setCatchs(catches);
         bodyStatements.add(tryStmt);
 
@@ -480,25 +481,23 @@ public class JUnitCreator {
     }
 
     BlockStmt exitCall = new BlockStmt();
-    List<Expression> args = new ArrayList<>();
-    args.add(new IntegerLiteralExpr("1"));
-    List<Statement> exitStatement = new ArrayList<>();
-    exitStatement.add(new ExpressionStmt(new MethodCallExpr(new NameExpr("System"), "exit", args)));
+    List<Expression> args = Collections.singletonList(new IntegerLiteralExpr("1"));
+    List<Statement> exitStatement =
+        Collections.singletonList(
+            new ExpressionStmt(new MethodCallExpr(new NameExpr("System"), "exit", args)));
     exitCall.setStmts(exitStatement);
     bodyStatements.add(new IfStmt(new NameExpr(failureVariableName), exitCall, null));
 
     BlockStmt body = new BlockStmt();
     body.setStmts(bodyStatements);
     mainMethod.setBody(body);
-    List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
-    bodyDeclarations.add(mainMethod);
+    List<BodyDeclaration> bodyDeclarations = Collections.singletonList(mainMethod);
 
     ClassOrInterfaceDeclaration driverClass =
         new ClassOrInterfaceDeclaration(Modifier.PUBLIC, false, driverName);
     driverClass.setMembers(bodyDeclarations);
 
-    List<TypeDeclaration> types = new ArrayList<>();
-    types.add(driverClass);
+    List<TypeDeclaration> types = Collections.singletonList(driverClass);
     compilationUnit.setTypes(types);
     return compilationUnit.toString();
   }

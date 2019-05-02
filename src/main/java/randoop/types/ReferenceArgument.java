@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class ReferenceArgument extends TypeArgument {
 
-  /** The reference type for this argument */
+  /** The reference type for this argument. */
   private final ReferenceType referenceType;
 
   /**

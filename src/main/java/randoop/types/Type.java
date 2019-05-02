@@ -1,6 +1,8 @@
 package randoop.types;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.WildcardType;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 
 /**
  * The superclass of a class hierarchy representing Java types defined in JLS Section 4.1. This
@@ -60,15 +62,91 @@ public abstract class Type implements Comparable<Type> {
    * t.getRuntimeClass().getName()}.
    *
    * @param typeName the name of a type
-   * @return the type object for the type with the name, null if none is found
+   * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Type forName(String typeName) throws ClassNotFoundException {
+  public static Type forName(@ClassGetName String typeName) throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.classForName(typeName);
     if (c == null) {
       c = Class.forName(typeName);
     }
     return Type.forClass(c);
+  }
+
+  /**
+   * Returns the Type for a fully qualified name (that may or may not be a multi-dimensional array).
+   *
+   * @param fullyQualifiedName the fully qualified name of a type. Array names such as {@code int[]}
+   *     or {@code java.lang.String[][]} are also fully qualified names. However, array definitions
+   *     with sizes, such as {@code int[3][]}, are not fully qualified names.
+   * @return the type object for the type with the name
+   * @throws ClassNotFoundException if name is not a recognized type
+   */
+  public static Type getTypeforFullyQualifiedName(@ClassGetName String fullyQualifiedName)
+      throws ClassNotFoundException {
+    Class<?> className = forFullyQualifiedName(fullyQualifiedName);
+    return className.isArray() ? ArrayType.forClass(className) : Type.forClass(className);
+  }
+
+  /**
+   * Returns the Class for a fully qualified name (that may or may not be a multi-dimensional
+   * array).
+   *
+   * @param fullyQualifiedName the fully qualified name of a type. Array names such as {@code int[]}
+   *     or {@code java.lang.String[][]} are also fully qualified names. However, array definitions
+   *     with sizes, such as {@code int[3][]}, are not fully qualified names.
+   * @return the type object for the type with the name
+   * @throws ClassNotFoundException if name is not a recognized type
+   */
+  public static Class<?> forFullyQualifiedName(@ClassGetName String fullyQualifiedName)
+      throws ClassNotFoundException {
+    String[] fullyQualifiedArrayParsedName = fullyQualifiedName.split("\\[");
+    int arrayDimension = fullyQualifiedArrayParsedName.length - 1;
+    Class<?> fullyQualifiedBaseType =
+        forFullyQualifiedNameNonArray(fullyQualifiedArrayParsedName[0]);
+
+    if (arrayDimension > 0) {
+      // Make each dimension size zero, since it is ignored by getClass().
+      int[] dimensions = new int[arrayDimension];
+      return Array.newInstance(fullyQualifiedBaseType, dimensions).getClass();
+    } else {
+      return fullyQualifiedBaseType;
+    }
+  }
+
+  /**
+   * Returns the Class for a fully qualified name. Does not support arrays.
+   *
+   * @param fullyQualifiedName the fully qualified name of a non-array type
+   * @return the type object for the type with the name
+   * @throws ClassNotFoundException if name is not a recognized type
+   */
+  private static Class<?> forFullyQualifiedNameNonArray(String fullyQualifiedName)
+      throws ClassNotFoundException {
+    Class<?> c = PrimitiveTypes.classForName(fullyQualifiedName);
+    if (c != null) {
+      return c;
+    }
+
+    try {
+      return Class.forName(fullyQualifiedName);
+    } catch (ClassNotFoundException e) {
+      while (true) {
+        int pos = fullyQualifiedName.lastIndexOf('.');
+        if (pos == -1) { // not found
+          throw e;
+        }
+        @SuppressWarnings("signature") // checked below & exception is handled
+        @ClassGetName String innerName =
+            fullyQualifiedName.substring(0, pos) + "$" + fullyQualifiedName.substring(pos + 1);
+        fullyQualifiedName = innerName;
+        try {
+          return Class.forName(fullyQualifiedName);
+        } catch (ClassNotFoundException ee) {
+          // nothing to do
+        }
+      }
+    }
   }
 
   /**
@@ -230,7 +308,7 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicates whether this object is an interface type
+   * Indicates whether this object is an interface type.
    *
    * @return true if this object is an interface type, false otherwise
    */
@@ -440,10 +518,10 @@ public abstract class Type implements Comparable<Type> {
   @Override
   public int compareTo(Type type) {
     String name1 = this.getCanonicalName();
-    String name2 = this.getCanonicalName();
+    String name2 = type.getCanonicalName();
     if (name1 != null && name2 != null) {
       return this.getCanonicalName().compareTo(type.getCanonicalName());
     }
-    return this.getRuntimeClass().getName().compareTo(this.getRuntimeClass().getName());
+    return this.getRuntimeClass().getName().compareTo(type.getRuntimeClass().getName());
   }
 }

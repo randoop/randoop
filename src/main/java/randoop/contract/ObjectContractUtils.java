@@ -22,7 +22,7 @@ public class ObjectContractUtils {
    */
   public static ExecutionOutcome execute(final ObjectContract c, final Object... objs) {
     ReflectionCode refl = new ObjectContractReflectionCode(c, objs);
-    return ReflectionExecutor.executeReflectionCode(refl, System.out);
+    return ReflectionExecutor.executeReflectionCode(refl);
   }
 
   /**

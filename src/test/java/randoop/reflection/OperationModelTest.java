@@ -38,7 +38,6 @@ public class OperationModelTest {
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("java.util.LinkedList");
     Set<String> coveredClassnames = new LinkedHashSet<>();
-    Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -49,7 +48,6 @@ public class OperationModelTest {
               reflectionPredicate,
               classnames,
               coveredClassnames,
-              methodSignatures,
               errorHandler,
               literalsFileList);
     } catch (SignatureParseException e) {
@@ -91,7 +89,6 @@ public class OperationModelTest {
     classnames.add("randoop.test.ClassWithInnerClass");
     classnames.add("randoop.test.ClassWithInnerClass$A");
     Set<String> coveredClassnames = new LinkedHashSet<>();
-    Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -102,7 +99,6 @@ public class OperationModelTest {
               reflectionPredicate,
               classnames,
               coveredClassnames,
-              methodSignatures,
               errorHandler,
               literalsFileList);
     } catch (SignatureParseException e) {
@@ -167,7 +163,6 @@ public class OperationModelTest {
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.supertypetest.InheritedEnum");
     Set<String> coveredClassnames = new LinkedHashSet<>();
-    Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -178,7 +173,6 @@ public class OperationModelTest {
               reflectionPredicate,
               classnames,
               coveredClassnames,
-              methodSignatures,
               errorHandler,
               literalsFileList);
     } catch (NoSuchMethodException e) {
@@ -204,14 +198,14 @@ public class OperationModelTest {
       if (operation.getOutputType().equals(JavaTypes.STRING_TYPE)) {
         inputs[0] = InheritedEnum.ONE;
         inputs[1] = 1;
-        outcome = operation.execute(inputs, null);
+        outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
         assertThat("outcome should be string \"one\"", (String) value, is(equalTo("one")));
 
         inputs[0] = InheritedEnum.TWO;
         inputs[1] = 1;
-        outcome = operation.execute(inputs, null);
+        outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
         assertThat("outcome should be string \"two\"", (String) value, is(equalTo("two")));
@@ -219,14 +213,14 @@ public class OperationModelTest {
       } else if (operation.getOutputType().equals(JavaTypes.INT_TYPE)) {
         inputs[0] = InheritedEnum.ONE;
         inputs[1] = "one";
-        outcome = operation.execute(inputs, null);
+        outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
         assertThat("outcome should be string \"one\"", (int) value, is(equalTo(1)));
 
         inputs[0] = InheritedEnum.TWO;
         inputs[1] = "two";
-        outcome = operation.execute(inputs, null);
+        outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
         assertThat("outcome should be string \"one\"", (int) value, is(equalTo(2)));
@@ -351,7 +345,6 @@ public class OperationModelTest {
   private OperationModel getOperationModel(Set<String> classnames) {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> coveredClassnames = new LinkedHashSet<>();
-    Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -362,7 +355,6 @@ public class OperationModelTest {
               reflectionPredicate,
               classnames,
               coveredClassnames,
-              methodSignatures,
               errorHandler,
               literalsFileList);
     } catch (SignatureParseException e) {

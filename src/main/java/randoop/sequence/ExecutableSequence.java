@@ -69,7 +69,7 @@ public class ExecutableSequence {
 
   /**
    * How long it took to generate this sequence in nanoseconds, excluding execution time. Must be
-   * directly set by the generator that creates this object (No code in this class sets its value.)
+   * directly set by the generator that creates this object. No code in this class sets its value.
    */
   public long gentime = -1;
 
@@ -86,7 +86,7 @@ public class ExecutableSequence {
    */
   private boolean hasNullInput = false;
 
-  /** Captures output from the executed sequence */
+  /** Captures output from the executed sequence. */
   // static, so initializing eagerly is not a large cost.
   private static ByteArrayOutputStream output_buffer = new ByteArrayOutputStream();
 
@@ -94,7 +94,7 @@ public class ExecutableSequence {
   // static, so initializing eagerly is not a large cost.
   private static PrintStream output_buffer_stream = new PrintStream(output_buffer);
 
-  /* Maps a value to the set of variables that hold it. */
+  /** Maps a value to the set of variables that hold it. */
   private IdentityMultiMap<Object, Variable> variableMap = new IdentityMultiMap<>();
 
   /**
@@ -244,7 +244,6 @@ public class ExecutableSequence {
    *         <li>execute the i-th statement, using reflection
    *         <li>call {@code visitor.visitAfter(this, i)}
    *       </ul>
-   *
    *   <li>For the last statement, check its specifications (pre-, post-, and throws-conditions).
    * </ul>
    *
@@ -403,7 +402,7 @@ public class ExecutableSequence {
 
       ExecutionOutcome r;
       try {
-        r = statement.execute(inputVariables, Globals.blackHole);
+        r = statement.execute(inputVariables);
       } catch (SequenceExecutionException e) {
         throw new SequenceExecutionException("Problem while executing " + statement, e);
       }

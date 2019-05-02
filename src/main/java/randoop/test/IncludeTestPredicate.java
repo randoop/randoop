@@ -1,15 +1,16 @@
 package randoop.test;
 
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import randoop.sequence.ExecutableSequence;
-import randoop.util.predicate.DefaultPredicate;
 
 /**
- * A test predicate that checks for the occurrence of variables that match the given regular
- * expression.
+ * A test predicate that checks for the occurrence of variables (and methods) that match the given
+ * regular expression.
  */
-public class IncludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
+public class IncludeTestPredicate implements Predicate<ExecutableSequence> {
 
+  /** Classes whose uses to require. Predicate returns true if one of these is used. */
   private Pattern testClasses;
 
   public IncludeTestPredicate(Pattern testClasses) {

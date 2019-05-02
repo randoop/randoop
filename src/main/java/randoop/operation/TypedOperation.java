@@ -1,10 +1,10 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import randoop.ExecutionOutcome;
@@ -33,7 +33,7 @@ import randoop.types.TypeVariable;
  */
 public abstract class TypedOperation implements Operation, Comparable<TypedOperation> {
 
-  /** The operation to be decorated */
+  /** The operation to be decorated. */
   private final CallableOperation operation;
 
   /**
@@ -46,7 +46,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /** The output type. */
   private final Type outputType;
 
-  /** The specification for this operation */
+  /** The specification for this operation. */
   private ExecutableSpecification execSpec;
 
   /**
@@ -61,6 +61,15 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.inputTypes = inputTypes;
     this.outputType = outputType;
     this.execSpec = null;
+  }
+
+  /**
+   * Sets the specification; any previous value is ignored.
+   *
+   * @param execSpec the specification to use for this object
+   */
+  public void setExecutableSpecification(ExecutableSpecification execSpec) {
+    this.execSpec = execSpec;
   }
 
   @Override
@@ -137,7 +146,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   @Override
   public String toString() {
-    return getName() + " : " + inputTypes + " -> " + outputType;
+    String specString = (execSpec == null) ? "" : (" [spec: " + execSpec.toString() + "]");
+    return getName() + " : " + inputTypes + " -> " + outputType + specString;
   }
 
   @Override
@@ -254,14 +264,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * ResultOrException object and can output results to specified PrintStream.
    *
    * @param input array containing appropriate inputs to operation
-   * @param out stream to output results of execution; if null, nothing is printed
    * @return results of executing this statement
    */
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  public ExecutionOutcome execute(Object[] input) {
     assert input.length == inputTypes.size()
         : "operation execute expected " + inputTypes.size() + ", but got " + input.length;
 
-    return this.getOperation().execute(input, out);
+    return this.getOperation().execute(input);
   }
 
   /**
@@ -282,6 +291,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public abstract TypedOperation applyCaptureConversion();
 
+  // Implementation note: clients mutate the list, so don't use Collections.emptyList.
   public List<TypeVariable> getTypeParameters() {
     return new ArrayList<>();
   }
@@ -521,8 +531,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return an operation to create an array of the given type
    */
   public static TypedOperation createArrayCreation(ArrayType arrayType) {
-    List<Type> typeList = new ArrayList<>();
-    typeList.add(JavaTypes.INT_TYPE);
+    List<Type> typeList = Collections.singletonList(JavaTypes.INT_TYPE);
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new ArrayCreation(arrayType), inputTypes, arrayType);
   }
@@ -535,8 +544,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return an operation that casts the input type to the result type
    */
   public static TypedOperation createCast(Type fromType, Type toType) {
-    List<Type> typeList = new ArrayList<>();
-    typeList.add(fromType);
+    List<Type> typeList = Collections.singletonList(fromType);
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new UncheckedCast(toType), inputTypes, toType);
   }
@@ -589,18 +597,20 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     if (execSpec == null) {
       return new ExpectedOutcomeTable();
     }
-    return execSpec.checkPrestate(addNullReceiver(values));
+    return execSpec.checkPrestate(addNullReceiverIfStatic(values));
   }
 
   /**
-   * Fixes the argument array for checking an {@link Operation} -- inserting {@code null} as first
-   * argument when this operation is static.
+   * Inserts {@code null} as first argument when this operation is static.
+   *
+   * <p>This is necessary because the argument array for checking an {@link Operation} is always
+   * assumed to have a "receiver" argument, which is null (and ignored) for a static method.
    *
    * @param values the argument array for this operation
    * @return the corresponding operation array for checking a {@link
    *     randoop.condition.ExecutableBooleanExpression}
    */
-  private Object[] addNullReceiver(Object[] values) {
+  private Object[] addNullReceiverIfStatic(Object[] values) {
     Object[] args = values;
     if (this.isStatic()) {
       args = new Object[values.length + 1];
@@ -608,15 +618,5 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       System.arraycopy(values, 0, args, 1, values.length);
     }
     return args;
-  }
-
-  /**
-   * Sets the specification; any previous value is ignored (so the method name {@code
-   * addExecutableSpecification} may be misleading).
-   *
-   * @param execSpec the specification to use for this object
-   */
-  public void addExecutableSpecification(ExecutableSpecification execSpec) {
-    this.execSpec = execSpec;
   }
 }

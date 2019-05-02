@@ -70,7 +70,7 @@ public class JavaTypes {
   /** The void {@link VoidType} */
   public static final VoidType VOID_TYPE = VoidType.getVoidType();
 
-  /** The list of primitive types */
+  /** The list of primitive types. */
   private static final List<PrimitiveType> PRIMITIVE_TYPES;
 
   static {

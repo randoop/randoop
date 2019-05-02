@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
 import randoop.operation.NonreceiverTerm;
@@ -73,7 +73,7 @@ class HelperSequenceCreator {
       if (componentType.isParameterized()) {
         // XXX build elementType default construction sequence here, if cannot build one then stop
         InstantiatedType creationType = getImplementingType((InstantiatedType) componentType);
-        /* If element type is C<T extends C<T>, so use T */
+        // If element type is C<T extends C<T>, so use T
         if (creationType.isRecursiveType()) {
           // XXX being incautious, argument type might be parameterized
           componentType =
@@ -321,15 +321,14 @@ class HelperSequenceCreator {
     TypedOperation lengthTerm =
         TypedOperation.createNonreceiverInitialization(
             new NonreceiverTerm(JavaTypes.INT_TYPE, length));
-    creationSequence = creationSequence.extend(lengthTerm, new ArrayList<Variable>());
+    creationSequence = creationSequence.extend(lengthTerm, Collections.emptyList());
     input.add(creationSequence.getLastVariable());
 
     TypedOperation creationOperation = TypedOperation.createArrayCreation(rawArrayType);
     creationSequence = creationSequence.extend(creationOperation, input);
 
     TypedOperation castOperation = TypedOperation.createCast(rawArrayType, arrayType);
-    input = new ArrayList<>();
-    input.add(creationSequence.getLastVariable());
+    input = Collections.singletonList(creationSequence.getLastVariable());
     creationSequence = creationSequence.extend(castOperation, input);
     return creationSequence;
   }
@@ -390,11 +389,10 @@ class HelperSequenceCreator {
     try {
       method = enumsetClass.getMethod("noneOf", JavaTypes.CLASS_TYPE.getRuntimeClass());
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("Can't find \"noneOf\" method for EnumSet: ", e);
+      throw new RandoopBug("Can't find \"noneOf\" method for EnumSet: ", e);
     }
     MethodCall op = new MethodCall(method);
-    List<Type> paramTypes = new ArrayList<>();
-    paramTypes.add(JavaTypes.CLASS_TYPE);
+    List<Type> paramTypes = Collections.singletonList(JavaTypes.CLASS_TYPE);
     return new TypedClassOperation(op, creationType, new TypeTuple(paramTypes), creationType);
   }
 
@@ -411,7 +409,7 @@ class HelperSequenceCreator {
     try {
       addMethod = collectionType.getRuntimeClass().getMethod("add", Object.class);
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("Can't find add() method for " + collectionType, e);
+      throw new RandoopBug("Can't find add() method for " + collectionType, e);
     }
     MethodCall op = new MethodCall(addMethod);
     List<Type> arguments = new ArrayList<>();
@@ -436,7 +434,7 @@ class HelperSequenceCreator {
           collectionsClass.getMethod(
               "addAll", JDKTypes.COLLECTION_TYPE.getRuntimeClass(), (new Object[] {}).getClass());
     } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("Can't find Collections.addAll method", e);
+      throw new RandoopBug("Can't find Collections.addAll method", e);
     }
     MethodCall op = new MethodCall(method);
     assert method.getTypeParameters().length == 1 : "method should have one type parameter";

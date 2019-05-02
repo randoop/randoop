@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
@@ -17,13 +16,13 @@ import randoop.types.TypeTuple;
  */
 public class ArrayCreation extends CallableOperation {
 
-  /** The element type for the created array */
+  /** The element type for the created array. */
   private final Type elementType;
 
-  /** The component type for the created array */
+  /** The component type for the created array. */
   private final Type componentType;
 
-  /** The dimensions of the created array */
+  /** The dimensions of the created array. */
   private int dimensions;
 
   /**
@@ -65,9 +64,10 @@ public class ArrayCreation extends CallableOperation {
   }
 
   @Override
-  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+  // The argument array contains a single Integer.
+  public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "requires array dimension as input";
-    int length = Integer.parseInt(input[0].toString());
+    int length = ((Integer) input[0]).intValue();
     long startTime = System.currentTimeMillis();
     Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
     long totalTime = System.currentTimeMillis() - startTime;
