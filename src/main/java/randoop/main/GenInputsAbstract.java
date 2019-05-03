@@ -280,7 +280,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * 100 error-revealing tests; consider using <a
    * href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test"><code>
    * --stop-on-error-test=true</code></a>. Also see the <a
-   * href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization-options">test
+   * href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization">test
    * case minimization options</a>.
    */
   // Omit this to keep the documentation short:
