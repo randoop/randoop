@@ -17,7 +17,6 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.NonParameterizedType;
-import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
@@ -129,7 +128,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   private TypedClassOperation instantiateTypes(TypedClassOperation operation) {
     if (!classType.isGeneric() && operation.getDeclaringType().isGeneric()) {
-      Substitution<ReferenceType> substitution =
+      Substitution substitution =
           classType.getInstantiatingSubstitution(operation.getDeclaringType());
       if (substitution == null) { // No unifying substitution found
         throw new RandoopBug(

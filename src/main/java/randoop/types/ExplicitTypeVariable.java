@@ -66,7 +66,7 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+  public ReferenceType apply(Substitution substitution) {
     ReferenceType type = substitution.get(this);
     if (type != null && !type.isVariable()) {
       return type;

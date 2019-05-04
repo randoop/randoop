@@ -126,13 +126,13 @@ public class CaptureConversionTest {
       List<TypedOperation> genericOperations) {
     InstantiatedType finalType = genericClassType.instantiate(actualArgType);
     InstantiatedType instantiatedType = sourceType.instantiate(paramType);
-    Substitution<ReferenceType> substitution = instantiatedType.getTypeSubstitution();
+    Substitution substitution = instantiatedType.getTypeSubstitution();
     for (TypedOperation op : genericOperations) {
       InstantiatedType argumentType = getArgumentType(op).apply(substitution);
       InstantiatedType convertedArgumentType = argumentType.applyCaptureConversion();
       List<TypeVariable> arguments = convertedArgumentType.getTypeParameters();
       if (arguments.size() > 0) {
-        Substitution<ReferenceType> wcSubst = Substitution.forArgs(arguments, actualArgType);
+        Substitution wcSubst = Substitution.forArgs(arguments, actualArgType);
         convertedArgumentType = convertedArgumentType.apply(wcSubst);
       }
       if (op.hasWildcardTypes()) {

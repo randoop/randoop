@@ -19,7 +19,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
-import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -281,7 +280,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param substitution the substitution
    * @return the operation resulting from applying the substitution to the types of this operation
    */
-  public abstract TypedOperation apply(Substitution<ReferenceType> substitution);
+  public abstract TypedOperation apply(Substitution substitution);
 
   /**
    * Applies a capture conversion to the wildcard types of this operation, and returns a new
@@ -401,7 +400,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
           InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
           assert superType != null
               : "should exist a super type of enum instantiating " + genDeclaringType;
-          Substitution<ReferenceType> substitution = superType.getTypeSubstitution();
+          Substitution substitution = superType.getTypeSubstitution();
           inputTypes = inputTypes.apply(substitution);
           outputType = outputType.apply(substitution);
         }

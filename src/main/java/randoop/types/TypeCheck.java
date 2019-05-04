@@ -36,7 +36,7 @@ public class TypeCheck {
    * @param substitution substitution for checking bounds
    * @return true if instantiation of the parameters by the tuple is valid, false otherwise
    */
-  public boolean test(List<ReferenceType> tuple, Substitution<ReferenceType> substitution) {
+  public boolean test(List<ReferenceType> tuple, Substitution substitution) {
     int i = 0;
     while (i < tuple.size()
         && parameters.get(i).getLowerTypeBound().isLowerBound(tuple.get(i), substitution)

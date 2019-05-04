@@ -25,7 +25,7 @@ public class GenericTypesTest {
         a1.getTypeParameters().get(0).getUpperTypeBound());
 
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
-    Substitution<ReferenceType> subst =
+    Substitution subst =
         Substitution.forArgs(a1.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     assertTrue("String satisfies bound", b1.isUpperBound(JavaTypes.STRING_TYPE, subst));
 
@@ -51,7 +51,7 @@ public class GenericTypesTest {
         new EagerReferenceBound(new NonParameterizedType(Number.class)),
         a1.getTypeParameters().get(0).getUpperTypeBound());
 
-    Substitution<ReferenceType> substitution;
+    Substitution substitution;
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
     ReferenceType candidateType = new NonParameterizedType(Integer.class);
     substitution = Substitution.forArgs(a1.getTypeParameters(), candidateType);
