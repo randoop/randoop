@@ -2,7 +2,7 @@ package randoop.types;
 
 import java.util.Objects;
 
-/** Represents a type variable that is a type parameter. (See JLS, section 4.3) */
+/** Represents a type variable that is a type parameter. (See JLS, section 4.3.) */
 class ExplicitTypeVariable extends TypeVariable {
 
   /** the type parameter */
