@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import randoop.operation.TypedClassOperation;
+import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
@@ -20,7 +21,6 @@ import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
-import randoop.types.TypeCheck;
 import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
 import randoop.util.Log;
@@ -362,8 +362,8 @@ public class TypeInstantiator {
       } else {
         // if no parameters with non-generic bounds, choose instantiation for parameters
         // with generic bounds
-        TypeCheck typeCheck = TypeCheck.forParameters(genericParameters);
-        substitutionList = getInstantiations(genericParameters, substitution, typeCheck);
+        BoundsCheck boundsCheck = new BoundsCheck(genericParameters);
+        substitutionList = getInstantiations(genericParameters, substitution, boundsCheck);
       }
       if (substitutionList.isEmpty()) {
         return substitutionList;
@@ -425,11 +425,11 @@ public class TypeInstantiator {
    *
    * @param parameters the list of parameters to instantiate
    * @param initialSubstitution the substitution to be extended by new substitutions
-   * @param typeCheck the predicate to type check a substitution
+   * @param boundsCheck the predicate to type check a substitution
    * @return the list of instantiating substitutions
    */
   private List<Substitution> getInstantiations(
-      List<TypeVariable> parameters, Substitution initialSubstitution, TypeCheck typeCheck) {
+      List<TypeVariable> parameters, Substitution initialSubstitution, BoundsCheck boundsCheck) {
     List<Substitution> substitutionList = new ArrayList<>();
     List<List<ReferenceType>> candidateTypes = getCandidateTypeLists(parameters);
     if (candidateTypes.isEmpty()) {
@@ -439,7 +439,7 @@ public class TypeInstantiator {
     for (List<ReferenceType> tuple : iteratorToIterable(new ListIterator<>(candidateTypes))) {
       Substitution partialSubstitution = Substitution.forArgs(parameters, tuple);
       Substitution substitution = initialSubstitution.extend(partialSubstitution);
-      if (typeCheck.test(tuple, substitution)) {
+      if (boundsCheck.test(tuple, substitution)) {
         substitutionList.add(substitution);
       }
     }
