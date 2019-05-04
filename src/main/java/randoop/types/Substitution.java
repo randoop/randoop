@@ -1,28 +1,27 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import java.util.Set;
+import java.util.function.BiFunction;
 
 /**
- * A substitution represents the instantiation of a generic class, which is a parameterized type.
- *
- * <p>It maps type parameters/variables (including wildcards) to type arguments.
- *
- * <p>An instance is built using {@link Substitution#forArgs(List, List)} and then not modified.
+ * A substitution maps type parameters/variables (including wildcards) to concrete types. It
+ * represents the instantiation of a generic class to a parameterized type.
  */
 public class Substitution {
 
-  /** The substitution map. */
+  /** The map from type variables to concrete types. */
   private Map<TypeVariable, ReferenceType> map;
 
-  /** map on reflection types - used for testing bounds */
+  /**
+   * Map on reflection types - used for testing bounds. Its keys are a subset of the keys of {@link
+   * #map}: those that are type parameters as opposed to other type variables such as wildcards.
+   */
   private Map<java.lang.reflect.Type, ReferenceType> rawMap;
 
   /** Create an empty substitution. */
@@ -31,11 +30,23 @@ public class Substitution {
     rawMap = new LinkedHashMap<>();
   }
 
+  /**
+   * Make a copy of the given substitution.
+   *
+   * @param substitution the substitution to copy
+   */
   public Substitution(Substitution substitution) {
     map = new LinkedHashMap<>(substitution.map);
     rawMap = new LinkedHashMap<>(substitution.rawMap);
   }
 
+  /**
+   * Create a substitution that maps the given type parameter to the given type argument.
+   *
+   * @param parameter the type parameter
+   * @param argument the type argument
+   * @return a one-element mapping
+   */
   public static Substitution forArg(TypeVariable parameter, ReferenceType argument) {
     Substitution s = new Substitution();
     s.put(parameter, argument);
@@ -43,12 +54,11 @@ public class Substitution {
   }
 
   /**
-   * Create a substitution from the type parameters to the corresponding type arguments. Requires
-   * that the number of parameters and arguments agree.
+   * Create a substitution from the type parameters to the corresponding type arguments.
    *
    * @param parameters the type parameters
    * @param arguments the type arguments
-   * @return a {@code Substitution} mapping each type variable to a type argument
+   * @return a substitution that maps each type parameters to the corresponding type argument
    */
   public static Substitution forArgs(List<TypeVariable> parameters, ReferenceType... arguments) {
     assert parameters.size() == arguments.length;
@@ -60,11 +70,11 @@ public class Substitution {
   }
 
   /**
-   * Create a substitution from the type parameters and the list of arguments.
+   * Create a substitution from the type parameters to the corresponding type arguments.
    *
    * @param parameters the type parameters
    * @param arguments the type arguments
-   * @return the substitution that maps the type parameters to the corresponding type argument
+   * @return a substitution that maps each type parameters to the corresponding type argument
    */
   public static Substitution forArgs(List<TypeVariable> parameters, List<ReferenceType> arguments) {
     assert parameters.size() == arguments.size();
@@ -85,7 +95,6 @@ public class Substitution {
     if (!(obj instanceof Substitution)) {
       return false;
     }
-    @SuppressWarnings("rawtypes")
     Substitution s = (Substitution) obj;
     return map.equals(s.map);
   }
@@ -95,23 +104,14 @@ public class Substitution {
     return Objects.hash(map);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return a string representation of the substitution
-   */
   @Override
   public String toString() {
-    List<String> pairs = new ArrayList<>();
-    for (Entry<TypeVariable, ReferenceType> p : map.entrySet()) {
-      pairs.add(p.getKey().toString() + " := " + p.getValue().toString());
-    }
-    return "[" + UtilPlume.join(pairs, ", ") + "]";
+    return map.toString();
   }
 
   /**
-   * Indicates whether this substitution is disjoint from another substitution, or that if they both
-   * map the same type variable, they map it to the same type. This is the test for whether this
+   * Two substitutions are consistent if their type variables are disjoint or, if they both map the
+   * same type variable, they map it to the same type. This is the test for whether this
    * substitution can be extended by the other substitution using {@link #extend(Substitution)}.
    *
    * @param substitution the other substitution to check for consistency with this substitution
@@ -133,30 +133,30 @@ public class Substitution {
     return true;
   }
 
+  /** Throws an exception if its arguments are different non-null values. */
+  private static BiFunction<ReferenceType, ReferenceType, ReferenceType> requireSameEntry =
+      (v1, v2) -> {
+        if (v1 == null) return v2;
+        if (v2 == null) return v1;
+        if (v1.equals(v2)) return v1;
+        throw new IllegalArgumentException(
+            String.format("Substitutions map a key to distinct types %s and %s", v1, v2));
+      };
+
   /**
-   * Extends this substitution by adding the entries of another substitution. If both substitutions
+   * Creates a new substitution tat contains the entries of two substitutions. If both substitutions
    * contain the same type variable, they must map to the same type.
    *
-   * @param substitution the substitution to add to this substitution
+   * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
    */
-  public Substitution extend(Substitution substitution) {
+  public Substitution extend(Substitution other) {
     Substitution result = new Substitution(this);
-    for (Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {
-      if (result.map.containsKey(entry.getKey())
-          && !result.get(entry.getKey()).equals(entry.getValue())) {
-        throw new IllegalArgumentException(
-            "Substitutions not disjoint, and map " + entry.getKey() + " to distinct types");
-      }
-      result.map.put(entry.getKey(), entry.getValue());
+    for (Entry<TypeVariable, ReferenceType> entry : other.map.entrySet()) {
+      result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
-    for (Entry<java.lang.reflect.Type, ReferenceType> entry : substitution.rawMap.entrySet()) {
-      if (result.rawMap.containsKey(entry.getKey())
-          && !result.get(entry.getKey()).equals(entry.getValue())) {
-        throw new IllegalArgumentException(
-            "Substitutions not disjoint, and map " + entry.getKey() + " to distinct types");
-      }
-      result.rawMap.put(entry.getKey(), entry.getValue());
+    for (Entry<java.lang.reflect.Type, ReferenceType> entry : other.rawMap.entrySet()) {
+      result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
     return result;
   }
@@ -183,11 +183,16 @@ public class Substitution {
     return rawMap.get(parameter);
   }
 
-  public Collection<TypeVariable> getVariables() {
+  /**
+   * Returns the type variables mapped from by this.
+   *
+   * @return the type variables mapped from by this
+   */
+  public Set<TypeVariable> keySet() {
     return map.keySet();
   }
 
-  /** Print the entries of this substitution to standard out. */
+  /** Print the entries of this substitution to standard out on multiple lines. */
   public void print() {
     for (Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
       System.out.println(entry.getKey() + "(" + entry.getKey() + ")" + " := " + entry.getValue());
@@ -209,9 +214,9 @@ public class Substitution {
   }
 
   /**
-   * Indicates whether this substitution has any variable-type pairs.
+   * Indicates whether this substitution is empty.
    *
-   * @return true if there are no substitution pairs, false otherwise
+   * @return true if this has no substitution pairs, false otherwise
    */
   public boolean isEmpty() {
     return map.isEmpty();
