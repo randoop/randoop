@@ -36,12 +36,12 @@ import com.github.javaparser.ast.stmt.TryStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.VoidType;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import randoop.Globals;
 import randoop.sequence.ExecutableSequence;
 
@@ -368,19 +368,13 @@ public class JUnitCreator {
     NodeList<AnnotationExpr> annotations = new NodeList<>();
     annotations.add(
         new SingleMemberAnnotationExpr(new Name("RunWith"), new NameExpr("Suite.class")));
-    StringBuilder classList = new StringBuilder();
-    Iterator<String> testIterator = testClassNames.iterator();
-    if (testIterator.hasNext()) {
-      String classCode = testIterator.next() + ".class";
-      while (testIterator.hasNext()) {
-        classList.append(classCode).append(", ");
-        classCode = testIterator.next() + ".class";
-      }
-      classList.append(classCode);
+    StringJoiner classList = new StringJoiner(".class, ", "{ ", ".class }");
+    for (String testClassName : testClassNames) {
+      classList.add(testClassName);
     }
     annotations.add(
         new SingleMemberAnnotationExpr(
-            new Name("Suite.SuiteClasses"), new NameExpr("{ " + classList + " }")));
+            new Name("Suite.SuiteClasses"), new NameExpr(classList.toString())));
     suiteClass.setAnnotations(annotations);
     NodeList<TypeDeclaration<?>> types = new NodeList<>(suiteClass);
     compilationUnit.setTypes(types);

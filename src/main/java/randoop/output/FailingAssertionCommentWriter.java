@@ -461,6 +461,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @throws RandoopBug if the iterator has no more lines, but the pattern hasn't been matched
    */
   private Match readUntilMatch(Iterator<String> lineIterator, Pattern pattern) {
+    // Not a for loop because the iterator is side effected and passed around.
     while (lineIterator.hasNext()) {
       String line = lineIterator.next();
       Matcher matcher = pattern.matcher(line);
