@@ -1,12 +1,12 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 /**
@@ -181,11 +181,11 @@ public class Substitution {
     return rawMap.get(parameter);
   }
 
-  public Collection<TypeVariable> getVariables() {
+  public Set<TypeVariable> keySet() {
     return map.keySet();
   }
 
-  /** Print the entries of this substitution to standard out. */
+  /** Print the entries of this substitution to standard out on multiple lines. */
   public void print() {
     for (Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
       System.out.println(entry.getKey() + "(" + entry.getKey() + ")" + " := " + entry.getValue());
@@ -207,9 +207,9 @@ public class Substitution {
   }
 
   /**
-   * Indicates whether this substitution has any variable-type pairs.
+   * Indicates whether this substitution is empty.
    *
-   * @return true if there are no substitution pairs, false otherwise
+   * @return true if this has no substitution pairs, false otherwise
    */
   public boolean isEmpty() {
     return map.isEmpty();

@@ -250,7 +250,7 @@ public class TypeInstantiator {
     }
 
     if (!typeParameters.isEmpty()) {
-      typeParameters.removeAll(substitution.getVariables());
+      typeParameters.removeAll(substitution.keySet());
     }
 
     if (!typeParameters.isEmpty()) {
