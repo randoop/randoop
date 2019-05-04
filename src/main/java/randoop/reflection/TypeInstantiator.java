@@ -1,5 +1,7 @@
 package randoop.reflection;
 
+import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -350,11 +352,10 @@ public class TypeInstantiator {
         if (nonGenCandidates.isEmpty()) {
           return Collections.emptyList();
         }
-        ListEnumerator<ReferenceType> enumerator = new ListEnumerator<>(nonGenCandidates);
-        while (enumerator.hasNext()) {
+        for (List<ReferenceType> tuple : iteratorToIterable(new ListIterator<>(nonGenCandidates))) {
           // choose instantiating substitution for non-generic bounded parameters
           Substitution<ReferenceType> initialSubstitution =
-              substitution.extend(Substitution.forArgs(nongenericParameters, enumerator.next()));
+              substitution.extend(Substitution.forArgs(nongenericParameters, tuple));
           // apply selected substitution to all generic-bounded parameters
           List<TypeVariable> parameters = new ArrayList<>();
           for (TypeVariable variable : genericParameters) {
@@ -446,9 +447,7 @@ public class TypeInstantiator {
       // cannot use `Collections.emptyList()` because clients will add elements to the returned list
       return new ArrayList<>();
     }
-    ListEnumerator<ReferenceType> enumerator = new ListEnumerator<>(candidateTypes);
-    while (enumerator.hasNext()) {
-      List<ReferenceType> tuple = enumerator.next();
+    for (List<ReferenceType> tuple : iteratorToIterable(new ListIterator<>(candidateTypes))) {
       Substitution<ReferenceType> partialSubstitution = Substitution.forArgs(parameters, tuple);
       Substitution<ReferenceType> substitution = initialSubstitution.extend(partialSubstitution);
       if (typeCheck.test(tuple, substitution)) {
