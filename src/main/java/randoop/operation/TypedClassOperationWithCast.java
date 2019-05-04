@@ -4,7 +4,6 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -24,7 +23,7 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
   }
 
   @Override
-  public TypedClassOperationWithCast apply(Substitution<ReferenceType> substitution) {
+  public TypedClassOperationWithCast apply(Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }

@@ -60,7 +60,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @param substitution the substitution
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
-  public TypeTuple apply(Substitution<ReferenceType> substitution) {
+  public TypeTuple apply(Substitution substitution) {
     List<Type> typeList = new ArrayList<>();
     for (Type type : this.list) {
       Type newType = type.apply(substitution);

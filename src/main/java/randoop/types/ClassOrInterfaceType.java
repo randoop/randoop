@@ -112,7 +112,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * objects without casting.
    */
   @Override
-  public abstract ClassOrInterfaceType apply(Substitution<ReferenceType> substitution);
+  public abstract ClassOrInterfaceType apply(Substitution substitution);
 
   /**
    * Applies the substitution to the enclosing type of this type and adds the result as the
@@ -122,8 +122,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type the type to which resulting enclosing type is to be added
    * @return the type with enclosing type added if needed
    */
-  final ClassOrInterfaceType apply(
-      Substitution<ReferenceType> substitution, ClassOrInterfaceType type) {
+  final ClassOrInterfaceType apply(Substitution substitution, ClassOrInterfaceType type) {
     if (this.isMemberClass() && !this.isStatic()) {
       type.setEnclosingType(enclosingType.apply(substitution));
     }
@@ -271,10 +270,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param goalType the generic type for which a substitution is needed
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
-  public Substitution<ReferenceType> getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
+  public Substitution getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
     assert goalType.isGeneric() : "goal type must be generic";
 
-    Substitution<ReferenceType> substitution = new Substitution<>();
+    Substitution substitution = new Substitution();
     if (this.isMemberClass() && !this.isStatic()) {
       substitution = enclosingType.getInstantiatingSubstitution(goalType);
       if (substitution == null) {
@@ -285,7 +284,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (goalType instanceof GenericClassType) {
       InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
-        Substitution<ReferenceType> supertypeSubstitution = supertype.getTypeSubstitution();
+        Substitution supertypeSubstitution = supertype.getTypeSubstitution();
         if (supertypeSubstitution == null) {
           return null;
         }

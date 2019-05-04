@@ -67,7 +67,7 @@ public class GenericClassType extends ParameterizedType {
    * @return a {@link ParameterizedType} instantiating this generic class by the given substitution
    */
   @Override
-  public InstantiatedType apply(Substitution<ReferenceType> substitution) {
+  public InstantiatedType apply(Substitution substitution) {
     List<TypeArgument> argumentList = new ArrayList<>();
     for (TypeVariable variable : parameters) {
       ReferenceType referenceType = substitution.get(variable);
@@ -114,7 +114,7 @@ public class GenericClassType extends ParameterizedType {
    * @param substitution the type substitution
    * @return the list of instantiated directly-implemented interface types of this type
    */
-  List<ClassOrInterfaceType> getInterfaces(Substitution<ReferenceType> substitution) {
+  List<ClassOrInterfaceType> getInterfaces(Substitution substitution) {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (java.lang.reflect.Type type : rawType.getGenericInterfaces()) {
       interfaces.add(ClassOrInterfaceType.forType(type).apply(substitution));
@@ -162,7 +162,7 @@ public class GenericClassType extends ParameterizedType {
    * @param substitution the type substitution
    * @return the instantiated type
    */
-  ClassOrInterfaceType getSuperclass(Substitution<ReferenceType> substitution) {
+  ClassOrInterfaceType getSuperclass(Substitution substitution) {
     java.lang.reflect.Type superclass = this.rawType.getGenericSuperclass();
     if (superclass == null) {
       return JavaTypes.OBJECT_TYPE;
@@ -203,8 +203,7 @@ public class GenericClassType extends ParameterizedType {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution<ReferenceType> substitution =
-        Substitution.forArgs(this.getTypeParameters(), typeArguments);
+    Substitution substitution = Substitution.forArgs(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
@@ -229,8 +228,7 @@ public class GenericClassType extends ParameterizedType {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution<ReferenceType> substitution =
-        Substitution.forArgs(this.getTypeParameters(), typeArguments);
+    Substitution substitution = Substitution.forArgs(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(

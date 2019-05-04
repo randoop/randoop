@@ -169,7 +169,7 @@ public class ParameterizedTypeTest {
         "generic member class has type parameters",
         genericNestedTypeOfClass.getTypeParameters().size(),
         is(equalTo(1)));
-    Substitution<ReferenceType> substitution =
+    Substitution substitution =
         Substitution.forArgs(genericNestedTypeOfClass.getTypeParameters(), integerType);
     ClassOrInterfaceType instantiatedGenericNestedClass =
         genericNestedTypeOfClass.apply(substitution);

@@ -29,7 +29,7 @@ public class DevExampleCode {
       // Want constructor for LinkedList<String>
       InstantiatedType linkedListType =
           JDKTypes.LINKED_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
-      Substitution<ReferenceType> substLL = linkedListType.getTypeSubstitution();
+      Substitution substLL = linkedListType.getTypeSubstitution();
       TypedOperation newLL =
           TypedOperation.forConstructor(LinkedList.class.getConstructor()).apply(substLL);
 
@@ -44,19 +44,19 @@ public class DevExampleCode {
 
       // Call to operation with wildcard in TreeSet<String>
       InstantiatedType treeSetType = JDKTypes.TREE_SET_TYPE.instantiate(JavaTypes.STRING_TYPE);
-      Substitution<ReferenceType> substTS = treeSetType.getTypeSubstitution();
+      Substitution substTS = treeSetType.getTypeSubstitution();
       TypedOperation wcTS =
           TypedOperation.forConstructor(TreeSet.class.getConstructor(Collection.class))
               .apply(substTS)
               .applyCaptureConversion();
-      Substitution<ReferenceType> substWC =
+      Substitution substWC =
           Substitution.forArgs(wcTS.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
       TypedOperation newTS = wcTS.apply(substWC);
 
       // call to generic operation
       TypedOperation syncA =
           TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class));
-      Substitution<ReferenceType> substA =
+      Substitution substA =
           Substitution.forArgs(syncA.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
       TypedOperation syncS = syncA.apply(substA);
 

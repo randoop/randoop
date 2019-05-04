@@ -232,7 +232,7 @@ public class InstantiationTest {
     Set<Type> inputTypes = new LinkedHashSet<>();
     addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
     addTypes(ClassOrInterfaceType.forClass(AnIterable.class), inputTypes);
-    Substitution<ReferenceType> subst;
+    Substitution subst;
     GenericClassType predicateType =
         GenericClassType.forClass(CaptureInstantiationCase.LocalPredicate.class);
     subst = Substitution.forArgs(predicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
@@ -274,7 +274,7 @@ public class InstantiationTest {
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
     addTypes(JavaTypes.STRING_TYPE, inputTypes);
-    Substitution<ReferenceType> substitution = Substitution.forArgs(JDKTypes.TREE_SET_TYPE.getTypeParameters(), (ReferenceType)JavaTypes.STRING_TYPE);
+    Substitution substitution = Substitution.forArgs(JDKTypes.TREE_SET_TYPE.getTypeParameters(), (ReferenceType)JavaTypes.STRING_TYPE);
     addTypes(JDKTypes.TREE_SET_TYPE.apply(substitution), inputTypes);
 
     Set<String> nullOKNames = new HashSet<>();

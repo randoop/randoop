@@ -23,7 +23,7 @@ public class VariableNamerTest {
 
     GenericClassType genericType = ParameterizedType.forClass(GenericTypeWithDigit2.class);
     InstantiatedType type;
-    Substitution<ReferenceType> substitution =
+    Substitution substitution =
         Substitution.forArgs(
             genericType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     type = genericType.apply(substitution);

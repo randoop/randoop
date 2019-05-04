@@ -55,7 +55,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public NonParameterizedType apply(Substitution<ReferenceType> substitution) {
+  public NonParameterizedType apply(Substitution substitution) {
     return (NonParameterizedType) apply(substitution, new NonParameterizedType(this.runtimeType));
   }
 
