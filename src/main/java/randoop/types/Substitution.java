@@ -137,9 +137,9 @@ public class Substitution {
       };
 
   /**
-   * Creates a new substitution that contains the mappings of this, plus additional mappings. If
-   * this and the additional mappings contain the same type variable, both must map it to the same
-   * type.
+   * Creates a new substitution that contains the mappings of this substitution, extended by the
+   * given mappings. If this and the additional mappings contain the same type variable, both must
+   * map it to the same type.
    *
    * @param parameters the type parameters
    * @param arguments the type arguments
