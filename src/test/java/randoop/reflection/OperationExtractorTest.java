@@ -86,7 +86,7 @@ public class OperationExtractorTest {
     assertTrue("should have type parameters", classType.getTypeParameters().size() > 0);
     Substitution substitution =
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
-    classType = classType.apply(substitution);
+    classType = classType.substitute(substitution);
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
@@ -117,7 +117,7 @@ public class OperationExtractorTest {
 
     Substitution substitution =
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
-    classType = classType.apply(substitution);
+    classType = classType.substitute(substitution);
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
@@ -138,7 +138,7 @@ public class OperationExtractorTest {
         memberType.getName(),
         is(equalTo("randoop.reflection.GenericTreeWithInnerNode<java.lang.String>.Node")));
     assertFalse("is generic", memberType.isGeneric());
-    assertTrue("is parameterized", memberType.isParameterized());
+    assertTrue("is parameterized", memberType.isInstantiatedType());
   }
 
   @Test
@@ -157,7 +157,7 @@ public class OperationExtractorTest {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertFalse("static member should not be a generic type", classType.isGeneric());
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
-    assertFalse("static member is not parameterized", classType.isParameterized());
+    assertFalse("static member is not parameterized", classType.isInstantiatedType());
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, classType.getRuntimeClass());
@@ -187,7 +187,7 @@ public class OperationExtractorTest {
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertFalse("class type should not be generic", classType.isGeneric());
-    assertFalse("class type is not parameterized", classType.isParameterized());
+    assertFalse("class type is not parameterized", classType.isInstantiatedType());
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);

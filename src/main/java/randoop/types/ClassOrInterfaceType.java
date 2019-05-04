@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
  *
- * <p>This abstract class corresponds to the grammar in the JLS:
+ * <p>This abstract class corresponds to this grammar production in the JLS:
  *
  * <pre>
  *   ClassOrInterfaceType:
@@ -112,7 +112,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * objects without casting.
    */
   @Override
-  public abstract ClassOrInterfaceType apply(Substitution substitution);
+  public abstract ClassOrInterfaceType substitute(Substitution substitution);
 
   /**
    * Applies the substitution to the enclosing type of this type and adds the result as the
@@ -122,9 +122,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type the type to which resulting enclosing type is to be added
    * @return the type with enclosing type added if needed
    */
-  final ClassOrInterfaceType apply(Substitution substitution, ClassOrInterfaceType type) {
+  final ClassOrInterfaceType substitute(Substitution substitution, ClassOrInterfaceType type) {
     if (this.isMemberClass() && !this.isStatic()) {
-      type.setEnclosingType(enclosingType.apply(substitution));
+      type.setEnclosingType(enclosingType.substitute(substitution));
     }
     return type;
   }
@@ -229,7 +229,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
-          if (interfaceType.isParameterized()) {
+          if (interfaceType.isInstantiatedType()) {
             InstantiatedType type = (InstantiatedType) interfaceType;
             if (type.isInstantiationOf(goalType)) {
               return (InstantiatedType) interfaceType;
@@ -384,8 +384,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public boolean isParameterized() {
-    return this.isMemberClass() && !this.isStatic() && enclosingType.isParameterized();
+  public boolean isInstantiatedType() {
+    return this.isMemberClass() && !this.isStatic() && enclosingType.isInstantiatedType();
   }
 
   /**

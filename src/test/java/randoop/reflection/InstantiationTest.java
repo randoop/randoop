@@ -236,21 +236,21 @@ public class InstantiationTest {
     GenericClassType predicateType =
         GenericClassType.forClass(CaptureInstantiationCase.LocalPredicate.class);
     subst = Substitution.forArgs(predicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
-    addTypes(predicateType.apply(subst), inputTypes);
+    addTypes(predicateType.substitute(subst), inputTypes);
     GenericClassType onePredicateType =
         GenericClassType.forClass(CaptureInstantiationCase.OnePredicate.class);
     subst = Substitution.forArgs(onePredicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
-    InstantiatedType oneSerializablePredicateType = onePredicateType.apply(subst);
+    InstantiatedType oneSerializablePredicateType = onePredicateType.substitute(subst);
     addTypes(oneSerializablePredicateType, inputTypes);
     subst =
         Substitution.forArgs(
             JDKTypes.TREE_SET_TYPE.getTypeParameters(),
             (ReferenceType) oneSerializablePredicateType);
-    addTypes(JDKTypes.TREE_SET_TYPE.apply(subst), inputTypes);
+    addTypes(JDKTypes.TREE_SET_TYPE.substitute(subst), inputTypes);
     subst =
         Substitution.forArgs(
             predicateType.getTypeParameters(), (ReferenceType) oneSerializablePredicateType);
-    addTypes(predicateType.apply(subst), inputTypes);
+    addTypes(predicateType.substitute(subst), inputTypes);
 
     Set<String> nullOKNames = new HashSet<>();
     getOperations(model, classOperations, inputTypes, nullOKNames);
@@ -275,7 +275,7 @@ public class InstantiationTest {
     Set<Type> inputTypes = new LinkedHashSet<>();
     addTypes(JavaTypes.STRING_TYPE, inputTypes);
     Substitution substitution = Substitution.forArgs(JDKTypes.TREE_SET_TYPE.getTypeParameters(), (ReferenceType)JavaTypes.STRING_TYPE);
-    addTypes(JDKTypes.TREE_SET_TYPE.apply(substitution), inputTypes);
+    addTypes(JDKTypes.TREE_SET_TYPE.substitute(substitution), inputTypes);
 
     Set<String> nullOKNames = new HashSet<>();
     getOperations(model, classOperations, inputTypes, nullOKNames);

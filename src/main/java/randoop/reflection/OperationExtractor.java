@@ -136,7 +136,7 @@ public class OperationExtractor extends DefaultClassVisitor {
                 "Type %s for operation %s is not a subtype of an instantiation of declaring class of method %s",
                 classType, operation, operation.getDeclaringType()));
       }
-      operation = operation.apply(substitution);
+      operation = operation.substitute(substitution);
       if (operation == null) {
         // No more details available because formal parameter {@code operation} was overwritten.
         throw new RandoopBug("Instantiation of operation failed");

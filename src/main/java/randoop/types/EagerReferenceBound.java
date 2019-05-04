@@ -18,8 +18,8 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public EagerReferenceBound apply(Substitution substitution) {
-    ReferenceType referenceType = getBoundType().apply(substitution);
+  public EagerReferenceBound substitute(Substitution substitution) {
+    ReferenceType referenceType = getBoundType().substitute(substitution);
     if (referenceType.equals(getBoundType())) {
       return this;
     }
@@ -42,14 +42,14 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isLowerBound(Type argType, Substitution subst) {
-    ReferenceType boundType = this.getBoundType().apply(subst);
+    ReferenceType boundType = this.getBoundType().substitute(subst);
     if (boundType.equals(JavaTypes.NULL_TYPE)) {
       return true;
     }
     if (boundType.isVariable()) {
       return ((TypeVariable) boundType).getLowerTypeBound().isLowerBound(argType, subst);
     }
-    if (argType.isParameterized()) {
+    if (argType.isInstantiatedType()) {
       if (!(boundType instanceof ClassOrInterfaceType)) {
         return false;
       }
@@ -83,14 +83,14 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isUpperBound(Type argType, Substitution subst) {
-    ReferenceType boundType = this.getBoundType().apply(subst);
+    ReferenceType boundType = this.getBoundType().substitute(subst);
     if (boundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
     }
     if (boundType.isVariable()) {
       return ((TypeVariable) boundType).getUpperTypeBound().isUpperBound(argType, subst);
     }
-    if (boundType.isParameterized()) {
+    if (boundType.isInstantiatedType()) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }

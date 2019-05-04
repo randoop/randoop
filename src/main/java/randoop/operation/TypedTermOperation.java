@@ -34,9 +34,9 @@ class TypedTermOperation extends TypedOperation {
   }
 
   @Override
-  public TypedTermOperation apply(Substitution substitution) {
-    TypeTuple inputTypes = this.getInputTypes().apply(substitution);
-    Type outputType = this.getOutputType().apply(substitution);
+  public TypedTermOperation substitute(Substitution substitution) {
+    TypeTuple inputTypes = this.getInputTypes().substitute(substitution);
+    Type outputType = this.getOutputType().substitute(substitution);
     return new TypedTermOperation(this.getOperation(), inputTypes, outputType);
   }
 

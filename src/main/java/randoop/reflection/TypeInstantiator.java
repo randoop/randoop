@@ -29,7 +29,10 @@ import randoop.util.Randomness;
 /** Function object to instantiate type parameters from a set of input types. */
 public class TypeInstantiator {
 
-  /** The set of input types for this model. */
+  /**
+   * The set of input types for this model. The input types need to be closed on supertypes: if a
+   * type is in the input types, then so are all of its supertypes.
+   */
   private final Set<Type> inputTypes;
 
   /**
@@ -69,7 +72,7 @@ public class TypeInstantiator {
         return null;
       }
       // instantiate type parameters of declaring type
-      operation = operation.apply(substitution);
+      operation = operation.substitute(substitution);
     }
     // type parameters of declaring type are instantiated
 
@@ -136,7 +139,7 @@ public class TypeInstantiator {
     if (substitution == null) {
       return null;
     }
-    TypeArgument argumentType = searchType.apply(substitution).getTypeArguments().get(0);
+    TypeArgument argumentType = searchType.substitute(substitution).getTypeArguments().get(0);
     return Substitution.forArgs(
         typeParameters, ((ReferenceArgument) argumentType).getReferenceType());
   }
@@ -161,8 +164,8 @@ public class TypeInstantiator {
     List<TypeVariable> typeParameters = type.getTypeParameters();
     Substitution substitution = selectSubstitution(typeParameters);
     if (substitution != null) {
-      ClassOrInterfaceType instantiatingType = type.apply(substitution);
-      if (!instantiatingType.isGeneric()) {
+      ClassOrInterfaceType instantiatedType = type.substitute(substitution);
+      if (!instantiatedType.isGeneric()) {
         return substitution;
       } else {
         Log.logPrintf("Didn't find types to satisfy bounds on generic type: %s%n", type);
@@ -178,18 +181,15 @@ public class TypeInstantiator {
    * The pattern type makes it possible to select matches for partial instantiations of a generic
    * type.
    *
-   * <p>Note: for all uses to work properly, the input types need to be closed on supertypes: if a
-   * type is in the input types, then so are all of its supertypes.
-   *
-   * @param type the generic type for which instantiation is to be found
+   * @param type the generic type for which an instantiation is to be found
    * @param patternType the generic type from which match is to be determined, must be instantiation
-   *     of {@code type}.
+   *     of {@code type}
    * @return a substitution instantiating given type as an existing type; null if no such type
    */
   private Substitution selectMatch(ClassOrInterfaceType type, ClassOrInterfaceType patternType) {
     List<InstantiatedType> matches = new ArrayList<>();
     for (Type inputType : inputTypes) {
-      if (inputType.isParameterized()
+      if (inputType.isInstantiatedType()
           && ((InstantiatedType) inputType).isInstantiationOf(patternType)) {
         matches.add((InstantiatedType) inputType);
       }
@@ -205,11 +205,8 @@ public class TypeInstantiator {
    * Selects an existing type that instantiates the given generic declaring type and returns the
    * instantiating substitution.
    *
-   * <p>Note: for all uses to work properly, the input types need to be closed on supertypes: if a
-   * type is in the input types, then so are all of its supertypes.
-   *
-   * @param type the generic type for which instantiation is to be found
-   * @return a substitution instantiating given type as an existing type; null if no such type
+   * @param type the generic type for which an instantiation is to be found
+   * @return a substitution instantiating the given type as an existing type; null if no such type
    */
   private Substitution selectMatch(ClassOrInterfaceType type) {
     return selectMatch(type, type);
@@ -227,7 +224,7 @@ public class TypeInstantiator {
     Set<TypeVariable> typeParameters = new LinkedHashSet<>();
     Substitution substitution = new Substitution();
     for (Type parameterType : operation.getInputTypes()) {
-      Type workingType = parameterType.apply(substitution);
+      Type workingType = parameterType.substitute(substitution);
       if (workingType.isGeneric()) {
         if (workingType.isClassOrInterfaceType()) {
           Substitution subst =
@@ -243,7 +240,7 @@ public class TypeInstantiator {
     }
     // return types don't have to exist, but do need to be selected
     if (operation.getOutputType().isReferenceType()) {
-      Type workingType = operation.getOutputType().apply(substitution);
+      Type workingType = operation.getOutputType().substitute(substitution);
       if (workingType.isGeneric()) {
         typeParameters.addAll(((ReferenceType) workingType).getTypeParameters());
       }
@@ -260,7 +257,7 @@ public class TypeInstantiator {
       }
     }
 
-    operation = operation.apply(substitution);
+    operation = operation.substitute(substitution);
     if (operation.isGeneric()) {
       return null;
     }
@@ -354,7 +351,7 @@ public class TypeInstantiator {
           // apply selected substitution to all generic-bounded parameters
           List<TypeVariable> parameters = new ArrayList<>();
           for (TypeVariable variable : genericParameters) {
-            ReferenceType paramType = variable.apply(initialSubstitution);
+            ReferenceType paramType = variable.substitute(initialSubstitution);
             if (paramType.isVariable()) {
               parameters.add(variable);
             }

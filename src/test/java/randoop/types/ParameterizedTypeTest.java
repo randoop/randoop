@@ -139,7 +139,7 @@ public class ParameterizedTypeTest {
     ClassOrInterfaceType staticInnerType =
         (ClassOrInterfaceType) Type.forClass(GenericWithInnerClass.StaticInnerClass.class);
     assertTrue("is reference type", staticInnerType.isReferenceType());
-    assertFalse("is not parameterized", staticInnerType.isParameterized());
+    assertFalse("is not parameterized", staticInnerType.isInstantiatedType());
     assertFalse("is not generic", staticInnerType.isGeneric());
     assertFalse("is not primitive", staticInnerType.isPrimitive());
     assertFalse("is not rawtype", staticInnerType.isRawtype());
@@ -160,7 +160,7 @@ public class ParameterizedTypeTest {
     ClassOrInterfaceType genericNestedTypeOfClass =
         (ClassOrInterfaceType) Type.forClass(ClassWithGenericInnerClass.GenericNestedClass.class);
     assertTrue("is generic", genericNestedTypeOfClass.isGeneric());
-    assertFalse("is not parameterized", genericNestedTypeOfClass.isParameterized());
+    assertFalse("is not parameterized", genericNestedTypeOfClass.isInstantiatedType());
     assertThat(
         "name of generic inner class has type arguments",
         genericNestedTypeOfClass.getName(),
@@ -172,7 +172,7 @@ public class ParameterizedTypeTest {
     Substitution substitution =
         Substitution.forArgs(genericNestedTypeOfClass.getTypeParameters(), integerType);
     ClassOrInterfaceType instantiatedGenericNestedClass =
-        genericNestedTypeOfClass.apply(substitution);
+        genericNestedTypeOfClass.substitute(substitution);
     assertThat(
         "name of instantiated generic member class",
         instantiatedGenericNestedClass.getName(),
@@ -183,7 +183,7 @@ public class ParameterizedTypeTest {
         Substitution.forArgs(
             genericNestedTypeOfClass.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedGenericNestedClass2 =
-        genericNestedTypeOfClass.apply(substitution);
+        genericNestedTypeOfClass.substitute(substitution);
     assertTrue(
         "equality should be reflexive",
         instantiatedGenericNestedClass.equals(instantiatedGenericNestedClass));
@@ -203,7 +203,7 @@ public class ParameterizedTypeTest {
     // GenericWithInnerClass<Integer>.InnerClass ic;
     ClassOrInterfaceType innerType =
         (ClassOrInterfaceType) Type.forClass(GenericWithInnerClass.InnerClass.class);
-    assertFalse("is parameterized", innerType.isParameterized());
+    assertFalse("is parameterized", innerType.isInstantiatedType());
     assertTrue("is generic", innerType.isGeneric());
     assertThat(
         "name of inner class of generic should have type arguments",
@@ -214,14 +214,14 @@ public class ParameterizedTypeTest {
         innerType.getTypeParameters().size(),
         is(equalTo(1)));
     substitution = Substitution.forArgs(innerType.getTypeParameters(), integerType);
-    ClassOrInterfaceType instantiatedInnerType = innerType.apply(substitution);
+    ClassOrInterfaceType instantiatedInnerType = innerType.substitute(substitution);
     assertThat(
         "name of instantiated member class",
         instantiatedInnerType.getName(),
         is(equalTo("randoop.types.GenericWithInnerClass<java.lang.Integer>.InnerClass")));
     substitution =
         Substitution.forArgs(innerType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
-    ClassOrInterfaceType instantiatedInnerType2 = innerType.apply(substitution);
+    ClassOrInterfaceType instantiatedInnerType2 = innerType.substitute(substitution);
     assertTrue("equality should be reflexive", instantiatedInnerType.equals(instantiatedInnerType));
     assertFalse(
         "different instantiations not equal", instantiatedInnerType.equals(instantiatedInnerType2));
@@ -238,7 +238,7 @@ public class ParameterizedTypeTest {
     // GenericWithInnerClass<String>.GenericNestedClass<Integer> gnc;
     ClassOrInterfaceType genericNestedType =
         (ClassOrInterfaceType) Type.forClass(GenericWithInnerClass.GenericNestedClass.class);
-    assertFalse("is not parameterized", genericNestedType.isParameterized());
+    assertFalse("is not parameterized", genericNestedType.isInstantiatedType());
     assertTrue("is generic", genericNestedType.isGeneric());
     /*
     assertThat(
@@ -253,7 +253,7 @@ public class ParameterizedTypeTest {
     substitution =
         Substitution.forArgs(
             genericNestedType.getTypeParameters(), JavaTypes.STRING_TYPE, integerType);
-    ClassOrInterfaceType instantiatedGenericNestedType = genericNestedType.apply(substitution);
+    ClassOrInterfaceType instantiatedGenericNestedType = genericNestedType.substitute(substitution);
     assertThat(
         "unqual name",
         instantiatedGenericNestedType.getUnqualifiedName(),
@@ -271,7 +271,8 @@ public class ParameterizedTypeTest {
     substitution =
         Substitution.forArgs(
             genericNestedType.getTypeParameters(), integerType, JavaTypes.STRING_TYPE);
-    ClassOrInterfaceType instantiatedGenericNestedType2 = genericNestedType.apply(substitution);
+    ClassOrInterfaceType instantiatedGenericNestedType2 =
+        genericNestedType.substitute(substitution);
     assertTrue(
         "equality should be reflexive",
         instantiatedGenericNestedType.equals(instantiatedGenericNestedType));
@@ -292,7 +293,7 @@ public class ParameterizedTypeTest {
         ClassOrInterfaceType.forClass(ClassWithInnerClass.InnerClass.class);
     ClassOrInterfaceType otherNonparamInnerClass =
         ClassOrInterfaceType.forClass(ClassWithInnerClass.OtherInnerClass.class);
-    assertFalse("not parameterized", nonparamInnerClass.isParameterized());
+    assertFalse("not parameterized", nonparamInnerClass.isInstantiatedType());
     assertFalse("not generic", nonparamInnerClass.isGeneric());
     assertThat(
         "should not have type parameters",

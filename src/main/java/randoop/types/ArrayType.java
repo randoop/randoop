@@ -111,8 +111,8 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public ArrayType apply(Substitution substitution) {
-    Type type = componentType.apply(substitution);
+  public ArrayType substitute(Substitution substitution) {
+    Type type = componentType.substitute(substitution);
     if (!type.equals(this)) {
       return ArrayType.ofComponentType(type);
     } else {
@@ -186,7 +186,7 @@ public class ArrayType extends ReferenceType {
       return true;
     }
 
-    if (otherType.isArray() && this.componentType.isParameterized()) {
+    if (otherType.isArray() && this.componentType.isInstantiatedType()) {
       Type otherElementType = ((ArrayType) otherType).componentType;
       return otherElementType.isRawtype()
           && otherElementType.runtimeClassIs(this.componentType.getRuntimeClass());
@@ -254,7 +254,7 @@ public class ArrayType extends ReferenceType {
    * @return true if the element type is parameterized; false otherwise
    */
   public boolean hasParameterizedElementType() {
-    return getElementType().isParameterized();
+    return getElementType().isInstantiatedType();
   }
 
   /**
