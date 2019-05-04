@@ -183,6 +183,11 @@ public class Substitution {
     return rawMap.get(parameter);
   }
 
+  /**
+   * Returns the type variables mapped from by this.
+   *
+   * @return the type variables mapped from by this
+   */
   public Set<TypeVariable> keySet() {
     return map.keySet();
   }
