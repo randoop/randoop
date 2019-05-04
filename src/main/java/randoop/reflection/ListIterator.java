@@ -7,8 +7,11 @@ import java.util.NoSuchElementException;
 
 /**
  * Enumerates the set of lists formed by selecting values sequentially from a list of candidates,
- * such that each generlist has a value from each candidate list. the length of the lists . For
- * instance, given {@code [["a1", "a2"], ["b1"], ["c1", "c2", "c3"]]} enumerates
+ * such that each generated list has a value from each candidate list. Each generated list's length
+ * is the same as the length of the candidates passed to the constructor.
+ *
+ * <p>For instance, given {@code [["a1", "a2"], ["b1"], ["c1", "c2", "c3"]]}, this class yields in
+ * turn:
  *
  * <pre>
  *   ["a1", "b1", "c1"]
@@ -18,10 +21,8 @@ import java.util.NoSuchElementException;
  *   ["a2", "b1", "c2"]
  *   ["a2", "b1", "c3"]
  * </pre>
- *
- * by successive calls to {@link #next()}.
  */
-class ListEnumerator<T> implements Iterator<List<T>> {
+class ListIterator<T> implements Iterator<List<T>> {
 
   /** Lists of candidate values for each position in generated lists. */
   private final List<List<T>> candidates;
@@ -33,12 +34,12 @@ class ListEnumerator<T> implements Iterator<List<T>> {
   private int nextList;
 
   /**
-   * Creates a {@link ListEnumerator} for lists constructed from the given candidates. Each
-   * generated list will be the same length as the given list.
+   * Creates a {@link ListIterator} for lists constructed from the given candidates. Each generated
+   * list will be the same length as the given list.
    *
    * @param candidates lists of candidate values for each position in generated lists
    */
-  ListEnumerator(List<List<T>> candidates) {
+  ListIterator(List<List<T>> candidates) {
     this.candidates = candidates;
     this.iterators = new ArrayList<>(candidates.size());
     this.currentTypes = new ArrayList<>(candidates.size());

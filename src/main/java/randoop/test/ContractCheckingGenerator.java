@@ -189,7 +189,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
       return false;
     }
 
-    Substitution<ReferenceType> substitution = new Substitution<>();
+    Substitution substitution = new Substitution();
     int i = 0;
     while (i < inputTypes.size()) {
       Type inputType = inputTypes.get(i);
@@ -202,7 +202,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
           if (superType == null) {
             return false;
           }
-          Substitution<ReferenceType> subst = superType.getTypeSubstitution();
+          Substitution subst = superType.getTypeSubstitution();
           if (!substitution.isConsistentWith(subst)) {
             return false;
           }

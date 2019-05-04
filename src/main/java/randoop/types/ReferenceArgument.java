@@ -56,7 +56,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public TypeArgument apply(Substitution<ReferenceType> substitution) {
+  public TypeArgument apply(Substitution substitution) {
     return TypeArgument.forType(referenceType.apply(substitution));
   }
 
@@ -122,7 +122,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public Substitution<ReferenceType> getInstantiatingSubstitution(TypeArgument otherArgument) {
+  public Substitution getInstantiatingSubstitution(TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return null;
     }

@@ -33,7 +33,7 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public ReferenceBound apply(Substitution<ReferenceType> substitution) {
+  public ReferenceBound apply(Substitution substitution) {
     // if the substitution has no effect on this bound just return this
     if (substitution.isEmpty()) {
       return this;
@@ -87,7 +87,7 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isLowerBound(Type argType, Substitution<ReferenceType> substitution) {
+  public boolean isLowerBound(Type argType, Substitution substitution) {
     ReferenceBound b = this.apply(substitution);
     return !this.equals(b) && b.isLowerBound(argType, substitution);
   }
@@ -99,14 +99,14 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isUpperBound(Type argType, Substitution<ReferenceType> substitution) {
+  public boolean isUpperBound(Type argType, Substitution substitution) {
     ReferenceBound b = this.apply(substitution);
     return !this.equals(b) && b.isUpperBound(argType, substitution);
   }
 
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
-    assert false : "isUpperBound(ParameterBound, Substitution<ReferenceType>) not implemented";
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    assert false : "isUpperBound(ParameterBound, Substitution) not implemented";
     return false;
   }
 }

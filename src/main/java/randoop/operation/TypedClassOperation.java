@@ -73,7 +73,7 @@ public class TypedClassOperation extends TypedOperation {
    * <p>Applies the substitution to the declaring type, all input types, and the output type.
    */
   @Override
-  public TypedClassOperation apply(Substitution<ReferenceType> substitution) {
+  public TypedClassOperation apply(Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
