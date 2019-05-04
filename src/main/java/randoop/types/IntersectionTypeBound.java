@@ -63,10 +63,10 @@ class IntersectionTypeBound extends ParameterBound {
    * @return this bound with the substitution applied to all member bounds
    */
   @Override
-  public IntersectionTypeBound apply(Substitution substitution) {
+  public IntersectionTypeBound substitute(Substitution substitution) {
     List<ParameterBound> bounds = new ArrayList<>();
     for (ParameterBound bound : this.boundList) {
-      bounds.add(bound.apply(substitution));
+      bounds.add(bound.substitute(substitution));
     }
     return new IntersectionTypeBound(bounds);
   }

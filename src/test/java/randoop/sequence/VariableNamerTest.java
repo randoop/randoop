@@ -26,14 +26,14 @@ public class VariableNamerTest {
     Substitution substitution =
         Substitution.forArgs(
             genericType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
-    type = genericType.apply(substitution);
+    type = genericType.substitute(substitution);
     name = VariableRenamer.getVariableName(type);
     assertFalse("last character should not be a digit: " + name, lastCharIsDigit(name));
 
     genericType = JDKTypes.LIST_TYPE;
     substitution =
         Substitution.forArgs(genericType.getTypeParameters(), (ReferenceType) nonParamType);
-    InstantiatedType listType = genericType.apply(substitution);
+    InstantiatedType listType = genericType.substitute(substitution);
     name = VariableRenamer.getVariableName(listType);
     assertFalse("last character should not be a digit: " + name, lastCharIsDigit(name));
   }

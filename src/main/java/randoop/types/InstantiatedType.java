@@ -63,13 +63,13 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public InstantiatedType apply(Substitution substitution) {
+  public InstantiatedType substitute(Substitution substitution) {
     List<TypeArgument> argumentList = new ArrayList<>();
     for (TypeArgument argument : this.argumentList) {
-      argumentList.add(argument.apply(substitution));
+      argumentList.add(argument.substitute(substitution));
     }
     return (InstantiatedType)
-        apply(substitution, new InstantiatedType(instantiatedType, argumentList));
+        substitute(substitution, new InstantiatedType(instantiatedType, argumentList));
   }
 
   /**

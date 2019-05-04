@@ -1045,7 +1045,7 @@ write:
 <pre class="code">
   InstantiatedType linkedListType = JDKTypes.LINKED_LIST_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
   Substitution&lt;ReferenceType&gt; substLL = linkedListType.getTypeSubstitution();
-  TypedOperation newLL = TypedOperation.forConstructor(LinkedList.class.getConstructor()).apply(substLL);
+  TypedOperation newLL = TypedOperation.forConstructor(LinkedList.class.getConstructor()).substitute(substLL);
 </pre>
 
 <p>
@@ -1057,8 +1057,8 @@ The next operations aren't from generic classes, and don't require this amount o
 
 <pre class="code">
   TypedOperation newOb = TypedOperation.createPrimitiveInitialization(ConcreteTypes.STRING_TYPE, "hi!");
-  TypedOperation addFirst = TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class)).apply(substLL);
-  TypedOperation size = TypedOperation.forMethod(LinkedList.class.getMethod("size")).apply(substLL);
+  TypedOperation addFirst = TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class)).substitute(substLL);
+  TypedOperation size = TypedOperation.forMethod(LinkedList.class.getMethod("size")).substitute(substLL);
 </pre>
 
 <p>
@@ -1070,9 +1070,9 @@ for the variables from the capture conversion.
 <pre class="code">
   InstantiatedType treeSetType = JDKTypes.TREE_SET_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
   Substitution&lt;ReferenceType&gt; substTS = treeSetType.getTypeSubstitution();
-  TypedOperation wcTS = TypedOperation.forConstructor(TreeSet.class.getConstructor(Collection.class)).apply(substTS).applyCaptureConversion();
+  TypedOperation wcTS = TypedOperation.forConstructor(TreeSet.class.getConstructor(Collection.class)).substitute(substTS).applyCaptureConversion();
   Substitution&lt;ReferenceType&gt; substWC = Substitution.forArgs(wcTS.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
-  TypedOperation newTS = wcTS.apply(substWC);
+  TypedOperation newTS = wcTS.substitute(substWC);
 </pre>
 
 <p>
@@ -1083,7 +1083,7 @@ parameter to the method:
 <pre class="code">
    TypedOperation syncA = TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class));
    Substitution&lt;ReferenceType&gt; substA = Substitution.forArgs(syncA.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
-   TypedOperation syncS = syncA.apply(substA);
+   TypedOperation syncS = syncA.substitute(substA);
 </pre>
 
 <p>

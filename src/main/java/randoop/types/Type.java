@@ -419,7 +419,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the {@link Type} constructed by substituting for type parameters in this type, or this
    *     type if this is not a generic class type
    */
-  public Type apply(Substitution substitution) {
+  public Type substitute(Substitution substitution) {
     return this;
   }
 

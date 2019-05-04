@@ -69,7 +69,7 @@ public class TypeInstantiator {
         return null;
       }
       // instantiate type parameters of declaring type
-      operation = operation.apply(substitution);
+      operation = operation.substitute(substitution);
     }
     // type parameters of declaring type are instantiated
 
@@ -136,7 +136,7 @@ public class TypeInstantiator {
     if (substitution == null) {
       return null;
     }
-    TypeArgument argumentType = searchType.apply(substitution).getTypeArguments().get(0);
+    TypeArgument argumentType = searchType.substitute(substitution).getTypeArguments().get(0);
     return Substitution.forArgs(
         typeParameters, ((ReferenceArgument) argumentType).getReferenceType());
   }
@@ -161,7 +161,7 @@ public class TypeInstantiator {
     List<TypeVariable> typeParameters = type.getTypeParameters();
     Substitution substitution = selectSubstitution(typeParameters);
     if (substitution != null) {
-      ClassOrInterfaceType instantiatingType = type.apply(substitution);
+      ClassOrInterfaceType instantiatingType = type.substitute(substitution);
       if (!instantiatingType.isGeneric()) {
         return substitution;
       } else {
@@ -227,7 +227,7 @@ public class TypeInstantiator {
     Set<TypeVariable> typeParameters = new LinkedHashSet<>();
     Substitution substitution = new Substitution();
     for (Type parameterType : operation.getInputTypes()) {
-      Type workingType = parameterType.apply(substitution);
+      Type workingType = parameterType.substitute(substitution);
       if (workingType.isGeneric()) {
         if (workingType.isClassOrInterfaceType()) {
           Substitution subst =
@@ -243,7 +243,7 @@ public class TypeInstantiator {
     }
     // return types don't have to exist, but do need to be selected
     if (operation.getOutputType().isReferenceType()) {
-      Type workingType = operation.getOutputType().apply(substitution);
+      Type workingType = operation.getOutputType().substitute(substitution);
       if (workingType.isGeneric()) {
         typeParameters.addAll(((ReferenceType) workingType).getTypeParameters());
       }
@@ -260,7 +260,7 @@ public class TypeInstantiator {
       }
     }
 
-    operation = operation.apply(substitution);
+    operation = operation.substitute(substitution);
     if (operation.isGeneric()) {
       return null;
     }
@@ -357,7 +357,7 @@ public class TypeInstantiator {
           // apply selected substitution to all generic-bounded parameters
           List<TypeVariable> parameters = new ArrayList<>();
           for (TypeVariable variable : genericParameters) {
-            ReferenceType paramType = variable.apply(initialSubstitution);
+            ReferenceType paramType = variable.substitute(initialSubstitution);
             if (paramType.isVariable()) {
               parameters.add(variable);
             }

@@ -86,7 +86,7 @@ public class OperationExtractorTest {
     assertTrue("should have type parameters", classType.getTypeParameters().size() > 0);
     Substitution substitution =
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
-    classType = classType.apply(substitution);
+    classType = classType.substitute(substitution);
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);
@@ -117,7 +117,7 @@ public class OperationExtractorTest {
 
     Substitution substitution =
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
-    classType = classType.apply(substitution);
+    classType = classType.substitute(substitution);
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, c);

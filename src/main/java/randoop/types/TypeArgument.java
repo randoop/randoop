@@ -47,7 +47,7 @@ public abstract class TypeArgument {
    * @param substitution the substitution
    * @return a version of this type argument with type variables replaced by the substitution
    */
-  public abstract TypeArgument apply(Substitution substitution);
+  public abstract TypeArgument substitute(Substitution substitution);
 
   /**
    * Checks whether this type argument contains another argument, using relationship defined in <a
