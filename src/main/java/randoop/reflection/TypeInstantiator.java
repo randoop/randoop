@@ -42,7 +42,7 @@ public class TypeInstantiator {
 
   public TypedClassOperation instantiate(TypedClassOperation operation) {
     assert operation.isGeneric() || operation.hasWildcardTypes()
-        : "operation must be generic or have wildcards";
+        : "operation " + operation + " must be generic or have wildcards";
 
     // Need to allow for backtracking, because choice of instantiation for declaring type may fail
     // for generic operation --- OR maybe not.
