@@ -133,6 +133,7 @@ public class Substitution {
     return true;
   }
 
+  /** Throws an exception if its arguments are different non-null values. */
   private static BiFunction<ReferenceType, ReferenceType, ReferenceType> requireSameEntry =
       (v1, v2) -> {
         if (v1 == null) return v2;
