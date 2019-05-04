@@ -271,7 +271,7 @@ public class TypeInstantiator {
    * Selects an instantiating substitution for the given list of type variables.
    *
    * @param typeParameters the type variables to be instantiated
-   * @return a substitution instantiating the type variables; null if a variable has no
+   * @return a substitution instantiating the type variables; null if some type variable has no
    *     instantiating types
    * @see #selectSubstitution(List, Substitution)
    */
@@ -306,25 +306,22 @@ public class TypeInstantiator {
    *
    * @param typeParameters the type parameters to be instantiated
    * @param substitution the substitution to be extended
-   * @return the list of substitutions, empty if none are found
+   * @return the list of possible substitutions, empty if none are found
    */
   @SuppressWarnings("MixedMutabilityReturnType")
   private List<Substitution> collectSubstitutions(
       List<TypeVariable> typeParameters, Substitution substitution) {
-    /*
-     * partition parameters based on whether might have independent bounds:
-     * - parameters with generic bounds may be dependent on other parameters
-     */
+
+    // Partition parameters based on whether they might have independent bounds:
+
+    // parameters with generic bounds may be dependent on other parameters
     List<TypeVariable> genericParameters = new ArrayList<>();
-    /*
-     * - parameters with nongeneric bounds can be selected independently, but may be used by
-     *   generic bounds of other parameters.
-     */
+
+    // parameters with nongeneric bounds can be selected independently, but may be used by
     List<TypeVariable> nongenericParameters = new ArrayList<>();
-    /*
-     * - wildcard capture variables without generic bounds can be selected independently, and
-     *   may not be used in the bounds of another parameter.
-     */
+
+    // wildcard capture variables without generic bounds can be selected independently, and
+    // may not be used in the bounds of another parameter.
     List<TypeVariable> captureParameters = new ArrayList<>();
 
     for (TypeVariable variable : typeParameters) {
@@ -346,11 +343,11 @@ public class TypeInstantiator {
         // if there are type parameters with non-generic bounds, these may be variables in
         // generic-bounded parameters
 
-        List<List<ReferenceType>> nonGenCandidates = getCandidateTypeLists(nongenericParameters);
-        if (nonGenCandidates.isEmpty()) {
+        List<List<ReferenceType>> nongenCandidates = getCandidateTypeLists(nongenericParameters);
+        if (nongenCandidates.isEmpty()) {
           return Collections.emptyList();
         }
-        for (List<ReferenceType> tuple : iteratorToIterable(new ListIterator<>(nonGenCandidates))) {
+        for (List<ReferenceType> tuple : iteratorToIterable(new ListIterator<>(nongenCandidates))) {
           // choose instantiating substitution for non-generic bounded parameters
           Substitution initialSubstitution =
               substitution.extend(Substitution.forArgs(nongenericParameters, tuple));
