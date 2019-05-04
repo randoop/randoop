@@ -170,7 +170,7 @@ public class ParameterizedTypeTest {
         genericNestedTypeOfClass.getTypeParameters().size(),
         is(equalTo(1)));
     Substitution substitution =
-        Substitution.forArgs(genericNestedTypeOfClass.getTypeParameters(), integerType);
+        new Substitution(genericNestedTypeOfClass.getTypeParameters(), integerType);
     ClassOrInterfaceType instantiatedGenericNestedClass =
         genericNestedTypeOfClass.substitute(substitution);
     assertThat(
@@ -180,7 +180,7 @@ public class ParameterizedTypeTest {
             equalTo(
                 "randoop.types.ClassWithGenericInnerClass.GenericNestedClass<java.lang.Integer>")));
     substitution =
-        Substitution.forArgs(
+        new Substitution(
             genericNestedTypeOfClass.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedGenericNestedClass2 =
         genericNestedTypeOfClass.substitute(substitution);
@@ -213,14 +213,14 @@ public class ParameterizedTypeTest {
         "member of generic has type parameters",
         innerType.getTypeParameters().size(),
         is(equalTo(1)));
-    substitution = Substitution.forArgs(innerType.getTypeParameters(), integerType);
+    substitution = new Substitution(innerType.getTypeParameters(), integerType);
     ClassOrInterfaceType instantiatedInnerType = innerType.substitute(substitution);
     assertThat(
         "name of instantiated member class",
         instantiatedInnerType.getName(),
         is(equalTo("randoop.types.GenericWithInnerClass<java.lang.Integer>.InnerClass")));
     substitution =
-        Substitution.forArgs(innerType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+        new Substitution(innerType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedInnerType2 = innerType.substitute(substitution);
     assertTrue("equality should be reflexive", instantiatedInnerType.equals(instantiatedInnerType));
     assertFalse(
@@ -251,8 +251,7 @@ public class ParameterizedTypeTest {
         genericNestedType.getTypeParameters().size(),
         is(equalTo(2)));
     substitution =
-        Substitution.forArgs(
-            genericNestedType.getTypeParameters(), JavaTypes.STRING_TYPE, integerType);
+        new Substitution(genericNestedType.getTypeParameters(), JavaTypes.STRING_TYPE, integerType);
     ClassOrInterfaceType instantiatedGenericNestedType = genericNestedType.substitute(substitution);
     assertThat(
         "unqual name",
@@ -269,8 +268,7 @@ public class ParameterizedTypeTest {
             equalTo(
                 "randoop.types.GenericWithInnerClass<java.lang.String>.GenericNestedClass<java.lang.Integer>")));
     substitution =
-        Substitution.forArgs(
-            genericNestedType.getTypeParameters(), integerType, JavaTypes.STRING_TYPE);
+        new Substitution(genericNestedType.getTypeParameters(), integerType, JavaTypes.STRING_TYPE);
     ClassOrInterfaceType instantiatedGenericNestedType2 =
         genericNestedType.substitute(substitution);
     assertTrue(

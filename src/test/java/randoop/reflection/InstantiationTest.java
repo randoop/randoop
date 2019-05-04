@@ -235,20 +235,20 @@ public class InstantiationTest {
     Substitution subst;
     GenericClassType predicateType =
         GenericClassType.forClass(CaptureInstantiationCase.LocalPredicate.class);
-    subst = Substitution.forArgs(predicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
+    subst = new Substitution(predicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
     addTypes(predicateType.substitute(subst), inputTypes);
     GenericClassType onePredicateType =
         GenericClassType.forClass(CaptureInstantiationCase.OnePredicate.class);
-    subst = Substitution.forArgs(onePredicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
+    subst = new Substitution(onePredicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
     InstantiatedType oneSerializablePredicateType = onePredicateType.substitute(subst);
     addTypes(oneSerializablePredicateType, inputTypes);
     subst =
-        Substitution.forArgs(
+        new Substitution(
             JDKTypes.TREE_SET_TYPE.getTypeParameters(),
             (ReferenceType) oneSerializablePredicateType);
     addTypes(JDKTypes.TREE_SET_TYPE.substitute(subst), inputTypes);
     subst =
-        Substitution.forArgs(
+        new Substitution(
             predicateType.getTypeParameters(), (ReferenceType) oneSerializablePredicateType);
     addTypes(predicateType.substitute(subst), inputTypes);
 
@@ -274,7 +274,7 @@ public class InstantiationTest {
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
     addTypes(JavaTypes.STRING_TYPE, inputTypes);
-    Substitution substitution = Substitution.forArgs(JDKTypes.TREE_SET_TYPE.getTypeParameters(), (ReferenceType)JavaTypes.STRING_TYPE);
+    Substitution substitution = new Substitution(JDKTypes.TREE_SET_TYPE.getTypeParameters(), (ReferenceType)JavaTypes.STRING_TYPE);
     addTypes(JDKTypes.TREE_SET_TYPE.substitute(substitution), inputTypes);
 
     Set<String> nullOKNames = new HashSet<>();

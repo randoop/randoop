@@ -66,7 +66,7 @@ class TypeTupleSet {
     List<Substitution> substitutionSet = new ArrayList<>();
     List<List<ReferenceType>> tupleList = new ArrayList<>();
     for (List<ReferenceType> tuple : typeTuples) {
-      Substitution substitution = Substitution.forArgs(typeParameters, tuple);
+      Substitution substitution = new Substitution(typeParameters, tuple);
 
       int i = 0;
       while (i < tuple.size()

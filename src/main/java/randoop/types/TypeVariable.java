@@ -104,7 +104,7 @@ public abstract class TypeVariable extends ParameterType {
    */
   private static Substitution getSubstitution(TypeVariable variable, ReferenceType otherType) {
     List<TypeVariable> variableList = Collections.singletonList(variable);
-    return Substitution.forArgs(variableList, otherType);
+    return new Substitution(variableList, otherType);
   }
 
   @Override

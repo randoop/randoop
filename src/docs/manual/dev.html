@@ -1071,7 +1071,7 @@ for the variables from the capture conversion.
   InstantiatedType treeSetType = JDKTypes.TREE_SET_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
   Substitution&lt;ReferenceType&gt; substTS = treeSetType.getTypeSubstitution();
   TypedOperation wcTS = TypedOperation.forConstructor(TreeSet.class.getConstructor(Collection.class)).substitute(substTS).applyCaptureConversion();
-  Substitution&lt;ReferenceType&gt; substWC = Substitution.forArgs(wcTS.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
+  Substitution&lt;ReferenceType&gt; substWC = new Substitution(wcTS.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
   TypedOperation newTS = wcTS.substitute(substWC);
 </pre>
 
@@ -1082,7 +1082,7 @@ parameter to the method:
 
 <pre class="code">
    TypedOperation syncA = TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class));
-   Substitution&lt;ReferenceType&gt; substA = Substitution.forArgs(syncA.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
+   Substitution&lt;ReferenceType&gt; substA = new Substitution(syncA.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
    TypedOperation syncS = syncA.substitute(substA);
 </pre>
 

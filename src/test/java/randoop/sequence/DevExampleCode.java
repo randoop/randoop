@@ -50,14 +50,14 @@ public class DevExampleCode {
               .substitute(substTS)
               .applyCaptureConversion();
       Substitution substWC =
-          Substitution.forArgs(wcTS.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+          new Substitution(wcTS.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
       TypedOperation newTS = wcTS.substitute(substWC);
 
       // call to generic operation
       TypedOperation syncA =
           TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class));
       Substitution substA =
-          Substitution.forArgs(syncA.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+          new Substitution(syncA.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
       TypedOperation syncS = syncA.substitute(substA);
 
       // Now, create the sequence by repeated extension.

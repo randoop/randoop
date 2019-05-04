@@ -140,8 +140,7 @@ public class TypeInstantiator {
       return null;
     }
     TypeArgument argumentType = searchType.substitute(substitution).getTypeArguments().get(0);
-    return Substitution.forArgs(
-        typeParameters, ((ReferenceArgument) argumentType).getReferenceType());
+    return new Substitution(typeParameters, ((ReferenceArgument) argumentType).getReferenceType());
   }
 
   /**
@@ -346,8 +345,7 @@ public class TypeInstantiator {
         }
         for (List<ReferenceType> tuple : iteratorToIterable(new ListIterator<>(nongenCandidates))) {
           // choose instantiating substitution for non-generic bounded parameters
-          Substitution initialSubstitution =
-              substitution.extend(Substitution.forArgs(nongenericParameters, tuple));
+          Substitution initialSubstitution = substitution.extend(nongenericParameters, tuple);
           // apply selected substitution to all generic-bounded parameters
           List<TypeVariable> parameters = new ArrayList<>();
           for (TypeVariable variable : genericParameters) {
@@ -402,19 +400,20 @@ public class TypeInstantiator {
    * @param parameters a list of independent type parameters
    * @param substitution the substitution to extend
    * @return the substitution extended by mapping given parameters to selected types; null, if there
-   *     are no candidate types for any parameter
+   *     are no candidate types for some parameter
    */
   private Substitution selectAndExtend(List<TypeVariable> parameters, Substitution substitution) {
     List<ReferenceType> selectedTypes = new ArrayList<>();
     for (TypeVariable typeArgument : parameters) {
       List<ReferenceType> candidates = selectCandidates(typeArgument);
       if (candidates.isEmpty()) {
-        Log.logPrintf("No candidate types for %s%n", typeArgument);
+        Log.logPrintf(
+            "TypeInstantiator.selectAndExtend: No candidate types for %s%n", typeArgument);
         return null;
       }
       selectedTypes.add(Randomness.randomMember(candidates));
     }
-    return substitution.extend(Substitution.forArgs(parameters, selectedTypes));
+    return substitution.extend(parameters, selectedTypes);
   }
 
   /**
@@ -437,8 +436,7 @@ public class TypeInstantiator {
       return new ArrayList<>();
     }
     for (List<ReferenceType> tuple : iteratorToIterable(new ListIterator<>(candidateTypes))) {
-      Substitution partialSubstitution = Substitution.forArgs(parameters, tuple);
-      Substitution substitution = initialSubstitution.extend(partialSubstitution);
+      Substitution substitution = initialSubstitution.extend(parameters, tuple);
       if (boundsCheck.test(tuple, substitution)) {
         substitutionList.add(substitution);
       }
@@ -485,7 +483,7 @@ public class TypeInstantiator {
     for (Type inputType : inputTypes) {
       if (inputType.isReferenceType()) {
         ReferenceType inputRefType = (ReferenceType) inputType;
-        Substitution substitution = Substitution.forArgs(typeVariableList, inputRefType);
+        Substitution substitution = new Substitution(typeVariableList, inputRefType);
         if (lowerBound.isLowerBound(inputRefType, substitution)
             && upperBound.isUpperBound(inputRefType, substitution)) {
           typeList.add(inputRefType);

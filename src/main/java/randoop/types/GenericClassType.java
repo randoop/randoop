@@ -203,7 +203,7 @@ public class GenericClassType extends ParameterizedType {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution substitution = Substitution.forArgs(this.getTypeParameters(), typeArguments);
+    Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
@@ -228,7 +228,7 @@ public class GenericClassType extends ParameterizedType {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution substitution = Substitution.forArgs(this.getTypeParameters(), typeArguments);
+    Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(
