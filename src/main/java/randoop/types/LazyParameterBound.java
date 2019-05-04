@@ -52,7 +52,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public ParameterBound apply(Substitution<ReferenceType> substitution) {
+  public ParameterBound apply(Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
@@ -101,8 +101,7 @@ class LazyParameterBound extends ParameterBound {
    * @param substitution the type substitution
    * @return the type argument
    */
-  private static TypeArgument apply(
-      java.lang.reflect.Type type, Substitution<ReferenceType> substitution) {
+  private static TypeArgument apply(java.lang.reflect.Type type, Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
@@ -234,7 +233,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public boolean isLowerBound(Type argType, Substitution<ReferenceType> substitution) {
+  public boolean isLowerBound(Type argType, Substitution substitution) {
     ParameterBound b = this.apply(substitution);
     if (b.equals(this)) {
       throw new IllegalArgumentException(
@@ -261,7 +260,7 @@ class LazyParameterBound extends ParameterBound {
    * applying the substitution to this generic bound is satisfied by the concrete type.
    */
   @Override
-  public boolean isUpperBound(Type argType, Substitution<ReferenceType> substitution) {
+  public boolean isUpperBound(Type argType, Substitution substitution) {
     ParameterBound b = this.apply(substitution);
     if (b.equals(this)) {
       throw new IllegalArgumentException(
@@ -271,7 +270,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     assert false : " not quite sure what to do with lazy type bound";
     return false;
   }

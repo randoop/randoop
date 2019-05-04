@@ -47,7 +47,7 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   @Override
-  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+  public ReferenceType apply(Substitution substitution) {
     ReferenceType type = substitution.get(this);
     if (type != null) {
       return type;
@@ -73,7 +73,7 @@ public abstract class TypeVariable extends ParameterType {
 
     if (otherType.isVariable()) {
       TypeVariable variable = (TypeVariable) otherType;
-      Substitution<ReferenceType> substitution = getSubstitution(variable, this);
+      Substitution substitution = getSubstitution(variable, this);
       boolean lowerbound =
           variable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
       boolean upperbound =
@@ -89,7 +89,7 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType.isReferenceType()) {
-      Substitution<ReferenceType> substitution = getSubstitution(this, (ReferenceType) otherType);
+      Substitution substitution = getSubstitution(this, (ReferenceType) otherType);
       return this.getUpperTypeBound().isLowerBound(otherType, substitution);
     }
     return false;
@@ -102,8 +102,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param otherType the replacement type
    * @return a substitution that replaces {@code variable} with {@code otherType}
    */
-  private static Substitution<ReferenceType> getSubstitution(
-      TypeVariable variable, ReferenceType otherType) {
+  private static Substitution getSubstitution(TypeVariable variable, ReferenceType otherType) {
     List<TypeVariable> variableList = Collections.singletonList(variable);
     return Substitution.forArgs(variableList, otherType);
   }
@@ -121,7 +120,7 @@ public abstract class TypeVariable extends ParameterType {
    * @return true if the given type can instantiate this variable, false otherwise
    */
   boolean canBeInstantiatedBy(ReferenceType otherType) {
-    Substitution<ReferenceType> substitution;
+    Substitution substitution;
     if (getLowerTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
       ParameterBound boundType = getLowerTypeBound().apply(substitution);
