@@ -11,7 +11,7 @@ import java.util.Set;
  *
  * <p>Note that {@link java.lang.reflect.ParameterizedType} is an interface that can represent
  * either a parameterized type in the sense meant here, or a generic class. Conversion to this type
- * from this and other {@link java.lang.reflect.Type} interfaces is handled by {@link
+ * from {@link java.lang.reflect.Type} interfaces is handled by {@link
  * Type#forType(java.lang.reflect.Type)}.
  */
 public class InstantiatedType extends ParameterizedType {
@@ -63,13 +63,13 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public InstantiatedType apply(Substitution substitution) {
+  public InstantiatedType substitute(Substitution substitution) {
     List<TypeArgument> argumentList = new ArrayList<>();
     for (TypeArgument argument : this.argumentList) {
-      argumentList.add(argument.apply(substitution));
+      argumentList.add(argument.substitute(substitution));
     }
     return (InstantiatedType)
-        apply(substitution, new InstantiatedType(instantiatedType, argumentList));
+        substitute(substitution, new InstantiatedType(instantiatedType, argumentList));
   }
 
   /**
@@ -358,7 +358,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public boolean isParameterized() {
+  public boolean isInstantiatedType() {
     return true;
   }
 
@@ -398,7 +398,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {
-    if (otherType.isParameterized()) {
+    if (otherType.isInstantiatedType()) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {

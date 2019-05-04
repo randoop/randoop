@@ -47,7 +47,7 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   @Override
-  public ReferenceType apply(Substitution substitution) {
+  public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
     if (type != null) {
       return type;
@@ -123,7 +123,7 @@ public abstract class TypeVariable extends ParameterType {
     Substitution substitution;
     if (getLowerTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
-      ParameterBound boundType = getLowerTypeBound().apply(substitution);
+      ParameterBound boundType = getLowerTypeBound().substitute(substitution);
       TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
@@ -136,7 +136,7 @@ public abstract class TypeVariable extends ParameterType {
     }
     if (getUpperTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
-      ParameterBound boundType = getUpperTypeBound().apply(substitution);
+      ParameterBound boundType = getUpperTypeBound().substitute(substitution);
       TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;

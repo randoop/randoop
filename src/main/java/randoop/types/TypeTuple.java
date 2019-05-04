@@ -60,10 +60,10 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @param substitution the substitution
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
-  public TypeTuple apply(Substitution substitution) {
+  public TypeTuple substitute(Substitution substitution) {
     List<Type> typeList = new ArrayList<>();
     for (Type type : this.list) {
-      Type newType = type.apply(substitution);
+      Type newType = type.substitute(substitution);
       if (newType != null) {
         typeList.add(newType);
       } else {
@@ -119,7 +119,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    */
   public boolean hasWildcard() {
     for (Type type : list) {
-      if (type.isParameterized() && ((ParameterizedType) type).hasWildcard()) {
+      if (type.isInstantiatedType() && ((ParameterizedType) type).hasWildcard()) {
         return true;
       }
     }

@@ -80,7 +80,7 @@ public abstract class ReferenceType extends Type {
    * @return the type created by applying the substitution to this type
    */
   @Override
-  public abstract ReferenceType apply(Substitution substitution);
+  public abstract ReferenceType substitute(Substitution substitution);
 
   @Override
   public ReferenceType applyCaptureConversion() {

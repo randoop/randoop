@@ -280,7 +280,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param substitution the substitution
    * @return the operation resulting from applying the substitution to the types of this operation
    */
-  public abstract TypedOperation apply(Substitution substitution);
+  public abstract TypedOperation substitute(Substitution substitution);
 
   /**
    * Applies a capture conversion to the wildcard types of this operation, and returns a new
@@ -401,8 +401,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
           assert superType != null
               : "should exist a super type of enum instantiating " + genDeclaringType;
           Substitution substitution = superType.getTypeSubstitution();
-          inputTypes = inputTypes.apply(substitution);
-          outputType = outputType.apply(substitution);
+          inputTypes = inputTypes.substitute(substitution);
+          outputType = outputType.substitute(substitution);
         }
 
         // check if param types match

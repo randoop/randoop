@@ -107,7 +107,7 @@ public abstract class ParameterBound {
    * @param substitution the type substitution
    * @return this bound with the type after the substitution has been applied
    */
-  public abstract ParameterBound apply(Substitution substitution);
+  public abstract ParameterBound substitute(Substitution substitution);
 
   /**
    * Applies a capture conversion to any wildcard arguments in the type of this bound.
