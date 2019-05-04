@@ -189,7 +189,7 @@ public class TypeInstantiator {
   private Substitution selectMatch(ClassOrInterfaceType type, ClassOrInterfaceType patternType) {
     List<InstantiatedType> matches = new ArrayList<>();
     for (Type inputType : inputTypes) {
-      if (inputType.isParameterized()
+      if (inputType.isInstantiatedType()
           && ((InstantiatedType) inputType).isInstantiationOf(patternType)) {
         matches.add((InstantiatedType) inputType);
       }

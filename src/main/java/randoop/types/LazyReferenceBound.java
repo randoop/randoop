@@ -57,7 +57,7 @@ class LazyReferenceBound extends ReferenceBound {
       return new EagerReferenceBound(referenceType);
     }
 
-    if (getBoundType().isParameterized()) {
+    if (getBoundType().isInstantiatedType()) {
       // XXX technically, need to check if variable argument was replaced by variable
       // if so should return new LazyReferenceBound(referenceType)
       // But highly unlikely so for now only including code to do else case
@@ -76,7 +76,7 @@ class LazyReferenceBound extends ReferenceBound {
     List<TypeVariable> parameters = new ArrayList<>();
     if (getBoundType().isVariable()) {
       parameters.add((TypeVariable) getBoundType());
-    } else if (getBoundType().isParameterized()) {
+    } else if (getBoundType().isInstantiatedType()) {
       for (ReferenceType argType : ((InstantiatedType) getBoundType()).getReferenceArguments()) {
         if (argType.isVariable()) {
           parameters.add((TypeVariable) argType);

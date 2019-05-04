@@ -229,7 +229,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
-          if (interfaceType.isParameterized()) {
+          if (interfaceType.isInstantiatedType()) {
             InstantiatedType type = (InstantiatedType) interfaceType;
             if (type.isInstantiationOf(goalType)) {
               return (InstantiatedType) interfaceType;
@@ -384,8 +384,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public boolean isParameterized() {
-    return this.isMemberClass() && !this.isStatic() && enclosingType.isParameterized();
+  public boolean isInstantiatedType() {
+    return this.isMemberClass() && !this.isStatic() && enclosingType.isInstantiatedType();
   }
 
   /**

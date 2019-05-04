@@ -358,7 +358,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public boolean isParameterized() {
+  public boolean isInstantiatedType() {
     return true;
   }
 
@@ -398,7 +398,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {
-    if (otherType.isParameterized()) {
+    if (otherType.isInstantiatedType()) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {

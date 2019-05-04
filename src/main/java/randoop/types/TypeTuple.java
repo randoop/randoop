@@ -119,7 +119,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    */
   public boolean hasWildcard() {
     for (Type type : list) {
-      if (type.isParameterized() && ((ParameterizedType) type).hasWildcard()) {
+      if (type.isInstantiatedType() && ((ParameterizedType) type).hasWildcard()) {
         return true;
       }
     }

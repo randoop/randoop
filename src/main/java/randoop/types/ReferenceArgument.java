@@ -97,7 +97,8 @@ public class ReferenceArgument extends TypeArgument {
 
   @Override
   public boolean hasWildcard() {
-    return referenceType.isParameterized() && ((ClassOrInterfaceType) referenceType).hasWildcard();
+    return referenceType.isInstantiatedType()
+        && ((ClassOrInterfaceType) referenceType).hasWildcard();
   }
 
   /**
