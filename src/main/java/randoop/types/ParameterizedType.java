@@ -65,7 +65,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public abstract ParameterizedType apply(Substitution<ReferenceType> substitution);
+  public abstract ParameterizedType substitute(Substitution substitution);
 
   /**
    * Returns the {@link GenericClassType} for this parameterized type.

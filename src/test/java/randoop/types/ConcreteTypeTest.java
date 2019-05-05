@@ -20,7 +20,7 @@ public class ConcreteTypeTest {
     assertTrue("is not enum", !primitiveType.isEnum());
     assertTrue("is not interface", !primitiveType.isInterface());
     assertTrue("is not Object", !primitiveType.isObject());
-    assertTrue("is not Parameterized", !primitiveType.isParameterized());
+    assertTrue("is not Parameterized", !primitiveType.isInstantiatedType());
     assertTrue("is not rawtype", !primitiveType.isRawtype());
     assertTrue("is not reference type", !primitiveType.isReferenceType());
     assertTrue("is not String", !primitiveType.isString());
@@ -35,7 +35,7 @@ public class ConcreteTypeTest {
     assertTrue("is not enum", !classType.isEnum());
     assertTrue("is not interface", !classType.isInterface());
     assertTrue("is not Object", !classType.isObject());
-    assertTrue("is not Parameterized", !classType.isParameterized());
+    assertTrue("is not Parameterized", !classType.isInstantiatedType());
     assertTrue("is not rawtype", !classType.isRawtype());
     assertTrue("is reference type", classType.isReferenceType());
     assertTrue("is String", classType.isString());
@@ -54,7 +54,7 @@ public class ConcreteTypeTest {
     assertTrue("is not enum", !arrayType.isEnum());
     assertTrue("is not interface", !arrayType.isInterface());
     assertTrue("is not Object", !arrayType.isObject());
-    assertTrue("is not Parameterized", !arrayType.isParameterized());
+    assertTrue("is not Parameterized", !arrayType.isInstantiatedType());
     assertTrue("is not rawtype", !arrayType.isRawtype());
     assertTrue("is reference type", arrayType.isReferenceType());
     assertTrue("is not String", !arrayType.isString());
@@ -70,7 +70,7 @@ public class ConcreteTypeTest {
     assertTrue("is not enum", !rawClassType.isEnum());
     assertTrue("is not interface", !rawClassType.isInterface());
     assertTrue("is not Object", !rawClassType.isObject());
-    assertTrue("is not Parameterized", !rawClassType.isParameterized());
+    assertTrue("is not Parameterized", !rawClassType.isInstantiatedType());
     assertTrue("is rawtype", rawClassType.isRawtype());
     assertTrue("is reference type", rawClassType.isReferenceType());
     assertTrue("is not String", !rawClassType.isString());
@@ -87,7 +87,7 @@ public class ConcreteTypeTest {
     assertTrue("is not enum", !classType.isEnum());
     assertTrue("is not interface", !classType.isInterface());
     assertTrue("is not Object", !classType.isObject());
-    assertTrue("is not Parameterized", !classType.isParameterized());
+    assertTrue("is not Parameterized", !classType.isInstantiatedType());
     assertTrue("is not rawtype", !classType.isRawtype());
     assertTrue("is reference type", classType.isReferenceType());
     assertTrue("is not String", !classType.isString());

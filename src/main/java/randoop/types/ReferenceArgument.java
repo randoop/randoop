@@ -56,8 +56,8 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public TypeArgument apply(Substitution<ReferenceType> substitution) {
-    return TypeArgument.forType(referenceType.apply(substitution));
+  public TypeArgument substitute(Substitution substitution) {
+    return TypeArgument.forType(referenceType.substitute(substitution));
   }
 
   /**
@@ -97,7 +97,8 @@ public class ReferenceArgument extends TypeArgument {
 
   @Override
   public boolean hasWildcard() {
-    return referenceType.isParameterized() && ((ClassOrInterfaceType) referenceType).hasWildcard();
+    return referenceType.isInstantiatedType()
+        && ((ClassOrInterfaceType) referenceType).hasWildcard();
   }
 
   /**
@@ -122,7 +123,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public Substitution<ReferenceType> getInstantiatingSubstitution(TypeArgument otherArgument) {
+  public Substitution getInstantiatingSubstitution(TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return null;
     }

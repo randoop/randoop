@@ -60,13 +60,13 @@ class TypeTupleSet {
    * @param typeParameters the type arguments
    * @return the list of substitutions that instantiate the type arguments
    */
-  List<Substitution<ReferenceType>> filter(List<TypeVariable> typeParameters) {
+  List<Substitution> filter(List<TypeVariable> typeParameters) {
     assert typeParameters.size() == tupleLength
         : "tuple size " + tupleLength + " must equal number of parameters " + typeParameters.size();
-    List<Substitution<ReferenceType>> substitutionSet = new ArrayList<>();
+    List<Substitution> substitutionSet = new ArrayList<>();
     List<List<ReferenceType>> tupleList = new ArrayList<>();
     for (List<ReferenceType> tuple : typeTuples) {
-      Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, tuple);
+      Substitution substitution = new Substitution(typeParameters, tuple);
 
       int i = 0;
       while (i < tuple.size()

@@ -46,7 +46,7 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public abstract ReferenceBound apply(Substitution<ReferenceType> substitution);
+  public abstract ReferenceBound substitute(Substitution substitution);
 
   @Override
   public abstract ReferenceBound applyCaptureConversion();

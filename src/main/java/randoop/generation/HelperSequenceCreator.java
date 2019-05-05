@@ -70,7 +70,7 @@ class HelperSequenceCreator {
     if (componentType.isArray()) {
       candidates = createArraySequence(components, componentType);
     } else {
-      if (componentType.isParameterized()) {
+      if (componentType.isInstantiatedType()) {
         // XXX build elementType default construction sequence here, if cannot build one then stop
         InstantiatedType creationType = getImplementingType((InstantiatedType) componentType);
         // If element type is C<T extends C<T>, so use T
@@ -162,7 +162,7 @@ class HelperSequenceCreator {
       return null;
     }
 
-    if (!elementType.isParameterized()
+    if (!elementType.isInstantiatedType()
         && !(elementType.isArray() && ((ArrayType) elementType).hasParameterizedElementType())) {
       // build sequence to create array of element type
       int totStatements = 0;
@@ -273,7 +273,7 @@ class HelperSequenceCreator {
       TupleSequence elementsSequence, Type elementType, int length) {
 
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
-    if (!elementType.isParameterized()
+    if (!elementType.isInstantiatedType()
         && !(elementType.isArray() && ((ArrayType) elementType).hasParameterizedElementType())) {
       TypedOperation creationOperation =
           TypedOperation.createInitializedArrayCreation(arrayType, length);
