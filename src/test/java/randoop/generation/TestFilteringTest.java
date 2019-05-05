@@ -268,6 +268,7 @@ public class TestFilteringTest {
         new ForwardGenerator(
             new ArrayList<>(extractor.getOperations()),
             new LinkedHashSet<TypedOperation>(),
+            new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(),
             componentMgr,
             null,

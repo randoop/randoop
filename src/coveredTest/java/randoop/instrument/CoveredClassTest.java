@@ -224,6 +224,23 @@ public class CoveredClassTest {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
+    Set<String> nonMultiRunDeterministicMethodSignatures = new LinkedHashSet<String>();
+    Set<String> nonMultiRunDeterministicUserMethodSignatures =
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.nonMultiRunDeterministicUser,
+            "nonMultiRunDeterministicUserMethods",
+            "//.*",
+            null);
+    Set<String> nonMultiRunDeterministicJDKMethodSignatures =
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.nonMultiRunDeterministicJDK,
+            "nonMultiRunDeterministicJDKMethods",
+            "//.*",
+            null);
+
+    nonMultiRunDeterministicMethodSignatures.addAll(nonMultiRunDeterministicUserMethodSignatures);
+    nonMultiRunDeterministicMethodSignatures.addAll(nonMultiRunDeterministicJDKMethodSignatures);
+
     // Maps each class type to the observer methods in it.
     MultiMap<Type, TypedOperation> observerMap;
     try {
@@ -239,11 +256,29 @@ public class CoveredClassTest {
       observers.addAll(observerMap.getValues(keyType));
     }
 
+    // Maps each class type to the nmrd methods in it.
+    MultiMap<Type, TypedOperation> nonMultiRunDeterministicMethodMap;
+    try {
+      nonMultiRunDeterministicMethodMap =
+          operationModel.getTypedOperationFromFullyQualifiedSignatures(
+              nonMultiRunDeterministicMethodSignatures);
+    } catch (OperationParseException e) {
+      System.out.printf("Parse error while reading nonMultiRunDeterministicMethods: %s%n", e);
+      System.exit(1);
+      throw new Error("dead code");
+    }
+
+    Set<TypedOperation> nonMultiRunDeterministicMethods = new LinkedHashSet<>();
+    for (Type keyType : nonMultiRunDeterministicMethodMap.keySet()) {
+      nonMultiRunDeterministicMethods.addAll(nonMultiRunDeterministicMethodMap.getValues(keyType));
+    }
+
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
             observers,
+            nonMultiRunDeterministicMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,

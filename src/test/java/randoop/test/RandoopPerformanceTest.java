@@ -44,6 +44,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
+            new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(0, 100000, 100000, 100000),
             null,
             null,

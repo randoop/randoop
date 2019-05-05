@@ -1112,6 +1112,22 @@ Randoop about your application, and that is how we recommend using Randoop.
  signature</a> on a separate line. Specifying observers has two benefits: it makes regression
  tests stronger, and it helps Randoop create smaller tests.
       </ul>
+  <li id="optiongroup:nMRD-user-methods">nMRD user methods
+      <ul>
+            <li id="option:nonMultiRunDeterministicUser"><b>--nonMultiRunDeterministicUser=</b><i>filename</i>.
+             File containing user non-multi run deterministic observer methods, each given as a <a
+ href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+ signature</a> on a separate line. These methods will not be called when generating tests to
+ avoid generating flaky tests.
+      </ul>
+  <li id="optiongroup:nMRD-JDK-methods">nMRD JDK methods
+      <ul>
+            <li id="option:nonMultiRunDeterministicJDK"><b>--nonMultiRunDeterministicJDK=</b><i>filename</i>.
+             File containing JDK non-multi run deterministic observer methods, each given as a <a
+ href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+ signature</a> on a separate line. These methods will not be called when generating tests to
+ avoid generating flaky tests.
+      </ul>
   <li id="optiongroup:Limiting-test-generation">Limiting test generation
       <ul>
             <li id="option:time-limit"><b>--time-limit=</b><i>int</i>.

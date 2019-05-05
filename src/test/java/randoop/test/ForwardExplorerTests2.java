@@ -87,6 +87,7 @@ public class ForwardExplorerTests2 {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
+            new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(0, 100, 100, 100),
             mgr,
             null,

@@ -421,6 +421,7 @@ public class TestClassificationTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
+            new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(),
             componentMgr,
             null,

@@ -359,6 +359,23 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
+    Set<String> nonMultiRunDeterministicMethodSignatures = new LinkedHashSet<String>();
+    Set<String> nonMultiRunDeterministicUserMethodSignatures =
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.nonMultiRunDeterministicUser,
+            "nonMultiRunDeterministicUserMethods",
+            "//.*",
+            null);
+    Set<String> nonMultiRunDeterministicJDKMethodSignatures =
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.nonMultiRunDeterministicJDK,
+            "nonMultiRunDeterministicJDKMethods",
+            "//.*",
+            null);
+
+    nonMultiRunDeterministicMethodSignatures.addAll(nonMultiRunDeterministicUserMethodSignatures);
+    nonMultiRunDeterministicMethodSignatures.addAll(nonMultiRunDeterministicJDKMethodSignatures);
+
     MultiMap<Type, TypedOperation> observerMap;
     try {
       observerMap = OperationModel.readOperations(GenInputsAbstract.observers, true);
@@ -372,6 +389,23 @@ public class GenTests extends GenInputsAbstract {
       observers.addAll(observerMap.getValues(keyType));
     }
 
+    // Maps each class type to the observer methods in it.
+    MultiMap<Type, TypedOperation> nonMultiRunDeterministicMethodMap;
+    try {
+      nonMultiRunDeterministicMethodMap =
+          operationModel.getTypedOperationFromFullyQualifiedSignatures(
+              nonMultiRunDeterministicMethodSignatures);
+    } catch (OperationParseException e) {
+      System.out.printf("Parse error while reading nonMultiRunDeterministicMethods: %s%n", e);
+      System.exit(1);
+      throw new Error("dead code");
+    }
+
+    Set<TypedOperation> nonMultiRunDeterministicMethods = new LinkedHashSet<>();
+    for (Type keyType : nonMultiRunDeterministicMethodMap.keySet()) {
+      nonMultiRunDeterministicMethods.addAll(nonMultiRunDeterministicMethodMap.getValues(keyType));
+    }
+
     /*
      * Create the generator for this session.
      */
@@ -379,6 +413,7 @@ public class GenTests extends GenInputsAbstract {
         new ForwardGenerator(
             operations,
             observers,
+            nonMultiRunDeterministicMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,

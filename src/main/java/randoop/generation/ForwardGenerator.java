@@ -52,6 +52,9 @@ public class ForwardGenerator extends AbstractGenerator {
   /** The side-effect-free observer methods. */
   private final Set<TypedOperation> observers;
 
+  /** The non-multi-run-deterministic method blacklist. */
+  private final Set<TypedOperation> nonMultiRunDeterministicMethods;
+
   /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
 
@@ -81,16 +84,26 @@ public class ForwardGenerator extends AbstractGenerator {
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
+      Set<TypedOperation> nonMultiRunDeterministicMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       RandoopListenerManager listenerManager,
       Set<ClassOrInterfaceType> classesUnderTest) {
-    this(operations, observers, limits, componentManager, null, listenerManager, classesUnderTest);
+    this(
+        operations,
+        observers,
+        nonMultiRunDeterministicMethods,
+        limits,
+        componentManager,
+        null,
+        listenerManager,
+        classesUnderTest);
   }
 
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
+      Set<TypedOperation> nonMultiRunDeterministicMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
@@ -99,6 +112,7 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
+    this.nonMultiRunDeterministicMethods = nonMultiRunDeterministicMethods;
     this.allSequences = new LinkedHashSet<>();
     this.instantiator = componentManager.getTypeInstantiator();
 
@@ -341,6 +355,11 @@ public class ForwardGenerator extends AbstractGenerator {
     // Select the next operation to use in constructing a new sequence.
     TypedOperation operation = operationSelector.selectOperation();
     Log.logPrintf("Selected operation: %s%n", operation.toString());
+
+    // TODO: cxing - CR request: Is this the best way to do this?
+    if (nonMultiRunDeterministicMethods.contains(operation)) {
+      return null; // Avoid calling this.
+    }
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
@@ -871,6 +890,8 @@ public class ForwardGenerator extends AbstractGenerator {
         + ("subsumed_sequences.size()=" + subsumed_sequences.size())
         + ","
         + ("runtimePrimitivesSeen.size()=" + runtimePrimitivesSeen.size())
+        + ","
+        + ("nonMultiRunDeterministicMethods.size()=" + nonMultiRunDeterministicMethods.size())
         + ")";
   }
 }
