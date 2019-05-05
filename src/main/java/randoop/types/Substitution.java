@@ -47,6 +47,7 @@ public class Substitution {
    * @param argument the type argument
    */
   public Substitution(TypeVariable parameter, ReferenceType argument) {
+    this();
     put(parameter, argument);
   }
 
