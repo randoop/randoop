@@ -930,7 +930,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>If the regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the
  beginning and the end of the signature string.
-            <li id="option:omitmethods-file"><b>--omitmethods-file=</b><i>filename</i>.
+            <li id="option:omitmethods-file"><b>--omitmethods-file=</b><i>filename</i> <code>[+]</code>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>--omitmethods</code>, and the default omissions.
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
@@ -949,11 +949,12 @@ Randoop about your application, and that is how we recommend using Randoop.
              What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
  different executions.
 
- <p>Setting this option to <code>DISCARD</code> or <code>OUTPUT</code> should be considered a last resort.
- Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
- and a better solution is not to call Randoop on such methods; see section <a
+ <p><code>OUTPUT</code> is the default because Randoop now provides term frequency - inverse document
+ frequency metrics for identifying nondeterministic methods. Flaky tests are usually due to
+ calling Randoop on side-effecting or nondeterministic methods, and a ultiately, the solution is
+ not to call Randoop on such methods; see section <a
  href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
- the Randoop manual. [default HALT]
+ the Randoop manual. [default OUTPUT]
 <ul>
   <li><b>HALT</b> Randoop halts with a diagnostic message.
   <li><b>DISCARD</b> Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
@@ -1111,22 +1112,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
  signature</a> on a separate line. Specifying observers has two benefits: it makes regression
  tests stronger, and it helps Randoop create smaller tests.
-      </ul>
-  <li id="optiongroup:nMRD-user-methods">nMRD user methods
-      <ul>
-            <li id="option:nonMultiRunDeterministicUser"><b>--nonMultiRunDeterministicUser=</b><i>filename</i>.
-             File containing user non-multi run deterministic observer methods, each given as a <a
- href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
- signature</a> on a separate line. These methods will not be called when generating tests to
- avoid generating flaky tests.
-      </ul>
-  <li id="optiongroup:nMRD-JDK-methods">nMRD JDK methods
-      <ul>
-            <li id="option:nonMultiRunDeterministicJDK"><b>--nonMultiRunDeterministicJDK=</b><i>filename</i>.
-             File containing JDK non-multi run deterministic observer methods, each given as a <a
- href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
- signature</a> on a separate line. These methods will not be called when generating tests to
- avoid generating flaky tests.
       </ul>
   <li id="optiongroup:Limiting-test-generation">Limiting test generation
       <ul>

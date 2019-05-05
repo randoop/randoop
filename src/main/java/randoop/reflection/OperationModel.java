@@ -43,8 +43,6 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopUsageError;
-import randoop.operation.ConstructorCall;
-import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -317,39 +315,6 @@ public class OperationModel {
       }
     }
     return observerMap;
-  }
-
-  /**
-   * Given a set of signatures, returns the operations for them.
-   *
-   * @param fullyQualifiedSignatures the set of method signatures; typically comes from the {@code
-   *     --observers} command-line option
-   * @return a map from each class type to the set of observer methods in it
-   * @throws OperationParseException if a method signature cannot be parsed
-   */
-  public MultiMap<Type, TypedOperation> getTypedOperationFromFullyQualifiedSignatures(
-      Set<String> fullyQualifiedSignatures) throws OperationParseException {
-    MultiMap<Type, TypedOperation> operationMap = new MultiMap<>();
-    for (String sig : fullyQualifiedSignatures) {
-      TypedClassOperation operation = null;
-      try {
-        operation = MethodCall.parse(sig);
-      } catch (OperationParseException e) {
-        try {
-          operation = ConstructorCall.parse(sig);
-        } catch (OperationParseException | AssertionError e2) {
-          throw new OperationParseException(
-              "Could not parse text as a method or constructor call: "
-                  + sig
-                  + Globals.lineSep
-                  + e.getMessage()
-                  + Globals.lineSep
-                  + e2.getMessage());
-        }
-      }
-      operationMap.add(operation.getDeclaringType(), operation);
-    }
-    return operationMap;
   }
 
   /**
