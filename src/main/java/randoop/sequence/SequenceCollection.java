@@ -249,7 +249,13 @@ public class SequenceCollection {
     return result;
   }
 
+  /**
+   * Returns the current type instantiator. What is returned depends on the current set of observed
+   * types and their supertypes. HOWEVER, this is only ever called once, when a ForwardGenerator is
+   * created, and never called again.
+   */
   public TypeInstantiator getTypeInstantiator() {
+    System.out.printf("SequenceCollection.getTypeInstantiator was called.%n");
     return new TypeInstantiator(typesAndSupertypes);
   }
 

@@ -253,6 +253,7 @@ public class ComponentManager {
   }
 
   TypeInstantiator getTypeInstantiator() {
+    System.out.printf("ComponentManager.getTypeInstantiator was called.%n");
     return gralComponents.getTypeInstantiator();
   }
 

@@ -27,7 +27,11 @@ import randoop.util.Randomness;
 /** Function object to instantiate type parameters from a set of input types. */
 public class TypeInstantiator {
 
-  /** The set of input types for this model. */
+  /**
+   * The set of input types for this model.
+   *
+   * <p>Is side-effected throughout Randoop execution to add more types, I believe.
+   */
   private final Set<Type> inputTypes;
 
   /**
