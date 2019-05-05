@@ -45,6 +45,9 @@ public class TypeInstantiator {
    */
   public TypeInstantiator(Set<Type> inputTypes) {
     this.inputTypes = inputTypes;
+    for (Type t : inputTypes) {
+      assert t != null;
+    }
   }
 
   public TypedClassOperation instantiate(TypedClassOperation operation) {
@@ -481,6 +484,7 @@ public class TypeInstantiator {
    * @return the list of candidate types to include in tested tuples
    */
   private List<ReferenceType> allCandidates(TypeVariable argument) {
+    assert argument != null;
     ParameterBound lowerBound = selectLowerBound(argument);
     ParameterBound upperBound = selectUpperBound(argument);
 
