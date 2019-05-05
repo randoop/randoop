@@ -66,7 +66,7 @@ public class TypeInstantiator {
           substitution = instantiateClass(declaringType);
         }
       } else { // otherwise, select from existing one
-        substitution = selectMatch(declaringType);
+        substitution = selectSubstitution(declaringType);
       }
       if (substitution == null) { // return null if fail to find instantiation
         return null;
@@ -106,7 +106,6 @@ public class TypeInstantiator {
     // TODO: we have no guarantee that the first type parameter is the set element type.
     // For example, "class MyClass<A, B> implements SortedSet<B>".
     TypeVariable typeParameter = operation.getDeclaringType().getTypeParameters().get(0);
-    List<TypeVariable> typeParameters = Collections.singletonList(typeParameter);
 
     TypeTuple opInputTypes = operation.getInputTypes();
 
@@ -114,18 +113,18 @@ public class TypeInstantiator {
 
     // This is the default constructor, choose a type E that is Comparable<E>.
     if (opInputTypes.isEmpty()) {
-      return getSearchTypeSubstitution(JavaTypes.COMPARABLE_TYPE, typeParameters);
+      return selectSubstitutionForSortedSet(JavaTypes.COMPARABLE_TYPE, typeParameter);
     } else if (opInputTypes.size() == 1) {
       ClassOrInterfaceType inputType = (ClassOrInterfaceType) opInputTypes.get(0);
       if (inputType.isInstantiationOf(JDKTypes.COMPARATOR_TYPE)) {
         // This constructor has Comparator<E> arg, choose type E with Comparator<E>.
-        return getSearchTypeSubstitution(JDKTypes.COMPARATOR_TYPE, typeParameters);
+        return selectSubstitutionForSortedSet(JDKTypes.COMPARATOR_TYPE, typeParameter);
       } else if (inputType.isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
         // This constructor has Collection<E> arg, choose type E that is Comparable<E>.
-        return getSearchTypeSubstitution(JavaTypes.COMPARABLE_TYPE, typeParameters);
+        return selectSubstitutionForSortedSet(JavaTypes.COMPARABLE_TYPE, typeParameter);
       } else if (inputType.isInstantiationOf(JDKTypes.SORTED_SET_TYPE)) {
         // This constructor has SortedSet<E> arg, choose existing matching type.
-        return getSearchTypeSubstitution(JDKTypes.SORTED_SET_TYPE, typeParameters);
+        return selectSubstitutionForSortedSet(JDKTypes.SORTED_SET_TYPE, typeParameter);
       }
     }
 
@@ -133,14 +132,23 @@ public class TypeInstantiator {
     return null;
   }
 
-  private Substitution getSearchTypeSubstitution(
-      GenericClassType searchType, List<TypeVariable> typeParameters) {
-    Substitution substitution = selectMatch(searchType);
+  /**
+   * Select a substitution for the type parameter of SortedSet.
+   *
+   * @param searchType one of Comparator, Comparable, or SortedSet
+   * @param typeParameter the type parameter to create an instantiation for
+   * @return a substitution for the type parameter of SortedSet
+   */
+  private Substitution selectSubstitutionForSortedSet(
+      GenericClassType searchType, TypeVariable typeParameter) {
+    // Select a substitution for searchType's formal parameter.
+    Substitution substitution = selectSubstitution(searchType);
     if (substitution == null) {
       return null;
     }
+    // Convert it into a substitution for the given type parameter.
     TypeArgument argumentType = searchType.substitute(substitution).getTypeArguments().get(0);
-    return new Substitution(typeParameters, ((ReferenceArgument) argumentType).getReferenceType());
+    return new Substitution(typeParameter, ((ReferenceArgument) argumentType).getReferenceType());
   }
 
   /**
@@ -155,7 +163,7 @@ public class TypeInstantiator {
    */
   private Substitution instantiateClass(ClassOrInterfaceType type) {
     if (Randomness.weightedCoinFlip(0.5)) {
-      Substitution substitution = selectMatch(type);
+      Substitution substitution = selectSubstitution(type);
       if (substitution != null) {
         return substitution;
       }
@@ -186,7 +194,8 @@ public class TypeInstantiator {
    * @return a substitution instantiating {@code type}'s type parameters to existing types; null if
    *     no such type exists
    */
-  private Substitution selectMatch(ClassOrInterfaceType type, ClassOrInterfaceType patternType) {
+  private Substitution selectSubstitution(
+      ClassOrInterfaceType type, ClassOrInterfaceType patternType) {
     List<InstantiatedType> matches = new ArrayList<>();
     for (Type inputType : inputTypes) {
       if (inputType.isInstantiatedType()
@@ -208,8 +217,8 @@ public class TypeInstantiator {
    * @param type the generic type for which an instantiation is to be found
    * @return a substitution instantiating the given type as an existing type; null if no such type
    */
-  private Substitution selectMatch(ClassOrInterfaceType type) {
-    return selectMatch(type, type);
+  private Substitution selectSubstitution(ClassOrInterfaceType type) {
+    return selectSubstitution(type, type);
   }
 
   /**
@@ -228,7 +237,8 @@ public class TypeInstantiator {
       if (workingType.isGeneric()) {
         if (workingType.isClassOrInterfaceType()) {
           Substitution subst =
-              selectMatch((ParameterizedType) parameterType, (ParameterizedType) workingType);
+              selectSubstitution(
+                  (ParameterizedType) parameterType, (ParameterizedType) workingType);
           if (subst == null) {
             return null;
           }
@@ -238,7 +248,7 @@ public class TypeInstantiator {
         }
       }
     }
-    // return types don't have to exist, but do need to be selected
+    // return types don't have to exist, but do need to have tehir type parameters instantiated
     if (operation.getOutputType().isReferenceType()) {
       Type workingType = operation.getOutputType().substitute(substitution);
       if (workingType.isGeneric()) {
@@ -339,7 +349,7 @@ public class TypeInstantiator {
         // if there are type parameters with non-generic bounds, these may be variables in
         // generic-bounded parameters
 
-        List<List<ReferenceType>> nongenCandidates = getCandidateTypeLists(nongenericParameters);
+        List<List<ReferenceType>> nongenCandidates = allCandidateTypeLists(nongenericParameters);
         if (nongenCandidates.isEmpty()) {
           return Collections.emptyList();
         }
@@ -361,7 +371,7 @@ public class TypeInstantiator {
         // if no parameters with non-generic bounds, choose instantiation for parameters
         // with generic bounds
         BoundsCheck boundsCheck = new BoundsCheck(genericParameters);
-        substitutionList = getInstantiations(genericParameters, substitution, boundsCheck);
+        substitutionList = allInstantiations(genericParameters, substitution, boundsCheck);
       }
       if (substitutionList.isEmpty()) {
         return substitutionList;
@@ -429,10 +439,10 @@ public class TypeInstantiator {
    * @param boundsCheck the predicate to type check a substitution
    * @return the list of instantiating substitutions
    */
-  private List<Substitution> getInstantiations(
+  private List<Substitution> allInstantiations(
       List<TypeVariable> parameters, Substitution initialSubstitution, BoundsCheck boundsCheck) {
     List<Substitution> substitutionList = new ArrayList<>();
-    List<List<ReferenceType>> candidateTypes = getCandidateTypeLists(parameters);
+    List<List<ReferenceType>> candidateTypes = allCandidateTypeLists(parameters);
     if (candidateTypes.isEmpty()) {
       // cannot use `Collections.emptyList()` because clients will add elements to the returned list
       return new ArrayList<>();
@@ -456,7 +466,7 @@ public class TypeInstantiator {
    *     has no candidates
    */
   @SuppressWarnings("MixedMutabilityReturnType")
-  private List<List<ReferenceType>> getCandidateTypeLists(List<TypeVariable> parameters) {
+  private List<List<ReferenceType>> allCandidateTypeLists(List<TypeVariable> parameters) {
     List<List<ReferenceType>> candidateTypes = new ArrayList<>();
     for (TypeVariable typeArgument : parameters) {
       List<ReferenceType> candidates = allCandidates(typeArgument);
@@ -470,7 +480,7 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns all input types that potentially satisfies the bounds on the argument. If a bound has
+   * Returns all input types that potentially satisfy the bounds on the argument. If a bound has
    * another type parameter, then the default bound is tested.
    *
    * @param argument the type arguments
@@ -480,12 +490,11 @@ public class TypeInstantiator {
     ParameterBound lowerBound = selectLowerBound(argument);
     ParameterBound upperBound = selectUpperBound(argument);
 
-    List<TypeVariable> typeVariableList = Collections.singletonList(argument);
     List<ReferenceType> typeList = new ArrayList<>();
     for (Type inputType : inputTypes) {
       if (inputType.isReferenceType()) {
         ReferenceType inputRefType = (ReferenceType) inputType;
-        Substitution substitution = new Substitution(typeVariableList, inputRefType);
+        Substitution substitution = new Substitution(argument, inputRefType);
         if (lowerBound.isLowerBound(inputRefType, substitution)
             && upperBound.isUpperBound(inputRefType, substitution)) {
           typeList.add(inputRefType);
