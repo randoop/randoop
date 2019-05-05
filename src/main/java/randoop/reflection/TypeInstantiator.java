@@ -66,7 +66,7 @@ public class TypeInstantiator {
           substitution = instantiateClass(declaringType);
         }
       } else { // otherwise, select from existing one
-        substitution = selectMatch(declaringType);
+        substitution = selectSubstitution(declaringType);
       }
       if (substitution == null) { // return null if fail to find instantiation
         return null;
@@ -135,7 +135,7 @@ public class TypeInstantiator {
 
   private Substitution getSearchTypeSubstitution(
       GenericClassType searchType, List<TypeVariable> typeParameters) {
-    Substitution substitution = selectMatch(searchType);
+    Substitution substitution = selectSubstitution(searchType);
     if (substitution == null) {
       return null;
     }
@@ -155,7 +155,7 @@ public class TypeInstantiator {
    */
   private Substitution instantiateClass(ClassOrInterfaceType type) {
     if (Randomness.weightedCoinFlip(0.5)) {
-      Substitution substitution = selectMatch(type);
+      Substitution substitution = selectSubstitution(type);
       if (substitution != null) {
         return substitution;
       }
@@ -186,7 +186,8 @@ public class TypeInstantiator {
    * @return a substitution instantiating {@code type}'s type parameters to existing types; null if
    *     no such type exists
    */
-  private Substitution selectMatch(ClassOrInterfaceType type, ClassOrInterfaceType patternType) {
+  private Substitution selectSubstitution(
+      ClassOrInterfaceType type, ClassOrInterfaceType patternType) {
     List<InstantiatedType> matches = new ArrayList<>();
     for (Type inputType : inputTypes) {
       if (inputType.isInstantiatedType()
@@ -208,8 +209,8 @@ public class TypeInstantiator {
    * @param type the generic type for which an instantiation is to be found
    * @return a substitution instantiating the given type as an existing type; null if no such type
    */
-  private Substitution selectMatch(ClassOrInterfaceType type) {
-    return selectMatch(type, type);
+  private Substitution selectSubstitution(ClassOrInterfaceType type) {
+    return selectSubstitution(type, type);
   }
 
   /**
@@ -228,7 +229,8 @@ public class TypeInstantiator {
       if (workingType.isGeneric()) {
         if (workingType.isClassOrInterfaceType()) {
           Substitution subst =
-              selectMatch((ParameterizedType) parameterType, (ParameterizedType) workingType);
+              selectSubstitution(
+                  (ParameterizedType) parameterType, (ParameterizedType) workingType);
           if (subst == null) {
             return null;
           }
