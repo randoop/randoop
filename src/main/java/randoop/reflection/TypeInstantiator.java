@@ -111,7 +111,6 @@ public class TypeInstantiator {
     // TODO: we have no guarantee that the first type parameter is the set element type.
     // For example, "class MyClass<A, B> implements SortedSet<B>".
     TypeVariable typeParameter = operation.getDeclaringType().getTypeParameters().get(0);
-    List<TypeVariable> typeParameters = Collections.singletonList(typeParameter);
 
     TypeTuple opInputTypes = operation.getInputTypes();
 
@@ -119,18 +118,18 @@ public class TypeInstantiator {
 
     // This is the default constructor, choose a type E that is Comparable<E>.
     if (opInputTypes.isEmpty()) {
-      return selectSubstitutionForSortedSet(JavaTypes.COMPARABLE_TYPE, typeParameters);
+      return selectSubstitutionForSortedSet(JavaTypes.COMPARABLE_TYPE, typeParameter);
     } else if (opInputTypes.size() == 1) {
       ClassOrInterfaceType inputType = (ClassOrInterfaceType) opInputTypes.get(0);
       if (inputType.isInstantiationOf(JDKTypes.COMPARATOR_TYPE)) {
         // This constructor has Comparator<E> arg, choose type E with Comparator<E>.
-        return selectSubstitutionForSortedSet(JDKTypes.COMPARATOR_TYPE, typeParameters);
+        return selectSubstitutionForSortedSet(JDKTypes.COMPARATOR_TYPE, typeParameter);
       } else if (inputType.isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
         // This constructor has Collection<E> arg, choose type E that is Comparable<E>.
-        return selectSubstitutionForSortedSet(JavaTypes.COMPARABLE_TYPE, typeParameters);
+        return selectSubstitutionForSortedSet(JavaTypes.COMPARABLE_TYPE, typeParameter);
       } else if (inputType.isInstantiationOf(JDKTypes.SORTED_SET_TYPE)) {
         // This constructor has SortedSet<E> arg, choose existing matching type.
-        return selectSubstitutionForSortedSet(JDKTypes.SORTED_SET_TYPE, typeParameters);
+        return selectSubstitutionForSortedSet(JDKTypes.SORTED_SET_TYPE, typeParameter);
       }
     }
 
@@ -138,14 +137,23 @@ public class TypeInstantiator {
     return null;
   }
 
+  /**
+   * Select a substitution for the type parameter of SortedSet.
+   *
+   * @param searchType one of Comparator, Comparable, or SortedSet
+   * @param typeParameter the type parameter to create an instantiation for
+   * @return a substitution for the type parameter of SortedSet
+   */
   private Substitution selectSubstitutionForSortedSet(
-      GenericClassType searchType, List<TypeVariable> typeParameters) {
+      GenericClassType searchType, TypeVariable typeParameter) {
+    // Select a substitution for searchType's formal parameter.
     Substitution substitution = selectSubstitution(searchType);
     if (substitution == null) {
       return null;
     }
+    // Convert it into a substitution for the given type parameter.
     TypeArgument argumentType = searchType.substitute(substitution).getTypeArguments().get(0);
-    return new Substitution(typeParameters, ((ReferenceArgument) argumentType).getReferenceType());
+    return new Substitution(typeParameter, ((ReferenceArgument) argumentType).getReferenceType());
   }
 
   /**
