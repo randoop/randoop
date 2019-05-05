@@ -126,7 +126,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --omitmethods}, and the default omissions.
    */
   @Option("File containing regular expressions for methods to omit")
-  public static Path omitmethods_file = null;
+  public static List<Path> omitmethods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
@@ -202,14 +202,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
    * different executions.
    *
-   * <p>Setting this option to {@code DISCARD} or {@code OUTPUT} should be considered a last resort.
-   * Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
-   * and a better solution is not to call Randoop on such methods; see section <a
+   * <p>{@code OUTPUT} is the default because Randoop now provides term frequency - inverse document
+   * frequency metrics for identifying nondeterministic methods. Flaky tests are usually due to
+   * calling Randoop on side-effecting or nondeterministic methods, and a ultiately, the solution is
+   * not to call Randoop on such methods; see section <a
    * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
    * the Randoop manual.
    */
   @Option("What to do if a flaky test is generated")
-  public static FlakyTestAction flaky_test_behavior = FlakyTestAction.HALT;
+  public static FlakyTestAction flaky_test_behavior = FlakyTestAction.OUTPUT;
 
   /**
    * How many suspected side-effecting or nondeterministic methods (from the program under test) to
@@ -410,28 +411,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File containing observer functions")
   // This file is used to populate RegressionCaptureGenerator.observer_map
   public static Path observers = null;
-
-  ///////////////////////////////////////////////////////////////////
-  /**
-   * File containing user non-multi run deterministic observer methods, each given as a <a
-   * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
-   * signature</a> on a separate line. These methods will not be called when generating tests to
-   * avoid generating flaky tests.
-   */
-  @OptionGroup("nMRD user methods")
-  @Option("File containing user-defined non-MRD functions")
-  public static Path nonMultiRunDeterministicUser = null;
-
-  ///////////////////////////////////////////////////////////////////
-  /**
-   * File containing JDK non-multi run deterministic observer methods, each given as a <a
-   * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
-   * signature</a> on a separate line. These methods will not be called when generating tests to
-   * avoid generating flaky tests.
-   */
-  @OptionGroup("nMRD JDK methods")
-  @Option("File containing MRD functions from the JDK")
-  public static Path nonMultiRunDeterministicJDK = null;
 
   /**
    * Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop

@@ -113,7 +113,6 @@ public class ICSE07ContainersTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(
                 120 /* 2 minutes */, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),
             componentMgr,

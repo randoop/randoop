@@ -80,7 +80,7 @@ The Randoop homepage is
           <li><a href="#not-enough-tests-created">Randoop does not create enough tests, or creates no tests</a></li>
           <li><a href="#nontermination">Randoop does not terminate</a></li>
           <li><a href="#different-output">Randoop produces different output on different runs</a></li>
-          <li><a href="#flaky-tests">Randoop stopped because of a flaky test</a></li>
+          <li><a href="#flaky-tests">Randoop generated flaky tests</a></li>
           <li><a href="#regression-tests-do-not-pass">Randoop produces a regression test suite that does not pass</a></li>
           <li><a href="#dependent-tests">Tests behave differently in isolation or when reordered</a></li>
         </ul></li>
@@ -2103,6 +2103,15 @@ that they differ will help you find the nondeterminism.
 </p>
 
 <p>
+If Randoop produces flaky tests and <a href="#option:flaky-test-behavior"><code>--flaky-test-behavior</code></a> is not set to HALT, Randoop will
+output a list of methods suspected to be the cause of nondeterminism in decreasing order 
+of likelihood.
+You can iteratively exclude nondeterministic methods via <a href="#option:omitmethods"><code>--omitmethods</code></a>
+or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>
+command-line argument and re-run Randoop until flaky tests are not generated.
+</p>
+
+<p>
 The remainder of this section gives several reasons you may discover.
 </p>
 
@@ -2529,7 +2538,7 @@ See the manual section on <a href="#nondeterminism">nondeterminism</a>.
 </p>
 
 
-<h3 id="flaky-tests">Randoop stopped because of a flaky test</h3>
+<h3 id="flaky-tests">Randoop generated flaky tests</h3>
 
 <p>
 A test is <i>flaky</i> if it behaves differently on different executions.

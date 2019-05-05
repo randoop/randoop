@@ -244,7 +244,10 @@ public class GenTests extends GenInputsAbstract {
     Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
     omitFields.addAll(omit_field);
 
-    omitmethods.addAll(readOmitMethods(omitmethods_file));
+    for (Path omitmethodsFile : GenInputsAbstract.omitmethods_file) {
+      omitmethods.addAll(readOmitMethods(omitmethodsFile));
+    }
+
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
       omitmethods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
     }
@@ -359,23 +362,6 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    Set<String> nonMultiRunDeterministicMethodSignatures = new LinkedHashSet<String>();
-    Set<String> nonMultiRunDeterministicUserMethodSignatures =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.nonMultiRunDeterministicUser,
-            "nonMultiRunDeterministicUserMethods",
-            "//.*",
-            null);
-    Set<String> nonMultiRunDeterministicJDKMethodSignatures =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.nonMultiRunDeterministicJDK,
-            "nonMultiRunDeterministicJDKMethods",
-            "//.*",
-            null);
-
-    nonMultiRunDeterministicMethodSignatures.addAll(nonMultiRunDeterministicUserMethodSignatures);
-    nonMultiRunDeterministicMethodSignatures.addAll(nonMultiRunDeterministicJDKMethodSignatures);
-
     MultiMap<Type, TypedOperation> observerMap;
     try {
       observerMap = OperationModel.readOperations(GenInputsAbstract.observers, true);
@@ -389,23 +375,6 @@ public class GenTests extends GenInputsAbstract {
       observers.addAll(observerMap.getValues(keyType));
     }
 
-    // Maps each class type to the observer methods in it.
-    MultiMap<Type, TypedOperation> nonMultiRunDeterministicMethodMap;
-    try {
-      nonMultiRunDeterministicMethodMap =
-          operationModel.getTypedOperationFromFullyQualifiedSignatures(
-              nonMultiRunDeterministicMethodSignatures);
-    } catch (OperationParseException e) {
-      System.out.printf("Parse error while reading nonMultiRunDeterministicMethods: %s%n", e);
-      System.exit(1);
-      throw new Error("dead code");
-    }
-
-    Set<TypedOperation> nonMultiRunDeterministicMethods = new LinkedHashSet<>();
-    for (Type keyType : nonMultiRunDeterministicMethodMap.keySet()) {
-      nonMultiRunDeterministicMethods.addAll(nonMultiRunDeterministicMethodMap.getValues(keyType));
-    }
-
     /*
      * Create the generator for this session.
      */
@@ -413,7 +382,6 @@ public class GenTests extends GenInputsAbstract {
         new ForwardGenerator(
             operations,
             observers,
-            nonMultiRunDeterministicMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
@@ -639,8 +607,8 @@ public class GenTests extends GenInputsAbstract {
     }
 
     System.out.println(
-        "To prevent the generation of flaky tests, see section 'Nondeterministic program");
-    System.out.println("under test' at https://randoop.github.io/randoop/manual/#nondeterminism .");
+        "To prevent the generation of flaky tests, see section 'Randoop generated flaky tests'");
+    System.out.println(" at https://randoop.github.io/randoop/manual/#flaky-tests .");
     System.out.println();
     // TODO cxing: Separate PR: add nmrd-blacklist comment suggestion for
     // user (actionable steps to take to avoid flaky test generation) and edit the manual
