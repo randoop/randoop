@@ -610,10 +610,6 @@ public class GenTests extends GenInputsAbstract {
         "To prevent the generation of flaky tests, see section 'Randoop generated flaky tests'");
     System.out.println(" at https://randoop.github.io/randoop/manual/#flaky-tests .");
     System.out.println();
-    // TODO cxing: Separate PR: add nmrd-blacklist comment suggestion for
-    // user (actionable steps to take to avoid flaky test generation) and edit the manual
-    // accordingly.
-    System.out.println();
   }
 
   /**
