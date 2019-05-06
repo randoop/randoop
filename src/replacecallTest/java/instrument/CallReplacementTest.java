@@ -11,6 +11,7 @@ import org.junit.rules.ExpectedException;
 import randoop.SystemExitCalledError;
 
 /** Tests the replacecall agent. */
+@SuppressWarnings("deprecation")
 public class CallReplacementTest {
 
   @Rule public ExpectedException thrown = ExpectedException.none();

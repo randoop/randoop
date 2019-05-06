@@ -107,7 +107,7 @@ public abstract class ParameterBound {
    * @param substitution the type substitution
    * @return this bound with the type after the substitution has been applied
    */
-  public abstract ParameterBound apply(Substitution substitution);
+  public abstract ParameterBound substitute(Substitution substitution);
 
   /**
    * Applies a capture conversion to any wildcard arguments in the type of this bound.
@@ -206,12 +206,14 @@ public abstract class ParameterBound {
 
   /**
    * Tests whether this is a lower bound on the type of a given bound with respect to a type
-   * substitution.
+   * substitution. The body is approximately:
+   *
+   * <pre>{@code return this.substitute(substitution).isLowerBound(bound.substitute(substitution);}
+   * </pre>
    *
    * @param bound the other bound
    * @param substitution the type substitution
-   * @return true, if this bound is a lower bound on the type of the given bound, and false
-   *     otherwise
+   * @return true iff this bound is a lower bound on the type of the given bound
    */
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
     return false;

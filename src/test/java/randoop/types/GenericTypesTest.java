@@ -26,7 +26,7 @@ public class GenericTypesTest {
 
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
     Substitution subst =
-        Substitution.forArgs(a1.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+        new Substitution(a1.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     assertTrue("String satisfies bound", b1.isUpperBound(JavaTypes.STRING_TYPE, subst));
 
     Class<?> c2 = Variable2.class;
@@ -54,10 +54,10 @@ public class GenericTypesTest {
     Substitution substitution;
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
     ReferenceType candidateType = new NonParameterizedType(Integer.class);
-    substitution = Substitution.forArgs(a1.getTypeParameters(), candidateType);
+    substitution = new Substitution(a1.getTypeParameters(), candidateType);
     assertTrue("Integer satisfies bound Number", b1.isUpperBound(candidateType, substitution));
     candidateType = JavaTypes.STRING_TYPE;
-    substitution = Substitution.forArgs(a1.getTypeParameters(), candidateType);
+    substitution = new Substitution(a1.getTypeParameters(), candidateType);
     assertFalse(
         "String does not satisfy bound Number", b1.isUpperBound(candidateType, substitution));
 
@@ -69,19 +69,19 @@ public class GenericTypesTest {
     candidateType =
         GenericClassType.forClass(Comparable.class)
             .instantiate(new NonParameterizedType(Integer.class));
-    substitution = Substitution.forArgs(a2.getTypeParameters(), candidateType);
+    substitution = new Substitution(a2.getTypeParameters(), candidateType);
     assertTrue(
         "Comparable<Integer> satisfies bound Comparable<Integer>",
         b2.isUpperBound(candidateType, substitution));
 
     candidateType = new NonParameterizedType(Integer.class);
-    substitution = Substitution.forArgs(a2.getTypeParameters(), candidateType);
+    substitution = new Substitution(a2.getTypeParameters(), candidateType);
     assertTrue(
         "Integer satisfies bound Comparable<Integer>",
         b2.isUpperBound(candidateType, substitution));
 
     candidateType = new NonParameterizedType(String.class);
-    substitution = Substitution.forArgs(a2.getTypeParameters(), candidateType);
+    substitution = new Substitution(a2.getTypeParameters(), candidateType);
     assertFalse(
         "String does not satisfy bound Comparable<Integer>",
         b2.isUpperBound(new NonParameterizedType(String.class), substitution));

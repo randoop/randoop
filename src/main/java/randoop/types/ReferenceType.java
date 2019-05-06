@@ -80,7 +80,7 @@ public abstract class ReferenceType extends Type {
    * @return the type created by applying the substitution to this type
    */
   @Override
-  public abstract ReferenceType apply(Substitution substitution);
+  public abstract ReferenceType substitute(Substitution substitution);
 
   @Override
   public ReferenceType applyCaptureConversion() {
@@ -164,7 +164,7 @@ public abstract class ReferenceType extends Type {
     if (otherType.isVariable()) {
       TypeVariable variable = (TypeVariable) otherType;
       List<TypeVariable> typeParameters = Collections.singletonList(variable);
-      Substitution substitution = Substitution.forArgs(typeParameters, this);
+      Substitution substitution = new Substitution(typeParameters, this);
       if (variable.getLowerTypeBound().isLowerBound(this, substitution)
           && variable.getUpperTypeBound().isUpperBound(this, substitution)) {
         return substitution;
