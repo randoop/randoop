@@ -198,7 +198,7 @@ public class TypeInstantiator {
       ClassOrInterfaceType type, ClassOrInterfaceType patternType) {
     List<InstantiatedType> matches = new ArrayList<>();
     for (Type inputType : inputTypes) {
-      if (inputType.isInstantiatedType()
+      if (inputType.isParameterized()
           && ((InstantiatedType) inputType).isInstantiationOf(patternType)) {
         matches.add((InstantiatedType) inputType);
       }

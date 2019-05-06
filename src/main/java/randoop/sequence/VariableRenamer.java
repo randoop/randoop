@@ -102,7 +102,7 @@ class VariableRenamer {
       return "anonymous";
     }
 
-    if (type.isInstantiatedType()) {
+    if (type.isParameterized()) {
       Class<?> typeClass = type.getRuntimeClass();
 
       // Special cases for parameterized types.

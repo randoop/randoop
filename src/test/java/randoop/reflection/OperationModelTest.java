@@ -277,7 +277,7 @@ public class OperationModelTest {
         assertTrue(
             "is member class: " + operation.getOutputType(),
             ((ClassOrInterfaceType) operation.getOutputType()).isMemberClass());
-        assertFalse("is not parameterized", operation.getOutputType().isInstantiatedType());
+        assertFalse("is not parameterized", operation.getOutputType().isParameterized());
         assertTrue("is generic", operation.getOutputType().isGeneric());
       }
     }

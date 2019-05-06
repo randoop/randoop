@@ -186,7 +186,7 @@ public class ArrayType extends ReferenceType {
       return true;
     }
 
-    if (otherType.isArray() && this.componentType.isInstantiatedType()) {
+    if (otherType.isArray() && this.componentType.isParameterized()) {
       Type otherElementType = ((ArrayType) otherType).componentType;
       return otherElementType.isRawtype()
           && otherElementType.runtimeClassIs(this.componentType.getRuntimeClass());
@@ -254,7 +254,7 @@ public class ArrayType extends ReferenceType {
    * @return true if the element type is parameterized; false otherwise
    */
   public boolean hasParameterizedElementType() {
-    return getElementType().isInstantiatedType();
+    return getElementType().isParameterized();
   }
 
   /**
