@@ -204,7 +204,7 @@ public class TypeInstantiator {
     List<ReferenceType> matches = new ArrayList<>();
     for (Type inputType : inputTypes) {
       Log.logPrintf(
-          "inputType = %s [%s] isInstantiatedType=%s, patternType=%s %n",
+          "inputType = %s [%s] isInstantiatedType=%s, patternType=%s%n",
           inputType, inputType.getClass(), inputType.isInstantiatedType(), patternType);
       // if inputType.isInstantiatedType returns true, there are two possibilities:
       //  * inputType instanceof InstantiatedType
