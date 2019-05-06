@@ -11,7 +11,6 @@ import randoop.operation.TypedClassOperation;
 import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
-import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
@@ -201,17 +200,24 @@ public class TypeInstantiator {
    */
   private Substitution selectSubstitution(
       ClassOrInterfaceType type, ClassOrInterfaceType patternType) {
-    List<InstantiatedType> matches = new ArrayList<>();
+    Log.logPrintf("selectSubstitution(%s, %s)%n", type, patternType);
+    List<ReferenceType> matches = new ArrayList<>();
     for (Type inputType : inputTypes) {
+      Log.logPrintf(
+          "inputType = %s [%s] isInstantiatedType=%s, patternType=%s %n",
+          inputType, inputType.getClass(), inputType.isInstantiatedType(), patternType);
+      // if inputType.isInstantiatedType returns true, there are two possibilities:
+      //  * inputType instanceof InstantiatedType
+      //  * inputType is a member class and the enclosing type is an instantiated type
       if (inputType.isInstantiatedType()
-          && ((InstantiatedType) inputType).isInstantiationOf(patternType)) {
-        matches.add((InstantiatedType) inputType);
+          && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
+        matches.add((ReferenceType) inputType);
       }
     }
     if (matches.isEmpty()) {
       return null;
     }
-    InstantiatedType selectedType = Randomness.randomSetMember(matches);
+    ReferenceType selectedType = Randomness.randomSetMember(matches);
     return selectedType.getInstantiatingSubstitution(type);
   }
 

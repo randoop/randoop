@@ -157,7 +157,7 @@ public abstract class ReferenceType extends Type {
     return false;
   }
 
-  Substitution getInstantiatingSubstitution(ReferenceType otherType) {
+  public Substitution getInstantiatingSubstitution(ReferenceType otherType) {
     if (this.equals(otherType)) {
       return new Substitution();
     }
