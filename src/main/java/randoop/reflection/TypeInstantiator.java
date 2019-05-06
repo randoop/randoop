@@ -195,15 +195,8 @@ public class TypeInstantiator {
    */
   private Substitution selectSubstitution(
       ClassOrInterfaceType type, ClassOrInterfaceType patternType) {
-    Log.logPrintf("selectSubstitution(%s, %s)%n", type, patternType);
     List<ReferenceType> matches = new ArrayList<>();
     for (Type inputType : inputTypes) {
-      Log.logPrintf(
-          "inputType = %s [%s] isParameterized=%s, patternType=%s%n",
-          inputType, inputType.getClass(), inputType.isParameterized(), patternType);
-      // if inputType.isParameterized returns true, there are two possibilities:
-      //  * inputType instanceof InstantiatedType
-      //  * inputType is a member class and the enclosing type is an instantiated type
       if (inputType.isParameterized()
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
         matches.add((ReferenceType) inputType);
