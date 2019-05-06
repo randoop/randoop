@@ -91,7 +91,7 @@ class TypeExtractor extends DefaultClassVisitor {
   private void addIfConcrete(Type type) {
     if (!type.isVoid()
         && !type.isGeneric()
-        && !(type.isInstantiatedType() && ((ParameterizedType) type).hasWildcard())) {
+        && !(type.isParameterized() && ((ParameterizedType) type).hasWildcard())) {
       if (!predicate.isVisible(type.getRuntimeClass())) {
         return;
       }

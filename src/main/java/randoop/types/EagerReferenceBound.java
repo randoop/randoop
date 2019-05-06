@@ -49,7 +49,7 @@ class EagerReferenceBound extends ReferenceBound {
     if (boundType.isVariable()) {
       return ((TypeVariable) boundType).getLowerTypeBound().isLowerBound(argType, subst);
     }
-    if (argType.isInstantiatedType()) {
+    if (argType.isParameterized()) {
       if (!(boundType instanceof ClassOrInterfaceType)) {
         return false;
       }
@@ -90,7 +90,7 @@ class EagerReferenceBound extends ReferenceBound {
     if (boundType.isVariable()) {
       return ((TypeVariable) boundType).getUpperTypeBound().isUpperBound(argType, subst);
     }
-    if (boundType.isInstantiatedType()) {
+    if (boundType.isParameterized()) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }

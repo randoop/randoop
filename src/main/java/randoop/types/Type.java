@@ -349,7 +349,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return true if this type is a parameterized type, false otherwise
    */
-  public boolean isInstantiatedType() {
+  public boolean isParameterized() {
     return false;
   }
 

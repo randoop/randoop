@@ -204,12 +204,12 @@ public class TypeInstantiator {
     List<ReferenceType> matches = new ArrayList<>();
     for (Type inputType : inputTypes) {
       Log.logPrintf(
-          "inputType = %s [%s] isInstantiatedType=%s, patternType=%s%n",
-          inputType, inputType.getClass(), inputType.isInstantiatedType(), patternType);
-      // if inputType.isInstantiatedType returns true, there are two possibilities:
+          "inputType = %s [%s] isParameterized=%s, patternType=%s%n",
+          inputType, inputType.getClass(), inputType.isParameterized(), patternType);
+      // if inputType.isParameterized returns true, there are two possibilities:
       //  * inputType instanceof InstantiatedType
       //  * inputType is a member class and the enclosing type is an instantiated type
-      if (inputType.isInstantiatedType()
+      if (inputType.isParameterized()
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
         matches.add((ReferenceType) inputType);
       }
