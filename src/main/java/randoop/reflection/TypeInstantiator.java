@@ -45,6 +45,12 @@ public class TypeInstantiator {
     this.inputTypes = inputTypes;
   }
 
+  /**
+   * Instantiate the given operation by choosing type arguments for its type parameters.
+   *
+   * @param operation the generic operation to instantiate
+   * @return an instantiated version of the operation
+   */
   public TypedClassOperation instantiate(TypedClassOperation operation) {
     assert operation.isGeneric() || operation.hasWildcardTypes()
         : "operation " + operation + " must be generic or have wildcards";
