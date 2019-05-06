@@ -255,7 +255,6 @@ public class SequenceCollection {
    * created, and never called again.
    */
   public TypeInstantiator getTypeInstantiator() {
-    System.out.printf("SequenceCollection.getTypeInstantiator was called.%n");
     return new TypeInstantiator(typesAndSupertypes);
   }
 

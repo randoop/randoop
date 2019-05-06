@@ -100,7 +100,6 @@ public class ForwardGenerator extends AbstractGenerator {
 
     this.observers = observers;
     this.allSequences = new LinkedHashSet<>();
-    System.out.printf("In ForwardGenerator constructor.%n");
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();

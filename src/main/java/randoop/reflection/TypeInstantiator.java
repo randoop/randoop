@@ -31,8 +31,6 @@ public class TypeInstantiator {
   /**
    * The set of input types for this model. The input types need to be closed on supertypes: if a
    * type is in the input types, then so are all of its supertypes.
-   *
-   * <p>Is side-effected throughout Randoop execution to add more types, I believe???
    */
   private final Set<Type> inputTypes;
 
@@ -44,9 +42,6 @@ public class TypeInstantiator {
    */
   public TypeInstantiator(Set<Type> inputTypes) {
     this.inputTypes = inputTypes;
-    for (Type t : inputTypes) {
-      assert t != null;
-    }
   }
 
   public TypedClassOperation instantiate(TypedClassOperation operation) {
@@ -498,7 +493,6 @@ public class TypeInstantiator {
    * @return the list of candidate types to include in tested tuples
    */
   private List<ReferenceType> allCandidates(TypeVariable argument) {
-    assert argument != null;
     ParameterBound lowerBound = selectLowerBound(argument);
     ParameterBound upperBound = selectUpperBound(argument);
 
