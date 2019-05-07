@@ -157,12 +157,12 @@ public abstract class ReferenceType extends Type {
     return false;
   }
 
-  Substitution getInstantiatingSubstitution(ReferenceType otherType) {
-    if (this.equals(otherType)) {
+  Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+    if (this.equals(goalType)) {
       return new Substitution();
     }
-    if (otherType.isVariable()) {
-      TypeVariable variable = (TypeVariable) otherType;
+    if (goalType.isVariable()) {
+      TypeVariable variable = (TypeVariable) goalType;
       List<TypeVariable> typeParameters = Collections.singletonList(variable);
       Substitution substitution = new Substitution(typeParameters, this);
       if (variable.getLowerTypeBound().isLowerBound(this, substitution)
