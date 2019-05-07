@@ -76,6 +76,7 @@ public class ReplacementFileReader {
    * @param replacementFile the file with method substitutions
    * @return the method replacement map constructed from the file
    * @throws IOException if there is an error reading the file
+   * @throws ReplacementFileException if there is an error in the replacement file
    * @see #readReplacements(Reader, String)
    */
   static HashMap<MethodSignature, MethodSignature> readReplacements(Path replacementFile)
@@ -95,6 +96,7 @@ public class ReplacementFileReader {
    * @param filename the name of the file read by {@code in}, used for error reporting
    * @return the method replacement map constructed from the file
    * @throws IOException if there is an error while reading the file
+   * @throws ReplacementFileException if there is an error in the replacement file
    */
   static HashMap<MethodSignature, MethodSignature> readReplacements(Reader in, String filename)
       throws ReplacementFileException, IOException {
@@ -155,6 +157,8 @@ public class ReplacementFileReader {
    * @param replacementSignature the signature of the replacement method
    * @throws ReplacementException if either replacement signature is badly-formed, the replacement
    *     class is not found, or the method does not exist
+   * @throws NoSuchMethodException if no method corresponding to the replacement is found
+   * @throws ClassNotFoundException if no class corresponding to the replacement is found
    */
   private static void addMethodReplacement(
       HashMap<MethodSignature, MethodSignature> replacementMap,
@@ -192,7 +196,6 @@ public class ReplacementFileReader {
    * @param replacementMap the map from an original signature to a replacement signature
    * @param original the original signature
    * @param replacement the replacement method signature
-   * @return true if the replacement was added, false otherwise
    * @throws ReplacementException if a replacement already exists for {@code original}
    */
   private static void addReplacement(
@@ -230,6 +233,8 @@ public class ReplacementFileReader {
    * @param replacement the replacement package or class name
    * @throws ReplacementException if the replacement does not correspond to a package or class on
    *     the classpath
+   * @throws IOException if there is an error while reading the file
+   * @throws ClassNotFoundException if no class corresponding to the replacement is found
    */
   private static void addReplacementsForClassOrPackage(
       HashMap<MethodSignature, MethodSignature> replacementMap, String original, String replacement)
@@ -337,6 +342,7 @@ public class ReplacementFileReader {
    * @param originalPackage the original package name
    * @param replacementPackage the replacement package name
    * @throws ReplacementException if no package corresponding to the replacement is found
+   * @throws ClassNotFoundException if no class corresponding to the replacement is found
    * @see #addReplacementsForClassOrPackage(HashMap, String, String)
    */
   private static void addReplacementsForPackage(
@@ -393,6 +399,7 @@ public class ReplacementFileReader {
    * @param loader the {@code ClassLoader}
    * @throws IOException if no package corresponding to replacement is found
    * @throws ReplacementException if no replacements are found in the replacement package
+   * @throws ClassNotFoundException if no class corresponding to the replacement is found
    * @see #addReplacementsForClassOrPackage(HashMap, String, String)
    */
   private static void addReplacementsForPackage(
@@ -489,6 +496,8 @@ public class ReplacementFileReader {
    * @param originalPackage the original package name
    * @param replacementPackage the replacement package name
    * @param jarFile the jar file to search
+   * @throws ReplacementException if no replacements are found in the replacement package
+   * @throws ClassNotFoundException if no class corresponding to the replacement is found
    * @see #addReplacementsForPackage(HashMap, String, String)
    * @see #addReplacementsForPackage(HashMap, String, String, ClassLoader)
    */
@@ -521,6 +530,7 @@ public class ReplacementFileReader {
    * @param originalClassname the name of the original class
    * @param replacementClassname the name of the replacement class
    * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
+   * @throws ReplacementException if no replacements are found in the replacement package
    */
   private static void addReplacementsForClass(
       HashMap<MethodSignature, MethodSignature> replacementMap,
