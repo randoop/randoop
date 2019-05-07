@@ -109,6 +109,9 @@ public class SequenceCompiler {
     JavaCompiler.CompilationTask task =
         compiler.getTask(null, fileManager, diagnostics, options, null, sources);
     Boolean succeeded = task.call();
+    if (!diagnostics.getDiagnostics().isEmpty()) {
+      System.out.println(diagnostics.getDiagnostics());
+    }
     return (succeeded != null && succeeded);
   }
 
