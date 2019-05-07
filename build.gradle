@@ -38,6 +38,7 @@ allprojects {
 
   apply plugin: 'java'
   apply plugin: 'com.github.johnrengelman.shadow'
+  apply plugin: 'checkstyle'
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -696,6 +697,14 @@ task clonePlumeScripts {
   }
 }
 
+task checkstyle(type: Checkstyle) {
+  configFile = rootProject.file('checkstyle.xml')
+  source sourceSets.main.allJava
+
+  // empty classpath
+  classpath = files()
+}
+
 /*
  * Set destination directory to build/docs/api, and restrict to classes in
  * main sourceSet.
@@ -728,7 +737,7 @@ tasks.withType(Javadoc) {
     // work. See https://github.com/gradle/gradle/issues/2354
     // See JDK-8200363 (https://bugs.openjdk.java.net/browse/JDK-8200363)
     // for information about the -Xwerror option.
-    options.addStringOption('Xwerror', '-verbose')
+    options.addStringOption('Xwerror', '-quiet')
 }
 
 configurations {
