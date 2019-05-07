@@ -262,6 +262,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   @Override
   public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+    {
+      Substitution superResult =
+          ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+      if (superResult != null) {
+        return superResult;
+      }
+    }
+
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution substitution = new Substitution();

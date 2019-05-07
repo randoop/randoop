@@ -1,7 +1,6 @@
 package randoop.types;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -168,15 +167,28 @@ public abstract class ReferenceType extends Type {
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
   public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
-    if (this.equals(goalType)) {
+    return ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+  }
+
+  /**
+   * Static helper method that does the work of getInstantiatingSubstitution, if goalType is a type
+   * variable.
+   *
+   * @param instantiatedType the first type
+   * @param goalType the generic type for which a substitution is needed
+   * @return a substitution unifying this first type or a supertype of the first type with the goal
+   *     type
+   */
+  public static Substitution getInstantiatingSubstitutionforTypeVariable(
+      ReferenceType instantiatedType, ReferenceType goalType) {
+    if (instantiatedType.equals(goalType)) {
       return new Substitution();
     }
     if (goalType.isVariable()) {
       TypeVariable variable = (TypeVariable) goalType;
-      List<TypeVariable> typeParameters = Collections.singletonList(variable);
-      Substitution substitution = new Substitution(typeParameters, this);
-      if (variable.getLowerTypeBound().isLowerBound(this, substitution)
-          && variable.getUpperTypeBound().isUpperBound(this, substitution)) {
+      Substitution substitution = new Substitution(variable, instantiatedType);
+      if (variable.getLowerTypeBound().isLowerBound(instantiatedType, substitution)
+          && variable.getUpperTypeBound().isUpperBound(instantiatedType, substitution)) {
         return substitution;
       }
     }
