@@ -38,6 +38,7 @@ allprojects {
 
   apply plugin: 'java'
   apply plugin: 'com.github.johnrengelman.shadow'
+  apply plugin: 'checkstyle'
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -691,6 +692,23 @@ task clonePlumeScripts {
       }
     }
   }
+}
+
+checkstyle {
+  configFile = rootProject.file('checkstyle.xml')
+}
+
+// The test cases are allowed to have javadoc comment errors.
+checkstyleSystemTest.enabled = false
+checkstyleTest.enabled = false
+checkstyleTestInput.enabled = false
+
+task checkstyle(type: Checkstyle) {
+  configFile = rootProject.file('checkstyle.xml')
+  source sourceSets.main.allJava
+
+  // empty classpath
+  classpath = files()
 }
 
 /*
