@@ -333,10 +333,9 @@ public class InstantiatedType extends ParameterizedType {
       InstantiatedType otherInstType = (InstantiatedType) goalType;
       if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
         for (int i = 0; i < this.argumentList.size(); i++) {
-          Substitution subst =
-              this.argumentList
-                  .get(i)
-                  .getInstantiatingSubstitution(otherInstType.argumentList.get(i));
+          TypeArgument thisTArg = this.argumentList.get(i);
+          TypeArgument otherTArg = otherInstType.argumentList.get(i);
+          Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
           if (subst == null) {
             return null;
           }
