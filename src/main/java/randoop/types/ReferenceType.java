@@ -157,6 +157,16 @@ public abstract class ReferenceType extends Type {
     return false;
   }
 
+  /**
+   * Computes a substitution that can be applied to the type variables of the generic goal type to
+   * instantiate operations of this type, possibly inherited from from the goal type. The
+   * substitution will unify this type or a supertype of this type with the given goal type.
+   *
+   * <p>If there is no unifying substitution, returns {@code null}.
+   *
+   * @param otherType the generic type for which a substitution is needed
+   * @return a substitution unifying this type or a supertype of this type with the goal type
+   */
   public Substitution getInstantiatingSubstitution(ReferenceType otherType) {
     if (this.equals(otherType)) {
       return new Substitution();
