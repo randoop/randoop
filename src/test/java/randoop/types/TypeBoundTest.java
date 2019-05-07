@@ -192,8 +192,7 @@ public class TypeBoundTest {
   private boolean checkBound(TypeVariable typeParameter, ReferenceType candidateType) {
     ParameterBound lowerBound = typeParameter.getLowerTypeBound();
     ParameterBound upperBound = typeParameter.getUpperTypeBound();
-    List<TypeVariable> typeParameters = Collections.singletonList(typeParameter);
-    Substitution substitution = new Substitution(typeParameters, candidateType);
+    Substitution substitution = new Substitution(typeParameter, candidateType);
     return lowerBound.isLowerBound(candidateType, substitution)
         && upperBound.isUpperBound(candidateType, substitution);
   }
