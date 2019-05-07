@@ -264,41 +264,24 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
     assert goalType.isGeneric() : "goal type must be generic";
 
-    // System.out.printf("ClassOrInterfaceType.getInstantiatingSubstitution(%s)%n", goalType);
-
     Substitution substitution = new Substitution();
     if (this.isMemberClass() && !this.isStatic()) {
       substitution = enclosingType.getInstantiatingSubstitution(goalType);
       if (substitution == null) {
-        // System.out.printf("ClassOrInterfaceType.getInstantiatingSubstitution => null (1)%n");
         return null;
       }
     }
-
-    // System.out.printf(
-    //     "ClassOrInterfaceType.getInstantiatingSubstitution: substitution (1) = %s%n",
-    // substitution);
 
     if (goalType instanceof GenericClassType) {
       InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();
-        // System.out.printf(
-        //     "ClassOrInterfaceType.getInstantiatingSubstitution: supertypeSubstitution (2) =
-        // %s%n",
-        //     supertypeSubstitution);
         if (supertypeSubstitution == null) {
-          // System.out.printf("ClassOrInterfaceType.getInstantiatingSubstitution => null (2)%n");
           return null;
         }
         substitution = substitution.extend(supertypeSubstitution);
-        // System.out.printf(
-        //     "ClassOrInterfaceType.getInstantiatingSubstitution: substitution (2) = %s%n",
-        //     substitution);
       }
     }
-    // System.out.printf("ClassOrInterfaceType.getInstantiatingSubstitution => %s%n", substitution);
-
     return substitution;
   }
 
@@ -417,9 +400,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public boolean isSubtypeOf(Type otherType) {
     if (debug) {
-      // System.out.printf(
-      //     "isSubtypeOf(%s, %s) [%s, %s]%n", this, otherType, this.getClass(),
-      // otherType.getClass());
+      System.out.printf(
+          "isSubtypeOf(%s, %s) [%s, %s]%n", this, otherType, this.getClass(), otherType.getClass());
     }
 
     // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
