@@ -117,8 +117,8 @@ public class TypeInstantiator {
 
     // There are four constructors in the SortedSet interface.
 
-    // This is the default constructor, choose a type E that is Comparable<E>.
     if (opInputTypes.isEmpty()) {
+      // This is the default constructor, choose a type E that is Comparable<E>.
       return selectSubstitutionForSortedSet(JavaTypes.COMPARABLE_TYPE, typeParameter);
     } else if (opInputTypes.size() == 1) {
       ClassOrInterfaceType inputType = (ClassOrInterfaceType) opInputTypes.get(0);

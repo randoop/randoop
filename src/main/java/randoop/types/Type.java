@@ -347,6 +347,10 @@ public abstract class Type implements Comparable<Type> {
    * Indicate whether this type is a parameterized type. A <i>parameterized type</i> is a type
    * {@code C<T1,...,Tk>} that instantiates a generic class {@code C<F1,...,Fk>}.
    *
+   * <p>If inputType.isParameterized returns true, there are two possibilities: {@code inputType
+   * instanceof InstantiatedType}, or inputType is a member class and the enclosing type is a
+   * parameterized type
+   *
    * @return true if this type is a parameterized type, false otherwise
    */
   public boolean isParameterized() {
