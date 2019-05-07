@@ -164,15 +164,15 @@ public abstract class ReferenceType extends Type {
    *
    * <p>If there is no unifying substitution, returns {@code null}.
    *
-   * @param otherType the generic type for which a substitution is needed
+   * @param goalType the generic type for which a substitution is needed
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
-  public Substitution getInstantiatingSubstitution(ReferenceType otherType) {
-    if (this.equals(otherType)) {
+  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+    if (this.equals(goalType)) {
       return new Substitution();
     }
-    if (otherType.isVariable()) {
-      TypeVariable variable = (TypeVariable) otherType;
+    if (goalType.isVariable()) {
+      TypeVariable variable = (TypeVariable) goalType;
       List<TypeVariable> typeParameters = Collections.singletonList(variable);
       Substitution substitution = new Substitution(typeParameters, this);
       if (variable.getLowerTypeBound().isLowerBound(this, substitution)
