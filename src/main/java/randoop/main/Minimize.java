@@ -1,16 +1,21 @@
 package randoop.main;
 
+import static com.github.javaparser.utils.PositionUtils.sortByBeginPosition;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
@@ -22,7 +27,9 @@ import com.github.javaparser.ast.expr.LongLiteralExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.NullLiteralExpr;
+import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
@@ -44,9 +51,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
@@ -127,6 +136,10 @@ public class Minimize extends CommandHandler {
   @Option("Verbose, flag for verbose output")
   public static boolean verboseminimizer = false;
 
+  /** An instance of a Java parser. */
+  private static final JavaParser javaParser = new JavaParser();
+
+  /** Create the handler for Randoop's {@code minimize} command. */
   Minimize() {
     super(
         "minimize",
@@ -274,11 +287,16 @@ public class Minimize extends CommandHandler {
     // Read and parse input Java file.
     CompilationUnit compilationUnit;
     try (FileInputStream inputStream = new FileInputStream(file.toFile())) {
-      compilationUnit = JavaParser.parse(inputStream);
-    } catch (ParseException e) {
-      System.err.println("Error parsing Java file: " + file);
-      e.printStackTrace();
-      return false;
+      ParseResult<CompilationUnit> parseCompilationUnit = javaParser.parse(inputStream);
+      if (parseCompilationUnit.isSuccessful()) {
+        compilationUnit = parseCompilationUnit.getResult().get();
+      } else {
+        System.err.println("Error parsing Java file: " + file);
+        for (Problem problem : parseCompilationUnit.getProblems()) {
+          System.out.println(problem);
+        }
+        return false;
+      }
     } catch (IOException e) {
       System.err.println("Error reading Java file: " + file);
       e.printStackTrace();
@@ -292,8 +310,12 @@ public class Minimize extends CommandHandler {
     // Find the package name of the input file if it has one.
     String packageName;
     try {
-      PackageDeclaration classPackage = compilationUnit.getPackage();
-      packageName = (classPackage == null) ? null : classPackage.getPackageName();
+      Optional<PackageDeclaration> oClassPackage = compilationUnit.getPackageDeclaration();
+      if (oClassPackage.isPresent()) {
+        packageName = oClassPackage.get().getName().toString();
+      } else {
+        packageName = null;
+      }
     } catch (NoSuchElementException e) {
       packageName = null;
       // No package declaration.
@@ -368,8 +390,8 @@ public class Minimize extends CommandHandler {
     int numberOfTestMethods = getNumberOfTestMethods(compilationUnit);
     int numberOfMinimizedTests = 0;
 
-    for (TypeDeclaration type : compilationUnit.getTypes()) {
-      for (BodyDeclaration member : type.getMembers()) {
+    for (TypeDeclaration<?> type : compilationUnit.getTypes()) {
+      for (BodyDeclaration<?> member : type.getMembers()) {
         if (member instanceof MethodDeclaration) {
           MethodDeclaration method = (MethodDeclaration) member;
 
@@ -430,7 +452,12 @@ public class Minimize extends CommandHandler {
       Map<String, String> expectedOutput,
       int timeoutLimit)
       throws IOException {
-    List<Statement> statements = method.getBody().getStmts();
+    Optional<BlockStmt> oBlockStmt = method.getBody();
+    if (!oBlockStmt.isPresent()) {
+      return;
+    }
+    BlockStmt body = oBlockStmt.get();
+    List<Statement> statements = body.getStatements();
 
     // Map from primitive variable name to the variable's value extracted
     // from a passing assertion.
@@ -443,18 +470,21 @@ public class Minimize extends CommandHandler {
     // Iterate through the list of statements, from last to first.
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
+      List<Comment> orphanComments = new ArrayList<>(1);
+      getOrphanCommentsBeforeThisChildNode(currStmt, orphanComments);
+      Node parent = currStmt.getParentNode().get();
 
-      // Remove the current statement. We will re-insert simplifications
-      // of it.
+      // Remove the current statement. We will re-insert simplifications of it.
       statements.remove(i);
 
       // Obtain a list of possible replacements for the current statement.
       List<Statement> replacements = getStatementReplacements(currStmt, primitiveValues);
       boolean replacementFound = false;
+      boolean replacementIsNull = false;
+
       for (Statement stmt : replacements) {
         // Add replacement statement to the method's body.
-        // If stmt is null, don't add anything since null represents
-        // removal of the statement.
+        // If stmt is null, don't add anything since null represents removal of the statement.
         if (stmt != null) {
           statements.add(i, stmt);
         }
@@ -465,6 +495,7 @@ public class Minimize extends CommandHandler {
           // No compilation or runtime issues, obtained output is the same as the expected output.
           // Use simplification of this statement and continue with next statement.
           replacementFound = true;
+          replacementIsNull = (stmt == null);
 
           // Assertions are never simplified, only removed. If currStmt is an assertion, then stmt
           // is null.
@@ -482,6 +513,10 @@ public class Minimize extends CommandHandler {
         // No correct simplification found. Add back the original statement to the list of
         // statements.
         statements.add(i, currStmt);
+      } else if (replacementIsNull) {
+        for (Comment oc : orphanComments) {
+          parent.removeOrphanComment(oc);
+        }
       }
     }
   }
@@ -507,8 +542,8 @@ public class Minimize extends CommandHandler {
       if (exp instanceof MethodCallExpr) {
         MethodCallExpr mCall = (MethodCallExpr) exp;
         // Check that the method call is an assertTrue statement.
-        if (mCall.getName().equals("assertTrue")) {
-          List<Expression> mArgs = mCall.getArgs();
+        if (mCall.getName().toString().equals("assertTrue")) {
+          List<Expression> mArgs = mCall.getArguments();
           // The condition expression from the assert statement.
           Expression mExp;
           if (mArgs.size() == 1) {
@@ -523,7 +558,7 @@ public class Minimize extends CommandHandler {
           if (mExp instanceof BinaryExpr) {
             BinaryExpr binaryExp = (BinaryExpr) mExp;
             // Check that the operator is an equality operator.
-            if (binaryExp.getOperator().equals(BinaryExpr.Operator.equals)) {
+            if (binaryExp.getOperator().equals(BinaryExpr.Operator.EQUALS)) {
               // Retrieve and store the value associated with the variable in the assertion.
               Expression leftExpr = binaryExp.getLeft();
               Expression rightExpr = binaryExp.getRight();
@@ -539,7 +574,7 @@ public class Minimize extends CommandHandler {
               if (leftExpr instanceof NameExpr && rightExpr instanceof LiteralExpr) {
                 NameExpr nameExpr = (NameExpr) leftExpr;
                 // Check that the variable is a primitive or wrapped type.
-                if (primitiveAndWrappedTypeVars.contains(nameExpr.getName())) {
+                if (primitiveAndWrappedTypeVars.contains(nameExpr.getName().toString())) {
                   String var = binaryExp.getLeft().toString();
                   String val = binaryExp.getRight().toString();
                   primitiveValues.put(var, val);
@@ -614,12 +649,12 @@ public class Minimize extends CommandHandler {
   private static List<Statement> rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
     List<Statement> resultList = new ArrayList<>();
 
-    if (vdExpr.getVars().size() != 1) {
+    if (vdExpr.getVariables().size() != 1) {
       // Number of variables declared in this expression is not 1.
       return resultList;
     }
 
-    Type type = vdExpr.getType();
+    Type type = vdExpr.getVariables().get(0).getType();
     if (type instanceof PrimitiveType) {
       // Replacement with zero value on the right hand side.
       resultList.add(rhsAssignWithValue(vdExpr, type, null));
@@ -628,8 +663,8 @@ public class Minimize extends CommandHandler {
       resultList.add(rhsAssignWithValue(vdExpr, type, null));
 
       ReferenceType rType = (ReferenceType) type;
-      if (rType.getType() instanceof ClassOrInterfaceType) {
-        ClassOrInterfaceType classType = (ClassOrInterfaceType) rType.getType();
+      if (rType instanceof ClassOrInterfaceType) {
+        ClassOrInterfaceType classType = (ClassOrInterfaceType) rType;
         // Check if the type is a boxed primitive type.
         if (classType.isBoxedType()) {
           // Replacement with zero value on the right hand side.
@@ -656,17 +691,18 @@ public class Minimize extends CommandHandler {
    */
   private static Statement rhsAssignValueFromPassingAssertion(
       VariableDeclarationExpr vdExpr, Map<String, String> primitiveValues) {
-    if (vdExpr.getVars().size() != 1) {
+    if (vdExpr.getVariables().size() != 1) {
       // Number of variables declared in this expression is not one.
       return null;
     }
+    VariableDeclarator vDecl = vdExpr.getVariables().get(0);
     // Get the name of the variable being declared.
-    String varName = vdExpr.getVars().get(0).getId().getName();
+    String varName = vDecl.getName().toString();
 
     // Check if the map contains a value found from a passing assertion.
     if (primitiveValues.containsKey(varName)) {
       String value = primitiveValues.get(varName);
-      return rhsAssignWithValue(vdExpr, vdExpr.getType(), value);
+      return rhsAssignWithValue(vdExpr, vDecl.getType(), value);
     } else {
       // The map does not contain a value for this variable.
       return null;
@@ -687,25 +723,25 @@ public class Minimize extends CommandHandler {
    */
   private static Statement rhsAssignWithValue(
       VariableDeclarationExpr vdExpr, Type exprType, String value) {
-    if (vdExpr.getVars().size() != 1) {
+    if (vdExpr.getVariables().size() != 1) {
       // Number of variables declared in this expression is not 1.
       return null;
     }
 
     // Create the resulting expression, a copy of the original expression
     // which will be modified and returned.
-    VariableDeclarationExpr resultExpr = (VariableDeclarationExpr) vdExpr.clone();
+    VariableDeclarationExpr resultExpr = vdExpr.clone();
 
     // The variable declaration.
-    VariableDeclarator vd = resultExpr.getVars().get(0);
+    VariableDeclarator vd = resultExpr.getVariables().get(0);
 
     // Based on the declared variable type, set the right hand to the value
     // that was passed in.
     if (exprType instanceof PrimitiveType) {
-      vd.setInit(getLiteralExpression(value, ((PrimitiveType) exprType).getType()));
+      vd.setInitializer(getLiteralExpression(value, ((PrimitiveType) exprType).getType()));
     } else {
       // Set right hand side to the null expression.
-      vd.setInit(new NullLiteralExpr());
+      vd.setInitializer(new NullLiteralExpr());
     }
 
     // Return a new statement with the simplified expression.
@@ -722,34 +758,34 @@ public class Minimize extends CommandHandler {
    */
   private static LiteralExpr getLiteralExpression(String value, PrimitiveType.Primitive type) {
     switch (type) {
-      case Boolean:
+      case BOOLEAN:
         if (value == null) {
           return new BooleanLiteralExpr(Boolean.parseBoolean("false"));
         } else {
           return new BooleanLiteralExpr(Boolean.parseBoolean(value));
         }
-      case Char:
-      case Byte:
-      case Short:
-      case Int:
+      case CHAR:
+      case BYTE:
+      case SHORT:
+      case INT:
         if (value == null) {
           return new IntegerLiteralExpr("0");
         } else {
           return new IntegerLiteralExpr(value);
         }
-      case Float:
+      case FLOAT:
         if (value == null) {
           return new DoubleLiteralExpr("0f");
         } else {
           return new DoubleLiteralExpr(value);
         }
-      case Double:
+      case DOUBLE:
         if (value == null) {
           return new DoubleLiteralExpr("0.0");
         } else {
           return new DoubleLiteralExpr(value);
         }
-      case Long:
+      case LONG:
         if (value == null) {
           return new LongLiteralExpr("0L");
         } else {
@@ -763,7 +799,8 @@ public class Minimize extends CommandHandler {
 
   /**
    * Return a statement that contains only the right hand side of a given statement. Returns null if
-   * there are multiple variable declarations in a single statement, such as {@code int i, j, k; }.
+   * there are multiple variable declarations in a single statement, such as {@code int i=1, j=2,
+   * k=3; }, or if there are no initializers, as in {@code int i;}.
    *
    * @param vdExpr variable declaration expression that represents the statement to simplify
    * @return a {@code Statement} object that is equal to the right-hand-side of {@code vdExpr}.
@@ -771,19 +808,24 @@ public class Minimize extends CommandHandler {
    *     VariableDeclarationExpr}.
    */
   private static Statement removeLeftHandSideSimplification(VariableDeclarationExpr vdExpr) {
-    if (vdExpr.getVars().size() > 1) {
+    if (vdExpr.getVariables().size() > 1) {
       // More than 1 variable declared in this expression.
       return null;
     }
 
     // Create the resulting expression, a copy of the original expression
     // which will be modified and returned.
-    VariableDeclarationExpr resultExpr = (VariableDeclarationExpr) vdExpr.clone();
-    List<VariableDeclarator> vars = resultExpr.getVars();
+    VariableDeclarationExpr resultExpr = vdExpr.clone();
+    List<VariableDeclarator> vars = resultExpr.getVariables();
     VariableDeclarator vd = vars.get(0);
 
     // Return a new statement with only the right hand side.
-    return new ExpressionStmt(vd.getInit());
+    Optional<Expression> initializer = vd.getInitializer();
+    if (initializer.isPresent()) {
+      return new ExpressionStmt(initializer.get());
+    } else {
+      return null;
+    }
   }
 
   /** Sorts a type by its name. */
@@ -1150,17 +1192,16 @@ public class Minimize extends CommandHandler {
    */
   private static void addImport(CompilationUnit compilationUnit, String importName) {
     String importStr = "import " + importName + ";";
-    ImportDeclaration importDeclaration;
 
-    try {
-      importDeclaration = JavaParser.parseImport(importStr);
-    } catch (ParseException e) {
-      // Unexpected error from parsing import.
+    ParseResult<ImportDeclaration> parseImportDeclaration = javaParser.parseImport(importStr);
+    if (!parseImportDeclaration.isSuccessful()) {
       System.err.println("Error parsing import: " + importName);
+      // TODO: could print the diagnostics, but they should be obvious
       return;
     }
+    ImportDeclaration importDeclaration = parseImportDeclaration.getResult().get();
 
-    List<ImportDeclaration> importDeclarations = compilationUnit.getImports();
+    NodeList<ImportDeclaration> importDeclarations = compilationUnit.getImports();
     for (ImportDeclaration im : importDeclarations) {
       String currImportStr = im.toString().trim();
 
@@ -1206,7 +1247,7 @@ public class Minimize extends CommandHandler {
    * @param compilationUnit the compilation unit whose imports will be sorted by name
    */
   private static void sortImports(CompilationUnit compilationUnit) {
-    List<ImportDeclaration> imports = compilationUnit.getImports();
+    NodeList<ImportDeclaration> imports = compilationUnit.getImports();
 
     Collections.sort(imports, importDeclarationComparator);
 
@@ -1352,8 +1393,8 @@ public class Minimize extends CommandHandler {
    */
   private static int getNumberOfTestMethods(CompilationUnit compilationUnit) {
     int numberOfTestMethods = 0;
-    for (TypeDeclaration type : compilationUnit.getTypes()) {
-      for (BodyDeclaration member : type.getMembers()) {
+    for (TypeDeclaration<?> type : compilationUnit.getTypes()) {
+      for (BodyDeclaration<?> member : type.getMembers()) {
         if (member instanceof MethodDeclaration) {
           MethodDeclaration method = (MethodDeclaration) member;
           if (isTestMethod(method)) {
@@ -1372,8 +1413,52 @@ public class Minimize extends CommandHandler {
    * @param totalTests the total number of tests in the input test suite
    * @param testName the current test method being minimized
    */
-  private static void printProgress(int currentTestIndex, int totalTests, String testName) {
+  private static void printProgress(int currentTestIndex, int totalTests, SimpleName testName) {
     System.out.println(
         currentTestIndex + "/" + totalTests + " tests minimized, Minimized method: " + testName);
+  }
+
+  /**
+   * This is stolen from JavaParser's PrettyPrintVisitor.printOrphanCommentsBeforeThisChildNode,
+   * with light modifications.
+   *
+   * @param node the node whose orphan comments to collect
+   * @param result the list to add orphan comments to. Is side-effected by this method. The
+   *     implementation uses this to minimize the diffs against upstream.
+   */
+  @SuppressWarnings({
+    "JdkObsolete", // for LinkedList
+    "ReferenceEquality"
+  })
+  private static void getOrphanCommentsBeforeThisChildNode(final Node node, List<Comment> result) {
+    if (node instanceof Comment) return;
+
+    Node parent = node.getParentNode().orElse(null);
+    if (parent == null) return;
+    List<Node> everything = new LinkedList<>(parent.getChildNodes());
+    sortByBeginPosition(everything);
+    int positionOfTheChild = -1;
+    for (int i = 0; i < everything.size(); i++) {
+      if (everything.get(i) == node) positionOfTheChild = i;
+    }
+    if (positionOfTheChild == -1) {
+      throw new AssertionError("I am not a child of my parent.");
+    }
+    int positionOfPreviousChild = -1;
+    for (int i = positionOfTheChild - 1; i >= 0 && positionOfPreviousChild == -1; i--) {
+      if (!(everything.get(i) instanceof Comment)) positionOfPreviousChild = i;
+    }
+    for (int i = positionOfPreviousChild + 1; i < positionOfTheChild; i++) {
+      Node nodeToPrint = everything.get(i);
+      if (!(nodeToPrint instanceof Comment))
+        throw new RuntimeException(
+            "Expected comment, instead "
+                + nodeToPrint.getClass()
+                + ". Position of previous child: "
+                + positionOfPreviousChild
+                + ", position of child "
+                + positionOfTheChild);
+      result.add((Comment) nodeToPrint);
+    }
   }
 }

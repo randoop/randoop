@@ -111,8 +111,8 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public ArrayType apply(Substitution<ReferenceType> substitution) {
-    Type type = componentType.apply(substitution);
+  public ArrayType substitute(Substitution substitution) {
+    Type type = componentType.substitute(substitution);
     if (!type.equals(this)) {
       return ArrayType.ofComponentType(type);
     } else {

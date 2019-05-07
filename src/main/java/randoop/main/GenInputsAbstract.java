@@ -212,6 +212,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FlakyTestAction flaky_test_behavior = FlakyTestAction.HALT;
 
   /**
+   * How many suspected side-effecting or nondeterministic methods (from the program under test) to
+   * print.
+   */
+  @Option("Number of suspected nondeterministic methods to print")
+  public static int nondeterministic_methods_to_output = 10;
+
+  /**
    * Whether to output error-revealing tests. Disables all output when used with {@code
    * --no-regression-tests}. Restricting output can result in long runs if the default values of
    * {@code --generated-limit} and {@code --time-limit} are used.
@@ -273,7 +280,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * 100 error-revealing tests; consider using <a
    * href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test"><code>
    * --stop-on-error-test=true</code></a>. Also see the <a
-   * href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization-options">test
+   * href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization">test
    * case minimization options</a>.
    */
   // Omit this to keep the documentation short:
@@ -901,6 +908,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Read names of classes under test, as provided with the --classlist command-line argument.
    *
+   * @param visibility the visibility predicate
    * @return the classes provided via the --classlist command-line argument
    */
   @SuppressWarnings("signature") // TODO: reading from file; no guarantee strings are @ClassGetName
@@ -917,7 +925,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Read names of classes from a jar file. Ignores interfaces, abstract classes, and non-visible
    * classes.
    *
-   * @return the classes in the jar file
+   * @param jarFile the jar file from which to read classes
+   * @param visibility the visibility predicate
+   * @return the names of classes in the jar file
    */
   @SuppressWarnings("signature") // string manipulation
   public static Set<@ClassGetName String> getClassnamesFromJarFile(

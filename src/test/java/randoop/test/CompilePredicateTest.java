@@ -2,11 +2,11 @@ package randoop.test;
 
 import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
@@ -15,6 +15,8 @@ import randoop.output.JUnitCreator;
 
 /** Test for compilation predicate. */
 public class CompilePredicateTest {
+
+  private static final JavaParser javaParser = new JavaParser();
 
   @Test
   public void uncompilablePredicateTest() throws ParseException, UnsupportedEncodingException {
@@ -99,13 +101,15 @@ public class CompilePredicateTest {
             + "        org.junit.Assert.assertNotNull(list_wildcard33);\n"
             + "    }\n"
             + "}";
-    CompilationUnit source;
-    source = JavaParser.parse(new ByteArrayInputStream(failedCode.getBytes(UTF_8)));
-    assertNotNull(source);
+    ParseResult<CompilationUnit> parseCU =
+        javaParser.parse(new ByteArrayInputStream(failedCode.getBytes(UTF_8)));
+    assertTrue(parseCU.isSuccessful());
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator(null, null, null, null, null);
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
 
-    assertFalse("predicate should fail on code", pred.testSource("CompRegression0", source, ""));
+    assertFalse(
+        "predicate should fail on code",
+        pred.testSource("CompRegression0", parseCU.getResult().get(), ""));
   }
 
   @Test
@@ -134,12 +138,14 @@ public class CompilePredicateTest {
             + "        }\n"
             + "    }\n"
             + "}";
-    CompilationUnit source;
-    source = JavaParser.parse(new ByteArrayInputStream(compilableCode.getBytes(UTF_8)));
-    assertNotNull(source);
+    ParseResult<CompilationUnit> parseCU =
+        javaParser.parse(new ByteArrayInputStream(compilableCode.getBytes(UTF_8)));
+    assertTrue(parseCU.isSuccessful());
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator("foo.bar", null, null, null, null);
     CompilableTestPredicate pred = new CompilableTestPredicate(jUnitCreator, null);
 
-    assertTrue("predicate should pass on code", pred.testSource("TestClass0", source, "foo.bar"));
+    assertTrue(
+        "predicate should pass on code",
+        pred.testSource("TestClass0", parseCU.getResult().get(), "foo.bar"));
   }
 }

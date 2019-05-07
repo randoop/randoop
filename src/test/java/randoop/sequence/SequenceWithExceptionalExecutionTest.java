@@ -24,7 +24,6 @@ import randoop.types.ArrayType;
 import randoop.types.GenericClassType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
-import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.util.MultiMap;
@@ -64,12 +63,12 @@ public class SequenceWithExceptionalExecutionTest {
       throw new Error("Unreachable");
     }
     TypedClassOperation constructorOp = TypedOperation.forConstructor(constructor);
-    Substitution<ReferenceType> substitution =
+    Substitution substitution =
         ((GenericClassType) constructorOp.getDeclaringType())
             .instantiate(JavaTypes.STRING_TYPE)
             .getTypeSubstitution();
     input = new ArrayList<>();
-    sequence = sequence.extend(constructorOp.apply(substitution), input);
+    sequence = sequence.extend(constructorOp.substitute(substitution), input);
     int linkedHashSetIndex = sequence.getLastVariable().index;
 
     sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, 0));

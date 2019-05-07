@@ -20,10 +20,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.StringTokenizer;
@@ -52,6 +55,7 @@ import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
+import randoop.operation.TypedOperation.RankedTypeOperation;
 import randoop.output.CodeWriter;
 import randoop.output.FailingAssertionCommentWriter;
 import randoop.output.JUnitCreator;
@@ -70,6 +74,7 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.SequenceExecutionException;
+import randoop.sequence.Statement;
 import randoop.test.CompilableTestPredicate;
 import randoop.test.ContractCheckingGenerator;
 import randoop.test.ContractSet;
@@ -91,6 +96,7 @@ import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
+import randoop.util.SimpleList;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */
@@ -161,6 +167,7 @@ public class GenTests extends GenInputsAbstract {
   /** The count of sequences that failed to compile. */
   private int sequenceCompileFailureCount = 0;
 
+  /** GenTests constructor that uses default messages */
   public GenTests() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
@@ -509,15 +516,23 @@ public class GenTests extends GenInputsAbstract {
         testEnvironment.setReplaceCallAgent(agentPath, agentArgs);
       }
 
+      List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+
       FailingAssertionCommentWriter codeWriter =
           new FailingAssertionCommentWriter(testEnvironment, javaFileWriter);
       writeTestFiles(
           junitCreator,
-          explorer.getRegressionSequences(),
+          regressionSequences,
           codeWriter,
           GenInputsAbstract.regression_test_basename,
           "Regression");
-    }
+
+      // TODO: cxing handle Error Test Sequence tallying.
+      //  Currently, we don't rerun Error Test Sequences, so we do not know whether they are flaky.
+      processAndOutputFlakyMethods(
+          testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
+          regressionSequences);
+    } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
@@ -536,6 +551,131 @@ public class GenTests extends GenInputsAbstract {
     explorer.getOperationHistory().outputTable();
 
     return true;
+  }
+
+  /** Is output to the user before each possibly flaky method. */
+  public static final String POSSIBLY_FLAKY_PREFIX = "  Possibly flaky:  ";
+
+  /**
+   * Outputs suspected flaky methods by using the tf-idf metric (Term Frequency - Inverse Document
+   * Frequency), which is:
+   *
+   * <pre>(number of flaky tests M occurs in) / (number of total tests M occurs in)</pre>
+   *
+   * @param flakySequences the flaky test sequences
+   * @param sequences all the sequences (flaky and non-flaky)
+   */
+  private void processAndOutputFlakyMethods(
+      List<ExecutableSequence> flakySequences, List<ExecutableSequence> sequences) {
+
+    if (flakySequences.isEmpty()) {
+      return;
+    }
+
+    System.out.println();
+    System.out.println("Flaky tests were generated. This means that your program contains");
+    System.out.println("methods that are nondeterministic or depend on non-local state.");
+
+    if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
+      // How many flaky tests an operation occurs in (regardless of how many times it appears in
+      // that test).
+      Map<TypedOperation, Integer> testOccurrences = countSequencesPerOperation(sequences);
+
+      // How many tests an operation occurs in (regardless of how many times it appears in that
+      // flaky test).
+      Map<TypedOperation, Integer> flakyOccurrences = countSequencesPerOperation(flakySequences);
+
+      // Priority queue of methods ordered by tf-idf heuristic, highest first.
+      PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
+          new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
+      for (TypedOperation op : flakyOccurrences.keySet()) {
+        double tfIdfMetric = flakyOccurrences.get(op) / testOccurrences.get(op);
+        RankedTypeOperation rankedMethod = new RankedTypeOperation(tfIdfMetric, op);
+        methodHeuristicPriorityQueue.add(rankedMethod);
+      }
+
+      System.out.println("The following methods, in decreasing order of likelihood,");
+      System.out.println("are the most likely to be the problem.");
+      int maxMethodsToOutput = GenInputsAbstract.nondeterministic_methods_to_output;
+      for (int i = 0; i < maxMethodsToOutput && !methodHeuristicPriorityQueue.isEmpty(); i++) {
+        RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
+        System.out.println(POSSIBLY_FLAKY_PREFIX + rankedMethod.operation.toParsableString());
+      }
+    }
+
+    System.out.println(
+        "To prevent the generation of flaky tests, see section 'Nondeterministic program");
+    System.out.println("under test' at https://randoop.github.io/randoop/manual/#nondeterminism .");
+    System.out.println();
+    // TODO cxing: Separate PR: add nmrd-blacklist comment suggestion for
+    // user (actionable steps to take to avoid flaky test generation) and edit the manual
+    // accordingly.
+    System.out.println();
+  }
+
+  /**
+   * Given a collection of test names of the form "test005", returns the corresponding elements from
+   * the given list.
+   *
+   * @param testNames names of the form "test005"
+   * @param sequences test sequences (error or regression), numbered sequentially
+   * @return the sequences corresponding to the test names
+   */
+  private List<ExecutableSequence> testNamesToSequences(
+      Iterable<String> testNames, List<ExecutableSequence> sequences) {
+    List<ExecutableSequence> result = new ArrayList<>();
+    for (String testName : testNames) {
+      int testNum = Integer.parseInt(testName.substring(4)); // length of "test"
+      // Tests start at 001, not 000, so subtract 1.
+      ExecutableSequence sequence = sequences.get(testNum - 1);
+      result.add(sequence);
+    }
+    return result;
+  }
+
+  /**
+   * Counts the number of sequences each operation occurs in.
+   *
+   * @param sequences a list of sequences
+   * @return a map from operation to the number of sequences in which the operation occurs at least
+   *     once
+   */
+  private Map<TypedOperation, Integer> countSequencesPerOperation(
+      List<ExecutableSequence> sequences) {
+    // Map from method call operations to number of sequences it occurs in.
+    Map<TypedOperation, Integer> tallyMap = new HashMap<>();
+
+    for (ExecutableSequence es : sequences) {
+      Set<TypedOperation> ops = getOperationsInSequence(es);
+
+      for (TypedOperation to : ops) {
+        if (tallyMap.containsKey(to)) {
+          tallyMap.put(to, tallyMap.get(to) + 1);
+        } else {
+          tallyMap.put(to, 1);
+        }
+      }
+    }
+    return tallyMap;
+  }
+
+  /**
+   * Constructs a set of method-call operations appearing in an Executable Sequence. Non-method-call
+   * operations are excluded.
+   *
+   * @param es an ExecutableSequence
+   * @return the set of method call operations in {@code es}
+   */
+  private Set<TypedOperation> getOperationsInSequence(ExecutableSequence es) {
+    HashSet<TypedOperation> ops = new HashSet<>();
+
+    SimpleList<Statement> statements = es.sequence.statements;
+    for (int i = 0; i < statements.size(); i++) {
+      if (statements.get(i).getOperation().isMethodCall()) {
+        ops.add(statements.get(i).getOperation());
+      }
+    }
+    return ops;
   }
 
   /**

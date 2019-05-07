@@ -344,8 +344,12 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Indicate whether this type is a parameterized type. (A <i>parameterized type</i> is a type
+   * Indicate whether this type is a parameterized type. A <i>parameterized type</i> is a type
    * {@code C<T1,...,Tk>} that instantiates a generic class {@code C<F1,...,Fk>}.
+   *
+   * <p>If inputType.isParameterized returns true, there are two possibilities: {@code inputType
+   * instanceof InstantiatedType}, or inputType is a member class and the enclosing type is a
+   * parameterized type
    *
    * @return true if this type is a parameterized type, false otherwise
    */
@@ -419,7 +423,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the {@link Type} constructed by substituting for type parameters in this type, or this
    *     type if this is not a generic class type
    */
-  public Type apply(Substitution<ReferenceType> substitution) {
+  public Type substitute(Substitution substitution) {
     return this;
   }
 

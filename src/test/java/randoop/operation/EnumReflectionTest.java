@@ -202,7 +202,7 @@ public class EnumReflectionTest {
       Set<TypedClassOperation> opSet = overrideMap.get(m.getName());
       if (opSet != null) {
         TypedClassOperation actualEnumOp =
-            createMethodCall(m, enumType).apply(interfaceType.getTypeSubstitution());
+            createMethodCall(m, enumType).substitute(interfaceType.getTypeSubstitution());
         include.add(actualEnumOp);
       }
     }

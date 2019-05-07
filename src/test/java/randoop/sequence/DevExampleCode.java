@@ -29,36 +29,36 @@ public class DevExampleCode {
       // Want constructor for LinkedList<String>
       InstantiatedType linkedListType =
           JDKTypes.LINKED_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
-      Substitution<ReferenceType> substLL = linkedListType.getTypeSubstitution();
+      Substitution substLL = linkedListType.getTypeSubstitution();
       TypedOperation newLL =
-          TypedOperation.forConstructor(LinkedList.class.getConstructor()).apply(substLL);
+          TypedOperation.forConstructor(LinkedList.class.getConstructor()).substitute(substLL);
 
       // operations for string constant, and list method calls
       TypedOperation newOb =
           TypedOperation.createPrimitiveInitialization(JavaTypes.STRING_TYPE, "hi!");
       TypedOperation addFirst =
           TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class))
-              .apply(substLL);
+              .substitute(substLL);
       TypedOperation size =
-          TypedOperation.forMethod(LinkedList.class.getMethod("size")).apply(substLL);
+          TypedOperation.forMethod(LinkedList.class.getMethod("size")).substitute(substLL);
 
       // Call to operation with wildcard in TreeSet<String>
       InstantiatedType treeSetType = JDKTypes.TREE_SET_TYPE.instantiate(JavaTypes.STRING_TYPE);
-      Substitution<ReferenceType> substTS = treeSetType.getTypeSubstitution();
+      Substitution substTS = treeSetType.getTypeSubstitution();
       TypedOperation wcTS =
           TypedOperation.forConstructor(TreeSet.class.getConstructor(Collection.class))
-              .apply(substTS)
+              .substitute(substTS)
               .applyCaptureConversion();
-      Substitution<ReferenceType> substWC =
-          Substitution.forArgs(wcTS.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
-      TypedOperation newTS = wcTS.apply(substWC);
+      Substitution substWC =
+          new Substitution(wcTS.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+      TypedOperation newTS = wcTS.substitute(substWC);
 
       // call to generic operation
       TypedOperation syncA =
           TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class));
-      Substitution<ReferenceType> substA =
-          Substitution.forArgs(syncA.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
-      TypedOperation syncS = syncA.apply(substA);
+      Substitution substA =
+          new Substitution(syncA.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+      TypedOperation syncS = syncA.substitute(substA);
 
       // Now, create the sequence by repeated extension.
       Sequence s = new Sequence();
