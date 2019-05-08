@@ -182,6 +182,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   /**
    * Indicates whether the named class is defined in a package that is excluded.
    *
+   * @param loader the classloader for the class
    * @param fullClassName the fully-qualified class name, must be non-null
    * @return true if any excluded package is a prefix of the class name, false otherwise
    */
@@ -253,7 +254,7 @@ public class CallReplacementTransformer extends InstructionListUtils
           debug_instrument.enabled = false;
 
           // Prepare method for instrumentation.
-          fetch_current_stack_map_table(mg, cg.getMajor());
+          set_current_stack_map_table(mg, cg.getMajor());
           build_unitialized_NEW_map(il);
           fix_local_variable_table(mg);
           debug_instrument.enabled = save_debug;
