@@ -253,7 +253,7 @@ public class TypeInstantiator {
         }
       }
     }
-    // return types don't have to exist, but do need to have tehir type parameters instantiated
+    // return types don't have to exist, but do need to have their type parameters instantiated
     if (operation.getOutputType().isReferenceType()) {
       Type workingType = operation.getOutputType().substitute(substitution);
       if (workingType.isGeneric()) {
