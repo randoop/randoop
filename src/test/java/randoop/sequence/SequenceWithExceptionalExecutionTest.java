@@ -68,7 +68,7 @@ public class SequenceWithExceptionalExecutionTest {
             .instantiate(JavaTypes.STRING_TYPE)
             .getTypeSubstitution();
     input = new ArrayList<>();
-    sequence = sequence.extend(constructorOp.apply(substitution), input);
+    sequence = sequence.extend(constructorOp.substitute(substitution), input);
     int linkedHashSetIndex = sequence.getLastVariable().index;
 
     sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, 0));
