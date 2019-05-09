@@ -163,8 +163,9 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound applyCaptureConversion() {
-    assert false : "unable to do capture conversion on lazy bound " + this;
-    return this;
+    throw new LazyBoundException();
+    // assert false : "unable to do capture conversion on lazy bound " + this;
+    // return this;
   }
 
   @Override
@@ -249,8 +250,9 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public boolean isSubtypeOf(ParameterBound boundType) {
-    assert false : "LazyParameterBound.isSubtypeOf not implemented";
-    return false;
+    throw new LazyBoundException();
+    // assert false : "LazyParameterBound.isSubtypeOf not implemented";
+    // return false;
   }
 
   /**
@@ -271,12 +273,18 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    assert false : " not quite sure what to do with lazy type bound";
-    return false;
+    throw new LazyBoundException();
+    // assert false : " not quite sure what to do with lazy type bound";
+    // return false;
   }
 
   @Override
   public boolean isVariable() {
     return boundType instanceof java.lang.reflect.TypeVariable;
+  }
+
+  /** There was an attempt to perform an operation, such as capture conversion, on a lazy bound. */
+  static class LazyBoundException extends RuntimeException {
+    private static final long serialVersionUID = 20190508;
   }
 }
