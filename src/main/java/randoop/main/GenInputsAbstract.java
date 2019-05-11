@@ -202,12 +202,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
    * different executions.
    *
-   * <p>{@code OUTPUT} is the default because Randoop now provides term frequency - inverse document
-   * frequency metrics for identifying nondeterministic methods. Flaky tests are usually due to
-   * calling Randoop on side-effecting or nondeterministic methods, and a ultiately, the solution is
-   * not to call Randoop on such methods; see section <a
+   * <p>Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic
+   * methods, and a ultimately, the solution is not to call Randoop on such methods; see section <a
    * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
-   * the Randoop manual.
+   * the Randoop manual. {@code OUTPUT} is the default because Randoop helps users with identifying
+   * nondeterministic methods via the term frequency - inverse document frequency metric.
    */
   @Option("What to do if a flaky test is generated")
   public static FlakyTestAction flaky_test_behavior = FlakyTestAction.OUTPUT;
