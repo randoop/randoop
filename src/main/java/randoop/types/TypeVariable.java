@@ -1,7 +1,6 @@
 package randoop.types;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -47,7 +46,7 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   @Override
-  public ReferenceType apply(Substitution substitution) {
+  public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
     if (type != null) {
       return type;
@@ -103,8 +102,7 @@ public abstract class TypeVariable extends ParameterType {
    * @return a substitution that replaces {@code variable} with {@code otherType}
    */
   private static Substitution getSubstitution(TypeVariable variable, ReferenceType otherType) {
-    List<TypeVariable> variableList = Collections.singletonList(variable);
-    return Substitution.forArgs(variableList, otherType);
+    return new Substitution(variable, otherType);
   }
 
   @Override
@@ -123,7 +121,7 @@ public abstract class TypeVariable extends ParameterType {
     Substitution substitution;
     if (getLowerTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
-      ParameterBound boundType = getLowerTypeBound().apply(substitution);
+      ParameterBound boundType = getLowerTypeBound().substitute(substitution);
       TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
@@ -136,7 +134,7 @@ public abstract class TypeVariable extends ParameterType {
     }
     if (getUpperTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
-      ParameterBound boundType = getUpperTypeBound().apply(substitution);
+      ParameterBound boundType = getUpperTypeBound().substitute(substitution);
       TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;

@@ -53,6 +53,7 @@ fi
 
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
   ./gradlew javadoc
+  ./gradlew checkstyle
   ./gradlew manual
 
   echo "TRAVIS_COMMIT_RANGE = $TRAVIS_COMMIT_RANGE"

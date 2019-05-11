@@ -45,12 +45,10 @@ public class Substitution {
    *
    * @param parameter the type parameter
    * @param argument the type argument
-   * @return a one-element mapping
    */
-  public static Substitution forArg(TypeVariable parameter, ReferenceType argument) {
-    Substitution s = new Substitution();
-    s.put(parameter, argument);
-    return s;
+  public Substitution(TypeVariable parameter, ReferenceType argument) {
+    this();
+    put(parameter, argument);
   }
 
   /**
@@ -58,15 +56,13 @@ public class Substitution {
    *
    * @param parameters the type parameters
    * @param arguments the type arguments
-   * @return a substitution that maps each type parameters to the corresponding type argument
    */
-  public static Substitution forArgs(List<TypeVariable> parameters, ReferenceType... arguments) {
+  public Substitution(List<TypeVariable> parameters, ReferenceType... arguments) {
+    this();
     assert parameters.size() == arguments.length;
-    Substitution s = new Substitution();
     for (int i = 0; i < parameters.size(); i++) {
-      s.put(parameters.get(i), arguments[i]);
+      put(parameters.get(i), arguments[i]);
     }
-    return s;
   }
 
   /**
@@ -74,15 +70,13 @@ public class Substitution {
    *
    * @param parameters the type parameters
    * @param arguments the type arguments
-   * @return a substitution that maps each type parameters to the corresponding type argument
    */
-  public static Substitution forArgs(List<TypeVariable> parameters, List<ReferenceType> arguments) {
+  public Substitution(List<TypeVariable> parameters, List<ReferenceType> arguments) {
+    this();
     assert parameters.size() == arguments.size();
-    Substitution s = new Substitution();
     for (int i = 0; i < parameters.size(); i++) {
-      s.put(parameters.get(i), arguments.get(i));
+      put(parameters.get(i), arguments.get(i));
     }
-    return s;
   }
 
   /**
@@ -144,8 +138,21 @@ public class Substitution {
       };
 
   /**
-   * Creates a new substitution tat contains the entries of two substitutions. If both substitutions
-   * contain the same type variable, they must map to the same type.
+   * Creates a new substitution that contains the mappings of this substitution, extended by the
+   * given mappings. If this and the additional mappings contain the same type variable, both must
+   * map it to the same type.
+   *
+   * @param parameters the type parameters
+   * @param arguments the type arguments
+   * @return a new substitution that is this substitution extended by the given mappings
+   */
+  public Substitution extend(List<TypeVariable> parameters, List<ReferenceType> arguments) {
+    return extend(new Substitution(parameters, arguments));
+  }
+
+  /**
+   * Creates a new substitution that contains the entries of two substitutions. If both
+   * substitutions contain the same type variable, they must map to the same type.
    *
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
@@ -200,8 +207,7 @@ public class Substitution {
   }
 
   /**
-   * Add a type variable to concrete type mapping to the substitution. Only called by {@link
-   * #forArgs(List, List)} and {@link #forArgs(List, ReferenceType[])}.
+   * Add a type variable to concrete type mapping to the substitution.
    *
    * @param typeParameter the type variable
    * @param type the concrete type

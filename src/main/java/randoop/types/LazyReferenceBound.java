@@ -10,8 +10,8 @@ import java.util.Objects;
  * {@code java.lang.reflect.Type}. Also, prevents access to recursive type bounds, that would
  * otherwise result in nonterminating calls to {@link #getTypeParameters()}.
  *
- * <p>Objects of this class are created by {@link LazyParameterBound#apply(Substitution)} when the
- * substitution would replace a type variable with another type variable.
+ * <p>Objects of this class are created by {@link LazyParameterBound#substitute(Substitution)} when
+ * the substitution would replace a type variable with another type variable.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -33,7 +33,7 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public ReferenceBound apply(Substitution substitution) {
+  public ReferenceBound substitute(Substitution substitution) {
     // if the substitution has no effect on this bound just return this
     if (substitution.isEmpty()) {
       return this;
@@ -44,7 +44,7 @@ class LazyReferenceBound extends ReferenceBound {
       }
     }
 
-    ReferenceType referenceType = getBoundType().apply(substitution);
+    ReferenceType referenceType = getBoundType().substitute(substitution);
 
     if (referenceType.equals(getBoundType())) {
       return this;
@@ -88,7 +88,7 @@ class LazyReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.apply(substitution);
+    ReferenceBound b = this.substitute(substitution);
     return !this.equals(b) && b.isLowerBound(argType, substitution);
   }
 
@@ -100,7 +100,7 @@ class LazyReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.apply(substitution);
+    ReferenceBound b = this.substitute(substitution);
     return !this.equals(b) && b.isUpperBound(argType, substitution);
   }
 

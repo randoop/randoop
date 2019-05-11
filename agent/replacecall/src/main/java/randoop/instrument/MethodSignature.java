@@ -83,6 +83,7 @@ public class MethodSignature {
    *
    * @param fullMethodName fully-qualified name of method
    * @param params fully-qualified names of parameter types
+   * @return the {@link MethodSignature} for the method represented by the string
    */
   static MethodSignature of(String fullMethodName, String[] params) {
     int dotPos = fullMethodName.lastIndexOf('.');
