@@ -98,24 +98,6 @@ public abstract class ReferenceType extends Type {
   }
 
   /**
-   * Indicates whether this {@link ReferenceType} has a wildcard.
-   *
-   * @return true iff this type has a wildcard
-   */
-  public boolean hasWildcard() {
-    return false;
-  }
-
-  /**
-   * Indicates whether this {@link ReferenceType} has a capture variable.
-   *
-   * @return true iff this type has a capture variable
-   */
-  public boolean hasCaptureVariable() {
-    return false;
-  }
-
-  /**
    * {@inheritDoc}
    *
    * <p>For assignment to {@link ReferenceType}, checks for widening reference conversion when the

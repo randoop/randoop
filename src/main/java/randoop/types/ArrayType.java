@@ -240,14 +240,12 @@ public class ArrayType extends ReferenceType {
 
   @Override
   public boolean hasWildcard() {
-    // TODO: should this be: return componentType.hasWildcard();
-    return false;
+    return componentType.hasWildcard();
   }
 
   @Override
   public boolean hasCaptureVariable() {
-    // TODO: should this be: return componentType.hasCaptureVariable();
-    return false;
+    return componentType.hasCaptureVariable();
   }
 
   /**
