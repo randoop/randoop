@@ -471,11 +471,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return superClassType.isSubtypeOf(otherType);
   }
 
-  /**
-   * Indicate whether this type has a wildcard either as or in a type argument.
-   *
-   * @return true if this type has a wildcard, and false otherwise
-   */
   @Override
   public boolean hasWildcard() {
     return false;
