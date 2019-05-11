@@ -90,6 +90,7 @@ public class OmitMethodsPredicate {
    * @return true if the signature of the method in the current class or a superclass is matched by
    *     an omit pattern, false otherwise
    */
+  @SuppressWarnings("ReferenceEquality")
   boolean shouldOmit(final TypedClassOperation operation) {
     Log.logPrintf("shouldOmit: testing %s%n", operation);
 
