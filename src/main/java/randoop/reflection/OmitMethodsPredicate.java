@@ -8,6 +8,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
@@ -120,8 +121,13 @@ public class OmitMethodsPredicate {
         type.getRuntimeClass().getMethod(signature.getName(), signature.getParameterTypes());
         exists = true;
       } catch (NoSuchMethodException e) {
-        Log.logPrintf(
-            "no method for %s in %s%n", signature, type.getRuntimeClass().getSimpleName());
+        if (type == operation.getDeclaringType()) {
+          throw new RandoopBug(
+              String.format("Didn't find %s in its declaring type %s", operation, type));
+        } else {
+          Log.logPrintf(
+              "no method %s in supertype %s%n", signature, type.getRuntimeClass().getSimpleName());
+        }
       }
       if (!exists && signature.getName().equals(type.getRuntimeClass().getSimpleName())) {
         try {
