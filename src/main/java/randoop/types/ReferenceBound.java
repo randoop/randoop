@@ -57,6 +57,11 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
+  public boolean hasCaptureVariable() {
+    return boundType.hasCaptureVariable();
+  }
+
+  @Override
   public boolean isGeneric() {
     return boundType.isGeneric();
   }
