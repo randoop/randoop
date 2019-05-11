@@ -212,7 +212,8 @@ public class TypeInstantiator {
       return null;
     }
     ReferenceType selectedType = Randomness.randomSetMember(matches);
-    return selectedType.getInstantiatingSubstitution(type);
+    Substitution result = selectedType.getInstantiatingSubstitution(type);
+    return result;
   }
 
   /**
