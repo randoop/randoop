@@ -1,4 +1,4 @@
-Version 4.2.0, release ??
+Version 4.2.0, released ??
 
 Command-line argument changes:
  * the --omit-methods-file argument can be repeated to supply 
