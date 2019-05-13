@@ -8,6 +8,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
@@ -89,6 +90,7 @@ public class OmitMethodsPredicate {
    * @return true if the signature of the method in the current class or a superclass is matched by
    *     an omit pattern, false otherwise
    */
+  @SuppressWarnings("ReferenceEquality")
   boolean shouldOmit(final TypedClassOperation operation) {
     Log.logPrintf("shouldOmit: testing %s%n", operation);
 
@@ -111,18 +113,24 @@ public class OmitMethodsPredicate {
         continue;
       }
 
-      Log.logPrintf("looking for %s in %s%n", signature.getName(), type.getRuntimeClass());
-      Log.logPrintf("  typeQueue.size() = %d%n", typeQueue.size());
+      Log.logPrintf(
+          "shouldOmit looking for %s in %s%n", signature.getName(), type.getRuntimeClass());
 
       // Try to get the method for type
-      boolean exists = false;
+      boolean exists;
       try {
         type.getRuntimeClass().getMethod(signature.getName(), signature.getParameterTypes());
         exists = true;
       } catch (NoSuchMethodException e) {
+        // This is not necessarily an error (yet); it might be a constructor.
         Log.logPrintf(
-            "no method for %s in %s%n", signature, type.getRuntimeClass().getSimpleName());
+            "no method %s in %stype %s%n",
+            signature,
+            (type == operation.getDeclaringType()) ? "" : "super",
+            type.getRuntimeClass().getSimpleName());
+        exists = false;
       }
+      // Look for a constructor if the method was not found.
       if (!exists && signature.getName().equals(type.getRuntimeClass().getSimpleName())) {
         try {
           type.getRuntimeClass().getConstructor(signature.getParameterTypes());
@@ -134,7 +142,7 @@ public class OmitMethodsPredicate {
         }
       }
 
-      // If type has the method
+      // If type has the method or constructor
       if (exists) {
         // Create the operation and test whether it is matched by an omit pattern
         TypedClassOperation superTypeOperation = operation.getOperationForType(type);
@@ -143,6 +151,15 @@ public class OmitMethodsPredicate {
         }
         // Otherwise, search supertypes
         typeQueue.addAll(type.getImmediateSupertypes());
+      } else {
+        if (type == operation.getDeclaringType()) {
+          // TEMPORARILY disable because the assertion is failing
+          if (false)
+            throw new RandoopBug(
+                String.format(
+                    "shouldOmit didn't find %s in its declaring class %s",
+                    operation, type.getRuntimeClass()));
+        }
       }
     }
 
