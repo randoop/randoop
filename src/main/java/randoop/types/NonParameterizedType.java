@@ -204,7 +204,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    */
   public PrimitiveType toPrimitive() {
     if (this.isBoxedPrimitive()) {
-      return new PrimitiveType(PrimitiveTypes.toUnboxedType(this.getRuntimeClass()));
+      Class<?> primitiveClass = PrimitiveTypes.toUnboxedType(this.getRuntimeClass());
+      return PrimitiveType.forClass(primitiveClass);
     }
     throw new IllegalArgumentException("Type must be boxed primitive");
   }

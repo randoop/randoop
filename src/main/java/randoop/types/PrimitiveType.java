@@ -1,5 +1,8 @@
 package randoop.types;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Represents a Java primitive type. Corresponds to primitive types as defined in JLS <a
  * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-PrimitiveType">section
@@ -10,12 +13,30 @@ public class PrimitiveType extends Type {
   /** The runtime class of the primitive type. */
   private final Class<?> runtimeClass;
 
+  /** All the PrimitiveTypes that have been created. */
+  private static Map<Class<?>, PrimitiveType> cache = new HashMap<>();
+
+  /**
+   * Creates a primitive type from the given runtime class.
+   *
+   * @param runtimeClass the runtime class
+   * @return the PrimitiveType for the given runtime class
+   */
+  public static PrimitiveType forClass(Class<?> runtimeClass) {
+    PrimitiveType cached = cache.get(runtimeClass);
+    if (cached == null) {
+      cached = new PrimitiveType(runtimeClass);
+      cache.put(runtimeClass, cached);
+    }
+    return cached;
+  }
+
   /**
    * Creates a primitive type from the given runtime class.
    *
    * @param runtimeClass the runtime class
    */
-  public PrimitiveType(Class<?> runtimeClass) {
+  private PrimitiveType(Class<?> runtimeClass) {
     assert runtimeClass.isPrimitive()
         : "must be initialized with primitive type, got " + runtimeClass.getName();
     assert !runtimeClass.equals(void.class) : "void should be represented by VoidType";
