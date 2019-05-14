@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Optional argument $1 is one of:
-#   all, test, misc
+#   all, test, misc, testPart1, testPart2, testPart3, testPart4, testPart5
 # If it is omitted, this script does everything.
 export GROUP=$1
 if [[ "${GROUP}" == "" ]]; then
@@ -47,8 +47,43 @@ if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
   /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
   sleep 3 # give xvfb some time to start
 
-  # `gradle build` == `gradle check assemble`
+  # `gradle build` == `gradle check assemble`.
   ./gradlew --info check
+fi
+
+## Splitting tests into 5 parts reduces latency for the whole job to complete.
+## The 5 parts are the dependences of the "check" target.
+## By default `gradle check` == `gradle test`, but Randoop's buildfile adds more dependences.
+
+if [[ "${GROUP}" == "testPart1" ]]; then
+  ./gradlew --info test
+fi
+
+if [[ "${GROUP}" == "testPart2" ]]; then
+  ./gradlew --info coveredTest
+fi
+
+if [[ "${GROUP}" == "testPart3" ]]; then
+  # need gui for running tests of replace call agent with Swing/AWT
+  # run xvfb
+  export DISPLAY=:99.0
+  XVFB=/usr/bin/Xvfb
+  XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
+  PIDFILE=/var/xvfb_${DISPLAY:1}.pid
+  /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
+  sleep 3 # give xvfb some time to start
+
+  # `gradle build` == `gradle check assemble`.
+  # By default `gradle check` == `gradle test`, but Randoop's buildfile adds more dependences
+  ./gradlew --info replacecallTest
+fi
+
+if [[ "${GROUP}" == "testPart4" ]]; then
+  ./gradlew --info jacocoTestReport
+fi
+
+if [[ "${GROUP}" == "testPart5" ]]; then
+  ./gradlew --info systemTest
 fi
 
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
