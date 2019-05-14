@@ -19,9 +19,6 @@ env:
   matrix:
     - OS=ubuntu JDKVER=jdk8 GROUP=testPart1
     - OS=ubuntu JDKVER=jdk8 GROUP=testPart2
-    - OS=ubuntu JDKVER=jdk8 GROUP=testPart3
-    - OS=ubuntu JDKVER=jdk8 GROUP=testPart4
-    - OS=ubuntu JDKVER=jdk8 GROUP=testPart5
     - OS=ubuntu JDKVER=jdkany GROUP=misc
 ## These jobs take a long time and reveal few problems.
 #    - OS=fedora JDKVER=jdk8 GROUP=test
