@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Optional argument $1 is one of:
-#   all, test, misc, testPart1, testPart2, testPart3, testPart4, testPart5
+#   all, test, misc, testPart1, testPart2, testPart3, testPart4
 # If it is omitted, this script does everything.
 export GROUP=$1
 if [[ "${GROUP}" == "" ]]; then
   export GROUP=all
 fi
 
-if [[ "${GROUP}" != "all" && "${GROUP}" != "test" && "${GROUP}" != "misc" && "${GROUP}" != "testPart1" && "${GROUP}" != "testPart2" && "${GROUP}" != "testPart3" && "${GROUP}" != "testPart4" && "${GROUP}" != "testPart5" ]]; then
-  echo "Bad argument '${GROUP}'; should be omitted or one of: all, test, misc, testPart1, testPart2, testPart3, testPart4, testPart5"
+if [[ "${GROUP}" != "all" && "${GROUP}" != "test" && "${GROUP}" != "misc" && "${GROUP}" != "testPart1" && "${GROUP}" != "testPart2" ]]; then
+  echo "Bad argument '${GROUP}'; should be omitted or one of: all, test, misc, testPart1, testPart2"
   exit 1
 fi
 
@@ -57,15 +57,10 @@ fi
 
 if [[ "${GROUP}" == "testPart1" ]]; then
   ./gradlew --info test
-fi
-
-if [[ "${GROUP}" == "testPart2" ]]; then
   ./gradlew --info coveredTest
-fi
 
-if [[ "${GROUP}" == "testPart3" ]]; then
-  # need gui for running tests of replace call agent with Swing/AWT
-  # run xvfb
+  # Need GUI for running tests of replace call agent with Swing/AWT.
+  # Run xvfb.
   export DISPLAY=:99.0
   XVFB=/usr/bin/Xvfb
   XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
@@ -78,13 +73,25 @@ if [[ "${GROUP}" == "testPart3" ]]; then
   ./gradlew --info replacecallTest
 fi
 
-if [[ "${GROUP}" == "testPart4" ]]; then
-  ./gradlew --info jacocoTestReport
-fi
+if [[ "${GROUP}" == "testPart2" ]]; then
+  # Need GUI for running renDirectSwingTest.
+  # Run xvfb.
+  export DISPLAY=:99.0
+  XVFB=/usr/bin/Xvfb
+  XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
+  PIDFILE=/var/xvfb_${DISPLAY:1}.pid
+  /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
+  sleep 3 # give xvfb some time to start
 
-if [[ "${GROUP}" == "testPart5" ]]; then
   ./gradlew --info systemTest
 fi
+
+## There is no need to run jacocoTestReport in continuous integration.
+## It runs both :test and :systemTest.
+## If we run it, run it instead of both of them.
+# if [[ "${GROUP}" == "testPart3" ]]; then
+#   ./gradlew --info jacocoTestReport
+# fi
 
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
   ./gradlew javadoc
