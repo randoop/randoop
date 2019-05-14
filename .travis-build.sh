@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Optional argument $1 is one of:
-#   all, test, misc, testPart1, testPart2, testPart3, testPart4
+#   all, test, misc, testPart1, testPart2
 # If it is omitted, this script does everything.
 export GROUP=$1
 if [[ "${GROUP}" == "" ]]; then
@@ -51,8 +51,8 @@ if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
   ./gradlew --info check
 fi
 
-## Splitting tests into 5 parts reduces latency for the whole job to complete.
-## The 5 parts are the dependences of the "check" target.
+## Splitting tests into 2 parts reduces latency for the whole job to complete.
+## There are 5 dependencies of the "check" target.
 ## By default `gradle check` == `gradle test`, but Randoop's buildfile adds more dependences.
 
 if [[ "${GROUP}" == "testPart1" ]]; then
@@ -74,7 +74,7 @@ if [[ "${GROUP}" == "testPart1" ]]; then
 fi
 
 if [[ "${GROUP}" == "testPart2" ]]; then
-  # Need GUI for running renDirectSwingTest.
+  # Need GUI for running runDirectSwingTest.
   # Run xvfb.
   export DISPLAY=:99.0
   XVFB=/usr/bin/Xvfb
@@ -87,8 +87,7 @@ if [[ "${GROUP}" == "testPart2" ]]; then
 fi
 
 ## There is no need to run jacocoTestReport in continuous integration.
-## It runs both :test and :systemTest.
-## If we run it, run it instead of both of them.
+## If we run it, there is no need to run :test and :systemTest, both of which it runs.
 # if [[ "${GROUP}" == "testPart3" ]]; then
 #   ./gradlew --info jacocoTestReport
 # fi
