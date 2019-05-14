@@ -8,8 +8,8 @@ if [[ "${GROUP}" == "" ]]; then
   export GROUP=all
 fi
 
-if [[ "${GROUP}" != "all" && "${GROUP}" != "test" && "${GROUP}" != "misc" ]]; then
-  echo "Bad argument '${GROUP}'; should be omitted or one of: all, test, misc"
+if [[ "${GROUP}" != "all" && "${GROUP}" != "test" && "${GROUP}" != "misc" && "${GROUP}" != "testPart1" && "${GROUP}" != "testPart2" && "${GROUP}" != "testPart3" && "${GROUP}" != "testPart4" && "${GROUP}" != "testPart5" ]]; then
+  echo "Bad argument '${GROUP}'; should be omitted or one of: all, test, misc, testPart1, testPart2, testPart3, testPart4, testPart5"
   exit 1
 fi
 
