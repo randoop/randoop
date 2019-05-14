@@ -748,8 +748,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Runtime environment")
-  // We do this rather than using java -D so that we can easily pass these
-  // to other JVMs
+  // This list enables Randoop to pass these properties to other JVMs, which woud not be easy if the
+  // user ran Randoop using `java -D`.  (But, Randoop does not seem to do so!  It was removed.)
   @Option("-D Specify system properties to be set; similar to <code>java -Dx=y</code>.")
   public static List<String> system_props = new ArrayList<>();
 
@@ -815,6 +815,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("<filename> Log operation usage counts to this file")
   public static FileWriterWithName operation_history_log = null;
 
+  /**
+   * True if Randoop should print generated tests that do not compile, which indicate Randoop bugs.
+   */
   @Option("Display source if a generated test contains a compilation error.")
   public static boolean print_non_compiling_file = false;
 
