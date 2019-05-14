@@ -48,7 +48,7 @@ if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
   sleep 3 # give xvfb some time to start
 
   # `gradle build` == `gradle check assemble`
-  ./gradlew --info check
+  ./gradlew --info check -x checkstyleMain
 fi
 
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
