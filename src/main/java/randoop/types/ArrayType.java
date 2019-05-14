@@ -240,7 +240,7 @@ public class ArrayType extends ReferenceType {
 
   @Override
   public boolean hasWildcard() {
-    return false;
+    return componentType.hasWildcard();
   }
 
   /**

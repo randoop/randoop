@@ -274,7 +274,7 @@ public class ReflectionManager {
    * @param m the method to be visited
    */
   private void applyTo(ClassVisitor v, Method m) {
-    Log.logPrintf("Visiting method %s%n", m.toGenericString());
+    Log.logPrintf("ReflectionManager visiting method %s%n", m.toGenericString());
     v.visit(m);
   }
 
