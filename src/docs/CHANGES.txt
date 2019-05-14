@@ -11,6 +11,9 @@ methods Randoop reports.
 Randoop builds in a set of omitted methods that are nondeterministic or
 long-running.
 
+Command-line argument changes:
+ * renamed --print-erroneous-file to print-non-compiling-file
+
 
 Version 4.1.2, released April 21, 2019
 

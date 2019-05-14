@@ -229,12 +229,12 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         String.format(
             "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n",
             "sourceFile", destinationDir);
-    if (GenInputsAbstract.print_erroneous_file) {
+    if (GenInputsAbstract.print_non_compiling_file) {
       message += String.format("Source file:%n%s%n", classSource);
     } else {
       message +=
           String.format(
-              "Use --print-erroneous-file to print the file with the compilation error.%n");
+              "Use --print-non-compiling-file to print the file with the compilation error.%n");
     }
     message += String.format("Diagnostics:%n%s%n", diagnostics);
     throw new RandoopBug(message, e);
@@ -341,12 +341,12 @@ public class FailingAssertionCommentWriter implements CodeWriter {
           message.append(String.format("%s%n", javaCodeLines[i]));
         }
 
-        if (GenInputsAbstract.print_erroneous_file) {
+        if (GenInputsAbstract.print_non_compiling_file) {
           message.append(String.format("Full source file:%n%s%n", javaCode));
         } else {
           message.append(
               String.format(
-                  "Use --print-erroneous-file to print the full file with the flaky test.%n"));
+                  "Use --print-non-compiling-file to print the full file with the flaky test.%n"));
         }
         throw new RandoopUsageError(message.toString());
       }
