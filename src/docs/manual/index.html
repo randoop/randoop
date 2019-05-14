@@ -2085,9 +2085,9 @@ that they differ will help you find the nondeterminism.
 If Randoop produces flaky tests and <a href="#option:flaky-test-behavior"><code>--flaky-test-behavior</code></a> is not set to HALT, Randoop will
 output a list of methods suspected to be the cause of nondeterminism in decreasing order 
 of likelihood.
-You can iteratively exclude nondeterministic methods via <a href="#option:omitmethods"><code>--omitmethods</code></a>
+You should investigate these methods, fix nondeterministic ones or exclude them via <a href="#option:omitmethods"><code>--omitmethods</code></a>
 or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>
-command-line argument and re-run Randoop until flaky tests are not generated.
+command-line argument, and re-run Randoop until flaky tests are not generated.
 </p>
 
 <p>
