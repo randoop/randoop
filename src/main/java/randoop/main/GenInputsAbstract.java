@@ -271,8 +271,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Pattern require_classname_in_test = null;
 
   /**
-   * File containing fully-qualified names of classes that the tests must use. This option only
-   * works if Randoop is run using the <a
+   * File containing fully-qualified names of classes that the tests must use, directly or
+   * indirectly. This option only works if Randoop is run using the <a
    * href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
    * javaagent</a> to instrument the classes. A test is output only if it uses at least one of the
    * class names in the file. A test uses a class if it invokes any constructor or method of the
@@ -722,7 +722,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Filename for code to include in AfterClass-annotated method of test classes")
   public static String junit_after_all = null;
 
-  /** Name of the directory to which JUnit files should be written. */
+  /** Name of the directory in which JUnit files should be written. */
   @Option("Name of the directory to which JUnit files should be written")
   public static String junit_output_dir = null;
 
@@ -750,7 +750,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @OptionGroup("Runtime environment")
   // We do this rather than using java -D so that we can easily pass these
   // to other JVMs
-  @Option("-D Specify system properties to be set (similar to java -Dx=y)")
+  @Option("-D Specify system properties to be set; similar to <code>java -Dx=y</code>.")
   public static List<String> system_props = new ArrayList<>();
 
   @Unpublicized
@@ -816,7 +816,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FileWriterWithName operation_history_log = null;
 
   @Option("Display source if a generated test contains a compilation error.")
-  public static boolean print_erroneous_file = false;
+  public static boolean print_non_compiling_file = false;
 
   /**
    * Create sequences but never execute them. Used to test performance of Randoop's sequence
