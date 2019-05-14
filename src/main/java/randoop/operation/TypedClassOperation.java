@@ -166,7 +166,7 @@ public class TypedClassOperation extends TypedOperation {
    */
   public RawSignature getRawSignature() {
     // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably
-    // both
+    // both.
     if (!this.isConstructorCall() && !this.isMethodCall()) {
       return null;
     }

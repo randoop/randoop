@@ -570,8 +570,8 @@ public class ForwardGenerator extends AbstractGenerator {
     // define it as the concatenation of the following list of sequences.
     // In other words, S = sequences[0] + ... + sequences[sequences.size()-1].
     // (This representation choice is for efficiency: it is cheaper to perform
-    // a single concatenation of the subsequences in the end than repeatedly
-    // extending S.)
+    // a single concatenation of the subsequences in the end than to repeatedly
+    // extend S.)
 
     List<Sequence> sequences = new ArrayList<>();
 
