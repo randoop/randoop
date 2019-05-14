@@ -1908,8 +1908,8 @@ public class RandoopSystemTest {
    * @param expectedRegression the minimum expected number of regression tests
    * @param expectedError the minimum expected number of error tests
    * @param coverageChecker the expected code coverage checker
-   * @param expectedFlakyMethodNames the expected suspected flaky method names that must appear in
-   *     this order. No flaky methods can be generated if this parameter is null.
+   * @param expectedFlakyMethodNames the first few expected suspected flaky method names that must
+   *     appear in this order. If this parameter is null, no flaky methods should be generated.
    */
   private void generateAndTest(
       SystemTestEnvironment environment,

@@ -203,7 +203,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * different executions.
    *
    * <p>Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic
-   * methods, and a ultimately, the solution is not to call Randoop on such methods; see section <a
+   * methods, and ultimately, the solution is not to call Randoop on such methods; see section <a
    * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
    * the Randoop manual. {@code OUTPUT} is the default because Randoop helps users with identifying
    * nondeterministic methods via the term frequency - inverse document frequency metric.
