@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import randoop.ExecutionOutcome;
@@ -18,7 +19,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
-import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -280,7 +280,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param substitution the substitution
    * @return the operation resulting from applying the substitution to the types of this operation
    */
-  public abstract TypedOperation apply(Substitution<ReferenceType> substitution);
+  public abstract TypedOperation substitute(Substitution substitution);
 
   /**
    * Applies a capture conversion to the wildcard types of this operation, and returns a new
@@ -400,9 +400,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
           InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
           assert superType != null
               : "should exist a super type of enum instantiating " + genDeclaringType;
-          Substitution<ReferenceType> substitution = superType.getTypeSubstitution();
-          inputTypes = inputTypes.apply(substitution);
-          outputType = outputType.apply(substitution);
+          Substitution substitution = superType.getTypeSubstitution();
+          inputTypes = inputTypes.substitute(substitution);
+          outputType = outputType.substitute(substitution);
         }
 
         // check if param types match
@@ -619,4 +619,32 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     }
     return args;
   }
+
+  /**
+   * RankedTypedOperation is a wrapper around a TypedOperation and a number. The number represents a
+   * ranking or priority. The purpose of this class is to be put in a priority queue.
+   */
+  public static class RankedTypeOperation {
+    /** Ranking value for the TypedOperation. */
+    public final double ranking;
+
+    /** The wrapped operation. */
+    public final TypedOperation operation;
+
+    /**
+     * Constructor to populate ranking and operation.
+     *
+     * @param ranking value associated with the operation
+     * @param operation wrapped operation
+     */
+    public RankedTypeOperation(double ranking, TypedOperation operation) {
+      this.ranking = ranking;
+      this.operation = operation;
+    }
+  }
+
+  /** Comparator used for sorting by ranking. */
+  public static final Comparator<RankedTypeOperation> compareRankedTypeOperation =
+      (RankedTypeOperation t, RankedTypeOperation t1) ->
+          Double.valueOf(t.ranking).compareTo(t1.ranking);
 }

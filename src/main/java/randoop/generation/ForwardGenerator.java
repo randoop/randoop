@@ -351,7 +351,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Select the next operation to use in constructing a new sequence.
     TypedOperation operation = operationSelector.selectOperation();
-    Log.logPrintf("Selected operation: %s%n", operation.toString());
+    Log.logPrintf("Selected operation: %s%n", operation);
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
@@ -364,13 +364,14 @@ public class ForwardGenerator extends AbstractGenerator {
           }
         } else {
           operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-          Log.logPrintf("Instantiation error for operation %s%n", operation);
+          Log.logPrintf("Instantiation error for operation%n %s%n", operation);
           Log.logStackTrace(e);
-          System.out.println("Instantiation error for operation " + operation);
-          operation = null;
+          System.out.printf("Instantiation error for operation%n %s%n", operation);
+          return null;
         }
       }
       if (operation == null) { // failed to instantiate generic
+        Log.logPrintf("Failed to instantiate generic operation%n", operation);
         return null;
       }
     }
@@ -409,7 +410,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     Sequence newSequence = concatSeq.extend(operation, inputVars);
 
-    // With .5 probability, do a primitive value heuristic.
+    // With .1 probability, do a "repeat" heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
       newSequence = repeat(newSequence, operation, times);
@@ -580,8 +581,8 @@ public class ForwardGenerator extends AbstractGenerator {
     // define it as the concatenation of the following list of sequences.
     // In other words, S = sequences[0] + ... + sequences[sequences.size()-1].
     // (This representation choice is for efficiency: it is cheaper to perform
-    // a single concatenation of the subsequences in the end than repeatedly
-    // extending S.)
+    // a single concatenation of the subsequences in the end than to repeatedly
+    // extend S.)
 
     List<Sequence> sequences = new ArrayList<>();
 

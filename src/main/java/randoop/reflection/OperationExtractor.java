@@ -17,7 +17,6 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.NonParameterizedType;
-import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
@@ -129,7 +128,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   private TypedClassOperation instantiateTypes(TypedClassOperation operation) {
     if (!classType.isGeneric() && operation.getDeclaringType().isGeneric()) {
-      Substitution<ReferenceType> substitution =
+      Substitution substitution =
           classType.getInstantiatingSubstitution(operation.getDeclaringType());
       if (substitution == null) { // No unifying substitution found
         throw new RandoopBug(
@@ -137,7 +136,7 @@ public class OperationExtractor extends DefaultClassVisitor {
                 "Type %s for operation %s is not a subtype of an instantiation of declaring class of method %s",
                 classType, operation, operation.getDeclaringType()));
       }
-      operation = operation.apply(substitution);
+      operation = operation.substitute(substitution);
       if (operation == null) {
         // No more details available because formal parameter {@code operation} was overwritten.
         throw new RandoopBug("Instantiation of operation failed");

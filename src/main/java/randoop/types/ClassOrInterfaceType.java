@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
  *
- * <p>This abstract class corresponds to the grammar in the JLS:
+ * <p>This abstract class corresponds to this grammar production in the JLS:
  *
  * <pre>
  *   ClassOrInterfaceType:
@@ -112,7 +112,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * objects without casting.
    */
   @Override
-  public abstract ClassOrInterfaceType apply(Substitution<ReferenceType> substitution);
+  public abstract ClassOrInterfaceType substitute(Substitution substitution);
 
   /**
    * Applies the substitution to the enclosing type of this type and adds the result as the
@@ -122,10 +122,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type the type to which resulting enclosing type is to be added
    * @return the type with enclosing type added if needed
    */
-  final ClassOrInterfaceType apply(
-      Substitution<ReferenceType> substitution, ClassOrInterfaceType type) {
+  final ClassOrInterfaceType substitute(Substitution substitution, ClassOrInterfaceType type) {
     if (this.isMemberClass() && !this.isStatic()) {
-      type.setEnclosingType(enclosingType.apply(substitution));
+      type.setEnclosingType(enclosingType.substitute(substitution));
     }
     return type;
   }
@@ -261,20 +260,17 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return null;
   }
 
-  /**
-   * Computes a substitution that can be applied to the type variables of the generic goal type to
-   * instantiate operations of this type, possibly inherited from from the goal type. The
-   * substitution will unify this type or a supertype of this type with the given goal type.
-   *
-   * <p>If there is no unifying substitution, returns {@code null}.
-   *
-   * @param goalType the generic type for which a substitution is needed
-   * @return a substitution unifying this type or a supertype of this type with the goal type
-   */
-  public Substitution<ReferenceType> getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
+  @Override
+  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+    Substitution superResult =
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+    if (superResult != null) {
+      return superResult;
+    }
+
     assert goalType.isGeneric() : "goal type must be generic";
 
-    Substitution<ReferenceType> substitution = new Substitution<>();
+    Substitution substitution = new Substitution();
     if (this.isMemberClass() && !this.isStatic()) {
       substitution = enclosingType.getInstantiatingSubstitution(goalType);
       if (substitution == null) {
@@ -285,7 +281,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (goalType instanceof GenericClassType) {
       InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
-        Substitution<ReferenceType> supertypeSubstitution = supertype.getTypeSubstitution();
+        Substitution supertypeSubstitution = supertype.getTypeSubstitution();
         if (supertypeSubstitution == null) {
           return null;
         }
@@ -475,11 +471,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return superClassType.isSubtypeOf(otherType);
   }
 
-  /**
-   * Indicate whether this type has a wildcard either as or in a type argument.
-   *
-   * @return true if this type has a wildcard, and false otherwise
-   */
   @Override
   public boolean hasWildcard() {
     return false;

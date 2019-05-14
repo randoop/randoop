@@ -111,8 +111,8 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public ArrayType apply(Substitution<ReferenceType> substitution) {
-    Type type = componentType.apply(substitution);
+  public ArrayType substitute(Substitution substitution) {
+    Type type = componentType.substitute(substitution);
     if (!type.equals(this)) {
       return ArrayType.ofComponentType(type);
     } else {
@@ -238,14 +238,9 @@ public class ArrayType extends ReferenceType {
     return new ArrayType(componentType.getRawtype(), runtimeClass);
   }
 
-  /**
-   * Indicate whether this type has a wildcard either as or in a type argument.
-   *
-   * @return true if this type has a wildcard, and false otherwise
-   */
   @Override
   public boolean hasWildcard() {
-    return false;
+    return componentType.hasWildcard();
   }
 
   /**

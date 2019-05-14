@@ -1,12 +1,16 @@
 package randoop.main;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.options.Option;
@@ -16,6 +20,8 @@ import org.plumelib.options.Unpublicized;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
+import randoop.reflection.OperationModel;
+import randoop.reflection.VisibilityPredicate;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 
@@ -40,13 +46,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * The fully-qualified raw name of a class to test; for example, {@code
    * --testclass=java.util.TreeSet}. All of its methods are methods under test. This class is tested
-   * in addition to any specified using {@code --classlist}, and must be accessible from the package
-   * of the tests (set with {@code --junit-package-name}).
+   * in addition to any specified using {@code --testjar} or {@code --classlist}, and must be
+   * accessible from the package of the tests (set with {@code --junit-package-name}).
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Code under test:  which classes and members may be used by a test")
   @Option("The fully-qualified name of a class under test")
   public static List<String> testclass = new ArrayList<>();
+
+  /**
+   * Treat every class in the given jar file as a class to test. The jarfile must be on the
+   * classpath.
+   */
+  @Option("A jarfile, all of whose classes should be tested")
+  public static List<Path> testjar = new ArrayList<>();
 
   /**
    * File that lists classes to test. All of their methods are methods under test.
@@ -60,6 +73,22 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File that lists classes under test")
   public static Path classlist = null;
 
+  /**
+   * A regex that indicates classes that should not be classes to test, even if included by some
+   * other command-line option. The regex is matched against fully-qualified class names. If the
+   * regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the beginning and
+   * the end of the class name.
+   */
+  @Option("Do not test classes that match regular expression <string>")
+  public static List<Pattern> omit_classes = new ArrayList<>();
+
+  /**
+   * A file containing a list of regular expressions that indicate classes not to test. These
+   * patterns are used along with those provided with {@code --omit-classes}.
+   */
+  @Option("File containing regular expressions for methods to omit")
+  public static Path omit_classes_file = null;
+
   // A relative URL like <a href="#specifying-methods"> works when this
   // Javadoc is pasted into the manual, but not in Javadoc proper.
   /**
@@ -67,8 +96,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
    * signature</a> on a separate line.
    *
-   * <p>These methods augment any methods from classes given by the {@code --testclass} or {@code
-   * --classlist} options.
+   * <p>These methods augment any methods from classes given by the {@code --testclass}, {@code
+   * --testjar}, and {@code --classlist} options.
    *
    * <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
    * file</a>.
@@ -85,7 +114,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * signature</a> matches the regular expression, or a method inherited from a superclass or
    * interface whose signature matches the regular expression.
    *
-   * <p>If the regular expression contains anchors "{@code ^}" and "{@code $}", they refer to the
+   * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.
    */
   @Option("Do not call methods that match regular expression <string>")
@@ -183,6 +212,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FlakyTestAction flaky_test_behavior = FlakyTestAction.HALT;
 
   /**
+   * How many suspected side-effecting or nondeterministic methods (from the program under test) to
+   * print.
+   */
+  @Option("Number of suspected nondeterministic methods to print")
+  public static int nondeterministic_methods_to_output = 10;
+
+  /**
    * Whether to output error-revealing tests. Disables all output when used with {@code
    * --no-regression-tests}. Restricting output can result in long runs if the default values of
    * {@code --generated-limit} and {@code --time-limit} are used.
@@ -244,7 +280,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * 100 error-revealing tests; consider using <a
    * href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test"><code>
    * --stop-on-error-test=true</code></a>. Also see the <a
-   * href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization-options">test
+   * href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization">test
    * case minimization options</a>.
    */
   // Omit this to keep the documentation short:
@@ -857,28 +893,76 @@ public abstract class GenInputsAbstract extends CommandHandler {
         && output_limit >= LIMIT_DEFAULT) {
       throw new RandoopUsageError(
           String.format(
-              "Unlikely parameter combination: --time-limit=%s --attempted-limit=%s --generated-limit=%s --output-limit=%s",
-              time_limit, attempted_limit, generated_limit, output_limit));
+              "Unlikely parameter combination: --time-limit=0 and high other limits:%n"
+                  + " --attempted-limit=%s --generated-limit=%s --output-limit=%s",
+              attempted_limit, generated_limit, output_limit));
     }
 
-    if (classlist == null && methodlist == null && testclass.isEmpty()) {
+    if (testclass.isEmpty() && testjar.isEmpty() && classlist == null && methodlist == null) {
       throw new RandoopUsageError(
           "You must specify some classes or methods to test."
               + Globals.lineSep
-              + "Use the --classlist, --testclass, or --methodlist options.");
+              + "Use the --testclass, --testjar, --classlist, or --methodlist options.");
     }
   }
 
   /**
    * Read names of classes under test, as provided with the --classlist command-line argument.
    *
+   * @param visibility the visibility predicate
    * @return the classes provided via the --classlist command-line argument
    */
   @SuppressWarnings("signature") // TODO: reading from file; no guarantee strings are @ClassGetName
-  public static Set<@ClassGetName String> getClassnamesFromArgs() {
+  public static Set<@ClassGetName String> getClassnamesFromArgs(VisibilityPredicate visibility) {
     Set<@ClassGetName String> classnames = getStringSetFromFile(classlist, "tested classes");
+    for (Path jarFile : testjar) {
+      classnames.addAll(getClassnamesFromJarFile(jarFile, visibility));
+    }
     classnames.addAll(testclass);
     return classnames;
+  }
+
+  /**
+   * Read names of classes from a jar file. Ignores interfaces, abstract classes, and non-visible
+   * classes.
+   *
+   * @param jarFile the jar file from which to read classes
+   * @param visibility the visibility predicate
+   * @return the names of classes in the jar file
+   */
+  @SuppressWarnings("signature") // string manipulation
+  public static Set<@ClassGetName String> getClassnamesFromJarFile(
+      Path jarFile, VisibilityPredicate visibility) {
+    try {
+      Set<@ClassGetName String> classNames = new TreeSet<>();
+      ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()));
+      for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+        if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+          // This ZipEntry represents a class. Now, what class does it represent?
+          String classFileName = entry.getName();
+          String slashName = classFileName.substring(0, classFileName.length() - ".class".length());
+          String className = slashName.replace('/', '.');
+          Class<?> c;
+          try {
+            c = Class.forName(className);
+          } catch (ClassNotFoundException e) {
+            throw new RandoopUsageError(
+                className
+                    + " not found on classpath.  Ensure that "
+                    + jarFile
+                    + " is on the classpath.");
+          }
+          if (OperationModel.nonInstantiable(c, visibility) == null) {
+            classNames.add(className);
+          }
+        }
+      }
+      return classNames;
+    } catch (IOException e) {
+      String message =
+          String.format("Error while reading jar file %s: %s%n", jarFile, e.getMessage());
+      throw new RandoopUsageError(message, e);
+    }
   }
 
   /**

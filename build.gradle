@@ -25,7 +25,10 @@ plugins {
   id 'se.patrikerdes.use-latest-versions' version '0.2.9'
   id 'com.github.ben-manes.versions' version '0.21.0'
 
-  id 'org.aim42.htmlSanityCheck' version '1.1.1'
+  id 'org.aim42.htmlSanityCheck' version '1.1.3'
+
+  // This does not work with Gradle 5.3: https://github.com/dorongold/gradle-task-tree/issues/32
+  // id "com.dorongold.task-tree" version "1.3"
 }
 
 // For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
@@ -38,6 +41,7 @@ allprojects {
 
   apply plugin: 'java'
   apply plugin: 'com.github.johnrengelman.shadow'
+  apply plugin: 'checkstyle'
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -142,10 +146,7 @@ dependencies {
   implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
 
-  /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files.
-   * TODO: Update now that we no longer support JDK7.
-   * Note that updating will require code changes due to JavaParser API changes. */
-  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
+  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.13.10'
 
   /* Jacoco measures coverage of classes and methods under test. */
   implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
@@ -696,6 +697,23 @@ task clonePlumeScripts {
   }
 }
 
+checkstyle {
+  configFile = rootProject.file('checkstyle.xml')
+}
+
+// The test cases are allowed to have javadoc comment errors.
+checkstyleSystemTest.enabled = false
+checkstyleTest.enabled = false
+checkstyleTestInput.enabled = false
+
+task checkstyle(type: Checkstyle) {
+  configFile = rootProject.file('checkstyle.xml')
+  source sourceSets.main.allJava
+
+  // empty classpath
+  classpath = files()
+}
+
 /*
  * Set destination directory to build/docs/api, and restrict to classes in
  * main sourceSet.
@@ -755,6 +773,7 @@ task requireJavadocPrivate(type: Javadoc) {
   options.memberLevel = JavadocMemberLevel.PRIVATE
   options.docletpath = project.sourceSets.main.compileClasspath as List
   options.doclet = "org.plumelib.javadoc.RequireJavadoc"
+  options.addStringOption('skip', 'CloneVisitor')
   // options.addStringOption('skip', 'ClassNotToCheck|OtherClass')
 }
 

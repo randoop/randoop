@@ -107,9 +107,9 @@ class CaptureTypeVariable extends TypeVariable {
    * @param typeParameter the formal type parameter of the generic type
    * @param substitution the capture conversion substitution
    */
-  public void convert(TypeVariable typeParameter, Substitution<ReferenceType> substitution) {
+  public void convert(TypeVariable typeParameter, Substitution substitution) {
     // the lower bound is either the null-type or the wildcard lower bound, so only do upper bound
-    ParameterBound parameterBound = typeParameter.getUpperTypeBound().apply(substitution);
+    ParameterBound parameterBound = typeParameter.getUpperTypeBound().substitute(substitution);
     if (getUpperTypeBound().isObject()) {
       setUpperBound(parameterBound);
     } else {
@@ -141,20 +141,20 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+  public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;
     }
     // otherwise, apply to bounds
-    ParameterBound lowerBound = getLowerTypeBound().apply(substitution);
-    ParameterBound upperBound = getUpperTypeBound().apply(substitution);
+    ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
+    ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
 
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds
       if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
-        WildcardArgument updatedWildcard = wildcard.apply(substitution);
+        WildcardArgument updatedWildcard = wildcard.substitute(substitution);
         return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);
       }
       return this;

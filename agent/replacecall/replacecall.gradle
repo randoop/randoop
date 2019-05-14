@@ -25,6 +25,10 @@ jar {
   }
 }
 
+checkstyle {
+  configFile = rootProject.file('checkstyle.xml')
+}
+
 test {
   testLogging {
     events 'started', 'passed'
