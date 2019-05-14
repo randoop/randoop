@@ -48,7 +48,7 @@ if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
   sleep 3 # give xvfb some time to start
 
   # `gradle build` == `gradle check assemble`
-  # There is no need for checkstyle targets, which are checked in "misc" job.
+  # There is no need for checkstyle targets here; they are checked in "misc" job.
   ./gradlew --info check -x checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
 fi
 
