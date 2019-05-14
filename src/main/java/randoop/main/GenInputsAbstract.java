@@ -187,14 +187,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @see #flaky_test_behavior
    */
   public enum FlakyTestAction {
-    /** Randoop halts with a diagnostic message. */
+    /**
+     * Randoop halts with a diagnostic message. You can determine the responsible methods, fix or
+     * exclude them, and re-run Randoop.
+     */
     HALT,
     /**
-     * Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
-     * down by a factor of 2 or more.
+     * Discard the flaky test. This option should be a last resort. It is inefficient and
+     * unproductive for Randoop to produce and discard a lot of flaky tests.
      */
     DISCARD,
-    /** Output the flaky test; the resulting test suite may fail when it is run. */
+    /**
+     * Output the flaky test, but with flaky assertions commented out. When the value is {@code
+     * OUTPUT}, Randoop also suggests methods under test that might have caused the flakiness. You
+     * should <a
+     * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">investigate</a>
+     * them, fix or exclude them, then re-run Randoop.
+     */
     OUTPUT
   }
 
@@ -205,8 +214,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic
    * methods, and ultimately, the solution is not to call Randoop on such methods; see section <a
    * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
-   * the Randoop manual. {@code OUTPUT} is the default because Randoop helps users with identifying
-   * nondeterministic methods via the term frequency - inverse document frequency metric.
+   * the Randoop manual.
    */
   @Option("What to do if a flaky test is generated")
   public static FlakyTestAction flaky_test_behavior = FlakyTestAction.OUTPUT;
