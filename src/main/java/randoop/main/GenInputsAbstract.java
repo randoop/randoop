@@ -126,7 +126,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --omitmethods}, and the default omissions.
    */
   @Option("File containing regular expressions for methods to omit")
-  public static Path omitmethods_file = null;
+  public static List<Path> omitmethods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
@@ -187,14 +187,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @see #flaky_test_behavior
    */
   public enum FlakyTestAction {
-    /** Randoop halts with a diagnostic message. */
+    /**
+     * Randoop halts with a diagnostic message. You can determine the responsible methods, fix or
+     * exclude them, and re-run Randoop.
+     */
     HALT,
     /**
-     * Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
-     * down by a factor of 2 or more.
+     * Discard the flaky test. This option should be a last resort. It is inefficient and
+     * unproductive for Randoop to produce and discard a lot of flaky tests.
      */
     DISCARD,
-    /** Output the flaky test; the resulting test suite may fail when it is run. */
+    /**
+     * Output the flaky test, but with flaky assertions commented out. When the value is {@code
+     * OUTPUT}, Randoop also suggests methods under test that might have caused the flakiness. You
+     * should <a
+     * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">investigate</a>
+     * them, fix or exclude them, then re-run Randoop.
+     */
     OUTPUT
   }
 
@@ -202,14 +211,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
    * different executions.
    *
-   * <p>Setting this option to {@code DISCARD} or {@code OUTPUT} should be considered a last resort.
-   * Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
-   * and a better solution is not to call Randoop on such methods; see section <a
+   * <p>Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic
+   * methods, and ultimately, the solution is not to call Randoop on such methods; see section <a
    * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
    * the Randoop manual.
    */
   @Option("What to do if a flaky test is generated")
-  public static FlakyTestAction flaky_test_behavior = FlakyTestAction.HALT;
+  public static FlakyTestAction flaky_test_behavior = FlakyTestAction.OUTPUT;
 
   /**
    * How many suspected side-effecting or nondeterministic methods (from the program under test) to

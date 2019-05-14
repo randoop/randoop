@@ -85,7 +85,7 @@ The Randoop homepage is
           <li><a href="#not-enough-tests-created">Randoop does not create enough tests, or creates no tests</a></li>
           <li><a href="#nontermination">Randoop does not terminate</a></li>
           <li><a href="#different-output">Randoop produces different output on different runs</a></li>
-          <li><a href="#flaky-tests">Randoop stopped because of a flaky test</a></li>
+          <li><a href="#flaky-tests">Randoop generated flaky tests</a></li>
           <li><a href="#regression-tests-do-not-pass">Randoop produces a regression test suite that does not pass</a></li>
           <li><a href="#dependent-tests">Tests behave differently in isolation or when reordered</a></li>
         </ul></li>
@@ -930,7 +930,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>If the regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the
  beginning and the end of the signature string.
-            <li id="option:omitmethods-file"><b>--omitmethods-file=</b><i>filename</i>.
+            <li id="option:omitmethods-file"><b>--omitmethods-file=</b><i>filename</i> <code>[+]</code>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>--omitmethods</code>, and the default omissions.
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
@@ -949,11 +949,12 @@ Randoop about your application, and that is how we recommend using Randoop.
              What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
  different executions.
 
- <p>Setting this option to <code>DISCARD</code> or <code>OUTPUT</code> should be considered a last resort.
- Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
- and a better solution is not to call Randoop on such methods; see section <a
+ <p><code>OUTPUT</code> is the default because Randoop now provides term frequency - inverse document
+ frequency metrics for identifying nondeterministic methods. Flaky tests are usually due to
+ calling Randoop on side-effecting or nondeterministic methods, and a ultiately, the solution is
+ not to call Randoop on such methods; see section <a
  href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
- the Randoop manual. [default HALT]
+ the Randoop manual. [default OUTPUT]
 <ul>
   <li><b>HALT</b> Randoop halts with a diagnostic message.
   <li><b>DISCARD</b> Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
@@ -2064,6 +2065,15 @@ the <a href="#option:randomseed"><code>--deterministic</code></a>
 command-line argument, then there is some source of nondeterminism.
 
 <p>
+If Randoop produces flaky tests and <a href="#option:flaky-test-behavior"><code>--flaky-test-behavior</code></a> is not set to HALT, Randoop will
+output a list of methods suspected to be the cause of nondeterminism in decreasing order 
+of likelihood.
+You should investigate these methods, fix nondeterministic ones or exclude them via <a href="#option:omitmethods"><code>--omitmethods</code></a>
+or <a href="#option:omitmethods-file"><code>--omitmethods-file</code></a>
+command-line argument, and re-run Randoop until flaky tests are not generated.
+</p>
+
+<p>
 The remainder of this section gives several reasons you may discover.
 </p>
 
@@ -2481,7 +2491,7 @@ See the manual section on <a href="#nondeterminism">nondeterminism</a>.
 </p>
 
 
-<h3 id="flaky-tests">Randoop stopped because of a flaky test</h3>
+<h3 id="flaky-tests">Randoop generated flaky tests</h3>
 
 <p>
 A test is <i>flaky</i> if it behaves differently on different executions.

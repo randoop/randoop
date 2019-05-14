@@ -1060,6 +1060,37 @@ public class RandoopSystemTest {
         expectedFlakyMethodsInOrder);
   }
 
+  /** This test case verifies that flaky methods are excluded via --omitmethods. */
+  @Test
+  public void runFlakyOmitMethodsTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("flaky-omit-methods-test");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("flaky.FlakyClass");
+    options.setOption("generated_limit", "1000");
+    options.setOption("output_limit", "1000");
+    options.setOption("flaky-test-behavior", "OUTPUT");
+    options.setOption("omitmethods", "flaky\\.FlakyClass\\.flakyDefaultHashCode\\(\\)");
+
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            "flaky.FlakyClass.getTwo() include",
+            "flaky.FlakyClass.getThree() include",
+            "flaky.FlakyClass.flakyDefaultHashCode() ignore",
+            "flaky.FlakyClass.multiply(int, int) include");
+
+    List<String> expectedFlakyMethodsInOrder = null;
+
+    generateAndTest(
+        testEnvironment,
+        options,
+        ExpectedTests.DONT_CARE,
+        ExpectedTests.DONT_CARE,
+        coverageChecker,
+        expectedFlakyMethodsInOrder);
+  }
+
   /** Test for inserted test fixtures. */
   @Test
   public void runFixtureTest() {
@@ -1877,8 +1908,8 @@ public class RandoopSystemTest {
    * @param expectedRegression the minimum expected number of regression tests
    * @param expectedError the minimum expected number of error tests
    * @param coverageChecker the expected code coverage checker
-   * @param expectedFlakyMethodNames the expected suspected flaky method names that must appear in
-   *     this order
+   * @param expectedFlakyMethodNames the first few expected suspected flaky method names that must
+   *     appear in this order. If this parameter is null, no flaky methods should be generated.
    */
   private void generateAndTest(
       SystemTestEnvironment environment,
@@ -1894,11 +1925,15 @@ public class RandoopSystemTest {
 
     RandoopRunStatus runStatus = generateAndCompile(environment, options, false);
 
-    // Assert that the flaky methods identified are present and in the order expected.
     List<String> generatedFlakyMethodNames = runStatus.suspectedFlakyMethodNames;
-    assert (generatedFlakyMethodNames.size() >= expectedFlakyMethodNames.size());
-    for (int i = 0; i < expectedFlakyMethodNames.size(); i++) {
-      assert (generatedFlakyMethodNames.get(i).equals(expectedFlakyMethodNames.get(i)));
+    if (expectedFlakyMethodNames == null) {
+      assert (generatedFlakyMethodNames.isEmpty());
+    } else {
+      // Assert that the flaky methods identified are present and in the order expected.
+      assert (generatedFlakyMethodNames.size() >= expectedFlakyMethodNames.size());
+      for (int i = 0; i < expectedFlakyMethodNames.size(); i++) {
+        assert (generatedFlakyMethodNames.get(i).equals(expectedFlakyMethodNames.get(i)));
+      }
     }
 
     String packageName = options.getPackageName();
