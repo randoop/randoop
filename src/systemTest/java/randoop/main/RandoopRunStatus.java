@@ -84,8 +84,20 @@ class RandoopRunStatus {
         && !testEnvironment.getBootClassPath().isEmpty()) {
       command.add("-Xbootclasspath/a:" + testEnvironment.getBootClassPath());
     }
+
     command.add("-classpath");
+    // This version can make a command that is too long (over 4096 characters).
     command.add(testEnvironment.getSystemTestClasspath());
+    // In Java 9+, use a Java "argument file":
+    // String classpathFilename = testEnvironment.workingDir + "filename.txt";
+    // try (PrintWriter out = new PrintWriter(classpathFilename)) {
+    //   out.println(testEnvironment.getSystemTestClasspath());
+    // } catch (FileNotFoundException e) {
+    //   e.printStackTrace();
+    //   System.exit(1);
+    // }
+    // command.add("@" + classpathFilename);
+
     if (testEnvironment.getJavaAgentPath() != null) {
       String agent = "-javaagent:" + testEnvironment.getJavaAgentPath();
       String args = testEnvironment.getJavaAgentArgumentString();

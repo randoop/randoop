@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.List;
+import randoop.types.LazyParameterBound.LazyBoundException;
 
 /**
  * Represents a bound on a type variable where the bound is a {@link ReferenceType} that can be used
@@ -94,7 +95,13 @@ class EagerReferenceBound extends ReferenceBound {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType boundClassType = (InstantiatedType) boundType.applyCaptureConversion();
+      InstantiatedType boundClassType;
+      try {
+        boundClassType = (InstantiatedType) boundType.applyCaptureConversion();
+      } catch (LazyBoundException e) {
+        // Capture conversion does not (currently?) work for a lazy bound.
+        return false;
+      }
       InstantiatedType argSuperType =
           ((ClassOrInterfaceType) argType)
               .getMatchingSupertype(boundClassType.getGenericClassType());

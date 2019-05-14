@@ -100,12 +100,6 @@ class IntersectionTypeBound extends ParameterBound {
     return paramList;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return true if any type in the intersection type bound has a wildcard argument, false
-   *     otherwise
-   */
   @Override
   boolean hasWildcard() {
     for (ParameterBound b : boundList) {

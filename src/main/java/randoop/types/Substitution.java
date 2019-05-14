@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,8 @@ public class Substitution {
    */
   public Substitution(List<TypeVariable> parameters, ReferenceType... arguments) {
     this();
-    assert parameters.size() == arguments.length;
+    assert parameters.size() == arguments.length
+        : "parameters=" + parameters + "  arguments=" + Arrays.toString(arguments);
     for (int i = 0; i < parameters.size(); i++) {
       put(parameters.get(i), arguments[i]);
     }
