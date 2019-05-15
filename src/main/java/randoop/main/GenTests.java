@@ -244,7 +244,10 @@ public class GenTests extends GenInputsAbstract {
     Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
     omitFields.addAll(omit_field);
 
-    omitmethods.addAll(readOmitMethods(omitmethods_file));
+    for (Path omitmethodsFile : GenInputsAbstract.omitmethods_file) {
+      omitmethods.addAll(readOmitMethods(omitmethodsFile));
+    }
+
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
       omitmethods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
     }
@@ -604,12 +607,8 @@ public class GenTests extends GenInputsAbstract {
     }
 
     System.out.println(
-        "To prevent the generation of flaky tests, see section 'Nondeterministic program");
-    System.out.println("under test' at https://randoop.github.io/randoop/manual/#nondeterminism .");
-    System.out.println();
-    // TODO cxing: Separate PR: add nmrd-blacklist comment suggestion for
-    // user (actionable steps to take to avoid flaky test generation) and edit the manual
-    // accordingly.
+        "To prevent the generation of flaky tests, see section 'Randoop generated flaky tests'");
+    System.out.println(" at https://randoop.github.io/randoop/manual/#flaky-tests .");
     System.out.println();
   }
 

@@ -126,7 +126,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --omitmethods}, and the default omissions.
    */
   @Option("File containing regular expressions for methods to omit")
-  public static Path omitmethods_file = null;
+  public static List<Path> omitmethods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
@@ -187,14 +187,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @see #flaky_test_behavior
    */
   public enum FlakyTestAction {
-    /** Randoop halts with a diagnostic message. */
+    /**
+     * Randoop halts with a diagnostic message. You can determine the responsible methods, fix or
+     * exclude them, and re-run Randoop.
+     */
     HALT,
     /**
-     * Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
-     * down by a factor of 2 or more.
+     * Discard the flaky test. This option should be a last resort. It is inefficient and
+     * unproductive for Randoop to produce and discard a lot of flaky tests.
      */
     DISCARD,
-    /** Output the flaky test; the resulting test suite may fail when it is run. */
+    /**
+     * Output the flaky test, but with flaky assertions commented out. When the value is {@code
+     * OUTPUT}, Randoop also suggests methods under test that might have caused the flakiness. You
+     * should <a
+     * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">investigate</a>
+     * them, fix or exclude them, then re-run Randoop.
+     */
     OUTPUT
   }
 
@@ -202,14 +211,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
    * different executions.
    *
-   * <p>Setting this option to {@code DISCARD} or {@code OUTPUT} should be considered a last resort.
-   * Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
-   * and a better solution is not to call Randoop on such methods; see section <a
+   * <p>Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic
+   * methods, and ultimately, the solution is not to call Randoop on such methods; see section <a
    * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
    * the Randoop manual.
    */
   @Option("What to do if a flaky test is generated")
-  public static FlakyTestAction flaky_test_behavior = FlakyTestAction.HALT;
+  public static FlakyTestAction flaky_test_behavior = FlakyTestAction.OUTPUT;
 
   /**
    * How many suspected side-effecting or nondeterministic methods (from the program under test) to
@@ -263,8 +271,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Pattern require_classname_in_test = null;
 
   /**
-   * File containing fully-qualified names of classes that the tests must use. This option only
-   * works if Randoop is run using the <a
+   * File containing fully-qualified names of classes that the tests must use, directly or
+   * indirectly. This option only works if Randoop is run using the <a
    * href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
    * javaagent</a> to instrument the classes. A test is output only if it uses at least one of the
    * class names in the file. A test uses a class if it invokes any constructor or method of the
@@ -714,7 +722,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Filename for code to include in AfterClass-annotated method of test classes")
   public static String junit_after_all = null;
 
-  /** Name of the directory to which JUnit files should be written. */
+  /** Name of the directory in which JUnit files should be written. */
   @Option("Name of the directory to which JUnit files should be written")
   public static String junit_output_dir = null;
 
@@ -740,9 +748,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Runtime environment")
-  // We do this rather than using java -D so that we can easily pass these
-  // to other JVMs
-  @Option("-D Specify system properties to be set (similar to java -Dx=y)")
+  // This list enables Randoop to pass these properties to other JVMs, which woud not be easy if the
+  // user ran Randoop using `java -D`.  (But, Randoop does not seem to do so!  It was removed.)
+  @Option("-D Specify system properties to be set; similar to <code>java -Dx=y</code>.")
   public static List<String> system_props = new ArrayList<>();
 
   @Unpublicized
@@ -807,8 +815,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("<filename> Log operation usage counts to this file")
   public static FileWriterWithName operation_history_log = null;
 
+  /**
+   * True if Randoop should print generated tests that do not compile, which indicate Randoop bugs.
+   */
   @Option("Display source if a generated test contains a compilation error.")
-  public static boolean print_erroneous_file = false;
+  public static boolean print_non_compiling_file = false;
 
   /**
    * Create sequences but never execute them. Used to test performance of Randoop's sequence
