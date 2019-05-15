@@ -747,6 +747,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean junit_reflection_allowed = true;
 
   ///////////////////////////////////////////////////////////////////
+  /** System properties that Randoop will set similarly to {@code java -D}, of the form "x=y". */
   @OptionGroup("Runtime environment")
   // This list enables Randoop to pass these properties to other JVMs, which woud not be easy if the
   // user ran Randoop using `java -D`.  (But, Randoop does not seem to do so!  It was removed.)
