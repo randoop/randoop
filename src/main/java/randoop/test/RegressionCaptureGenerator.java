@@ -13,6 +13,7 @@ import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
+import randoop.reflection.OperationModel;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
@@ -42,8 +43,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The generator for expected exceptions. */
   private ExpectedExceptionCheckGen exceptionExpectation;
 
-  /** The map from a type to the observer operations for the type. */
-  private MultiMap<Type, TypedOperation> observerMap;
+  /** The map from a type to the side-effect-free (@SideEffectFree) operations for the type */
+  private MultiMap<Type, TypedOperation> sideEffectFreeMap;
 
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
@@ -53,11 +54,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
-      MultiMap<Type, TypedOperation> observerMap,
+      MultiMap<Type, TypedOperation> sideEffectFreeMap,
       VisibilityPredicate isVisible,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
-    this.observerMap = observerMap;
+    this.sideEffectFreeMap = sideEffectFreeMap;
     this.isVisible = isVisible;
     this.includeAssertions = includeAssertions;
   }
@@ -177,13 +178,13 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               checks.add(new ObjectCheck(new IsNotNull(), var));
             }
 
-            // Put out any observers that exist for this type
+            // Put out any side-effect-free methods that exist for this type
             Variable var0 = sequence.sequence.getVariable(i);
-            Set<TypedOperation> observers = observerMap.getValues(var0.getType());
-            if (observers != null) {
-              for (TypedOperation m : observers) {
-
-                // When outputting checks, ignore observers that don't take a single argument.
+            Set<TypedOperation> sideEffectFreeMethods = sideEffectFreeMap.getValues(var0.getType());
+            if (sideEffectFreeMethods != null) {
+              for (TypedOperation m : sideEffectFreeMethods) {
+                // When outputting checks, ignore side-effect-free methods that don't take a single
+                // argument.
                 if (m.getInputTypes().size() != 1) {
                   continue;
                 }
@@ -191,7 +192,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
-                      "unexpected error invoking observer "
+                      "unexpected error invoking sideEffectFree method "
                           + m
                           + " on "
                           + var
@@ -208,6 +209,12 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
 
+                // Ignored non-callable methods
+                if (OperationModel.nonInstantiable(value.getClass(), VisibilityPredicate.IS_PUBLIC)
+                    != null) {
+                  continue;
+                }
+
                 // Don't create assertions over string that look like raw object
                 // references.
                 if ((value instanceof String) && Value.looksLikeObjectToString((String) value)) {
@@ -217,7 +224,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 ObjectContract observerEqValue = new ObserverEqValue(m, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
 
-                Log.logPrintf("Adding observer %s%n", observerCheck);
+                Log.logPrintf("Adding sideEffectFree method %s%n", observerCheck);
 
                 checks.add(observerCheck);
               }

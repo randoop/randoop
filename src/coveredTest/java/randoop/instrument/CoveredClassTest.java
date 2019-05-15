@@ -224,26 +224,32 @@ public class CoveredClassTest {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
-    // Maps each class type to the observer methods in it.
-    MultiMap<Type, TypedOperation> observerMap;
+    MultiMap<Type, TypedOperation> sideEffectFreeMap = new MultiMap<>();
+    MultiMap<Type, TypedOperation> sideEffectFreeJDKMap;
+    MultiMap<Type, TypedOperation> sideEffectFreeUserMap;
     try {
-      observerMap = operationModel.readOperations(GenInputsAbstract.observers, false);
+      sideEffectFreeJDKMap =
+          OperationModel.readOperations(GenInputsAbstract.side_effect_free_JDK_methods, true);
+      sideEffectFreeUserMap =
+          OperationModel.readOperations(GenInputsAbstract.side_effect_free_user_methods, true);
     } catch (OperationParseException e) {
-      System.out.printf("Parse error while reading observers: %s%n", e);
+      System.out.printf("Error parsing observers: %s%n", e.getMessage());
       System.exit(1);
       throw new Error("dead code");
     }
-    assert observerMap != null;
-    Set<TypedOperation> observers = new LinkedHashSet<>();
-    for (Type keyType : observerMap.keySet()) {
-      observers.addAll(observerMap.getValues(keyType));
+    sideEffectFreeMap.addAll(sideEffectFreeJDKMap);
+    sideEffectFreeMap.addAll(sideEffectFreeUserMap);
+
+    Set<TypedOperation> sideEffectFreeMethodSet = new LinkedHashSet<>();
+    for (Type keyType : sideEffectFreeMap.keySet()) {
+      sideEffectFreeMethodSet.addAll(sideEffectFreeMap.getValues(keyType));
     }
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
-            observers,
+            sideEffectFreeMethodSet,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
@@ -269,7 +275,7 @@ public class CoveredClassTest {
 
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
-        GenTests.createTestCheckGenerator(visibility, contracts, observerMap);
+        GenTests.createTestCheckGenerator(visibility, contracts, sideEffectFreeMap);
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(
         new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));
