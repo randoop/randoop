@@ -54,7 +54,7 @@ public class FieldSetterTest {
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
     Field field = c.getField("fourField");
     AccessibleField f = new AccessibleField(field, declaringType);
-    Type fieldType = new PrimitiveType(field.getType());
+    Type fieldType = PrimitiveType.forClass(field.getType());
     List<Type> setInputTypeList = Collections.singletonList(fieldType);
     FieldSet setOp = new FieldSet(f);
     TypedOperation op =
