@@ -617,7 +617,7 @@ public class RandoopSystemTest {
         new CoverageChecker(
             options,
             "examples.Buggy.BuggyCompareToTransitive.getTwo() ignore",
-            "examples.Buggy.StackOverflowError() ignore",
+            "examples.Buggy.throwStackOverflowError() ignore",
             "examples.Buggy.hashCode() ignore",
             "examples.Buggy.toString() ignore",
 
