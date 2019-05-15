@@ -52,6 +52,14 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The flag whether to include regression assertions. */
   private boolean includeAssertions;
 
+  /**
+   * TODO
+   *
+   * @param exceptionExpectation TODO
+   * @param sideEffectFreeMap TODO
+   * @param isVisible TODO
+   * @param includeAssertions TODO
+   */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
       MultiMap<Type, TypedOperation> sideEffectFreeMap,
@@ -210,8 +218,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
 
                 // Ignored non-callable methods
-                if (OperationModel.nonInstantiable(value.getClass(), VisibilityPredicate.IS_PUBLIC)
-                    != null) {
+                if (OperationModel.nonInstantiable(value.getClass(), isVisible) != null) {
                   continue;
                 }
 
