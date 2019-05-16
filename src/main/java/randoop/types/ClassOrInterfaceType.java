@@ -26,7 +26,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   private static boolean debug = false;
 
-  /** The enclosing type: non-null only if this is a member class. */
+  /**
+   * The enclosing type. Non-null only if this is a nested type (either a member type or a nested
+   * static type).
+   */
   private ClassOrInterfaceType enclosingType = null;
 
   /**
