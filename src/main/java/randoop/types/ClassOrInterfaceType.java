@@ -24,6 +24,7 @@ import java.util.Objects;
  */
 public abstract class ClassOrInterfaceType extends ReferenceType {
 
+  /** Set to true to enable debug output to standard out. */
   private static boolean debug = false;
 
   /**
