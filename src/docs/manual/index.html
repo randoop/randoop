@@ -949,17 +949,19 @@ Randoop about your application, and that is how we recommend using Randoop.
              What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
  different executions.
 
- <p><code>OUTPUT</code> is the default because Randoop now provides term frequency - inverse document
- frequency metrics for identifying nondeterministic methods. Flaky tests are usually due to
- calling Randoop on side-effecting or nondeterministic methods, and a ultiately, the solution is
- not to call Randoop on such methods; see section <a
+ <p>Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic
+ methods, and ultimately, the solution is not to call Randoop on such methods; see section <a
  href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
  the Randoop manual. [default OUTPUT]
 <ul>
-  <li><b>HALT</b> Randoop halts with a diagnostic message.
-  <li><b>DISCARD</b> Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
- down by a factor of 2 or more.
-  <li><b>OUTPUT</b> Output the flaky test; the resulting test suite may fail when it is run.
+  <li><b>HALT</b> Randoop halts with a diagnostic message. You can determine the responsible methods, fix or
+ exclude them, and re-run Randoop.
+  <li><b>DISCARD</b> Discard the flaky test. This option should be a last resort. It is inefficient and
+ unproductive for Randoop to produce and discard a lot of flaky tests.
+  <li><b>OUTPUT</b> Output the flaky test, but with flaky assertions commented out. When the value is <code>OUTPUT</code>, Randoop also suggests methods under test that might have caused the flakiness. You
+ should <a
+ href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">investigate</a>
+ them, fix or exclude them, then re-run Randoop.
 </ul>
 
             <li id="option:nondeterministic-methods-to-output"><b>--nondeterministic-methods-to-output=</b><i>int</i>.
@@ -1272,7 +1274,7 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Runtime-environment">Runtime environment
       <ul>
             <li id="option:system-props"><b>-D</b> <b>--system-props=</b><i>string</i> <code>[+]</code>.
-             Specify system properties to be set; similar to &lt;code&gt;java -Dx=y&lt;/code&gt;.
+             System properties that Randoop will set similarly to <code>java -D</code>, of the form "x=y".
       </ul>
   <li id="optiongroup:Controlling-randomness">Controlling randomness
       <ul>
@@ -1305,7 +1307,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:operation-history-log"><b>--operation-history-log=</b><i>filename</i>.
              A file to which to log the operation usage history.
             <li id="option:print-non-compiling-file"><b>--print-non-compiling-file=</b><i>boolean</i>.
-             Display source if a generated test contains a compilation error. [default false]
+             True if Randoop should print generated tests that do not compile, which indicate Randoop bugs. [default false]
       </ul>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
       <ul>
