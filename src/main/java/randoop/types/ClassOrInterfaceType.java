@@ -49,8 +49,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     } else {
       type = new NonParameterizedType(classType);
     }
-    if (classType.isMemberClass()) {
-      type.setEnclosingType(ClassOrInterfaceType.forClass(classType.getEnclosingClass()));
+    Class<?> enclosingClass = classType.getEnclosingClass();
+    if (enclosingClass != null) {
+      type.setEnclosingType(ClassOrInterfaceType.forClass(enclosingClass));
     }
     return type;
   }
