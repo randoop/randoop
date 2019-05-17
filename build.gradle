@@ -20,6 +20,8 @@ plugins {
    * There is no separate target to just run Error Prone.
    */
   id "net.ltgt.errorprone-base" version "0.0.16"
+  // Checker Framework pluggable type-checking
+  id 'org.checkerframework' version '0.3.0'
 
   // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
   id 'se.patrikerdes.use-latest-versions' version '0.2.9'
@@ -31,17 +33,13 @@ plugins {
   // id "com.dorongold.task-tree" version "1.3"
 }
 
-// For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
-// It is not run in the main build because the Checker Framework is incompatible with Error Prone.
-// TODO: Uncomment
-// apply from: "checkerframework.gradle"
-
 /* Common build configuration for Randoop and agents */
 allprojects {
 
   apply plugin: 'java'
   apply plugin: 'com.github.johnrengelman.shadow'
   apply plugin: 'checkstyle'
+  apply plugin: 'org.checkerframework'
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -238,6 +236,13 @@ tasks.withType(JavaCompile).each { t ->
       // '-Xep:ReferenceEquality:OFF'
       ]
   }
+}
+
+checkerFramework {
+  checkers = [
+    // 'org.checkerframework.checker.nullness.NullnessChecker',
+    'org.checkerframework.checker.signature.SignatureChecker'
+  ]
 }
 
 
