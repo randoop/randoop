@@ -95,17 +95,6 @@ public class ForwardGenerator extends AbstractGenerator {
         classesUnderTest);
   }
 
-  /**
-   * Constructs a new ForwardGenerator - TODO
-   *
-   * @param operations TODO
-   * @param sideEffectFreeMethods TODO
-   * @param limits TODO
-   * @param componentManager TODO
-   * @param stopper TODO
-   * @param listenerManager TODO
-   * @param classesUnderTest TODO
-   */
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> sideEffectFreeMethods,

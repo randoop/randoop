@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -228,10 +229,12 @@ public class CoveredClassTest {
     MultiMap<Type, TypedOperation> sideEffectFreeJDKMap;
     MultiMap<Type, TypedOperation> sideEffectFreeUserMap;
     try {
+      String sfeDefaultsFileName = "/randoop-sfe.txt";
+      InputStream inputStream = GenTests.class.getResourceAsStream(sfeDefaultsFileName);
       sideEffectFreeJDKMap =
-          OperationModel.readOperations(GenInputsAbstract.side_effect_free_JDK_methods, true);
+          OperationModel.readOperationsFromStream(inputStream, sfeDefaultsFileName, true);
       sideEffectFreeUserMap =
-          OperationModel.readOperations(GenInputsAbstract.side_effect_free_user_methods, true);
+          OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods, true);
     } catch (OperationParseException e) {
       System.out.printf("Error parsing observers: %s%n", e.getMessage());
       System.exit(1);
