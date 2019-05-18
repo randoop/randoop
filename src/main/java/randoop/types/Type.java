@@ -46,7 +46,7 @@ public abstract class Type implements Comparable<Type> {
       return VoidType.getVoidType();
     }
     if (classType.isPrimitive()) {
-      return new PrimitiveType(classType);
+      return PrimitiveType.forClass(classType);
     }
 
     return ReferenceType.forClass(classType);

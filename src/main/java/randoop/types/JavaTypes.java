@@ -13,28 +13,28 @@ import java.util.List;
  */
 public class JavaTypes {
   /** The {@code boolean} type. */
-  public static final PrimitiveType BOOLEAN_TYPE = new PrimitiveType(boolean.class);
+  public static final PrimitiveType BOOLEAN_TYPE = PrimitiveType.forClass(boolean.class);
 
   /** The {@code byte} type. */
-  public static final PrimitiveType BYTE_TYPE = new PrimitiveType(byte.class);
+  public static final PrimitiveType BYTE_TYPE = PrimitiveType.forClass(byte.class);
 
   /** The {@code char} type. */
-  public static final PrimitiveType CHAR_TYPE = new PrimitiveType(char.class);
+  public static final PrimitiveType CHAR_TYPE = PrimitiveType.forClass(char.class);
 
   /** The {@code double} type. */
-  public static final PrimitiveType DOUBLE_TYPE = new PrimitiveType(double.class);
+  public static final PrimitiveType DOUBLE_TYPE = PrimitiveType.forClass(double.class);
 
   /** The {@code float} type. */
-  public static final PrimitiveType FLOAT_TYPE = new PrimitiveType(float.class);
+  public static final PrimitiveType FLOAT_TYPE = PrimitiveType.forClass(float.class);
 
   /** The {@code int} type. */
-  public static final PrimitiveType INT_TYPE = new PrimitiveType(int.class);
+  public static final PrimitiveType INT_TYPE = PrimitiveType.forClass(int.class);
 
   /** The {@code long} type. */
-  public static final PrimitiveType LONG_TYPE = new PrimitiveType(long.class);
+  public static final PrimitiveType LONG_TYPE = PrimitiveType.forClass(long.class);
 
   /** The {@code short} type. */
-  public static final PrimitiveType SHORT_TYPE = new PrimitiveType(short.class);
+  public static final PrimitiveType SHORT_TYPE = PrimitiveType.forClass(short.class);
 
   /** The {@code java.lang.Object} type. */
   public static final ClassOrInterfaceType OBJECT_TYPE = new NonParameterizedType(Object.class);

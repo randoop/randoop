@@ -16,10 +16,10 @@ import java.util.Set;
  */
 public class InstantiatedType extends ParameterizedType {
 
-  private final List<TypeArgument> argumentList;
-
   /** The generic class for this type. */
   private final GenericClassType instantiatedType;
+
+  private final List<TypeArgument> argumentList;
 
   /**
    * Create a parameterized type from the generic class type.

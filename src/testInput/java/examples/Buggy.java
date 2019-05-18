@@ -26,11 +26,11 @@ public class Buggy {
         "Buggy class is test input class and somehow hashCode() has been called outside of contract check");
   }
 
-  public static void StackOverflowError() {
+  public static void throwStackOverflowError() {
     throw new StackOverflowError();
   }
 
-  public static void AssertionError() {
+  public static void throwAssertionError() {
     throw new AssertionError();
   }
 
