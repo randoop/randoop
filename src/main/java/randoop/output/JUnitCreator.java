@@ -222,7 +222,7 @@ public class JUnitCreator {
     // FieldDeclaration debugField =
     //     new FieldDeclaration(
     //         PUBLIC_STATIC),
-    //         new NodeList<AnnotationExpr>(new PrimitiveType(PrimitiveType.booleanType())),
+    //         new NodeList<AnnotationExpr>(PrimitiveType.forClass(PrimitiveType.booleanType())),
     //         new NodeList<VariableDeclarator>(debugVariable));
     BodyDeclaration<?> debugField =
         javaParser.parseBodyDeclaration("public static boolean debug=false;").getResult().get();
