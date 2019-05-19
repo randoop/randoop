@@ -5,6 +5,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -299,22 +300,53 @@ public class OperationModel {
    */
   public static MultiMap<Type, TypedOperation> readOperations(Path file, boolean onlyMethods)
       throws OperationParseException {
-    MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     if (file != null) {
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
-        for (String line : er) {
-          String sig = line.trim();
-          TypedClassOperation operation =
-              signatureToOperation(
-                  sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
-          observerMap.add(operation.getDeclaringType(), operation);
-        }
+        return readOperations(er, onlyMethods);
+
       } catch (IOException e) {
         String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
         throw new RandoopUsageError(message, e);
       }
     }
-    return observerMap;
+    return new MultiMap<>();
+  }
+
+  /**
+   * Returns operations read from the given EntryReader.
+   *
+   * @param er the EntryReader to read from.
+   * @param onlyMethods if true, throw an exception if a constructor is read
+   * @return contents of the file, as a map of operations
+   */
+  public static MultiMap<Type, TypedOperation> readOperations(EntryReader er, boolean onlyMethods) {
+    MultiMap<Type, TypedOperation> operationsMap = new MultiMap<>();
+    for (String line : er) {
+      String sig = line.trim();
+      TypedClassOperation operation =
+          signatureToOperation(sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
+      operationsMap.add(operation.getDeclaringType(), operation);
+    }
+    return operationsMap;
+  }
+
+  /**
+   * Returns operations read from the given stream.
+   *
+   * @param is the stream from which to read
+   * @param filename the file name to use in diagnostic messages
+   * @param onlyMethods if true, throw an exception if a constructor is read
+   * @return contents of the file, as a map of operations
+   */
+  public static MultiMap<Type, TypedOperation> readOperationsFromStream(
+      InputStream is, String filename, boolean onlyMethods) {
+    // Read method omissions from user-provided file
+    try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
+      return readOperations(er, onlyMethods);
+    } catch (IOException e) {
+      String message = String.format("Error while reading file %s: %s%n", filename, e.getMessage());
+      throw new RandoopUsageError(message, e);
+    }
   }
 
   /**
