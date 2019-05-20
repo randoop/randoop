@@ -27,6 +27,7 @@ import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.OperationParseException;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
@@ -225,9 +226,9 @@ public class CoveredClassTest {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
-    MultiMap<Type, TypedOperation> sideEffectFreeMap = new MultiMap<>();
-    MultiMap<Type, TypedOperation> sideEffectFreeJDKMap;
-    MultiMap<Type, TypedOperation> sideEffectFreeUserMap;
+    MultiMap<Type, TypedClassOperation> sideEffectFreeMap = new MultiMap<>();
+    MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMap;
+    MultiMap<Type, TypedClassOperation> sideEffectFreeUserMap;
     try {
       String sfeDefaultsFileName = "/randoop-sfe.txt";
       InputStream inputStream = GenTests.class.getResourceAsStream(sfeDefaultsFileName);
@@ -278,7 +279,8 @@ public class CoveredClassTest {
 
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
-        GenTests.createTestCheckGenerator(visibility, contracts, sideEffectFreeMap);
+        GenTests.createTestCheckGenerator(
+            visibility, contracts, operationModel.getOmitMethodsPredicate(), sideEffectFreeMap);
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(
         new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));

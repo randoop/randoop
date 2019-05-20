@@ -54,6 +54,7 @@ import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.operation.TypedOperation.RankedTypeOperation;
 import randoop.output.CodeWriter;
@@ -64,6 +65,7 @@ import randoop.output.MinimizerWriter;
 import randoop.output.NameGenerator;
 import randoop.output.RandoopOutputException;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.RawSignature;
@@ -362,9 +364,9 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    MultiMap<Type, TypedOperation> sideEffectFreeMap = new MultiMap<>();
-    MultiMap<Type, TypedOperation> sideEffectFreeJDKMap;
-    MultiMap<Type, TypedOperation> sideEffectFreeUserMap;
+    MultiMap<Type, TypedClassOperation> sideEffectFreeMap = new MultiMap<>();
+    MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMap;
+    MultiMap<Type, TypedClassOperation> sideEffectFreeUserMap;
     try {
       String sfeDefaultsFileName = "/JDK-sfe-methods.txt";
       InputStream inputStream = GenTests.class.getResourceAsStream(sfeDefaultsFileName);
@@ -412,7 +414,9 @@ public class GenTests extends GenInputsAbstract {
      * Create the test check generator for the contracts and side-effect-free methods
      */
     ContractSet contracts = operationModel.getContracts();
-    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, sideEffectFreeMap);
+    TestCheckGenerator testGen =
+        createTestCheckGenerator(
+            visibility, contracts, operationModel.getOmitMethodsPredicate(), sideEffectFreeMap);
     explorer.setTestCheckGenerator(testGen);
 
     /*
@@ -1076,7 +1080,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Creates the test check generator for this run based on the command-line arguments. The goal of
+   * Creates the test check generator for this run based on the command-line arguments.The goal of
    * the generator is to produce all appropriate checks for each sequence it is applied to.
    *
    * <p>The generator always contains validity and contract checks. If regression tests are to be
@@ -1084,13 +1088,15 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param visibility the visibility predicate
    * @param contracts the contract checks
+   * @param omitMethodsPredicate the predicate for filtering out omit methods
    * @param sideEffectFreeMethods the map from types to side-effect-free methods
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
-      MultiMap<Type, TypedOperation> sideEffectFreeMethods) {
+      OmitMethodsPredicate omitMethodsPredicate,
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethods) {
 
     // Start with checking for invalid exceptions.
     TestCheckGenerator testGen =
@@ -1110,6 +1116,7 @@ public class GenTests extends GenInputsAbstract {
               expectation,
               sideEffectFreeMethods,
               visibility,
+              omitMethodsPredicate,
               !GenInputsAbstract.no_regression_assertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);

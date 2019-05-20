@@ -12,7 +12,8 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.TypedOperation;
+import randoop.operation.TypedClassOperation;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -44,22 +45,27 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   private ExpectedExceptionCheckGen exceptionExpectation;
 
   /** The map from a type to the side-effect-free (@SideEffectFree) operations for the type */
-  private MultiMap<Type, TypedOperation> sideEffectFreeMap;
+  private MultiMap<Type, TypedClassOperation> sideEffectFreeMap;
 
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
+
+  /** The omit methods predicate to filter side effect method assertions * */
+  private OmitMethodsPredicate omitMethodsPredicate;
 
   /** The flag whether to include regression assertions. */
   private boolean includeAssertions;
 
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
-      MultiMap<Type, TypedOperation> sideEffectFreeMap,
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMap,
       VisibilityPredicate isVisible,
+      OmitMethodsPredicate omitMethodsPredicate,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
     this.sideEffectFreeMap = sideEffectFreeMap;
     this.isVisible = isVisible;
+    this.omitMethodsPredicate = omitMethodsPredicate;
     this.includeAssertions = includeAssertions;
   }
 
@@ -180,12 +186,18 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
             // Put out any side-effect-free methods that exist for this type
             Variable var0 = sequence.sequence.getVariable(i);
-            Set<TypedOperation> sideEffectFreeMethods = sideEffectFreeMap.getValues(var0.getType());
+            Set<TypedClassOperation> sideEffectFreeMethods =
+                sideEffectFreeMap.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
-              for (TypedOperation m : sideEffectFreeMethods) {
+              for (TypedClassOperation m : sideEffectFreeMethods) {
                 // When outputting checks, ignore side-effect-free methods that don't take a single
                 // argument.
                 if (m.getInputTypes().size() != 1) {
+                  continue;
+                }
+
+                // Ignore flaky side-effect free methods
+                if (omitMethodsPredicate.shouldOmit(m)) {
                   continue;
                 }
 
@@ -209,7 +221,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
 
-                // Ignored non-callable methods
+                // Ignore non-callable methods
                 if (OperationModel.nonInstantiable(value.getClass(), isVisible) != null) {
                   continue;
                 }

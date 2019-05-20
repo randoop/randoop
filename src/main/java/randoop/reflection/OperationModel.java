@@ -94,6 +94,9 @@ public class OperationModel {
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
+  /** Omit methods predicate * */
+  private OmitMethodsPredicate omitMethodsPredicate;
+
   /** Create an empty model of test context. */
   private OperationModel() {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
@@ -162,6 +165,8 @@ public class OperationModel {
         literalsFileList);
 
     OmitMethodsPredicate omitPredicate = new OmitMethodsPredicate(omitMethods);
+
+    model.omitMethodsPredicate = omitPredicate;
 
     model.addOperationsFromClasses(
         model.classTypes, visibility, reflectionPredicate, omitPredicate, operationSpecifications);
@@ -298,7 +303,7 @@ public class OperationModel {
    * @return a map from each class type to the set of methods/constructors in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public static MultiMap<Type, TypedOperation> readOperations(Path file, boolean onlyMethods)
+  public static MultiMap<Type, TypedClassOperation> readOperations(Path file, boolean onlyMethods)
       throws OperationParseException {
     if (file != null) {
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
@@ -319,8 +324,9 @@ public class OperationModel {
    * @param onlyMethods if true, throw an exception if a constructor is read
    * @return contents of the file, as a map of operations
    */
-  public static MultiMap<Type, TypedOperation> readOperations(EntryReader er, boolean onlyMethods) {
-    MultiMap<Type, TypedOperation> operationsMap = new MultiMap<>();
+  public static MultiMap<Type, TypedClassOperation> readOperations(
+      EntryReader er, boolean onlyMethods) {
+    MultiMap<Type, TypedClassOperation> operationsMap = new MultiMap<>();
     for (String line : er) {
       String sig = line.trim();
       TypedClassOperation operation =
@@ -338,7 +344,7 @@ public class OperationModel {
    * @param onlyMethods if true, throw an exception if a constructor is read
    * @return contents of the file, as a map of operations
    */
-  public static MultiMap<Type, TypedOperation> readOperationsFromStream(
+  public static MultiMap<Type, TypedClassOperation> readOperationsFromStream(
       InputStream is, String filename, boolean onlyMethods) {
     // Read method omissions from user-provided file
     try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
@@ -395,6 +401,15 @@ public class OperationModel {
    */
   public ContractSet getContracts() {
     return contracts;
+  }
+
+  /**
+   * Returns the omit methods predicate associated with this operation model.
+   *
+   * @return the omit method predicate
+   */
+  public OmitMethodsPredicate getOmitMethodsPredicate() {
+    return omitMethodsPredicate;
   }
 
   public Set<Sequence> getAnnotatedTestValues() {

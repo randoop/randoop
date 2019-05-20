@@ -125,9 +125,9 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.require_classname_in_test);
     testGenerator.setTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
-    MultiMap<Type, TypedOperation> sideEffectFreeMap = new MultiMap<>();
     TestCheckGenerator checkGenerator =
-        GenTests.createTestCheckGenerator(visibility, contracts, sideEffectFreeMap);
+        GenTests.createTestCheckGenerator(
+            visibility, contracts, operationModel.getOmitMethodsPredicate(), new MultiMap<>());
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);
