@@ -100,7 +100,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
           // If value's type is void (i.e. its statement is a void-return method call),
           // don't capture checks (nothing interesting).
           Type outputType = statement.getOutputType();
-          if (outputType.isVoid()) continue; // no return value.
+          if (outputType.isVoid()) {
+            continue;
+          }
 
           Object runtimeValue = execution.getRuntimeValue();
 
@@ -164,11 +166,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             // oc, s.seq_id());
 
           } else if (runtimeValue.getClass().isEnum()
+              // The assertion will be "foo == EnumClass.ENUM" and the rhs must be visible.
               && isVisible.isVisible(runtimeValue.getClass())) {
-            // XXX Not clear why the visibility check is necessary
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) runtimeValue), var);
             checks.add(oc);
-          } else { // its a more complex type with a non-null value
+          } else { // It's a more complex type with a non-null value.
 
             // Assert that the value is not null.
             // Exception: if the value comes directly from a constructor call,
