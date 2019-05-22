@@ -1080,7 +1080,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Creates the test check generator for this run based on the command-line arguments.The goal of
+   * Creates the test check generator for this run based on the command-line arguments. The goal of
    * the generator is to produce all appropriate checks for each sequence it is applied to.
    *
    * <p>The generator always contains validity and contract checks. If regression tests are to be

@@ -44,13 +44,13 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The generator for expected exceptions. */
   private ExpectedExceptionCheckGen exceptionExpectation;
 
-  /** The map from a type to the side-effect-free (@SideEffectFree) operations for the type */
+  /** The map from a type to the side-effect-free (@SideEffectFree) operations for the type. */
   private MultiMap<Type, TypedClassOperation> sideEffectFreeMap;
 
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
 
-  /** The omit methods predicate to filter side effect method assertions * */
+  /** The omit methods predicate to filter side effect method assertions. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /** The flag whether to include regression assertions. */
@@ -107,7 +107,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
           // If value's type is void (i.e. its statement is a void-return method call),
           // don't capture checks (nothing interesting).
           Type outputType = statement.getOutputType();
-          if (outputType.isVoid()) continue; // no return value.
+          if (outputType.isVoid()) {
+            continue;
+          }
 
           Object runtimeValue = execution.getRuntimeValue();
 
@@ -171,11 +173,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             // oc, s.seq_id());
 
           } else if (runtimeValue.getClass().isEnum()
+              // The assertion will be "foo == EnumClass.ENUM" and the rhs must be visible.
               && isVisible.isVisible(runtimeValue.getClass())) {
-            // XXX Not clear why the visibility check is necessary
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) runtimeValue), var);
             checks.add(oc);
-          } else { // its a more complex type with a non-null value
+          } else { // It's a more complex type with a non-null value.
 
             // Assert that the value is not null.
             // Exception: if the value comes directly from a constructor call,
@@ -226,7 +228,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
-                // Don't create assertions over string that look like raw object
+                // Don't create assertions over strings that look like raw object
                 // references.
                 if ((value instanceof String) && Value.looksLikeObjectToString((String) value)) {
                   continue;

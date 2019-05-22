@@ -12,8 +12,7 @@ import randoop.util.Util;
 
 /**
  * A check recording the value that an observer method returned during execution, e.g. a check
- * recording that a collection's {@code size()} method returned {@code 3} when called in particular
- * sequence.
+ * recording that a collection's {@code size()} method returned {@code 3}.
  *
  * <p>ObserverEqValue checks are not checks that must hold of all objects of a given class (unlike a
  * check like {@link EqualsReflexive}, which must hold for any objects, no matter its execution

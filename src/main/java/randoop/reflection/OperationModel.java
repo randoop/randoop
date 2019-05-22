@@ -94,7 +94,7 @@ public class OperationModel {
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
-  /** Omit methods predicate * */
+  /** Omit methods predicate. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /** Create an empty model of test context. */
