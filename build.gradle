@@ -12,16 +12,12 @@ plugins {
   id 'idea'
   id 'jacoco'
 
-  /*
-   * Plugin that applies Google's Error Prone linter (http://errorprone.info/).
-   * https://github.com/tbroyer/gradle-errorprone-plugin
-   * Elsewhere this file excludes src/testInput from directories examined by Error Prone.
-   * To run Error Prone, do:  ./gradlew compileJava
-   * There is no separate target to just run Error Prone.
-   */
+  // https://github.com/tbroyer/gradle-errorprone-plugin
+  // To run the Error Prone linter, do:  ./gradlew compileJava
   id "net.ltgt.errorprone-base" version "0.0.16" apply false
 
-  // Checker Framework pluggable type-checking
+  // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
+  // ./gradlew compileJava -PuseCheckerFramework=true
   id 'org.checkerframework' version '0.3.0' apply false
 
   // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
@@ -34,17 +30,6 @@ plugins {
   // id "com.dorongold.task-tree" version "1.3"
 }
 
-/**
- * Error Prone and the Checker Framework cannot
- * be used together in the same build, because Error Prone
- * relies on an old version of the Checker Framework dataflow
- * framework, which is incompatible with modern versions
- * of the Checker Framework.
- *
- * By default, Error Prone is enabled. To build with the Checker
- * Framework, invoke gradle like this:
- * ./gradlew build -PuseCheckerFramework=true
- */
 if (!project.hasProperty("useCheckerFramework")) {
     ext.useCheckerFramework = "false"
 }
@@ -255,10 +240,7 @@ if ("true".equals(project.ext.useCheckerFramework)) {
     ]
   }
 } else {
-
-  /*
-   * Configuration for using Error Prone linter.
-  */
+  // Configuration for the Error Prone linter.
   tasks.withType(JavaCompile).each { t ->
     if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
       t.toolChain ErrorProneToolChain.create(project)
