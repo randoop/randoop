@@ -19,9 +19,10 @@ plugins {
    * To run Error Prone, do:  ./gradlew compileJava
    * There is no separate target to just run Error Prone.
    */
-  id "net.ltgt.errorprone-base" version "0.0.16"
+  id "net.ltgt.errorprone-base" version "0.0.16" apply false
+
   // Checker Framework pluggable type-checking
-  id 'org.checkerframework' version '0.3.0'
+  id 'org.checkerframework' version '0.3.0' apply false
 
   // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
   id 'se.patrikerdes.use-latest-versions' version '0.2.9'
@@ -33,13 +34,34 @@ plugins {
   // id "com.dorongold.task-tree" version "1.3"
 }
 
+/**
+ * Error Prone and the Checker Framework cannot
+ * be used together in the same build, because Error Prone
+ * relies on an old version of the Checker Framework dataflow
+ * framework, which is incompatible with modern versions
+ * of the Checker Framework.
+ *
+ * By default, Error Prone is enabled. To build with the Checker
+ * Framework, invoke gradle like this:
+ * ./gradlew build -PuseCheckerFramework=true
+ */
+if (!project.hasProperty("useCheckerFramework")) {
+    ext.useCheckerFramework = "false"
+}
+if ("true".equals(project.ext.useCheckerFramework)) {
+  apply plugin: 'org.checkerframework'
+} else {
+  apply plugin: 'net.ltgt.errorprone-base'
+}
+
+def cfVersion = "2.8.1" // Checker Framework version
+
 /* Common build configuration for Randoop and agents */
 allprojects {
 
   apply plugin: 'java'
   apply plugin: 'com.github.johnrengelman.shadow'
   apply plugin: 'checkstyle'
-  apply plugin: 'org.checkerframework'
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -60,8 +82,7 @@ allprojects {
   }
 
   dependencies {
-    // If you update this, also update file checkerframework.gradle
-    implementation "org.checkerframework:checker-qual:2.8.0"
+    implementation "org.checkerframework:checker-qual:" + cfVersion
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     plumelib 'org.plumelib:bcel-util:1.1.4'
@@ -179,7 +200,7 @@ dependencies {
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.3'
-  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.8.0'
+  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: cfVersion
   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
@@ -189,7 +210,13 @@ dependencies {
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
 
-  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
+  if ("true".equals(project.ext.useCheckerFramework)) {
+    checkerFramework 'org.checkerframework:checker:' + cfVersion
+    checkerFramework 'org.checkerframework:jdk8:' + cfVersion
+    checkerFramework 'org.checkerframework:checker-qual:' + cfVersion
+  } else {
+    errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
+  }
 }
 
 /*
@@ -218,31 +245,34 @@ task compileAll() {
 // Get early notification of any compilation failures, before running any tests
 build.dependsOn compileAll
 
-/*
- * Configuration for using Error Prone linter.
- */
 import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
-tasks.withType(JavaCompile).each { t ->
-  if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
-    t.toolChain ErrorProneToolChain.create(project)
-    t.options.compilerArgs += [
-      // Maybe NamedParameters is no longer supported?
-      // // undocumented, and suggestion seems bad
-      // '-Xep:NamedParameters:OFF',
-      // Is always a false positive in my experience.
-      '-Xep:StringSplitter:OFF'
-      // TODO: uncomment once we run the Interning Checker on Randoop
-      // '-Xep:ReferenceEquality:OFF'
-      ]
+if ("true".equals(project.ext.useCheckerFramework)) {
+  checkerFramework {
+    checkers = [
+      // 'org.checkerframework.checker.nullness.NullnessChecker',
+      'org.checkerframework.checker.signature.SignatureChecker'
+    ]
   }
-}
+} else {
 
-checkerFramework {
-  checkers = [
-    // 'org.checkerframework.checker.nullness.NullnessChecker',
-    'org.checkerframework.checker.signature.SignatureChecker'
-  ]
+  /*
+   * Configuration for using Error Prone linter.
+  */
+  tasks.withType(JavaCompile).each { t ->
+    if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
+      t.toolChain ErrorProneToolChain.create(project)
+      t.options.compilerArgs += [
+        // Maybe NamedParameters is no longer supported?
+        // // undocumented, and suggestion seems bad
+        // '-Xep:NamedParameters:OFF',
+        // Is always a false positive in my experience.
+        '-Xep:StringSplitter:OFF'
+        // TODO: uncomment once we run the Interning Checker on Randoop
+        // '-Xep:ReferenceEquality:OFF'
+      ]
+    }
+  }
 }
 
 
