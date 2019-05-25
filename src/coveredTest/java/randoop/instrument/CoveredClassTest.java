@@ -187,8 +187,7 @@ public class CoveredClassTest {
     VisibilityPredicate visibility = IS_PUBLIC;
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
     Set<String> coveredClassnames =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.require_covered_classes, "coverage class names");
+        GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields =
         GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "field list");
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);

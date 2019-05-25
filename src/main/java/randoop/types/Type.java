@@ -2,7 +2,10 @@ package randoop.types;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.WildcardType;
+import java.util.StringTokenizer;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.checker.signature.qual.FqBinaryName;
+import org.plumelib.reflection.Signatures;
 
 /**
  * The superclass of a class hierarchy representing Java types defined in JLS Section 4.1. This
@@ -82,7 +85,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Type getTypeforFullyQualifiedName(@ClassGetName String fullyQualifiedName)
+  public static Type getTypeforFullyQualifiedName(@FqBinaryName String fullyQualifiedName)
       throws ClassNotFoundException {
     Class<?> className = forFullyQualifiedName(fullyQualifiedName);
     return className.isArray() ? ArrayType.forClass(className) : Type.forClass(className);
@@ -92,36 +95,48 @@ public abstract class Type implements Comparable<Type> {
    * Returns the Class for a fully qualified name (that may or may not be a multi-dimensional
    * array).
    *
-   * @param fullyQualifiedName the fully qualified name of a type. Array names such as {@code int[]}
-   *     or {@code java.lang.String[][]} are also fully qualified names. However, array definitions
-   *     with sizes, such as {@code int[3][]}, are not fully qualified names.
+   * @param fullyQualifiedName the fully qualified name of a type -- actually a binary name,
+   *     possibly suffixed by array brackets. Examples are {@code java.lang.Integer}, {@code
+   *     pkg.Outer$Inner}, {@code int[]}, {@code java.lang.String[][]}, and {@code
+   *     pkg.Outer$Inner[]}. However, array definitions with sizes, such as {@code int[3][]}, are
+   *     not legal arguments.
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static Class<?> forFullyQualifiedName(@ClassGetName String fullyQualifiedName)
+  public static Class<?> forFullyQualifiedName(@FqBinaryName String fullyQualifiedName)
       throws ClassNotFoundException {
-    String[] fullyQualifiedArrayParsedName = fullyQualifiedName.split("\\[");
-    int arrayDimension = fullyQualifiedArrayParsedName.length - 1;
-    Class<?> fullyQualifiedBaseType =
-        forFullyQualifiedNameNonArray(fullyQualifiedArrayParsedName[0]);
+    @ClassGetName String baseTypeName = Signatures.getArrayElementType(fullyQualifiedName);
+    Class<?> baseType = forFullyQualifiedNameNonArray(baseTypeName);
 
+    int arrayDimension = numDimensions(fullyQualifiedName);
     if (arrayDimension > 0) {
       // Make each dimension size zero, since it is ignored by getClass().
       int[] dimensions = new int[arrayDimension];
-      return Array.newInstance(fullyQualifiedBaseType, dimensions).getClass();
+      return Array.newInstance(baseType, dimensions).getClass();
     } else {
-      return fullyQualifiedBaseType;
+      return baseType;
     }
+  }
+
+  /**
+   * Return the number of dimensions in the given type, which might or might not be an array.
+   *
+   * @param typeName a type name, possibly with some number of trailing "[]"
+   * @return the number of trailing "[]"
+   */
+  private static int numDimensions(@FqBinaryName String typeName) {
+    return new StringTokenizer(typeName, "[").countTokens() - 1;
   }
 
   /**
    * Returns the Class for a fully qualified name. Does not support arrays.
    *
-   * @param fullyQualifiedName the fully qualified name of a non-array type
+   * @param fullyQualifiedName the binary name of a non-array type; for a non-nested class, this is
+   *     the same as its fully-qualified name
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  private static Class<?> forFullyQualifiedNameNonArray(String fullyQualifiedName)
+  private static Class<?> forFullyQualifiedNameNonArray(@ClassGetName String fullyQualifiedName)
       throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.classForName(fullyQualifiedName);
     if (c != null) {
@@ -136,7 +151,7 @@ public abstract class Type implements Comparable<Type> {
         if (pos == -1) { // not found
           throw e;
         }
-        @SuppressWarnings("signature") // checked below & exception is handled
+        @SuppressWarnings("signature") // string manipulation
         @ClassGetName String innerName =
             fullyQualifiedName.substring(0, pos) + "$" + fullyQualifiedName.substring(pos + 1);
         fullyQualifiedName = innerName;

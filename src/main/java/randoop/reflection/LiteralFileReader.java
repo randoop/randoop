@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.Globals;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
@@ -60,7 +61,6 @@ public class LiteralFileReader {
    * @param inFile the input file
    * @return the map from types to literal values
    */
-  @SuppressWarnings("signature") // parsing
   public static MultiMap<ClassOrInterfaceType, Sequence> parse(String inFile) {
 
     final MultiMap<ClassOrInterfaceType, Sequence> map = new MultiMap<>();
@@ -80,7 +80,9 @@ public class LiteralFileReader {
 
             Class<?> cls = null;
             try {
-              cls = TypeNames.getTypeForName(lines.get(1));
+              @SuppressWarnings("signature") // reading from file, checked & exception thrown below
+              @ClassGetName String className = lines.get(1);
+              cls = TypeNames.getTypeForName(className);
             } catch (ClassNotFoundException e) {
               throwRecordSyntaxError(e);
             }

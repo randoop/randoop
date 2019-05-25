@@ -160,7 +160,7 @@ dependencies {
   testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.12'
   testImplementation configurations.junit.dependencies
   testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.8.0'
+  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
   testImplementation sourceSets.testInput.output
 
   /*
@@ -1038,3 +1038,9 @@ task installGitHooks(type: Copy) {
 }
 /* Always run this task. */
 gradle.startParameter.taskNames = [":installGitHooks"] + gradle.startParameter.taskNames
+
+task printClasspath {
+    doLast {
+        configurations.compileClasspath.each { println it }
+    }
+}

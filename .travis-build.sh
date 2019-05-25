@@ -91,7 +91,7 @@ fi
 # fi
 
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
-  ./gradlew assemble -PuseCheckerFramework=true
+  ./gradlew clean assemble -PuseCheckerFramework=true
   ./gradlew javadoc
   ./gradlew checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
   ./gradlew manual
