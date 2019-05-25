@@ -1038,9 +1038,3 @@ task installGitHooks(type: Copy) {
 }
 /* Always run this task. */
 gradle.startParameter.taskNames = [":installGitHooks"] + gradle.startParameter.taskNames
-
-task printClasspath {
-    doLast {
-        configurations.compileClasspath.each { println it }
-    }
-}

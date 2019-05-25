@@ -96,10 +96,7 @@ public abstract class Type implements Comparable<Type> {
    * array).
    *
    * @param fullyQualifiedName the fully qualified name of a type -- actually a binary name,
-   *     possibly suffixed by array brackets. Examples are {@code java.lang.Integer}, {@code
-   *     pkg.Outer$Inner}, {@code int[]}, {@code java.lang.String[][]}, and {@code
-   *     pkg.Outer$Inner[]}. However, array definitions with sizes, such as {@code int[3][]}, are
-   *     not legal arguments.
+   *     possibly suffixed by array brackets
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
