@@ -228,6 +228,13 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
+                // Don't create assertions over types that are not either primitives
+                // or strings.
+                if (!PrimitiveTypes.isBoxedPrimitive(value.getClass())
+                    && !value.getClass().equals(String.class)) {
+                  continue;
+                }
+
                 // Don't create assertions over strings that look like raw object
                 // references.
                 if ((value instanceof String) && Value.looksLikeObjectToString((String) value)) {
