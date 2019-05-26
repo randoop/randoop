@@ -13,5 +13,9 @@ public class SystemExitCalledError extends Error {
   public SystemExitCalledError(int status) {
     super(String.format("System exit(%d) ignored", status));
     this.status = status;
+    // If there are any java.awt windows active java runtime will deadlock.
+    for (java.awt.Window w : java.awt.Window.getWindows()) {
+      w.dispose();
+    }
   }
 }
