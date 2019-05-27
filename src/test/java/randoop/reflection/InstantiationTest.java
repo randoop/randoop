@@ -348,8 +348,7 @@ public class InstantiationTest {
           TypedClassOperation classOperation =
               instantiator.instantiate((TypedClassOperation) operation);
           if (!operation.getName().equals("randoop.reflection.GenericBounds.m09")) {
-            assertNotNull(
-                "instantiation of method " + operation + " should not be null", classOperation);
+            assertNotNull("instantiation failed for method " + operation, classOperation);
             addTypes(classOperation, inputTypes);
             if (classOperation.isMethodCall()) {
               classOperations.add(classOperation);
