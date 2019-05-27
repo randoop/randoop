@@ -313,7 +313,9 @@ public class InstantiatedType extends ParameterizedType {
       InstantiatedType otherInstType = (InstantiatedType) otherType;
       if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
         for (int i = 0; i < this.argumentList.size(); i++) {
-          if (!this.argumentList.get(i).isInstantiationOf(otherInstType.argumentList.get(i))) {
+          TypeArgument thisTypeArg = this.argumentList.get(i);
+          TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
+          if (!thisTypeArg.isInstantiationOf(otherTypeArg)) {
             return false;
           }
         }
