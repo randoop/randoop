@@ -111,7 +111,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  boolean isInstantiationOfArgument(TypeArgument otherArgument) {
+  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return false;
     }

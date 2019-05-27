@@ -131,7 +131,7 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  boolean isInstantiationOfArgument(TypeArgument otherArgument) {
+  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     return this.equals(otherArgument);
   }
 
