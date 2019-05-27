@@ -19,13 +19,14 @@ public class InstantiatedType extends ParameterizedType {
   /** The generic class for this type. */
   private final GenericClassType instantiatedType;
 
+  /** The type arguments for this class. */
   private final List<TypeArgument> argumentList;
 
   /**
    * Create a parameterized type from the generic class type.
    *
    * @param instantiatedType the generic class type
-   * @param argumentList the list of argument types
+   * @param argumentList the list of type arguments
    * @throws IllegalArgumentException if either argument is null
    */
   InstantiatedType(GenericClassType instantiatedType, List<TypeArgument> argumentList) {
@@ -313,9 +314,9 @@ public class InstantiatedType extends ParameterizedType {
       InstantiatedType otherInstType = (InstantiatedType) otherType;
       if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
         for (int i = 0; i < this.argumentList.size(); i++) {
-          if (!this.argumentList
-              .get(i)
-              .isInstantiationOfTypeArgument(otherInstType.argumentList.get(i))) {
+          TypeArgument thisTypeArg = this.argumentList.get(i);
+          TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
+          if (!thisTypeArg.isInstantiationOfTypeArgument(otherTypeArg)) {
             return false;
           }
         }

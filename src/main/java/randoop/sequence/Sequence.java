@@ -768,27 +768,19 @@ public final class Sequence {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      if (!operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint)) {
+      Type inputType = operation.getInputTypes().get(i);
+      if (!inputType.isAssignableFrom(newRefConstraint)) {
         String msg =
-            i
-                + "th given type "
-                + newRefConstraint
-                + " does not imply "
-                + "operations's "
-                + i
-                + "th input type "
-                + operation.getInputTypes().get(i)
-                + Globals.lineSep
-                + ".Sequence:"
-                + Globals.lineSep
-                + ""
-                + this.toString()
-                + Globals.lineSep
-                + "statement:"
-                + operation
-                + Globals.lineSep
-                + "inputVariables:"
-                + inputVariables;
+            String.format(
+                    "Mismatch at %dth argument:%n  %s [%s]%n is not assignable from%n  %s [%s]%n",
+                    i,
+                    inputType,
+                    inputType.getClass(),
+                    newRefConstraint,
+                    newRefConstraint.getClass())
+                + String.format(
+                    "Sequence:%n%s%nstatement:%s%ninputVariables:%s",
+                    this, operation, inputVariables);
         throw new IllegalArgumentException(msg);
       }
     }
