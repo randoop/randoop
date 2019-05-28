@@ -32,6 +32,9 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof NonParameterizedType)) {
       return false;
     }
