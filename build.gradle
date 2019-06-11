@@ -201,7 +201,7 @@ compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileCoveredTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileReplacecallTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile', '-XDenableSunApiLintControl', '-Xlint:-sunapi']
+compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
 task compileAll() {
   dependsOn compileJava
