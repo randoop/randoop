@@ -32,10 +32,15 @@ public final class Randomness {
    */
   private static Random random = new Random(DEFAULT_SEED);
 
-  public static void setSeed(long newSeed) {
-    random.setSeed(newSeed);
+  /**
+   * Sets the seed of this random number generator.
+   *
+   * @param seed the initial seed
+   */
+  public static void setSeed(long seed) {
+    random.setSeed(seed);
     totalCallsToRandom = 0;
-    logSelection("[Random object]", "setSeed", newSeed);
+    logSelection("[Random object]", "setSeed", seed);
   }
 
   /** Number of calls to the underlying Random instance that this wraps. */
