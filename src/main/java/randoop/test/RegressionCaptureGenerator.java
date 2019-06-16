@@ -1,5 +1,6 @@
 package randoop.test;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -12,9 +13,9 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.CallableOperation;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.OmitMethodsPredicate;
-import randoop.reflection.OperationModel;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
@@ -224,7 +225,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
 
                 // Ignore non-callable methods
-                if (OperationModel.nonInstantiable(value.getClass(), isVisible) != null) {
+                CallableOperation callableOp = m.getOperation();
+                Method method = (Method) callableOp.getReflectionObject();
+                if (!isVisible.isVisible(method)) {
                   continue;
                 }
 
