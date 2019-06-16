@@ -378,19 +378,6 @@ public class Arrays {
      * Sorting of complex type arrays.
      */
 
-    /**
-     * Old merge sort implementation can be selected (for
-     * compatibility with broken comparators) using a system property.
-     * Cannot be a static boolean in the enclosing class due to
-     * circular dependencies. To be removed in a future release.
-     */
-    static final class LegacyMergeSort {
-        private static final boolean userRequested =
-            java.security.AccessController.doPrivileged(
-                new sun.security.action.GetBooleanAction(
-                    "java7.util7.Arrays.useLegacyMergeSort")).booleanValue();
-    }
-
     /*
      * If this platform has an optimizing VM, check whether ComparableTimSort
      * offers any performance benefit over TimSort in conjunction with a
@@ -467,16 +454,7 @@ public class Arrays {
      *         {@link Comparable} contract
      */
     public static void sort(Object[] a) {
-        if (LegacyMergeSort.userRequested)
-            legacyMergeSort(a);
-        else
-            ComparableTimSort.sort(a);
-    }
-
-    /** To be removed in a future release. */
-    private static void legacyMergeSort(Object[] a) {
-        Object[] aux = a.clone();
-        mergeSort(aux, a, 0, a.length, 0);
+        ComparableTimSort.sort(a);
     }
 
     /**
@@ -532,18 +510,7 @@ public class Arrays {
      *         integers).
      */
     public static void sort(Object[] a, int fromIndex, int toIndex) {
-        if (LegacyMergeSort.userRequested)
-            legacyMergeSort(a, fromIndex, toIndex);
-        else
-            ComparableTimSort.sort(a, fromIndex, toIndex);
-    }
-
-    /** To be removed in a future release. */
-    private static void legacyMergeSort(Object[] a,
-                                        int fromIndex, int toIndex) {
-        rangeCheck(a.length, fromIndex, toIndex);
-        Object[] aux = copyOfRange(a, fromIndex, toIndex);
-        mergeSort(aux, a, fromIndex, toIndex, -fromIndex);
+        ComparableTimSort.sort(a, fromIndex, toIndex);
     }
 
     /**
@@ -654,19 +621,7 @@ public class Arrays {
      *         found to violate the {@link Comparator} contract
      */
     public static <T> void sort(T[] a, Comparator<? super T> c) {
-        if (LegacyMergeSort.userRequested)
-            legacyMergeSort(a, c);
-        else
-            TimSort.sort(a, c);
-    }
-
-    /** To be removed in a future release. */
-    private static <T> void legacyMergeSort(T[] a, Comparator<? super T> c) {
-        T[] aux = a.clone();
-        if (c==null)
-            mergeSort(aux, a, 0, a.length, 0);
-        else
-            mergeSort(aux, a, 0, a.length, 0, c);
+        TimSort.sort(a, c);
     }
 
     /**
@@ -722,21 +677,7 @@ public class Arrays {
      */
     public static <T> void sort(T[] a, int fromIndex, int toIndex,
                                 Comparator<? super T> c) {
-        if (LegacyMergeSort.userRequested)
-            legacyMergeSort(a, fromIndex, toIndex, c);
-        else
-            TimSort.sort(a, fromIndex, toIndex, c);
-    }
-
-    /** To be removed in a future release. */
-    private static <T> void legacyMergeSort(T[] a, int fromIndex, int toIndex,
-                                            Comparator<? super T> c) {
-        rangeCheck(a.length, fromIndex, toIndex);
-        T[] aux = copyOfRange(a, fromIndex, toIndex);
-        if (c==null)
-            mergeSort(aux, a, fromIndex, toIndex, -fromIndex);
-        else
-            mergeSort(aux, a, fromIndex, toIndex, -fromIndex, c);
+        TimSort.sort(a, fromIndex, toIndex, c);
     }
 
     /**

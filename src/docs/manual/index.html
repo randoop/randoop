@@ -553,7 +553,7 @@ is the same object as itself and return <code>true</code> in such a case).
 <p>
 The test in the <a href="#Introduction">Introduction</a> is nicely
 succinct: it shows a small number of method calls leading up to the
-assertion violation. Because Randoop's generation is random, the actual
+assertion violation. Because Randoop's generation is pseudo-random, the actual
 test revealing the error can be significantly longer, and contain many
 irrelevant calls that are not necessary to reveal the contract violation.
 You may wish to <a href="#minimize">minimize the test
@@ -1521,6 +1521,29 @@ is <code>randoop.mock.javax.swing.JOptionPane</code>.  (You may need
 to <a href="#replacecall-load-exclusions">exclude</a> this package if any
 of the replacement methods use otherwise replaced methods.)
 </p>
+
+<p>
+If the class containing the method you wish to replace is loaded by the bootstrap class loader,
+or if it is called from a class loaded by the bootstrap class loader, then your replacement
+classes must also be loaded by the bootstrap class loader. For Java 8 this list includes most
+of the Java runtime.  For Java 9+, the new module system dramatically reduces the number of
+classes loaded by the bootstap loader.
+See <a href="https://docs.oracle.com/javase/9/docs/api/java.base-summary.html">Module base</a>
+for a list.  If this condition applies to your replacement code
+(assume it is located in <code>myreplace.jar</code>):
+</p>
+<ul>
+  <li>When running Randoop, add the additional command-line option to <code>java</code>:
+<pre>
+-Xbootclasspath/a:mypath/myreplace.jar
+</pre>
+  </li>
+  <li>When running the generated tests, add the file <code>myreplace.jar</code> to the boot class path:
+<pre>
+-Xbootclasspath/a:mypath/myreplace.jar
+</pre>
+</li>
+</ul>
 
 <p>
 Randoop's default replacements are in sub-packages

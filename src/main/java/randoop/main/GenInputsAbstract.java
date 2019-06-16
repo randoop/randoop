@@ -765,7 +765,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Controlling randomness")
   @Option("The random seed to use in the generation process")
-  public static int randomseed = (int) Randomness.SEED;
+  public static int randomseed = (int) Randomness.DEFAULT_SEED;
 
   // Currently, Randoop is deterministic, and there isn't a way to make Randoop not pay the costs of
   // (for example) LinkedHashMaps instead of HashMaps.  The only effect of this command-line
