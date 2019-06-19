@@ -72,6 +72,16 @@ public class RandoopSystemTest {
   }
 
   /**
+   * Sets common system test command line options.
+   *
+   * @param options RandoopOptions to set
+   */
+  public static void setSystemTestOptions(RandoopOptions options) {
+    options.setOption("side-effect-free-methods", "resources/systemTest/JDK-sfe-methods.txt");
+    options.setOption("omitmethods-file", "resources/systemTest/omitmethods-defaults.txt");
+  }
+
+  /**
    * Enumerated type to quantify expected test generation:
    *
    * <ul>
@@ -89,83 +99,84 @@ public class RandoopSystemTest {
   /* --------------------------------------- test methods --------------------------------------- */
 
   /*
-   * WRITING TEST METHODS:
-   *
-   * Methods with the @Test annotation will be run normally as JUnit tests.
-   * Each method should consist of one system test, and is responsible for setting up the
-   * directories for the test, setting the options for Randoop, running Randoop, compiling the
-   * generated tests, and then doing whatever checks are required for the test.  The steps each
-   * test should follow are:
-   *
-   * 1. Set up the test environment.
-   *
-   *    Each test method should create the working environment for running the test with a call like
-   *
-   *      SystemTestEnvironment testEnvironment = systemTestEnvironmentManager.createTestEnvironment(testName);
-   *
-   *    where testName is the name of your test (be sure that it doesn't conflict with the name
-   *    of any test already in this class).
-   *    The variable systemTestEnvironmentManager refers to the global environment for a run of the
-   *    system tests, and contains information about the classpath, and directories needed while
-   *    running all of the system tests.
-   *
-   * 2. Set the options for Randoop.
-   *
-   *    The method that executes Randoop takes the command-line arguments as a RandoopOptions object,
-   *    which can be constructed by the line
-   *      RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-   *    using the SystemTestEnvironment built in the first step.
-   *    This class has methods to explicitly set the test package name and base names:
-   *      options.setPackageName("foo.bar");
-   *      options.setRegressionBasename("TestClass");
-   *      options.setErrorBasename("ErrorTestClass");
-   *    And, the input classes should be specified by using the methods
-   *      options.addTestClass(testClassName);
-   *      options.addClassList(classListFilename);
-   *    that correspond to the Randoop arguments.
-   *    Other options can be set using the methods
-   *      options.setFlag(flagName);
-   *      options.setOption(optionName, optionValue);
-   *    This object will also set options for output directories and logging, so only options
-   *    affecting generation are needed.
-   *
-   *    Input files should be placed in src/systemTest/resources (or src/inputtest/resources if they
-   *    relate to classes in the inputTest source set), and can be used in option using the path
-   *    prefix resources/systemTest/.
-   *
-   *
-   *  3. Run Randoop and compile generated tests.
-   *
-   *     This is where things can vary somewhat depending on the condition of the test.
-   *
-   *     In the majority of cases, we want to check that Randoop generates an expected number of
-   *     regression and/or error-revealing tests; that the generated tests compile; and that when run,
-   *     regression tests succeed, error tests fail, and that the methods of the classes-under-test
-   *     are covered by all tests.  In this case, the test method will make a call like
-   *
-   *       generateAndTest(
-   *         testEnvironment,
-   *         options,
-   *         expectedRegressionTests,
-   *         expectedErrorTests);
-   *
-   *     where testEnvironment, packageName, regressionBasename, errorBasename, and options are all
-   *     defined in steps 1 and 2.
-   *     The expected-tests parameters are values of the ExpectedTests enumerated type.
-   *     Use the value SOME if there must be at least one test, NONE if there should be no tests,
-   *     and DONT_CARE if, well, it doesn't matter how many tests there are.
-   *     The generateAndTest() method handles the standard test behavior, checking the
-   *     standard assumptions about regression and error tests (given the quantifiers), and dumping
-   *     output when the results don't meet expectations.
-   *
-   *     By default, coverage is checked against all methods returned by Class.getDeclaredMethods()
-   *     for an input class. Some tests need to specifically exclude methods that Randoop should not
-   *     generate, or need to ignore methods.  These can be indicated by creating a
-   *     CoverageChecker object and adding these method names using either the exclude() or ignore()
-   *     methods, and then giving the CoverageChecker as the last argument to the alternate version
-   *     of generateAndTest(). When excluded methods are given, these methods may not be
-   *     covered, and, unless ignored, any method not excluded is expected to be covered.
-   */
+  * WRITING TEST METHODS:
+  *
+  * Methods with the @Test annotation will be run normally as JUnit tests.
+  * Each method should consist of one system test, and is responsible for setting up the
+  * directories for the test, setting the options for Randoop, running Randoop, compiling the
+  * generated tests, and then doing whatever checks are required for the test.  The steps each
+  * test should follow are:
+  *
+  * 1. Set up the test environment.
+  *
+  *    Each test method should create the working environment for running the test with a call like
+  *
+  *      SystemTestEnvironment testEnvironment = systemTestEnvironmentManager.createTestEnvironment(testName);
+  *
+  *    where testName is the name of your test (be sure that it doesn't conflict with the name
+  *    of any test already in this class).
+  *    The variable systemTestEnvironmentManager refers to the global environment for a run of the
+  *    system tests, and contains information about the classpath, and directories needed while
+  *    running all of the system tests.
+  *
+  * 2. Set the options for Randoop.
+  *
+  *    The method that executes Randoop takes the command-line arguments as a RandoopOptions object,
+  *    which can be constructed by the line
+  *      RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+   setSystemTestOptions(options);
+  *    using the SystemTestEnvironment built in the first step.
+  *    This class has methods to explicitly set the test package name and base names:
+  *      options.setPackageName("foo.bar");
+  *      options.setRegressionBasename("TestClass");
+  *      options.setErrorBasename("ErrorTestClass");
+  *    And, the input classes should be specified by using the methods
+  *      options.addTestClass(testClassName);
+  *      options.addClassList(classListFilename);
+  *    that correspond to the Randoop arguments.
+  *    Other options can be set using the methods
+  *      options.setFlag(flagName);
+  *      options.setOption(optionName, optionValue);
+  *    This object will also set options for output directories and logging, so only options
+  *    affecting generation are needed.
+  *
+  *    Input files should be placed in src/systemTest/resources (or src/inputtest/resources if they
+  *    relate to classes in the inputTest source set), and can be used in option using the path
+  *    prefix resources/systemTest/.
+  *
+  *
+  *  3. Run Randoop and compile generated tests.
+  *
+  *     This is where things can vary somewhat depending on the condition of the test.
+  *
+  *     In the majority of cases, we want to check that Randoop generates an expected number of
+  *     regression and/or error-revealing tests; that the generated tests compile; and that when run,
+  *     regression tests succeed, error tests fail, and that the methods of the classes-under-test
+  *     are covered by all tests.  In this case, the test method will make a call like
+  *
+  *       generateAndTest(
+  *         testEnvironment,
+  *         options,
+  *         expectedRegressionTests,
+  *         expectedErrorTests);
+  *
+  *     where testEnvironment, packageName, regressionBasename, errorBasename, and options are all
+  *     defined in steps 1 and 2.
+  *     The expected-tests parameters are values of the ExpectedTests enumerated type.
+  *     Use the value SOME if there must be at least one test, NONE if there should be no tests,
+  *     and DONT_CARE if, well, it doesn't matter how many tests there are.
+  *     The generateAndTest() method handles the standard test behavior, checking the
+  *     standard assumptions about regression and error tests (given the quantifiers), and dumping
+  *     output when the results don't meet expectations.
+  *
+  *     By default, coverage is checked against all methods returned by Class.getDeclaredMethods()
+  *     for an input class. Some tests need to specifically exclude methods that Randoop should not
+  *     generate, or need to ignore methods.  These can be indicated by creating a
+  *     CoverageChecker object and adding these method names using either the exclude() or ignore()
+  *     methods, and then giving the CoverageChecker as the last argument to the alternate version
+  *     of generateAndTest(). When excluded methods are given, these methods may not be
+  *     covered, and, unless ignored, any method not excluded is expected to be covered.
+  */
 
   /**
    * Test formerly known as randoop1. This test previously did a diff on TestClass0.java with goal
@@ -178,6 +189,7 @@ public class RandoopSystemTest {
         systemTestEnvironmentManager.createTestEnvironment("collections-test");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName("foo.bar");
     options.setRegressionBasename("TestClass");
     options.addTestClass("java7.util7.TreeSet");
@@ -186,7 +198,6 @@ public class RandoopSystemTest {
     options.setOption("output_limit", "1000");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
-    options.setOption("side_effect_free_methods", "resources/systemTest/randoop1_observers.txt");
     options.setOption("omit-field-list", "resources/systemTest/testclassomitfields.txt");
 
     // omit methods that use Random
@@ -230,7 +241,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude",
             "java7.util7.Collections.unmodifiableList(java7.util7.List) exclude",
             "java7.util7.Collections.unmodifiableList(java7.util7.List) ignore",
-            "java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude",
+            "java7.util7.Collections.unmodifiableMap(java7.util7.Map) ignore",
             "java7.util7.Collections.unmodifiableSet(java7.util7.Set) ignore",
             "java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude",
             "java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude",
@@ -261,6 +272,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment(directoryName);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
@@ -285,9 +297,11 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.remove(int) ignore",
+            "java7.util7.ArrayList.remove(java.lang.Object) ignore",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
             "java7.util7.ArrayList.set(int, java.lang.Object) ignore",
             "java7.util7.ArrayList.subList(int, int) ignore",
+            "java7.util7.ArrayList.toArray(java.lang.Object[]) ignore",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
@@ -371,6 +385,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("jdk-test");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName("jdktests");
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
@@ -394,18 +409,25 @@ public class RandoopSystemTest {
             options,
             "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
-            "java7.util7.ArrayList.fastRemove(int) exclude",
+            "java7.util7.ArrayList.fastRemove(int) ignore",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.remove(int) ignore",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
+            "java7.util7.ArrayList.set(int, java.lang.Object) ignore",
             "java7.util7.ArrayList.subList(int, int) ignore",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude",
+            "java7.util7.Arrays.binarySearch(char[], int, int, char) ignore",
             "java7.util7.Arrays.binarySearch(double[], int, int, double) ignore",
+            "java7.util7.Arrays.binarySearch(int[], int, int, int) ignore",
+            "java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object) ignore",
             "java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Arrays.binarySearch(java.lang.Object[], java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Arrays.binarySearch0(java.lang.Object[], int, int, java.lang.Object, java7.util7.Comparator) ignore",
             "java7.util7.Arrays.deepEquals0(java.lang.Object, java.lang.Object) exclude",
+            "java7.util7.Arrays.deepHashCode(java.lang.Object[]) exclude", // could be flaky
+            "java7.util7.Arrays.fill(boolean[], int, int, boolean) ignore",
+            "java7.util7.Arrays.fill(float[], int, int, float) ignore",
             "java7.util7.Arrays.fill(int[], int, int, int) ignore",
             "java7.util7.Arrays.fill(java.lang.Object[], int, int, java.lang.Object) ignore",
             "java7.util7.Arrays.fill(long[], int, int, long) ignore",
@@ -449,7 +471,7 @@ public class RandoopSystemTest {
             "java7.util7.BitSet.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.BitSet.valueOf(java.nio.LongBuffer) exclude",
             "java7.util7.BitSet.writeObject(java.io.ObjectOutputStream) exclude",
-            "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) exclude",
+            "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore",
             "java7.util7.Collections.asLifoQueue(java7.util7.Deque) ignore",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
@@ -481,13 +503,14 @@ public class RandoopSystemTest {
             "java7.util7.Collections.swap(java.lang.Object[], int, int) exclude",
             "java7.util7.Collections.swap(java7.util7.List, int, int) ignore",
             "java7.util7.Collections.synchronizedCollection(java7.util7.Collection) ignore",
+            "java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore",
             "java7.util7.Collections.synchronizedSet(java7.util7.Set) ignore",
             "java7.util7.Collections.synchronizedSortedSet(java7.util7.SortedSet) ignore",
             "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude",
             "java7.util7.Collections.unmodifiableList(java7.util7.List) ignore",
             "java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude",
             "java7.util7.Collections.unmodifiableSet(java7.util7.Set) ignore",
-            "java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude",
+            "java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) ignore",
             "java7.util7.Collections.unmodifiableSortedSet(java7.util7.SortedSet) ignore",
             "java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude",
             "java7.util7.Hashtable.putAll(java7.util7.Map) ignore",
@@ -514,6 +537,8 @@ public class RandoopSystemTest {
             "java7.util7.Observable.clearChanged() exclude",
             "java7.util7.Observable.setChanged() exclude",
             "java7.util7.Stack.empty() ignore", // Travis
+            "java7.util7.Stack.peek() ignore",
+            "java7.util7.Stack.pop() ignore",
             "java7.util7.Stack.push(java.lang.Object) ignore", // Travis
             "java7.util7.StringTokenizer.isDelimiter(int) exclude",
             "java7.util7.TreeMap.addAllForTreeSet(java7.util7.SortedSet, java.lang.Object) ignore",
@@ -555,7 +580,7 @@ public class RandoopSystemTest {
             "java7.util7.TreeMap.writeObject(java.io.ObjectOutputStream) exclude",
             "java7.util7.TreeSet.add(java.lang.Object) exclude",
             "java7.util7.TreeSet.addAll(java7.util7.Collection) ignore",
-            "java7.util7.TreeSet.contains(java.lang.Object) exclude",
+            "java7.util7.TreeSet.contains(java.lang.Object) ignore",
             "java7.util7.TreeSet.first() ignore",
             "java7.util7.TreeSet.headSet(java.lang.Object) exclude",
             "java7.util7.TreeSet.headSet(java.lang.Object, boolean) exclude",
@@ -602,10 +627,12 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("contracts-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setErrorBasename("BuggyTest");
 
     options.setFlag("no-regression-tests");
     options.setOption("generated_limit", "1000");
+    setSystemTestOptions(options);
     // Don't minimize the tests because it would take too long to finish.
     options.setOption("minimize_error_test", "false");
     options.addClassList("resources/systemTest/buggyclasses.txt");
@@ -617,6 +644,7 @@ public class RandoopSystemTest {
         new CoverageChecker(
             options,
             "examples.Buggy.BuggyCompareToTransitive.getTwo() ignore",
+            "examples.Buggy.BuggyEqualsTransitive.getTwo() ignore",
             "examples.Buggy.throwStackOverflowError() ignore",
             "examples.Buggy.hashCode() ignore",
             "examples.Buggy.toString() ignore",
@@ -650,6 +678,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("checkrep-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setErrorBasename("CheckRepTest");
 
     options.setFlag("no-regression-tests");
@@ -680,6 +709,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("literals-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName(null);
     options.setRegressionBasename("LiteralsReg");
     options.setErrorBasename("LiteralsErr");
@@ -705,6 +735,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("longstring-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName(null);
     options.setRegressionBasename("LongString");
     options.setErrorBasename("");
@@ -731,6 +762,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("visibility-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName(null);
     options.setRegressionBasename("VisibilityTest");
     options.setErrorBasename("");
@@ -761,6 +793,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("no-output-test"); // temp directory
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName(null);
     options.setRegressionBasename("NoOutputTest");
     options.setErrorBasename("");
@@ -781,7 +814,7 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Runs with --side_effect_free_methods flag and should have no observers called for side effect.
+   * Runs with --side-effect-free-methods flag and should have no observers called for side effect.
    */
   @Test
   public void runSideEffectObserversTest() {
@@ -789,13 +822,14 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment(directoryName);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName(null);
     options.setRegressionBasename("SideEffectObserver");
     options.setErrorBasename("SideEffectObserverError");
     options.addTestClass("observers.Box");
     options.setOption("maxsize", "7");
     options.setOption("attempted-limit", "1000");
-    options.setOption("side_effect_free_methods", "resources/systemTest/observers.txt");
+    options.setOption("side-effect-free-methods", "resources/systemTest/observers.txt");
 
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
 
@@ -811,6 +845,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("inner-class-test");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName(null);
     options.setRegressionBasename("InnerClassRegression");
     options.setErrorBasename("InnerClassError");
@@ -832,6 +867,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("parameterized-type");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName(null);
     options.setRegressionBasename("ParamTypeReg");
     options.setErrorBasename("ParamTypeErr");
@@ -851,6 +887,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("recursive-bound");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName("muse");
     options.setRegressionBasename("BoundsReg");
     options.setErrorBasename("BoundsErr");
@@ -871,6 +908,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("default-package");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName(null);
     options.setRegressionBasename("DefaultPackageReg");
     options.setErrorBasename("DefaultPackageErr");
@@ -888,6 +926,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("exception-tests");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName("misc");
     options.setRegressionBasename("ExceptionTest");
     options.setErrorBasename("ExceptionErr");
@@ -906,6 +945,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("cm-exception-tests");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName("misc");
     options.setRegressionBasename("CMExceptionTest");
     options.setErrorBasename("CMExceptionErr");
@@ -943,6 +983,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("coll-gen-tests");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName("gen");
     options.setRegressionBasename("GenRegressionTest");
     options.setErrorBasename("GenErrorTest");
@@ -977,6 +1018,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("enum-assertions");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName("check");
     options.setRegressionBasename("EnumCheckRegression");
     options.setErrorBasename("EnumCheckError");
@@ -995,6 +1037,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("empty-names");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addClassList("resources/systemTest/emptyclasslist.txt");
     options.setOption("attempted_limit", "20");
 
@@ -1018,6 +1061,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("flaky-nan");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("examples.NaNBadness");
     options.setRegressionBasename("NaNRegression");
     options.setErrorBasename("NaNError");
@@ -1037,6 +1081,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("flaky-test");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("flaky.FlakyClass");
     options.setOption("generated_limit", "1000");
     options.setOption("output_limit", "1000");
@@ -1068,6 +1113,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("flaky-omit-methods-test");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("flaky.FlakyClass");
     options.setOption("generated_limit", "1000");
     options.setOption("output_limit", "1000");
@@ -1099,6 +1145,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("fixtures");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("examples.Dummy");
     options.setRegressionBasename("FixtureRegression");
     options.setOption("junit-before-all", "resources/systemTest/beforeallcode.txt");
@@ -1150,6 +1197,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("fixture-driver");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("examples.Dummy");
     options.setRegressionBasename("FixtureRegression");
     options.setOption("junit-before-all", "resources/systemTest/beforeallcode.txt");
@@ -1207,6 +1255,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("condition-input");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("randoop.condition.ClassWithConditions");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/classwithconditions.json");
@@ -1225,6 +1274,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("toradocu-input");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("net.Connection");
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
@@ -1243,6 +1293,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("toradocu-invalid");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("net.Connection");
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
@@ -1262,6 +1313,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("toradocu-error");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("net.Connection");
     options.setOption(
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
@@ -1281,6 +1333,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("toradocu-inherited");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("pkg.SubClass");
     options.setOption("specifications", "resources/systemTest/pkg/pkg_subclass_toradocu_spec.json");
     options.unsetFlag("use-jdk-specifications");
@@ -1302,6 +1355,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("condition-with-exception");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("randoop.condition.ConditionWithException");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/condition_with_exception.json");
@@ -1330,6 +1384,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("conditions-inherited");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/overridingconditionsclass.json");
@@ -1346,6 +1401,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("conditions-superclass");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsuperclass.json");
@@ -1362,6 +1418,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("conditions-interface");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsinterface.json");
@@ -1378,6 +1435,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("conditions-supersuperclass");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/conditionsupersuperclass.json");
@@ -1399,6 +1457,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("private-enum");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("generror.Ints");
     options.setErrorBasename("LexError");
     options.setRegressionBasename("LexRegression");
@@ -1414,6 +1473,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("compile-error");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("compileerr.WildcardCollection");
     options.setErrorBasename("CompError");
     options.setRegressionBasename("CompRegression");
@@ -1435,6 +1495,7 @@ public class RandoopSystemTest {
         systemTestEnvironmentManager.createTestEnvironment("covered-class");
     testEnvironment.addJavaAgent(systemTestEnvironmentManager.coveredClassAgentPath);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addClassList("resources/systemTest/instrument/testcase/allclasses.txt");
     options.setOption(
         "require-covered-classes", "resources/systemTest/instrument/testcase/coveredclasses.txt");
@@ -1472,6 +1533,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("bad-copy-cast");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("generation.Dim5Matrix");
     options.addTestClass("generation.Dim6Matrix");
     options.setOption("generated_limit", "2000");
@@ -1486,6 +1548,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("bad-collection-size");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("collections.BadCollection");
     options.setOption("generated_limit", "10");
     options.setOption("output_limit", "10");
@@ -1517,6 +1580,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("abstract-recursive-bound");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("randoop.types.AbstractMultiary"); // abstract shouldn't load
     options.addTestClass("randoop.types.CompoundFunction"); // uses AbstractMultiary
     options.setOption("generated_limit", "1");
@@ -1562,6 +1626,7 @@ public class RandoopSystemTest {
             + testDebugDir);
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName("components");
     options.addTestClass("components.ArrowIcon");
     options.addTestClass("components.ConversionPanel");
@@ -1762,6 +1827,7 @@ public class RandoopSystemTest {
         "--dont-transform=resources/systemTest/replacecall-exclusions.txt,--debug,--debug-directory="
             + testDebugDir);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.setPackageName("components");
     options.addTestClass("components.DialogRunner");
 
@@ -1793,6 +1859,7 @@ public class RandoopSystemTest {
         systemTestEnvironmentManager.replacecallAgentPath,
         "--dont-transform=resources/systemTest/replacecall-exclusions.txt");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("input.SystemExitClass");
     options.setOption("output_limit", "20");
     options.setOption("generated_limit", "80");
@@ -1817,6 +1884,7 @@ public class RandoopSystemTest {
         systemTestEnvironmentManager.replacecallAgentPath,
         "--dont-transform=resources/systemTest/replacecall-exclusions.txt");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("input.NoExitClass");
     options.setOption("output_limit", "20");
     options.setOption("generated_limit", "40");
@@ -1831,6 +1899,7 @@ public class RandoopSystemTest {
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment("jdk-specification-test");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    setSystemTestOptions(options);
     options.addTestClass("java.util.ArrayList");
     options.addTestClass("java.util.LinkedHashSet");
     options.setFlag("use-jdk-specifications");
