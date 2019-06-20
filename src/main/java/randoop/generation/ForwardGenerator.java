@@ -78,6 +78,16 @@ public class ForwardGenerator extends AbstractGenerator {
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
+  /**
+   * Create a forward generator.
+   *
+   * @param operations list of operations under test
+   * @param observers side-effect-free observer methods
+   * @param limits limits for generation, after which the generator will stop
+   * @param componentManager stores previously-generated sequences
+   * @param listenerManager manages notifications for listeners
+   * @param classesUnderTest set of classes under test
+   */
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
@@ -88,6 +98,17 @@ public class ForwardGenerator extends AbstractGenerator {
     this(operations, observers, limits, componentManager, null, listenerManager, classesUnderTest);
   }
 
+  /**
+   * Create a forward generator.
+   *
+   * @param operations list of operations under test
+   * @param observers side-effect-free observer methods
+   * @param limits limits for generation, after which the generator will stop
+   * @param componentManager stores previously-generated sequences
+   * @param stopper optional, additional stopping criterion for the generator. Can be null.
+   * @param listenerManager manages notifications for listeners
+   * @param classesUnderTest set of classes under test
+   */
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
