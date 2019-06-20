@@ -271,7 +271,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       // If it is a call to a side effect free method, clear the active flag of
-      // its receiver. (This method doesn't side effect the receiver or
+      // its receiver and arguments. (This method doesn't side effect the receiver or
       // any argument, so Randoop should use some other shorter sequence
       // that produces the value.)
       Sequence stmts = seq.sequence;

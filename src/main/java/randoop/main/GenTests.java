@@ -8,6 +8,7 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -52,6 +53,7 @@ import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
 import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
+import randoop.operation.CallableOperation;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
@@ -91,6 +93,7 @@ import randoop.test.RegressionTestPredicate;
 import randoop.test.TestCheckGenerator;
 import randoop.test.ValidityCheckingGenerator;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
@@ -548,7 +551,9 @@ public class GenTests extends GenInputsAbstract {
       //  Currently, we don't rerun Error Test Sequences, so we do not know whether they are flaky.
       processAndOutputFlakyMethods(
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
-          regressionSequences);
+          regressionSequences,
+          operationModel.getOmitMethodsPredicate(),
+          sideEffectFreeMap);
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
@@ -581,12 +586,49 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param flakySequences the flaky test sequences
    * @param sequences all the sequences (flaky and non-flaky)
+   * @param omitMethodsPredicate predicate for omitting desired side effect free methods
+   * @param sideEffectFreeMap map of side effect free methods to use as assertions
    */
   private void processAndOutputFlakyMethods(
-      List<ExecutableSequence> flakySequences, List<ExecutableSequence> sequences) {
+      List<ExecutableSequence> flakySequences,
+      List<ExecutableSequence> sequences,
+      OmitMethodsPredicate omitMethodsPredicate,
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMap) {
 
     if (flakySequences.isEmpty()) {
       return;
+    }
+
+    // Filter out methods that should be omitted.
+    MultiMap<Type, TypedClassOperation> filteredSideEffectFreeMap = new MultiMap<>();
+    for (Type t : sideEffectFreeMap.keySet()) {
+      Set<TypedClassOperation> typeOperations = sideEffectFreeMap.getValues(t);
+      for (TypedClassOperation tco : typeOperations) {
+        if (omitMethodsPredicate.shouldOmit(tco)) {
+          continue;
+        }
+        if (tco.getInputTypes().size() == 1) {
+          continue;
+        }
+
+        if (tco.getOutputType().isVoid()) {
+          continue;
+        }
+
+        Class<?> outputClass = tco.getOutputType().getRuntimeClass();
+        if (!PrimitiveTypes.isBoxedPrimitive(outputClass) && !String.class.equals(outputClass)) {
+          continue;
+        }
+
+        // Ignore non-callable methods
+        CallableOperation callableOp = tco.getOperation();
+        Method method = (Method) callableOp.getReflectionObject();
+        if (!VisibilityPredicate.IS_PUBLIC.isVisible(method)) {
+          continue;
+        }
+
+        filteredSideEffectFreeMap.add(t, tco);
+      }
     }
 
     System.out.println();
@@ -596,11 +638,13 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
       // How many flaky tests an operation occurs in (regardless of how many times it appears in
       // that test).
-      Map<TypedOperation, Integer> testOccurrences = countSequencesPerOperation(sequences);
+      Map<TypedOperation, Integer> testOccurrences =
+          countSequencesPerOperation(sequences, filteredSideEffectFreeMap);
 
       // How many tests an operation occurs in (regardless of how many times it appears in that
       // flaky test).
-      Map<TypedOperation, Integer> flakyOccurrences = countSequencesPerOperation(flakySequences);
+      Map<TypedOperation, Integer> flakyOccurrences =
+          countSequencesPerOperation(flakySequences, filteredSideEffectFreeMap);
 
       // Priority queue of methods ordered by tf-idf heuristic, highest first.
       PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
@@ -616,7 +660,10 @@ public class GenTests extends GenInputsAbstract {
       int maxMethodsToOutput = GenInputsAbstract.nondeterministic_methods_to_output;
       for (int i = 0; i < maxMethodsToOutput && !methodHeuristicPriorityQueue.isEmpty(); i++) {
         RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
-        System.out.println(POSSIBLY_FLAKY_PREFIX + rankedMethod.operation.toParsableString());
+        System.out.println(
+            POSSIBLY_FLAKY_PREFIX
+                + rankedMethod.operation.getName()
+                + rankedMethod.operation.getInputTypes());
       }
     }
 
@@ -650,11 +697,14 @@ public class GenTests extends GenInputsAbstract {
    * Counts the number of sequences each operation occurs in.
    *
    * @param sequences a list of sequences
+   * @param filteredSideEffectFreeMap a map of side effect free methods to use as assertions with
+   *     methods specified with the OmitMethodsPredicate filtered out
    * @return a map from operation to the number of sequences in which the operation occurs at least
    *     once
    */
   private Map<TypedOperation, Integer> countSequencesPerOperation(
-      List<ExecutableSequence> sequences) {
+      List<ExecutableSequence> sequences,
+      MultiMap<Type, TypedClassOperation> filteredSideEffectFreeMap) {
     // Map from method call operations to number of sequences it occurs in.
     Map<TypedOperation, Integer> tallyMap = new HashMap<>();
 
@@ -662,11 +712,15 @@ public class GenTests extends GenInputsAbstract {
       Set<TypedOperation> ops = getOperationsInSequence(es);
 
       for (TypedOperation to : ops) {
-        if (tallyMap.containsKey(to)) {
-          tallyMap.put(to, tallyMap.get(to) + 1);
-        } else {
-          tallyMap.put(to, 1);
-        }
+        incrementTallyValueForKey(tallyMap, to);
+      }
+
+      // Add corresponding asserts of the result of final execution (if an Object)
+      SimpleList<Statement> statements = es.sequence.statements;
+      Statement lastStatement = statements.get(statements.size() - 1);
+      Type lastStatementType = lastStatement.getOutputType();
+      for (TypedClassOperation tco : filteredSideEffectFreeMap.getValues(lastStatementType)) {
+        incrementTallyValueForKey(tallyMap, tco);
       }
     }
     return tallyMap;
@@ -689,6 +743,21 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     return ops;
+  }
+
+  /**
+   * Helper method for incrementing a key's tally as a value or sets the tally to 1 if the key is
+   * not found.
+   *
+   * @param tallyMap map to increment for the specified operation key
+   * @param to TypedOperation key
+   */
+  private void incrementTallyValueForKey(Map<TypedOperation, Integer> tallyMap, TypedOperation to) {
+    if (tallyMap.containsKey(to)) {
+      tallyMap.put(to, tallyMap.get(to) + 1);
+    } else {
+      tallyMap.put(to, 1);
+    }
   }
 
   /**
