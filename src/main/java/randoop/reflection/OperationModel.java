@@ -412,6 +412,11 @@ public class OperationModel {
     return omitMethodsPredicate;
   }
 
+  /**
+   * Returns the set of singleton sequences for values from {@code @TestValue} annotated fields.
+   *
+   * @return sequences that get fields annotated with {@code @TestValue}
+   */
   public Set<Sequence> getAnnotatedTestValues() {
     return annotatedTestValues;
   }
