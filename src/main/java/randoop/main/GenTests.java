@@ -929,7 +929,7 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Returns patterns read from the given EntryReader.
    *
-   * @param er the EntryReader to read from.
+   * @param er the EntryReader to read from
    * @return contents of the file, as a list of Patterns
    */
   private List<Pattern> readOmitMethods(EntryReader er) {
