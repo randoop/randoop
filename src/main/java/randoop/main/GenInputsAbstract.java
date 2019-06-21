@@ -409,13 +409,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   /**
-   * File containing side-effect-free user-supplied methods, each given as a <a
+   * File containing side-effect-free methods, each given as a <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
-   * signature</a> on a separate line. Specifying side-effect-free has two benefits: it makes
-   * regression tests stronger, and it helps Randoop create smaller tests.
+   * signature</a> on a separate line. Specifying side-effect-free methods has two benefits: it
+   * makes regression tests stronger, and it helps Randoop create smaller tests.
    */
-  @OptionGroup("Side Effect Free methods")
-  @Option("File containing side-effect-free functions")
+  @OptionGroup("Side-effect-free methods")
+  @Option("File containing side-effect-free methods")
   public static Path side_effect_free_methods = null;
 
   /**

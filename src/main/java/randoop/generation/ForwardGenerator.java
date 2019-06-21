@@ -291,7 +291,7 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // If it is a call to a side effect free method, clear the active flag of
+      // If it is a call to a side-effect-free method, clear the active flag of
       // its receiver and arguments. (This method doesn't side effect the receiver or
       // any argument, so Randoop should use some other shorter sequence
       // that produces the value.)

@@ -586,8 +586,8 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param flakySequences the flaky test sequences
    * @param sequences all the sequences (flaky and non-flaky)
-   * @param omitMethodsPredicate predicate for omitting desired side effect free methods
-   * @param sideEffectFreeMap map of side effect free methods to use as assertions
+   * @param omitMethodsPredicate predicate for omitting desired side-effect-free methods
+   * @param sideEffectFreeMap map of side-effect-free methods to use as assertions
    */
   private void processAndOutputFlakyMethods(
       List<ExecutableSequence> flakySequences,
@@ -694,7 +694,7 @@ public class GenTests extends GenInputsAbstract {
    * Counts the number of sequences each operation occurs in.
    *
    * @param sequences a list of sequences
-   * @param filteredSideEffectFreeMap a map of side effect free methods to use as assertions with
+   * @param filteredSideEffectFreeMap a map of side-effect-free methods to use as assertions with
    *     methods specified with the OmitMethodsPredicate filtered out
    * @return a map from operation to the number of sequences in which the operation occurs at least
    *     once
