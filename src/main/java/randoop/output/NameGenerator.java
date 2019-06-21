@@ -1,5 +1,7 @@
 package randoop.output;
 
+import org.checkerframework.checker.signature.qual.Identifier;
+
 /**
  * A NameGenerator generates a sequence of names as strings in the form "prefix"+i for integer i.
  * Pads the counter with zeros to ensure a minimum number of digits determined by field digits.
@@ -19,7 +21,7 @@ public class NameGenerator {
    * @param initialValue integer starting value for name counter
    * @param lastValue the last expected number, to determine 0-padding; 0 for no padding
    */
-  public NameGenerator(String prefix, int initialValue, int lastValue) {
+  public NameGenerator(@Identifier String prefix, int initialValue, int lastValue) {
     this.counter = initialValue;
     this.format =
         prefix + "%" + (lastValue == 0 ? "" : ("0" + ((int) (Math.log10(lastValue) + 1)))) + "d";
@@ -30,12 +32,18 @@ public class NameGenerator {
    *
    * @param prefix is a string to be used as a prefix for all names generated
    */
-  public NameGenerator(String prefix) {
+  public NameGenerator(@Identifier String prefix) {
     this(prefix, 0, 0);
   }
 
-  public String next() {
-    String name = String.format(format, counter);
+  /**
+   * Return a new gensym (unique identifier).
+   *
+   * @return the next identifier in the sequence produced by this
+   */
+  public @Identifier String next() {
+    @SuppressWarnings("signature") // string formatting
+    @Identifier String name = String.format(format, counter);
     counter++;
     return name;
   }

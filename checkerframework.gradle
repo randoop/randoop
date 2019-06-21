@@ -17,7 +17,7 @@ configurations {
 dependencies {
   if (!rootProject.hasProperty('cfLocal')) {
     // If you update this, also update file build.gradle
-    ext.checkerFrameworkVersion = '2.8.0'
+    ext.checkerFrameworkVersion = '2.8.2'
     checkerFrameworkAnnotatedJDK "org.checkerframework:jdk8:${checkerFrameworkVersion}"
     annotationProcessor "org.checkerframework:checker:${checkerFrameworkVersion}"
     implementation "org.checkerframework:checker-qual:${checkerFrameworkVersion}"

@@ -36,6 +36,8 @@ plugins {
 // TODO: Uncomment
 // apply from: "checkerframework.gradle"
 
+def checkerFrameworkVersion = "2.8.2" // Checker Framework version
+
 /* Common build configuration for Randoop and agents */
 allprojects {
 
@@ -63,7 +65,7 @@ allprojects {
 
   dependencies {
     // If you update this, also update file checkerframework.gradle
-    implementation "org.checkerframework:checker-qual:2.8.0"
+    implementation "org.checkerframework:checker-qual:" + checkerFrameworkVersion
 
     // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
@@ -155,7 +157,7 @@ dependencies {
   testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.12'
   testImplementation configurations.junit.dependencies
   testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.8.0'
+  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
   testImplementation sourceSets.testInput.output
 
   /*
@@ -180,7 +182,7 @@ dependencies {
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.3'
-  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.8.0'
+  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
