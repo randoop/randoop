@@ -57,6 +57,14 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The flag whether to include regression assertions. */
   private boolean includeAssertions;
 
+  /**
+   * Create a RegressionCaptureGenerator.
+   *
+   * @param exceptionExpectation the generator for expected exceptions
+   * @param observerMap the map from a type to the observer operations for the type
+   * @param isVisible the visibility predicate
+   * @param includeAssertions whether to include regression assertions
+   */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
       MultiMap<Type, TypedClassOperation> sideEffectFreeMap,
