@@ -52,9 +52,9 @@ public final class ObserverEqValue extends ObjectContract {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;
-    assert isLiteralValue(value)
+    assert isLiteralValue(value) || value.getClass().isEnum()
         : String.format(
-            "Cannot represent %s [%s] as a literal; observer = %s",
+            "Cannot represent %s [%s] as a literal or enum; observer = %s",
             value, value.getClass(), observer);
   }
 
