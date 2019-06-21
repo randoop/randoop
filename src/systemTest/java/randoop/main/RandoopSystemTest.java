@@ -1909,7 +1909,7 @@ public class RandoopSystemTest {
    * @param expectedError the minimum expected number of error tests
    * @param coverageChecker the expected code coverage checker
    * @param expectedFlakyMethodNames the first few expected suspected flaky method names that must
-   *     appear in this order. If this parameter is null, no flaky methods should be generated.
+   *     appear in this order. If this parameter is null, Randoop should output no flaky methods.
    */
   private void generateAndTest(
       SystemTestEnvironment environment,
@@ -1932,7 +1932,10 @@ public class RandoopSystemTest {
       // Assert that the flaky methods identified are present and in the order expected.
       assert (generatedFlakyMethodNames.size() >= expectedFlakyMethodNames.size());
       for (int i = 0; i < expectedFlakyMethodNames.size(); i++) {
-        assert (generatedFlakyMethodNames.get(i).equals(expectedFlakyMethodNames.get(i)));
+        assert generatedFlakyMethodNames.get(i).equals(expectedFlakyMethodNames.get(i))
+            : String.format(
+                "Mismatch at position %d: expected %s, generated %s",
+                i, expectedFlakyMethodNames.get(i), generatedFlakyMethodNames.get(i));
       }
     }
 
