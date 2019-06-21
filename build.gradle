@@ -69,17 +69,16 @@ allprojects {
   dependencies {
     implementation "org.checkerframework:checker-qual:" + checkerFrameworkVersion
 
-    // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    plumelib 'org.plumelib:bcel-util:1.1.4'
-    // To use a local version comment out line above and uncomment line below.
-    // plumelib files("${rootDir}/libs/bcel-util-all.jar")
+    // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
+    // https://mvnrepository.com/artifact/org.plumelib/bcel-util
+    plumelib 'org.plumelib:bcel-util:1.1.5'
     // https://mvnrepository.com/artifact/org.plumelib/options
     plumelib 'org.plumelib:options:1.0.1'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.0.6'
+    plumelib 'org.plumelib:plume-util:1.0.8'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    plumelib 'org.plumelib:reflection-util:0.0.2'
+    plumelib 'org.plumelib:reflection-util:0.0.4'
   }
 }
 
@@ -212,7 +211,7 @@ compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileCoveredTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileReplacecallTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile', '-XDenableSunApiLintControl', '-Xlint:-sunapi']
+compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
 task compileAll() {
   dependsOn compileJava
@@ -770,7 +769,7 @@ configurations {
   requireJavadoc
 }
 dependencies {
-  implementation group: 'org.plumelib', name: 'require-javadoc', version: '0.1.0'
+  compileOnly group: 'org.plumelib', name: 'require-javadoc', version: '0.1.2'
 }
 task requireJavadoc(type: Javadoc) {
   description = 'Ensures that all Java elements have Javadoc documentation.'
