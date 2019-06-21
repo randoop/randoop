@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.util.UtilPlume;
 
 /**
@@ -19,7 +20,7 @@ import org.plumelib.util.UtilPlume;
 public class RawSignature {
 
   /** The package name of the class; null for the unnamed package. */
-  private final String packageName;
+  private final @DotSeparatedIdentifiers String packageName;
 
   /** The name of the declaring class of the method. */
   private final String classname;
@@ -39,7 +40,10 @@ public class RawSignature {
    * @param parameterTypes the method parameter types, including the receiver type if any
    */
   public RawSignature(
-      String packageName, String classname, String name, Class<?>[] parameterTypes) {
+      @DotSeparatedIdentifiers String packageName,
+      String classname,
+      String name,
+      Class<?>[] parameterTypes) {
     assert !Objects.equals(packageName, "");
     this.packageName = packageName;
     this.classname = classname;
@@ -124,7 +128,7 @@ public class RawSignature {
    *
    * @return the package name for this signature, null if default package
    */
-  public String getPackageName() {
+  public @DotSeparatedIdentifiers String getPackageName() {
     return packageName;
   }
 

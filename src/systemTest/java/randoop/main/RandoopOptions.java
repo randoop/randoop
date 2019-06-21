@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.util.EntryReader;
 
 /**
@@ -23,7 +24,7 @@ class RandoopOptions {
   private final Set<@ClassGetName String> classnames;
 
   /** The package name for Randoop-generated test classes; null if default package. */
-  private String packageName;
+  private @DotSeparatedIdentifiers String packageName;
 
   /** The basename for generated regression test classes. */
   private String regressionBasename;
@@ -178,7 +179,7 @@ class RandoopOptions {
    *
    * @return the package name, which may be null if not set
    */
-  String getPackageName() {
+  @DotSeparatedIdentifiers String getPackageName() {
     return packageName;
   }
 
