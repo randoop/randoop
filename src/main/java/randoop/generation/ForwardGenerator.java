@@ -73,9 +73,10 @@ public class ForwardGenerator extends AbstractGenerator {
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
 
-  // The set of all primitive values seen during generation and execution
-  // of sequences. This set is used to tell if a new primitive value has
-  // been generated, to add the value to the components.
+  /**
+   * The set of all primitive values seen during generation and execution of sequences. This set is
+   * used to tell if a new primitive value has been generated, to add the value to the components.
+   */
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
