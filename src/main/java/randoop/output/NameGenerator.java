@@ -36,6 +36,11 @@ public class NameGenerator {
     this(prefix, 0, 0);
   }
 
+  /**
+   * Return a new gensym (unique identifier).
+   *
+   * @return the next identifier in the sequence produced by this
+   */
   public @Identifier String next() {
     @SuppressWarnings("signature") // string formatting
     @Identifier String name = String.format(format, counter);
