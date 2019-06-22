@@ -52,6 +52,12 @@ public final class SideEffectFreeEqValue extends ObjectContract {
     return Objects.hash(sideEffectFreeMethod, value);
   }
 
+  /**
+   * Creates a new SideEffectFree Value regression check.
+   *
+   * @param sideEffectFreeOp side effect free method call
+   * @param value return value of the side effect free method
+   */
   public SideEffectFreeEqValue(TypedOperation sideEffectFreeOp, Object value) {
     assert sideEffectFreeOp.isMethodCall()
         : "Side effect free operation must be MethodCall, got " + sideEffectFreeOp;
