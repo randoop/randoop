@@ -8,6 +8,9 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
+import org.checkerframework.checker.signature.qual.BinaryName;
+import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
+import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 
 /**
  * Compiles a Java class given as a {@code String}.
@@ -121,13 +124,12 @@ public class SequenceCompiler {
    * @return the {@code Class<T>} object with the class name
    * @throws ClassNotFoundException if the class cannot be loaded
    */
-  @SuppressWarnings({
-    "unchecked",
-    "signature" // string concatenation
-  })
-  public <T> Class<T> loadClass(String packageName, String classname)
+  @SuppressWarnings("unchecked")
+  public <T> Class<T> loadClass(
+      @DotSeparatedIdentifiers String packageName, @BinaryNameInUnnamedPackage String classname)
       throws ClassNotFoundException {
-    String qualifiedName = (packageName == null ? "" : (packageName + ".")) + classname;
+    @SuppressWarnings("signature") // string concatenation
+    @BinaryName String qualifiedName = (packageName == null ? "" : (packageName + ".")) + classname;
     return (Class<T>) classLoader.loadClass(qualifiedName);
   }
 }

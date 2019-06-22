@@ -12,14 +12,13 @@ plugins {
   id 'idea'
   id 'jacoco'
 
-  /*
-   * Plugin that applies Google's Error Prone linter (http://errorprone.info/).
-   * https://github.com/tbroyer/gradle-errorprone-plugin
-   * Elsewhere this file excludes src/testInput from directories examined by Error Prone.
-   * To run Error Prone, do:  ./gradlew compileJava
-   * There is no separate target to just run Error Prone.
-   */
-  id "net.ltgt.errorprone-base" version "0.0.16"
+  // https://github.com/tbroyer/gradle-errorprone-plugin
+  // To run the Error Prone linter, do:  ./gradlew compileJava
+  id "net.ltgt.errorprone-base" version "0.0.16" apply false
+
+  // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
+  // ./gradlew compileJava -PuseCheckerFramework=true
+  id 'org.checkerframework' version '0.3.4' apply false
 
   // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
   id 'se.patrikerdes.use-latest-versions' version '0.2.9'
@@ -31,10 +30,16 @@ plugins {
   // id "com.dorongold.task-tree" version "1.3"
 }
 
-// For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
-// It is not run in the main build because the Checker Framework is incompatible with Error Prone.
-// TODO: Uncomment
-// apply from: "checkerframework.gradle"
+if (!project.hasProperty("useCheckerFramework")) {
+    ext.useCheckerFramework = "false"
+}
+if ("true".equals(project.ext.useCheckerFramework)) {
+  apply plugin: 'org.checkerframework'
+} else {
+  apply plugin: 'net.ltgt.errorprone-base'
+}
+
+def checkerFrameworkVersion = "2.8.2" // Checker Framework version
 
 /* Common build configuration for Randoop and agents */
 allprojects {
@@ -62,8 +67,7 @@ allprojects {
   }
 
   dependencies {
-    // If you update this, also update file checkerframework.gradle
-    implementation "org.checkerframework:checker-qual:2.8.0"
+    implementation "org.checkerframework:checker-qual:" + checkerFrameworkVersion
 
     // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
@@ -155,7 +159,7 @@ dependencies {
   testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.12'
   testImplementation configurations.junit.dependencies
   testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.8.0'
+  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
   testImplementation sourceSets.testInput.output
 
   /*
@@ -180,7 +184,7 @@ dependencies {
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.3'
-  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.8.0'
+  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
@@ -190,7 +194,13 @@ dependencies {
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
 
-  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
+  if ("true".equals(project.ext.useCheckerFramework)) {
+    checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
+    checkerFramework 'org.checkerframework:jdk8:' + checkerFrameworkVersion
+    checkerFramework 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+  } else {
+    errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
+  }
 }
 
 /*
@@ -219,23 +229,30 @@ task compileAll() {
 // Get early notification of any compilation failures, before running any tests
 build.dependsOn compileAll
 
-/*
- * Configuration for using Error Prone linter.
- */
 import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
-tasks.withType(JavaCompile).each { t ->
-  if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
-    t.toolChain ErrorProneToolChain.create(project)
-    t.options.compilerArgs += [
-      // Maybe NamedParameters is no longer supported?
-      // // undocumented, and suggestion seems bad
-      // '-Xep:NamedParameters:OFF',
-      // Is always a false positive in my experience.
-      '-Xep:StringSplitter:OFF'
-      // TODO: uncomment once we run the Interning Checker on Randoop
-      // '-Xep:ReferenceEquality:OFF'
+if ("true".equals(project.ext.useCheckerFramework)) {
+  checkerFramework {
+    checkers = [
+      // 'org.checkerframework.checker.nullness.NullnessChecker',
+      'org.checkerframework.checker.signature.SignatureChecker'
+    ]
+  }
+} else {
+  // Configuration for the Error Prone linter.
+  tasks.withType(JavaCompile).each { t ->
+    if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
+      t.toolChain ErrorProneToolChain.create(project)
+      t.options.compilerArgs += [
+        // Maybe NamedParameters is no longer supported?
+        // // undocumented, and suggestion seems bad
+        // '-Xep:NamedParameters:OFF',
+        // Is always a false positive in my experience.
+        '-Xep:StringSplitter:OFF'
+        // TODO: uncomment once we run the Interning Checker on Randoop
+        // '-Xep:ReferenceEquality:OFF'
       ]
+    }
   }
 }
 

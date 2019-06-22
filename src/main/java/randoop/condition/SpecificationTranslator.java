@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
@@ -171,7 +172,10 @@ public class SpecificationTranslator {
    * @return the constructed post-expression method signature
    */
   private static RawSignature getRawSignature(
-      String packageName, Class<?> receiverType, Class<?>[] parameterTypes, Class<?> returnType) {
+      @DotSeparatedIdentifiers String packageName,
+      Class<?> receiverType,
+      Class<?>[] parameterTypes,
+      Class<?> returnType) {
     final int shift = (receiverType != null) ? 1 : 0;
     final int length = parameterTypes.length + shift + (returnType != null ? 1 : 0);
     Class<?>[] expressionParameterTypes = new Class<?>[length];
@@ -205,7 +209,8 @@ public class SpecificationTranslator {
    * @return the name of the package, updated to start with "randoop." if the original begins with
    *     "java."; null if {@code aPackage} is null
    */
-  private static String renamedPackage(Package aPackage) {
+  @SuppressWarnings("signature") // string concatenation
+  private static @DotSeparatedIdentifiers String renamedPackage(Package aPackage) {
     if (aPackage == null) {
       return null;
     }
