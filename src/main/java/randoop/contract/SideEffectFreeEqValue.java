@@ -11,21 +11,24 @@ import randoop.types.TypeTuple;
 import randoop.util.Util;
 
 /**
- * A check recording the value that an observer method returned during execution, e.g. a check
- * recording that a collection's {@code size()} method returned {@code 3}.
+ * A check recording the value that an side effect free method returned during execution, e.g. a
+ * check recording that a collection's {@code size()} method returned {@code 3}.
  *
- * <p>ObserverEqValue checks are not checks that must hold of all objects of a given class (unlike a
- * check like {@link EqualsReflexive}, which must hold for any objects, no matter its execution
- * context). Randoop creates an instance of this contract when, during execution of a sequence, it
- * determines that the above property holds. The property thus represents a <i>regression</i> as it
- * captures the behavior of the code when it is executed.
+ * <p>SideEffectFreeEqValue checks are not checks that must hold of all objects of a given class
+ * (unlike a check like {@link EqualsReflexive}, which must hold for any objects, no matter its
+ * execution context). Randoop creates an instance of this contract when, during execution of a
+ * sequence, it determines that the above property holds. The property thus represents a
+ * <i>regression</i> as it captures the behavior of the code when it is executed.
  */
-public final class ObserverEqValue extends ObjectContract {
+public final class SideEffectFreeEqValue extends ObjectContract {
 
-  /** The observer method. */
-  public TypedOperation observer;
+  /** The side effect free method. */
+  public TypedOperation sideEffectFreeMethod;
 
-  /** The run-time value of the observer. This variable holds a primitive value or String. */
+  /**
+   * The run-time value of the side effect free method. This variable holds a primitive value or
+   * String.
+   */
   public Object value;
 
   @Override
@@ -36,26 +39,28 @@ public final class ObserverEqValue extends ObjectContract {
     if (o == this) {
       return true;
     }
-    if (!(o instanceof ObserverEqValue)) {
+    if (!(o instanceof SideEffectFreeEqValue)) {
       return false;
     }
-    ObserverEqValue other = (ObserverEqValue) o;
-    return observer.equals(other.observer) && Util.equalsWithNull(value, other.value);
+    SideEffectFreeEqValue other = (SideEffectFreeEqValue) o;
+    return sideEffectFreeMethod.equals(other.sideEffectFreeMethod)
+        && Util.equalsWithNull(value, other.value);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(observer, value);
+    return Objects.hash(sideEffectFreeMethod, value);
   }
 
-  public ObserverEqValue(TypedOperation observer, Object value) {
-    assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
-    this.observer = observer;
+  public SideEffectFreeEqValue(TypedOperation sideEffectFreeOp, Object value) {
+    assert sideEffectFreeOp.isMethodCall()
+        : "Side effect free operation must be MethodCall, got " + sideEffectFreeOp;
+    this.sideEffectFreeMethod = sideEffectFreeOp;
     this.value = value;
     assert isLiteralValue(value)
         : String.format(
-            "Cannot represent %s [%s] as a literal; observer = %s",
-            value, value.getClass(), observer);
+            "Cannot represent %s [%s] as a literal; sideEffectFreeOp = %s",
+            value, value.getClass(), sideEffectFreeOp);
   }
 
   /**
@@ -79,13 +84,13 @@ public final class ObserverEqValue extends ObjectContract {
     b.append("// Regression assertion (captures the current behavior of the code)")
         .append(Globals.lineSep);
 
-    String methodname = observer.getOperation().getName();
+    String methodname = sideEffectFreeMethod.getOperation().getName();
     if (value == null) {
       b.append(String.format("assertNull(\"x0.%s() == null\", x0.%s());", methodname, methodname));
-    } else if (observer.getOutputType().isPrimitive()
+    } else if (sideEffectFreeMethod.getOutputType().isPrimitive()
         && !value.equals(Double.NaN)
         && !value.equals(Float.NaN)) {
-      if (observer.getOutputType().runtimeClassIs(boolean.class)) {
+      if (sideEffectFreeMethod.getOutputType().runtimeClassIs(boolean.class)) {
         assert value.equals(true) || value.equals(false);
         if (value.equals(true)) {
           b.append(String.format("org.junit.Assert.assertTrue(x0.%s());", methodname));
@@ -134,11 +139,11 @@ public final class ObserverEqValue extends ObjectContract {
 
   @Override
   public String get_observer_str() {
-    return observer.toString();
+    return sideEffectFreeMethod.toString();
   }
 
   @Override
   public String toString() {
-    return String.format("<ObserverEqValue %s, value = '%s'", observer, value);
+    return String.format("<SideEffectFreeEqValue %s, value = '%s'", sideEffectFreeMethod, value);
   }
 }

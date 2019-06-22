@@ -49,8 +49,8 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final LinkedHashSet<Sequence> allSequences;
 
-  /** The side-effect-free observer methods. */
-  private final Set<TypedOperation> observers;
+  /** The side-effect-free methods. */
+  private final Set<TypedOperation> sideEffectFreeMethodSet;
 
   /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
@@ -83,7 +83,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * Create a forward generator.
    *
    * @param operations list of operations under test
-   * @param observers side-effect-free observer methods
+   * @param sideEffectFreeMethodSet side-effect-free methods
    * @param limits limits for generation, after which the generator will stop
    * @param componentManager stores previously-generated sequences
    * @param listenerManager manages notifications for listeners
@@ -91,19 +91,26 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   public ForwardGenerator(
       List<TypedOperation> operations,
-      Set<TypedOperation> observers,
+      Set<TypedOperation> sideEffectFreeMethodSet,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       RandoopListenerManager listenerManager,
       Set<ClassOrInterfaceType> classesUnderTest) {
-    this(operations, observers, limits, componentManager, null, listenerManager, classesUnderTest);
+    this(
+        operations,
+        sideEffectFreeMethodSet,
+        limits,
+        componentManager,
+        null,
+        listenerManager,
+        classesUnderTest);
   }
 
   /**
    * Create a forward generator.
    *
    * @param operations list of operations under test
-   * @param observers side-effect-free observer methods
+   * @param sideEffectFreeMethodSet side-effect-free methods
    * @param limits limits for generation, after which the generator will stop
    * @param componentManager stores previously-generated sequences
    * @param stopper optional, additional stopping criterion for the generator. Can be null.
@@ -112,7 +119,7 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   public ForwardGenerator(
       List<TypedOperation> operations,
-      Set<TypedOperation> observers,
+      Set<TypedOperation> sideEffectFreeMethodSet,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
@@ -120,7 +127,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Set<ClassOrInterfaceType> classesUnderTest) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
-    this.observers = observers;
+    this.sideEffectFreeMethodSet = sideEffectFreeMethodSet;
     this.allSequences = new LinkedHashSet<>();
     this.instantiator = componentManager.getTypeInstantiator();
 
@@ -285,15 +292,16 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // If it is a call to an observer method, clear the active flag of
+      // If it is a call to a side effect free method, clear the active flag of
       // its receiver. (This method doesn't side effect the receiver or
       // any argument, so Randoop should use some other shorter sequence
       // that produces the value.)
       Sequence stmts = seq.sequence;
       Statement stmt = stmts.statements.get(i);
-      boolean isObserver = stmt.isMethodCall() && observers.contains(stmt.getOperation());
-      Log.logPrintf("isObserver => %s for %s%n", isObserver, stmt);
-      if (isObserver) {
+      boolean isSideEffectFree =
+          stmt.isMethodCall() && sideEffectFreeMethodSet.contains(stmt.getOperation());
+      Log.logPrintf("isSideEffectFree => %s for %s%n", isSideEffectFree, stmt);
+      if (isSideEffectFree) {
         List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
         for (Integer inputIndex : inputVars) {
           seq.sequence.clearActiveFlag(inputIndex);
@@ -889,7 +897,7 @@ public class ForwardGenerator extends AbstractGenerator {
     return "randoop.generation.ForwardGenerator("
         + ("allSequences.size()=" + allSequences.size())
         + ","
-        + ("observers.size()=" + observers.size())
+        + ("sideEffectFreeMethodSet.size()=" + sideEffectFreeMethodSet.size())
         + ","
         + ("subsumed_sequences.size()=" + subsumed_sequences.size())
         + ","

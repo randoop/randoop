@@ -101,11 +101,11 @@ public class SpecialCoveredClassTest {
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    Set<TypedOperation> observers = new LinkedHashSet<>();
+    Set<TypedOperation> sideEffectFreeMethodSet = new LinkedHashSet<>();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
-            observers,
+            sideEffectFreeMethodSet,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
@@ -124,9 +124,9 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.require_classname_in_test);
     testGenerator.setTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
-    MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
+    MultiMap<Type, TypedOperation> sideEffectFreeMethodMap = new MultiMap<>();
     TestCheckGenerator checkGenerator =
-        GenTests.createTestCheckGenerator(visibility, contracts, observerMap);
+        GenTests.createTestCheckGenerator(visibility, contracts, sideEffectFreeMethodMap);
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);
