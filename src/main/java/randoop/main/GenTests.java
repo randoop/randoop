@@ -366,13 +366,13 @@ public class GenTests extends GenInputsAbstract {
       sideEffectFreeMap =
           OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods, true);
     } catch (OperationParseException e) {
-      System.out.printf("Error parsing side effect free methods: %s%n", e.getMessage());
+      System.out.printf("Error parsing side-effect-free methods: %s%n", e.getMessage());
       System.exit(1);
       throw new Error("dead code");
     }
-    Set<TypedOperation> sideEffectFreeMethodSet = new LinkedHashSet<>();
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
     for (Type keyType : sideEffectFreeMap.keySet()) {
-      sideEffectFreeMethodSet.addAll(sideEffectFreeMap.getValues(keyType));
+      sideEffectFreeMethods.addAll(sideEffectFreeMap.getValues(keyType));
     }
 
     /*
@@ -381,7 +381,7 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer =
         new ForwardGenerator(
             operations,
-            sideEffectFreeMethodSet,
+            sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
@@ -399,7 +399,7 @@ public class GenTests extends GenInputsAbstract {
     // System.out.println("isLoggingOn = " + Log.isLoggingOn());
 
     /*
-     * Create the test check generator for the contracts and side effect free methods
+     * Create the test check generator for the contracts and side-effect-free methods
      */
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, sideEffectFreeMap);
@@ -849,7 +849,7 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Returns patterns read from the given EntryReader.
    *
-   * @param er the EntryReader to read from.
+   * @param er the EntryReader to read from
    * @return contents of the file, as a list of Patterns
    */
   private List<Pattern> readOmitMethods(EntryReader er) {
@@ -1074,7 +1074,7 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param visibility the visibility predicate
    * @param contracts the contract checks
-   * @param sideEffectFreeMap the map from types to side effect free methods
+   * @param sideEffectFreeMap the map from types to side-effect-free methods
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(

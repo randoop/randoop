@@ -9,8 +9,8 @@ import randoop.contract.EnumValue;
 import randoop.contract.IsNotNull;
 import randoop.contract.IsNull;
 import randoop.contract.ObjectContract;
+import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
-import randoop.contract.SideEffectFreeEqValue;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.reflection.VisibilityPredicate;
@@ -42,7 +42,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The generator for expected exceptions. */
   private ExpectedExceptionCheckGen exceptionExpectation;
 
-  /** The map from a type to the set of side effect free operations for the type. */
+  /** The map from a type to the set of side-effect-free operations for the type. */
   private MultiMap<Type, TypedOperation> sideEffectFreeMap;
 
   /** The visibility predicate. */
@@ -55,7 +55,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * Create a RegressionCaptureGenerator.
    *
    * @param exceptionExpectation the generator for expected exceptions
-   * @param sideEffectFreeMap the map from a type to the side effect free operations for the type
+   * @param sideEffectFreeMap the map from a type to the side-effect-free operations for the type
    * @param isVisible the visibility predicate
    * @param includeAssertions whether to include regression assertions
    */
@@ -118,7 +118,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
           if (runtimeValue == null) {
 
-            // Add side effect free test for null
+            // Add test for null
             checks.add(new ObjectCheck(new IsNull(), var));
 
           } else if (PrimitiveTypes.isBoxedPrimitive(runtimeValue.getClass())
@@ -161,7 +161,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               }
             }
 
-            // Add side effect free test for the primitive
+            // Add test for the primitive
             PrimValue.PrintMode printMode;
             if (var.getType().isPrimitive()) {
               printMode = PrimValue.PrintMode.EQUALSEQUALS;
@@ -187,25 +187,23 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               checks.add(new ObjectCheck(new IsNotNull(), var));
             }
 
-            // Put out any side effect free methods that exist for this type
+            // Put out any side-effect-free methods that exist for this type
             Variable var0 = sequence.sequence.getVariable(i);
-            Set<TypedOperation> sideEffectFreeMethodSet =
-                sideEffectFreeMap.getValues(var0.getType());
-            if (sideEffectFreeMethodSet != null) {
-              for (TypedOperation sideEffectFreeMethod : sideEffectFreeMethodSet) {
+            Set<TypedOperation> sideEffectFreeMethods = sideEffectFreeMap.getValues(var0.getType());
+            if (sideEffectFreeMethods != null) {
+              for (TypedOperation m : sideEffectFreeMethods) {
 
-                // When outputting checks, ignore side effect free methods that don't take a single
+                // When outputting checks, ignore side-effect-free methods that don't take a single
                 // argument.
-                if (sideEffectFreeMethod.getInputTypes().size() != 1) {
+                if (m.getInputTypes().size() != 1) {
                   continue;
                 }
 
-                ExecutionOutcome outcome =
-                    sideEffectFreeMethod.execute(new Object[] {runtimeValue});
+                ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
-                      "unexpected error invoking side effect free method  "
-                          + sideEffectFreeMethod
+                      "unexpected error invoking side-effect-free method  "
+                          + m
                           + " on "
                           + var
                           + "["
@@ -221,19 +219,18 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
 
-                // Don't create assertions over string that look like raw object
+                // Don't create assertions over strings that look like raw object
                 // references.
                 if ((value instanceof String) && Value.looksLikeObjectToString((String) value)) {
                   continue;
                 }
 
-                ObjectContract sideEffectFreeEqValue =
-                    new SideEffectFreeEqValue(sideEffectFreeMethod, value);
-                ObjectCheck sideEffectFreeCheck = new ObjectCheck(sideEffectFreeEqValue, var);
+                ObjectContract observerEqValue = new ObserverEqValue(m, value);
+                ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
 
-                Log.logPrintf("Adding side effect free check %s%n", sideEffectFreeCheck);
+                Log.logPrintf("Adding observer check %s%n", observerCheck);
 
-                checks.add(sideEffectFreeCheck);
+                checks.add(observerCheck);
               }
             }
           }

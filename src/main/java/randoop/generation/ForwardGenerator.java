@@ -50,7 +50,7 @@ public class ForwardGenerator extends AbstractGenerator {
   private final LinkedHashSet<Sequence> allSequences;
 
   /** The side-effect-free methods. */
-  private final Set<TypedOperation> sideEffectFreeMethodSet;
+  private final Set<TypedOperation> sideEffectFreeMethods;
 
   /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
@@ -83,7 +83,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * Create a forward generator.
    *
    * @param operations list of operations under test
-   * @param sideEffectFreeMethodSet side-effect-free methods
+   * @param sideEffectFreeMethods side-effect-free methods
    * @param limits limits for generation, after which the generator will stop
    * @param componentManager stores previously-generated sequences
    * @param listenerManager manages notifications for listeners
@@ -91,14 +91,14 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   public ForwardGenerator(
       List<TypedOperation> operations,
-      Set<TypedOperation> sideEffectFreeMethodSet,
+      Set<TypedOperation> sideEffectFreeMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       RandoopListenerManager listenerManager,
       Set<ClassOrInterfaceType> classesUnderTest) {
     this(
         operations,
-        sideEffectFreeMethodSet,
+        sideEffectFreeMethods,
         limits,
         componentManager,
         null,
@@ -110,7 +110,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * Create a forward generator.
    *
    * @param operations list of operations under test
-   * @param sideEffectFreeMethodSet side-effect-free methods
+   * @param sideEffectFreeMethods side-effect-free methods
    * @param limits limits for generation, after which the generator will stop
    * @param componentManager stores previously-generated sequences
    * @param stopper optional, additional stopping criterion for the generator. Can be null.
@@ -119,7 +119,7 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   public ForwardGenerator(
       List<TypedOperation> operations,
-      Set<TypedOperation> sideEffectFreeMethodSet,
+      Set<TypedOperation> sideEffectFreeMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
@@ -127,7 +127,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Set<ClassOrInterfaceType> classesUnderTest) {
     super(operations, limits, componentManager, stopper, listenerManager);
 
-    this.sideEffectFreeMethodSet = sideEffectFreeMethodSet;
+    this.sideEffectFreeMethods = sideEffectFreeMethods;
     this.allSequences = new LinkedHashSet<>();
     this.instantiator = componentManager.getTypeInstantiator();
 
@@ -292,14 +292,14 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // If it is a call to a side effect free method, clear the active flag of
+      // If it is a call to a side-effect-free method, clear the active flag of
       // its receiver. (This method doesn't side effect the receiver or
       // any argument, so Randoop should use some other shorter sequence
       // that produces the value.)
       Sequence stmts = seq.sequence;
       Statement stmt = stmts.statements.get(i);
       boolean isSideEffectFree =
-          stmt.isMethodCall() && sideEffectFreeMethodSet.contains(stmt.getOperation());
+          stmt.isMethodCall() && sideEffectFreeMethods.contains(stmt.getOperation());
       Log.logPrintf("isSideEffectFree => %s for %s%n", isSideEffectFree, stmt);
       if (isSideEffectFree) {
         List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
@@ -897,7 +897,7 @@ public class ForwardGenerator extends AbstractGenerator {
     return "randoop.generation.ForwardGenerator("
         + ("allSequences.size()=" + allSequences.size())
         + ","
-        + ("sideEffectFreeMethodSet.size()=" + sideEffectFreeMethodSet.size())
+        + ("sideEffectFreeMethods.size()=" + sideEffectFreeMethods.size())
         + ","
         + ("subsumed_sequences.size()=" + subsumed_sequences.size())
         + ","

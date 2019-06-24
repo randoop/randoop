@@ -9,7 +9,7 @@ public class Box {
         b = 3;
     }
     
-    // Marked as side effect free.
+    // Marked as side-effect-free.
     public int getA() {
         return a;
     }
@@ -18,7 +18,7 @@ public class Box {
         return new Box();
     }
     
-    // Marked as side effect free.
+    // Marked as side-effect-free.
     public int getSum(Box other) {
         return other.a + other.b + a + b;
     }

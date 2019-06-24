@@ -781,10 +781,7 @@ public class RandoopSystemTest {
         is(equalTo(0)));
   }
 
-  /**
-   * Runs with --side-effect-free-methods flag and should have no side effect free methods called
-   * for side effect.
-   */
+  /** Runs with --side-effect-free-methods flag. */
   @Test
   public void runSideEffectFreeMethodTest() {
     String directoryName = "side-effect-free-method-test";
