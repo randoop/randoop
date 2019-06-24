@@ -74,8 +74,8 @@ public class RandoopSystemTest {
   /**
    * Creates a RandoopOptions object configured for a system test.
    *
-   * @param testEnvironment individual system test specific testEnvironment
-   * @return RandoopOptions with default system test options
+   * @param testEnvironment test-specific specific testEnvironment
+   * @return RandoopOptions with default system test options, for the given test environment
    */
   public static RandoopOptions createRandoopOptions(SystemTestEnvironment testEnvironment) {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
