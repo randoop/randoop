@@ -377,16 +377,16 @@ public class GenTests extends GenInputsAbstract {
       sideEffectFreeUserMap =
           OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods, true);
     } catch (OperationParseException e) {
-      System.out.printf("Error parsing observers: %s%n", e.getMessage());
+      System.out.printf("Error parsing side-effect-free methods: %s%n", e.getMessage());
       System.exit(1);
       throw new Error("dead code");
     }
     sideEffectFreeMap.addAll(sideEffectFreeJDKMap);
     sideEffectFreeMap.addAll(sideEffectFreeUserMap);
 
-    Set<TypedOperation> sideEffectFreeMethodSet = new LinkedHashSet<>();
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
     for (Type keyType : sideEffectFreeMap.keySet()) {
-      sideEffectFreeMethodSet.addAll(sideEffectFreeMap.getValues(keyType));
+      sideEffectFreeMethods.addAll(sideEffectFreeMap.getValues(keyType));
     }
 
     /*
@@ -395,7 +395,7 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer =
         new ForwardGenerator(
             operations,
-            sideEffectFreeMethodSet,
+            sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,

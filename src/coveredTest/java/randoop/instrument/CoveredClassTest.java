@@ -225,6 +225,7 @@ public class CoveredClassTest {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
+    // Maps each class type to the side-effect-free methods in it.
     MultiMap<Type, TypedClassOperation> sideEffectFreeMap = new MultiMap<>();
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMap;
     MultiMap<Type, TypedClassOperation> sideEffectFreeUserMap;
@@ -236,23 +237,23 @@ public class CoveredClassTest {
       sideEffectFreeUserMap =
           OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods, true);
     } catch (OperationParseException e) {
-      System.out.printf("Error parsing observers: %s%n", e.getMessage());
+      System.out.printf("Incorrectly formatted side-effect-free method: %s%n", e);
       System.exit(1);
       throw new Error("dead code");
     }
     sideEffectFreeMap.addAll(sideEffectFreeJDKMap);
     sideEffectFreeMap.addAll(sideEffectFreeUserMap);
 
-    Set<TypedOperation> sideEffectFreeMethodSet = new LinkedHashSet<>();
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
     for (Type keyType : sideEffectFreeMap.keySet()) {
-      sideEffectFreeMethodSet.addAll(sideEffectFreeMap.getValues(keyType));
+      sideEffectFreeMethods.addAll(sideEffectFreeMap.getValues(keyType));
     }
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
-            sideEffectFreeMethodSet,
+            sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
