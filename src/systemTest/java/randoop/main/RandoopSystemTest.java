@@ -72,7 +72,7 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Sets common system test command line options.
+   * Sets common system test command-line options.
    *
    * @param options RandoopOptions to set
    */
@@ -813,9 +813,7 @@ public class RandoopSystemTest {
         is(equalTo(0)));
   }
 
-  /**
-   * Runs with --side-effect-free-methods flag and should have no observers called for side effect.
-   */
+  /** Runs with --side-effect-free-methods flag. */
   @Test
   public void runSideEffectObserversTest() {
     String directoryName = "side-effect-free-methods-test";

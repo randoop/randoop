@@ -36,7 +36,7 @@ public class ThrowsCondition extends SpecificationClause {
   /** Gson serialization requires a default constructor. */
   @SuppressWarnings({
     "unused",
-    "signature" // dummy value
+    "signature" // dummy value in default constructor for Gson
   })
   private ThrowsCondition() {
     super();

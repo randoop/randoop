@@ -45,7 +45,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The generator for expected exceptions. */
   private ExpectedExceptionCheckGen exceptionExpectation;
 
-  /** The map from a type to the side-effect-free (@SideEffectFree) operations for the type. */
+  /** The map from a type to the set of side-effect-free operations for the type. */
   private MultiMap<Type, TypedClassOperation> sideEffectFreeMap;
 
   /** The visibility predicate. */
@@ -61,7 +61,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * Create a RegressionCaptureGenerator.
    *
    * @param exceptionExpectation the generator for expected exceptions
-   * @param sideEffectFreeMap the map from a type to the observer operations for the type
+   * @param sideEffectFreeMap the map from a type to the side-effect-free operations for the type
    * @param isVisible the visibility predicate
    * @param includeAssertions whether to include regression assertions
    * @param omitMethodsPredicate the omit methods predicate used to filter {@code sideEffectFreeMap}
@@ -127,7 +127,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
           if (runtimeValue == null) {
 
-            // Add observer test for null
+            // Add test for null
             checks.add(new ObjectCheck(new IsNull(), var));
 
           } else if (PrimitiveTypes.isBoxedPrimitive(runtimeValue.getClass())
@@ -170,7 +170,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               }
             }
 
-            // Add observer test for the primitive
+            // Add test for the primitive
             PrimValue.PrintMode printMode;
             if (var.getType().isPrimitive()) {
               printMode = PrimValue.PrintMode.EQUALSEQUALS;
@@ -208,7 +208,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
-                // Ignore flaky side-effect free methods
+                // Ignore flaky side-effect-free methods
                 if (omitMethodsPredicate.shouldOmit(m)) {
                   continue;
                 }
@@ -256,7 +256,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 ObjectContract observerEqValue = new ObserverEqValue(m, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
 
-                Log.logPrintf("Adding sideEffectFree method %s%n", observerCheck);
+                Log.logPrintf("Adding observer check %s%n", observerCheck);
 
                 checks.add(observerCheck);
               }

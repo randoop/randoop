@@ -73,16 +73,17 @@ public class ForwardGenerator extends AbstractGenerator {
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
 
-  // The set of all primitive values seen during generation and execution
-  // of sequences. This set is used to tell if a new primitive value has
-  // been generated, to add the value to the components.
+  /**
+   * The set of all primitive values seen during generation and execution of sequences. This set is
+   * used to tell if a new primitive value has been generated, to add the value to the components.
+   */
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
    * Create a forward generator.
    *
    * @param operations list of operations under test
-   * @param sideEffectFreeMethods side-effect-free observer methods
+   * @param sideEffectFreeMethods side-effect-free methods
    * @param limits limits for generation, after which the generator will stop
    * @param componentManager stores previously-generated sequences
    * @param listenerManager manages notifications for listeners
@@ -109,7 +110,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * Create a forward generator.
    *
    * @param operations list of operations under test
-   * @param sideEffectFreeMethods side-effect-free observer methods
+   * @param sideEffectFreeMethods side-effect-free methods
    * @param limits limits for generation, after which the generator will stop
    * @param componentManager stores previously-generated sequences
    * @param stopper optional, additional stopping criterion for the generator. Can be null.
