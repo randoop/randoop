@@ -241,9 +241,8 @@ public class GenTests extends GenInputsAbstract {
     Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
 
     // Get names of classes that must be covered by output tests
-    @SuppressWarnings("signature") // TOOD: read from file, no guarantee strings are @ClassGetName
     Set<@ClassGetName String> coveredClassnames =
-        GenInputsAbstract.getStringSetFromFile(require_covered_classes, "coverage class names");
+        GenInputsAbstract.getClassNamesFromFile(require_covered_classes);
 
     // Get names of fields to be omitted
     Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
