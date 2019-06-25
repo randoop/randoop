@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.JarURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -101,6 +99,7 @@ public class ReplacementFileReader {
   static HashMap<MethodSignature, MethodSignature> readReplacements(Reader in, String filename)
       throws ReplacementFileException, IOException {
     HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
+
     try (EntryReader reader = new EntryReader(in, filename, "//.*$", null)) {
       for (String line : reader) {
         String trimmed = line.trim();
@@ -203,6 +202,7 @@ public class ReplacementFileReader {
       MethodSignature original,
       MethodSignature replacement)
       throws ReplacementException {
+
     // If there is already a replacement, do not overwrite it.
     if (replacementMap.get(original) != null) {
       String msg =
@@ -254,16 +254,7 @@ public class ReplacementFileReader {
       addReplacementsForClass(replacementMap, original, replacementClass);
     } else {
       // Otherwise, assume the replacement is a package.
-      // Finding the package depends on whether the agent is run on bootloaded classes,
-      // which is the case if the ClassLoader is null.
-      ClassLoader loader = ReplacementFileReader.class.getClassLoader();
-      if (loader == null) {
-        // The agent is run on bootloaded classes, so we have to check the path directly.
-        addReplacementsForPackage(replacementMap, original, replacement);
-      } else {
-        // Otherwise, use the ClassLoader to avoid missing any classes on the normal classpath.
-        addReplacementsForPackage(replacementMap, original, replacement, loader);
-      }
+      addReplacementsForPackage(replacementMap, original, replacement);
     }
   }
 
@@ -329,14 +320,11 @@ public class ReplacementFileReader {
   }
 
   /**
-   * Adds method replacements determined by an original and replacement package. Uses the
-   * bootclasspath to find the replacement package.
+   * Adds method replacements determined by an original and replacement package. Uses
+   * getSystemResources to find the replacement package.
    *
    * <p>Visits each class of the package on the classpath and applies {@link
    * #addReplacementsForClass(HashMap, String, Class)} to add the method replacements.
-   *
-   * <p>Contrasts with {@link #addReplacementsForPackage(HashMap, String, String, ClassLoader)} that
-   * searches for the package using a class loader.
    *
    * @param replacementMap the method replacement map to which new replacements are added
    * @param originalPackage the original package name
@@ -350,100 +338,57 @@ public class ReplacementFileReader {
       String originalPackage,
       String replacementPackage)
       throws ReplacementException, ClassNotFoundException {
-    String bootclasspath = System.getProperty("sun.boot.class.path");
-    String javaHome = System.getProperty("java.home");
 
-    // Explore the whole classpath to ensure all replacements are found.
-    for (String pathString : bootclasspath.split(java.io.File.pathSeparator)) {
-      // Replacements won't be found in java.home.
-      if (pathString.startsWith(javaHome)) {
-        continue;
-      }
-      Path file = Paths.get(pathString);
-      if (!Files.exists(file)) {
-        continue;
-      }
-      if (Files.isDirectory(file)) {
-        Path path = file;
-        Path replacementPath =
-            path.resolve(replacementPackage.replace('.', java.io.File.separatorChar));
-        if (Files.exists(replacementPath) && Files.isDirectory(replacementPath)) {
-          addReplacementsForPackage(
-              replacementMap, originalPackage, replacementPackage, replacementPath);
-        }
-      } else { // or a jar file
+    if (ReplaceCallAgent.debug) {
+      System.err.println("javaVersion: " + System.getProperty("java.version"));
+      System.err.println("bootclasspath: " + System.getProperty("sun.boot.class.path"));
+      System.err.println("javaHome: " + System.getProperty("java.class.path"));
+      System.err.println("classpath: " + System.getProperty("java.home"));
+    }
+
+    // We will only process the first occurance found; the boot classpath
+    // is searched prior to the system classpath.
+
+    String replacementPackagePath = replacementPackage.replace('.', java.io.File.separatorChar);
+    Enumeration<URL> resources;
+    try {
+      resources = ClassLoader.getSystemResources(replacementPackagePath);
+    } catch (IOException e) {
+      throw new ReplacementException("Error getting SystemResources", e);
+    }
+    while (resources.hasMoreElements()) {
+      URL url = resources.nextElement();
+      String protocol = url.getProtocol();
+      if (protocol.equals("jar")) {
+        String jarFilePath = ReplaceCallAgent.getJarPathFromURL(url);
+        Path file = Paths.get(jarFilePath);
         try {
           JarFile jarFile = new JarFile(file.toFile());
           addReplacementsFromAllClassesOfPackage(
               replacementMap, originalPackage, replacementPackage, jarFile);
+          return;
         } catch (IOException e) {
-          throw new ReplacementException("Error reading jar file from boot classpath: " + file, e);
+          throw new ReplacementException("Error reading jar file: " + file, e);
         }
+      } else if (protocol.equals("file")) {
+        Path path = null;
+        try {
+          path = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
+        } catch (Exception e) {
+          throw new ReplacementException("Unable to extract Path from URL: " + url, e);
+        }
+        if (Files.exists(path) && Files.isDirectory(path)) {
+          addReplacementsForPackage(replacementMap, originalPackage, replacementPackage, path);
+          return;
+        }
+      } else {
+        throw new ReplacementException("URL protocol not 'file' or 'jar'");
       }
     }
-  }
-
-  /**
-   * Adds method replacements determined by an original and replacement package. Uses the given
-   * {@code ClassLoader} to find the replacement package.
-   *
-   * <p>Visits each class of the package on the classpath and applies {@link
-   * #addReplacementsForClass(HashMap, String, Class)} to add the method replacements.
-   *
-   * <p>Contrasts with {@link #addReplacementsForPackage(HashMap, String, String)} that searches for
-   * the package on the boot classpath.
-   *
-   * @param replacementMap the method replacement map to which new replacements are added
-   * @param originalPackage the original package name
-   * @param replacementPackage the replacement package name
-   * @param loader the {@code ClassLoader}
-   * @throws IOException if no package corresponding to replacement is found
-   * @throws ReplacementException if no replacements are found in the replacement package
-   * @throws ClassNotFoundException if no class corresponding to the replacement is found
-   * @see #addReplacementsForClassOrPackage(HashMap, String, String)
-   */
-  private static void addReplacementsForPackage(
-      HashMap<MethodSignature, MethodSignature> replacementMap,
-      String originalPackage,
-      String replacementPackage,
-      ClassLoader loader)
-      throws ReplacementException, IOException, ClassNotFoundException {
-    boolean found = false;
-    Enumeration<URL> resources = loader.getResources(replacementPackage.replace('.', '/'));
-
-    // Explore the whole classpath to ensure all replacements are found.
-    while (resources.hasMoreElements()) {
-      URL url = resources.nextElement();
-      try {
-        URLConnection connection = url.openConnection();
-        if (connection instanceof JarURLConnection) {
-          JarFile jarFile = ((JarURLConnection) connection).getJarFile();
-          addReplacementsFromAllClassesOfPackage(
-              replacementMap, originalPackage, replacementPackage, jarFile);
-        } else {
-          // The subclass for directories is an internal Java class and its use results in compiler
-          // warnings.
-          // It seems to work to assume that connection is a directory, and let an exception occur
-          // if it is not.
-          Path path = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
-          if (Files.exists(path) && Files.isDirectory(path)) {
-            addReplacementsForPackage(replacementMap, originalPackage, replacementPackage, path);
-            found = true;
-          }
-        }
-      } catch (IOException e) {
-        String msg =
-            String.format(
-                "Error identifying replacement %s with a package: %s",
-                replacementPackage, e.getMessage());
-        throw new ReplacementException(msg, e);
-      }
-    }
-    if (!found) {
-      String msg =
-          String.format("No package for replacement %s found on classpath", replacementPackage);
-      throw new ReplacementException(msg);
-    }
+    // went through all the resources and didn't find the package
+    String msg =
+        String.format("No package for replacement %s found on classpath", replacementPackage);
+    throw new ReplacementException(msg);
   }
 
   /**
@@ -459,7 +404,6 @@ public class ReplacementFileReader {
    * @throws ReplacementException if a replacement method is not valid
    * @throws ClassNotFoundException if a replacement or package class is not found
    * @see #addReplacementsForPackage(HashMap, String, String)
-   * @see #addReplacementsForPackage(HashMap, String, String, ClassLoader)
    */
   private static void addReplacementsForPackage(
       HashMap<MethodSignature, MethodSignature> replacementMap,
@@ -499,7 +443,6 @@ public class ReplacementFileReader {
    * @throws ReplacementException if no replacements are found in the replacement package
    * @throws ClassNotFoundException if no class corresponding to the replacement is found
    * @see #addReplacementsForPackage(HashMap, String, String)
-   * @see #addReplacementsForPackage(HashMap, String, String, ClassLoader)
    */
   private static void addReplacementsFromAllClassesOfPackage(
       HashMap<MethodSignature, MethodSignature> replacementMap,
