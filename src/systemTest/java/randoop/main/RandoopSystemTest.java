@@ -293,7 +293,8 @@ public class RandoopSystemTest {
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude",
-            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) exclude",
+            // inconsistent Java 8 vs 9, so ignore
+            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore",
             "java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude",
@@ -454,7 +455,8 @@ public class RandoopSystemTest {
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude",
-            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) exclude",
+            // inconsistent Java 8 vs 9, so ignore
+            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore",
             "java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude",
@@ -1838,6 +1840,19 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
+            // next 12 methods are inconsistent Java 8 vs 9, so ignore
+            "java.util.ArrayList.add(java.lang.Object, java.lang.Object[], int) ignore",
+            "java.util.ArrayList.batchRemove(java.util.Collection, boolean, int, int) ignore",
+            "java.util.ArrayList.checkInvariants() ignore",
+            "java.util.ArrayList.elementAt(java.lang.Object[], int) ignore",
+            "java.util.ArrayList.grow() ignore",
+            "java.util.ArrayList.isClear(long[], int) ignore",
+            "java.util.ArrayList.nBits(int) ignore",
+            "java.util.ArrayList.newCapacity(int) ignore",
+            "java.util.ArrayList.outOfBoundsMsg(int, int) ignore",
+            "java.util.ArrayList.removeIf(java.util.function.Predicate, int, int) ignore",
+            "java.util.ArrayList.setBit(long[], int) ignore",
+            "java.util.ArrayList.shiftTailOverGap(java.lang.Object[], int, int) ignore",
             "java.util.ArrayList.add(int, java.lang.Object) exclude",
             "java.util.ArrayList.add(java.lang.Object) exclude",
             "java.util.ArrayList.addAll(int, java.util.Collection) exclude",
