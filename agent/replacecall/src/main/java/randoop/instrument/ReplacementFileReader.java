@@ -278,7 +278,6 @@ public class ReplacementFileReader {
       String originalClassname,
       Class<?> replacementClass)
       throws ReplacementException {
-
     final Type originalType = BcelUtil.classnameToType(originalClassname);
     for (Method method : replacementClass.getDeclaredMethods()) {
       int modifiers = method.getModifiers() & Modifier.methodModifiers();
@@ -340,15 +339,11 @@ public class ReplacementFileReader {
       String replacementPackage)
       throws ReplacementException, ClassNotFoundException {
 
-    String javaVersion = System.getProperty("java.version");
-    String bootclasspath = System.getProperty("sun.boot.class.path");
-    String classpath = System.getProperty("java.class.path");
-    String javaHome = System.getProperty("java.home");
     if (ReplaceCallAgent.debug) {
-      System.err.println(javaVersion);
-      System.err.println(bootclasspath);
-      System.err.println(javaHome);
-      System.err.println(classpath);
+      System.err.println("javaVersion: " + System.getProperty("java.version"));
+      System.err.println("bootclasspath: " + System.getProperty("sun.boot.class.path"));
+      System.err.println("javaHome: " + System.getProperty("java.class.path"));
+      System.err.println("classpath: " + System.getProperty("java.home"));
     }
 
     // Previous versions located and processed all occurances of replacementPackage
@@ -466,7 +461,6 @@ public class ReplacementFileReader {
       String replacementPackage,
       JarFile jarFile)
       throws ReplacementException, ClassNotFoundException {
-
     String replacementPath = replacementPackage.replace('.', '/') + "/";
     Enumeration<JarEntry> entries = jarFile.entries();
     while (entries.hasMoreElements()) {
