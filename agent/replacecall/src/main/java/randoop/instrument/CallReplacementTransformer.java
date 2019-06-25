@@ -100,12 +100,14 @@ public class CallReplacementTransformer extends InstructionListUtils
     debug_transform.log("loader: %s, className: %s%n", loader, className);
 
     // Note: An uncaught exception within a transform method is equivalent to null being returned.
-    // This method will only throw an IllegalClassFormatException, which is a ClassFileTransformer
-    // convention.
+    // This method might throw an IllegalClassFormatException, which is a ClassFileTransformer
+    // convention.  (It may re-throw a ThreadDeath error.)
 
-    // In Java 8 the className is null for special Lambda classes.  When this happens the following
-    // statement throws an exception and the class is ignored.
-    // For Java 9+, these special classes are not passed to the transform method.
+    // In Java 8 the className is null for special Lambda classes. They should be ignored.
+    // In Java 9 these special classes are not passed to the transform method.
+    if (className == null) {
+      return null;
+    }
     String fullClassName = className.replace("/", ".");
 
     if (isExcludedClass(loader, fullClassName)) {

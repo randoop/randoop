@@ -262,13 +262,22 @@ public class ReplaceCallAgent {
     if (c.getClassLoader() != null) {
       throw new BugInAgentException("Agent should be included on bootclasspath");
     }
-    URL u = ClassLoader.getSystemResource("randoop/instrument/ReplaceCallAgent.class");
-    String jpath = u.getPath();
-    String jarFilePath = jpath.substring(jpath.indexOf(":") + 1, jpath.indexOf("!"));
+    URL url = ClassLoader.getSystemResource("randoop/instrument/ReplaceCallAgent.class");
+    String jarFilePath = getJarPathFromURL(url);
     if (debug) {
       System.err.println("AgentPath: " + jarFilePath);
     }
     return jarFilePath;
+  }
+
+  /**
+   * Extracts the path from a URL of type jar.
+   *
+   * @return the path for the jar file, as a string
+   */
+  protected static String getJarPathFromURL(URL url) {
+    String jarPath = url.getPath();
+    return jarPath.substring(jarPath.indexOf(":") + 1, jarPath.indexOf("!"));
   }
 
   /**

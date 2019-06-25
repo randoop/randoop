@@ -346,13 +346,9 @@ public class ReplacementFileReader {
       System.err.println("classpath: " + System.getProperty("java.home"));
     }
 
-    // Previous versions located and processed all occurances of replacementPackage
-    // on the boot classpath.  With Java 9+, this is no longer practical.
-    // Consequently, we now only process the first occurance found; since the
-    // boot classpath is searched prior to the system classpath, the results
-    // are identical in the case of a single occurance of replacementPackage.
+    // We will only process the first occurance found; the boot classpath
+    // is searched prior to the system classpath.
 
-    boolean found = false;
     String replacementPackagePath = replacementPackage.replace('.', java.io.File.separatorChar);
     Enumeration<URL> resources;
     try {
@@ -362,44 +358,37 @@ public class ReplacementFileReader {
     }
     while (resources.hasMoreElements()) {
       URL url = resources.nextElement();
-      String urlString = url.toString();
       String protocol = url.getProtocol();
       if (protocol.equals("jar")) {
-        String jpath = url.getPath();
-        String jarFilePath = jpath.substring(jpath.indexOf(":") + 1, jpath.indexOf("!"));
+        String jarFilePath = ReplaceCallAgent.getJarPathFromURL(url);
         Path file = Paths.get(jarFilePath);
         try {
           JarFile jarFile = new JarFile(file.toFile());
           addReplacementsFromAllClassesOfPackage(
               replacementMap, originalPackage, replacementPackage, jarFile);
-          found = true;
-          break;
+          return;
         } catch (IOException e) {
           throw new ReplacementException("Error reading jar file: " + file, e);
         }
       } else if (protocol.equals("file")) {
-        // It seems to work to assume that connection is a directory, and let an exception occur
-        // if it is not.
         Path path = null;
         try {
           path = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
-        } catch (IOException e) {
-          throw new ReplacementException("Error reading file: " + path, e);
+        } catch (Exception e) {
+          throw new ReplacementException("Unable to extract Path from URL: " + url, e);
         }
         if (Files.exists(path) && Files.isDirectory(path)) {
           addReplacementsForPackage(replacementMap, originalPackage, replacementPackage, path);
-          found = true;
-          break;
+          return;
         }
       } else {
         throw new ReplacementException("URL protocol not 'file' or 'jar'");
       }
     }
-    if (!found) {
-      String msg =
-          String.format("No package for replacement %s found on classpath", replacementPackage);
-      throw new ReplacementException(msg);
-    }
+    // went through all the resources and didn't find the package
+    String msg =
+        String.format("No package for replacement %s found on classpath", replacementPackage);
+    throw new ReplacementException(msg);
   }
 
   /**
