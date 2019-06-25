@@ -1,5 +1,7 @@
 Version 4.2.0, released ??
 
+Randoop supports Java 9 (and still supports Java 8).
+
 New --testjar, --omit-classes, and --omit-classes-file arguments to
 make it easy to test all classes in a .jar file.
 
