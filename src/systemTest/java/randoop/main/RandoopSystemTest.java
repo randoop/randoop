@@ -810,8 +810,8 @@ public class RandoopSystemTest {
 
   /** Runs with --side-effect-free-methods flag. */
   @Test
-  public void runSideEffectObserversTest() {
-    String directoryName = "side-effect-free-methods-test";
+  public void runSideEffectFreeMethodTest() {
+    String directoryName = "side-effect-free-method-test";
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment(directoryName);
     RandoopOptions options = createRandoopOptions(testEnvironment);
