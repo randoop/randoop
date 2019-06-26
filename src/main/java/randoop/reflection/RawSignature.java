@@ -34,7 +34,8 @@ public class RawSignature {
   /**
    * Create a {@link RawSignature} object with the name and parameterTypes.
    *
-   * @param packageName the package name of the class; null for the unnamed package
+   * @param packageName the package name of the class. An unnamed package is indicated by a null in
+   *     Java 8 and an emptry string in Java 9.
    * @param classname the name of the class
    * @param name the method name; for a constructor, same as the classname
    * @param parameterTypes the method parameter types, including the receiver type if any
@@ -44,7 +45,6 @@ public class RawSignature {
       String classname,
       String name,
       Class<?>[] parameterTypes) {
-    assert !Objects.equals(packageName, "");
     this.packageName = packageName;
     this.classname = classname;
     this.name = name;
