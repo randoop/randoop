@@ -361,17 +361,18 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    MultiMap<Type, TypedOperation> observerMap;
+    MultiMap<Type, TypedOperation> sideEffectFreeMap;
     try {
-      observerMap = OperationModel.readOperations(GenInputsAbstract.observers, true);
+      sideEffectFreeMap =
+          OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods, true);
     } catch (OperationParseException e) {
-      System.out.printf("Error parsing observers: %s%n", e.getMessage());
+      System.out.printf("Error parsing side-effect-free methods: %s%n", e.getMessage());
       System.exit(1);
       throw new Error("dead code");
     }
-    Set<TypedOperation> observers = new LinkedHashSet<>();
-    for (Type keyType : observerMap.keySet()) {
-      observers.addAll(observerMap.getValues(keyType));
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
+    for (Type keyType : sideEffectFreeMap.keySet()) {
+      sideEffectFreeMethods.addAll(sideEffectFreeMap.getValues(keyType));
     }
 
     /*
@@ -380,7 +381,7 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer =
         new ForwardGenerator(
             operations,
-            observers,
+            sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
@@ -398,10 +399,10 @@ public class GenTests extends GenInputsAbstract {
     // System.out.println("isLoggingOn = " + Log.isLoggingOn());
 
     /*
-     * Create the test check generator for the contracts and observers
+     * Create the test check generator for the contracts and side-effect-free methods
      */
     ContractSet contracts = operationModel.getContracts();
-    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap);
+    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, sideEffectFreeMap);
     explorer.setTestCheckGenerator(testGen);
 
     /*
@@ -848,7 +849,7 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Returns patterns read from the given EntryReader.
    *
-   * @param er the EntryReader to read from.
+   * @param er the EntryReader to read from
    * @return contents of the file, as a list of Patterns
    */
   private List<Pattern> readOmitMethods(EntryReader er) {
@@ -1073,13 +1074,13 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param visibility the visibility predicate
    * @param contracts the contract checks
-   * @param observerMap the map from types to observer methods
+   * @param sideEffectFreeMap the map from types to side-effect-free methods
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
-      MultiMap<Type, TypedOperation> observerMap) {
+      MultiMap<Type, TypedOperation> sideEffectFreeMap) {
 
     // Start with checking for invalid exceptions.
     TestCheckGenerator testGen =
@@ -1096,7 +1097,10 @@ public class GenTests extends GenInputsAbstract {
 
       RegressionCaptureGenerator regressionVisitor =
           new RegressionCaptureGenerator(
-              expectation, observerMap, visibility, !GenInputsAbstract.no_regression_assertions);
+              expectation,
+              sideEffectFreeMap,
+              visibility,
+              !GenInputsAbstract.no_regression_assertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }

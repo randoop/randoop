@@ -299,7 +299,7 @@ public class OperationModel {
    */
   public static MultiMap<Type, TypedOperation> readOperations(Path file, boolean onlyMethods)
       throws OperationParseException {
-    MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
+    MultiMap<Type, TypedOperation> sideEffectFreeMap = new MultiMap<>();
     if (file != null) {
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
         for (String line : er) {
@@ -307,14 +307,14 @@ public class OperationModel {
           TypedClassOperation operation =
               signatureToOperation(
                   sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
-          observerMap.add(operation.getDeclaringType(), operation);
+          sideEffectFreeMap.add(operation.getDeclaringType(), operation);
         }
       } catch (IOException e) {
         String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
         throw new RandoopUsageError(message, e);
       }
     }
-    return observerMap;
+    return sideEffectFreeMap;
   }
 
   /**

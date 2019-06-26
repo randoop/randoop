@@ -186,7 +186,8 @@ public class RandoopSystemTest {
     options.setOption("output_limit", "1000");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
-    options.setOption("observers", "resources/systemTest/randoop1_observers.txt");
+    options.setOption(
+        "side-effect-free-methods", "resources/systemTest/randoop1_side_effect_free_methods.txt");
     options.setOption("omit-field-list", "resources/systemTest/testclassomitfields.txt");
 
     // omit methods that use Random
@@ -782,20 +783,21 @@ public class RandoopSystemTest {
         is(equalTo(0)));
   }
 
-  /** Runs with --observers flag and should have no observers called for side effect. */
+  /** Runs with --side-effect-free-methods flag. */
   @Test
-  public void runSideEffectObserversTest() {
-    String directoryName = "side-effect-observers-test";
+  public void runSideEffectFreeMethodTest() {
+    String directoryName = "side-effect-free-method-test";
     SystemTestEnvironment testEnvironment =
         systemTestEnvironmentManager.createTestEnvironment(directoryName);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName(null);
-    options.setRegressionBasename("SideEffectObserver");
-    options.setErrorBasename("SideEffectObserverError");
-    options.addTestClass("observers.Box");
+    options.setRegressionBasename("SideEffectFreeTest");
+    options.setErrorBasename("SideEffectFreeTestError");
+    options.addTestClass("sideeffectfree.Box");
     options.setOption("maxsize", "7");
     options.setOption("attempted-limit", "1000");
-    options.setOption("observers", "resources/systemTest/observers.txt");
+    options.setOption(
+        "side-effect-free-methods", "resources/systemTest/side_effect_free_Box_methods.txt");
 
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
 
