@@ -827,7 +827,8 @@ public class RandoopSystemTest {
     options.addTestClass("sideeffectfree.Box");
     options.setOption("maxsize", "7");
     options.setOption("attempted-limit", "1000");
-    options.setOption("side-effect-free-methods", "resources/systemTest/observers.txt");
+    options.setOption(
+        "side-effect-free-methods", "resources/systemTest/side_effect_free_Box_methods.txt");
 
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
 
