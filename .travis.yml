@@ -1,5 +1,7 @@
 language: generic
 
+## Sometimes, the Gradle cache becomes corrupted and must be reset.
+## Clear the cache by deleting it at https://travis-ci.com/ORG/REPO/caches .
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
