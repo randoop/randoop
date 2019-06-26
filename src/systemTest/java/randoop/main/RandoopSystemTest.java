@@ -822,9 +822,9 @@ public class RandoopSystemTest {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     setSystemTestOptions(options);
     options.setPackageName(null);
-    options.setRegressionBasename("SideEffectObserver");
-    options.setErrorBasename("SideEffectObserverError");
-    options.addTestClass("observers.Box");
+    options.setRegressionBasename("SideEffectFreeTest");
+    options.setErrorBasename("SideEffectFreeTestError");
+    options.addTestClass("sideeffectfree.Box");
     options.setOption("maxsize", "7");
     options.setOption("attempted-limit", "1000");
     options.setOption("side-effect-free-methods", "resources/systemTest/observers.txt");

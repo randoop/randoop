@@ -1,0 +1,3 @@
+sideeffectfree.Box.getA()
+sideeffectfree.Box.getSum(sideeffectfree.Box)
+java.lang.Class.getClass()
