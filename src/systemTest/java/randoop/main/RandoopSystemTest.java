@@ -79,7 +79,7 @@ public class RandoopSystemTest {
    */
   public static RandoopOptions createRandoopOptions(SystemTestEnvironment testEnvironment) {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setOption("side-effect-free-methods", "resources/systemTest/JDK-sfe-methods.txt");
+    options.setOption("side-effect-free-methods", "resources/systemTest/JDK-sef-methods.txt");
     options.setOption("omitmethods-file", "resources/systemTest/omitmethods-defaults.txt");
     return options;
   }
