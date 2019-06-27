@@ -230,10 +230,10 @@ public class CoveredClassTest {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMap;
     MultiMap<Type, TypedClassOperation> sideEffectFreeUserMap;
     try {
-      String sfeDefaultsFileName = "/JDK-sfe-methods.txt";
-      InputStream inputStream = GenTests.class.getResourceAsStream(sfeDefaultsFileName);
+      String sefDefaultsFileName = "/JDK-sef-methods.txt";
+      InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName);
       sideEffectFreeJDKMap =
-          OperationModel.readOperationsFromStream(inputStream, sfeDefaultsFileName, true);
+          OperationModel.readOperationsFromStream(inputStream, sefDefaultsFileName, true);
       sideEffectFreeUserMap =
           OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods, true);
     } catch (OperationParseException e) {

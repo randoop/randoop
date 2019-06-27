@@ -346,6 +346,9 @@ public class OperationModel {
    */
   public static MultiMap<Type, TypedClassOperation> readOperationsFromStream(
       InputStream is, String filename, boolean onlyMethods) {
+    if (is == null) {
+      throw new RandoopBug("input stream is null for file " + filename);
+    }
     // Read method omissions from user-provided file
     try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
       return readOperations(er, onlyMethods);

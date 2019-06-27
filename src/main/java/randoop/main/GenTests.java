@@ -370,7 +370,7 @@ public class GenTests extends GenInputsAbstract {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMap;
     MultiMap<Type, TypedClassOperation> sideEffectFreeUserMap;
     try {
-      String sfeDefaultsFileName = "/JDK-sfe-methods.txt";
+      String sfeDefaultsFileName = "/JDK-sef-methods.txt";
       InputStream inputStream = GenTests.class.getResourceAsStream(sfeDefaultsFileName);
       sideEffectFreeJDKMap =
           OperationModel.readOperationsFromStream(inputStream, sfeDefaultsFileName, true);
