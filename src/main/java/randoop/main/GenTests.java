@@ -171,7 +171,7 @@ public class GenTests extends GenInputsAbstract {
   /** The count of sequences that failed to compile. */
   private int sequenceCompileFailureCount = 0;
 
-  /** GenTests constructor that uses default messages */
+  /** GenTests constructor that uses default messages. */
   public GenTests() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
