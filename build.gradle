@@ -237,6 +237,11 @@ if ("true".equals(project.ext.useCheckerFramework)) {
       // 'org.checkerframework.checker.nullness.NullnessChecker',
       'org.checkerframework.checker.signature.SignatureChecker'
     ]
+    extraJavacArgs = [
+      '-AcheckPurityAnnotations',
+      '-ArequirePrefixInWarningSuppressions',
+      '-AwarnUnneededSuppressions'
+    ]
   }
 } else {
   // Configuration for the Error Prone linter.
