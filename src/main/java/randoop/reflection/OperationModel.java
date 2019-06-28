@@ -321,8 +321,8 @@ public class OperationModel {
    * method signatures.
    *
    * @param er the EntryReader to read from.
-   * @return contents of the file, as a map of operations
-   * @throws IOException
+   * @return contents of the file, as a map of operations.
+   * @throws IOException if there's a problem reading the file.
    */
   private static MultiMap<Type, TypedClassOperation> readOperations(EntryReader er) {
     MultiMap<Type, TypedClassOperation> operationsMap = new MultiMap<>();

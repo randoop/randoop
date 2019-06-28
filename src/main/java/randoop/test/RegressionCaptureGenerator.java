@@ -202,6 +202,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 sideEffectFreeMap.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedClassOperation tco : sideEffectFreeMethods) {
+                // These checks must be kept in sync with the checks in
+                // GenTests.processAndOutputFlakyMethods()
+
                 // Ignore flaky side-effect-free methods
                 if (omitMethodsPredicate.shouldOmit(tco)) {
                   continue;

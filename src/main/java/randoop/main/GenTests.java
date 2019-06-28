@@ -619,6 +619,9 @@ public class GenTests extends GenInputsAbstract {
     for (Type t : sideEffectFreeMethods.keySet()) {
       Set<TypedClassOperation> typeOperations = sideEffectFreeMethods.getValues(t);
       for (TypedClassOperation tco : typeOperations) {
+        // These checks must be kept in sync with the checks in
+        // RegressionCaptureGenerator.generateTestChecks() in the section that
+        // handles assertion generation for more complex final types (Objects etc.)
         if (omitMethodsPredicate.shouldOmit(tco)) {
           continue;
         }
