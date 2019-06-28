@@ -701,7 +701,8 @@ public class GenTests extends GenInputsAbstract {
    * Counts the number of sequences each operation occurs in.
    *
    * @param sequences a list of sequences
-   * @param assertableSideEffectFreeMethods a map of side-effect-free methods used as assertions
+   * @param assertableSideEffectFreeMethods a map from a type to all its side-effect-free methods
+   *     that can be used as assertions
    * @return a map from operation to the number of sequences in which the operation occurs at least
    *     once
    */
