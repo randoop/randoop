@@ -296,7 +296,7 @@ public class OperationModel {
   }
 
   /**
-   * Given a file containing fully qualified method signatures, returns the operations for them.
+   * Given a file containing fully-qualified method signatures, returns the operations for them.
    *
    * @param file a file that contains method or constructor signatures, one per line
    * @return a map from each class type to the set of methods/constructors in it

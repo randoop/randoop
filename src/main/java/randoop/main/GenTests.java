@@ -719,7 +719,7 @@ public class GenTests extends GenInputsAbstract {
       Set<TypedOperation> ops = getOperationsInSequence(es);
 
       for (TypedOperation to : ops) {
-        numSequencesUsedIn.merge(to, 1, Integer::sum);
+        numSequencesUsedIn.merge(to, 1, Integer::sum); // increment value associated with key `to`
       }
 
       // Add corresponding asserts of the result of final execution (if an Object)
@@ -1150,14 +1150,14 @@ public class GenTests extends GenInputsAbstract {
    * @param visibility the visibility predicate
    * @param contracts the contract checks
    * @param omitMethodsPredicate the predicate for filtering out omit methods
-   * @param sideEffectFreeMethods the map from types to side-effect-free methods
+   * @param sideEffectFreeMethodsByType the map from types to side-effect-free methods
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
       OmitMethodsPredicate omitMethodsPredicate,
-      MultiMap<Type, TypedClassOperation> sideEffectFreeMethods) {
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType) {
 
     // Start with checking for invalid exceptions.
     TestCheckGenerator testGen =
@@ -1175,7 +1175,7 @@ public class GenTests extends GenInputsAbstract {
       RegressionCaptureGenerator regressionVisitor =
           new RegressionCaptureGenerator(
               expectation,
-              sideEffectFreeMethods,
+              sideEffectFreeMethodsByType,
               visibility,
               omitMethodsPredicate,
               !GenInputsAbstract.no_regression_assertions);
