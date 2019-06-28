@@ -194,7 +194,7 @@ public class ExecutableBooleanExpression {
    * @param parameterDeclaration the parameter declaration string, including parameter names and
    *     wrapped in parentheses
    * @param expressionSource a Java expression that is the source code for the expression, in the
-   *     format of {@link ExecutableBooleanExpression#getContractSource()}.
+   *     format of {@link ExecutableBooleanExpression#getContractSource()}
    * @param compiler the compiler to use to compile the expression class
    * @return the {@code Method} object for {@code contractSource}
    */
