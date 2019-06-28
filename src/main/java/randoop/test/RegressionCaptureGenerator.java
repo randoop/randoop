@@ -292,6 +292,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
     }
 
     Class<?> outputClass = tco.getOutputType().getRuntimeClass();
+
+    if (outputClass == null) {
+      return false;
+    }
+
     // Don't create assertions over types that are not either primitives
     // or strings or enums.
     if (!PrimitiveTypes.isBoxedPrimitive(outputClass)
