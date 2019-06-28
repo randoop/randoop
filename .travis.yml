@@ -1,15 +1,15 @@
 language: generic
 
-## Sometimes, the cache becomes corrupted and it needs to be reset by
-## commenting these lines out and then re-enabling them after a successuful job.
-# before_cache:
-#   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-#   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-# cache:
-#   directories:
-#     - $HOME/.gradle/caches/
-#     - $HOME/.gradle/wrapper/
-#     - $HOME/.m2/
+## Sometimes, the Gradle cache becomes corrupted and must be reset.
+## Clear the cache by deleting it at https://travis-ci.com/ORG/REPO/caches .
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.m2/
 
 services:
   - docker
