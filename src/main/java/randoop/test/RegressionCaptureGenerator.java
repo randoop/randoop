@@ -201,23 +201,21 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             Set<TypedClassOperation> sideEffectFreeMethods =
                 sideEffectFreeMap.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
-              for (TypedClassOperation m : sideEffectFreeMethods) {
-                // When outputting checks, ignore side-effect-free methods that don't take a single
-                // argument.
-                if (m.getInputTypes().size() != 1) {
-                  continue;
-                }
-
+              for (TypedClassOperation tco : sideEffectFreeMethods) {
                 // Ignore flaky side-effect-free methods
-                if (omitMethodsPredicate.shouldOmit(m)) {
+                if (omitMethodsPredicate.shouldOmit(tco)) {
                   continue;
                 }
 
-                ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
+                if (!isAssertableSideEffectFree(tco)) {
+                  continue;
+                }
+
+                ExecutionOutcome outcome = tco.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
                       "unexpected error invoking side-effect-free method  "
-                          + m
+                          + tco
                           + " on "
                           + var
                           + "["
@@ -234,16 +232,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
 
                 // Ignore non-callable methods
-                CallableOperation callableOp = m.getOperation();
+                CallableOperation callableOp = tco.getOperation();
                 Method method = (Method) callableOp.getReflectionObject();
                 if (!isVisible.isVisible(method)) {
-                  continue;
-                }
-
-                // Don't create assertions over types that are not either primitives
-                // or strings.
-                if (!PrimitiveTypes.isBoxedPrimitive(value.getClass())
-                    && !value.getClass().equals(String.class)) {
                   continue;
                 }
 
@@ -253,7 +244,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
-                ObjectContract observerEqValue = new ObserverEqValue(m, value);
+                ObjectContract observerEqValue = new ObserverEqValue(tco, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
 
                 Log.logPrintf("Adding observer check %s%n", observerCheck);
@@ -280,5 +271,35 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       }
     }
     return checks;
+  }
+
+  /**
+   * Returns true if the method - has one formal parameter - has a return type of [boxed] primitive,
+   * String, or an enum - is side-effect-free
+   *
+   * @param tco side-effect-free method as a TypedClassOperation
+   * @return whether we can use this method as a side-effect-free assertion
+   */
+  public static boolean isAssertableSideEffectFree(TypedClassOperation tco) {
+    // When outputting checks, ignore side-effect-free methods that don't take a single
+    // argument.
+    if (tco.getInputTypes().size() != 1) {
+      return false;
+    }
+
+    if (tco.getOutputType().isVoid()) {
+      return false;
+    }
+
+    Class<?> outputClass = tco.getOutputType().getRuntimeClass();
+    // Don't create assertions over types that are not either primitives
+    // or strings or enums.
+    if (!PrimitiveTypes.isBoxedPrimitive(outputClass)
+        && !outputClass.equals(String.class)
+        && !outputClass.isEnum()) {
+      return false;
+    }
+
+    return true;
   }
 }

@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 import static randoop.main.GenInputsAbstract.require_classname_in_test;
 import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
 
-import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -26,7 +25,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.main.ThrowClassNameError;
-import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
@@ -225,28 +223,12 @@ public class CoveredClassTest {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
-    // Maps each class type to the side-effect-free methods in it.
-    MultiMap<Type, TypedClassOperation> sideEffectFreeMap = new MultiMap<>();
-    MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMap;
-    MultiMap<Type, TypedClassOperation> sideEffectFreeUserMap;
-    try {
-      String sefDefaultsFileName = "/JDK-sef-methods.txt";
-      InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName);
-      sideEffectFreeJDKMap =
-          OperationModel.readOperationsFromStream(inputStream, sefDefaultsFileName, true);
-      sideEffectFreeUserMap =
-          OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods, true);
-    } catch (OperationParseException e) {
-      System.out.printf("Incorrectly formatted side-effect-free method: %s%n", e);
-      System.exit(1);
-      throw new Error("dead code");
-    }
-    sideEffectFreeMap.addAll(sideEffectFreeJDKMap);
-    sideEffectFreeMap.addAll(sideEffectFreeUserMap);
+    MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType =
+        GenTests.readSideEffectFreeMethods();
 
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
-    for (Type keyType : sideEffectFreeMap.keySet()) {
-      sideEffectFreeMethods.addAll(sideEffectFreeMap.getValues(keyType));
+    for (Type keyType : sideEffectFreeMethodsByType.keySet()) {
+      sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));
     }
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
@@ -280,7 +262,10 @@ public class CoveredClassTest {
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, contracts, operationModel.getOmitMethodsPredicate(), sideEffectFreeMap);
+            visibility,
+            contracts,
+            operationModel.getOmitMethodsPredicate(),
+            sideEffectFreeMethodsByType);
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(
         new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));
