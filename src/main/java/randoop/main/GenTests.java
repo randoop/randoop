@@ -565,7 +565,7 @@ public class GenTests extends GenInputsAbstract {
    * Read side effect free method inputs from the default JDK side effect free method list and a
    * user-provided method list if provided.
    *
-   * @return a map from a Type to a set of side effect free methods for that type.
+   * @return a map from a Type to a set of side effect free methods for that type
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethods = new MultiMap<>();

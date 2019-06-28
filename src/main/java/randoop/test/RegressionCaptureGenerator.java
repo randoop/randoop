@@ -279,7 +279,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Returns true if the method
+   * Returns true if the method:
    *
    * <ul>
    *   <li>has one formal parameter
