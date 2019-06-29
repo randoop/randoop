@@ -562,13 +562,12 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Read side effect free method inputs from the default JDK side effect free method list and a
+   * Read side-effect-free methods from the default JDK side-effect-free method list, and from a
    * user-provided method list if provided.
    *
-   * @return a map from a Type to a set of side effect free methods for that type
+   * @return a map from a Type to a set of side-effect-free methods for that type
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
-    MultiMap<Type, TypedClassOperation> sideEffectFreeMethods = new MultiMap<>();
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
     MultiMap<Type, TypedClassOperation> sideEffectFreeUserMethods;
     try {
@@ -582,9 +581,10 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
       throw new Error("dead code");
     }
-    sideEffectFreeMethods.addAll(sideEffectFreeJDKMethods);
-    sideEffectFreeMethods.addAll(sideEffectFreeUserMethods);
-    return sideEffectFreeMethods;
+    MultiMap<Type, TypedClassOperation> result = new MultiMap<>();
+    result.addAll(sideEffectFreeJDKMethods);
+    result.addAll(sideEffectFreeUserMethods);
+    return result;
   }
 
   /** Is output to the user before each possibly flaky method. */

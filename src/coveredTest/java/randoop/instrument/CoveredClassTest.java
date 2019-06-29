@@ -223,6 +223,7 @@ public class CoveredClassTest {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
+    // Maps each class type to the side-effect-free methods in it.
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType =
         GenTests.readSideEffectFreeMethods();
 
