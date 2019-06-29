@@ -69,8 +69,7 @@ public final class ObserverEqValue extends ObjectContract {
    */
   public static boolean isLiteralValue(Object value) {
     if (value == null) {
-      // TODO: why isn't this "true"?
-      return false;
+      return true;
     }
     Class<?> cls = value.getClass();
     if (cls == Class.class || cls == String.class || cls.isEnum()) {
