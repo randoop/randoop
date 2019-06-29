@@ -3,6 +3,7 @@ package randoop.contract;
 import java.util.Arrays;
 import java.util.Objects;
 import randoop.Globals;
+import randoop.main.RandoopBug;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Value;
 import randoop.types.JavaTypes;
@@ -52,10 +53,12 @@ public final class ObserverEqValue extends ObjectContract {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;
-    assert isLiteralValue(value)
-        : String.format(
-            "Cannot represent %s [%s] as a literal; observer = %s",
-            value, value.getClass(), observer);
+    if (!isLiteralValue(value)) {
+      throw new RandoopBug(
+          String.format(
+              "Cannot represent %s [%s] as a literal; observer = %s",
+              value, value.getClass(), observer));
+    }
   }
 
   /**
@@ -66,10 +69,17 @@ public final class ObserverEqValue extends ObjectContract {
    */
   public static boolean isLiteralValue(Object value) {
     if (value == null) {
-      return false;
+      return true;
     }
-    Type type = Type.forClass(value.getClass());
-    return type.isBoxedPrimitive() || type.isClass() || type.isString();
+    Class<?> cls = value.getClass();
+    if (cls == Class.class || cls == String.class || cls.isEnum()) {
+      return true;
+    }
+    Type type = Type.forClass(cls);
+    if (type.isBoxedPrimitive()) {
+      return true;
+    }
+    return false;
   }
 
   @Override
