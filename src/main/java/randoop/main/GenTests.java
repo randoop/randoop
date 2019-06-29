@@ -361,9 +361,9 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    MultiMap<Type, TypedOperation> sideEffectFreeMap;
+    MultiMap<Type, TypedOperation> sideEffectFreeMethodsByType;
     try {
-      sideEffectFreeMap =
+      sideEffectFreeMethodsByType =
           OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods, true);
     } catch (OperationParseException e) {
       System.out.printf("Error parsing side-effect-free methods: %s%n", e.getMessage());
@@ -371,8 +371,8 @@ public class GenTests extends GenInputsAbstract {
       throw new Error("dead code");
     }
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
-    for (Type keyType : sideEffectFreeMap.keySet()) {
-      sideEffectFreeMethods.addAll(sideEffectFreeMap.getValues(keyType));
+    for (Type keyType : sideEffectFreeMethodsByType.keySet()) {
+      sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));
     }
 
     /*
@@ -402,7 +402,8 @@ public class GenTests extends GenInputsAbstract {
      * Create the test check generator for the contracts and side-effect-free methods
      */
     ContractSet contracts = operationModel.getContracts();
-    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, sideEffectFreeMap);
+    TestCheckGenerator testGen =
+        createTestCheckGenerator(visibility, contracts, sideEffectFreeMethodsByType);
     explorer.setTestCheckGenerator(testGen);
 
     /*
@@ -642,20 +643,20 @@ public class GenTests extends GenInputsAbstract {
   private Map<TypedOperation, Integer> countSequencesPerOperation(
       List<ExecutableSequence> sequences) {
     // Map from method call operations to number of sequences it occurs in.
-    Map<TypedOperation, Integer> tallyMap = new HashMap<>();
+    Map<TypedOperation, Integer> numSequencesUsedIn = new HashMap<>();
 
     for (ExecutableSequence es : sequences) {
       Set<TypedOperation> ops = getOperationsInSequence(es);
 
       for (TypedOperation to : ops) {
-        if (tallyMap.containsKey(to)) {
-          tallyMap.put(to, tallyMap.get(to) + 1);
+        if (numSequencesUsedIn.containsKey(to)) {
+          numSequencesUsedIn.put(to, numSequencesUsedIn.get(to) + 1);
         } else {
-          tallyMap.put(to, 1);
+          numSequencesUsedIn.put(to, 1);
         }
       }
     }
-    return tallyMap;
+    return numSequencesUsedIn;
   }
 
   /**
@@ -1074,13 +1075,13 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param visibility the visibility predicate
    * @param contracts the contract checks
-   * @param sideEffectFreeMap the map from types to side-effect-free methods
+   * @param sideEffectFreeMethodsByType the map from types to side-effect-free methods
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
-      MultiMap<Type, TypedOperation> sideEffectFreeMap) {
+      MultiMap<Type, TypedOperation> sideEffectFreeMethodsByType) {
 
     // Start with checking for invalid exceptions.
     TestCheckGenerator testGen =
@@ -1098,7 +1099,7 @@ public class GenTests extends GenInputsAbstract {
       RegressionCaptureGenerator regressionVisitor =
           new RegressionCaptureGenerator(
               expectation,
-              sideEffectFreeMap,
+              sideEffectFreeMethodsByType,
               visibility,
               !GenInputsAbstract.no_regression_assertions);
 
