@@ -600,14 +600,14 @@ public class GenTests extends GenInputsAbstract {
    * @param sequences all the sequences (flaky and non-flaky)
    * @param omitMethodsPredicate the same predicate used to filter out side-effect-free methods
    *     during test generation
-   * @param sideEffectFreeMethods map of side-effect-free methods to use as assertions
+   * @param sideEffectFreeMethodsByType map of side-effect-free methods to use as assertions
    * @param visibilityPredicate visibility predicate for side-effect-free methods
    */
   private void processAndOutputFlakyMethods(
       List<ExecutableSequence> flakySequences,
       List<ExecutableSequence> sequences,
       OmitMethodsPredicate omitMethodsPredicate,
-      MultiMap<Type, TypedClassOperation> sideEffectFreeMethods,
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
       VisibilityPredicate visibilityPredicate) {
 
     if (flakySequences.isEmpty()) {
@@ -616,8 +616,8 @@ public class GenTests extends GenInputsAbstract {
 
     // Filter out methods that were omitted during test generation.
     MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods = new MultiMap<>();
-    for (Type t : sideEffectFreeMethods.keySet()) {
-      Set<TypedClassOperation> typeOperations = sideEffectFreeMethods.getValues(t);
+    for (Type t : sideEffectFreeMethodsByType.keySet()) {
+      Set<TypedClassOperation> typeOperations = sideEffectFreeMethodsByType.getValues(t);
       for (TypedClassOperation tco : typeOperations) {
         // These checks must be kept in sync with the checks in
         // RegressionCaptureGenerator.generateTestChecks() in the section that
