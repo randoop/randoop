@@ -718,11 +718,14 @@ public class GenTests extends GenInputsAbstract {
     for (ExecutableSequence es : sequences) {
       Set<TypedOperation> ops = getOperationsInSequence(es);
 
+      // The test case consists of a sequence of calls, then assertions over the value produced by
+      // the final call.
+      // 1. Count up calls in the main sequence of calls.
       for (TypedOperation to : ops) {
         numSequencesUsedIn.merge(to, 1, Integer::sum); // increment value associated with key `to`
       }
 
-      // Add corresponding asserts of the result of final execution (if an Object)
+      // 2. Count up calls that appear in assertions.
       SimpleList<Statement> statements = es.sequence.statements;
       Statement lastStatement = statements.get(statements.size() - 1);
       Type lastStatementType = lastStatement.getOutputType();
