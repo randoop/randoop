@@ -46,7 +46,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   private ExpectedExceptionCheckGen exceptionExpectation;
 
   /** The map from a type to the set of side-effect-free operations for the type. */
-  private MultiMap<Type, TypedClassOperation> sideEffectFreeMap;
+  private MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType;
 
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
@@ -61,19 +61,21 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * Create a RegressionCaptureGenerator.
    *
    * @param exceptionExpectation the generator for expected exceptions
-   * @param sideEffectFreeMap the map from a type to the side-effect-free operations for the type
+   * @param sideEffectFreeMethodsByType the map from a type to the side-effect-free operations for
+   *     the type
    * @param isVisible the visibility predicate
    * @param includeAssertions whether to include regression assertions
-   * @param omitMethodsPredicate the omit methods predicate used to filter {@code sideEffectFreeMap}
+   * @param omitMethodsPredicate the omit methods predicate used to filter {@code
+   *     sideEffectFreeMethodsByType}
    */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
-      MultiMap<Type, TypedClassOperation> sideEffectFreeMap,
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
       VisibilityPredicate isVisible,
       OmitMethodsPredicate omitMethodsPredicate,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
-    this.sideEffectFreeMap = sideEffectFreeMap;
+    this.sideEffectFreeMethodsByType = sideEffectFreeMethodsByType;
     this.isVisible = isVisible;
     this.omitMethodsPredicate = omitMethodsPredicate;
     this.includeAssertions = includeAssertions;
@@ -199,25 +201,26 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             // Put out any side-effect-free methods that exist for this type
             Variable var0 = sequence.sequence.getVariable(i);
             Set<TypedClassOperation> sideEffectFreeMethods =
-                sideEffectFreeMap.getValues(var0.getType());
+                sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
-              for (TypedClassOperation m : sideEffectFreeMethods) {
-                // When outputting checks, ignore side-effect-free methods that don't take a single
-                // argument.
-                if (m.getInputTypes().size() != 1) {
-                  continue;
-                }
+              for (TypedClassOperation tco : sideEffectFreeMethods) {
+                // These checks must be kept in sync with the checks in
+                // GenTests.processAndOutputFlakyMethods()
 
                 // Ignore flaky side-effect-free methods
-                if (omitMethodsPredicate.shouldOmit(m)) {
+                if (omitMethodsPredicate.shouldOmit(tco)) {
                   continue;
                 }
 
-                ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
+                if (!isAssertableSideEffectFree(tco)) {
+                  continue;
+                }
+
+                ExecutionOutcome outcome = tco.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
                       "unexpected error invoking side-effect-free method  "
-                          + m
+                          + tco
                           + " on "
                           + var
                           + "["
@@ -234,16 +237,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
 
                 // Ignore non-callable methods
-                CallableOperation callableOp = m.getOperation();
+                CallableOperation callableOp = tco.getOperation();
                 Method method = (Method) callableOp.getReflectionObject();
                 if (!isVisible.isVisible(method)) {
-                  continue;
-                }
-
-                // Don't create assertions over types that are not either primitives
-                // or strings.
-                if (!PrimitiveTypes.isBoxedPrimitive(value.getClass())
-                    && !value.getClass().equals(String.class)) {
                   continue;
                 }
 
@@ -253,7 +249,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
-                ObjectContract observerEqValue = new ObserverEqValue(m, value);
+                ObjectContract observerEqValue = new ObserverEqValue(tco, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
 
                 Log.logPrintf("Adding observer check %s%n", observerCheck);
@@ -280,5 +276,45 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       }
     }
     return checks;
+  }
+
+  /**
+   * Returns true if the method:
+   *
+   * <ul>
+   *   <li>has one formal parameter
+   *   <li>has a return type of primitive, boxed primitive, String, or enum
+   *   <li>is side-effect-free
+   * </ul>
+   *
+   * @param tco side-effect-free method as a TypedClassOperation
+   * @return whether we can use this method as a side-effect-free assertion
+   */
+  public static boolean isAssertableSideEffectFree(TypedClassOperation tco) {
+    // When outputting checks, ignore side-effect-free methods that don't take a single
+    // argument.
+    if (tco.getInputTypes().size() != 1) {
+      return false;
+    }
+
+    if (tco.getOutputType().isVoid()) {
+      return false;
+    }
+
+    Class<?> outputClass = tco.getOutputType().getRuntimeClass();
+
+    if (outputClass == null) {
+      return false;
+    }
+
+    // Don't create assertions over types that are not either primitives
+    // or strings or enums.
+    if (!PrimitiveTypes.isBoxedPrimitive(outputClass)
+        && !outputClass.equals(String.class)
+        && !outputClass.isEnum()) {
+      return false;
+    }
+
+    return true;
   }
 }

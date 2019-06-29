@@ -296,18 +296,17 @@ public class OperationModel {
   }
 
   /**
-   * Given a file containing signatures, returns the operations for them.
+   * Given a file containing fully-qualified method signatures, returns the operations for them.
    *
    * @param file a file that contains method or constructor signatures, one per line
-   * @param onlyMethods if true, throw an exception if a constructor is read
    * @return a map from each class type to the set of methods/constructors in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public static MultiMap<Type, TypedClassOperation> readOperations(Path file, boolean onlyMethods)
+  public static MultiMap<Type, TypedClassOperation> readOperations(Path file)
       throws OperationParseException {
     if (file != null) {
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
-        return readOperations(er, onlyMethods);
+        return OperationModel.readOperations(er);
 
       } catch (IOException e) {
         String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
@@ -318,14 +317,14 @@ public class OperationModel {
   }
 
   /**
-   * Returns operations read from the given EntryReader.
+   * Returns operations read from the given EntryReader for a file with a list of fully qualified
+   * method signatures.
    *
-   * @param er the EntryReader to read from.
-   * @param onlyMethods if true, throw an exception if a constructor is read
+   * @param er the EntryReader to read from
    * @return contents of the file, as a map of operations
+   * @throws IOException if there's a problem reading the file
    */
-  public static MultiMap<Type, TypedClassOperation> readOperations(
-      EntryReader er, boolean onlyMethods) {
+  private static MultiMap<Type, TypedClassOperation> readOperations(EntryReader er) {
     MultiMap<Type, TypedClassOperation> operationsMap = new MultiMap<>();
     for (String line : er) {
       String sig = line.trim();
@@ -337,21 +336,21 @@ public class OperationModel {
   }
 
   /**
-   * Returns operations read from the given stream.
+   * Returns operations read from the given stream for a file with a list of fully qualified method
+   * signatures.
    *
    * @param is the stream from which to read
    * @param filename the file name to use in diagnostic messages
-   * @param onlyMethods if true, throw an exception if a constructor is read
    * @return contents of the file, as a map of operations
    */
-  public static MultiMap<Type, TypedClassOperation> readOperationsFromStream(
-      InputStream is, String filename, boolean onlyMethods) {
+  public static MultiMap<Type, TypedClassOperation> readOperations(
+      InputStream is, String filename) {
     if (is == null) {
       throw new RandoopBug("input stream is null for file " + filename);
     }
     // Read method omissions from user-provided file
     try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
-      return readOperations(er, onlyMethods);
+      return OperationModel.readOperations(er);
     } catch (IOException e) {
       String message = String.format("Error while reading file %s: %s%n", filename, e.getMessage());
       throw new RandoopUsageError(message, e);
