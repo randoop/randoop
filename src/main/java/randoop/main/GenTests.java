@@ -648,11 +648,7 @@ public class GenTests extends GenInputsAbstract {
       Set<TypedOperation> ops = getOperationsInSequence(es);
 
       for (TypedOperation to : ops) {
-        if (tallyMap.containsKey(to)) {
-          tallyMap.put(to, tallyMap.get(to) + 1);
-        } else {
-          tallyMap.put(to, 1);
-        }
+        tallyMap.merge(to, 1, Integer::sum); // increment value associated with key `to`
       }
     }
     return tallyMap;
