@@ -66,7 +66,7 @@ public final class ObserverEqValue extends ObjectContract {
    */
   public static boolean isLiteralValue(Object value) {
     if (value == null) {
-      return false;
+      return true;
     }
     Type type = Type.forClass(value.getClass());
     return type.isBoxedPrimitive() || type.isClass() || type.isString();
