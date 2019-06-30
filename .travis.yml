@@ -1,6 +1,6 @@
 language: generic
 
-+## If the cache gets corrupted, clear it at https://travis-ci.com/ORG/REPO/caches .
+## If the cache gets corrupted, clear it at https://travis-ci.com/ORG/REPO/caches .
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
