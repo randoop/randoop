@@ -56,7 +56,9 @@ jobs:
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
-      - run: ./.circleci/systemTest.sh
+      - run:
+          command: ./.circleci/systemTest.sh
+          no_output_timeout: 20m
 
       - save_cache:
           paths:
