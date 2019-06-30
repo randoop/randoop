@@ -1,7 +1,6 @@
-# Create a Docker image that is ready to run the full Randoop tests,
-# including building the manual and Javadoc.
-# But it's used primarily for running miscellaneous tests such as the manual
-# and Javadoc.
+# Create a Docker image that is ready to run the full Randoop tests.
+# It's used primarily for running miscellaneous tests such as the manual,
+# Javadoc, and running the Checker Framework.
 
 FROM ubuntu
 MAINTAINER Michael Ernst <mernst@cs.washington.edu>
