@@ -238,7 +238,8 @@ if ("true".equals(project.ext.useCheckerFramework)) {
       'org.checkerframework.checker.signature.SignatureChecker'
     ]
     extraJavacArgs = [
-      '-AcheckPurityAnnotations',
+      '-Werror',
+      // '-AcheckPurityAnnotations',
       '-ArequirePrefixInWarningSuppressions',
       '-AwarnUnneededSuppressions'
     ]

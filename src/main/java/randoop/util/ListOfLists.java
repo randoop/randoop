@@ -25,7 +25,7 @@ public class ListOfLists<T> implements SimpleList<T>, Serializable {
 
   private int totalelements;
 
-  @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
+  @SuppressWarnings({"unchecked"}) // heap pollution warning
   public ListOfLists(SimpleList<T>... lists) {
     this.lists = new ArrayList<>(lists.length);
     for (SimpleList<T> sl : lists) {
