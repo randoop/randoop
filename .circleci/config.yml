@@ -1,0 +1,103 @@
+version: 2.1
+
+jobs:
+  nonSystemTest:
+
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+
+    steps:
+
+      - restore_cache:
+          keys:
+            - source-v1-{{ .Branch }}-{{ .Revision }}
+            - source-v1-{{ .Branch }}-
+            - source-v1-
+      - checkout
+      - save_cache:
+          key: source-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+
+      - restore_cache:
+          keys:
+            - gradle-v1-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v1-{{ .Branch }}-
+            - gradle-v1-
+
+      - run: ./.circleci/nonSystemTest.sh
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-v1-{{ .Branch }}-{{ checksum "build.gradle" }}
+
+  systemTest:
+
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+
+    steps:
+
+      - restore_cache:
+          keys:
+            - source-v1-{{ .Branch }}-{{ .Revision }}
+            - source-v1-{{ .Branch }}-
+            - source-v1-
+      - checkout
+      - save_cache:
+          key: source-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+
+      - restore_cache:
+          keys:
+            - gradle-v1-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v1-{{ .Branch }}-
+            - gradle-v1-
+
+      - run: ./.circleci/nonSystemTest.sh
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-v1-{{ .Branch }}-{{ checksum "build.gradle" }}
+
+  misc:
+
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+
+    steps:
+
+      - restore_cache:
+          keys:
+            - source-v1-{{ .Branch }}-{{ .Revision }}
+            - source-v1-{{ .Branch }}-
+            - source-v1-
+      - checkout
+      - save_cache:
+          key: source-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+
+      - restore_cache:
+          keys:
+            - gradle-v1-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v1-{{ .Branch }}-
+            - gradle-v1-
+
+      - run: ./.circleci/misc.sh
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-v1-{{ .Branch }}-{{ checksum "build.gradle" }}
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - nonSystemTest
+      - systemTest
+      - misc
