@@ -56,7 +56,7 @@ jobs:
             - gradle-v1-{{ .Branch }}-
             - gradle-v1-
 
-      - run: ./.circleci/nonSystemTest.sh
+      - run: ./.circleci/systemTest.sh
 
       - save_cache:
           paths:
