@@ -81,8 +81,6 @@ jobs:
           paths:
             - ".git"
 
-      - run: sudo pip install html5validator
-
       - restore_cache:
           keys:
             - gradle-v1-{{ .Branch }}-{{ checksum "build.gradle" }}
