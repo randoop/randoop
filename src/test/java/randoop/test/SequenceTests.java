@@ -23,12 +23,10 @@ import randoop.contract.EqualsToNullRetFalse;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.OptionsCache;
-import randoop.operation.TypedOperation;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceParseException;
-import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
@@ -116,8 +114,7 @@ public class SequenceTests {
     testGen =
         new ExtendGenerator(
             new ContractCheckingGenerator(contracts),
-            new RegressionCaptureGenerator(
-                expectation, new MultiMap<Type, TypedOperation>(), visibility, true));
+            new RegressionCaptureGenerator(expectation, new MultiMap<>(), visibility, true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886

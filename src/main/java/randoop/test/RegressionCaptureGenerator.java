@@ -43,7 +43,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   private ExpectedExceptionCheckGen exceptionExpectation;
 
   /** The map from a type to the set of side-effect-free operations for the type. */
-  private MultiMap<Type, TypedOperation> sideEffectFreeMap;
+  private MultiMap<Type, TypedOperation> sideEffectFreeMethodsByType;
 
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
@@ -55,17 +55,18 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * Create a RegressionCaptureGenerator.
    *
    * @param exceptionExpectation the generator for expected exceptions
-   * @param sideEffectFreeMap the map from a type to the side-effect-free operations for the type
+   * @param sideEffectFreeMethodsByType the map from a type to the side-effect-free operations for
+   *     the type
    * @param isVisible the visibility predicate
    * @param includeAssertions whether to include regression assertions
    */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
-      MultiMap<Type, TypedOperation> sideEffectFreeMap,
+      MultiMap<Type, TypedOperation> sideEffectFreeMethodsByType,
       VisibilityPredicate isVisible,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
-    this.sideEffectFreeMap = sideEffectFreeMap;
+    this.sideEffectFreeMethodsByType = sideEffectFreeMethodsByType;
     this.isVisible = isVisible;
     this.includeAssertions = includeAssertions;
   }
@@ -189,7 +190,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
             // Put out any side-effect-free methods that exist for this type
             Variable var0 = sequence.sequence.getVariable(i);
-            Set<TypedOperation> sideEffectFreeMethods = sideEffectFreeMap.getValues(var0.getType());
+            Set<TypedOperation> sideEffectFreeMethods =
+                sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedOperation m : sideEffectFreeMethods) {
 
