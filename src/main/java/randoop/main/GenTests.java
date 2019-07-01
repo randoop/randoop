@@ -519,7 +519,13 @@ public class GenTests extends GenInputsAbstract {
         testEnvironment.setReplaceCallAgent(agentPath, agentArgs);
       }
 
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf("%nAbout to get regression sequences.%n");
+      }
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf("%nGot %d regression sequences.%n", regressionSequences.size());
+      }
 
       FailingAssertionCommentWriter codeWriter =
           new FailingAssertionCommentWriter(testEnvironment, javaFileWriter);
@@ -800,7 +806,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("%n%s test output:%n", testKind);
       System.out.printf("%s test count: %d%n", testKind, testSequences.size());
-      System.out.printf("Writing JUnit tests...%n");
+      System.out.printf("Writing %s JUnit tests...%n", testKind.toLowerCase());
     }
     try {
       List<Path> testFiles = new ArrayList<>();
@@ -811,6 +817,9 @@ public class GenTests extends GenInputsAbstract {
       for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
         String classname = entry.getKey();
         String classSource = entry.getValue().toString();
+        if (GenInputsAbstract.progressdisplay) {
+          System.out.printf("CodeWriter %s will write class %s.%n", codeWriter, classname);
+        }
         testFiles.add(
             codeWriter.writeClassCode(
                 GenInputsAbstract.junit_package_name, classname, classSource));
@@ -840,6 +849,9 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("%nError writing %s tests%n", testKind.toLowerCase());
       e.printStackTrace(System.out);
       System.exit(1);
+    }
+    if (GenInputsAbstract.progressdisplay) {
+      System.out.printf("Wrote %s JUnit tests.%n", testKind.toLowerCase());
     }
   }
 

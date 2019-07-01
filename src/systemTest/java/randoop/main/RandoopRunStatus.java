@@ -125,12 +125,13 @@ class RandoopRunStatus {
 
     ProcessStatus randoopExitStatus = generate(testEnvironment, options);
 
-    if (randoopExitStatus.exitStatus != 0) {
+    int exitStatus = randoopExitStatus.exitStatus;
+    if (exitStatus != 0) {
       if (allowRandoopFailure) {
         return getRandoopRunStatus(randoopExitStatus);
       } else {
         System.out.println(randoopExitStatus.dump());
-        fail("Randoop exited badly, see details above.");
+        fail("Randoop exited with " + exitStatus + " exit status, see details above.");
       }
     }
 
