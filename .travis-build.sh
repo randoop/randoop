@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Optional argument $1 is one of:
-#   all, test, misc, testPart1, testPart2
+#   all, test, misc, nonSystemTest, systemTest
 # If it is omitted, this script does everything.
 export GROUP=$1
 if [[ "${GROUP}" == "" ]]; then
   export GROUP=all
 fi
 
-if [[ "${GROUP}" != "all" && "${GROUP}" != "test" && "${GROUP}" != "misc" && "${GROUP}" != "testPart1" && "${GROUP}" != "testPart2" ]]; then
-  echo "Bad argument '${GROUP}'; should be omitted or one of: all, test, misc, testPart1, testPart2"
+if [[ "${GROUP}" != "all" && "${GROUP}" != "test" && "${GROUP}" != "misc" && "${GROUP}" != "nonSystemTest" && "${GROUP}" != "systemTest" ]]; then
+  echo "Bad argument '${GROUP}'; should be omitted or one of: all, test, misc, nonSystemTest, systemTest"
   exit 1
 fi
 
@@ -56,7 +56,7 @@ fi
 ## There are 5 dependencies of the "check" target.
 ## By default `gradle check` == `gradle test`, but Randoop's buildfile adds more dependences.
 
-if [[ "${GROUP}" == "testPart1" ]]; then
+if [[ "${GROUP}" == "nonSystemTest" ]]; then
   # Need GUI for running tests of replace call agent with Swing/AWT.
   # Run xvfb.
   export DISPLAY=:99.0
@@ -71,7 +71,7 @@ if [[ "${GROUP}" == "testPart1" ]]; then
   ./gradlew --info test coveredTest replacecallTest -x checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
 fi
 
-if [[ "${GROUP}" == "testPart2" ]]; then
+if [[ "${GROUP}" == "systemTest" ]]; then
   # Need GUI for running runDirectSwingTest.
   # Run xvfb.
   export DISPLAY=:99.0
