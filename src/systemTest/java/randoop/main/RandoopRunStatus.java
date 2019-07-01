@@ -79,7 +79,7 @@ class RandoopRunStatus {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
-    command.add("-Xmx3600m");
+    command.add("-Xmx3000m");
     if (testEnvironment.getBootClassPath() != null
         && !testEnvironment.getBootClassPath().isEmpty()) {
       command.add("-Xbootclasspath/a:" + testEnvironment.getBootClassPath());
