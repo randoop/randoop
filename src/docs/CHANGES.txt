@@ -13,6 +13,9 @@ methods Randoop reports.
 Randoop builds in a set of omitted methods that are nondeterministic or
 long-running.
 
+Randoop produces more assertions, by calling observer methods.  This only
+works if you supply the --side-effect-free-methods command-line argument.
+
 Command-line argument changes:
  * the --omit-methods-file argument can be repeated
  * default for --flaky-test-behavior argument changed from HALT to OUTPUT
@@ -111,8 +114,7 @@ called.
 
 New command-line arguments:
 
---operation-history-log writes a table of operations used during
-generation, to either a file or standard out.
+--operation-history-log writes a table of operations used during generation.
 
 --print-file-system-state (default = false) writes any generated tests with
 compilation errors to standard out.

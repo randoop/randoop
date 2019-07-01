@@ -1,5 +1,6 @@
 package randoop.test;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -12,7 +13,8 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.TypedOperation;
+import randoop.operation.TypedClassOperation;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
@@ -43,10 +45,13 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   private ExpectedExceptionCheckGen exceptionExpectation;
 
   /** The map from a type to the set of side-effect-free operations for the type. */
-  private MultiMap<Type, TypedOperation> sideEffectFreeMap;
+  private MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType;
 
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
+
+  /** The user-supplied predicate for methods thta should not be called. */
+  private OmitMethodsPredicate omitMethodsPredicate;
 
   /** The flag whether to include regression assertions. */
   private boolean includeAssertions;
@@ -55,18 +60,22 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * Create a RegressionCaptureGenerator.
    *
    * @param exceptionExpectation the generator for expected exceptions
-   * @param sideEffectFreeMap the map from a type to the side-effect-free operations for the type
+   * @param sideEffectFreeMethodsByType the map from a type to the side-effect-free operations for
+   *     the type
    * @param isVisible the visibility predicate
    * @param includeAssertions whether to include regression assertions
+   * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
    */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
-      MultiMap<Type, TypedOperation> sideEffectFreeMap,
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
       VisibilityPredicate isVisible,
+      OmitMethodsPredicate omitMethodsPredicate,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
-    this.sideEffectFreeMap = sideEffectFreeMap;
+    this.sideEffectFreeMethodsByType = sideEffectFreeMethodsByType;
     this.isVisible = isVisible;
+    this.omitMethodsPredicate = omitMethodsPredicate;
     this.includeAssertions = includeAssertions;
   }
 
@@ -189,13 +198,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
             // Put out any side-effect-free methods that exist for this type
             Variable var0 = sequence.sequence.getVariable(i);
-            Set<TypedOperation> sideEffectFreeMethods = sideEffectFreeMap.getValues(var0.getType());
+            Set<TypedClassOperation> sideEffectFreeMethods =
+                sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
-              for (TypedOperation m : sideEffectFreeMethods) {
-
-                // When outputting checks, ignore side-effect-free methods that don't take a single
-                // argument.
-                if (m.getInputTypes().size() != 1) {
+              for (TypedClassOperation m : sideEffectFreeMethods) {
+                if (!isAssertable(m, omitMethodsPredicate, isVisible)) {
                   continue;
                 }
 
@@ -252,5 +259,52 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       }
     }
     return checks;
+  }
+
+  /**
+   * Returns true if the given side-effect-free method can be used in an assertion in Randoop.
+   *
+   * @param m the method, which must be side-effect-free
+   * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
+   * @param visibility the predicate used to check whether a method is visible to call
+   * @return whether we can use this method in a side-effect-free assertion
+   */
+  public static boolean isAssertable(
+      TypedClassOperation m,
+      OmitMethodsPredicate omitMethodsPredicate,
+      VisibilityPredicate visibility) {
+
+    if (omitMethodsPredicate.shouldOmit(m)) {
+      return false;
+    }
+
+    Method method = (Method) m.getOperation().getReflectionObject();
+    if (!visibility.isVisible(method)) {
+      return false;
+    }
+
+    // Must have a single formal parameter.
+    if (m.getInputTypes().size() != 1) {
+      return false;
+    }
+
+    // Must return non-void.
+    if (m.getOutputType().isVoid()) {
+      return false;
+    }
+    Class<?> outputClass = m.getOutputType().getRuntimeClass();
+    // Ignore the null reference type.
+    if (outputClass == null) {
+      return false;
+    }
+    // Don't create assertions over types that are not either primitives
+    // or strings or enums.
+    if (!PrimitiveTypes.isBoxedPrimitive(outputClass)
+        && !outputClass.equals(String.class)
+        && !outputClass.isEnum()) {
+      return false;
+    }
+
+    return true;
   }
 }

@@ -29,6 +29,7 @@ import randoop.main.OptionsCache;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -43,7 +44,6 @@ import randoop.test.NoExceptionCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 import randoop.util.SimpleList;
@@ -365,7 +365,7 @@ public class TestClassificationTest {
     VisibilityPredicate visibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
+            visibility, new ContractSet(), new MultiMap<>(), new OmitMethodsPredicate(null));
     ForwardGenerator gen = buildGenerator(c, componentManager, visibility, checkGenerator);
     gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
@@ -439,7 +439,7 @@ public class TestClassificationTest {
     VisibilityPredicate visibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
+            visibility, new ContractSet(), new MultiMap<>(), new OmitMethodsPredicate(null));
     return buildGenerator(c, componentMgr, visibility, checkGenerator);
   }
 

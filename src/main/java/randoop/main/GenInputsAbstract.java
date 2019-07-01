@@ -418,7 +418,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @OptionGroup("Side-effect-free methods")
   @Option("File containing side-effect-free methods")
-  // This file is used to populate RegressionCaptureGenerator.sideEffectFreeMap
   public static Path side_effect_free_methods = null;
 
   /**
