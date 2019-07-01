@@ -567,17 +567,16 @@ public class GenTests extends GenInputsAbstract {
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
-    MultiMap<Type, TypedClassOperation> sideEffectFreeUserMethods;
     try {
       String sefDefaultsFileName = "/JDK-sef-methods.txt";
       InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName);
       sideEffectFreeJDKMethods = OperationModel.readOperations(inputStream, sefDefaultsFileName);
-    } catch (RandoopUsageError rur) {
+    } catch (RandoopUsageError e) {
       throw new RandoopBug(
-          String.format(
-              "Incorrectly formatted side-effect-free method in default file: %s%n", rur));
+          String.format("Incorrectly formatted side-effect-free method in default file: %s%n", e));
     }
 
+    MultiMap<Type, TypedClassOperation> sideEffectFreeUserMethods;
     try {
       sideEffectFreeUserMethods =
           OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods);
@@ -605,7 +604,7 @@ public class GenTests extends GenInputsAbstract {
    * @param sequences all the sequences (flaky and non-flaky)
    * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
    *     during test generation
-   * @param sideEffectFreeMethodsByType map of side-effect-free methods to use in assertions
+   * @param sideEffectFreeMethodsByType side-effect-free methods to use in assertions
    * @param visibilityPredicate visibility predicate for side-effect-free methods
    */
   private void processAndOutputFlakyMethods(

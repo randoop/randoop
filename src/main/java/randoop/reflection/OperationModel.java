@@ -95,7 +95,7 @@ public class OperationModel {
   private List<Pattern> omitMethods;
 
   /**
-   * User supplied predicate for determining which methods should not be used during test
+   * User-supplied predicate for determining which methods should not be used during test
    * generation.
    */
   private OmitMethodsPredicate omitMethodsPredicate;
@@ -309,7 +309,6 @@ public class OperationModel {
   public static MultiMap<Type, TypedClassOperation> readOperations(@Nullable Path file)
       throws OperationParseException {
     if (file != null) {
-      MultiMap<Type, TypedOperation> sideEffectFreeMethodsByType = new MultiMap<>();
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
         return OperationModel.readOperations(er);
       } catch (IOException e) {
