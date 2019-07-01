@@ -519,7 +519,13 @@ public class GenTests extends GenInputsAbstract {
         testEnvironment.setReplaceCallAgent(agentPath, agentArgs);
       }
 
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf("%nAbout to get regression sequences.%n");
+      }
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf("%nGot %d regression sequences.%n", regressionSequences.size());
+      }
 
       FailingAssertionCommentWriter codeWriter =
           new FailingAssertionCommentWriter(testEnvironment, javaFileWriter);
@@ -725,7 +731,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("%n%s test output:%n", testKind);
       System.out.printf("%s test count: %d%n", testKind, testSequences.size());
-      System.out.printf("Writing %s JUnit tests...%n", testKind);
+      System.out.printf("Writing %s JUnit tests...%n", testKind.toLowerCase());
     }
     try {
       List<Path> testFiles = new ArrayList<>();
@@ -767,7 +773,7 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
     if (GenInputsAbstract.progressdisplay) {
-      System.out.printf("Wrote %s JUnit tests.%n", testKind);
+      System.out.printf("Wrote %s JUnit tests.%n", testKind.toLowerCase());
     }
   }
 
