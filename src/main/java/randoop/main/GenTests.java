@@ -619,7 +619,7 @@ public class GenTests extends GenInputsAbstract {
       return;
     }
 
-    // Filter out methods that were omitted during test generation.
+    // Exclude methods that were omitted during test generation.
     MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods = new MultiMap<>();
     for (Type t : sideEffectFreeMethodsByType.keySet()) {
       Set<TypedClassOperation> typeOperations = sideEffectFreeMethodsByType.getValues(t);
