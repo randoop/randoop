@@ -25,7 +25,7 @@ fi
 BRANCH=${TRAVIS_BRANCH:=$CIRCLE_BRANCH}
 
 echo COMMIT_RANGE=$COMMIT_RANGE
-echo BRANCH=$COMMIT_RANGE
+echo BRANCH=$BRANCH
 
 if [ -n "$COMMIT_RANGE" ] ; then
   (git diff $COMMIT_RANGE > /tmp/diff.txt 2>&1) || true
