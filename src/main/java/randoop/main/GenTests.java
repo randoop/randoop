@@ -496,6 +496,7 @@ public class GenTests extends GenInputsAbstract {
             afterEachFixtureBody);
 
     JavaFileWriter javaFileWriter = new JavaFileWriter(junit_output_dir);
+
     if (!GenInputsAbstract.no_error_revealing_tests) {
       CodeWriter codeWriter = javaFileWriter;
       if (GenInputsAbstract.minimize_error_test || GenInputsAbstract.stop_on_error_test) {
