@@ -894,14 +894,14 @@ public class ForwardGenerator extends AbstractGenerator {
 
   @Override
   public String toString() {
-    return "randoop.generation.ForwardGenerator("
-        + ("allSequences.size()=" + allSequences.size())
-        + ","
-        + ("sideEffectFreeMethods.size()=" + sideEffectFreeMethods.size())
-        + ","
-        + ("subsumed_sequences.size()=" + subsumed_sequences.size())
-        + ","
-        + ("runtimePrimitivesSeen.size()=" + runtimePrimitivesSeen.size())
+    return "ForwardGenerator("
+        + ("allSequences:" + allSequences.size())
+        + ", "
+        + ("sideEffectFreeMethods:" + sideEffectFreeMethods.size())
+        + ", "
+        + ("subsumed_sequences:" + subsumed_sequences.size())
+        + ", "
+        + ("runtimePrimitivesSeen:" + runtimePrimitivesSeen.size())
         + ")";
   }
 }
