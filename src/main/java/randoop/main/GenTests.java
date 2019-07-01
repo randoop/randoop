@@ -480,6 +480,11 @@ public class GenTests extends GenInputsAbstract {
       throw new RandoopBug("Error executing generated sequence", e);
     } catch (RandoopLoggingError e) {
       throw new RandoopBug("Logging error", e);
+    } catch (Throwable e) {
+      System.out.printf("createAndClassifySequences throw an exception%n");
+      e.printStackTrace();
+      e.printStackTrace(System.out);
+      throw e;
     }
 
     // post generation
