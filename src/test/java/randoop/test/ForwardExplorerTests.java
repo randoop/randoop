@@ -25,6 +25,7 @@ import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
@@ -39,7 +40,6 @@ import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
-import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
@@ -216,7 +216,7 @@ public class ForwardExplorerTests {
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
     return GenTests.createTestCheckGenerator(
-        IS_PUBLIC, contracts, new MultiMap<Type, TypedOperation>());
+        IS_PUBLIC, contracts, new MultiMap<>(), new OmitMethodsPredicate(null));
   }
 
   private static Predicate<ExecutableSequence> createOutputTest() {

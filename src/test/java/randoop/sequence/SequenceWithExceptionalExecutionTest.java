@@ -18,6 +18,7 @@ import randoop.main.GenTests;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ArrayType;
@@ -25,7 +26,6 @@ import randoop.types.GenericClassType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.Substitution;
-import randoop.types.Type;
 import randoop.util.MultiMap;
 
 /**
@@ -81,7 +81,7 @@ public class SequenceWithExceptionalExecutionTest {
     ExecutableSequence es = new ExecutableSequence(sequence);
     TestCheckGenerator gen =
         GenTests.createTestCheckGenerator(
-            IS_PUBLIC, new ContractSet(), new MultiMap<Type, TypedOperation>());
+            IS_PUBLIC, new ContractSet(), new MultiMap<>(), new OmitMethodsPredicate(null));
     es.execute(new DummyVisitor(), gen);
 
     assertFalse("sequence should not have unexecuted statements", es.hasNonExecutedStatements());

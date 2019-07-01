@@ -54,6 +54,7 @@ import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.operation.TypedOperation.RankedTypeOperation;
 import randoop.output.CodeWriter;
@@ -64,6 +65,7 @@ import randoop.output.MinimizerWriter;
 import randoop.output.NameGenerator;
 import randoop.output.RandoopOutputException;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.RawSignature;
@@ -361,18 +363,11 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    MultiMap<Type, TypedOperation> sideEffectFreeMap;
-    try {
-      sideEffectFreeMap =
-          OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods, true);
-    } catch (OperationParseException e) {
-      System.out.printf("Error parsing side-effect-free methods: %s%n", e.getMessage());
-      System.exit(1);
-      throw new Error("dead code");
-    }
+    MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
+
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
-    for (Type keyType : sideEffectFreeMap.keySet()) {
-      sideEffectFreeMethods.addAll(sideEffectFreeMap.getValues(keyType));
+    for (Type keyType : sideEffectFreeMethodsByType.keySet()) {
+      sideEffectFreeMethods.addAll(sideEffectFreeMethodsByType.getValues(keyType));
     }
 
     /*
@@ -402,7 +397,12 @@ public class GenTests extends GenInputsAbstract {
      * Create the test check generator for the contracts and side-effect-free methods
      */
     ContractSet contracts = operationModel.getContracts();
-    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, sideEffectFreeMap);
+    TestCheckGenerator testGen =
+        createTestCheckGenerator(
+            visibility,
+            contracts,
+            sideEffectFreeMethodsByType,
+            operationModel.getOmitMethodsPredicate());
     explorer.setTestCheckGenerator(testGen);
 
     /*
@@ -541,7 +541,10 @@ public class GenTests extends GenInputsAbstract {
       //  Currently, we don't rerun Error Test Sequences, so we do not know whether they are flaky.
       processAndOutputFlakyMethods(
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
-          regressionSequences);
+          regressionSequences,
+          sideEffectFreeMethodsByType,
+          operationModel.getOmitMethodsPredicate(),
+          visibility);
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
@@ -563,6 +566,40 @@ public class GenTests extends GenInputsAbstract {
     return true;
   }
 
+  /**
+   * Read side-effect-free methods from the default JDK side-effect-free method list, and from a
+   * user-provided method list if provided.
+   *
+   * @return a map from a Type to a set of side-effect-free methods for that type
+   */
+  public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
+    MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
+    String sefDefaultsFileName = "/JDK-sef-methods.txt";
+    try {
+      InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName);
+      sideEffectFreeJDKMethods = OperationModel.readOperations(inputStream, sefDefaultsFileName);
+    } catch (RandoopUsageError e) {
+      throw new RandoopBug(
+          String.format("Incorrectly formatted method in file %s: %s%n", sefDefaultsFileName, e));
+    }
+
+    MultiMap<Type, TypedClassOperation> sideEffectFreeUserMethods;
+    try {
+      sideEffectFreeUserMethods =
+          OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods);
+    } catch (OperationParseException e) {
+      throw new RandoopUsageError(
+          String.format(
+              "Incorrectly formatted method in file %s: %s%n",
+              GenInputsAbstract.side_effect_free_methods, e));
+    }
+
+    MultiMap<Type, TypedClassOperation> result = new MultiMap<>();
+    result.addAll(sideEffectFreeJDKMethods);
+    result.addAll(sideEffectFreeUserMethods);
+    return result;
+  }
+
   /** Is output to the user before each possibly flaky method. */
   public static final String POSSIBLY_FLAKY_PREFIX = "  Possibly flaky:  ";
 
@@ -574,12 +611,34 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param flakySequences the flaky test sequences
    * @param sequences all the sequences (flaky and non-flaky)
+   * @param sideEffectFreeMethodsByType side-effect-free methods to use in assertions
+   * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
+   *     during test generation
+   * @param visibilityPredicate visibility predicate for side-effect-free methods
    */
   private void processAndOutputFlakyMethods(
-      List<ExecutableSequence> flakySequences, List<ExecutableSequence> sequences) {
+      List<ExecutableSequence> flakySequences,
+      List<ExecutableSequence> sequences,
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
+      OmitMethodsPredicate omitMethodsPredicate,
+      VisibilityPredicate visibilityPredicate) {
 
     if (flakySequences.isEmpty()) {
       return;
+    }
+
+    // Exclude methods that were omitted during test generation.
+    MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods = new MultiMap<>();
+    for (Type t : sideEffectFreeMethodsByType.keySet()) {
+      Set<TypedClassOperation> typeOperations = sideEffectFreeMethodsByType.getValues(t);
+      for (TypedClassOperation tco : typeOperations) {
+        if (!RegressionCaptureGenerator.isAssertable(
+            tco, omitMethodsPredicate, visibilityPredicate)) {
+          continue;
+        }
+
+        assertableSideEffectFreeMethods.add(t, tco);
+      }
     }
 
     System.out.println();
@@ -589,11 +648,13 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
       // How many flaky tests an operation occurs in (regardless of how many times it appears in
       // that test).
-      Map<TypedOperation, Integer> testOccurrences = countSequencesPerOperation(sequences);
+      Map<TypedOperation, Integer> testOccurrences =
+          countSequencesPerOperation(sequences, assertableSideEffectFreeMethods);
 
       // How many tests an operation occurs in (regardless of how many times it appears in that
       // flaky test).
-      Map<TypedOperation, Integer> flakyOccurrences = countSequencesPerOperation(flakySequences);
+      Map<TypedOperation, Integer> flakyOccurrences =
+          countSequencesPerOperation(flakySequences, assertableSideEffectFreeMethods);
 
       // Priority queue of methods ordered by tf-idf heuristic, highest first.
       PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
@@ -643,22 +704,36 @@ public class GenTests extends GenInputsAbstract {
    * Counts the number of sequences each operation occurs in.
    *
    * @param sequences a list of sequences
+   * @param assertableSideEffectFreeMethods a map from a type to all its side-effect-free methods
+   *     that can be used in assertions
    * @return a map from operation to the number of sequences in which the operation occurs at least
    *     once
    */
   private Map<TypedOperation, Integer> countSequencesPerOperation(
-      List<ExecutableSequence> sequences) {
+      List<ExecutableSequence> sequences,
+      MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods) {
     // Map from method call operations to number of sequences it occurs in.
-    Map<TypedOperation, Integer> tallyMap = new HashMap<>();
+    Map<TypedOperation, Integer> numSequencesUsedIn = new HashMap<>();
 
     for (ExecutableSequence es : sequences) {
       Set<TypedOperation> ops = getOperationsInSequence(es);
 
+      // The test case consists of a sequence of calls, then assertions over the value produced by
+      // the final call.
+      // 1. Count up calls in the main sequence of calls.
       for (TypedOperation to : ops) {
-        tallyMap.merge(to, 1, Integer::sum); // increment value associated with key `to`
+        numSequencesUsedIn.merge(to, 1, Integer::sum); // increment value associated with key `to`
+      }
+
+      // 2. Count up calls that appear in assertions over the final value.
+      SimpleList<Statement> statements = es.sequence.statements;
+      Statement lastStatement = statements.get(statements.size() - 1);
+      Type lastValueType = lastStatement.getOutputType();
+      for (TypedClassOperation tco : assertableSideEffectFreeMethods.getValues(lastValueType)) {
+        numSequencesUsedIn.merge(tco, 1, Integer::sum);
       }
     }
-    return tallyMap;
+    return numSequencesUsedIn;
   }
 
   /**
@@ -1083,13 +1158,16 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param visibility the visibility predicate
    * @param contracts the contract checks
-   * @param sideEffectFreeMap the map from types to side-effect-free methods
+   * @param sideEffectFreeMethodsByType the map from types to side-effect-free methods
+   * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
+   *     during test generation
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
-      MultiMap<Type, TypedOperation> sideEffectFreeMap) {
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
+      OmitMethodsPredicate omitMethodsPredicate) {
 
     // Start with checking for invalid exceptions.
     TestCheckGenerator testGen =
@@ -1107,8 +1185,9 @@ public class GenTests extends GenInputsAbstract {
       RegressionCaptureGenerator regressionVisitor =
           new RegressionCaptureGenerator(
               expectation,
-              sideEffectFreeMap,
+              sideEffectFreeMethodsByType,
               visibility,
+              omitMethodsPredicate,
               !GenInputsAbstract.no_regression_assertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);

@@ -28,6 +28,23 @@
 ^java\.util\.Arrays\.hashCode\(double\[\]\)$
 ^java\.util\.Arrays\.hashCode\(java\.lang\.Object\[\]\)$
 ^java\.util\.Arrays\.deepHashCode\(java\.lang\.Object\[\]\)$
+^java7\.util7\.AbstractSet\.hashCode\(\)$
+^java7\.util7\.Collection\.hashCode\(\)$
+^java7\.util7\.AbstractList\.hashCode\(\)$
+^java7\.util7\.Random\.<init>\(\)$
+^java7\.util7\.Comparator\.compare\(java\.lang\.Object, java\.lang\.Object\)$
+^java7\.util7\.Set\.hashCode\(\)$
+^java7\.util7\.List\.hashCode\(\)$
+^java7\.util7\.Arrays\.hashCode\(long\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(int\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(short\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(char\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(byte\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(boolean\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(float\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(double\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(java\.lang\.Object\[\]\)$
+^java7\.util7\.Arrays\.deepHashCode\(java\.lang\.Object\[\]\)$
 ^java\.text\.BreakIterator\.getAvailableLocales\(\)$
 ^java\.lang\.Class\.getSigners\(\)$
 ^java\.lang\.String\.hashCode\(\)$
