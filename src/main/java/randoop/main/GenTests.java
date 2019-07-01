@@ -854,7 +854,13 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("%nError writing %s tests%n", testKind.toLowerCase());
       e.printStackTrace(System.out);
       System.exit(1);
+    } catch (Throwable e) {
+      System.out.printf("GenTests.writeTestFiles throw an exception%n");
+      e.printStackTrace();
+      e.printStackTrace(System.out);
+      throw e;
     }
+
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("Wrote %s JUnit tests.%n", testKind.toLowerCase());
     }
