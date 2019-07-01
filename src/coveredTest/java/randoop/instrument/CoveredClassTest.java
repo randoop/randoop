@@ -265,8 +265,8 @@ public class CoveredClassTest {
         GenTests.createTestCheckGenerator(
             visibility,
             contracts,
-            operationModel.getOmitMethodsPredicate(),
-            sideEffectFreeMethodsByType);
+            sideEffectFreeMethodsByType,
+            operationModel.getOmitMethodsPredicate());
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(
         new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));

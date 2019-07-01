@@ -50,10 +50,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
 
-  /**
-   * The user-supplied omit methods predicate used to determine which methods should not be used in
-   * test generation and assertions.
-   */
+  /** The user-supplied predicate for methods thta should not be called. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /** The flag whether to include regression assertions. */
@@ -204,16 +201,16 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             Set<TypedClassOperation> sideEffectFreeMethods =
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
-              for (TypedClassOperation tco : sideEffectFreeMethods) {
-                if (!isAssertable(tco, omitMethodsPredicate, isVisible)) {
+              for (TypedClassOperation m : sideEffectFreeMethods) {
+                if (!isAssertable(m, omitMethodsPredicate, isVisible)) {
                   continue;
                 }
 
-                ExecutionOutcome outcome = tco.execute(new Object[] {runtimeValue});
+                ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
                       "unexpected error invoking side-effect-free method  "
-                          + tco
+                          + m
                           + " on "
                           + var
                           + "["
@@ -235,7 +232,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   continue;
                 }
 
-                ObjectContract observerEqValue = new ObserverEqValue(tco, value);
+                ObjectContract observerEqValue = new ObserverEqValue(m, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
 
                 Log.logPrintf("Adding observer check %s%n", observerCheck);
@@ -265,38 +262,37 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Returns true if the given side-effect-free method can be used in an assertion in Randoop. Does
-   * not take user-supplied omit methods rules into account.
+   * Returns true if the given side-effect-free method can be used in an assertion in Randoop.
    *
-   * @param sideEffectFreeMethod the method, which must be side-effect-free
+   * @param m the method, which must be side-effect-free
    * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
    * @param visibility the predicate used to check whether a method is visible to call
    * @return whether we can use this method in a side-effect-free assertion
    */
   public static boolean isAssertable(
-      TypedClassOperation sideEffectFreeMethod,
+      TypedClassOperation m,
       OmitMethodsPredicate omitMethodsPredicate,
       VisibilityPredicate visibility) {
 
-    if (omitMethodsPredicate.shouldOmit(sideEffectFreeMethod)) {
+    if (omitMethodsPredicate.shouldOmit(m)) {
       return false;
     }
 
-    Method method = (Method) sideEffectFreeMethod.getOperation().getReflectionObject();
+    Method method = (Method) m.getOperation().getReflectionObject();
     if (!visibility.isVisible(method)) {
       return false;
     }
 
     // Must have a single formal parameter.
-    if (sideEffectFreeMethod.getInputTypes().size() != 1) {
+    if (m.getInputTypes().size() != 1) {
       return false;
     }
 
     // Must return non-void.
-    if (sideEffectFreeMethod.getOutputType().isVoid()) {
+    if (m.getOutputType().isVoid()) {
       return false;
     }
-    Class<?> outputClass = sideEffectFreeMethod.getOutputType().getRuntimeClass();
+    Class<?> outputClass = m.getOutputType().getRuntimeClass();
     // Ignore the null reference type.
     if (outputClass == null) {
       return false;

@@ -278,7 +278,7 @@ public class TestFilteringTest {
     gen.setTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new OmitMethodsPredicate(null), new MultiMap<>());
+            visibility, new ContractSet(), new MultiMap<>(), new OmitMethodsPredicate(null));
     gen.setTestCheckGenerator(checkGenerator);
     gen.setExecutionVisitor(new DummyVisitor());
     TestUtils.setAllLogs(gen);

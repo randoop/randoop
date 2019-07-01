@@ -401,8 +401,8 @@ public class GenTests extends GenInputsAbstract {
         createTestCheckGenerator(
             visibility,
             contracts,
-            operationModel.getOmitMethodsPredicate(),
-            sideEffectFreeMethodsByType);
+            sideEffectFreeMethodsByType,
+            operationModel.getOmitMethodsPredicate());
     explorer.setTestCheckGenerator(testGen);
 
     /*
@@ -535,8 +535,8 @@ public class GenTests extends GenInputsAbstract {
       processAndOutputFlakyMethods(
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
           regressionSequences,
-          operationModel.getOmitMethodsPredicate(),
           sideEffectFreeMethodsByType,
+          operationModel.getOmitMethodsPredicate(),
           visibility);
     } // if (!GenInputsAbstract.no_regression_tests)
 
@@ -567,13 +567,13 @@ public class GenTests extends GenInputsAbstract {
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
+    String sefDefaultsFileName = "/JDK-sef-methods.txt";
     try {
-      String sefDefaultsFileName = "/JDK-sef-methods.txt";
       InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName);
       sideEffectFreeJDKMethods = OperationModel.readOperations(inputStream, sefDefaultsFileName);
     } catch (RandoopUsageError e) {
       throw new RandoopBug(
-          String.format("Incorrectly formatted side-effect-free method in default file: %s%n", e));
+          String.format("Incorrectly formatted method in file %s: %s%n", sefDefaultsFileName, e));
     }
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeUserMethods;
@@ -582,7 +582,9 @@ public class GenTests extends GenInputsAbstract {
           OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods);
     } catch (OperationParseException e) {
       throw new RandoopUsageError(
-          String.format("Incorrectly formatted side-effect-free method: %s%n", e));
+          String.format(
+              "Incorrectly formatted method in file %s: %s%n",
+              GenInputsAbstract.side_effect_free_methods, e));
     }
 
     MultiMap<Type, TypedClassOperation> result = new MultiMap<>();
@@ -602,16 +604,16 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param flakySequences the flaky test sequences
    * @param sequences all the sequences (flaky and non-flaky)
+   * @param sideEffectFreeMethodsByType side-effect-free methods to use in assertions
    * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
    *     during test generation
-   * @param sideEffectFreeMethodsByType side-effect-free methods to use in assertions
    * @param visibilityPredicate visibility predicate for side-effect-free methods
    */
   private void processAndOutputFlakyMethods(
       List<ExecutableSequence> flakySequences,
       List<ExecutableSequence> sequences,
-      OmitMethodsPredicate omitMethodsPredicate,
       MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
+      OmitMethodsPredicate omitMethodsPredicate,
       VisibilityPredicate visibilityPredicate) {
 
     if (flakySequences.isEmpty()) {
@@ -716,11 +718,11 @@ public class GenTests extends GenInputsAbstract {
         numSequencesUsedIn.merge(to, 1, Integer::sum); // increment value associated with key `to`
       }
 
-      // 2. Count up calls that appear in assertions.
+      // 2. Count up calls that appear in assertions over the final value.
       SimpleList<Statement> statements = es.sequence.statements;
       Statement lastStatement = statements.get(statements.size() - 1);
-      Type lastStatementType = lastStatement.getOutputType();
-      for (TypedClassOperation tco : assertableSideEffectFreeMethods.getValues(lastStatementType)) {
+      Type lastValueType = lastStatement.getOutputType();
+      for (TypedClassOperation tco : assertableSideEffectFreeMethods.getValues(lastValueType)) {
         numSequencesUsedIn.merge(tco, 1, Integer::sum);
       }
     }
@@ -1143,16 +1145,16 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param visibility the visibility predicate
    * @param contracts the contract checks
+   * @param sideEffectFreeMethodsByType the map from types to side-effect-free methods
    * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
    *     during test generation
-   * @param sideEffectFreeMethodsByType the map from types to side-effect-free methods
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
-      OmitMethodsPredicate omitMethodsPredicate,
-      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType) {
+      MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType,
+      OmitMethodsPredicate omitMethodsPredicate) {
 
     // Start with checking for invalid exceptions.
     TestCheckGenerator testGen =

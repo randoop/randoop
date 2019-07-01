@@ -94,10 +94,7 @@ public class OperationModel {
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
-  /**
-   * User-supplied predicate for determining which methods should not be used during test
-   * generation.
-   */
+  /** User-supplied predicate for methods that should not be used during test generation. */
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /** Create an empty model of test context. */
@@ -320,8 +317,8 @@ public class OperationModel {
   }
 
   /**
-   * Returns operations read from the given EntryReader for a file with a list of fully qualified
-   * method signatures.
+   * Returns operations read from the given EntryReader, which contains fully-qualified method
+   * signatures.
    *
    * @param er the EntryReader to read from
    * @return contents of the file, as a map of operations
@@ -339,7 +336,7 @@ public class OperationModel {
   }
 
   /**
-   * Returns operations read from the given stream for a file with a list of fully qualified method
+   * Returns operations read from the given stream, which contains fully-qualified method
    * signatures.
    *
    * @param is the stream from which to read
@@ -409,9 +406,9 @@ public class OperationModel {
   }
 
   /**
-   * Returns the user-supplied omit methods predicate associated with this operation model.
+   * Returns the user-specified predicate for methods that should not be called.
    *
-   * @return the omit method predicate
+   * @return the user-specified predicate for methods that should not be called
    */
   public OmitMethodsPredicate getOmitMethodsPredicate() {
     return omitMethodsPredicate;
