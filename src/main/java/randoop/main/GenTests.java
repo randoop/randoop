@@ -742,6 +742,9 @@ public class GenTests extends GenInputsAbstract {
       for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
         String classname = entry.getKey();
         String classSource = entry.getValue().toString();
+        if (GenInputsAbstract.progressdisplay) {
+          System.out.printf("CodeWriter %s will write class %s.%n", codeWriter, classname);
+        }
         testFiles.add(
             codeWriter.writeClassCode(
                 GenInputsAbstract.junit_package_name, classname, classSource));
