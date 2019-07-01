@@ -167,7 +167,7 @@ public class GenTests extends GenInputsAbstract {
   /** The count of sequences that failed to compile. */
   private int sequenceCompileFailureCount = 0;
 
-  /** GenTests constructor that uses default messages */
+  /** GenTests constructor that uses default messages. */
   public GenTests() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
@@ -236,15 +236,17 @@ public class GenTests extends GenInputsAbstract {
     Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
 
     // Get names of classes that must be covered by output tests
-    @SuppressWarnings("signature") // TOOD: read from file, no guarantee strings are @ClassGetName
     Set<@ClassGetName String> coveredClassnames =
-        GenInputsAbstract.getStringSetFromFile(require_covered_classes, "coverage class names");
+        GenInputsAbstract.getClassNamesFromFile(require_covered_classes);
 
     // Get names of fields to be omitted
     Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "field list");
     omitFields.addAll(omit_field);
 
-    omitmethods.addAll(readOmitMethods(omitmethods_file));
+    for (Path omitmethodsFile : GenInputsAbstract.omitmethods_file) {
+      omitmethods.addAll(readOmitMethods(omitmethodsFile));
+    }
+
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
       omitmethods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
     }
@@ -359,17 +361,18 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    MultiMap<Type, TypedOperation> observerMap;
+    MultiMap<Type, TypedOperation> sideEffectFreeMap;
     try {
-      observerMap = OperationModel.readOperations(GenInputsAbstract.observers, true);
+      sideEffectFreeMap =
+          OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods, true);
     } catch (OperationParseException e) {
-      System.out.printf("Error parsing observers: %s%n", e.getMessage());
+      System.out.printf("Error parsing side-effect-free methods: %s%n", e.getMessage());
       System.exit(1);
       throw new Error("dead code");
     }
-    Set<TypedOperation> observers = new LinkedHashSet<>();
-    for (Type keyType : observerMap.keySet()) {
-      observers.addAll(observerMap.getValues(keyType));
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
+    for (Type keyType : sideEffectFreeMap.keySet()) {
+      sideEffectFreeMethods.addAll(sideEffectFreeMap.getValues(keyType));
     }
 
     /*
@@ -378,7 +381,7 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer =
         new ForwardGenerator(
             operations,
-            observers,
+            sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
@@ -396,10 +399,10 @@ public class GenTests extends GenInputsAbstract {
     // System.out.println("isLoggingOn = " + Log.isLoggingOn());
 
     /*
-     * Create the test check generator for the contracts and observers
+     * Create the test check generator for the contracts and side-effect-free methods
      */
     ContractSet contracts = operationModel.getContracts();
-    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap);
+    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, sideEffectFreeMap);
     explorer.setTestCheckGenerator(testGen);
 
     /*
@@ -604,12 +607,8 @@ public class GenTests extends GenInputsAbstract {
     }
 
     System.out.println(
-        "To prevent the generation of flaky tests, see section 'Nondeterministic program");
-    System.out.println("under test' at https://randoop.github.io/randoop/manual/#nondeterminism .");
-    System.out.println();
-    // TODO cxing: Separate PR: add nmrd-blacklist comment suggestion for
-    // user (actionable steps to take to avoid flaky test generation) and edit the manual
-    // accordingly.
+        "To prevent the generation of flaky tests, see section 'Randoop generated flaky tests'");
+    System.out.println(" at https://randoop.github.io/randoop/manual/#flaky-tests .");
     System.out.println();
   }
 
@@ -649,11 +648,7 @@ public class GenTests extends GenInputsAbstract {
       Set<TypedOperation> ops = getOperationsInSequence(es);
 
       for (TypedOperation to : ops) {
-        if (tallyMap.containsKey(to)) {
-          tallyMap.put(to, tallyMap.get(to) + 1);
-        } else {
-          tallyMap.put(to, 1);
-        }
+        tallyMap.merge(to, 1, Integer::sum); // increment value associated with key `to`
       }
     }
     return tallyMap;
@@ -850,7 +845,7 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Returns patterns read from the given EntryReader.
    *
-   * @param er the EntryReader to read from.
+   * @param er the EntryReader to read from
    * @return contents of the file, as a list of Patterns
    */
   private List<Pattern> readOmitMethods(EntryReader er) {
@@ -1075,13 +1070,13 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param visibility the visibility predicate
    * @param contracts the contract checks
-   * @param observerMap the map from types to observer methods
+   * @param sideEffectFreeMap the map from types to side-effect-free methods
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
   public static TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
-      MultiMap<Type, TypedOperation> observerMap) {
+      MultiMap<Type, TypedOperation> sideEffectFreeMap) {
 
     // Start with checking for invalid exceptions.
     TestCheckGenerator testGen =
@@ -1098,7 +1093,10 @@ public class GenTests extends GenInputsAbstract {
 
       RegressionCaptureGenerator regressionVisitor =
           new RegressionCaptureGenerator(
-              expectation, observerMap, visibility, !GenInputsAbstract.no_regression_assertions);
+              expectation,
+              sideEffectFreeMap,
+              visibility,
+              !GenInputsAbstract.no_regression_assertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }

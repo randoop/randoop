@@ -12,14 +12,13 @@ plugins {
   id 'idea'
   id 'jacoco'
 
-  /*
-   * Plugin that applies Google's Error Prone linter (http://errorprone.info/).
-   * https://github.com/tbroyer/gradle-errorprone-plugin
-   * Elsewhere this file excludes src/testInput from directories examined by Error Prone.
-   * To run Error Prone, do:  ./gradlew compileJava
-   * There is no separate target to just run Error Prone.
-   */
-  id "net.ltgt.errorprone-base" version "0.0.16"
+  // https://github.com/tbroyer/gradle-errorprone-plugin
+  // To run the Error Prone linter, do:  ./gradlew compileJava
+  id "net.ltgt.errorprone-base" version "0.0.16" apply false
+
+  // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
+  // ./gradlew compileJava -PuseCheckerFramework=true
+  id 'org.checkerframework' version '0.3.4' apply false
 
   // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
   id 'se.patrikerdes.use-latest-versions' version '0.2.9'
@@ -31,10 +30,16 @@ plugins {
   // id "com.dorongold.task-tree" version "1.3"
 }
 
-// For Checker Framework pluggable type-checking, run:  ./gradlew checkTypes
-// It is not run in the main build because the Checker Framework is incompatible with Error Prone.
-// TODO: Uncomment
-// apply from: "checkerframework.gradle"
+if (!project.hasProperty("useCheckerFramework")) {
+    ext.useCheckerFramework = "false"
+}
+if ("true".equals(project.ext.useCheckerFramework)) {
+  apply plugin: 'org.checkerframework'
+} else {
+  apply plugin: 'net.ltgt.errorprone-base'
+}
+
+def checkerFrameworkVersion = "2.8.2" // Checker Framework version
 
 /* Common build configuration for Randoop and agents */
 allprojects {
@@ -62,20 +67,18 @@ allprojects {
   }
 
   dependencies {
-    // If you update this, also update file checkerframework.gradle
-    implementation "org.checkerframework:checker-qual:2.8.0"
+    implementation "org.checkerframework:checker-qual:" + checkerFrameworkVersion
+
+    // To use a local version: plumelib files("${rootDir}/libs/bcel-util-all.jar")
 
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    plumelib 'org.plumelib:bcel-util:1.1.4'
-    // To use a local version comment out line above and uncomment line below.
-    // plumelib files("${rootDir}/libs/bcel-util-all.jar")
-
+    plumelib 'org.plumelib:bcel-util:1.1.5'
     // https://mvnrepository.com/artifact/org.plumelib/options
     plumelib 'org.plumelib:options:1.0.1'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.0.6'
+    plumelib 'org.plumelib:plume-util:1.0.8'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    plumelib 'org.plumelib:reflection-util:0.0.2'
+    plumelib 'org.plumelib:reflection-util:0.0.4'
   }
 }
 
@@ -156,7 +159,7 @@ dependencies {
   testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.12'
   testImplementation configurations.junit.dependencies
   testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.8.0'
+  testImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
   testImplementation sourceSets.testInput.output
 
   /*
@@ -181,7 +184,7 @@ dependencies {
   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.3'
-  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: '2.8.0'
+  systemTestImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
@@ -191,7 +194,13 @@ dependencies {
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
 
-  errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
+  if ("true".equals(project.ext.useCheckerFramework)) {
+    checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
+    checkerFramework 'org.checkerframework:jdk8:' + checkerFrameworkVersion
+    checkerFramework 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+  } else {
+    errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
+  }
 }
 
 /*
@@ -202,7 +211,7 @@ compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileCoveredTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileReplacecallTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile', '-XDenableSunApiLintControl', '-Xlint:-sunapi']
+compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
 task compileAll() {
   dependsOn compileJava
@@ -220,23 +229,36 @@ task compileAll() {
 // Get early notification of any compilation failures, before running any tests
 build.dependsOn compileAll
 
-/*
- * Configuration for using Error Prone linter.
- */
 import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
-tasks.withType(JavaCompile).each { t ->
-  if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
-    t.toolChain ErrorProneToolChain.create(project)
-    t.options.compilerArgs += [
-      // Maybe NamedParameters is no longer supported?
-      // // undocumented, and suggestion seems bad
-      // '-Xep:NamedParameters:OFF',
-      // Is always a false positive in my experience.
-      '-Xep:StringSplitter:OFF'
-      // TODO: uncomment once we run the Interning Checker on Randoop
-      // '-Xep:ReferenceEquality:OFF'
+if ("true".equals(project.ext.useCheckerFramework)) {
+  checkerFramework {
+    checkers = [
+      // 'org.checkerframework.checker.nullness.NullnessChecker',
+      'org.checkerframework.checker.signature.SignatureChecker'
+    ]
+    extraJavacArgs = [
+      '-Werror',
+      // '-AcheckPurityAnnotations',
+      '-ArequirePrefixInWarningSuppressions',
+      '-AwarnUnneededSuppressions'
+    ]
+  }
+} else {
+  // Configuration for the Error Prone linter.
+  tasks.withType(JavaCompile).each { t ->
+    if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
+      t.toolChain ErrorProneToolChain.create(project)
+      t.options.compilerArgs += [
+        // Maybe NamedParameters is no longer supported?
+        // // undocumented, and suggestion seems bad
+        // '-Xep:NamedParameters:OFF',
+        // Is always a false positive in my experience.
+        '-Xep:StringSplitter:OFF'
+        // TODO: uncomment once we run the Interning Checker on Randoop
+        // '-Xep:ReferenceEquality:OFF'
       ]
+    }
   }
 }
 
@@ -401,7 +423,7 @@ task replacecallTest(type: Test, dependsOn: 'copyJars') {
   testClassesDirs = sourceSets.replacecallTest.output.classesDirs
   classpath = sourceSets.replacecallTest.runtimeClasspath + files("$buildDir/libs/replacecall-${version}.jar")
   // use the replacecall agent using the exclusions file from replacecallTest/resources
-  jvmArgs "-javaagent:$buildDir/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt,--debug"
+  jvmArgs "-javaagent:$buildDir/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt"
   jvmArgs "-Xbootclasspath/a:$buildDir/libs/replacecall-${version}.jar"
   testLogging {
     showStandardStreams = true
@@ -753,7 +775,7 @@ configurations {
   requireJavadoc
 }
 dependencies {
-  implementation group: 'org.plumelib', name: 'require-javadoc', version: '0.1.0'
+  compileOnly group: 'org.plumelib', name: 'require-javadoc', version: '0.1.2'
 }
 task requireJavadoc(type: Javadoc) {
   description = 'Ensures that all Java elements have Javadoc documentation.'
@@ -959,19 +981,15 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) 
 /*
  * Applies HTML5 validator to project site HTML, including the manual
  */
-task validateSite(dependsOn: 'html5validatorExists') {
+task validateSite(type: Exec, dependsOn: 'html5validatorExists') {
   description "Run html5validator to find HTML errors in site files (excludes manual and api)"
   if (JavaVersion.current().isJava9Compatible()) {
-    exec {
-      environment PATH: "$System.env.PATH"
-      commandLine "html5validator", "--root", "src/docs/"
-    }
+    environment PATH: "$System.env.PATH"
+    commandLine "html5validator", "--root", "src/docs/"
   } else if (JavaVersion.current().isJava8Compatible()) {
     // Before JDK9, Javadoc did not create proper HTML 5.
-    exec {
-      environment PATH: "$System.env.PATH"
-      commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
-    }
+    environment PATH: "$System.env.PATH"
+    commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
   } else {
     commandLine "echo", "WARNING: HTML validation of API documentation is only run in Java 9+."
   }

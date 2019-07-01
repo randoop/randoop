@@ -187,8 +187,7 @@ public class CoveredClassTest {
     VisibilityPredicate visibility = IS_PUBLIC;
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
     Set<String> coveredClassnames =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.require_covered_classes, "coverage class names");
+        GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields =
         GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "field list");
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
@@ -224,26 +223,27 @@ public class CoveredClassTest {
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
-    // Maps each class type to the observer methods in it.
-    MultiMap<Type, TypedOperation> observerMap;
+    // Maps each class type to the side-effect-free methods in it.
+    MultiMap<Type, TypedOperation> sideEffectFreeMap;
     try {
-      observerMap = operationModel.readOperations(GenInputsAbstract.observers, false);
+      sideEffectFreeMap =
+          operationModel.readOperations(GenInputsAbstract.side_effect_free_methods, false);
     } catch (OperationParseException e) {
-      System.out.printf("Parse error while reading observers: %s%n", e);
+      System.out.printf("Incorrectly formatted side-effect-free method: %s%n", e);
       System.exit(1);
       throw new Error("dead code");
     }
-    assert observerMap != null;
-    Set<TypedOperation> observers = new LinkedHashSet<>();
-    for (Type keyType : observerMap.keySet()) {
-      observers.addAll(observerMap.getValues(keyType));
+    assert sideEffectFreeMap != null;
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
+    for (Type keyType : sideEffectFreeMap.keySet()) {
+      sideEffectFreeMethods.addAll(sideEffectFreeMap.getValues(keyType));
     }
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
-            observers,
+            sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
@@ -269,7 +269,7 @@ public class CoveredClassTest {
 
     ContractSet contracts = operationModel.getContracts();
     TestCheckGenerator checkGenerator =
-        GenTests.createTestCheckGenerator(visibility, contracts, observerMap);
+        GenTests.createTestCheckGenerator(visibility, contracts, sideEffectFreeMap);
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(
         new CoveredClassVisitor(operationModel.getCoveredClassesGoal()));

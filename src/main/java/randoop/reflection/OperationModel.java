@@ -290,31 +290,33 @@ public class OperationModel {
   }
 
   /**
-   * Given a file containing signatures, returns the operations for them.
+   * Given a file containing fully-qualified method signatures, returns the operations for them.
    *
-   * @param file a file that contains method or constructor signatures, one per line
+   * @param file a file that contains method or constructor signatures, one per line. If null, this
+   *     method returns an empty map.
    * @param onlyMethods if true, throw an exception if a constructor is read
    * @return a map from each class type to the set of methods/constructors in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public static MultiMap<Type, TypedOperation> readOperations(Path file, boolean onlyMethods)
-      throws OperationParseException {
-    MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
+  public static MultiMap<Type, TypedOperation> readOperations(
+      @Nullable Path file, boolean onlyMethods) throws OperationParseException {
     if (file != null) {
+      MultiMap<Type, TypedOperation> sideEffectFreeMap = new MultiMap<>();
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
         for (String line : er) {
           String sig = line.trim();
           TypedClassOperation operation =
               signatureToOperation(
                   sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
-          observerMap.add(operation.getDeclaringType(), operation);
+          sideEffectFreeMap.add(operation.getDeclaringType(), operation);
         }
+        return sideEffectFreeMap;
       } catch (IOException e) {
         String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
         throw new RandoopUsageError(message, e);
       }
     }
-    return observerMap;
+    return new MultiMap<>();
   }
 
   /**
@@ -365,6 +367,11 @@ public class OperationModel {
     return contracts;
   }
 
+  /**
+   * Returns the set of singleton sequences for values from {@code @TestValue} annotated fields.
+   *
+   * @return sequences that get fields annotated with {@code @TestValue}
+   */
   public Set<Sequence> getAnnotatedTestValues() {
     return annotatedTestValues;
   }

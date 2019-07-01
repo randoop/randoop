@@ -51,7 +51,7 @@ public class CaptureConversionTest {
     checkCapture(JDKTypes.LIST_TYPE, JavaTypes.STRING_TYPE, listOperations);
   }
 
-  /** Tests capture when wildcard bound is not a class type */
+  /** Tests capture when wildcard bound is not a class type. */
   @Test
   public void captureArrayTest() {
     checkCapture(

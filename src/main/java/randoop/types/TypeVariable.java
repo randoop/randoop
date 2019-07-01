@@ -71,14 +71,15 @@ public abstract class TypeVariable extends ParameterType {
     }
 
     if (otherType.isVariable()) {
-      TypeVariable variable = (TypeVariable) otherType;
-      Substitution substitution = getSubstitution(variable, this);
-      boolean lowerbound =
-          variable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
-      boolean upperbound =
-          variable.getUpperTypeBound().isUpperBound(getUpperTypeBound(), substitution);
-      return lowerbound && upperbound;
+      TypeVariable otherVariable = (TypeVariable) otherType;
+      Substitution substitution = getSubstitution(otherVariable, this);
+      boolean lowerboundOk =
+          otherVariable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
+      boolean upperboundOk =
+          otherVariable.getUpperTypeBound().isUpperBound(getUpperTypeBound(), substitution);
+      return lowerboundOk && upperboundOk;
     }
+
     return false;
   }
 

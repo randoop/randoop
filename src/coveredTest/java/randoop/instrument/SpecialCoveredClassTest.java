@@ -60,8 +60,7 @@ public class SpecialCoveredClassTest {
     VisibilityPredicate visibility = IS_PUBLIC;
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs(visibility);
     Set<String> coveredClassnames =
-        GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.require_covered_classes, "coverage class names");
+        GenInputsAbstract.getClassNamesFromFile(GenInputsAbstract.require_covered_classes);
     Set<String> omitFields = new HashSet<>();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
@@ -102,11 +101,11 @@ public class SpecialCoveredClassTest {
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    Set<TypedOperation> observers = new LinkedHashSet<>();
+    Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
-            observers,
+            sideEffectFreeMethods,
             new GenInputsAbstract.Limits(),
             componentMgr,
             listenerMgr,
@@ -125,9 +124,8 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.require_classname_in_test);
     testGenerator.setTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
-    MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     TestCheckGenerator checkGenerator =
-        GenTests.createTestCheckGenerator(visibility, contracts, observerMap);
+        GenTests.createTestCheckGenerator(visibility, contracts, new MultiMap<>());
     testGenerator.setTestCheckGenerator(checkGenerator);
     testGenerator.setExecutionVisitor(new CoveredClassVisitor(coveredClassesGoal));
     TestUtils.setAllLogs(testGenerator);

@@ -16,16 +16,17 @@ import java.util.Set;
  */
 public class InstantiatedType extends ParameterizedType {
 
-  private final List<TypeArgument> argumentList;
-
   /** The generic class for this type. */
   private final GenericClassType instantiatedType;
+
+  /** The type arguments for this class. */
+  private final List<TypeArgument> argumentList;
 
   /**
    * Create a parameterized type from the generic class type.
    *
    * @param instantiatedType the generic class type
-   * @param argumentList the list of argument types
+   * @param argumentList the list of type arguments
    * @throws IllegalArgumentException if either argument is null
    */
   InstantiatedType(GenericClassType instantiatedType, List<TypeArgument> argumentList) {
@@ -45,11 +46,15 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
     if (!(obj instanceof InstantiatedType)) {
       return false;
     }
-    InstantiatedType t = (InstantiatedType) obj;
-    return instantiatedType.equals(t.instantiatedType) && argumentList.equals(t.argumentList);
+    InstantiatedType other = (InstantiatedType) obj;
+    return instantiatedType.equals(other.instantiatedType)
+        && argumentList.equals(other.argumentList);
   }
 
   @Override
@@ -313,7 +318,9 @@ public class InstantiatedType extends ParameterizedType {
       InstantiatedType otherInstType = (InstantiatedType) otherType;
       if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
         for (int i = 0; i < this.argumentList.size(); i++) {
-          if (!this.argumentList.get(i).isInstantiationOf(otherInstType.argumentList.get(i))) {
+          TypeArgument thisTypeArg = this.argumentList.get(i);
+          TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
+          if (!thisTypeArg.isInstantiationOfTypeArgument(otherTypeArg)) {
             return false;
           }
         }

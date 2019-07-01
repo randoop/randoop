@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
@@ -231,6 +232,7 @@ public final class Sequence {
    *
    * @return the number of statements in this sequence
    */
+  @Pure
   public final int size() {
     return statements.size();
   }
@@ -768,27 +770,19 @@ public final class Sequence {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      if (!operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint)) {
+      Type inputType = operation.getInputTypes().get(i);
+      if (!inputType.isAssignableFrom(newRefConstraint)) {
         String msg =
-            i
-                + "th given type "
-                + newRefConstraint
-                + " does not imply "
-                + "operations's "
-                + i
-                + "th input type "
-                + operation.getInputTypes().get(i)
-                + Globals.lineSep
-                + ".Sequence:"
-                + Globals.lineSep
-                + ""
-                + this.toString()
-                + Globals.lineSep
-                + "statement:"
-                + operation
-                + Globals.lineSep
-                + "inputVariables:"
-                + inputVariables;
+            String.format(
+                    "Mismatch at %dth argument:%n  %s [%s]%n is not assignable from%n  %s [%s]%n",
+                    i,
+                    inputType,
+                    inputType.getClass(),
+                    newRefConstraint,
+                    newRefConstraint.getClass())
+                + String.format(
+                    "Sequence:%n%s%nstatement:%s%ninputVariables:%s",
+                    this, operation, inputVariables);
         throw new IllegalArgumentException(msg);
       }
     }

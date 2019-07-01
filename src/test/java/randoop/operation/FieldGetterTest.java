@@ -36,7 +36,7 @@ public class FieldGetterTest {
     Class<?> c = ClassWithFields.class;
     ClassOrInterfaceType classType = new NonParameterizedType(c);
     Field field = c.getField("fourField");
-    Type fieldType = new PrimitiveType(field.getType());
+    Type fieldType = PrimitiveType.forClass(field.getType());
     TypedOperation rhs = createGetter(field, fieldType, classType);
 
     // types
@@ -70,7 +70,7 @@ public class FieldGetterTest {
     ClassOrInterfaceType classType = new NonParameterizedType(c);
 
     Field field = c.getField("oneField");
-    Type fieldType = new PrimitiveType(field.getType());
+    Type fieldType = PrimitiveType.forClass(field.getType());
     TypedOperation rhs = createGetter(field, fieldType, classType);
 
     // types
@@ -136,7 +136,7 @@ public class FieldGetterTest {
     ClassOrInterfaceType classType = new NonParameterizedType(c);
 
     Field field = c.getField("FIVEFIELD");
-    Type fieldType = new PrimitiveType(field.getType());
+    Type fieldType = PrimitiveType.forClass(field.getType());
     TypedOperation rhs = createGetter(field, fieldType, classType);
 
     // types

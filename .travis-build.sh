@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Optional argument $1 is one of:
-#   all, test, misc
+#   all, test, misc, testPart1, testPart2
 # If it is omitted, this script does everything.
 export GROUP=$1
 if [[ "${GROUP}" == "" ]]; then
   export GROUP=all
 fi
 
-if [[ "${GROUP}" != "all" && "${GROUP}" != "test" && "${GROUP}" != "misc" ]]; then
-  echo "Bad argument '${GROUP}'; should be omitted or one of: all, test, misc"
+if [[ "${GROUP}" != "all" && "${GROUP}" != "test" && "${GROUP}" != "misc" && "${GROUP}" != "testPart1" && "${GROUP}" != "testPart2" ]]; then
+  echo "Bad argument '${GROUP}'; should be omitted or one of: all, test, misc, testPart1, testPart2"
   exit 1
 fi
 
@@ -47,13 +47,53 @@ if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
   /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
   sleep 3 # give xvfb some time to start
 
-  # `gradle build` == `gradle check assemble`
-  ./gradlew --info check
+  # `gradle build` == `gradle check assemble`.
+  # There is no need for checkstyle targets here; they are checked in "misc" job.
+  ./gradlew --info check -x checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
 fi
 
+## Splitting tests into 2 parts reduces latency for the whole job to complete.
+## There are 5 dependencies of the "check" target.
+## By default `gradle check` == `gradle test`, but Randoop's buildfile adds more dependences.
+
+if [[ "${GROUP}" == "testPart1" ]]; then
+  # Need GUI for running tests of replace call agent with Swing/AWT.
+  # Run xvfb.
+  export DISPLAY=:99.0
+  XVFB=/usr/bin/Xvfb
+  XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
+  PIDFILE=/var/xvfb_${DISPLAY:1}.pid
+  /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
+  sleep 3 # give xvfb some time to start
+
+  # `gradle build` == `gradle check assemble`.
+  # There is no need for checkstyle targets here; they are checked in "misc" job.
+  ./gradlew --info test coveredTest replacecallTest -x checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
+fi
+
+if [[ "${GROUP}" == "testPart2" ]]; then
+  # Need GUI for running runDirectSwingTest.
+  # Run xvfb.
+  export DISPLAY=:99.0
+  XVFB=/usr/bin/Xvfb
+  XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
+  PIDFILE=/var/xvfb_${DISPLAY:1}.pid
+  /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
+  sleep 3 # give xvfb some time to start
+
+  ./gradlew --info systemTest -x checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
+fi
+
+## There is no need to run jacocoTestReport in continuous integration.
+## If we run it, there is no need to run :test and :systemTest, both of which it runs.
+# if [[ "${GROUP}" == "testPart3" ]]; then
+#   ./gradlew --info jacocoTestReport
+# fi
+
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
+  ./gradlew clean assemble -PuseCheckerFramework=true
   ./gradlew javadoc
-  ./gradlew checkstyle
+  ./gradlew checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
   ./gradlew manual
 
   echo "TRAVIS_COMMIT_RANGE = $TRAVIS_COMMIT_RANGE"
@@ -63,7 +103,7 @@ if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
     # good argument to `git diff` but a bad argument to `git log` (they interpret "..." differently!).
     (git diff $TRAVIS_COMMIT_RANGE > /tmp/diff.txt 2>&1) || true
     (./gradlew requireJavadocPrivate > /tmp/rjp-output.txt 2>&1) || true
-    [ -s /tmp/diff.txt ] || ([[ "${TRAVIS_BRANCH}" != "master" && "${TRAVIS_EVENT_TYPE}" == "push" ]] || (echo "/tmp/diff.txt is empty; try pulling base branch into compare branch" && false))
+    [ -s /tmp/diff.txt ] || ([[ "${TRAVIS_BRANCH}" != "master" && "${TRAVIS_EVENT_TYPE}" == "push" ]] || (echo "/tmp/diff.txt is empty; try pulling base branch (often master) into compare branch (often feature branch)" && false))
     wget https://raw.githubusercontent.com/plume-lib/plume-scripts/master/lint-diff.py
     python lint-diff.py --strip-diff=1 --strip-lint=2 /tmp/diff.txt /tmp/rjp-output.txt
   fi

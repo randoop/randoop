@@ -42,8 +42,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The generator for expected exceptions. */
   private ExpectedExceptionCheckGen exceptionExpectation;
 
-  /** The map from a type to the observer operations for the type. */
-  private MultiMap<Type, TypedOperation> observerMap;
+  /** The map from a type to the set of side-effect-free operations for the type. */
+  private MultiMap<Type, TypedOperation> sideEffectFreeMap;
 
   /** The visibility predicate. */
   private final VisibilityPredicate isVisible;
@@ -51,13 +51,21 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   /** The flag whether to include regression assertions. */
   private boolean includeAssertions;
 
+  /**
+   * Create a RegressionCaptureGenerator.
+   *
+   * @param exceptionExpectation the generator for expected exceptions
+   * @param sideEffectFreeMap the map from a type to the side-effect-free operations for the type
+   * @param isVisible the visibility predicate
+   * @param includeAssertions whether to include regression assertions
+   */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
-      MultiMap<Type, TypedOperation> observerMap,
+      MultiMap<Type, TypedOperation> sideEffectFreeMap,
       VisibilityPredicate isVisible,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
-    this.observerMap = observerMap;
+    this.sideEffectFreeMap = sideEffectFreeMap;
     this.isVisible = isVisible;
     this.includeAssertions = includeAssertions;
   }
@@ -100,7 +108,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
           // If value's type is void (i.e. its statement is a void-return method call),
           // don't capture checks (nothing interesting).
           Type outputType = statement.getOutputType();
-          if (outputType.isVoid()) continue; // no return value.
+          if (outputType.isVoid()) {
+            continue;
+          }
 
           Object runtimeValue = execution.getRuntimeValue();
 
@@ -108,7 +118,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
           if (runtimeValue == null) {
 
-            // Add observer test for null
+            // Add test for null
             checks.add(new ObjectCheck(new IsNull(), var));
 
           } else if (PrimitiveTypes.isBoxedPrimitive(runtimeValue.getClass())
@@ -151,7 +161,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               }
             }
 
-            // Add observer test for the primitive
+            // Add test for the primitive
             PrimValue.PrintMode printMode;
             if (var.getType().isPrimitive()) {
               printMode = PrimValue.PrintMode.EQUALSEQUALS;
@@ -164,11 +174,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             // oc, s.seq_id());
 
           } else if (runtimeValue.getClass().isEnum()
+              // The assertion will be "foo == EnumClass.ENUM" and the rhs must be visible.
               && isVisible.isVisible(runtimeValue.getClass())) {
-            // XXX Not clear why the visibility check is necessary
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) runtimeValue), var);
             checks.add(oc);
-          } else { // its a more complex type with a non-null value
+          } else { // It's a more complex type with a non-null value.
 
             // Assert that the value is not null.
             // Exception: if the value comes directly from a constructor call,
@@ -177,13 +187,14 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
               checks.add(new ObjectCheck(new IsNotNull(), var));
             }
 
-            // Put out any observers that exist for this type
+            // Put out any side-effect-free methods that exist for this type
             Variable var0 = sequence.sequence.getVariable(i);
-            Set<TypedOperation> observers = observerMap.getValues(var0.getType());
-            if (observers != null) {
-              for (TypedOperation m : observers) {
+            Set<TypedOperation> sideEffectFreeMethods = sideEffectFreeMap.getValues(var0.getType());
+            if (sideEffectFreeMethods != null) {
+              for (TypedOperation m : sideEffectFreeMethods) {
 
-                // When outputting checks, ignore observers that don't take a single argument.
+                // When outputting checks, ignore side-effect-free methods that don't take a single
+                // argument.
                 if (m.getInputTypes().size() != 1) {
                   continue;
                 }
@@ -191,7 +202,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 ExecutionOutcome outcome = m.execute(new Object[] {runtimeValue});
                 if (outcome instanceof ExceptionalExecution) {
                   String msg =
-                      "unexpected error invoking observer "
+                      "unexpected error invoking side-effect-free method  "
                           + m
                           + " on "
                           + var
@@ -208,7 +219,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
                 Object value = ((NormalExecution) outcome).getRuntimeValue();
 
-                // Don't create assertions over string that look like raw object
+                // Don't create assertions over strings that look like raw object
                 // references.
                 if ((value instanceof String) && Value.looksLikeObjectToString((String) value)) {
                   continue;
@@ -217,7 +228,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 ObjectContract observerEqValue = new ObserverEqValue(m, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
 
-                Log.logPrintf("Adding observer %s%n", observerCheck);
+                Log.logPrintf("Adding observer check %s%n", observerCheck);
 
                 checks.add(observerCheck);
               }
