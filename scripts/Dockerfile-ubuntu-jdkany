@@ -1,7 +1,6 @@
-# Create a Docker image that is ready to run the full Randoop tests,
-# including building the manual and Javadoc.
-# But it's used primarily for running miscellaneous tests such as the manual
-# and Javadoc.
+# Create a Docker image that is ready to run the full Randoop tests.
+# It's used primarily for running miscellaneous tests such as the manual,
+# Javadoc, and running the Checker Framework.
 
 FROM ubuntu
 MAINTAINER Michael Ernst <mernst@cs.washington.edu>
@@ -16,10 +15,12 @@ MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt-get -qqy update \
 && apt-get -qqy install \
+  curl \
   git \
   gradle \
   xvfb \
   openjdk-8-jdk \
+&& update-java-alternatives --set java-1.8.0-openjdk-amd64 \
 && apt-get -qqy update \
 && apt-get -qqy install \
   perl \

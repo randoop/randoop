@@ -649,11 +649,7 @@ public class GenTests extends GenInputsAbstract {
       Set<TypedOperation> ops = getOperationsInSequence(es);
 
       for (TypedOperation to : ops) {
-        if (numSequencesUsedIn.containsKey(to)) {
-          numSequencesUsedIn.put(to, numSequencesUsedIn.get(to) + 1);
-        } else {
-          numSequencesUsedIn.put(to, 1);
-        }
+        numSequencesUsedIn.merge(to, 1, Integer::sum); // increment value associated with key `to`
       }
     }
     return numSequencesUsedIn;
