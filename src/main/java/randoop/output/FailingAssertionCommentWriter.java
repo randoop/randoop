@@ -383,10 +383,14 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         }
       }
       StringBuilder errorMessage = new StringBuilder();
-      errorMessage.append(
-          String.format(
-              "Did not find \"%s\" in execution of %s%nstatus=%s%n",
-              FAILURE_MESSAGE_PATTERN.pattern(), qualifiedClassname, status));
+      if (status.exitStatus == 137) {
+        errorMessage.append("Exits status 137.  Probbaly interrupted or out of memory.");
+      } else {
+        errorMessage.append(
+            String.format(
+                "Did not find \"%s\" in execution of %s%nstatus=%s%n",
+                FAILURE_MESSAGE_PATTERN.pattern(), qualifiedClassname, status));
+      }
       errorMessage.append("Standard output:");
       errorMessage.append(Globals.lineSep);
       for (String line : status.standardOutputLines) {
@@ -401,7 +405,11 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         errorMessage.append(Globals.lineSep);
         errorMessage.append(javaCode);
       }
-      throw new RandoopBug(errorMessage.toString());
+      if (status.exitStatus == 137) {
+        throw new RandoopUsageError(errorMessage.toString());
+      } else {
+        throw new RandoopBug(errorMessage.toString());
+      }
     }
     int totalFailures = Integer.parseInt(failureCountMatch.group);
     if (totalFailures <= 0) {
