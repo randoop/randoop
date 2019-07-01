@@ -269,6 +269,8 @@ public class JUnitCreator {
     NodeList<TypeDeclaration<?>> types = new NodeList<>(classDeclaration);
     compilationUnit.setTypes(types);
 
+    System.out.printf("exiting createTestClass(%s, this=%s)%n", testClassName, this);
+
     return compilationUnit;
   }
 
