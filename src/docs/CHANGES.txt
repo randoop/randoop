@@ -13,6 +13,9 @@ methods Randoop reports.
 Randoop builds in a set of omitted methods that are nondeterministic or
 long-running.
 
+Randoop produces more assertions, by calling observer methods.  This only
+works if you supply the --side-effect-free-methods command-line argument.
+
 Command-line argument changes:
  * the --omit-methods-file argument can be repeated
  * default for --flaky-test-behavior argument changed from HALT to OUTPUT
