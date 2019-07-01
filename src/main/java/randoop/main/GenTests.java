@@ -8,7 +8,6 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -53,7 +52,6 @@ import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
 import randoop.generation.TestUtils;
 import randoop.instrument.CoveredClassVisitor;
-import randoop.operation.CallableOperation;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
@@ -574,13 +572,20 @@ public class GenTests extends GenInputsAbstract {
       String sefDefaultsFileName = "/JDK-sef-methods.txt";
       InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName);
       sideEffectFreeJDKMethods = OperationModel.readOperations(inputStream, sefDefaultsFileName);
+    } catch (RandoopUsageError rur) {
+      throw new RandoopBug(
+          String.format(
+              "Incorrectly formatted side-effect-free method in default file: %s%n", rur));
+    }
+
+    try {
       sideEffectFreeUserMethods =
           OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods);
     } catch (OperationParseException e) {
-      System.out.printf("Incorrectly formatted side-effect-free method: %s%n", e);
-      System.exit(1);
-      throw new Error("dead code");
+      throw new RandoopUsageError(
+          String.format("Incorrectly formatted side-effect-free method: %s%n", e));
     }
+
     MultiMap<Type, TypedClassOperation> result = new MultiMap<>();
     result.addAll(sideEffectFreeJDKMethods);
     result.addAll(sideEffectFreeUserMethods);
@@ -598,9 +603,9 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param flakySequences the flaky test sequences
    * @param sequences all the sequences (flaky and non-flaky)
-   * @param omitMethodsPredicate the same predicate used to filter out side-effect-free methods
+   * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
    *     during test generation
-   * @param sideEffectFreeMethodsByType map of side-effect-free methods to use as assertions
+   * @param sideEffectFreeMethodsByType map of side-effect-free methods to use in assertions
    * @param visibilityPredicate visibility predicate for side-effect-free methods
    */
   private void processAndOutputFlakyMethods(
@@ -626,14 +631,7 @@ public class GenTests extends GenInputsAbstract {
           continue;
         }
 
-        if (!RegressionCaptureGenerator.isAssertableSideEffectFree(tco)) {
-          continue;
-        }
-
-        // Ignore non-callable methods
-        CallableOperation callableOp = tco.getOperation();
-        Method method = (Method) callableOp.getReflectionObject();
-        if (!visibilityPredicate.isVisible(method)) {
+        if (!RegressionCaptureGenerator.isAssertable(tco, visibilityPredicate)) {
           continue;
         }
 
@@ -705,7 +703,7 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param sequences a list of sequences
    * @param assertableSideEffectFreeMethods a map from a type to all its side-effect-free methods
-   *     that can be used as assertions
+   *     that can be used in assertions
    * @return a map from operation to the number of sequences in which the operation occurs at least
    *     once
    */
@@ -1152,7 +1150,8 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param visibility the visibility predicate
    * @param contracts the contract checks
-   * @param omitMethodsPredicate the predicate for filtering out omit methods
+   * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
+   *     during test generation
    * @param sideEffectFreeMethodsByType the map from types to side-effect-free methods
    * @return the {@code TestCheckGenerator} that reflects command line arguments
    */
