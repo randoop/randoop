@@ -160,12 +160,16 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    OmitMethodsPredicate omitPredicate = new OmitMethodsPredicate(omitMethods);
+    OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
     model.addOperationsFromClasses(
-        model.classTypes, visibility, reflectionPredicate, omitPredicate, operationSpecifications);
+        model.classTypes,
+        visibility,
+        reflectionPredicate,
+        omitMethodsPredicate,
+        operationSpecifications);
     model.addOperationsUsingSignatures(
-        GenInputsAbstract.methodlist, visibility, reflectionPredicate, omitPredicate);
+        GenInputsAbstract.methodlist, visibility, reflectionPredicate, omitMethodsPredicate);
     model.addObjectConstructor();
 
     return model;
@@ -551,7 +555,7 @@ public class OperationModel {
    * @param classTypes the set of declaring class types for the operations, must be non-null
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
-   * @param omitPredicate the predicate for omitting operations
+   * @param omitMethodsPredicate the predicate for omitting operations
    * @param operationSpecifications the collection of {@link
    *     randoop.condition.specification.OperationSpecification}
    */
@@ -559,13 +563,17 @@ public class OperationModel {
       Set<ClassOrInterfaceType> classTypes,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate,
+      OmitMethodsPredicate omitMethodsPredicate,
       SpecificationCollection operationSpecifications) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : classTypes) {
       OperationExtractor extractor =
           new OperationExtractor(
-              classType, reflectionPredicate, omitPredicate, visibility, operationSpecifications);
+              classType,
+              reflectionPredicate,
+              omitMethodsPredicate,
+              visibility,
+              operationSpecifications);
       mgr.apply(extractor, classType.getRuntimeClass());
       operations.addAll(extractor.getOperations());
     }
@@ -577,14 +585,14 @@ public class OperationModel {
    * @param methodSignatures_file the file containing the signatures; if null, do nothing
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
-   * @param omitPredicate the predicate for omitting operations
+   * @param omitMethodsPredicate the predicate for omitting operations
    * @throws SignatureParseException if any signature is syntactically invalid
    */
   private void addOperationsUsingSignatures(
       Path methodSignatures_file,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate)
+      OmitMethodsPredicate omitMethodsPredicate)
       throws SignatureParseException {
     if (methodSignatures_file == null) {
       return;
@@ -595,7 +603,7 @@ public class OperationModel {
         if (!sig.isEmpty()) {
           TypedClassOperation operation =
               signatureToOperation(sig, visibility, reflectionPredicate);
-          if (!omitPredicate.shouldOmit(operation)) {
+          if (!omitMethodsPredicate.shouldOmit(operation)) {
             operations.add(operation);
           }
         }
