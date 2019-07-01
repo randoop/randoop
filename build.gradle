@@ -981,19 +981,15 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) 
 /*
  * Applies HTML5 validator to project site HTML, including the manual
  */
-task validateSite(dependsOn: 'html5validatorExists') {
+task validateSite(type: Exec, dependsOn: 'html5validatorExists') {
   description "Run html5validator to find HTML errors in site files (excludes manual and api)"
   if (JavaVersion.current().isJava9Compatible()) {
-    exec {
-      environment PATH: "$System.env.PATH"
-      commandLine "html5validator", "--root", "src/docs/"
-    }
+    environment PATH: "$System.env.PATH"
+    commandLine "html5validator", "--root", "src/docs/"
   } else if (JavaVersion.current().isJava8Compatible()) {
     // Before JDK9, Javadoc did not create proper HTML 5.
-    exec {
-      environment PATH: "$System.env.PATH"
-      commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
-    }
+    environment PATH: "$System.env.PATH"
+    commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
   } else {
     commandLine "echo", "WARNING: HTML validation of API documentation is only run in Java 9+."
   }
