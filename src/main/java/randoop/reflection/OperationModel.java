@@ -5,6 +5,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -93,6 +94,9 @@ public class OperationModel {
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
+  /** User-supplied predicate for methods that should not be used during test generation. */
+  private OmitMethodsPredicate omitMethodsPredicate;
+
   /** Create an empty model of test context. */
   private OperationModel() {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
@@ -160,16 +164,12 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
+    model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
     model.addOperationsFromClasses(
-        model.classTypes,
-        visibility,
-        reflectionPredicate,
-        omitMethodsPredicate,
-        operationSpecifications);
+        model.classTypes, visibility, reflectionPredicate, operationSpecifications);
     model.addOperationsUsingSignatures(
-        GenInputsAbstract.methodlist, visibility, reflectionPredicate, omitMethodsPredicate);
+        GenInputsAbstract.methodlist, visibility, reflectionPredicate);
     model.addObjectConstructor();
 
     return model;
@@ -298,29 +298,61 @@ public class OperationModel {
    *
    * @param file a file that contains method or constructor signatures, one per line. If null, this
    *     method returns an empty map.
-   * @param onlyMethods if true, throw an exception if a constructor is read
    * @return a map from each class type to the set of methods and constructors in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public static MultiMap<Type, TypedOperation> readOperations(
-      @Nullable Path file, boolean onlyMethods) throws OperationParseException {
+  public static MultiMap<Type, TypedClassOperation> readOperations(@Nullable Path file)
+      throws OperationParseException {
     if (file != null) {
-      MultiMap<Type, TypedOperation> sideEffectFreeMethodsByType = new MultiMap<>();
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
-        for (String line : er) {
-          String sig = line.trim();
-          TypedClassOperation operation =
-              signatureToOperation(
-                  sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
-          sideEffectFreeMethodsByType.add(operation.getDeclaringType(), operation);
-        }
-        return sideEffectFreeMethodsByType;
+        return OperationModel.readOperations(er);
       } catch (IOException e) {
         String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
         throw new RandoopUsageError(message, e);
       }
     }
     return new MultiMap<>();
+  }
+
+  /**
+   * Returns operations read from the given EntryReader, which contains fully-qualified method
+   * signatures.
+   *
+   * @param er the EntryReader to read from
+   * @return contents of the file, as a map of operations
+   * @throws IOException if there's a problem reading the file
+   */
+  private static MultiMap<Type, TypedClassOperation> readOperations(EntryReader er) {
+    MultiMap<Type, TypedClassOperation> operationsMap = new MultiMap<>();
+    for (String line : er) {
+      String sig = line.trim();
+      TypedClassOperation operation =
+          signatureToOperation(sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
+      operationsMap.add(operation.getDeclaringType(), operation);
+    }
+    return operationsMap;
+  }
+
+  /**
+   * Returns operations read from the given stream, which contains fully-qualified method
+   * signatures.
+   *
+   * @param is the stream from which to read
+   * @param filename the file name to use in diagnostic messages
+   * @return contents of the file, as a map of operations
+   */
+  public static MultiMap<Type, TypedClassOperation> readOperations(
+      InputStream is, String filename) {
+    if (is == null) {
+      throw new RandoopBug("input stream is null for file " + filename);
+    }
+    // Read method omissions from user-provided file
+    try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
+      return OperationModel.readOperations(er);
+    } catch (IOException e) {
+      String message = String.format("Error while reading file %s: %s%n", filename, e.getMessage());
+      throw new RandoopUsageError(message, e);
+    }
   }
 
   /**
@@ -369,6 +401,15 @@ public class OperationModel {
    */
   public ContractSet getContracts() {
     return contracts;
+  }
+
+  /**
+   * Returns the user-specified predicate for methods that should not be called.
+   *
+   * @return the user-specified predicate for methods that should not be called
+   */
+  public OmitMethodsPredicate getOmitMethodsPredicate() {
+    return omitMethodsPredicate;
   }
 
   /**
@@ -555,7 +596,6 @@ public class OperationModel {
    * @param classTypes the set of declaring class types for the operations, must be non-null
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
-   * @param omitMethodsPredicate the predicate for omitting operations
    * @param operationSpecifications the collection of {@link
    *     randoop.condition.specification.OperationSpecification}
    */
@@ -563,7 +603,6 @@ public class OperationModel {
       Set<ClassOrInterfaceType> classTypes,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitMethodsPredicate,
       SpecificationCollection operationSpecifications) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : classTypes) {
@@ -585,14 +624,12 @@ public class OperationModel {
    * @param methodSignatures_file the file containing the signatures; if null, do nothing
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
-   * @param omitMethodsPredicate the predicate for omitting operations
    * @throws SignatureParseException if any signature is syntactically invalid
    */
   private void addOperationsUsingSignatures(
       Path methodSignatures_file,
       VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitMethodsPredicate)
+      ReflectionPredicate reflectionPredicate)
       throws SignatureParseException {
     if (methodSignatures_file == null) {
       return;
