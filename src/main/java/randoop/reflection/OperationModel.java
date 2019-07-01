@@ -310,7 +310,7 @@ public class OperationModel {
                   sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
           sideEffectFreeMethodsByType.add(operation.getDeclaringType(), operation);
         }
-        return sideEffectFreeMap;
+        return sideEffectFreeMethodsByType;
       } catch (IOException e) {
         String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
         throw new RandoopUsageError(message, e);
