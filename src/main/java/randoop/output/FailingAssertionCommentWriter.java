@@ -384,7 +384,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       }
       StringBuilder errorMessage = new StringBuilder();
       if (status.exitStatus == 137) {
-        errorMessage.append("Exits status 137.  Probbaly interrupted or out of memory.");
+        errorMessage.append("Exit status 137.  Probbaly interrupted or out of memory.");
       } else {
         errorMessage.append(
             String.format(
