@@ -295,7 +295,7 @@ public class OperationModel {
    * @param file a file that contains method or constructor signatures, one per line. If null, this
    *     method returns an empty map.
    * @param onlyMethods if true, throw an exception if a constructor is read
-   * @return a map from each class type to the set of methods/constructors in it
+   * @return a map from each class type to the set of methods and constructors in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
   public static MultiMap<Type, TypedOperation> readOperations(
