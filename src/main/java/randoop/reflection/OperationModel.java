@@ -298,13 +298,15 @@ public class OperationModel {
   /**
    * Given a file containing fully-qualified method signatures, returns the operations for them.
    *
-   * @param file a file that contains method or constructor signatures, one per line
+   * @param file a file that contains method or constructor signatures, one per line. If null, this
+   *     method returns an empty map.
    * @return a map from each class type to the set of methods and constructors in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public static MultiMap<Type, TypedClassOperation> readOperations(Path file)
+  public static MultiMap<Type, TypedClassOperation> readOperations(@Nullable Path file)
       throws OperationParseException {
     if (file != null) {
+      MultiMap<Type, TypedOperation> sideEffectFreeMethodsByType = new MultiMap<>();
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
         return OperationModel.readOperations(er);
       } catch (IOException e) {
