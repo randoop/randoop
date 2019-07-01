@@ -111,8 +111,7 @@ called.
 
 New command-line arguments:
 
---operation-history-log writes a table of operations used during
-generation, to either a file or standard out.
+--operation-history-log writes a table of operations used during generation.
 
 --print-file-system-state (default = false) writes any generated tests with
 compilation errors to standard out.

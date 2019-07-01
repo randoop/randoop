@@ -283,7 +283,7 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.LinkedList");
     options.addTestClass("java7.util7.Collections");
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
-    options.setOption("operation-history-log", "-"); // log to stdout
+    options.setOption("operation-history-log", "operation-log.txt");
 
     // omit methods that use Random
     options.setOption(
@@ -1619,7 +1619,7 @@ public class RandoopSystemTest {
     options.setOption("output_limit", "1000");
     options.setOption("generated_limit", "3000");
     options.setOption("flaky-test-behavior", "DISCARD");
-    options.setOption("operation-history-log", "-");
+    options.setOption("operation-history-log", "operation-log.txt");
     options.setFlag("usethreads");
     options.unsetFlag("deterministic");
 

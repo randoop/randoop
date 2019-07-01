@@ -18,8 +18,8 @@ env:
     - THIS_REPO=randoop
     - OS=ubuntu
   matrix:
-    - OS=ubuntu JDKVER=jdk8 GROUP=testPart1
-    - OS=ubuntu JDKVER=jdk8 GROUP=testPart2
+    - OS=ubuntu JDKVER=jdk8 GROUP=nonSystemTest
+    - OS=ubuntu JDKVER=jdk8 GROUP=systemTest
     - OS=ubuntu JDKVER=jdkany GROUP=misc
 ## These jobs take a long time and reveal few problems.
 #    - OS=fedora JDKVER=jdk8 GROUP=test
