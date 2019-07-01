@@ -164,9 +164,7 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    OmitMethodsPredicate omitPredicate = new OmitMethodsPredicate(omitMethods);
-
-    model.omitMethodsPredicate = omitPredicate;
+    model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
     model.addOperationsFromClasses(
         model.classTypes, visibility, reflectionPredicate, operationSpecifications);
