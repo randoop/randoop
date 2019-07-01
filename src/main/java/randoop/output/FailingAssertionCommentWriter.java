@@ -384,7 +384,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       }
       StringBuilder errorMessage = new StringBuilder();
       if (status.exitStatus == 137) {
-        errorMessage.append("Exit status 137.  Probbaly interrupted or out of memory.");
+        errorMessage.append("Exit status 137.  Probably interrupted or out of memory.");
+        errorMessage.append(Globals.lineSep);
       } else {
         errorMessage.append(
             String.format(
@@ -406,9 +407,9 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         errorMessage.append(javaCode);
       }
       if (status.exitStatus == 137) {
-        throw new RandoopUsageError(errorMessage.toString());
+        throw new RandoopUsageError(errorMessage.toString(), e);
       } else {
-        throw new RandoopBug(errorMessage.toString());
+        throw new RandoopBug(errorMessage.toString(), e);
       }
     }
     int totalFailures = Integer.parseInt(failureCountMatch.group);
