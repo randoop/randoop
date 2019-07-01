@@ -13,7 +13,6 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.CallableOperation;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -68,8 +67,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    *     the type
    * @param isVisible the visibility predicate
    * @param includeAssertions whether to include regression assertions
-   * @param omitMethodsPredicate the user-supplied predicate for removing methods that should not be
-   *     allowed to be used in assertions
+   * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
    */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
@@ -207,15 +205,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedClassOperation tco : sideEffectFreeMethods) {
-                // These checks must be kept in sync with the checks in
-                // GenTests.processAndOutputFlakyMethods()
-
-                // Ignore flaky side-effect-free methods
-                if (omitMethodsPredicate.shouldOmit(tco)) {
-                  continue;
-                }
-
-                if (!isAssertable(tco, isVisible)) {
+                if (!isAssertable(tco, omitMethodsPredicate, isVisible)) {
                   continue;
                 }
 
@@ -279,36 +269,38 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * not take user-supplied omit methods rules into account.
    *
    * @param sideEffectFreeMethod the method, which must be side-effect-free
+   * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
    * @param visibility the predicate used to check whether a method is visible to call
    * @return whether we can use this method in a side-effect-free assertion
    */
   public static boolean isAssertable(
-      TypedClassOperation sideEffectFreeMethod, VisibilityPredicate visibility) {
-    // Ignore non-visible methods
-    CallableOperation callableOp = sideEffectFreeMethod.getOperation();
-    Method method = (Method) callableOp.getReflectionObject();
+      TypedClassOperation sideEffectFreeMethod,
+      OmitMethodsPredicate omitMethodsPredicate,
+      VisibilityPredicate visibility) {
+
+    if (omitMethodsPredicate.shouldOmit(sideEffectFreeMethod)) {
+      return false;
+    }
+
+    Method method = (Method) sideEffectFreeMethod.getOperation().getReflectionObject();
     if (!visibility.isVisible(method)) {
       return false;
     }
 
-    // When outputting checks, ignore side-effect-free methods that don't take a single
-    // argument.
+    // Must have a single formal parameter.
     if (sideEffectFreeMethod.getInputTypes().size() != 1) {
       return false;
     }
 
-    // Ignore methods that return void.
+    // Must return non-void.
     if (sideEffectFreeMethod.getOutputType().isVoid()) {
       return false;
     }
-
     Class<?> outputClass = sideEffectFreeMethod.getOutputType().getRuntimeClass();
-
     // Ignore the null reference type.
     if (outputClass == null) {
       return false;
     }
-
     // Don't create assertions over types that are not either primitives
     // or strings or enums.
     if (!PrimitiveTypes.isBoxedPrimitive(outputClass)
