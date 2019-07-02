@@ -1921,7 +1921,18 @@ public class RandoopSystemTest {
             "java.util.ArrayList.outOfBoundsMsg(int, int) ignore",
             "java.util.ArrayList.removeIf(java.util.function.Predicate, int, int) ignore",
             "java.util.ArrayList.setBit(long[], int) ignore",
-            "java.util.ArrayList.shiftTailOverGap(java.lang.Object[], int, int) ignore"
+            "java.util.ArrayList.shiftTailOverGap(java.lang.Object[], int, int) ignore",
+            // next 10 methods are inconsistent Java 8,9 vs 11, so ignore
+            "java.util.ArrayList.checkForComodification(int) ignore",
+            "java.util.ArrayList.equals(java.lang.Object) ignore",
+            "java.util.ArrayList.equalsArrayList(java.util.ArrayList) ignore",
+            "java.util.ArrayList.equalsRange(java.util.List, int, int) ignore",
+            "java.util.ArrayList.fastRemove(java.lang.Object[], int) ignore",
+            "java.util.ArrayList.hashCode() ignore",
+            "java.util.ArrayList.hashCodeRange(int, int) ignore",
+            "java.util.ArrayList.indexOfRange(java.lang.Object, int, int) ignore",
+            "java.util.ArrayList.lastIndexOfRange(java.lang.Object, int, int) ignore",
+            "java.util.ArrayList.replaceAllRange(java.util.function.UnaryOperator, int, int) ignore"
             // end of list (line break to permit easier sorting)
             );
     generateAndTest(
