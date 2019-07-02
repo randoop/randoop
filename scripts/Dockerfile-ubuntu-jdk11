@@ -15,8 +15,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   git \
   gradle \
   xvfb \
-  openjdk-8-jdk \
-&& update-java-alternatives --set java-1.8.0-openjdk-amd64 \
+  default-jdk \
 && apt-get -qqy update \
 && apt-get -qqy install \
   python-pip \
