@@ -803,7 +803,8 @@ public class GenTests extends GenInputsAbstract {
     try {
       List<String> testClasses = new ArrayList<>();
 
-      // The test names start with classNamePrefix and are suffixed by integers starting with 0.
+      // The test class names start with classNamePrefix and are suffixed by integers starting with
+      // 0.
       int numTests = testSequences.size();
       int numFiles = (numTests - 1) / testsperfile + 1;
 
@@ -814,6 +815,7 @@ public class GenTests extends GenInputsAbstract {
         List<ExecutableSequence> partition =
             testSequences.subList(firstTestNum, Math.min((i + 1) * testsperfile, numTests));
         String testClassName = classNamePrefix + i;
+        testClasses.add(testClassName);
         CompilationUnit classAST =
             junitCreator.createTestClass(testClassName, methodNameGenerator, partition);
         String classSource = classAST.toString();
