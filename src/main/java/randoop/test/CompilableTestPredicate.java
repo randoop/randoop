@@ -90,7 +90,7 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
         if (((ExceptionalExecution) sequenceResult).getException()
             instanceof randoop.util.TimeoutExceededException) {
           // Do not count TimeoutExceeded as a CompileFailure.
-          return result;
+          return true;
         }
       }
     }
@@ -98,9 +98,9 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
   }
 
   /**
-   * Test the source text directly. This is here to allow the mechanics of the predicate to be
-   * tested directly. Otherwise, we have to create a broken {@link ExecutableSequence}, which may
-   * not always be possible.
+   * Return true if the given source code compiles without error. This is here to allow the
+   * mechanics of the predicate to be tested directly. Otherwise, we have to create a broken broken
+   * {@link ExecutableSequence}, which may not always be possible.
    *
    * @param testClassName the name of the test class
    * @param source the source text for the class
