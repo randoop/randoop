@@ -65,39 +65,6 @@ jobs:
             - ~/.gradle
           key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
 
-  systemTestDebug:
-
-    docker:
-      - image: mdernst/ubuntu-for-randoop-jdk8
-
-    steps:
-
-      - restore_cache:
-          keys:
-            - source-v2-{{ .Branch }}-{{ .Revision }}
-            - source-v2-{{ .Branch }}-
-            - source-v2-
-      - checkout
-      - save_cache:
-          key: source-v2-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - ".git"
-
-      - restore_cache:
-          keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
-            - gradle-v2-{{ .Branch }}-
-            - gradle-v2-
-
-      - run:
-          command: ./.circleci/systemTestDebug.sh
-          no_output_timeout: 20m
-
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
-
   misc:
 
     docker:
@@ -136,4 +103,3 @@ workflows:
       - nonSystemTest
       - systemTest
       - misc
-      - systemTestDebug
