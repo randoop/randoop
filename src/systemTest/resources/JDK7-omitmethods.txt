@@ -1,0 +1,22 @@
+# Long-running.  With sufficiently small arguments, can be fast.
+# (nothing here at present)
+
+# Nondeterministic
+^java7\.util7\.AbstractList\.hashCode\(\)$
+^java7\.util7\.AbstractSet\.hashCode\(\)$
+^java7\.util7\.Arrays\.deepHashCode\(java\.lang\.Object\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(boolean\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(byte\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(char\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(double\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(float\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(int\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(java\.lang\.Object\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(long\[\]\)$
+^java7\.util7\.Arrays\.hashCode\(short\[\]\)$
+^java7\.util7\.Collection\.hashCode\(\)$
+^java7\.util7\.Collections\.shuffle\(java7\.util7\.List\)$
+^java7\.util7\.Comparator\.compare\(java\.lang\.Object, java\.lang\.Object\)$
+^java7\.util7\.List\.hashCode\(\)$
+^java7\.util7\.Random\.<init>\(\)$
+^java7\.util7\.Set\.hashCode\(\)$
