@@ -80,7 +80,7 @@ public class RandoopSystemTest {
   public static RandoopOptions createRandoopOptions(SystemTestEnvironment testEnvironment) {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setOption("side-effect-free-methods", "resources/systemTest/JDK7-sef-methods.txt");
-    options.setOption("omitmethods-file", "resources/systemTest/omitmethods-defaults.txt");
+    options.setOption("omitmethods-file", "resources/systemTest/JDK7-omitmethods.txt");
     return options;
   }
 
@@ -202,10 +202,6 @@ public class RandoopSystemTest {
     options.setFlag("debug_checks");
     options.setOption("omit-field-list", "resources/systemTest/testclassomitfields.txt");
 
-    // omit methods that use Random
-    options.setOption(
-        "omitmethods", "java7\\.util7\\.Collections\\.shuffle\\(java7\\.util7\\.List\\)");
-
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
@@ -286,10 +282,6 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.Collections");
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
     options.setOption("operation-history-log", "operation-log.txt");
-
-    // omit methods that use Random
-    options.setOption(
-        "omitmethods", "java7\\.util7\\.Collections\\.shuffle\\(java7\\.util7\\.List\\)");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
@@ -405,10 +397,6 @@ public class RandoopSystemTest {
     options.setOption("input-selection", "small-tests");
     options.setFlag("clear=2000");
     options.addClassList("resources/systemTest/jdk_classlist.txt");
-
-    // omit methods that use Random
-    options.setOption(
-        "omitmethods", "java7\\.util7\\.Collections\\.shuffle\\(java7\\.util7\\.List\\)");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
