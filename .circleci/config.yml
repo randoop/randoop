@@ -133,7 +133,7 @@ workflows:
   version: 2
   build:
     jobs:
-      # - nonSystemTest
-      # - systemTest
-      # - misc
+      - nonSystemTest
+      - systemTest
+      - misc
       - systemTestDebug
