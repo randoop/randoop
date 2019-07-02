@@ -179,7 +179,6 @@ public class JUnitCreator {
    */
   public CompilationUnit createTestClass(
       String testClassName, NameGenerator methodNameGen, List<ExecutableSequence> sequences) {
-    System.out.printf("createTestClass(%s, this=%s)%n", testClassName, this);
     this.classMethodCounts.put(testClassName, sequences.size());
 
     CompilationUnit compilationUnit = new CompilationUnit();

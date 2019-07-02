@@ -36,7 +36,7 @@ class RandoopRunStatus {
 
   /**
    * The top suspected "flaky" nondeterministic methods to output. The size is no greater than
-   * {@link GenInputsAbstract#nondeterministic_methods_to_output}.
+   * {@link randoop.main.GenInputsAbstract#nondeterministic_methods_to_output}.
    */
   final List<String> suspectedFlakyMethodNames;
 
@@ -123,17 +123,25 @@ class RandoopRunStatus {
   static RandoopRunStatus generateAndCompile(
       SystemTestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
 
+    /// Generate tests.
+
     ProcessStatus randoopExitStatus = generate(testEnvironment, options);
 
     int exitStatus = randoopExitStatus.exitStatus;
+    System.out.printf("Test generation exited with %d exit status.", exitStatus);
     if (exitStatus != 0) {
       if (allowRandoopFailure) {
         return getRandoopRunStatus(randoopExitStatus);
       } else {
         System.out.println(randoopExitStatus.dump());
-        fail("Randoop exited with " + exitStatus + " exit status, see details above.");
+        fail(
+            String.format(
+                "Test generation exited with %d exit status, see process status details above.",
+                exitStatus));
       }
     }
+
+    /// Check that test files are there.
 
     String packageName = options.getPackageName();
     String packagePathString = packageName == null ? "" : packageName.replace('.', '/');
@@ -153,6 +161,8 @@ class RandoopRunStatus {
       }
       fail("No test class source files found");
     }
+
+    /// Compile.
 
     Path classDir = testEnvironment.classDir;
     CompilationStatus compileStatus =
@@ -178,6 +188,7 @@ class RandoopRunStatus {
         testClassFiles.size(),
         is(equalTo(testSourceFiles.size())));
 
+    // Compilation succeeded.  Return the result of test generation.
     return getRandoopRunStatus(randoopExitStatus);
   }
 
