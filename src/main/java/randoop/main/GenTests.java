@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +91,6 @@ import randoop.test.TestCheckGenerator;
 import randoop.test.ValidityCheckingGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
-import randoop.util.CollectionsExt;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
@@ -776,20 +774,20 @@ public class GenTests extends GenInputsAbstract {
    * the files using the {@link CodeWriter}. Writes the test suite if {@link
    * GenInputsAbstract#junit_reflection_allowed} is true, or the test driver, otherwise.
    *
-   * <p>Class names are numbered with {@code basename} as the prefix. The package for tests is
-   * {@link GenInputsAbstract#junit_package_name}.
+   * <p>Class names are numbered with {@code classNamePrefix} as the prefix. The package for tests
+   * is {@link GenInputsAbstract#junit_package_name}.
    *
    * @param junitCreator the {@link JUnitCreator} to create the test class source
    * @param testSequences a list of {@link ExecutableSequence} objects for test methods
    * @param codeWriter the {@link CodeWriter} to output the test classes
-   * @param basename the prefix for the class name
+   * @param classNamePrefix the prefix for the class name
    * @param testKind a {@code String} indicating the kind of tests for logging and error messages
    */
   private void writeTestFiles(
       JUnitCreator junitCreator,
       List<ExecutableSequence> testSequences,
       CodeWriter codeWriter,
-      String basename,
+      String classNamePrefix,
       String testKind) {
     if (testSequences.isEmpty()) {
       if (GenInputsAbstract.progressdisplay) {
@@ -803,38 +801,48 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("Writing JUnit tests...%n");
     }
     try {
-      List<Path> testFiles = new ArrayList<>();
+      List<String> testClasses = new ArrayList<>();
 
-      // Create and write test classes.
-      LinkedHashMap<String, CompilationUnit> testMap =
-          getTestASTMap(basename, testSequences, junitCreator);
-      for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
-        String classname = entry.getKey();
-        String classSource = entry.getValue().toString();
-        testFiles.add(
+      int numTests = testSequences.size();
+      // Test class names are classNamePrefix, followed by an integer in 0..numFiles-1.
+      int numFiles = (numTests - 1) / testsperfile + 1;
+
+      NameGenerator methodNameGenerator = new NameGenerator(TEST_METHOD_NAME_PREFIX, 1, numTests);
+
+      for (int i = 0; i < numFiles; i++) {
+        List<ExecutableSequence> partition =
+            testSequences.subList(i * testsperfile, Math.min((i + 1) * testsperfile, numTests));
+        String testClassName = classNamePrefix + i;
+        testClasses.add(testClassName);
+        CompilationUnit classAST =
+            junitCreator.createTestClass(testClassName, methodNameGenerator, partition);
+        String classSource = classAST.toString();
+        if (GenInputsAbstract.progressdisplay) {
+          System.out.printf("CodeWriter %s will write class %s.%n", codeWriter, testClassName);
+        }
+        Path testFile =
             codeWriter.writeClassCode(
-                GenInputsAbstract.junit_package_name, classname, classSource));
+                GenInputsAbstract.junit_package_name, testClassName, classSource);
+        if (GenInputsAbstract.progressdisplay) {
+          System.out.printf("Created file %s%n", testFile.toAbsolutePath());
+        }
       }
 
       // Create and write suite or driver class.
       String driverName;
       String classSource;
       if (GenInputsAbstract.junit_reflection_allowed) {
-        driverName = basename;
-        classSource = junitCreator.createTestSuite(driverName, testMap.keySet());
+        driverName = classNamePrefix;
+        classSource = junitCreator.createTestSuite(driverName, testClasses);
       } else {
-        driverName = basename + "Driver";
-        classSource =
-            junitCreator.createTestDriver(driverName, testMap.keySet(), testSequences.size());
+        driverName = classNamePrefix + "Driver";
+        classSource = junitCreator.createTestDriver(driverName, testClasses, numTests);
       }
-      testFiles.add(
+      Path suiteFile =
           codeWriter.writeUnmodifiedClassCode(
-              GenInputsAbstract.junit_package_name, driverName, classSource));
+              GenInputsAbstract.junit_package_name, driverName, classSource);
       if (GenInputsAbstract.progressdisplay) {
-        System.out.println();
-        for (Path f : testFiles) {
-          System.out.printf("Created file %s%n", f.toAbsolutePath());
-        }
+        System.out.printf("Created file %s%n", suiteFile.toAbsolutePath());
       }
     } catch (RandoopOutputException e) {
       System.out.printf("%nError writing %s tests%n", testKind.toLowerCase());
@@ -1107,33 +1115,6 @@ public class GenTests extends GenInputsAbstract {
     }
 
     return isOutputTest;
-  }
-
-  /**
-   * Creates the JUnit test classes for the given sequences, in AST (abstract syntax tree) form.
-   *
-   * @param classNamePrefix the class name prefix
-   * @param sequences the sequences for test methods of the created test classes
-   * @param junitCreator the JUnit creator to create the abstract syntax trees for the test classes
-   * @return mapping from a class name to the abstract syntax tree for the class
-   */
-  private LinkedHashMap<String, CompilationUnit> getTestASTMap(
-      String classNamePrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
-
-    LinkedHashMap<String, CompilationUnit> testMap = new LinkedHashMap<>();
-
-    NameGenerator methodNameGenerator =
-        new NameGenerator(TEST_METHOD_NAME_PREFIX, 1, sequences.size());
-    List<List<ExecutableSequence>> sequencePartition =
-        CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
-    for (int i = 0; i < sequencePartition.size(); i++) {
-      List<ExecutableSequence> partition = sequencePartition.get(i);
-      String testClassName = classNamePrefix + i;
-      CompilationUnit classAST =
-          junitCreator.createTestClass(testClassName, methodNameGenerator, partition);
-      testMap.put(testClassName, classAST);
-    }
-    return testMap;
   }
 
   /**
