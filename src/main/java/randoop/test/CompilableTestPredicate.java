@@ -73,7 +73,6 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    */
   @Override
   public boolean test(ExecutableSequence sequence) {
-    System.out.printf("test(%d)%n", sequence.hashCode());
     String testClassName = classNameGenerator.next();
     List<ExecutableSequence> sequences = Collections.singletonList(sequence);
     CompilationUnit source =
