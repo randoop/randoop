@@ -803,17 +803,15 @@ public class GenTests extends GenInputsAbstract {
     try {
       List<String> testClasses = new ArrayList<>();
 
-      // The test class names start with classNamePrefix and are suffixed by integers starting with
-      // 0.
       int numTests = testSequences.size();
+      // Test class names are classNamePrefix, followed by an integer in 0..numFiles-1.
       int numFiles = (numTests - 1) / testsperfile + 1;
 
       NameGenerator methodNameGenerator = new NameGenerator(TEST_METHOD_NAME_PREFIX, 1, numTests);
 
       for (int i = 0; i < numFiles; i++) {
-        int firstTestNum = i * testsperfile;
         List<ExecutableSequence> partition =
-            testSequences.subList(firstTestNum, Math.min((i + 1) * testsperfile, numTests));
+            testSequences.subList(i * testsperfile, Math.min((i + 1) * testsperfile, numTests));
         String testClassName = classNamePrefix + i;
         testClasses.add(testClassName);
         CompilationUnit classAST =
