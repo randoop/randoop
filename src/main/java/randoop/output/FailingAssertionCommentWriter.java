@@ -117,6 +117,9 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       throws RandoopOutputException {
     assert !Objects.equals(packageName, "");
 
+    System.out.printf(
+        "FailingAssertionCommentWriter.writeClassCode(%s, %s)%n", packageName, classname);
+
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     int iteration = 0; // Used to create unique working directory name.
@@ -151,7 +154,18 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         } else if (status.timedOut) {
           throw new Error("Timed out for class " + qualifiedClassname + ": " + status);
         } else if (status.exitStatus == 137) {
-          throw new Error("Exit status 137 for class " + qualifiedClassname + ": " + status);
+          System.out.printf(
+              "Exit status 137 for: FailingAssertionCommentWriter.writeClassCode(%s, %s)%n",
+              packageName, classname);
+          System.out.printf("classSource%n");
+          System.out.println(classSource);
+          throw new Error(
+              "Exit status 137 for class "
+                  + qualifiedClassname
+                  + ": "
+                  + status
+                  + "classSource: "
+                  + classSource);
         } else {
           classSource =
               commentFailingAssertions(packageName, classname, classSource, status, flakyTestNames);
