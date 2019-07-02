@@ -827,14 +827,9 @@ public class GenTests extends GenInputsAbstract {
             testSequences.subList(i * testsperfile, Math.min((i + 1) * testsperfile, numTests));
         String testClassName = classNamePrefix + i;
         testClasses.add(testClassName);
-        System.out.printf("About to call createTestClass(%s, %s)%n", testClassName, junitCreator);
         CompilationUnit classAST =
             junitCreator.createTestClass(testClassName, methodNameGenerator, partition);
-        System.out.printf("Called createTestClass(%s, %s)%n", testClassName, junitCreator);
         String classSource = classAST.toString();
-        if (GenInputsAbstract.progressdisplay) {
-          System.out.printf("CodeWriter %s will write class %s.%n", codeWriter, testClassName);
-        }
         Path testFile =
             codeWriter.writeClassCode(
                 GenInputsAbstract.junit_package_name, testClassName, classSource);
