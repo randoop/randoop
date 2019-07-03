@@ -79,7 +79,8 @@ class RandoopRunStatus {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
-    command.add("-Xmx3000m");
+    // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
+    command.add("-Xmx2000m");
     if (testEnvironment.getBootClassPath() != null
         && !testEnvironment.getBootClassPath().isEmpty()) {
       command.add("-Xbootclasspath/a:" + testEnvironment.getBootClassPath());
@@ -109,7 +110,7 @@ class RandoopRunStatus {
     command.add("randoop.main.Main");
     command.add("gentests");
     command.addAll(options.getOptions());
-    System.out.format("Randoop command:%n%s%n", command);
+    System.out.format("RandoopRunStatus.generate() command:%n%s%n", command);
     return ProcessStatus.runCommand(command);
   }
 
