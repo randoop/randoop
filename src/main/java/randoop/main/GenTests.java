@@ -545,15 +545,12 @@ public class GenTests extends GenInputsAbstract {
       if (GenInputsAbstract.progressdisplay) {
         System.out.printf("About to look for flaky methods.%n");
       }
-
-      // System.out.printf("About to call processAndOutputFlakyMethods.%n");
       processAndOutputFlakyMethods(
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
           regressionSequences,
           sideEffectFreeMethodsByType,
           operationModel.getOmitMethodsPredicate(),
           visibility);
-      // System.out.printf("Called processAndOutputFlakyMethods.%n");
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
@@ -568,13 +565,9 @@ public class GenTests extends GenInputsAbstract {
           "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
     }
 
-    // System.out.printf("About to call outputTable().%n");
-
     // Operation history includes counts determined by getting regression sequences from explorer,
     // so dump after all done.
     explorer.getOperationHistory().outputTable();
-
-    // System.out.printf("returning from GenTests.handle");
 
     return true;
   }
