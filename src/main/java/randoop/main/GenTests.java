@@ -523,9 +523,6 @@ public class GenTests extends GenInputsAbstract {
         testEnvironment.setReplaceCallAgent(agentPath, agentArgs);
       }
 
-      if (GenInputsAbstract.progressdisplay) {
-        System.out.printf("%nAbout to get regression sequences.%n");
-      }
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
       if (GenInputsAbstract.progressdisplay) {
         System.out.printf("%nGot %d regression sequences.%n", regressionSequences.size());

@@ -36,7 +36,7 @@ class RandoopRunStatus {
 
   /**
    * The top suspected "flaky" nondeterministic methods to output. The size is no greater than
-   * {@link randoop.main.GenInputsAbstract#nondeterministic_methods_to_output}.
+   * {@code randoop.main.GenInputsAbstract#nondeterministic_methods_to_output}.
    */
   final List<String> suspectedFlakyMethodNames;
 
@@ -128,8 +128,7 @@ class RandoopRunStatus {
 
     ProcessStatus randoopExitStatus = generate(testEnvironment, options);
 
-    int exitStatus = randoopExitStatus.exitStatus;
-    if (exitStatus != 0) {
+    if (randoopExitStatus.exitStatus != 0) {
       if (allowRandoopFailure) {
         return getRandoopRunStatus(randoopExitStatus);
       } else {
@@ -137,7 +136,7 @@ class RandoopRunStatus {
         fail(
             String.format(
                 "Test generation exited with %d exit status, see process status details above.",
-                exitStatus));
+                randoopExitStatus.exitStatus));
       }
     }
 
