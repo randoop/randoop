@@ -542,6 +542,9 @@ public class GenTests extends GenInputsAbstract {
 
       // TODO: cxing handle Error Test Sequence tallying.
       //  Currently, we don't rerun Error Test Sequences, so we do not know whether they are flaky.
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf("About to look for flaky methods.%n");
+      }
       processAndOutputFlakyMethods(
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
           regressionSequences,
@@ -829,9 +832,6 @@ public class GenTests extends GenInputsAbstract {
         CompilationUnit classAST =
             junitCreator.createTestClass(testClassName, methodNameGenerator, partition);
         String classSource = classAST.toString();
-        if (GenInputsAbstract.progressdisplay) {
-          System.out.printf("CodeWriter %s will write class %s.%n", codeWriter, testClassName);
-        }
         Path testFile =
             codeWriter.writeClassCode(
                 GenInputsAbstract.junit_package_name, testClassName, classSource);
@@ -860,7 +860,13 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("%nError writing %s tests%n", testKind.toLowerCase());
       e.printStackTrace(System.out);
       System.exit(1);
+    } catch (Throwable e) {
+      System.out.printf("GenTests.writeTestFiles threw an exception%n");
+      e.printStackTrace();
+      e.printStackTrace(System.out);
+      throw e;
     }
+
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("Wrote %s JUnit tests.%n", testKind.toLowerCase());
     }
