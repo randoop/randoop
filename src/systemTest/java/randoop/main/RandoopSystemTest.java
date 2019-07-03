@@ -1178,6 +1178,8 @@ public class RandoopSystemTest {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
+    // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
+    command.add("-Xmx2000m");
     command.add("-classpath");
     command.add(testEnvironment.testClassPath);
     command.add(driverName);
