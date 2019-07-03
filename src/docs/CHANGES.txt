@@ -2,9 +2,6 @@ Version 4.2.0, released ??
 
 Randoop supports Java 9 (and still supports Java 8).
 
-New --testjar, --omit-classes, and --omit-classes-file arguments to
-make it easy to test all classes in a .jar file.
-
 Randoop reports methods under test that may be nondeterministic or
 dependent on side-effected global state.  New command-line option
 --nondeterministic-methods-to-output controls how many suspicious
@@ -15,6 +12,11 @@ long-running.
 
 Randoop produces more assertions, by calling observer methods.  This only
 works if you supply the --side-effect-free-methods command-line argument.
+
+New command-line arguments:
+ * --testjar, --omit-classes, and --omit-classes-file
+   make it easy to test all classes in a .jar file.
+ * --jvm-max-memory indicates how much memory to use when starting a new JVM.
 
 Command-line argument changes:
  * the --omit-methods-file argument can be repeated
