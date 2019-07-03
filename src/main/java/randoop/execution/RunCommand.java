@@ -137,8 +137,8 @@ public class RunCommand {
       StringBuilder sb = new StringBuilder();
       sb.append(
           String.format(
-              "Status for command \"%s\" = %d (timedOut=%s)",
-              UtilPlume.join(command, " "), exitStatus, timedOut));
+              "Status %d (timedOut=%s) for command \"%s\"",
+              exitStatus, timedOut, UtilPlume.join(command, " ")));
       describeLines("stdout", standardOutputLines, sb);
       describeLines("stderr", errorOutputLines, sb);
       return sb.toString();
