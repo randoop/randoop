@@ -144,6 +144,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
         Status status;
         try {
+          // TODO: I can run with debug!
           status = testEnvironment.runTest(qualifiedClassname, workingDirectory);
         } catch (CommandException e) {
           throw new RandoopBug("Error filtering regression tests", e);
@@ -152,15 +153,15 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         if (status.exitStatus == 0) {
           passing = true;
         } else if (status.timedOut) {
-          throw new Error("Timed out for class " + qualifiedClassname + ": " + status);
+          throw new Error("runTest timed out for class " + qualifiedClassname + ": " + status);
         } else if (status.exitStatus == 137) {
           System.out.printf(
-              "Exit status 137 for: FailingAssertionCommentWriter.writeClassCode(%s, %s)%n",
+              "runTest exit status 137 in FailingAssertionCommentWriter.writeClassCode(%s, %s)%n",
               packageName, classname);
-          System.out.printf("classSource%n");
+          System.out.printf("classSource:%n");
           System.out.println(classSource);
           throw new Error(
-              "Exit status 137 for class "
+              "runTest exit status 137 for class "
                   + qualifiedClassname
                   + ": "
                   + status
