@@ -195,9 +195,18 @@ dependencies {
   testInputImplementation configurations.junit.dependencies
 
   if ("true".equals(project.ext.useCheckerFramework)) {
-    checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
-    checkerFramework 'org.checkerframework:jdk8:' + checkerFrameworkVersion
-    checkerFramework 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+    if (project.hasProperty("cfLocal")) {
+      def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
+      compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+      testCompileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+      checkerFramework files(cfHome + "/checker/dist/checker.jar")
+      checkerFrameworkAnnotatedJDK files(cfHome + "/checker/dist/jdk8.jar")
+    } else {
+      compileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+      testCompileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+      checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
+      checkerFrameworkAnnotatedJDK 'org.checkerframework:jdk8:' + checkerFrameworkVersion
+    }
   } else {
     errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
   }
