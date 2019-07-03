@@ -1183,6 +1183,7 @@ public class RandoopSystemTest {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
+    command.add("-Xmx3000m");
     command.add("-classpath");
     command.add(testEnvironment.testClassPath);
     command.add(driverName);

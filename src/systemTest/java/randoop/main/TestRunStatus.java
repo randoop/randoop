@@ -85,6 +85,7 @@ class TestRunStatus {
       command.add(agent);
     }
     command.add("-ea");
+    command.add("-Xmx3000m");
     command.add("-classpath");
     command.add(testClasspath);
     command.add("org.junit.runner.JUnitCore");
