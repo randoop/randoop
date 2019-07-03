@@ -128,7 +128,7 @@ class RandoopRunStatus {
     ProcessStatus randoopExitStatus = generate(testEnvironment, options);
 
     int exitStatus = randoopExitStatus.exitStatus;
-    System.out.printf("Test generation exited with %d exit status.", exitStatus);
+    System.out.printf("Test generation exited with %d exit status.%n", exitStatus);
     if (exitStatus != 0) {
       if (allowRandoopFailure) {
         return getRandoopRunStatus(randoopExitStatus);

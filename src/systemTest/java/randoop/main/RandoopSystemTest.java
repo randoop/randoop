@@ -288,12 +288,8 @@ public class RandoopSystemTest {
             options,
             "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
-            "java7.util7.ArrayList.clone() exclude",
-            "java7.util7.ArrayList.contains(java.lang.Object) exclude",
-            "java7.util7.ArrayList.elementData(int) exclude",
             "java7.util7.ArrayList.fastRemove(int) ignore",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
-            "java7.util7.ArrayList.indexOf(java.lang.Object) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.remove(int) ignore",
             "java7.util7.ArrayList.remove(java.lang.Object) ignore",
@@ -320,7 +316,6 @@ public class RandoopSystemTest {
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Collections.lastIndexOfSubList(java7.util7.List, java7.util7.List) ignore",
-            "java7.util7.Collections.list(java7.util7.Enumeration) exclude",
             "java7.util7.Collections.max(java7.util7.Collection) exclude",
             "java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) exclude",
             "java7.util7.Collections.min(java7.util7.Collection) exclude",
@@ -346,13 +341,11 @@ public class RandoopSystemTest {
             "java7.util7.LinkedList.add(int, java.lang.Object) ignore",
             "java7.util7.LinkedList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.LinkedList.addAll(java7.util7.Collection) ignore",
-            "java7.util7.LinkedList.element() exclude",
             "java7.util7.LinkedList.get(int) ignore",
             "java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) exclude",
             "java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) ignore",
             "java7.util7.LinkedList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.LinkedList.remove(int) ignore",
-            "java7.util7.LinkedList.removeFirstOccurrence(java.lang.Object) exclude",
             "java7.util7.LinkedList.set(int, java.lang.Object) ignore",
             "java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) ignore",
             "java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
@@ -426,6 +419,7 @@ public class RandoopSystemTest {
             "java7.util7.Arrays.deepEquals0(java.lang.Object, java.lang.Object) exclude",
             "java7.util7.Arrays.deepHashCode(java.lang.Object[]) exclude", // could be flaky
             "java7.util7.Arrays.fill(boolean[], int, int, boolean) ignore",
+            "java7.util7.Arrays.fill(char[], int, int, char) exclude",
             "java7.util7.Arrays.fill(float[], int, int, float) ignore",
             "java7.util7.Arrays.fill(int[], int, int, int) ignore",
             "java7.util7.Arrays.fill(java.lang.Object[], int, int, java.lang.Object) ignore",
@@ -795,12 +789,14 @@ public class RandoopSystemTest {
     RandoopRunStatus randoopRunDesc =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
-    assertThat(
-        "There should be no output; got:"
-            + lineSep
-            + UtilPlume.join(randoopRunDesc.processStatus.outputLines, lineSep),
-        randoopRunDesc.processStatus.outputLines.size(),
-        is(equalTo(0)));
+    if (randoopRunDesc.processStatus.outputLines.size() != 0) {
+      fail(
+          "There should be no output, but got "
+              + randoopRunDesc.processStatus.outputLines.size()
+              + " lines:"
+              + lineSep
+              + UtilPlume.join(randoopRunDesc.processStatus.outputLines, lineSep));
+    }
   }
 
   /** Runs with --side-effect-free-methods flag. */
