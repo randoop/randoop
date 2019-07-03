@@ -126,6 +126,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       Path workingDirectory = createWorkingDirectory(classname, iteration);
       try {
 
+        // Compile
+
         try {
           compileTestClass(packageName, classname, classSource, workingDirectory);
         } catch (FileCompiler.FileCompilerException e) {
@@ -139,6 +141,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
           continue;
         }
 
+        // Run tests
+
         Status status;
         try {
           status = testEnvironment.runTest(qualifiedClassname, workingDirectory);
@@ -149,9 +153,20 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         if (status.exitStatus == 0) {
           passing = true;
         } else if (status.timedOut) {
-          throw new Error("Timed out for class " + qualifiedClassname + ": " + status);
+          throw new Error("runTest timed out for class " + qualifiedClassname + ": " + status);
         } else if (status.exitStatus == 137) {
-          throw new Error("Exit status 137 for class " + qualifiedClassname + ": " + status);
+          System.out.printf(
+              "runTest exit status 137 in FailingAssertionCommentWriter.writeClassCode(%s, %s)%n",
+              packageName, classname);
+          System.out.printf("classSource:%n");
+          System.out.println(classSource);
+          throw new Error(
+              "runTest exit status 137 for class "
+                  + qualifiedClassname
+                  + ": "
+                  + status
+                  + "classSource: "
+                  + classSource);
         } else {
           classSource =
               commentFailingAssertions(packageName, classname, classSource, status, flakyTestNames);
@@ -391,10 +406,15 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         }
       }
       StringBuilder errorMessage = new StringBuilder();
-      errorMessage.append(
-          String.format(
-              "Did not find \"%s\" in execution of %s%nstatus=%s%n",
-              FAILURE_MESSAGE_PATTERN.pattern(), qualifiedClassname, status));
+      if (status.exitStatus == 137) {
+        errorMessage.append("Exit status 137.  Probably interrupted or out of memory.");
+        errorMessage.append(Globals.lineSep);
+      } else {
+        errorMessage.append(
+            String.format(
+                "Did not find \"%s\" in execution of %s%nstatus=%s%n",
+                FAILURE_MESSAGE_PATTERN.pattern(), qualifiedClassname, status));
+      }
       errorMessage.append("Standard output:");
       errorMessage.append(Globals.lineSep);
       for (String line : status.standardOutputLines) {
@@ -409,7 +429,11 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         errorMessage.append(Globals.lineSep);
         errorMessage.append(javaCode);
       }
-      throw new RandoopBug(errorMessage.toString());
+      if (status.exitStatus == 137) {
+        throw new RandoopUsageError(errorMessage.toString(), e);
+      } else {
+        throw new RandoopBug(errorMessage.toString(), e);
+      }
     }
     int totalFailures = Integer.parseInt(failureCountMatch.group);
     if (totalFailures <= 0) {
