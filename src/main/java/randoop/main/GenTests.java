@@ -542,14 +542,14 @@ public class GenTests extends GenInputsAbstract {
 
       // TODO: cxing handle Error Test Sequence tallying.
       //  Currently, we don't rerun Error Test Sequences, so we do not know whether they are flaky.
-      System.out.printf("About to call processAndOutputFlakyMethods.%n");
+      // System.out.printf("About to call processAndOutputFlakyMethods.%n");
       processAndOutputFlakyMethods(
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
           regressionSequences,
           sideEffectFreeMethodsByType,
           operationModel.getOmitMethodsPredicate(),
           visibility);
-      System.out.printf("Called processAndOutputFlakyMethods.%n");
+      // System.out.printf("Called processAndOutputFlakyMethods.%n");
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
@@ -564,13 +564,13 @@ public class GenTests extends GenInputsAbstract {
           "providing the information requested at https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
     }
 
-    System.out.printf("About to call outputTable().%n");
+    // System.out.printf("About to call outputTable().%n");
 
     // Operation history includes counts determined by getting regression sequences from explorer,
     // so dump after all done.
     explorer.getOperationHistory().outputTable();
 
-    System.out.printf("returning from GenTests.handle");
+    // System.out.printf("returning from GenTests.handle");
 
     return true;
   }
@@ -827,7 +827,7 @@ public class GenTests extends GenInputsAbstract {
 
       NameGenerator methodNameGenerator = new NameGenerator(TEST_METHOD_NAME_PREFIX, 1, numTests);
 
-      System.out.printf("About to create %d test files for %s%n", numFiles, classNamePrefix);
+      // System.out.printf("About to create %d test files for %s%n", numFiles, classNamePrefix);
       for (int i = 0; i < numFiles; i++) {
         List<ExecutableSequence> partition =
             testSequences.subList(i * testsperfile, Math.min((i + 1) * testsperfile, numTests));

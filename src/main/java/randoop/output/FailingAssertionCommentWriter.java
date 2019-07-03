@@ -117,8 +117,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       throws RandoopOutputException {
     assert !Objects.equals(packageName, "");
 
-    System.out.printf(
-        "FailingAssertionCommentWriter.writeClassCode(%s, %s)%n", packageName, classname);
+    // System.out.printf(
+    //     "FailingAssertionCommentWriter.writeClassCode(%s, %s)%n", packageName, classname);
 
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
