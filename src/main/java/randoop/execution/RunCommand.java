@@ -152,7 +152,7 @@ public class RunCommand {
      * @param sb where to print the represenation
      */
     private void describeLines(String source, List<String> lines, StringBuilder sb) {
-      if (lines.size() <= 222222) {
+      if (lines.size() <= 2) {
         sb.append(", ");
         sb.append(source);
         sb.append("=\"");
