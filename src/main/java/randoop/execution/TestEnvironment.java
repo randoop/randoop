@@ -92,6 +92,7 @@ public class TestEnvironment {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
+    command.add("-Xmx3000m");
 
     if (replaceCallAgentPath != null) {
       command.add("-Xbootclasspath/a:" + replaceCallAgentPath);

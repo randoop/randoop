@@ -126,6 +126,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       Path workingDirectory = createWorkingDirectory(classname, iteration);
       try {
 
+        // Compile
+
         try {
           compileTestClass(packageName, classname, classSource, workingDirectory);
         } catch (FileCompiler.FileCompilerException e) {
@@ -138,6 +140,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
                   e);
           continue;
         }
+
+        // Run tests
 
         Status status;
         try {
