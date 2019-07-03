@@ -149,9 +149,20 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         if (status.exitStatus == 0) {
           passing = true;
         } else if (status.timedOut) {
-          throw new Error("Timed out for class " + qualifiedClassname + ": " + status);
+          throw new Error("runTest timed out for class " + qualifiedClassname + ": " + status);
         } else if (status.exitStatus == 137) {
-          throw new Error("Exit status 137 for class " + qualifiedClassname + ": " + status);
+          System.out.printf(
+              "runTest exit status 137 in FailingAssertionCommentWriter.writeClassCode(%s, %s)%n",
+              packageName, classname);
+          System.out.printf("classSource:%n");
+          System.out.println(classSource);
+          throw new Error(
+              "runTest exit status 137 for class "
+                  + qualifiedClassname
+                  + ": "
+                  + status
+                  + "classSource: "
+                  + classSource);
         } else {
           classSource =
               commentFailingAssertions(packageName, classname, classSource, status, flakyTestNames);

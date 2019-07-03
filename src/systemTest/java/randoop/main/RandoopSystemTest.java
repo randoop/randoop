@@ -792,12 +792,14 @@ public class RandoopSystemTest {
     RandoopRunStatus randoopRunDesc =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
-    assertThat(
-        "There should be no output; got:"
-            + lineSep
-            + UtilPlume.join(randoopRunDesc.processStatus.outputLines, lineSep),
-        randoopRunDesc.processStatus.outputLines.size(),
-        is(equalTo(0)));
+    if (randoopRunDesc.processStatus.outputLines.size() != 0) {
+      fail(
+          "There should be no output, but got "
+              + randoopRunDesc.processStatus.outputLines.size()
+              + " lines:"
+              + lineSep
+              + UtilPlume.join(randoopRunDesc.processStatus.outputLines, lineSep));
+    }
   }
 
   /** Runs with --side-effect-free-methods flag. */
