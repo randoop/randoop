@@ -85,7 +85,8 @@ class TestRunStatus {
       command.add(agent);
     }
     command.add("-ea");
-    command.add("-Xmx3000m");
+    // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
+    command.add("-Xmx2000m");
     command.add("-classpath");
     command.add(testClasspath);
     command.add("org.junit.runner.JUnitCore");

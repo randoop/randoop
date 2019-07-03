@@ -70,7 +70,7 @@ class ProcessStatus {
    * @return the exit status and combined standard stream output
    */
   static ProcessStatus runCommand(List<String> command) {
-    // Setting tight timeout limits
+    // The timeout limits are extremely generous.  Setting tight timeout limits
     // for individual tests has caused headaches when tests are run on Travis CI.
     // 15 minutes is longer than all tests currently take, even for a slow Travis run.
     long timeout = 15 * 60 * 1000; // use 15 minutes for timeout

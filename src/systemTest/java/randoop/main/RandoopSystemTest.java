@@ -391,7 +391,10 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    options.setOption("generated_limit", "5000"); // runs out of memory on Travis if 6000
+    // runs out of memory on Travis if 6000
+    // runs out of memory on CircleCI if 5000
+    options.setOption("generated_limit", "4000");
+
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setOption("input-selection", "small-tests");
@@ -423,6 +426,7 @@ public class RandoopSystemTest {
             "java7.util7.Arrays.deepEquals0(java.lang.Object, java.lang.Object) exclude",
             "java7.util7.Arrays.deepHashCode(java.lang.Object[]) exclude", // could be flaky
             "java7.util7.Arrays.fill(boolean[], int, int, boolean) ignore",
+            "java7.util7.Arrays.fill(char[], int, int, char) exclude",
             "java7.util7.Arrays.fill(float[], int, int, float) ignore",
             "java7.util7.Arrays.fill(int[], int, int, int) ignore",
             "java7.util7.Arrays.fill(java.lang.Object[], int, int, java.lang.Object) ignore",
@@ -1186,7 +1190,8 @@ public class RandoopSystemTest {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
-    command.add("-Xmx3000m");
+    // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
+    command.add("-Xmx2000m");
     command.add("-classpath");
     command.add(testEnvironment.testClassPath);
     command.add(driverName);
