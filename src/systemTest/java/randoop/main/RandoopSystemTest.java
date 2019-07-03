@@ -273,9 +273,7 @@ public class RandoopSystemTest {
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
-    // TODO: Increase again when Randoop uses less memory.
-    // options.setOption("output_limit", "2000");
-    options.setOption("attempted_limit", "4000");
+    options.setOption("output_limit", "2000");
     options.addTestClass("java7.util7.TreeSet");
     options.addTestClass("java7.util7.ArrayList");
     options.addTestClass("java7.util7.LinkedList");
@@ -288,12 +286,8 @@ public class RandoopSystemTest {
             options,
             "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
-            "java7.util7.ArrayList.clone() ignore", // CircleCI vs. Travis
-            "java7.util7.ArrayList.contains(java.lang.Object) ignore", // CircleCI vs. Travis
-            "java7.util7.ArrayList.elementData(int) ignore", // CircleCI vs. Travis
             "java7.util7.ArrayList.fastRemove(int) ignore",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
-            "java7.util7.ArrayList.indexOf(java.lang.Object) ignore", // CircleCI vs. Travis
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.remove(int) ignore",
             "java7.util7.ArrayList.remove(java.lang.Object) ignore",
@@ -320,7 +314,6 @@ public class RandoopSystemTest {
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Collections.lastIndexOfSubList(java7.util7.List, java7.util7.List) ignore",
-            "java7.util7.Collections.list(java7.util7.Enumeration) ignore", // CircleCI vs. Travis
             "java7.util7.Collections.max(java7.util7.Collection) exclude",
             "java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) exclude",
             "java7.util7.Collections.min(java7.util7.Collection) exclude",
@@ -346,13 +339,11 @@ public class RandoopSystemTest {
             "java7.util7.LinkedList.add(int, java.lang.Object) ignore",
             "java7.util7.LinkedList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.LinkedList.addAll(java7.util7.Collection) ignore",
-            "java7.util7.LinkedList.element() ignore", // CircleCI vs. Travis
             "java7.util7.LinkedList.get(int) ignore",
             "java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) exclude",
             "java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) ignore",
             "java7.util7.LinkedList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.LinkedList.remove(int) ignore",
-            "java7.util7.LinkedList.removeFirstOccurrence(java.lang.Object) ignore", // CircleCI/Travis
             "java7.util7.LinkedList.set(int, java.lang.Object) ignore",
             "java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) ignore",
             "java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude",
@@ -391,10 +382,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    // runs out of memory on Travis if 6000
-    // runs out of memory on CircleCI if 5000
-    options.setOption("generated_limit", "4000");
-
+    options.setOption("generated_limit", "5000"); // runs out of memory on Travis if 6000
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setOption("input-selection", "small-tests");
@@ -426,7 +414,6 @@ public class RandoopSystemTest {
             "java7.util7.Arrays.deepEquals0(java.lang.Object, java.lang.Object) exclude",
             "java7.util7.Arrays.deepHashCode(java.lang.Object[]) exclude", // could be flaky
             "java7.util7.Arrays.fill(boolean[], int, int, boolean) ignore",
-            "java7.util7.Arrays.fill(char[], int, int, char) exclude",
             "java7.util7.Arrays.fill(float[], int, int, float) ignore",
             "java7.util7.Arrays.fill(int[], int, int, int) ignore",
             "java7.util7.Arrays.fill(java.lang.Object[], int, int, java.lang.Object) ignore",
