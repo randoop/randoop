@@ -225,6 +225,9 @@ task compileAll() {
   dependsOn compileSystemTestJava
 }
 
+// Get early notification of compilation failures.
+assemble.dependsOn compileAll
+
 // This isn't working; maybe I need to make it run first.
 // Get early notification of any compilation failures, before running any tests
 build.dependsOn compileAll
