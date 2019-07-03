@@ -831,7 +831,6 @@ public class GenTests extends GenInputsAbstract {
 
       NameGenerator methodNameGenerator = new NameGenerator(TEST_METHOD_NAME_PREFIX, 1, numTests);
 
-      // System.out.printf("About to create %d test files for %s%n", numFiles, classNamePrefix);
       for (int i = 0; i < numFiles; i++) {
         List<ExecutableSequence> partition =
             testSequences.subList(i * testsperfile, Math.min((i + 1) * testsperfile, numTests));

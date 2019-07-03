@@ -99,7 +99,7 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
   }
 
   /**
-   * o * Return true if the given source code compiles without error. This is here to allow the
+   * Return true if the given source code compiles without error. This is here to allow the
    * mechanics of the predicate to be tested directly. Otherwise, we have to create a broken {@link
    * ExecutableSequence}, which may not always be possible.
    *
