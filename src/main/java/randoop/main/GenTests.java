@@ -542,6 +542,10 @@ public class GenTests extends GenInputsAbstract {
 
       // TODO: cxing handle Error Test Sequence tallying.
       //  Currently, we don't rerun Error Test Sequences, so we do not know whether they are flaky.
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf("About to look for flaky methods.%n");
+      }
+
       // System.out.printf("About to call processAndOutputFlakyMethods.%n");
       processAndOutputFlakyMethods(
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
