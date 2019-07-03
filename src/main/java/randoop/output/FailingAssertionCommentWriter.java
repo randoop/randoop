@@ -117,9 +117,6 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       throws RandoopOutputException {
     assert !Objects.equals(packageName, "");
 
-    // System.out.printf(
-    //     "FailingAssertionCommentWriter.writeClassCode(%s, %s)%n", packageName, classname);
-
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
     int iteration = 0; // Used to create unique working directory name.
@@ -148,7 +145,6 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
         Status status;
         try {
-          // TODO: I can run with debug!
           status = testEnvironment.runTest(qualifiedClassname, workingDirectory);
         } catch (CommandException e) {
           throw new RandoopBug("Error filtering regression tests", e);
