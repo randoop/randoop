@@ -478,6 +478,11 @@ public class GenTests extends GenInputsAbstract {
       throw new RandoopBug("Error executing generated sequence", e);
     } catch (RandoopLoggingError e) {
       throw new RandoopBug("Logging error", e);
+    } catch (Throwable e) {
+      System.out.printf("createAndClassifySequences throw an exception%n");
+      e.printStackTrace();
+      e.printStackTrace(System.out);
+      throw e;
     }
 
     // post generation
@@ -494,6 +499,7 @@ public class GenTests extends GenInputsAbstract {
             afterEachFixtureBody);
 
     JavaFileWriter javaFileWriter = new JavaFileWriter(junit_output_dir);
+
     if (!GenInputsAbstract.no_error_revealing_tests) {
       CodeWriter codeWriter = javaFileWriter;
       if (GenInputsAbstract.minimize_error_test || GenInputsAbstract.stop_on_error_test) {
@@ -518,6 +524,11 @@ public class GenTests extends GenInputsAbstract {
       }
 
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf(
+            "%nAbout to look for failing assertions in %d regression sequences.%n",
+            regressionSequences.size());
+      }
 
       FailingAssertionCommentWriter codeWriter =
           new FailingAssertionCommentWriter(testEnvironment, javaFileWriter);
@@ -530,6 +541,9 @@ public class GenTests extends GenInputsAbstract {
 
       // TODO: cxing handle Error Test Sequence tallying.
       //  Currently, we don't rerun Error Test Sequences, so we do not know whether they are flaky.
+      if (GenInputsAbstract.progressdisplay) {
+        System.out.printf("About to look for flaky methods.%n");
+      }
       processAndOutputFlakyMethods(
           testNamesToSequences(codeWriter.getFlakyTestNames(), regressionSequences),
           regressionSequences,
@@ -798,7 +812,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.progressdisplay) {
       System.out.printf("%n%s test output:%n", testKind);
       System.out.printf("%s test count: %d%n", testKind, testSequences.size());
-      System.out.printf("Writing JUnit tests...%n");
+      System.out.printf("Writing %s JUnit tests...%n", testKind.toLowerCase());
     }
     try {
       List<String> testClasses = new ArrayList<>();
@@ -817,9 +831,6 @@ public class GenTests extends GenInputsAbstract {
         CompilationUnit classAST =
             junitCreator.createTestClass(testClassName, methodNameGenerator, partition);
         String classSource = classAST.toString();
-        if (GenInputsAbstract.progressdisplay) {
-          System.out.printf("CodeWriter %s will write class %s.%n", codeWriter, testClassName);
-        }
         Path testFile =
             codeWriter.writeClassCode(
                 GenInputsAbstract.junit_package_name, testClassName, classSource);
@@ -848,6 +859,15 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("%nError writing %s tests%n", testKind.toLowerCase());
       e.printStackTrace(System.out);
       System.exit(1);
+    } catch (Throwable e) {
+      System.out.printf("GenTests.writeTestFiles threw an exception%n");
+      e.printStackTrace();
+      e.printStackTrace(System.out);
+      throw e;
+    }
+
+    if (GenInputsAbstract.progressdisplay) {
+      System.out.printf("Wrote %s JUnit tests.%n", testKind.toLowerCase());
     }
   }
 

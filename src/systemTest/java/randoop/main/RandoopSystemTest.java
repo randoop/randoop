@@ -300,8 +300,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude",
             "java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude",
-            // inconsistent Java 8 vs 9, so ignore
-            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore",
+            "java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore", // inconsistent Java 8 vs 9
             "java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude",
             "java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude",
@@ -784,12 +783,14 @@ public class RandoopSystemTest {
     RandoopRunStatus randoopRunDesc =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
-    assertThat(
-        "There should be no output; got:"
-            + lineSep
-            + UtilPlume.join(randoopRunDesc.processStatus.outputLines, lineSep),
-        randoopRunDesc.processStatus.outputLines.size(),
-        is(equalTo(0)));
+    if (randoopRunDesc.processStatus.outputLines.size() != 0) {
+      fail(
+          "There should be no output, but got "
+              + randoopRunDesc.processStatus.outputLines.size()
+              + " lines:"
+              + lineSep
+              + UtilPlume.join(randoopRunDesc.processStatus.outputLines, lineSep));
+    }
   }
 
   /** Runs with --side-effect-free-methods flag. */

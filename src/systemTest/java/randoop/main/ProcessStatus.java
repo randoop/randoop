@@ -46,14 +46,18 @@ class ProcessStatus {
   /** Outputs a verbose representation of this. */
   public String dump() {
     StringBuilder sb = new StringBuilder();
-    sb.append("ProcessStatus[").append(lineSep);
-    sb.append("  command = ").append(command).append(lineSep);
-    sb.append("  exitStatus = ").append(exitStatus).append(lineSep);
-    sb.append("  outputlines = ").append(lineSep);
-    for (String line : outputLines) {
-      sb.append("    ").append(line).append(lineSep);
+    sb.append("ProcessStatus dump:").append(lineSep);
+    sb.append("command: ").append(command).append(lineSep);
+    sb.append("exitStatus: ").append(exitStatus);
+    if (exitStatus == 137) {
+      sb.append(" (status 137 might mean out of memory)");
     }
-    sb.append("]");
+    sb.append(lineSep);
+    sb.append("outputlines:").append(lineSep);
+    for (String line : outputLines) {
+      sb.append(line).append(lineSep);
+    }
+    sb.append("End of ProcessStatus dump.").append(lineSep);
     return sb.toString();
   }
 
