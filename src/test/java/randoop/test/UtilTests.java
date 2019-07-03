@@ -1,61 +1,15 @@
 package randoop.test;
 
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import junit.framework.TestCase;
-import randoop.util.CollectionsExt;
 import randoop.util.Randomness;
 import randoop.util.Util;
 
 public class UtilTests extends TestCase {
-
-  private <T> List<T> makeList(int length) {
-    List<T> result = new ArrayList<>(length);
-    for (int j = 0; j < length; j++) {
-      result.add(null);
-    }
-    assertEquals(length, result.size());
-    return result;
-  }
-
-  public void testChunkUp1() throws Exception {
-    List<String> list = makeList(243);
-    int maxLength = 100;
-    List<List<String>> chunks = CollectionsExt.formSublists(list, maxLength);
-    assertEquals(3, chunks.size());
-    assertEquals(100, chunks.get(0).size());
-    assertEquals(100, chunks.get(1).size());
-    assertEquals(43, chunks.get(2).size());
-  }
-
-  public void testChunkUp2() throws Exception {
-    List<String> list = makeList(43);
-    int maxLength = 100;
-    List<List<String>> chunks = CollectionsExt.formSublists(list, maxLength);
-    assertEquals(1, chunks.size());
-    assertEquals(43, chunks.get(0).size());
-  }
-
-  public void testChunkUp3() throws Exception {
-    List<String> list = makeList(0);
-    int maxLength = 100;
-    List<List<String>> chunks = CollectionsExt.formSublists(list, maxLength);
-    assertEquals(0, chunks.size());
-  }
-
-  public void testChunkUp4() throws Exception {
-    List<String> list = makeList(200);
-    int maxLength = 100;
-    List<List<String>> chunks = CollectionsExt.formSublists(list, maxLength);
-    assertEquals(2, chunks.size());
-    assertEquals(100, chunks.get(0).size());
-    assertEquals(100, chunks.get(1).size());
-  }
 
   public void testGetRandomSetMemeber1() throws Exception {
     Set<Integer> ints = new LinkedHashSet<>(Arrays.asList(1, 3, 4));

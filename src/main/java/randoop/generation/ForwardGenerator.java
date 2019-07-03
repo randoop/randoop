@@ -293,7 +293,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       // If it is a call to a side-effect-free method, clear the active flag of
-      // its receiver. (This method doesn't side effect the receiver or
+      // its receiver and arguments. (This method doesn't side effect the receiver or
       // any argument, so Randoop should use some other shorter sequence
       // that produces the value.)
       Sequence stmts = seq.sequence;
@@ -894,14 +894,14 @@ public class ForwardGenerator extends AbstractGenerator {
 
   @Override
   public String toString() {
-    return "randoop.generation.ForwardGenerator("
-        + ("allSequences.size()=" + allSequences.size())
-        + ","
-        + ("sideEffectFreeMethods.size()=" + sideEffectFreeMethods.size())
-        + ","
-        + ("subsumed_sequences.size()=" + subsumed_sequences.size())
-        + ","
-        + ("runtimePrimitivesSeen.size()=" + runtimePrimitivesSeen.size())
+    return "ForwardGenerator("
+        + ("allSequences:" + allSequences.size())
+        + ", "
+        + ("sideEffectFreeMethods:" + sideEffectFreeMethods.size())
+        + ", "
+        + ("subsumed_sequences:" + subsumed_sequences.size())
+        + ", "
+        + ("runtimePrimitivesSeen:" + runtimePrimitivesSeen.size())
         + ")";
   }
 }

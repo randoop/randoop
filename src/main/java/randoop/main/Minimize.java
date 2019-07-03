@@ -1431,10 +1431,14 @@ public class Minimize extends CommandHandler {
     "ReferenceEquality"
   })
   private static void getOrphanCommentsBeforeThisChildNode(final Node node, List<Comment> result) {
-    if (node instanceof Comment) return;
+    if (node instanceof Comment) {
+      return;
+    }
 
     Node parent = node.getParentNode().orElse(null);
-    if (parent == null) return;
+    if (parent == null) {
+      return;
+    }
     List<Node> everything = new LinkedList<>(parent.getChildNodes());
     sortByBeginPosition(everything);
     int positionOfTheChild = -1;

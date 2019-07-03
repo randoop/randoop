@@ -18,7 +18,7 @@ import org.plumelib.util.UtilPlume;
  * <p>Note: this is similar to the Randoop {@code randoop.reflection.RawSignature} class, but uses
  * BCEL {@code Type} instead of {@code java.lang.reflect.Class} for the parameter types.
  */
-public class MethodSignature {
+public class MethodSignature implements Comparable<MethodSignature> {
 
   /** fully-qualified class name */
   private final String classname;
@@ -137,6 +137,29 @@ public class MethodSignature {
     return this.classname.equals(md.classname)
         && this.name.equals(md.name)
         && Arrays.equals(this.paramTypes, md.paramTypes);
+  }
+
+  @Override
+  public int compareTo(MethodSignature m) {
+    int result = this.classname.compareTo(m.classname);
+    if (result == 0) {
+      result = this.name.compareTo(m.name);
+      if (result == 0) {
+        // shorter array is considered 'less than'
+        if (this.paramTypes.length < m.paramTypes.length) {
+          return -1;
+        } else if (this.paramTypes.length > m.paramTypes.length) {
+          return 1;
+        }
+        for (int i = 0; i < this.paramTypes.length; i++) {
+          result = this.paramTypes[i].getSignature().compareTo(m.paramTypes[i].getSignature());
+          if (result != 0) {
+            return result;
+          }
+        }
+      }
+    }
+    return result;
   }
 
   @Override

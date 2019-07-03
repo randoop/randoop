@@ -1,6 +1,49 @@
-# Nondeterministic
-^java\.util\.Collections\.shuffle\(java\.util\.List\)$
 # Long-running.  With sufficiently small arguments, can be fast.
 # org.apache.commons.math3.analysis.differentiation.DSCompiler.getCompiler\(int,int\)
 ^org.apache.commons.math3.analysis.differentiation.
 ^org.apache.commons.math3.analysis.integration.
+
+# Nondeterministic
+^java\.io\.File\.listFiles\(\)$
+^java\.io\.File\.listFiles\(java\.io\.FileFilter\)$
+^java\.io\.File\.listFiles\(java\.io\.FilenameFilter\)$
+^java\.io\.File\.listRoots\(\)$
+^java\.io\.File\.list\(\)$
+^java\.io\.File\.list\(java\.io\.FilenameFilter\)$
+^java\.lang\.Class\.getSigners\(\)$
+^java\.lang\.Object\.hashCode\(\)$
+^java\.lang\.String\.hashCode\(\)$
+^java\.lang\.System\.clearProperty\(java\.lang\.String\)$
+^java\.lang\.System\.console\(\)$
+^java\.lang\.System\.currentTimeMillis\(\)$
+^java\.lang\.System\.getProperties\(\)$
+^java\.lang\.System\.getProperty\(java\.lang\.String, java\.lang\.String\)$
+^java\.lang\.System\.getProperty\(java\.lang\.String\)$
+^java\.lang\.System\.getSecurityManager\(\)$
+^java\.lang\.System\.getenv\(\)$
+^java\.lang\.System\.getenv\(java\.lang\.String\)$
+^java\.lang\.System\.identityHashCode\(java\.lang\.Object\)$
+^java\.lang\.System\.inheritedChannel\(\)$
+^java\.lang\.System\.mapLibraryName\(java\.lang\.String\)$
+^java\.lang\.System\.nanoTime\(\)$
+^java\.lang\.System\.setProperty\(java\.lang\.String, java\.lang\.String\)$
+^java\.lang\.reflect\.Method\.hashCode\(\)$
+^java\.text\.BreakIterator\.getAvailableLocales\(\)$
+^java\.util\.AbstractList\.hashCode\(\)$
+^java\.util\.AbstractSet\.hashCode\(\)$
+^java\.util\.Arrays\.deepHashCode\(java\.lang\.Object\[\]\)$
+^java\.util\.Arrays\.hashCode\(boolean\[\]\)$
+^java\.util\.Arrays\.hashCode\(byte\[\]\)$
+^java\.util\.Arrays\.hashCode\(char\[\]\)$
+^java\.util\.Arrays\.hashCode\(double\[\]\)$
+^java\.util\.Arrays\.hashCode\(float\[\]\)$
+^java\.util\.Arrays\.hashCode\(int\[\]\)$
+^java\.util\.Arrays\.hashCode\(java\.lang\.Object\[\]\)$
+^java\.util\.Arrays\.hashCode\(long\[\]\)$
+^java\.util\.Arrays\.hashCode\(short\[\]\)$
+^java\.util\.Collection\.hashCode\(\)$
+^java\.util\.Collections\.shuffle\(java\.util\.List\)$
+^java\.util\.Comparator\.compare\(java\.lang\.Object, java\.lang\.Object\)$
+^java\.util\.List\.hashCode\(\)$
+^java\.util\.Random\.<init>\(\)$
+^java\.util\.Set\.hashCode\(\)$

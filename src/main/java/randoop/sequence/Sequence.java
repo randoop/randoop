@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
@@ -231,6 +232,7 @@ public final class Sequence {
    *
    * @return the number of statements in this sequence
    */
+  @Pure
   public final int size() {
     return statements.size();
   }
