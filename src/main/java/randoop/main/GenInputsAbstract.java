@@ -760,6 +760,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * still need to supply {@code -Xmx...} when starting Randoop itself.
    */
   @Option("Maximum memory for JVM; will be passed with <code>-Xmx</code>.")
+  // CircleCI runs out of memory during test generation if 2500m.
   public static String jvm_max_memory = "2000m";
 
   @Unpublicized
