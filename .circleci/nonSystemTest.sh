@@ -3,6 +3,7 @@
 # This runs all of `./gradlew check` except for `./gradlew systemTest`.
 
 set -e
+set -o pipefail
 set -o verbose
 set -o xtrace
 export SHELLOPTS

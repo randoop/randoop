@@ -3,6 +3,7 @@
 # This is the "misc" job of the pull request.
 
 set -e
+set -o pipefail
 set -o verbose
 set -o xtrace
 export SHELLOPTS
