@@ -164,6 +164,8 @@ workflows:
   version: 2
   build:
     jobs:
-      - nonSystemTest
-      - systemTest
+      - nonSystemTest-jdk8
+      - systemTest-jdk8
+      - nonSystemTest-jdk11
+      - systemTest-jdk11
       - misc
