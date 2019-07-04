@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
@@ -31,9 +32,10 @@ import randoop.types.Type;
 /** Tests instantiation of type parameters by OperationModel. */
 public class InstantiationTest {
 
+  @SuppressWarnings("signature:argument.type.incompatible") // string concatenation
   @Test
   public void testGenericBounds() {
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     String packageName = "randoop.reflection";
     classnames.add(packageName + "." + "GenericBounds");
     classnames.add(packageName + "." + "TW");
@@ -202,7 +204,7 @@ public class InstantiationTest {
   /** Based on a case from imglib2. */
   @Test
   public void testIntersectionType() {
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.intersectiontypes.ExtendedBase");
     Package pkg = randoop.reflection.intersectiontypes.ExtendedBase.class.getPackage();
     assertNotNull(pkg);
@@ -225,7 +227,7 @@ public class InstantiationTest {
   /** Based on a case from Apache Commons Collections. */
   @Test
   public void testCaptureConvInstantiation() {
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.CaptureInstantiationCase");
     OperationModel model = createModel(classnames, "randoop.reflection");
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
@@ -284,11 +286,11 @@ public class InstantiationTest {
   }
   */
 
-  private OperationModel createModel(Set<String> classnames, String packageName) {
+  private OperationModel createModel(Set<@ClassGetName String> classnames, String packageName) {
     VisibilityPredicate visibility =
         new VisibilityPredicate.PackageVisibilityPredicate(packageName);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> coveredClassnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;

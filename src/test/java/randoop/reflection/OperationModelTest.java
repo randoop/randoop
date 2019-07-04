@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -35,9 +36,9 @@ public class OperationModelTest {
   @Test
   public void linkedListTest() {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("java.util.LinkedList");
-    Set<String> coveredClassnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -85,10 +86,10 @@ public class OperationModelTest {
   @Test
   public void classWithInnerClassTest() {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.test.ClassWithInnerClass");
     classnames.add("randoop.test.ClassWithInnerClass$A");
-    Set<String> coveredClassnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -160,9 +161,9 @@ public class OperationModelTest {
   @Test
   public void testEnumOverloads() {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.supertypetest.InheritedEnum");
-    Set<String> coveredClassnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
@@ -286,7 +287,7 @@ public class OperationModelTest {
 
   @Test
   public void orderModelTest() {
-    Set<String> classnames1 = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames1 = new LinkedHashSet<>();
     classnames1.add("randoop.reflection.ClassWithMemberTypes");
     classnames1.add("randoop.reflection.GenericTreeWithInnerNode");
     classnames1.add("randoop.reflection.supertypetest.InheritedEnum");
@@ -294,7 +295,7 @@ public class OperationModelTest {
     OperationModel model1 = getOperationModel(classnames1);
     List<TypedOperation> operations1 = model1.getOperations();
 
-    Set<String> classnames2 = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames2 = new LinkedHashSet<>();
     classnames2.add("randoop.reflection.visibilitytest.PublicClass");
     classnames2.add("randoop.reflection.GenericTreeWithInnerNode");
     classnames2.add("randoop.reflection.supertypetest.InheritedEnum");
@@ -311,7 +312,7 @@ public class OperationModelTest {
 
   @Test
   public void staticFinalFieldTest() {
-    Set<String> classnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.FieldInheritingClass");
     OperationModel model = getOperationModel(classnames);
     List<TypedOperation> operations = model.getOperations();
@@ -336,15 +337,15 @@ public class OperationModelTest {
     }
   }
 
-  private OperationModel getOperationModel(String classname) {
-    Set<String> classnames = new LinkedHashSet<>();
+  private OperationModel getOperationModel(@ClassGetName String classname) {
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
     classnames.add(classname);
     return getOperationModel(classnames);
   }
 
-  private OperationModel getOperationModel(Set<String> classnames) {
+  private OperationModel getOperationModel(Set<@ClassGetName String> classnames) {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> coveredClassnames = new LinkedHashSet<>();
+    Set<@ClassGetName String> coveredClassnames = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;

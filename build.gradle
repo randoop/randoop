@@ -110,7 +110,7 @@ sourceSets {
   }
 
   /* Code sets used by system tests. There are no actual tests here. */
-  testInput 
+  testInput
 
   test {
     resources {
@@ -193,6 +193,7 @@ dependencies {
    */
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
+  testInputImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
 
   if ("true".equals(project.ext.useCheckerFramework)) {
     checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
@@ -224,6 +225,9 @@ task compileAll() {
   dependsOn compileReplacecallTestJava
   dependsOn compileSystemTestJava
 }
+
+// Get early notification of compilation failures.
+assemble.dependsOn compileAll
 
 // This isn't working; maybe I need to make it run first.
 // Get early notification of any compilation failures, before running any tests
