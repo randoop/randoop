@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  nonSystemTest:
+  nonSystemTest-jdk8:
 
     docker:
       - image: mdernst/ubuntu-for-randoop-jdk8
@@ -32,10 +32,74 @@ jobs:
             - ~/.gradle
           key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
 
-  systemTest:
+  systemTest-jdk8:
 
     docker:
       - image: mdernst/ubuntu-for-randoop-jdk8
+
+    steps:
+
+      - restore_cache:
+          keys:
+            - source-v2-{{ .Branch }}-{{ .Revision }}
+            - source-v2-{{ .Branch }}-
+            - source-v2-
+      - checkout
+      - save_cache:
+          key: source-v2-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+
+      - restore_cache:
+          keys:
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-
+            - gradle-v2-
+
+      - run:
+          command: ./.circleci/systemTest.sh
+          no_output_timeout: 20m
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+
+  nonSystemTest-jdk11:
+
+    docker:
+      - image: mdernst/ubuntu-for-randoop-jdk11
+
+    steps:
+
+      - restore_cache:
+          keys:
+            - source-v2-{{ .Branch }}-{{ .Revision }}
+            - source-v2-{{ .Branch }}-
+            - source-v2-
+      - checkout
+      - save_cache:
+          key: source-v2-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+
+      - restore_cache:
+          keys:
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-
+            - gradle-v2-
+
+      - run: ./.circleci/nonSystemTest.sh
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+
+  systemTest-jdk11:
+
+    docker:
+      - image: mdernst/ubuntu-for-randoop-jdk11
 
     steps:
 
