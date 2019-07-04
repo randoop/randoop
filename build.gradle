@@ -260,17 +260,19 @@ if ("true".equals(project.ext.useCheckerFramework)) {
 } else {
   // Configuration for the Error Prone linter.
   tasks.withType(JavaCompile).each { t ->
-    if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
-      t.toolChain ErrorProneToolChain.create(project)
-      t.options.compilerArgs += [
+    if (!JavaVersion.current().isJava11()) {
+      if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
+        t.toolChain ErrorProneToolChain.create(project)
+        t.options.compilerArgs += [
         // Maybe NamedParameters is no longer supported?
         // // undocumented, and suggestion seems bad
         // '-Xep:NamedParameters:OFF',
         // Is always a false positive in my experience.
-        '-Xep:StringSplitter:OFF'
+          '-Xep:StringSplitter:OFF'
         // TODO: uncomment once we run the Interning Checker on Randoop
         // '-Xep:ReferenceEquality:OFF'
-      ]
+        ]
+      }
     }
   }
 }
@@ -760,8 +762,18 @@ javadoc {
   options.addStringOption("stylesheetfile", "${projectDir}/src/javadoc/resources/stylesheets/javadocstyle.css")
   // Use of Javadoc's -linkoffline command-line option makes Javadoc generation
   // much faster, especially on Travis.
-  options.with {
-    linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
+  if (JavaVersion.current().isJava8()) {
+    options.with {
+      linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
+    }
+  } else if (JavaVersion.current().isJava9()) {
+    options.with {
+      linksOffline 'https://docs.oracle.com/javase/9/docs/api/', 'https://docs.oracle.com/javase/9/docs/api/'
+    }
+  } else if (JavaVersion.current().isJava11()) {
+    options.with {
+      linksOffline 'https://docs.oracle.com/en/java/javase/11/docs/api/', 'https://docs.oracle.com/en/java/javase/11/docs/api/'
+    }
   }
   failOnError = true  // does not fail on warnings
   doLast {

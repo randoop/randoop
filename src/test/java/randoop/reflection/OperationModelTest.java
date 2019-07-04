@@ -75,7 +75,10 @@ public class OperationModelTest {
       }
     }
     assertThat("concrete operation count ", concreteOpCount, is(equalTo(1)));
-    assertThat("generic operation count (JDK7: 51, JDK8: 58)", genericOpCount, isOneOf(50, 57));
+    assertThat(
+        "generic operation count (JDK7: 51, JDK8: 58, JDK11: 59)",
+        genericOpCount,
+        isOneOf(50, 57, 58));
     assertEquals("wildcard operation count", 1, wildcardTypeCount);
     assertEquals(
         "all operations generic or concrete",
