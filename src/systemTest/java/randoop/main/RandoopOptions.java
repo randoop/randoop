@@ -126,7 +126,7 @@ class RandoopOptions {
    *
    * @param packageName the package name
    */
-  void setPackageName(String packageName) {
+  void setPackageName(@DotSeparatedIdentifiers String packageName) {
     if (Objects.equals(packageName, "")) {
       throw new IllegalArgumentException();
     }
@@ -165,7 +165,7 @@ class RandoopOptions {
    *
    * @param classname the test class name
    */
-  void addTestClass(String classname) {
+  void addTestClass(@ClassGetName String classname) {
     if (classname.length() > 0) {
       setOption("testclass", classname);
       classnames.add(classname);
@@ -232,7 +232,8 @@ class RandoopOptions {
   private void loadClassNames(String classListFilename) {
     try (EntryReader er = new EntryReader(classListFilename, "^#.*", null)) {
       for (String line : er) {
-        String name = line.trim();
+        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @ClassGetName String name = line.trim();
         if (!name.isEmpty()) {
           classnames.add(name);
         }
