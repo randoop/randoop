@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -395,7 +396,7 @@ public class TestClassificationTest {
       ComponentManager componentMgr,
       VisibilityPredicate visibility,
       TestCheckGenerator checkGenerator) {
-    Set<String> classnames = new HashSet<>();
+    Set<@ClassGetName String> classnames = new HashSet<>();
     classnames.add(c.getName());
     Set<String> omitfields = new HashSet<>();
 
@@ -408,7 +409,7 @@ public class TestClassificationTest {
               reflectionPredicate,
               GenInputsAbstract.omitmethods,
               classnames,
-              new HashSet<String>(),
+              new HashSet<>(),
               new ThrowClassNameError(),
               new ArrayList<String>());
     } catch (Exception e) {
