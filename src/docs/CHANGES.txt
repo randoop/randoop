@@ -1,6 +1,6 @@
 Version 4.2.0, released ??
 
-Randoop supports Java 9 (and still supports Java 8).
+Randoop supports Java 11 (and still supports Java 8).
 
 Randoop reports methods under test that may be nondeterministic or
 dependent on side-effected global state.  New command-line option

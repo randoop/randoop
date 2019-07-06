@@ -94,6 +94,7 @@ public class TestEnvironment {
     command.add("java");
     command.add("-ea");
     command.add("-Xmx" + GenInputsAbstract.jvm_max_memory);
+    command.add("-XX:+HeapDumpOnOutOfMemoryError");
 
     if (replaceCallAgentPath != null) {
       command.add("-Xbootclasspath/a:" + replaceCallAgentPath);

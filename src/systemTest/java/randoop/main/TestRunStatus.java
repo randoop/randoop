@@ -87,6 +87,7 @@ class TestRunStatus {
     command.add("-ea");
     // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
     command.add("-Xmx2000m");
+    command.add("-XX:+HeapDumpOnOutOfMemoryError");
     command.add("-classpath");
     command.add(testClasspath);
     command.add("org.junit.runner.JUnitCore");

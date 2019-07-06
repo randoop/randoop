@@ -36,7 +36,7 @@ public class ConnectionSpecTest {
         new ThrowsCondition(
             "throws IllegalStateException if the connection is already open",
             throwsGuard,
-            IllegalStateException.class.getCanonicalName());
+            IllegalStateException.class.getName());
     List<ThrowsCondition> throwsList = Collections.singletonList(opThrows);
     OperationSignature opOpen = OperationSignature.of(mOpen);
     OperationSpecification opSpec = new OperationSpecification(opOpen, new Identifiers());
