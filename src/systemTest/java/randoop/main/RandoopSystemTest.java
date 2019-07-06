@@ -1063,7 +1063,7 @@ public class RandoopSystemTest {
             "flaky.FlakyClass.multiply(int, int) include");
 
     List<String> expectedFlakyMethodsInOrder = new ArrayList<>();
-    expectedFlakyMethodsInOrder.add("flaky.FlakyClass.flakyDefaultHashCode()");
+    expectedFlakyMethodsInOrder.add("flaky.FlakyClass.flakyDefaultHashCode(flaky.FlakyClass)");
 
     generateAndTest(
         testEnvironment,
