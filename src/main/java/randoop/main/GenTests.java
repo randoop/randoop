@@ -675,7 +675,7 @@ public class GenTests extends GenInputsAbstract {
       int maxMethodsToOutput = GenInputsAbstract.nondeterministic_methods_to_output;
       for (int i = 0; i < maxMethodsToOutput && !methodHeuristicPriorityQueue.isEmpty(); i++) {
         RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
-        System.out.println(POSSIBLY_FLAKY_PREFIX + rankedMethod.operation.toParsableString());
+        System.out.println(POSSIBLY_FLAKY_PREFIX + rankedMethod.operation.getSignatureString());
       }
     }
 
