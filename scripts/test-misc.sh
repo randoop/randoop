@@ -32,6 +32,6 @@ if [ -n "$COMMIT_RANGE" ] ; then
   (git diff $COMMIT_RANGE > /tmp/diff.txt 2>&1) || true
   (./gradlew requireJavadocPrivate > /tmp/rjp-output.txt 2>&1) || true
   [ -s /tmp/diff.txt ] || ([[ "${BRANCH}" != "master" && "${TRAVIS_EVENT_TYPE}" == "push" ]] || (echo "/tmp/diff.txt is empty; try pulling base branch (often master) into compare branch (often feature branch)" && false))
-  wget https://raw.githubusercontent.com/plume-lib/plume-scripts/master/lint-diff.py
+  wget -q https://raw.githubusercontent.com/plume-lib/plume-scripts/master/lint-diff.py
   python lint-diff.py --strip-diff=1 --strip-lint=2 /tmp/diff.txt /tmp/rjp-output.txt
 fi
