@@ -8,6 +8,10 @@ set -o verbose
 set -o xtrace
 export SHELLOPTS
 
+env
+set
+export
+
 ./gradlew clean assemble -PuseCheckerFramework=true
 ./gradlew javadoc
 ./gradlew checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
