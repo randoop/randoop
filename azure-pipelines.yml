@@ -4,31 +4,31 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 jobs:
-- job: nonSystemTest-jdk8:
+- job: nonSystemTest-jdk8
   pool:
     vmImage: 'ubuntu-16.04'
   container: mdernst/mdernst/ubuntu-for-randoop-jdk8
   steps:
   - bash: ./scripts/test-nonSystemTest.sh
-- job: systemTest-jdk8:
+- job: systemTest-jdk8
   pool:
     vmImage: 'ubuntu-16.04'
   container: mdernst/mdernst/ubuntu-for-randoop-jdk8
   steps:
   - bash: ./scripts/test-systemTest.sh
-- job: nonSystemTest-jdk8:
+- job: nonSystemTest-jdk11
   pool:
     vmImage: 'ubuntu-16.04'
   container: mdernst/mdernst/ubuntu-for-randoop-jdk11
   steps:
   - bash: ./scripts/test-nonSystemTest.sh
-- job: systemTest-jdk8:
+- job: systemTest-jdk11
   pool:
     vmImage: 'ubuntu-16.04'
   container: mdernst/mdernst/ubuntu-for-randoop-jdk11
   steps:
   - bash: ./scripts/test-systemTest.sh
-- job: misc:
+- job: misc
   pool:
     vmImage: 'ubuntu-16.04'
   container: mdernst/mdernst/ubuntu-for-randoop-jdkany
