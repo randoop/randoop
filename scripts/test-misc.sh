@@ -8,10 +8,16 @@ set -o verbose
 set -o xtrace
 export SHELLOPTS
 
-./gradlew clean assemble -PuseCheckerFramework=true
-./gradlew javadoc
-./gradlew checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
-./gradlew manual
+./gradlew clean assemble
+# ./gradlew javadoc
+# ./gradlew checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
+# ./gradlew manual
+
+echo SYSTEM_PULLREQUEST_TARGETBRANCH=$SYSTEM_PULLREQUEST_TARGETBRANCH
+echo SYSTEM_PULLREQUEST_SOURCEBRANCH=$SYSTEM_PULLREQUEST_SOURCEBRANCH
+echo BUILD_REPOSITORYNAME=$BUILD_REPOSITORYNAME
+echo BUILD_SOURCEVERSION=$BUILD_SOURCEVERSION
+echo pull request commit = `git rev-parse HEAD^2`
 
 # $TRAVIS_COMMIT_RANGE is empty for builds triggered by the initial commit of a new branch.
 # Until https://github.com/travis-ci/travis-ci/issues/4596 is fixed, $TRAVIS_COMMIT_RANGE is a
