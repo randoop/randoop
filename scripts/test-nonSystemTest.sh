@@ -15,7 +15,7 @@ export SHELLOPTS
 export DISPLAY=:99.0
 XVFB=/usr/bin/Xvfb
 XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16 +extension RANDR"
-PIDFILE=/var/xvfb_${DISPLAY:1}.pid
+PIDFILE=/tmp/xvfb_${DISPLAY:1}.pid
 /sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
 sleep 3 # give xvfb some time to start
 
