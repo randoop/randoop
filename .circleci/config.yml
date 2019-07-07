@@ -25,7 +25,7 @@ jobs:
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
-      - run: ./.circleci/nonSystemTest.sh
+      - run: ./scripts/test-nonSystemTest.sh
 
       - save_cache:
           paths:
@@ -57,7 +57,7 @@ jobs:
             - gradle-v2-
 
       - run:
-          command: ./.circleci/systemTest.sh
+          command: ./scripts/test-systemTest.sh
           no_output_timeout: 20m
 
       - save_cache:
@@ -89,7 +89,7 @@ jobs:
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
-      - run: ./.circleci/nonSystemTest.sh
+      - run: ./scripts/test-nonSystemTest.sh
 
       - save_cache:
           paths:
@@ -121,7 +121,7 @@ jobs:
             - gradle-v2-
 
       - run:
-          command: ./.circleci/systemTest.sh
+          command: ./scripts/test-systemTest.sh
           no_output_timeout: 20m
 
       - save_cache:
@@ -153,7 +153,7 @@ jobs:
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
-      - run: ./.circleci/misc.sh
+      - run: ./scripts/test-misc.sh
 
       - save_cache:
           paths:
