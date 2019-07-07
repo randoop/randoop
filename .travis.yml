@@ -18,8 +18,8 @@ env:
     - THIS_REPO=randoop
     - OS=ubuntu
   matrix:
-    - OS=ubuntu JDKVER=jdk8 GROUP=nonSystemTest
-    - OS=ubuntu JDKVER=jdk8 GROUP=systemTest
+    # - OS=ubuntu JDKVER=jdk8 GROUP=nonSystemTest
+    # - OS=ubuntu JDKVER=jdk8 GROUP=systemTest
     - OS=ubuntu JDKVER=jdk11 GROUP=nonSystemTest
     - OS=ubuntu JDKVER=jdk11 GROUP=systemTest
     - OS=ubuntu JDKVER=jdkany GROUP=misc
