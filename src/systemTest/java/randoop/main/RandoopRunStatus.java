@@ -80,7 +80,7 @@ class RandoopRunStatus {
     command.add("java");
     command.add("-ea");
     // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
-    command.add("-Xmx2000m");
+    command.add("-Xmx3000m");
     command.add("-XX:+HeapDumpOnOutOfMemoryError");
     if (testEnvironment.getBootClassPath() != null
         && !testEnvironment.getBootClassPath().isEmpty()) {
