@@ -99,8 +99,8 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
 
   /**
    * Return true if the given source code compiles without error. This is here to allow the
-   * mechanics of the predicate to be tested directly. Otherwise, we have to create a broken broken
-   * {@link ExecutableSequence}, which may not always be possible.
+   * mechanics of the predicate to be tested directly. Otherwise, we have to create a broken {@link
+   * ExecutableSequence}, which may not always be possible.
    *
    * @param testClassName the name of the test class
    * @param source the source text for the class

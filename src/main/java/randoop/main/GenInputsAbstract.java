@@ -755,6 +755,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("-D Specify system properties to be set; similar to <code>java -Dx=y</code>.")
   public static List<String> system_props = new ArrayList<>();
 
+  /**
+   * How much memory Randoop should use when starting new JVMs. This only affects new JVMs; you
+   * still need to supply {@code -Xmx...} when starting Randoop itself.
+   */
+  @Option("Maximum memory for JVM; will be passed with <code>-Xmx</code>.")
+  // CircleCI runs out of memory during test generation if 2500m.
+  public static String jvm_max_memory = "2000m";
+
   @Unpublicized
   @Option("Store all output to stdout and stderr in the ExecutionOutcome.")
   public static boolean capture_output = false;

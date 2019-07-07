@@ -36,7 +36,7 @@ class RandoopRunStatus {
 
   /**
    * The top suspected "flaky" nondeterministic methods to output. The size is no greater than
-   * {@link GenInputsAbstract#nondeterministic_methods_to_output}.
+   * {@code randoop.main.GenInputsAbstract#nondeterministic_methods_to_output}.
    */
   final List<String> suspectedFlakyMethodNames;
 
@@ -79,7 +79,9 @@ class RandoopRunStatus {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
-    command.add("-Xmx3000m");
+    // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
+    command.add("-Xmx2000m");
+    command.add("-XX:+HeapDumpOnOutOfMemoryError");
     if (testEnvironment.getBootClassPath() != null
         && !testEnvironment.getBootClassPath().isEmpty()) {
       command.add("-Xbootclasspath/a:" + testEnvironment.getBootClassPath());
@@ -109,7 +111,7 @@ class RandoopRunStatus {
     command.add("randoop.main.Main");
     command.add("gentests");
     command.addAll(options.getOptions());
-    System.out.format("Randoop command:%n%s%n", command);
+    System.out.format("RandoopRunStatus.generate() command:%n%s%n", command);
     return ProcessStatus.runCommand(command);
   }
 
@@ -123,6 +125,8 @@ class RandoopRunStatus {
   static RandoopRunStatus generateAndCompile(
       SystemTestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
 
+    /// Generate tests.
+
     ProcessStatus randoopExitStatus = generate(testEnvironment, options);
 
     if (randoopExitStatus.exitStatus != 0) {
@@ -130,9 +134,14 @@ class RandoopRunStatus {
         return getRandoopRunStatus(randoopExitStatus);
       } else {
         System.out.println(randoopExitStatus.dump());
-        fail("Randoop exited badly, see details above.");
+        fail(
+            String.format(
+                "Test generation exited with %d exit status, see process status details above.",
+                randoopExitStatus.exitStatus));
       }
     }
+
+    /// Check that test files are there.
 
     String packageName = options.getPackageName();
     String packagePathString = packageName == null ? "" : packageName.replace('.', '/');
@@ -152,6 +161,8 @@ class RandoopRunStatus {
       }
       fail("No test class source files found");
     }
+
+    /// Compile.
 
     Path classDir = testEnvironment.classDir;
     CompilationStatus compileStatus =
@@ -177,6 +188,7 @@ class RandoopRunStatus {
         testClassFiles.size(),
         is(equalTo(testSourceFiles.size())));
 
+    // Compilation succeeded.  Return the result of test generation.
     return getRandoopRunStatus(randoopExitStatus);
   }
 
