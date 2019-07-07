@@ -550,7 +550,7 @@ tasks.withType(Test) {
  /*
   * Set the heap size and GC for running tests.
   */
-  jvmArgs '-Xmx384m', '-XX:+UseG1GC', '-XX:SoftRefLRUPolicyMSPerMB=250'
+  jvmArgs '-Xmx3000m'
 
   /*
    * Pass along any system properties that begin with "randoop."
