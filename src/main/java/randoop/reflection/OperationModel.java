@@ -5,6 +5,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -93,6 +94,9 @@ public class OperationModel {
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
+  /** User-supplied predicate for methods that should not be used during test generation. */
+  private OmitMethodsPredicate omitMethodsPredicate;
+
   /** Create an empty model of test context. */
   private OperationModel() {
     // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
@@ -160,12 +164,12 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    OmitMethodsPredicate omitPredicate = new OmitMethodsPredicate(omitMethods);
+    model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
 
     model.addOperationsFromClasses(
-        model.classTypes, visibility, reflectionPredicate, omitPredicate, operationSpecifications);
+        model.classTypes, visibility, reflectionPredicate, operationSpecifications);
     model.addOperationsUsingSignatures(
-        GenInputsAbstract.methodlist, visibility, reflectionPredicate, omitPredicate);
+        GenInputsAbstract.methodlist, visibility, reflectionPredicate);
     model.addObjectConstructor();
 
     return model;
@@ -290,31 +294,64 @@ public class OperationModel {
   }
 
   /**
-   * Given a file containing signatures, returns the operations for them.
+   * Given a file containing fully-qualified method signatures, returns the operations for them.
    *
-   * @param file a file that contains method or constructor signatures, one per line
-   * @param onlyMethods if true, throw an exception if a constructor is read
-   * @return a map from each class type to the set of methods/constructors in it
+   * @param file a file that contains method or constructor signatures, one per line. If null, this
+   *     method returns an empty map.
+   * @return a map from each class type to the set of methods and constructors in it
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public static MultiMap<Type, TypedOperation> readOperations(Path file, boolean onlyMethods)
+  public static MultiMap<Type, TypedClassOperation> readOperations(@Nullable Path file)
       throws OperationParseException {
-    MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     if (file != null) {
       try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
-        for (String line : er) {
-          String sig = line.trim();
-          TypedClassOperation operation =
-              signatureToOperation(
-                  sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
-          observerMap.add(operation.getDeclaringType(), operation);
-        }
+        return OperationModel.readOperations(er);
       } catch (IOException e) {
         String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
         throw new RandoopUsageError(message, e);
       }
     }
-    return observerMap;
+    return new MultiMap<>();
+  }
+
+  /**
+   * Returns operations read from the given EntryReader, which contains fully-qualified method
+   * signatures.
+   *
+   * @param er the EntryReader to read from
+   * @return contents of the file, as a map of operations
+   */
+  private static MultiMap<Type, TypedClassOperation> readOperations(EntryReader er) {
+    MultiMap<Type, TypedClassOperation> operationsMap = new MultiMap<>();
+    for (String line : er) {
+      String sig = line.trim();
+      TypedClassOperation operation =
+          signatureToOperation(sig, VisibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
+      operationsMap.add(operation.getDeclaringType(), operation);
+    }
+    return operationsMap;
+  }
+
+  /**
+   * Returns operations read from the given stream, which contains fully-qualified method
+   * signatures.
+   *
+   * @param is the stream from which to read
+   * @param filename the file name to use in diagnostic messages
+   * @return contents of the file, as a map of operations
+   */
+  public static MultiMap<Type, TypedClassOperation> readOperations(
+      InputStream is, String filename) {
+    if (is == null) {
+      throw new RandoopBug("input stream is null for file " + filename);
+    }
+    // Read method omissions from user-provided file
+    try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
+      return OperationModel.readOperations(er);
+    } catch (IOException e) {
+      String message = String.format("Error while reading file %s: %s%n", filename, e.getMessage());
+      throw new RandoopUsageError(message, e);
+    }
   }
 
   /**
@@ -365,6 +402,20 @@ public class OperationModel {
     return contracts;
   }
 
+  /**
+   * Returns the user-specified predicate for methods that should not be called.
+   *
+   * @return the user-specified predicate for methods that should not be called
+   */
+  public OmitMethodsPredicate getOmitMethodsPredicate() {
+    return omitMethodsPredicate;
+  }
+
+  /**
+   * Returns the set of singleton sequences for values from {@code @TestValue} annotated fields.
+   *
+   * @return sequences that get fields annotated with {@code @TestValue}
+   */
   public Set<Sequence> getAnnotatedTestValues() {
     return annotatedTestValues;
   }
@@ -544,7 +595,6 @@ public class OperationModel {
    * @param classTypes the set of declaring class types for the operations, must be non-null
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
-   * @param omitPredicate the predicate for omitting operations
    * @param operationSpecifications the collection of {@link
    *     randoop.condition.specification.OperationSpecification}
    */
@@ -552,13 +602,16 @@ public class OperationModel {
       Set<ClassOrInterfaceType> classTypes,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate,
       SpecificationCollection operationSpecifications) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : classTypes) {
       OperationExtractor extractor =
           new OperationExtractor(
-              classType, reflectionPredicate, omitPredicate, visibility, operationSpecifications);
+              classType,
+              reflectionPredicate,
+              omitMethodsPredicate,
+              visibility,
+              operationSpecifications);
       mgr.apply(extractor, classType.getRuntimeClass());
       operations.addAll(extractor.getOperations());
     }
@@ -570,14 +623,12 @@ public class OperationModel {
    * @param methodSignatures_file the file containing the signatures; if null, do nothing
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
-   * @param omitPredicate the predicate for omitting operations
    * @throws SignatureParseException if any signature is syntactically invalid
    */
   private void addOperationsUsingSignatures(
       Path methodSignatures_file,
       VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      OmitMethodsPredicate omitPredicate)
+      ReflectionPredicate reflectionPredicate)
       throws SignatureParseException {
     if (methodSignatures_file == null) {
       return;
@@ -588,7 +639,7 @@ public class OperationModel {
         if (!sig.isEmpty()) {
           TypedClassOperation operation =
               signatureToOperation(sig, visibility, reflectionPredicate);
-          if (!omitPredicate.shouldOmit(operation)) {
+          if (!omitMethodsPredicate.shouldOmit(operation)) {
             operations.add(operation);
           }
         }

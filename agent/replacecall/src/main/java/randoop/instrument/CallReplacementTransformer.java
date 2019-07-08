@@ -73,6 +73,8 @@ public class CallReplacementTransformer extends InstructionListUtils
     this.replacementMap = replacementMap;
     this.excludedPackagePrefixes = excludedPackagePrefixes;
     // debug_instrument.enabled = ReplaceCallAgent.debug;
+    // debug_transform.enabled = ReplaceCallAgent.debug;
+    // debug_map.enabled = ReplaceCallAgent.debug;
   }
 
   /**
@@ -95,10 +97,17 @@ public class CallReplacementTransformer extends InstructionListUtils
       byte[] classfileBuffer)
       throws IllegalClassFormatException {
 
-    // Note: An uncaught exception within a transform method is equivalent to null being returned.
-    // This method will only throw an IllegalClassFormatException, which is a ClassFileTransformer
-    // convention.
+    debug_transform.log("loader: %s, className: %s%n", loader, className);
 
+    // Note: An uncaught exception within a transform method is equivalent to null being returned.
+    // This method might throw an IllegalClassFormatException, which is a ClassFileTransformer
+    // convention.  (It may re-throw a ThreadDeath error.)
+
+    // In Java 8 the className is null for special Lambda classes. They should be ignored.
+    // In Java 9 these special classes are not passed to the transform method.
+    if (className == null) {
+      return null;
+    }
     String fullClassName = className.replace("/", ".");
 
     if (isExcludedClass(loader, fullClassName)) {
@@ -524,6 +533,7 @@ public class CallReplacementTransformer extends InstructionListUtils
                 origInvocation, mg.getClassName(), mg.getName());
         throw new IllegalClassFormatException(msg);
     }
+    debug_transform.log("new invoke: %s%n", newInvocation);
     return build_il(newInvocation);
   }
 

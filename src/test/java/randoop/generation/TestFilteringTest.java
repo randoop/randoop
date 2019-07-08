@@ -31,7 +31,6 @@ import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 
@@ -279,7 +278,7 @@ public class TestFilteringTest {
     gen.setTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<Type, TypedOperation>());
+            visibility, new ContractSet(), new MultiMap<>(), new OmitMethodsPredicate(null));
     gen.setTestCheckGenerator(checkGenerator);
     gen.setExecutionVisitor(new DummyVisitor());
     TestUtils.setAllLogs(gen);

@@ -13,10 +13,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
+import org.checkerframework.checker.signature.qual.InternalForm;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Options;
 import org.plumelib.options.Unpublicized;
+import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
@@ -126,7 +128,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --omitmethods}, and the default omissions.
    */
   @Option("File containing regular expressions for methods to omit")
-  public static Path omitmethods_file = null;
+  public static List<Path> omitmethods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
@@ -187,14 +189,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @see #flaky_test_behavior
    */
   public enum FlakyTestAction {
-    /** Randoop halts with a diagnostic message. */
+    /**
+     * Randoop halts with a diagnostic message. You can determine the responsible methods, fix or
+     * exclude them, and re-run Randoop.
+     */
     HALT,
     /**
-     * Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
-     * down by a factor of 2 or more.
+     * Discard the flaky test. This option should be a last resort. It is inefficient and
+     * unproductive for Randoop to produce and discard a lot of flaky tests.
      */
     DISCARD,
-    /** Output the flaky test; the resulting test suite may fail when it is run. */
+    /**
+     * Output the flaky test, but with flaky assertions commented out. When the value is {@code
+     * OUTPUT}, Randoop also suggests methods under test that might have caused the flakiness. You
+     * should <a
+     * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">investigate</a>
+     * them, fix or exclude them, then re-run Randoop.
+     */
     OUTPUT
   }
 
@@ -202,14 +213,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
    * different executions.
    *
-   * <p>Setting this option to {@code DISCARD} or {@code OUTPUT} should be considered a last resort.
-   * Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
-   * and a better solution is not to call Randoop on such methods; see section <a
+   * <p>Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic
+   * methods, and ultimately, the solution is not to call Randoop on such methods; see section <a
    * href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
    * the Randoop manual.
    */
   @Option("What to do if a flaky test is generated")
-  public static FlakyTestAction flaky_test_behavior = FlakyTestAction.HALT;
+  public static FlakyTestAction flaky_test_behavior = FlakyTestAction.OUTPUT;
 
   /**
    * How many suspected side-effecting or nondeterministic methods (from the program under test) to
@@ -263,8 +273,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Pattern require_classname_in_test = null;
 
   /**
-   * File containing fully-qualified names of classes that the tests must use. This option only
-   * works if Randoop is run using the <a
+   * File containing fully-qualified names of classes that the tests must use, directly or
+   * indirectly. This option only works if Randoop is run using the <a
    * href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
    * javaagent</a> to instrument the classes. A test is output only if it uses at least one of the
    * class names in the file. A test uses a class if it invokes any constructor or method of the
@@ -401,15 +411,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   /**
-   * File containing side-effect-free observer methods, each given as a <a
+   * File containing side-effect-free methods, each given as a <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
-   * signature</a> on a separate line. Specifying observers has two benefits: it makes regression
-   * tests stronger, and it helps Randoop create smaller tests.
+   * signature</a> on a separate line. Specifying side-effect-free methods has two benefits: it
+   * makes regression tests stronger, and it helps Randoop create smaller tests.
    */
-  @OptionGroup("Observer methods")
-  @Option("File containing observer functions")
-  // This file is used to populate RegressionCaptureGenerator.observer_map
-  public static Path observers = null;
+  @OptionGroup("Side-effect-free methods")
+  @Option("File containing side-effect-free methods")
+  public static Path side_effect_free_methods = null;
 
   /**
    * Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop
@@ -714,7 +723,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Filename for code to include in AfterClass-annotated method of test classes")
   public static String junit_after_all = null;
 
-  /** Name of the directory to which JUnit files should be written. */
+  /** Name of the directory in which JUnit files should be written. */
   @Option("Name of the directory to which JUnit files should be written")
   public static String junit_output_dir = null;
 
@@ -739,11 +748,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean junit_reflection_allowed = true;
 
   ///////////////////////////////////////////////////////////////////
+  /** System properties that Randoop will set similarly to {@code java -D}, of the form "x=y". */
   @OptionGroup("Runtime environment")
-  // We do this rather than using java -D so that we can easily pass these
-  // to other JVMs
-  @Option("-D Specify system properties to be set (similar to java -Dx=y)")
+  // This list enables Randoop to pass these properties to other JVMs, which woud not be easy if the
+  // user ran Randoop using `java -D`.  (But, Randoop does not seem to do so!  It was removed.)
+  @Option("-D Specify system properties to be set; similar to <code>java -Dx=y</code>.")
   public static List<String> system_props = new ArrayList<>();
+
+  /**
+   * How much memory Randoop should use when starting new JVMs. This only affects new JVMs; you
+   * still need to supply {@code -Xmx...} when starting Randoop itself.
+   */
+  @Option("Maximum memory for JVM; will be passed with <code>-Xmx</code>.")
+  // CircleCI runs out of memory during test generation if 2500m.
+  public static String jvm_max_memory = "3000m";
 
   @Unpublicized
   @Option("Store all output to stdout and stderr in the ExecutionOutcome.")
@@ -757,7 +775,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Controlling randomness")
   @Option("The random seed to use in the generation process")
-  public static int randomseed = (int) Randomness.SEED;
+  public static int randomseed = (int) Randomness.DEFAULT_SEED;
 
   // Currently, Randoop is deterministic, and there isn't a way to make Randoop not pay the costs of
   // (for example) LinkedHashMaps instead of HashMaps.  The only effect of this command-line
@@ -807,8 +825,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("<filename> Log operation usage counts to this file")
   public static FileWriterWithName operation_history_log = null;
 
+  /**
+   * True if Randoop should print generated tests that do not compile, which indicate Randoop bugs.
+   */
   @Option("Display source if a generated test contains a compilation error.")
-  public static boolean print_erroneous_file = false;
+  public static boolean print_non_compiling_file = false;
 
   /**
    * Create sequences but never execute them. Used to test performance of Randoop's sequence
@@ -912,13 +933,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param visibility the visibility predicate
    * @return the classes provided via the --classlist command-line argument
    */
-  @SuppressWarnings("signature") // TODO: reading from file; no guarantee strings are @ClassGetName
   public static Set<@ClassGetName String> getClassnamesFromArgs(VisibilityPredicate visibility) {
-    Set<@ClassGetName String> classnames = getStringSetFromFile(classlist, "tested classes");
+    Set<@ClassGetName String> classnames = getClassNamesFromFile(classlist);
     for (Path jarFile : testjar) {
       classnames.addAll(getClassnamesFromJarFile(jarFile, visibility));
     }
-    classnames.addAll(testclass);
+    for (String classname : testclass) {
+      if (!Signatures.isClassGetName(classname)) {
+        throw new RandoopUsageError(
+            "Illegal argument --testclass=" + classname + ", should be a class name");
+      }
+      classnames.add(classname);
+    }
     return classnames;
   }
 
@@ -930,7 +956,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param visibility the visibility predicate
    * @return the names of classes in the jar file
    */
-  @SuppressWarnings("signature") // string manipulation
   public static Set<@ClassGetName String> getClassnamesFromJarFile(
       Path jarFile, VisibilityPredicate visibility) {
     try {
@@ -940,8 +965,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
         if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
           // This ZipEntry represents a class. Now, what class does it represent?
           String classFileName = entry.getName();
-          String slashName = classFileName.substring(0, classFileName.length() - ".class".length());
-          String className = slashName.replace('/', '.');
+          @SuppressWarnings("signature") // string manipulation: convert filename to class name
+          @InternalForm String ifClassName =
+              classFileName.substring(0, classFileName.length() - ".class".length());
+          @ClassGetName String className = Signatures.internalFormToClassGetName(ifClassName);
           Class<?> c;
           try {
             c = Class.forName(className);
@@ -963,6 +990,25 @@ public abstract class GenInputsAbstract extends CommandHandler {
           String.format("Error while reading jar file %s: %s%n", jarFile, e.getMessage());
       throw new RandoopUsageError(message, e);
     }
+  }
+
+  /**
+   * Returns the class names listed in the file.
+   *
+   * @param file the file containing the strings
+   * @return the lines in the file, or null if listFile is null
+   */
+  public static Set<@ClassGetName String> getClassNamesFromFile(Path file) {
+    Set<@ClassGetName String> result = new LinkedHashSet<>();
+    for (String line : getStringSetFromFile(file, "class names")) {
+      if (!Signatures.isClassGetName(line)) {
+        throw new RandoopUsageError(
+            "Illegal value \"" + line + "\" in " + file + ", should be a class name");
+      }
+
+      result.add(line);
+    }
+    return result;
   }
 
   /**

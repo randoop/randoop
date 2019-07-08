@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class A<T> implements Comparable<T> {
+  @SuppressWarnings("signature:override.param.invalid")  // bug in Checker Framework??
   @Override
   public int compareTo(T o) {
     return 0;
@@ -23,6 +24,7 @@ class F<T, S> extends E<S, T> {}
 class G<S> {}
 
 class H<T> extends G<T> implements Comparable<T> {
+  @SuppressWarnings("signature:override.param.invalid")  // bug in Checker Framework??
   @Override
   public int compareTo(T o) {
     return 0;

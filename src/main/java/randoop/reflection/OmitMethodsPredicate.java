@@ -91,7 +91,7 @@ public class OmitMethodsPredicate {
    *     an omit pattern, false otherwise
    */
   @SuppressWarnings("ReferenceEquality")
-  boolean shouldOmit(final TypedClassOperation operation) {
+  public boolean shouldOmit(final TypedClassOperation operation) {
     Log.logPrintf("shouldOmit: testing %s%n", operation);
 
     // Done if there are no patterns

@@ -54,7 +54,7 @@ public class OperationSignature {
   /** Gson serialization requires a default constructor. */
   @SuppressWarnings({
     "unused",
-    "signature" // default constructor for Gson
+    "signature" // dummy value in default constructor for Gson
   })
   private OperationSignature() {
     this.classname = "";
