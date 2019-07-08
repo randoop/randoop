@@ -14,6 +14,8 @@ env | sort
 
 echo SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI=${SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI}
 echo ${SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI} | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+echo BUILD_REPOSITORY_URI=${BUILD_REPOSITORY_URI}
+echo ${BUILD_REPOSITORY_URI} | tr 'A-Za-z' 'N-ZA-Mn-za-m'
 
 ./gradlew clean assemble -PuseCheckerFramework=true
 ./gradlew javadoc
