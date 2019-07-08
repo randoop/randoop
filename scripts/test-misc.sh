@@ -24,6 +24,12 @@ GET https://api.github.com/repos/${BUILD_REPOSITORY_NAME}/randoop/pulls/${SYSTEM
 
 echo Build.BuildId=$(Build.BuildId)
 echo Build.BuildNumber=$(Build.BuildNumber)
+echo Build.SourceBranch=$(Build.SourceBranch)
+echo Build.SourceBranchName=$(Build.SourceBranchName)
+echo System.PullRequest.IsFork=$(System.PullRequest.IsFork)
+echo System.PullRequest.SourceBranch=$(System.PullRequest.SourceBranch)
+echo System.PullRequest.SourceRepositoryURI=$(System.PullRequest.SourceRepositoryURI)
+echo System.PullRequest.TargetBranch=$(System.PullRequest.TargetBranch)
 
 ./gradlew clean assemble -PuseCheckerFramework=true
 ./gradlew javadoc
