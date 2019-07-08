@@ -22,6 +22,9 @@ echo GET https://api.github.com/repos/${BUILD_REPOSITORY_NAME}/randoop/pulls/${S
 echo HERE IT IS:
 GET https://api.github.com/repos/${BUILD_REPOSITORY_NAME}/randoop/pulls/${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER} | jq .head.label
 
+echo Build.BuildId=$(Build.BuildId)
+echo Build.BuildNumber=$(Build.BuildNumber)
+
 ./gradlew clean assemble -PuseCheckerFramework=true
 ./gradlew javadoc
 ./gradlew checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
