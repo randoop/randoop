@@ -24,16 +24,7 @@ set -o xtrace
 
 export SHELLOPTS
 
-SLUGOWNER=${TRAVIS_PULL_REQUEST_SLUG%/*}
-if [[ "$SLUGOWNER" == "" ]]; then
-  SLUGOWNER=${TRAVIS_REPO_SLUG%/*}
-fi
-if [[ "$SLUGOWNER" == "" ]]; then
-  SLUGOWNER=randoop
-fi
-echo SLUGOWNER=$SLUGOWNER
-
-./.travis-build-without-test.sh
+./gradlew assemble
 
 # If you don't have xvfb running, then you should probably run gradle directly
 # rather than running this script.
