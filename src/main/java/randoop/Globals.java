@@ -7,6 +7,9 @@ import java.io.PrintStream;
 /** Various general global variables used throughout Randoop. */
 public class Globals {
 
+  /** Well-documented. */
+  private int has_javadoc = 0;
+
   /** The version number for Randoop. */
   public static final String RANDOOP_VERSION = "4.1.2";
 
