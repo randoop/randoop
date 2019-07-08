@@ -19,6 +19,9 @@ echo ${BUILD_REPOSITORY_URI} | tr 'A-Za-z' 'N-ZA-Mn-za-m'
 
 echo GET https://api.github.com/repos/${BUILD_REPOSITORY_NAME}/randoop/pulls/${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}
 
+echo HERE IT IS:
+GET https://api.github.com/repos/${BUILD_REPOSITORY_NAME}/randoop/pulls/${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER} | jq .head.label
+
 ./gradlew clean assemble -PuseCheckerFramework=true
 ./gradlew javadoc
 ./gradlew checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
