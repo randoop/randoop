@@ -1,5 +1,12 @@
 #!/bin/bash
 
+###
+###
+### This is not used any longer!  We no longer use Travis CI.
+###
+###
+
+
 # Optional argument $1 is one of:
 #   all, test, misc, nonSystemTest, systemTest
 # If it is omitted, this script does everything.
