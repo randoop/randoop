@@ -17,11 +17,6 @@ echo ${SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI} | tr 'A-Za-z' 'N-ZA-Mn-za-m'
 echo BUILD_REPOSITORY_URI=${BUILD_REPOSITORY_URI}
 echo ${BUILD_REPOSITORY_URI} | tr 'A-Za-z' 'N-ZA-Mn-za-m'
 
-echo GET https://api.github.com/repos/${BUILD_REPOSITORY_NAME}/randoop/pulls/${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}
-
-echo HERE IT IS:
-GET https://api.github.com/repos/${BUILD_REPOSITORY_NAME}/randoop/pulls/${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER} | jq .head.label
-
 echo Build.BuildId=$(Build.BuildId)
 echo Build.BuildNumber=$(Build.BuildNumber)
 echo Build.SourceBranch=$(Build.SourceBranch)
@@ -30,6 +25,11 @@ echo System.PullRequest.IsFork=$(System.PullRequest.IsFork)
 echo System.PullRequest.SourceBranch=$(System.PullRequest.SourceBranch)
 echo System.PullRequest.SourceRepositoryURI=$(System.PullRequest.SourceRepositoryURI)
 echo System.PullRequest.TargetBranch=$(System.PullRequest.TargetBranch)
+
+echo curl https://api.github.com/repos/${BUILD_REPOSITORY_NAME}/pulls/${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}
+
+echo HERE IT IS:
+curl https://api.github.com/repos/${BUILD_REPOSITORY_NAME}/randoop/pulls/${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER} | jq .head.label
 
 ./gradlew clean assemble -PuseCheckerFramework=true
 ./gradlew javadoc
