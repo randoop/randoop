@@ -58,10 +58,7 @@ public class OperationModelTest {
     }
     assertNotNull(model);
 
-    assertThat(
-        "only expect the LinkedList and Object classes",
-        model.getClassTypes().size(),
-        is(equalTo(2)));
+    assertEquals("only expect the LinkedList and Object classes", 2, model.getClassTypes().size());
     int genericOpCount = 0;
     int concreteOpCount = 0;
     int wildcardTypeCount = 0;
@@ -74,7 +71,7 @@ public class OperationModelTest {
         concreteOpCount++;
       }
     }
-    assertThat("concrete operation count ", concreteOpCount, is(equalTo(1)));
+    assertEquals("concrete operation count ", 1, concreteOpCount);
     assertThat(
         "generic operation count (JDK7: 51, JDK8: 58, JDK11: 59)",
         genericOpCount,
@@ -111,10 +108,8 @@ public class OperationModelTest {
       fail("did not find method: " + e.getMessage());
     }
     assertNotNull(model);
-    assertThat(
-        "should have both outer and inner classes, plus Object",
-        model.getClassTypes().size(),
-        is(equalTo(3)));
+    assertEquals(
+        "should have both outer and inner classes, plus Object", 3, model.getClassTypes().size());
 
     assertTrue("should have nonzero operations set", model.getOperations().size() > 1);
   }
@@ -193,7 +188,7 @@ public class OperationModelTest {
         alphaOps.add(operation);
       }
     }
-    assertThat("should be two operations with name alpha", alphaOps.size(), is(equalTo(2)));
+    assertEquals("should be two operations with name alpha", 2, alphaOps.size());
 
     for (TypedOperation operation : alphaOps) {
       Object[] inputs = new Object[2];
@@ -205,14 +200,14 @@ public class OperationModelTest {
         outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
-        assertThat("outcome should be string \"one\"", (String) value, is(equalTo("one")));
+        assertEquals("outcome should be string \"one\"", "one", (String) value);
 
         inputs[0] = InheritedEnum.TWO;
         inputs[1] = 1;
         outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
-        assertThat("outcome should be string \"two\"", (String) value, is(equalTo("two")));
+        assertEquals("outcome should be string \"two\"", "two", (String) value);
 
       } else if (operation.getOutputType().equals(JavaTypes.INT_TYPE)) {
         inputs[0] = InheritedEnum.ONE;
@@ -220,14 +215,14 @@ public class OperationModelTest {
         outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
-        assertThat("outcome should be string \"one\"", (int) value, is(equalTo(1)));
+        assertEquals("outcome should be string \"one\"", 1, (int) value);
 
         inputs[0] = InheritedEnum.TWO;
         inputs[1] = "two";
         outcome = operation.execute(inputs);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
         value = ((NormalExecution) outcome).getRuntimeValue();
-        assertThat("outcome should be string \"one\"", (int) value, is(equalTo(2)));
+        assertEquals("outcome should be string \"one\"", 2, (int) value);
       } else {
         fail("output type should be either String or int");
       }
@@ -306,10 +301,7 @@ public class OperationModelTest {
     OperationModel model2 = getOperationModel(classnames2);
     List<TypedOperation> operations2 = model2.getOperations();
 
-    assertThat(
-        "operations lists should be same length",
-        operations1.size(),
-        is(equalTo(operations2.size())));
+    assertEquals("operations lists should be same length", operations2.size(), operations1.size());
     assertEquals("should be same elements", operations1, operations2);
   }
 
@@ -330,7 +322,7 @@ public class OperationModelTest {
         }
       }
     }
-    assertThat("should be two constant operations", constantOps.size(), is(equalTo(2)));
+    assertEquals("should be two constant operations", 2, constantOps.size());
     for (TypedClassOperation operation : constantOps) {
       assertThat(
           "declaring type should be interface",

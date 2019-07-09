@@ -1,8 +1,6 @@
 package randoop.instrument;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -70,18 +68,18 @@ public class ReplacementFileTest {
   public void classReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/classreplacement.txt");
     HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-    assertThat("mock Component file has 5 methods", map.size(), is(equalTo(5)));
+    assertEquals("mock Component file has 5 methods", 5, map.size());
   }
 
   @Test
   public void packageReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/packagereplacement.txt");
     HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-    assertThat("mock package has 75 methods", map.size(), is(equalTo(75)));
+    assertEquals("mock package has 75 methods", 75, map.size());
 
     Path defaultFile = Paths.get("build/resources/main/default-replacements.txt");
     HashMap<MethodSignature, MethodSignature> defaultMap =
         ReplacementFileReader.readReplacements(defaultFile);
-    assertThat("default file loads 75 methods", map.size(), is(equalTo(75)));
+    assertEquals("default file loads 75 methods", 75, map.size());
   }
 }
