@@ -174,7 +174,7 @@ public class ParameterizedTypeTest {
     assertFalse("is not parameterized", genericNestedTypeOfClass.isParameterized());
     assertEquals(
         "name of generic inner class has type arguments",
-        "randoop.types.ClassWithGenericInnerClass.GenericNestedClass<T>",
+        "randoop.types.ExampleClassesForTests.ClassWithGenericInnerClass.GenericNestedClass<T>",
         genericNestedTypeOfClass.getName());
     assertEquals(
         "generic member class has type parameters",

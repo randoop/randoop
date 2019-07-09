@@ -1,8 +1,6 @@
 package randoop.condition;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -211,10 +209,7 @@ public class SpecificationTranslatorTest {
       throw new AssertionError("exception while loading spec file", e);
     }
     assertEquals("spec file has 8 specs", 8, specificationList.size());
-    assertEquals(
-        "8th is right one",
-        specificationList.get(7).getOperation().getName(),
-        is(equalTo("append")));
+    assertEquals("8th is right one", "append", specificationList.get(7).getOperation().getName());
     return specificationList.get(7);
   }
 }
