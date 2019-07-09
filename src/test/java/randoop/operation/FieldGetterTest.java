@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,8 +65,8 @@ public class FieldGetterTest {
   @SuppressWarnings("ClassNewInstance")
   @Test
   public void testInstanceField()
-      throws NoSuchFieldException, SecurityException, InstantiationException,
-          IllegalAccessException {
+      throws NoSuchFieldException, NoSuchMethodException, SecurityException, InstantiationException,
+          IllegalAccessException, InvocationTargetException {
     Class<?> c = ClassWithFields.class;
     ClassOrInterfaceType classType = new NonParameterizedType(c);
 
@@ -122,7 +123,7 @@ public class FieldGetterTest {
     // actual object
     NormalExecution expectedExec = new NormalExecution(1, 0);
     inputs = new Object[1];
-    inputs[0] = c.newInstance();
+    inputs[0] = c.getDeclaredConstructor().newInstance();
     NormalExecution actualExec = (NormalExecution) rhs.execute(inputs);
     assertTrue(
         "Execution should simply return value",
