@@ -147,7 +147,7 @@ public class GenericTypesTest {
       assertEquals(
           "illegal argument message matches",
           "type argument randoop.types.GenericsExamples.Variable1Ext does not match parameter bound "
-              + "randoop.types.GenericsExamples.Variable1<T> & java.lang.Comparable<T>",
+              + "randoop.types.GenericsExamples$Variable1<T> & java.lang.Comparable<T>",
           e.getMessage());
     }
 

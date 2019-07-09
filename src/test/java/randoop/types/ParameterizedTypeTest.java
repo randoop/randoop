@@ -189,7 +189,7 @@ public class ParameterizedTypeTest {
         instantiatedGenericNestedClass.getName(),
         is(
             equalTo(
-                "randoop.types.ClassWithGenericInnerClass.GenericNestedClass<java.lang.Integer>")));
+                "randoop.types.ExampleClassesForTests.ClassWithGenericInnerClass.GenericNestedClass<java.lang.Integer>")));
     substitution =
         new Substitution(
             genericNestedTypeOfClass.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
