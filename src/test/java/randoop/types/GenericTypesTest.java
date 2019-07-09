@@ -124,7 +124,7 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument java.lang.Integer does not match parameter bound randoop.types.Variable1<T>",
+          "type argument java.lang.Integer does not match parameter bound randoop.types.GenericsExamples$Variable1<T>",
           e.getMessage());
     }
 

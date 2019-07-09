@@ -210,7 +210,7 @@ public class SpecificationTranslatorTest {
     } catch (IOException e) {
       throw new AssertionError("exception while loading spec file", e);
     }
-    assertEquals("spec file has 8 specs", specificationList.size(), is(equalTo(8)));
+    assertEquals("spec file has 8 specs", 8, specificationList.size());
     assertEquals(
         "8th is right one",
         specificationList.get(7).getOperation().getName(),

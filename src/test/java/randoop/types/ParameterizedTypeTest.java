@@ -156,7 +156,7 @@ public class ParameterizedTypeTest {
     assertFalse("is not rawtype", staticInnerType.isRawtype());
     assertEquals(
         "name of static nested class has no type arguments",
-        "randoop.types.GenericWithInnerClass.StaticInnerClass",
+        "randoop.types.ExampleClassesForTests.GenericWithInnerClass.StaticInnerClass",
         staticInnerType.getName());
     assertEquals(
         "static member of generic has no type parameters",
