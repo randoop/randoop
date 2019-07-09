@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -182,8 +183,10 @@ public class ReplaceCallAgent {
       MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
 
       if (debug) {
-        for (HashMap.Entry<MethodSignature, MethodSignature> entry : replacementMap.entrySet()) {
-          System.err.println("map: " + entry.getKey() + " : " + entry.getValue());
+        ArrayList<MethodSignature> sortedKeys = new ArrayList<>(replacementMap.keySet());
+        Collections.sort(sortedKeys);
+        for (MethodSignature key : sortedKeys) {
+          System.err.println("map: " + key + " : " + replacementMap.get(key));
         }
       }
 

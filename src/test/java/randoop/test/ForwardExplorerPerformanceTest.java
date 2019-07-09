@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -65,7 +66,9 @@ public class ForwardExplorerPerformanceTest {
     ReflectionManager manager = new ReflectionManager(IS_PUBLIC);
     try (EntryReader er =
         new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
-      for (String entry : er) {
+      for (String entryLine : er) {
+        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @ClassGetName String entry = entryLine;
         Class<?> c = Class.forName(entry);
         ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
         final OperationExtractor extractor =

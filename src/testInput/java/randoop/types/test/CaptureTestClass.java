@@ -16,5 +16,6 @@ public class CaptureTestClass<T> {
 
   public void b(Container<? extends T> container) {}
 
+  @SuppressWarnings("signature:type.argument.type.incompatible") // bug in Checker Framework?
   public void c(Container<? super T> container) {}
 }

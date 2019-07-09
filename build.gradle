@@ -110,7 +110,7 @@ sourceSets {
   }
 
   /* Code sets used by system tests. There are no actual tests here. */
-  testInput 
+  testInput
 
   test {
     resources {
@@ -193,11 +193,21 @@ dependencies {
    */
   testInputImplementation sourceSets.main.output
   testInputImplementation configurations.junit.dependencies
+  testInputImplementation group: 'org.checkerframework', name: 'checker-qual', version: checkerFrameworkVersion
 
   if ("true".equals(project.ext.useCheckerFramework)) {
-    checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
-    checkerFramework 'org.checkerframework:jdk8:' + checkerFrameworkVersion
-    checkerFramework 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+    if (project.hasProperty("cfLocal")) {
+      def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
+      compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+      testCompileOnly files(cfHome + "/checker/dist/checker-qual.jar")
+      checkerFramework files(cfHome + "/checker/dist/checker.jar")
+      checkerFrameworkAnnotatedJDK files(cfHome + "/checker/dist/jdk8.jar")
+    } else {
+      compileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+      testCompileOnly 'org.checkerframework:checker-qual:' + checkerFrameworkVersion
+      checkerFramework 'org.checkerframework:checker:' + checkerFrameworkVersion
+      checkerFrameworkAnnotatedJDK 'org.checkerframework:jdk8:' + checkerFrameworkVersion
+    }
   } else {
     errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: '2.3.3'
   }
@@ -225,6 +235,9 @@ task compileAll() {
   dependsOn compileSystemTestJava
 }
 
+// Get early notification of compilation failures.
+assemble.dependsOn compileAll
+
 // This isn't working; maybe I need to make it run first.
 // Get early notification of any compilation failures, before running any tests
 build.dependsOn compileAll
@@ -237,21 +250,29 @@ if ("true".equals(project.ext.useCheckerFramework)) {
       // 'org.checkerframework.checker.nullness.NullnessChecker',
       'org.checkerframework.checker.signature.SignatureChecker'
     ]
+    extraJavacArgs = [
+      '-Werror',
+      // '-AcheckPurityAnnotations',
+      '-ArequirePrefixInWarningSuppressions',
+      '-AwarnUnneededSuppressions'
+    ]
   }
 } else {
   // Configuration for the Error Prone linter.
   tasks.withType(JavaCompile).each { t ->
-    if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
-      t.toolChain ErrorProneToolChain.create(project)
-      t.options.compilerArgs += [
+    if (!JavaVersion.current().isJava11()) {
+      if (!t.name.equals("compileTestInputJava") && !t.name.startsWith("checkTypes")) {
+        t.toolChain ErrorProneToolChain.create(project)
+        t.options.compilerArgs += [
         // Maybe NamedParameters is no longer supported?
         // // undocumented, and suggestion seems bad
         // '-Xep:NamedParameters:OFF',
         // Is always a false positive in my experience.
-        '-Xep:StringSplitter:OFF'
+          '-Xep:StringSplitter:OFF'
         // TODO: uncomment once we run the Interning Checker on Randoop
         // '-Xep:ReferenceEquality:OFF'
-      ]
+        ]
+      }
     }
   }
 }
@@ -741,8 +762,18 @@ javadoc {
   options.addStringOption("stylesheetfile", "${projectDir}/src/javadoc/resources/stylesheets/javadocstyle.css")
   // Use of Javadoc's -linkoffline command-line option makes Javadoc generation
   // much faster, especially on Travis.
-  options.with {
-    linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
+  if (JavaVersion.current().isJava8()) {
+    options.with {
+      linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
+    }
+  } else if (JavaVersion.current().isJava9()) {
+    options.with {
+      linksOffline 'https://docs.oracle.com/javase/9/docs/api/', 'https://docs.oracle.com/javase/9/docs/api/'
+    }
+  } else if (JavaVersion.current().isJava11()) {
+    options.with {
+      linksOffline 'https://docs.oracle.com/en/java/javase/11/docs/api/', 'https://docs.oracle.com/en/java/javase/11/docs/api/'
+    }
   }
   failOnError = true  // does not fail on warnings
   doLast {
@@ -975,19 +1006,15 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) 
 /*
  * Applies HTML5 validator to project site HTML, including the manual
  */
-task validateSite(dependsOn: 'html5validatorExists') {
+task validateSite(type: Exec, dependsOn: 'html5validatorExists') {
   description "Run html5validator to find HTML errors in site files (excludes manual and api)"
   if (JavaVersion.current().isJava9Compatible()) {
-    exec {
-      environment PATH: "$System.env.PATH"
-      commandLine "html5validator", "--root", "src/docs/"
-    }
+    environment PATH: "$System.env.PATH"
+    commandLine "html5validator", "--root", "src/docs/"
   } else if (JavaVersion.current().isJava8Compatible()) {
     // Before JDK9, Javadoc did not create proper HTML 5.
-    exec {
-      environment PATH: "$System.env.PATH"
-      commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
-    }
+    environment PATH: "$System.env.PATH"
+    commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
   } else {
     commandLine "echo", "WARNING: HTML validation of API documentation is only run in Java 9+."
   }
