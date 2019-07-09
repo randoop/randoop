@@ -218,7 +218,7 @@ public class ParameterizedTypeTest {
     assertTrue("is generic", innerType.isGeneric());
     assertEquals(
         "name of inner class of generic should have type arguments",
-        "randoop.types.GenericWithInnerClass<T>.InnerClass",
+        "randoop.types.ExampleClassesForTests.GenericWithInnerClass<T>.InnerClass",
         innerType.getName());
     assertEquals("member of generic has type parameters", 1, innerType.getTypeParameters().size());
     substitution = new Substitution(innerType.getTypeParameters(), integerType);
