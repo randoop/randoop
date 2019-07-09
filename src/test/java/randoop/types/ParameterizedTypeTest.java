@@ -225,7 +225,7 @@ public class ParameterizedTypeTest {
     ClassOrInterfaceType instantiatedInnerType = innerType.substitute(substitution);
     assertEquals(
         "name of instantiated member class",
-        "randoop.types.GenericWithInnerClass<java.lang.Integer>.InnerClass",
+        "randoop.types.ExampleClassesForTests.GenericWithInnerClass<java.lang.Integer>.InnerClass",
         instantiatedInnerType.getName());
     substitution =
         new Substitution(innerType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
