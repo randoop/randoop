@@ -12,6 +12,7 @@ public class CaptureInstantiationCase {
 
   public static class OnePredicate<T> extends LocalPredicate<T> {}
 
+  @SuppressWarnings("rawtypes")
   public static final LocalPredicate THE_RAW_PREDICATE = new LocalPredicate<Object>();
 
   public static <T> boolean filter(Iterable<T> collection, LocalPredicate<? super T> pred) {
