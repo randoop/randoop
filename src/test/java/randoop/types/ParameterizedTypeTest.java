@@ -306,7 +306,7 @@ public class ParameterizedTypeTest {
         nonparamInnerClass.getUnqualifiedName());
     assertEquals(
         "canonical name",
-        "randoop.types.ClassWithInnerClass.InnerClass",
+        "randoop.types.ExampleClassesForTests.ClassWithInnerClass.InnerClass",
         nonparamInnerClass.getCanonicalName());
     assertTrue("equality should be reflexive", nonparamInnerClass.equals(nonparamInnerClass));
     assertFalse(
