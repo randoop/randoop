@@ -302,7 +302,7 @@ public class ParameterizedTypeTest {
         "should not have type parameters", 0, nonparamInnerClass.getTypeParameters().size());
     assertEquals(
         "unqualified name",
-        "ClassWithInnerClass.InnerClass",
+        "ExampleClassesForTests.ClassWithInnerClass.InnerClass",
         nonparamInnerClass.getUnqualifiedName());
     assertEquals(
         "canonical name",
