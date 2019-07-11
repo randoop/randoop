@@ -1,10 +1,10 @@
 package randoop.main;
 
 import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -80,7 +80,7 @@ class RandoopRunStatus {
     command.add("java");
     command.add("-ea");
     // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
-    command.add("-Xmx2000m");
+    command.add("-Xmx3000m");
     command.add("-XX:+HeapDumpOnOutOfMemoryError");
     if (testEnvironment.getBootClassPath() != null
         && !testEnvironment.getBootClassPath().isEmpty()) {
@@ -183,10 +183,10 @@ class RandoopRunStatus {
     Path classFileDir = classDir.resolve(packagePathString);
     List<File> testClassFiles =
         getFiles(classFileDir, "*.class", regressionBasename, errorBasename);
-    assertThat(
+    assertEquals(
         "Number of compiled test files must equal source test files",
-        testClassFiles.size(),
-        is(equalTo(testSourceFiles.size())));
+        testSourceFiles.size(),
+        testClassFiles.size());
 
     // Compilation succeeded.  Return the result of test generation.
     return getRandoopRunStatus(randoopExitStatus);

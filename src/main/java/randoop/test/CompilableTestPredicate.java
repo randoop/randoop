@@ -90,8 +90,7 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
         if (((ExceptionalExecution) sequenceResult).getException()
             instanceof randoop.util.TimeoutExceededException) {
           // Do not count TimeoutExceeded as a CompileFailure.
-          // TODO: This always returns false.  Should it be true?
-          return result;
+          return true;
         }
       }
     }

@@ -1,10 +1,8 @@
 package randoop.reflection;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -75,12 +73,7 @@ public class InstantiationTest {
     getOperations(model, classOperations, inputTypes);
 
     int expectedClassCount = classnames.size() + 1;
-    assertThat(
-        "expect "
-            + expectedClassCount
-            + " classes: GenericBounds, SW, TW, UW, VW, WW, XW, YW, RML and Object",
-        model.getClassTypes().size(),
-        is(equalTo(expectedClassCount)));
+    assertEquals(expectedClassCount, model.getClassTypes().size());
 
     int methodCount = 0;
     for (TypedOperation operation : classOperations) {
@@ -91,8 +84,7 @@ public class InstantiationTest {
         methodCount++;
       }
     }
-    assertThat(
-        "expect " + methodNames.size() + " methods", methodCount, is(equalTo(methodNames.size())));
+    assertEquals("expect " + methodNames.size() + " methods", methodNames.size(), methodCount);
   }
 
   /**
@@ -114,10 +106,7 @@ public class InstantiationTest {
     OperationModel model = createModel(classnames, packageName);
 
     int expectedClassCount = classnames.size() + 1;
-    assertThat(
-        "expect " + expectedClassCount + " classes",
-        model.getClassTypes().size(),
-        is(equalTo(expectedClassCount)));
+    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
 
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
@@ -150,10 +139,7 @@ public class InstantiationTest {
     OperationModel model = createModel(classnames, packageName);
 
     int expectedClassCount = classnames.size() + 1;
-    assertThat(
-        "expect " + expectedClassCount + " classes",
-        model.getClassTypes().size(),
-        is(equalTo(expectedClassCount)));
+    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
 
     for (ClassOrInterfaceType type : model.getClassTypes()) {
       assertThat(
@@ -172,10 +158,7 @@ public class InstantiationTest {
     classnames.add(packageName + "." + "SetUtility");
     OperationModel model = createModel(classnames, packageName);
     int expectedClassCount = classnames.size() + 1;
-    assertThat(
-            "expect " + expectedClassCount + " classes",
-            model.getClassTypes().size(),
-            is(equalTo(expectedClassCount)));
+    assertEquals("expect " + expectedClassCount + " classes", expectedClassCount, model.getClassTypes().size());
 
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
     Set<Type> inputTypes = new LinkedHashSet<>();
@@ -196,7 +179,7 @@ public class InstantiationTest {
       assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
       count++;
     }
-    assertThat("should have X operations", count, is(equalTo(24)));
+    assertEquals("should have X operations", 24, count);
 
   }
   */

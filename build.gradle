@@ -76,7 +76,7 @@ allprojects {
     // https://mvnrepository.com/artifact/org.plumelib/options
     plumelib 'org.plumelib:options:1.0.1'
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib 'org.plumelib:plume-util:1.0.8'
+    plumelib 'org.plumelib:plume-util:1.0.10'
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib 'org.plumelib:reflection-util:0.0.4'
   }
@@ -216,12 +216,12 @@ dependencies {
 /*
  * Configuration for compilation.
  */
-compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
-compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileCoveredTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileReplacecallTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
+compileJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
+compileTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
+compileCoveredTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
+compileReplacecallTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
+compileSystemTestJava.options.compilerArgs = ['-g','-Werror','-Xlint','-Xlint:-classfile']
+compileTestInputJava.options.compilerArgs = ['-g','-nowarn','-Xlint:-classfile']
 
 task compileAll() {
   dependsOn compileJava
@@ -550,7 +550,7 @@ tasks.withType(Test) {
  /*
   * Set the heap size and GC for running tests.
   */
-  jvmArgs '-Xmx384m', '-XX:+UseG1GC', '-XX:SoftRefLRUPolicyMSPerMB=250'
+  jvmArgs '-Xmx3000m'
 
   /*
    * Pass along any system properties that begin with "randoop."

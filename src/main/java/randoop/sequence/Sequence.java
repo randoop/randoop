@@ -667,12 +667,11 @@ public final class Sequence {
   public Variable randomVariableForTypeLastStatement(Type type, boolean onlyReceivers) {
     List<Variable> possibleVars = allVariablesForTypeLastStatement(type, onlyReceivers);
     if (possibleVars.isEmpty()) {
-      // Statement lastStatement = this.statements.get(this.statements.size() - 1);
-      return null; // deal with the problem elsewhere.  TODO: fix so this cannot happen.
-      // throw new RandoopBug(
-      //     String.format(
-      //         "Failed to select %svariable with input type %s from statement %s",
-      //         (onlyReceivers ? "receiver " : ""), type, lastStatement));
+      Statement lastStatement = this.statements.get(this.statements.size() - 1);
+      throw new RandoopBug(
+          String.format(
+              "Failed to select %svariable with input type %s from statement %s",
+              (onlyReceivers ? "receiver " : ""), type, lastStatement));
     }
     if (possibleVars.size() == 1) {
       return possibleVars.get(0);

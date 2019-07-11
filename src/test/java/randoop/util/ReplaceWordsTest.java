@@ -1,8 +1,6 @@
 package randoop.util;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +16,8 @@ public class ReplaceWordsTest {
     map.put("e", "x1");
     map.put("result", "x2");
 
-    assertThat(
-        "should not replace e in \"result\"",
-        Util.replaceWords(condition, map),
-        is(equalTo("x2.equals(x1)")));
+    assertEquals(
+        "should not replace e in \"result\"", "x2.equals(x1)", Util.replaceWords(condition, map));
   }
 
   @Test
@@ -31,9 +27,7 @@ public class ReplaceWordsTest {
     map.put("b", "c");
     map.put("a", "b");
 
-    assertThat(
-        "substitution should not interfere",
-        Util.replaceWords(condition, map),
-        is(equalTo("b == c && c == d")));
+    assertEquals(
+        "substitution should not interfere", "b == c && c == d", Util.replaceWords(condition, map));
   }
 }

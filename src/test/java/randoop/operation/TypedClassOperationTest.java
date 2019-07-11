@@ -1,8 +1,6 @@
 package randoop.operation;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -29,23 +27,19 @@ public class TypedClassOperationTest {
       TypedClassOperation classOperation = (TypedClassOperation) operation;
       final TypedClassOperation operationForType = classOperation.getOperationForType(cType);
       String expectedSignatureString = getExpectedSignature(classOperation, cType);
-      assertThat(
+      assertEquals(
           "underlying operations should be equal",
-          operationForType.getOperation(),
-          is(equalTo(classOperation.getOperation())));
+          classOperation.getOperation(),
+          operationForType.getOperation());
       if (classOperation.isConstructorCall()) {
         assertTrue("should be constructor", operationForType.isConstructorCall());
         String signatureString = operationForType.getRawSignature().toString();
-        assertThat(
-            "should be constructor signature",
-            signatureString,
-            is(equalTo(expectedSignatureString)));
+        assertEquals("should be constructor signature", expectedSignatureString, signatureString);
       }
       if (classOperation.isMethodCall()) {
         assertTrue("should be method", operationForType.isMethodCall());
         String signatureString = operationForType.getRawSignature().toString();
-        assertThat(
-            "modified method signature", signatureString, is(equalTo(expectedSignatureString)));
+        assertEquals("modified method signature", expectedSignatureString, signatureString);
       }
     }
   }

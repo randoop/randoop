@@ -4,6 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static randoop.types.ExampleClassesForTests.BaseStream;
+import static randoop.types.ExampleClassesForTests.Stream;
+import static randoop.types.GenericsExamples.Class1;
+import static randoop.types.GenericsExamples.Class2;
+import static randoop.types.GenericsExamples.IntersectionBounds;
+import static randoop.types.GenericsExamples.MutuallyRecursive1;
+import static randoop.types.GenericsExamples.Parameterized1;
+import static randoop.types.GenericsExamples.Variable1;
+import static randoop.types.GenericsExamples.Variable1Ext;
+import static randoop.types.GenericsExamples.Variable1Ext2;
+import static randoop.types.GenericsExamples.Variable1Ext3;
+import static randoop.types.GenericsExamples.Variable1Ext4;
+import static randoop.types.GenericsExamples.Variable2;
 
 import java.util.Collections;
 import java.util.List;
@@ -111,7 +124,7 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument java.lang.Integer does not match parameter bound randoop.types.Variable1<T>",
+          "type argument java.lang.Integer does not match parameter bound randoop.types.GenericsExamples$Variable1<T>",
           e.getMessage());
     }
 
@@ -133,8 +146,8 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument randoop.types.Variable1Ext does not match parameter bound "
-              + "randoop.types.Variable1<T> & java.lang.Comparable<T>",
+          "type argument randoop.types.GenericsExamples.Variable1Ext does not match parameter bound "
+              + "randoop.types.GenericsExamples$Variable1<T> & java.lang.Comparable<T>",
           e.getMessage());
     }
 
@@ -158,7 +171,7 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument randoop.types.Variable1Ext does not match parameter bound randoop.types.Variable1<T>",
+          "type argument randoop.types.GenericsExamples.Variable1Ext does not match parameter bound randoop.types.GenericsExamples$Variable1<T>",
           e.getMessage());
     }
 

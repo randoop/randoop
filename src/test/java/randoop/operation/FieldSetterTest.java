@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -97,7 +98,8 @@ public class FieldSetterTest {
   @SuppressWarnings("ClassNewInstance")
   @Test
   public void testInstanceField()
-      throws NoSuchFieldException, InstantiationException, IllegalAccessException {
+      throws NoSuchFieldException, NoSuchMethodException, InstantiationException,
+          InvocationTargetException, IllegalAccessException {
     Class<?> c = ClassWithFields.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
     Field field = c.getField("oneField");
@@ -154,7 +156,7 @@ public class FieldSetterTest {
 
     // real live object
     Object[] inputs2 = new Object[2];
-    inputs2[0] = c.newInstance();
+    inputs2[0] = c.getDeclaredConstructor().newInstance();
     inputs2[1] = 9;
     assertFalse("Initial value of field is not 9", 9 == (int) f.getValue(inputs2[0]));
     NormalExecution expectedExec = new NormalExecution(null, 0);
