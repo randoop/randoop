@@ -166,11 +166,11 @@ public class SequenceCompilerTest {
   }
 
   private SequenceCompiler getSequenceCompiler(SequenceClassLoader classLoader) {
-    List<String> options = new ArrayList<>();
-    // These are javac options
-    options.add("-Xmaxerrs");
-    options.add("1000");
-    return new SequenceCompiler(classLoader, options);
+    List<String> compilerOptions = new ArrayList<>();
+    // These are javac compilerOptions
+    compilerOptions.add("-Xmaxerrs");
+    compilerOptions.add("1000");
+    return new SequenceCompiler(classLoader, compilerOptions);
   }
 
   private void printDiagnostics(
