@@ -20,6 +20,7 @@ import randoop.test.TestCheckGenerator;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor;
+import randoop.util.Util;
 import randoop.util.predicate.AlwaysFalse;
 
 /**
@@ -361,6 +362,7 @@ public abstract class AbstractGenerator {
         System.out.println(
             "Average method execution time (exceptional termination): "
                 + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
+        System.out.println("Approximate memory usage " + Util.usedMemory() + "MB");
       }
     }
 
