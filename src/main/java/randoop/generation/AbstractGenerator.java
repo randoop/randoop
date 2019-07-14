@@ -314,7 +314,7 @@ public abstract class AbstractGenerator {
       if (GenInputsAbstract.progressdisplay
           && GenInputsAbstract.progressintervalsteps != -1
           && num_steps % GenInputsAbstract.progressintervalsteps == 0) {
-        progressDisplay.displayWithoutTime();
+        progressDisplay.display(false);
       }
 
       if (eSeq == null) {
@@ -345,11 +345,7 @@ public abstract class AbstractGenerator {
     }
 
     if (GenInputsAbstract.progressdisplay && progressDisplay != null) {
-      if (GenInputsAbstract.deterministic) {
-        progressDisplay.displayWithoutTime();
-      } else {
-        progressDisplay.displayWithTime();
-      }
+      progressDisplay.display(!GenInputsAbstract.deterministic);
       progressDisplay.shouldStop = true;
     }
 

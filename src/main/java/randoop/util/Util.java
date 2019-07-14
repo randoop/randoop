@@ -187,4 +187,21 @@ public final class Util {
     b.append(text.substring(position));
     return b.toString();
   }
+
+  /** The number of bytes in a megabyte. */
+  private static int MEGABYTE = 1024 * 1024;
+
+  /** The Runtime instance for the current execution. */
+  private static Runtime runtime = Runtime.getRuntime();
+
+  /**
+   * Returns the amount of used memory in the JVM, in megabytes. This is an overapproximation. It
+   * could be lower if a garbage collection were performed. See
+   * https://cruftex.net/2017/03/28/The-6-Memory-Metrics-You-Should-Track-in-Your-Java-Benchmarks.html
+   *
+   * @return the amount of used memory, in megabytes
+   */
+  public static long usedMemory() {
+    return (runtime.totalMemory() - runtime.freeMemory()) / MEGABYTE;
+  }
 }
