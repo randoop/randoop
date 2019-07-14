@@ -174,8 +174,9 @@ public class ComponentManager {
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
-  // This method is oddly named, since it does not take as input a type.  However, it extensively
-  // uses the operation, so it would take some work to abstract out its functionality.
+  // This method is oddly named, since it does not take as input a type.  However, the method
+  // extensively uses the operation, so refactoring the method to take a type instead would take
+  // some work.
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
