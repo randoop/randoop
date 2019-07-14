@@ -1,6 +1,7 @@
 package randoop.compile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
@@ -34,8 +35,16 @@ public class SequenceCompiler {
   private final SequenceJavaFileManager fileManager;
 
   /**
-   * Creates a {@link SequenceCompiler} with the given {@code ClassLoader}, options list, and {@code
-   * DiagnosticsCollector}.
+   * Creates a {@link SequenceCompiler}.
+   *
+   * @param classLoader the class loader for this compiler
+   */
+  public SequenceCompiler(SequenceClassLoader classLoader) {
+    this(classLoader, Collections.emptyList());
+  }
+
+  /**
+   * Creates a {@link SequenceCompiler}.
    *
    * @param classLoader the class loader for this compiler
    * @param options the compiler options
