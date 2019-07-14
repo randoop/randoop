@@ -630,8 +630,8 @@ public final class Sequence {
   }
 
   // TODO: This seems wrong.  Most of Randoop works in terms of active statements -- the statements
-  // whose variable that may be chosen.  Then, this only considers the last statement, but it
-  // considers all its variables, even ones that are not active.
+  // whose variable may be chosen.  By contrast, this method only considers the last statement, but
+  // it considers all its variables, even ones that are not active.
   /**
    * Return all values of type {@code type} that are produced by, or might be side-effected by, the
    * last statement. May return an empty list if {@code onlyReceivers} is true and the only values
