@@ -64,7 +64,7 @@ public class ProgressDisplay extends Thread {
         + generator.num_sequences_generated
         + ", failing inputs="
         + generator.num_failing_sequences
-        + (withTime ? ("      (" + new Date() + " " + Util.usedMemory() + "MB used)") : "");
+        + (withTime ? ("      (" + new Date() + "     " + Util.usedMemory() + "MB used)") : "");
   }
 
   /**
