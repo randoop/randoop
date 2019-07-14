@@ -109,7 +109,7 @@ public final class Sequence {
     if (value == null) throw new IllegalArgumentException("value is null");
     Type type = Type.forValue(value);
 
-    if (!TypedOperation.isNonreceiverType(type)) {
+    if (!type.isNonreceiverType()) {
       throw new IllegalArgumentException("value is not a (boxed) primitive or String");
     }
 

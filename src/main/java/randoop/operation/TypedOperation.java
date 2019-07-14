@@ -493,7 +493,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public static TypedOperation createPrimitiveInitialization(Type type, Object value) {
     Type valueType = Type.forValue(value);
-    assert isNonreceiverType(valueType) : "must be nonreceiver type, got " + type.getName();
+    assert valueType.isNonreceiverType() : "must be nonreceiver type, got " + type.getName();
     return TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(type, value));
   }
 
@@ -563,20 +563,6 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(
         new ArrayElementSet(arrayType.getComponentType()), inputTypes, JavaTypes.VOID_TYPE);
-  }
-
-  /**
-   * Determines whether the given {@link Type} is the type of a non-receiver term: primitive, boxed
-   * primitive, or {@code String}.
-   *
-   * @param type the {@link Type}
-   * @return true if the type is primitive, boxed primitive or {@code String}; false otherwise
-   */
-  public static boolean isNonreceiverType(Type type) {
-    return type.isPrimitive()
-        || type.isBoxedPrimitive()
-        || type.isString()
-        || type.getRuntimeClass().equals(Class.class);
   }
 
   @Override
