@@ -2,12 +2,12 @@ version: 2.1
 
 jobs:
   # nonSystemTest-jdk8:
-  # 
+  #
   #   docker:
   #     - image: mdernst/ubuntu-for-randoop-jdk8
-  # 
+  #
   #   steps:
-  # 
+  #
   #     - restore_cache:
   #         keys:
   #           - source-v2-{{ .Branch }}-{{ .Revision }}
@@ -18,27 +18,27 @@ jobs:
   #         key: source-v2-{{ .Branch }}-{{ .Revision }}
   #         paths:
   #           - ".git"
-  # 
+  #
   #     - restore_cache:
   #         keys:
   #           - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
   #           - gradle-v2-{{ .Branch }}-
   #           - gradle-v2-
-  # 
+  #
   #     - run: ./scripts/test-nonSystemTest.sh
-  # 
+  #
   #     - save_cache:
   #         paths:
   #           - ~/.gradle
   #         key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
-  # 
+  #
   # systemTest-jdk8:
-  # 
+  #
   #   docker:
   #     - image: mdernst/ubuntu-for-randoop-jdk8
-  # 
+  #
   #   steps:
-  # 
+  #
   #     - restore_cache:
   #         keys:
   #           - source-v2-{{ .Branch }}-{{ .Revision }}
@@ -49,17 +49,17 @@ jobs:
   #         key: source-v2-{{ .Branch }}-{{ .Revision }}
   #         paths:
   #           - ".git"
-  # 
+  #
   #     - restore_cache:
   #         keys:
   #           - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
   #           - gradle-v2-{{ .Branch }}-
   #           - gradle-v2-
-  # 
+  #
   #     - run:
   #         command: ./scripts/test-systemTest.sh
   #         no_output_timeout: 20m
-  # 
+  #
   #     - save_cache:
   #         paths:
   #           - ~/.gradle
@@ -106,7 +106,7 @@ jobs:
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
-          path: ~/test-results/junit     
+          path: ~/test-results/junit
 
   systemTest-jdk11:
 
@@ -151,7 +151,7 @@ jobs:
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
-          path: ~/test-results/junit     
+          path: ~/test-results/junit
 
   misc:
 
