@@ -18,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -82,8 +81,7 @@ public class SpecificationCollection {
     this.overridden = overridden;
     this.getExecutableSpecificationCache = new HashMap<>();
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
-    List<String> options = new ArrayList<>();
-    this.compiler = new SequenceCompiler(sequenceClassLoader, options);
+    this.compiler = new SequenceCompiler(sequenceClassLoader);
   }
 
   /**
