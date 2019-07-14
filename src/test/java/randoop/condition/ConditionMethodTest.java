@@ -4,8 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import randoop.compile.SequenceClassLoader;
@@ -117,7 +115,6 @@ public class ConditionMethodTest {
 
   private SequenceCompiler getCompiler() {
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
-    List<String> options = new ArrayList<>();
-    return new SequenceCompiler(sequenceClassLoader, options);
+    return new SequenceCompiler(sequenceClassLoader);
   }
 }
