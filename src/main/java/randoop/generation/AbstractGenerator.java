@@ -362,7 +362,7 @@ public abstract class AbstractGenerator {
         System.out.println(
             "Average method execution time (exceptional termination): "
                 + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
-        System.out.println("Approximate memory usage " + Util.usedMemory() + "MB");
+        System.out.println("Approximate memory usage " + Util.usedMemory(true) + "MB");
       }
     }
 

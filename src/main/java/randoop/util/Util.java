@@ -1,5 +1,7 @@
 package randoop.util;
 
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -195,13 +197,40 @@ public final class Util {
   private static Runtime runtime = Runtime.getRuntime();
 
   /**
-   * Returns the amount of used memory in the JVM, in megabytes. This is an overapproximation. It
-   * could be lower if a garbage collection were performed. See
-   * https://cruftex.net/2017/03/28/The-6-Memory-Metrics-You-Should-Track-in-Your-Java-Benchmarks.html
+   * Returns the amount of used memory in the JVM, in megabytes.
    *
+   * @param forceGc if true, force a garbage collection, which gives a more accurate
+   *     overapproximation of the memory used, but is also slower
    * @return the amount of used memory, in megabytes
    */
-  public static long usedMemory() {
+  public static long usedMemory(boolean forceGc) {
+    if (forceGc) {
+      long oldCollectionCount = getCollectionCount();
+      System.gc();
+      while (getCollectionCount() == oldCollectionCount) {
+        try {
+          Thread.sleep(1); // 1 millisecond
+        } catch (InterruptedException e) {
+          // nothing to do
+        }
+      }
+    }
     return (runtime.totalMemory() - runtime.freeMemory()) / MEGABYTE;
+  }
+
+  /**
+   * Return the number of garbage collections that have occurred.
+   *
+   * @return the number of garbage collections that have occurred
+   */
+  private static long getCollectionCount() {
+    long result = 0;
+    for (GarbageCollectorMXBean b : ManagementFactory.getGarbageCollectorMXBeans()) {
+      long count = b.getCollectionCount();
+      if (count != -1) {
+        result += count;
+      }
+    }
+    return result;
   }
 }
