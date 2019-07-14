@@ -800,7 +800,8 @@ public class ForwardGenerator extends AbstractGenerator {
   /**
    * Return a variable of the given type.
    *
-   * @param candidates the list to choose from (I think?)
+   * @param candidates sequences, each of which produces the given type; that is, each would be a
+   *     legal return value
    * @param inputType the type of the chosen variable/sequence
    * @param isReceiver whether the value will be used as a receiver
    * @return a random variable of the given type, chosen from the candidates
