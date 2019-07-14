@@ -51,17 +51,20 @@ public class ProgressDisplay extends Thread {
     setDaemon(true);
   }
 
-  public String messageWithoutTime() {
+  /**
+   * Return the progress message.
+   *
+   * @param withTime whether to include time and memory usage
+   * @return the progress message
+   */
+  public String message(boolean withTime) {
     return "Progress update: steps="
         + generator.num_steps
         + ", test inputs generated="
         + generator.num_sequences_generated
         + ", failing inputs="
-        + generator.num_failing_sequences;
-  }
-
-  public String messageWithTime() {
-    return messageWithoutTime() + "      (" + new Date() + ")";
+        + generator.num_failing_sequences
+        + (withTime ? ("      (" + new Date() + ")") : "");
   }
 
   /**
@@ -79,7 +82,7 @@ public class ProgressDisplay extends Thread {
         return;
       }
       if (progressInterval > 0) {
-        displayWithTime();
+        display(true);
       }
       if (listenerMgr != null) {
         listenerMgr.progressThreadUpdateNotify();
@@ -191,19 +194,12 @@ public class ProgressDisplay extends Thread {
   /**
    * Displays the current status. Call this if you don't want to wait until the next automatic
    * display.
+   *
+   * @param withTime whether to print time and memory usage
    */
-  public void displayWithTime() {
+  public void display(boolean withTime) {
     if (noProgressOutput()) return;
-    display(messageWithTime());
-  }
-
-  /**
-   * Displays the current status. Call this if you don't want to wait until the next automatic
-   * display.
-   */
-  public void displayWithoutTime() {
-    if (noProgressOutput()) return;
-    display(messageWithoutTime());
+    display(message(withTime));
   }
 
   /**

@@ -182,7 +182,7 @@ public class ReplaceCallAgent {
       MethodReplacements.setAgentPath(getAgentPath());
       MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
 
-      if (debug) {
+      if (debug && false) {
         ArrayList<MethodSignature> sortedKeys = new ArrayList<>(replacementMap.keySet());
         Collections.sort(sortedKeys);
         for (MethodSignature key : sortedKeys) {
