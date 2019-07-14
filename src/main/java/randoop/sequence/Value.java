@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
-import randoop.operation.TypedOperation;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
@@ -29,8 +28,7 @@ public class Value {
     }
 
     Type valueType = Type.forClass(value.getClass());
-    assert TypedOperation.isNonreceiverType(valueType)
-        : "expecting nonreceiver type, have " + valueType;
+    assert valueType.isNonreceiverType() : "expecting nonreceiver type, have " + valueType;
 
     if (valueType.isString()) {
       String escaped = StringEscapeUtils.escapeJava(value.toString());
