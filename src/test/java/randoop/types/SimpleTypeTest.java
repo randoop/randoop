@@ -3,6 +3,8 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static randoop.types.ExampleClassesForTests.I;
+import static randoop.types.ExampleClassesForTests.J;
 
 import java.util.ArrayList;
 import java.util.Collection;

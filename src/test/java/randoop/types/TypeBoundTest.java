@@ -2,6 +2,15 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static randoop.types.TypeBoundExamples.SW;
+import static randoop.types.TypeBoundExamples.TW;
+import static randoop.types.TypeBoundExamples.UW;
+import static randoop.types.TypeBoundExamples.VW;
+import static randoop.types.TypeBoundExamples.WW;
+import static randoop.types.TypeBoundExamples.WildcardBoundExamples;
+import static randoop.types.TypeBoundExamples.Word;
+import static randoop.types.TypeBoundExamples.XW;
+import static randoop.types.TypeBoundExamples.YW;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -179,7 +188,7 @@ public class TypeBoundTest {
     }
 
     private void addParameters(String name, java.lang.reflect.TypeVariable<?>[] typeParameters) {
-      for (java.lang.reflect.TypeVariable variable : typeParameters) {
+      for (java.lang.reflect.TypeVariable<?> variable : typeParameters) {
         argTypes.put(name, TypeVariable.forType(variable));
       }
     }
