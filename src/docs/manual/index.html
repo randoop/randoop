@@ -1275,6 +1275,9 @@ Randoop about your application, and that is how we recommend using Randoop.
       <ul>
             <li id="option:system-props"><b>-D</b> <b>--system-props=</b><i>string</i> <code>[+]</code>.
              System properties that Randoop will set similarly to <code>java -D</code>, of the form "x=y".
+            <li id="option:jvm-max-memory"><b>--jvm-max-memory=</b><i>string</i>.
+             How much memory Randoop should use when starting new JVMs. This only affects new JVMs; you
+ still need to supply <code>-Xmx...</code> when starting Randoop itself. [default 3000m]
       </ul>
   <li id="optiongroup:Controlling-randomness">Controlling randomness
       <ul>
