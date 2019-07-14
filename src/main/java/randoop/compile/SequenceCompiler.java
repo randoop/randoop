@@ -25,8 +25,8 @@ public class SequenceCompiler {
   /** The {@code ClassLoader} for this compiler. */
   private final SequenceClassLoader classLoader;
 
-  /** the options to the compiler */
-  private final List<String> options;
+  /** The options to the compiler. */
+  private final List<String> compilerOptions;
 
   /** the Java compiler */
   private final JavaCompiler compiler;
@@ -47,11 +47,11 @@ public class SequenceCompiler {
    * Creates a {@link SequenceCompiler}.
    *
    * @param classLoader the class loader for this compiler
-   * @param options the compiler options
+   * @param compilerOptions the compiler options
    */
-  public SequenceCompiler(SequenceClassLoader classLoader, List<String> options) {
+  public SequenceCompiler(SequenceClassLoader classLoader, List<String> compilerOptions) {
     this.classLoader = classLoader;
-    this.options = new ArrayList<>(options);
+    this.compilerOptions = new ArrayList<>(compilerOptions);
     this.compiler = ToolProvider.getSystemJavaCompiler();
 
     if (this.compiler == null) {
@@ -119,7 +119,7 @@ public class SequenceCompiler {
     sources.add(source);
     fileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, classFileName, source);
     JavaCompiler.CompilationTask task =
-        compiler.getTask(null, fileManager, diagnostics, options, null, sources);
+        compiler.getTask(null, fileManager, diagnostics, compilerOptions, null, sources);
     Boolean succeeded = task.call();
     return (succeeded != null && succeeded);
   }

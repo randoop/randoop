@@ -45,19 +45,19 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    */
   public CompilableTestPredicate(JUnitCreator junitCreator, GenTests genTests) {
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
-    List<String> options = new ArrayList<>();
+    List<String> compilerOptions = new ArrayList<>();
     // only need to know an error exists:
-    options.add("-Xmaxerrs");
-    options.add("1");
+    compilerOptions.add("-Xmaxerrs");
+    compilerOptions.add("1");
     // no class generation:
-    options.add("-implicit:none");
+    compilerOptions.add("-implicit:none");
     // no annotation processing: (note that -proc:only does not produce correct results)
-    options.add("-proc:none");
+    compilerOptions.add("-proc:none");
     // no debugging information:
-    options.add("-g:none");
+    compilerOptions.add("-g:none");
     // no warnings:
-    options.add("-Xlint:none");
-    this.compiler = new SequenceCompiler(sequenceClassLoader, options);
+    compilerOptions.add("-Xlint:none");
+    this.compiler = new SequenceCompiler(sequenceClassLoader, compilerOptions);
     this.junitCreator = junitCreator;
     this.classNameGenerator = new NameGenerator("RandoopTemporarySeqTest");
     this.methodNameGenerator = new NameGenerator("test");
