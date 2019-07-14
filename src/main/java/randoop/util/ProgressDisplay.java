@@ -51,6 +51,12 @@ public class ProgressDisplay extends Thread {
     setDaemon(true);
   }
 
+  /**
+   * Return the progress message.
+   *
+   * @param withTime whether to include time and memory usage
+   * @return the progress message
+   */
   public String message(boolean withTime) {
     return "Progress update: steps="
         + generator.num_steps
