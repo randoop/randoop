@@ -173,9 +173,13 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * Returns a NonreceiverTerm holding the zero value for the specified class c. In the case of
-   * characters there is no natural zero, so the value 'a' is used. Also, returns null for {@link
-   * JavaTypes#CLASS_TYPE}. Returns "" (empty string) for {@link JavaTypes#STRING_TYPE}.
+   * Returns a NonreceiverTerm holding the zero/false value for the specified class c.
+   *
+   * <ul>
+   *   <li>Returns 'a' for characters.
+   *   <li>Returns null for {@link JavaTypes#CLASS_TYPE}.
+   *   <li>Returns "" (empty string) for {@link JavaTypes#STRING_TYPE}.
+   * </ul>
    *
    * @param type the type of value desired
    * @return a {@link NonreceiverTerm} with a canonical representative of the given type
