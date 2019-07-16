@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,5 +90,10 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   @Override
   public String getUnqualifiedName() {
     return this.getSimpleName() + "<" + UtilPlume.join(this.getTypeArguments(), ",") + ">";
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return super.classifyTypeVariableUse();
   }
 }

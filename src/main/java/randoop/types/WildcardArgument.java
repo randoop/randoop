@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -147,5 +149,10 @@ class WildcardArgument extends TypeArgument {
 
   WildcardType getWildcardType() {
     return argumentType;
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return argumentType.classifyTypeVariableUse();
   }
 }

@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -167,5 +169,10 @@ public abstract class TypeVariable extends ParameterType {
   @Override
   public Type getRawtype() {
     return JavaTypes.OBJECT_TYPE;
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return TypeVariableUse.WHOLE_TYPE;
   }
 }

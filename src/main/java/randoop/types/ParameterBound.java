@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -262,4 +264,6 @@ public abstract class ParameterBound {
   public boolean isVariable() {
     return false;
   }
+
+  public abstract TypeVariableUse classifyTypeVariableUse();
 }

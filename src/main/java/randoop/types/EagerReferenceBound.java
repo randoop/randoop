@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.List;
 import randoop.types.LazyParameterBound.LazyBoundException;
 
@@ -117,5 +119,11 @@ class EagerReferenceBound extends ReferenceBound {
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     return isUpperBound(getBoundType(), substitution);
+  }
+
+  @Override
+  // This method exists to indicate that I have thought through that there is nothing to do.
+  public TypeVariableUse classifyTypeVariableUse() {
+    return super.classifyTypeVariableUse();
   }
 }

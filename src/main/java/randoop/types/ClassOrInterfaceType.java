@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -521,5 +523,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public boolean isClassOrInterfaceType() {
     return true;
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    TypeVariableUse tvu = TypeVariableUse.NO_USE;
+    for (TypeArgument ta : getTypeArguments()) {
+      tvu = tvu.min(ta.classifyTypeVariableUse());
+    }
+    return tvu.minIfExists(TypeVariableUse.TYPE_ARG);
   }
 }

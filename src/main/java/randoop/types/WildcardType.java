@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.lang.reflect.TypeVariable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -169,5 +171,11 @@ class WildcardType extends ParameterType {
 
   boolean hasUpperBound() {
     return hasUpperBound;
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    TypeVariableUse tvu = super.classifyTypeVariableUse();
+    return tvu.minIfExists(TypeVariableUse.WILDCARD);
   }
 }

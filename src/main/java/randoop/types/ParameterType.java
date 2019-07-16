@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -7,8 +9,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * An abstract class representing kinds of type parameters, which are either type variables or
- * wildcard types. Manages both upper and lower type bounds.
+ * Represents a type parameter, which is either a type variable or a wildcard type. Manages both
+ * upper and lower type bounds.
  */
 public abstract class ParameterType extends ReferenceType {
 
@@ -93,5 +95,10 @@ public abstract class ParameterType extends ReferenceType {
 
   public boolean hasGenericBound() {
     return getUpperTypeBound().isGeneric() || getLowerTypeBound().isGeneric();
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return lowerBound.classifyTypeVariableUse().min(upperBound.classifyTypeVariableUse());
   }
 }

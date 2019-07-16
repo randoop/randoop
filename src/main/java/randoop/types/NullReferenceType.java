@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 /**
  * The {@code null} type is the type of the value {@code null}. As the subtype of all reference
  * types, it is the default lowerbound of a {@link CaptureTypeVariable}.
@@ -73,5 +75,10 @@ class NullReferenceType extends ReferenceType {
   @Override
   public boolean isSubtypeOf(Type otherType) {
     return !otherType.equals(JavaTypes.VOID_TYPE) && otherType.isReferenceType();
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return TypeVariableUse.NO_USE;
   }
 }

@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -286,5 +288,10 @@ class LazyParameterBound extends ParameterBound {
   /** There was an attempt to perform an operation, such as capture conversion, on a lazy bound. */
   static class LazyBoundException extends RuntimeException {
     private static final long serialVersionUID = 20190508;
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    throw new RandoopBug("Not yet implemented");
   }
 }

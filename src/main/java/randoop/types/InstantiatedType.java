@@ -1,5 +1,7 @@
 package randoop.types;
 
+import static randoop.reflection.TypeInstantiator.TypeVariableUse;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -453,5 +455,10 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public NonParameterizedType getRawtype() {
     return instantiatedType.getRawtype();
+  }
+
+  @Override
+  public TypeVariableUse classifyTypeVariableUse() {
+    return super.classifyTypeVariableUse();
   }
 }
