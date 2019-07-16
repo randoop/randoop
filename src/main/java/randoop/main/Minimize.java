@@ -1195,9 +1195,11 @@ public class Minimize extends CommandHandler {
 
     ParseResult<ImportDeclaration> parseImportDeclaration = javaParser.parseImport(importStr);
     if (!parseImportDeclaration.isSuccessful()) {
+      new Error("backtrace").printStackTrace();
       System.err.println("Error parsing import: " + importName);
+      throw new RandoopBug("Error parsing import: " + importName);
       // TODO: could print the diagnostics, but they should be obvious
-      return;
+      // return;
     }
     ImportDeclaration importDeclaration = parseImportDeclaration.getResult().get();
 
