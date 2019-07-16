@@ -49,6 +49,7 @@ public class FileCompiler {
     List<String> compilerOptions = new ArrayList<>(options);
     compilerOptions.add("-d");
     compilerOptions.add(destinationDir.toString());
+    compilerOptions.add("-XDuseUnsharedTable");
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);

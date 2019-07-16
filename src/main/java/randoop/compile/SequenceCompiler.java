@@ -1,7 +1,6 @@
 package randoop.compile;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
@@ -40,7 +39,7 @@ public class SequenceCompiler {
    * @param classLoader the class loader for this compiler
    */
   public SequenceCompiler(SequenceClassLoader classLoader) {
-    this(classLoader, Collections.emptyList());
+    this(classLoader, new ArrayList<String>());
   }
 
   /**
@@ -52,6 +51,7 @@ public class SequenceCompiler {
   public SequenceCompiler(SequenceClassLoader classLoader, List<String> compilerOptions) {
     this.classLoader = classLoader;
     this.compilerOptions = new ArrayList<>(compilerOptions);
+    compilerOptions.add("-XDuseUnsharedTable");
     this.compiler = ToolProvider.getSystemJavaCompiler();
 
     if (this.compiler == null) {
