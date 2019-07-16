@@ -273,11 +273,11 @@ public class TypeInstantiator {
   }
 
   /**
-   * Sort formal parameter types, based on what constraints they place on generic type variables.
-   * Most specifically, it is a problem that instantiating a wildcard does not create/augment a
-   * substitution. So, first process types that are reflected in a substitution. The goal is to
-   * avoid a situation where a wildcard is instantiated, and then later another type is instantiated
-   * in a way that is incompatible with the wildcard.
+   * Sort formal parameter types, based on what constraints they place on generic type variables. It
+   * is a problem that instantiating a wildcard does not create/augment a substitution. So, first
+   * process types that are reflected in a substitution. The goal is to avoid a situation where a
+   * wildcard is instantiated, and then later another type is instantiated in a way that is
+   * incompatible with the wildcard.
    */
   private static class StrongestConstraintsFirst implements Comparator<Type> {
 
