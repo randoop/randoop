@@ -59,6 +59,7 @@ class CompilationStatus {
     compilerOptions.add(classpath);
     compilerOptions.add("-d");
     compilerOptions.add(destinationDir);
+    compilerOptions.add("-XDuseUnsharedTable");
 
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
