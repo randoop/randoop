@@ -265,5 +265,10 @@ public abstract class ParameterBound {
     return false;
   }
 
+  /**
+   * Return the first TypeVariableUse that describes how type variable are used in this.
+   *
+   * @return the first TypeVariableUse that describes how type variable are used in this
+   */
   public abstract TypeVariableUse classifyTypeVariableUse();
 }

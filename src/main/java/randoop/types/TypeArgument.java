@@ -124,5 +124,10 @@ public abstract class TypeArgument {
    */
   public abstract boolean isVariable();
 
+  /**
+   * Return the first TypeVariableUse that describes how type variable are used in this.
+   *
+   * @return the first TypeVariableUse that describes how type variable are used in this
+   */
   public abstract TypeVariableUse classifyTypeVariableUse();
 }

@@ -553,9 +553,9 @@ public abstract class Type implements Comparable<Type> {
 
   // TODO: This should be done via a visitor, but there is no visitor over Types.
   /**
-   * Return the first TypeVariableUse that describes how type variable are used in the type.
+   * Return the first TypeVariableUse that describes how type variable are used in this.
    *
-   * @return the first TypeVariableUse that describes how type variable are used in the type
+   * @return the first TypeVariableUse that describes how type variable are used in this
    */
   public abstract TypeVariableUse classifyTypeVariableUse();
 }

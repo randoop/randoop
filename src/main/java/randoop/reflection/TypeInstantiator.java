@@ -5,7 +5,6 @@ import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import randoop.operation.TypedClassOperation;
@@ -311,7 +310,6 @@ public class TypeInstantiator {
    */
   private TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
     // answer question: what type instantiation would allow a call to this operation?
-    Set<TypeVariable> typeParameters = new LinkedHashSet<>();
     Substitution substitution = new Substitution();
     List<Type> parameterTypesSorted = new ArrayList<>();
     for (Type parameterType : operation.getInputTypes()) {
@@ -330,26 +328,9 @@ public class TypeInstantiator {
           }
           substitution = substitution.extend(subst);
         } else {
-          typeParameters.addAll(((ReferenceType) workingType).getTypeParameters());
+          substitution =
+              selectSubstitution(((ReferenceType) workingType).getTypeParameters(), substitution);
         }
-      }
-    }
-    // return types don't have to exist, but do need to have their type parameters instantiated
-    if (operation.getOutputType().isReferenceType()) {
-      Type workingType = operation.getOutputType().substitute(substitution);
-      if (workingType.isGeneric()) {
-        typeParameters.addAll(((ReferenceType) workingType).getTypeParameters());
-      }
-    }
-
-    if (!typeParameters.isEmpty()) {
-      typeParameters.removeAll(substitution.keySet());
-    }
-
-    if (!typeParameters.isEmpty()) {
-      substitution = selectSubstitution(new ArrayList<>(typeParameters), substitution);
-      if (substitution == null) {
-        return null;
       }
     }
 
