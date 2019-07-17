@@ -882,11 +882,11 @@ public class Minimize extends CommandHandler {
       // String representation of the fully-qualified type name.
       Optional<ClassOrInterfaceType> scope = type.getScope();
 
+      String scopeString = (scope.isPresent() ? scope.get() + "." : "");
       // Check that the type is not in the java.lang package.
-      if (!(scope.isPresent() && scope.get().toString().equals("java.lang"))) {
+      if (!scopeString.equals("java.lang.")) {
         // Add an import statement for the type.
-        String typeName = (scope.isPresent() ? scope.get() + "." : "") + type.getName();
-        addImport(compUnitWithSimpleTypeNames, typeName);
+        addImport(compUnitWithSimpleTypeNames, scopeString + type.getName());
       }
 
       // Simplify class type names, method call names, and field names.
