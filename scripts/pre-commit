@@ -10,4 +10,5 @@ set -e
 #   the changed code is formatted correctly
 #   all files have proper javadoc comments
 #   all code compiles
-./gradlew checkFormat checkstyle compileAll
+#   documentation appears in the manual
+./gradlew checkFormat checkstyle compileAll manual

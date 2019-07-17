@@ -6,10 +6,23 @@ import java.util.Arrays;
 
 /** Wraps a constructor together with its arguments, ready for execution. Can be run only once. */
 public final class ConstructorReflectionCode extends ReflectionCode {
+
+  /** The constructor to be called. */
   private final Constructor<?> constructor;
-  /** If an inner class has a receiver, it is the first element of this array. */
+  /**
+   * The arguments that the constructor is applied to. If an inner class constructor has a receiver,
+   * it is the first element of this array.
+   */
   private final Object[] inputs;
 
+  /**
+   * Create a new ConstructorReflectionCode to represent a constructor invocation.
+   *
+   * @param constructor the constructor to be called
+   * @param inputs the arguments that the constructor is applied to. If an inner class constructor
+   *     has a receiver, it is the first element of this array.
+   */
+  @SuppressWarnings("deprecation") // AccessibleObject.isAccessible() has no replacement in Java 8.
   public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
     if (constructor == null) {
       throw new IllegalArgumentException("constructor is null");

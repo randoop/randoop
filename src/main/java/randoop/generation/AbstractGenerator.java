@@ -20,6 +20,7 @@ import randoop.test.TestCheckGenerator;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor;
+import randoop.util.Util;
 import randoop.util.predicate.AlwaysFalse;
 
 /**
@@ -314,7 +315,7 @@ public abstract class AbstractGenerator {
       if (GenInputsAbstract.progressdisplay
           && GenInputsAbstract.progressintervalsteps != -1
           && num_steps % GenInputsAbstract.progressintervalsteps == 0) {
-        progressDisplay.displayWithoutTime();
+        progressDisplay.display(!GenInputsAbstract.deterministic);
       }
 
       if (eSeq == null) {
@@ -345,11 +346,7 @@ public abstract class AbstractGenerator {
     }
 
     if (GenInputsAbstract.progressdisplay && progressDisplay != null) {
-      if (GenInputsAbstract.deterministic) {
-        progressDisplay.displayWithoutTime();
-      } else {
-        progressDisplay.displayWithTime();
-      }
+      progressDisplay.display(!GenInputsAbstract.deterministic);
       progressDisplay.shouldStop = true;
     }
 
@@ -365,6 +362,7 @@ public abstract class AbstractGenerator {
         System.out.println(
             "Average method execution time (exceptional termination): "
                 + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
+        System.out.println("Approximate memory usage " + Util.usedMemory(false) + "MB");
       }
     }
 

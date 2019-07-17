@@ -761,7 +761,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Maximum memory for JVM; will be passed with <code>-Xmx</code>.")
   // CircleCI runs out of memory during test generation if 2500m.
-  public static String jvm_max_memory = "2000m";
+  public static String jvm_max_memory = "3000m";
 
   @Unpublicized
   @Option("Store all output to stdout and stderr in the ExecutionOutcome.")
