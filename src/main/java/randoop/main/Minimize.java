@@ -828,14 +828,14 @@ public class Minimize extends CommandHandler {
     }
   }
 
-  /** Sorts a type by its name. */
+  /** Sorts a type by its simple name. */
   private static class ClassOrInterfaceTypeComparator implements Comparator<ClassOrInterfaceType> {
     @Override
     public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
       return o1.toString().compareTo(o2.toString());
     }
   }
-  /** Sorts a type by its name. */
+  /** Sorts a type by its simple name. */
   private static ClassOrInterfaceTypeComparator classOrInterfaceTypeComparator =
       new ClassOrInterfaceTypeComparator();
 
@@ -870,7 +870,7 @@ public class Minimize extends CommandHandler {
       System.out.println("Adding imports and simplifying type names.");
     }
 
-    // Types that are used in variable declarations.
+    // Types that are used in variable declarations.  Contains only one type per simple name.
     Set<ClassOrInterfaceType> types = new TreeSet<>(classOrInterfaceTypeComparator);
     new ClassTypeVisitor().visit(compilationUnit, types);
     CompilationUnit result = compilationUnit;
@@ -880,12 +880,13 @@ public class Minimize extends CommandHandler {
           (CompilationUnit) result.accept(new CloneVisitor(), null);
 
       // String representation of the fully-qualified type name.
-      String typeName = type.getScope() + "." + type.getName();
+      Optional<ClassOrInterfaceType> scope = type.getScope();
 
+      String scopeString = (scope.isPresent() ? scope.get() + "." : "");
       // Check that the type is not in the java.lang package.
-      if (!type.getScope().toString().equals("java.lang")) {
+      if (!scopeString.equals("java.lang.")) {
         // Add an import statement for the type.
-        addImport(compUnitWithSimpleTypeNames, typeName);
+        addImport(compUnitWithSimpleTypeNames, scopeString + type.getName());
       }
 
       // Simplify class type names, method call names, and field names.
@@ -1195,9 +1196,7 @@ public class Minimize extends CommandHandler {
 
     ParseResult<ImportDeclaration> parseImportDeclaration = javaParser.parseImport(importStr);
     if (!parseImportDeclaration.isSuccessful()) {
-      System.err.println("Error parsing import: " + importName);
-      // TODO: could print the diagnostics, but they should be obvious
-      return;
+      throw new RandoopBug("Error parsing import: " + importName);
     }
     ImportDeclaration importDeclaration = parseImportDeclaration.getResult().get();
 
