@@ -54,11 +54,12 @@ class CompilationStatus {
     final Writer writer = null; // use System.err for output
     final List<String> annotatedClasses = null; // no classes
 
-    List<String> options = new ArrayList<>();
-    options.add("-classpath");
-    options.add(classpath);
-    options.add("-d");
-    options.add(destinationDir);
+    List<String> compilerOptions = new ArrayList<>();
+    compilerOptions.add("-classpath");
+    compilerOptions.add(classpath);
+    compilerOptions.add("-d");
+    compilerOptions.add(destinationDir);
+    compilerOptions.add("-XDuseUnsharedTable");
 
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -70,7 +71,13 @@ class CompilationStatus {
           fileManager.getJavaFileObjectsFromFiles(testSourceFiles);
       succeeded =
           compiler
-              .getTask(writer, fileManager, diagnostics, options, annotatedClasses, filesToCompile)
+              .getTask(
+                  writer,
+                  fileManager,
+                  diagnostics,
+                  compilerOptions,
+                  annotatedClasses,
+                  filesToCompile)
               .call();
     } catch (IOException e) {
       fail("I/O Error while compiling generated tests: " + e);

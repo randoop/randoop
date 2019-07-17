@@ -50,8 +50,7 @@ public class SpecificationTranslatorTest {
         SpecificationTranslator.createTranslator(
             method,
             opSpec,
-            new SequenceCompiler(
-                new SequenceClassLoader(getClass().getClassLoader()), new ArrayList<String>()));
+            new SequenceCompiler(new SequenceClassLoader(getClass().getClassLoader())));
 
     assertEquals(
         "presignature is just receiver and parameters",
