@@ -1,1 +1,2 @@
-alpha.beta.Gamma.delta() randoop.mock.java.awt.Component.show(alpha.beta.Gamma)
+// make original any valid method
+randoop.MethodReplacements.getAgentPath() randoop.mock.java.awt.Component.show(alpha.beta.Gamma)

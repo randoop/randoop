@@ -1,35 +1,36 @@
 package randoop.instrument;
 
-import java.lang.reflect.Method;
+import java.lang.instrument.IllegalClassFormatException;
 import java.util.Arrays;
 import java.util.Objects;
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
 import org.apache.bcel.generic.Type;
 import org.plumelib.bcelutil.BcelUtil;
-import org.plumelib.reflection.ReflectionPlume;
-import org.plumelib.reflection.Signatures;
 import org.plumelib.util.UtilPlume;
 
 /**
  * Defines a method in a way that can be used to substitute method calls using BCEL. A method is
- * represented by its fully-qualified name and parameter types as BCEL {@code Type}.
+ * represented by its fully-qualified name and parameter types as BCEL {@code Type}. Once a
+ * MethodSignature is created it is never modified.
  *
  * <p>Note: this is similar to the Randoop {@code randoop.reflection.RawSignature} class, but uses
  * BCEL {@code Type} instead of {@code java.lang.reflect.Class} for the parameter types.
  */
 public class MethodSignature implements Comparable<MethodSignature> {
 
-  /** fully-qualified class name */
+  /** The fully-qualified class name. */
   private final String classname;
 
-  /** simple method name */
+  /** The method name. */
   private final String name;
 
   /** The parameter types. */
   private final Type[] paramTypes;
 
-  /** Cached {@link java.lang.reflect.Method} object for this {@link MethodSignature} */
+  /** Cached {@link org.apache.bcel.classfile.Method} object for this {@link MethodSignature} */
   private Method method;
 
   /**
@@ -47,19 +48,14 @@ public class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
-   * Creates a {@link MethodSignature} object for a {@code java.lang.reflect.Method} object.
+   * Creates a {@link MethodSignature} object for a {@code org.apache.bcel.classfile.Method} object.
    *
-   * @param method the reflection method object
-   * @return the {@link MethodSignature} representation of the reflection object
+   * @param classname the class containing the method
+   * @param method the Method object
+   * @return the {@link MethodSignature} representation of the Method object
    */
-  public static MethodSignature of(Method method) {
-    Class<?>[] paramTypes = method.getParameterTypes();
-    Type[] argTypes = new Type[paramTypes.length];
-    for (int i = 0; i < paramTypes.length; i++) {
-      argTypes[i] = Type.getType(paramTypes[i]);
-    }
-    return new MethodSignature(
-        method.getDeclaringClass().getCanonicalName(), method.getName(), argTypes);
+  public static MethodSignature of(String classname, org.apache.bcel.classfile.Method method) {
+    return new MethodSignature(classname, method.getName(), method.getArgumentTypes());
   }
 
   /**
@@ -105,7 +101,8 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * Reads a signature string and builds the corresponding {@link MethodSignature}.
    *
    * <p>The signature string must start with the fully-qualified classname, followed by the method
-   * name, and then the fully-qualified parameter types in parentheses.
+   * name, and then the fully-qualified parameter types in parentheses. Note that the return type is
+   * omitted.
    *
    * @param signature the method signature string, all types must be fully-qualified
    * @return the {@link MethodSignature} for the method represented by the signature string
@@ -205,55 +202,51 @@ public class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
-   * Uses reflection to get the {@code java.lang.reflect.Method} object for this {@link
-   * MethodSignature}.
+   * Searches the class file 'classname' for the method 'name' to get the {@code
+   * org.apache.bcel.classfile.Method} object for this {@link MethodSignature}.
    *
-   * @return the reflection object for this {@link MethodSignature}
+   * @return the Method object for this {@link MethodSignature}
    * @throws ClassNotFoundException if the containing class of this {@link MethodSignature} is not
    *     found on the classpath
    * @throws NoSuchMethodException if the containing class of this {@link MethodSignature} does not
    *     have the represented method as a member
+   * @throws IllegalClassFormatException if the containing class of this {@link MethodSignature}
+   *     exists, but cannot be loaded
    */
-  Method toMethod() throws ClassNotFoundException, NoSuchMethodException {
+  Method toMethod()
+      throws ClassNotFoundException, NoSuchMethodException, IllegalClassFormatException {
     if (method != null) {
       return method;
     }
 
-    Class<?> methodClass = Class.forName(classname);
-    Class<?> params[] = new Class[paramTypes.length];
-    for (int i = 0; i < paramTypes.length; i++) {
-      params[i] = typeToClass(paramTypes[i]);
-    }
+    String classname = this.classname;
+    int superclassIndex = 0;
+    JavaClass jc = null;
+    do {
+      // Check that the class exists
+      try {
+        jc = ReplacementFileReader.getJavaClassFromClassname(classname);
+      } catch (Throwable e) {
+        throw new IllegalClassFormatException("Unable to read: " + classname);
+      }
+      if (jc == null) {
+        throw new ClassNotFoundException("Class not found: " + classname);
+      }
 
-    // Note that Method.getMethod only returns public methods, so call Method.getDeclaredMethod
-    // first
+      for (Method m : jc.getMethods()) {
+        if (m.getName().equals(this.name) && Arrays.equals(m.getArgumentTypes(), this.paramTypes)) {
+          // we have a match
+          this.method = m;
+          return m;
+        }
+      }
 
-    // First check if the method is declared in the class
-    try {
-      method = methodClass.getDeclaredMethod(name, params);
-      return method;
-    } catch (NoSuchMethodException e) {
-      // ignore exception -- look for inherited method
-    }
+      // method not found; perhaps inherited from superclass
+      superclassIndex = jc.getSuperclassNameIndex(); // 0 for superclass of Object
+      classname = jc.getSuperclassName(); // BCEL bug, superclass of 'Object' is 'Object'
+    } while (superclassIndex != 0);
 
-    // If it is not declared in class, check if it is inherited
-    method = methodClass.getMethod(name, params);
-    return method;
-  }
-
-  /**
-   * Converts the BCEL type to a {@code java.lang.Class} object.
-   *
-   * <p>This method replicates the {@code BcelUtils.typeToClass()} method, but does not repackage
-   * the exception.
-   *
-   * @param type the type object
-   * @return the {@code Class<?>} object for the type
-   * @throws ClassNotFoundException if no {@code Class<?>} was found for the type
-   */
-  private Class<?> typeToClass(Type type) throws ClassNotFoundException {
-    String name = Signatures.fieldDescriptorToClassGetName(type.getSignature());
-    return ReflectionPlume.classForName(name);
+    throw new NoSuchMethodException("Method not found: " + this.name);
   }
 
   /**
@@ -266,7 +259,7 @@ public class MethodSignature implements Comparable<MethodSignature> {
   boolean exists() {
     try {
       return toMethod() != null;
-    } catch (ClassNotFoundException | NoSuchMethodException e) {
+    } catch (ClassNotFoundException | NoSuchMethodException | IllegalClassFormatException e) {
       return false;
     }
   }
