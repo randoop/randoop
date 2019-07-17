@@ -870,11 +870,11 @@ public class Minimize extends CommandHandler {
       System.out.println("Adding imports and simplifying type names.");
     }
 
-    // Set of fully-qualified type names that are used in variable declarations.
-    Set<ClassOrInterfaceType> fullyQualifiedNames = new TreeSet<>(classOrInterfaceTypeComparator);
-    new ClassTypeVisitor().visit(compilationUnit, fullyQualifiedNames);
+    // Types that are used in variable declarations.
+    Set<ClassOrInterfaceType> types = new TreeSet<>(classOrInterfaceTypeComparator);
+    new ClassTypeVisitor().visit(compilationUnit, types);
     CompilationUnit result = compilationUnit;
-    for (ClassOrInterfaceType type : fullyQualifiedNames) {
+    for (ClassOrInterfaceType type : types) {
       // Copy and modify the compilation unit.
       CompilationUnit compUnitWithSimpleTypeNames =
           (CompilationUnit) result.accept(new CloneVisitor(), null);
