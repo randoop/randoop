@@ -870,21 +870,22 @@ public class Minimize extends CommandHandler {
       System.out.println("Adding imports and simplifying type names.");
     }
 
-    // Set of fully-qualified type names that are used in variable declarations.
-    Set<ClassOrInterfaceType> fullyQualifiedNames = new TreeSet<>(classOrInterfaceTypeComparator);
-    new ClassTypeVisitor().visit(compilationUnit, fullyQualifiedNames);
+    // Types that are used in variable declarations.
+    Set<ClassOrInterfaceType> types = new TreeSet<>(classOrInterfaceTypeComparator);
+    new ClassTypeVisitor().visit(compilationUnit, types);
     CompilationUnit result = compilationUnit;
-    for (ClassOrInterfaceType type : fullyQualifiedNames) {
+    for (ClassOrInterfaceType type : types) {
       // Copy and modify the compilation unit.
       CompilationUnit compUnitWithSimpleTypeNames =
           (CompilationUnit) result.accept(new CloneVisitor(), null);
 
       // String representation of the fully-qualified type name.
-      String typeName = type.getScope() + "." + type.getName();
+      Optional<ClassOrInterfaceType> scope = type.getScope();
 
       // Check that the type is not in the java.lang package.
-      if (!type.getScope().toString().equals("java.lang")) {
+      if (!(scope.isPresent() && scope.get().toString().equals("java.lang"))) {
         // Add an import statement for the type.
+        String typeName = (scope.isPresent() ? scope.get() + "." : "") + type.getName();
         addImport(compUnitWithSimpleTypeNames, typeName);
       }
 
@@ -1195,11 +1196,7 @@ public class Minimize extends CommandHandler {
 
     ParseResult<ImportDeclaration> parseImportDeclaration = javaParser.parseImport(importStr);
     if (!parseImportDeclaration.isSuccessful()) {
-      new Error("backtrace").printStackTrace();
-      System.err.println("Error parsing import: " + importName);
       throw new RandoopBug("Error parsing import: " + importName);
-      // TODO: could print the diagnostics, but they should be obvious
-      // return;
     }
     ImportDeclaration importDeclaration = parseImportDeclaration.getResult().get();
 
