@@ -171,7 +171,7 @@ public class ReplacementFileReader {
     } catch (IllegalArgumentException e) {
       throw new ReplacementException("Bad original signature", e);
     }
-    // we call toMethod() instead of exists() to get more precise error messages
+    // Call toMethod() instead of exists() to get more precise error messages.
     original.toMethod();
 
     MethodSignature replacement;
@@ -180,7 +180,7 @@ public class ReplacementFileReader {
     } catch (IllegalArgumentException e) {
       throw new ReplacementException("Bad replacement signature", e);
     }
-    // we call toMethod() instead of exists() to get more precise error messages
+    // Call toMethod() instead of exists() to get more precise error messages.
     replacement.toMethod();
 
     addReplacement(replacementMap, original, replacement);
@@ -266,8 +266,8 @@ public class ReplacementFileReader {
    * @param originalClassname the name of the original class
    * @param replacementClassname the name of the replacement class
    * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
-   * @throws ReplacementException if a replacement method is not static, or has no matching original
-   *     or if the replacement class cannot be found
+   * @throws ReplacementException if a replacement method is not static, or has no matching
+   *     original, or if the replacement class cannot be found
    */
   private static void addReplacementsForClass(
       HashMap<MethodSignature, MethodSignature> replacementMap,

@@ -30,7 +30,10 @@ public class MethodSignature implements Comparable<MethodSignature> {
   /** The parameter types. */
   private final Type[] paramTypes;
 
-  /** Cached {@link org.apache.bcel.classfile.Method} object for this {@link MethodSignature} */
+  /**
+   * Cached {@link org.apache.bcel.classfile.Method} object for this {@link MethodSignature}. Is set
+   * by {@link #toMethod}.
+   */
   private Method method;
 
   /**
@@ -101,8 +104,8 @@ public class MethodSignature implements Comparable<MethodSignature> {
    * Reads a signature string and builds the corresponding {@link MethodSignature}.
    *
    * <p>The signature string must start with the fully-qualified classname, followed by the method
-   * name, and then the fully-qualified parameter types in parentheses. Note that the return type is
-   * omitted.
+   * name, and then the fully-qualified parameter types in parentheses. Note that a signature does
+   * not include a return type.
    *
    * @param signature the method signature string, all types must be fully-qualified
    * @return the {@link MethodSignature} for the method represented by the signature string
