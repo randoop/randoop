@@ -334,6 +334,19 @@ public class TypeInstantiator {
       }
     }
 
+    // There may be generics in the return type that didn't exist in an formal parameter.
+    // An example is Collections.emptyList().
+    if (operation.getOutputType().isReferenceType()) {
+      Type workingType = operation.getOutputType().substitute(substitution);
+      if (workingType.isGeneric()) {
+        substitution =
+            selectSubstitution(((ReferenceType) workingType).getTypeParameters(), substitution);
+        if (substitution == null) {
+          return null;
+        }
+      }
+    }
+
     operation = operation.substitute(substitution);
     if (operation.isGeneric()) {
       return null;
