@@ -284,7 +284,7 @@ public class TypeInstantiator {
    * @param typeParameters the type variables to be instantiated
    * @return a substitution instantiating the type variables; null if some type variable has no
    *     instantiating types
-   * @see #selectSubstitution(List, Substitution)
+   * @see #extendSubstitution(List, Substitution)
    */
   private Substitution selectSubstitution(List<TypeVariable> typeParameters) {
     Substitution substitution = new Substitution();
