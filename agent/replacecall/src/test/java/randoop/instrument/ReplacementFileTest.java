@@ -19,7 +19,7 @@ public class ReplacementFileTest {
     Path file = Paths.get("build/resources/test/randoop/instrument/missingclassreplacement.txt");
     thrown.expect(ReplacementFileException.class);
     String msg =
-        "missingclassreplacement.txt:2: Class not found: randoop.mock.Gamma for line: randoop.MethodReplacements.getAgentPath() randoop.mock.Gamma.delta(alpha.beta.Gamma)";
+        "missingclassreplacement.txt:2: Class randoop.mock.Gamma not found for line: randoop.MethodReplacements.getAgentPath() randoop.mock.Gamma.delta(alpha.beta.Gamma)";
     thrown.expectMessage(msg);
     HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
@@ -29,7 +29,7 @@ public class ReplacementFileTest {
     Path file = Paths.get("build/resources/test/randoop/instrument/missingmethodreplacement.txt");
     thrown.expect(ReplacementFileException.class);
     String msg =
-        "missingmethodreplacement.txt:2: Method not found: delta for line: randoop.MethodReplacements.getAgentPath() randoop.mock.java.awt.Component.delta()";
+        "missingmethodreplacement.txt:2: Method delta not found for line: randoop.MethodReplacements.getAgentPath() randoop.mock.java.awt.Component.delta()";
     thrown.expectMessage(msg);
     HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
@@ -50,7 +50,7 @@ public class ReplacementFileTest {
     Path file = Paths.get("build/resources/test/randoop/instrument/badargumenttypereplacement.txt");
     thrown.expect(ReplacementFileException.class);
     String msg =
-        "badargumenttypereplacement.txt:2: Method not found: show for line: randoop.MethodReplacements.getAgentPath() randoop.mock.java.awt.Component.show(alpha.beta.Gamma)";
+        "badargumenttypereplacement.txt:2: Method show not found for line: randoop.MethodReplacements.getAgentPath() randoop.mock.java.awt.Component.show(alpha.beta.Gamma)";
     thrown.expectMessage(msg);
     HashMap<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }

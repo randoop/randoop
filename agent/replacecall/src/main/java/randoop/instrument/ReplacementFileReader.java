@@ -283,7 +283,7 @@ public class ReplacementFileReader {
 
     for (Method m : replacementJC.getMethods()) {
       if (m.getName().equals("<init>")) {
-        // skip constructors
+        // We do not want to replace the original class constructor with the Mock class constructor.
         continue;
       }
       if (m.isPrivate()) {

@@ -205,8 +205,12 @@ public class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
-   * Searches the class file 'classname' for the method 'name' to get the {@code
-   * org.apache.bcel.classfile.Method} object for this {@link MethodSignature}.
+   * Tries to locate a class file whose name is contained in the field {@code classname}. If found,
+   * it then searches that class file for a method whose name matches the field {@code name} and
+   * whose argument types match the field {@code paramTypes}. If it finds a matching method it
+   * returns the corresponding {@code org.apache.bcel.classfile.Method} object for this {@link
+   * MethodSignature}. If the class exists, but the method is not found, it checks to see if there
+   * is a superclass and repeats the search process.
    *
    * @return the Method object for this {@link MethodSignature}
    * @throws ClassNotFoundException if the containing class of this {@link MethodSignature} is not
@@ -222,18 +226,17 @@ public class MethodSignature implements Comparable<MethodSignature> {
       return method;
     }
 
-    String classname = this.classname;
-    int superclassIndex = 0;
+    String currentClassname = classname;
     JavaClass jc = null;
-    do {
+    while (true) {
       // Check that the class exists
       try {
-        jc = ReplacementFileReader.getJavaClassFromClassname(classname);
+        jc = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
       } catch (Throwable e) {
-        throw new IllegalClassFormatException("Unable to read: " + classname);
+        throw new IllegalClassFormatException("Unable to read: " + currentClassname);
       }
       if (jc == null) {
-        throw new ClassNotFoundException("Class not found: " + classname);
+        throw new ClassNotFoundException("Class " + currentClassname + " not found");
       }
 
       for (Method m : jc.getMethods()) {
@@ -245,11 +248,15 @@ public class MethodSignature implements Comparable<MethodSignature> {
       }
 
       // method not found; perhaps inherited from superclass
-      superclassIndex = jc.getSuperclassNameIndex(); // 0 for superclass of Object
-      classname = jc.getSuperclassName(); // BCEL bug, superclass of 'Object' is 'Object'
-    } while (superclassIndex != 0);
+      // A superclass index of 0 indicates that the current class is {@code Object} and
+      // we have completed the search process without finding a matching method.
+      if (jc.getSuperclassNameIndex() == 0) {
+        break;
+      }
+      currentClassname = jc.getSuperclassName();
+    }
 
-    throw new NoSuchMethodException("Method not found: " + this.name);
+    throw new NoSuchMethodException("Method " + this.name + " not found");
   }
 
   /**
