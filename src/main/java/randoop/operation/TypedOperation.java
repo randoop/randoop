@@ -41,7 +41,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * first input type is always that of the receiver, that is, the declaring class of the method or
    * the field. Refer to {@link Operation}.
    */
-  private final TypeTuple inputTypes;
+  protected final TypeTuple inputTypes;
 
   /** The output type. */
   private final Type outputType;
@@ -615,7 +615,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     public final double ranking;
 
     /** The wrapped operation. */
-    public final TypedOperation operation;
+    public final TypedClassOperation operation;
 
     /**
      * Constructor to populate ranking and operation.
@@ -623,7 +623,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
      * @param ranking value associated with the operation
      * @param operation wrapped operation
      */
-    public RankedTypeOperation(double ranking, TypedOperation operation) {
+    public RankedTypeOperation(double ranking, TypedClassOperation operation) {
       this.ranking = ranking;
       this.operation = operation;
     }

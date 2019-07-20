@@ -653,18 +653,18 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.nondeterministic_methods_to_output > 0) {
       // How many flaky tests an operation occurs in (regardless of how many times it appears in
       // that test).
-      Map<TypedOperation, Integer> testOccurrences =
+      Map<TypedClassOperation, Integer> testOccurrences =
           countSequencesPerOperation(sequences, assertableSideEffectFreeMethods);
 
       // How many tests an operation occurs in (regardless of how many times it appears in that
       // flaky test).
-      Map<TypedOperation, Integer> flakyOccurrences =
+      Map<TypedClassOperation, Integer> flakyOccurrences =
           countSequencesPerOperation(flakySequences, assertableSideEffectFreeMethods);
 
       // Priority queue of methods ordered by tf-idf heuristic, highest first.
       PriorityQueue<RankedTypeOperation> methodHeuristicPriorityQueue =
           new PriorityQueue<>(TypedOperation.compareRankedTypeOperation.reversed());
-      for (TypedOperation op : flakyOccurrences.keySet()) {
+      for (TypedClassOperation op : flakyOccurrences.keySet()) {
         double tfIdfMetric = flakyOccurrences.get(op) / testOccurrences.get(op);
         RankedTypeOperation rankedMethod = new RankedTypeOperation(tfIdfMetric, op);
         methodHeuristicPriorityQueue.add(rankedMethod);
@@ -675,7 +675,8 @@ public class GenTests extends GenInputsAbstract {
       int maxMethodsToOutput = GenInputsAbstract.nondeterministic_methods_to_output;
       for (int i = 0; i < maxMethodsToOutput && !methodHeuristicPriorityQueue.isEmpty(); i++) {
         RankedTypeOperation rankedMethod = methodHeuristicPriorityQueue.remove();
-        System.out.println(POSSIBLY_FLAKY_PREFIX + rankedMethod.operation.getSignatureString());
+        System.out.println(
+            POSSIBLY_FLAKY_PREFIX + rankedMethod.operation.getFullyQualifiedSignature());
       }
     }
 
@@ -714,19 +715,19 @@ public class GenTests extends GenInputsAbstract {
    * @return a map from operation to the number of sequences in which the operation occurs at least
    *     once
    */
-  private Map<TypedOperation, Integer> countSequencesPerOperation(
+  private Map<TypedClassOperation, Integer> countSequencesPerOperation(
       List<ExecutableSequence> sequences,
       MultiMap<Type, TypedClassOperation> assertableSideEffectFreeMethods) {
     // Map from method call operations to number of sequences it occurs in.
-    Map<TypedOperation, Integer> numSequencesUsedIn = new HashMap<>();
+    Map<TypedClassOperation, Integer> numSequencesUsedIn = new HashMap<>();
 
     for (ExecutableSequence es : sequences) {
-      Set<TypedOperation> ops = getOperationsInSequence(es);
+      Set<TypedClassOperation> ops = getOperationsInSequence(es);
 
       // The test case consists of a sequence of calls, then assertions over the value produced by
       // the final call.
       // 1. Count up calls in the main sequence of calls.
-      for (TypedOperation to : ops) {
+      for (TypedClassOperation to : ops) {
         numSequencesUsedIn.merge(to, 1, Integer::sum); // increment value associated with key `to`
       }
 
@@ -748,13 +749,14 @@ public class GenTests extends GenInputsAbstract {
    * @param es an ExecutableSequence
    * @return the set of method call operations in {@code es}
    */
-  private Set<TypedOperation> getOperationsInSequence(ExecutableSequence es) {
-    HashSet<TypedOperation> ops = new HashSet<>();
+  private Set<TypedClassOperation> getOperationsInSequence(ExecutableSequence es) {
+    HashSet<TypedClassOperation> ops = new HashSet<>();
 
     SimpleList<Statement> statements = es.sequence.statements;
     for (int i = 0; i < statements.size(); i++) {
-      if (statements.get(i).getOperation().isMethodCall()) {
-        ops.add(statements.get(i).getOperation());
+      TypedOperation to = statements.get(i).getOperation();
+      if (to.isMethodCall()) {
+        ops.add((TypedClassOperation) to);
       }
     }
     return ops;
