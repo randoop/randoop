@@ -385,7 +385,8 @@ public class ForwardGenerator extends AbstractGenerator {
           operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
           Log.logPrintf("Instantiation error for operation%n %s%n", operation);
           Log.logStackTrace(e);
-          System.out.printf("Instantiation error for operation%n %s%n", operation);
+          System.out.printf(
+              "Instantiation error for operation (see log for stack trace)%n %s%n", operation);
           return null;
         }
       }

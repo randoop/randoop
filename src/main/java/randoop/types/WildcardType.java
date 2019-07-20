@@ -175,7 +175,8 @@ class WildcardType extends ParameterType {
 
   @Override
   public TypeVariableUse classifyTypeVariableUse() {
-    TypeVariableUse tvu = super.classifyTypeVariableUse();
-    return tvu.minIfExists(TypeVariableUse.WILDCARD);
+    // TypeVariableUse tvu = super.classifyTypeVariableUse();
+    // return tvu.minIfExists(TypeVariableUse.WILDCARD);
+    return TypeVariableUse.WILDCARD;
   }
 }

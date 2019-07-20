@@ -235,6 +235,9 @@ public class TypeInstantiator {
     WHOLE_TYPE,
     /** Types that use a generic type variable within a wildcard. */
     WILDCARD,
+    /** Lazy bounds. */
+    // TODO: Should this force the type to be sorted very late?
+    LAZY_BOUND,
     /** Types without any uses of generic type variables. */
     NO_USE;
 
@@ -245,6 +248,9 @@ public class TypeInstantiator {
      * @return the lesser (earlier in order) of this and the argument
      */
     public TypeVariableUse min(TypeVariableUse other) {
+      if (this == LAZY_BOUND || other == LAZY_BOUND) {
+        return LAZY_BOUND;
+      }
       if (this.compareTo(other) <= 0) {
         return this;
       } else {
@@ -261,6 +267,9 @@ public class TypeInstantiator {
      *     argument
      */
     public TypeVariableUse minIfExists(TypeVariableUse other) {
+      if (this == LAZY_BOUND || other == LAZY_BOUND) {
+        return LAZY_BOUND;
+      }
       if (this == NO_USE) {
         return NO_USE;
       } else {

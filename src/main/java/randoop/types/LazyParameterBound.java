@@ -26,6 +26,12 @@ class LazyParameterBound extends ParameterBound {
    */
   LazyParameterBound(java.lang.reflect.Type boundType) {
     this.boundType = boundType;
+    if (false)
+      if (!(boundType instanceof java.lang.reflect.TypeVariable
+          || boundType instanceof java.lang.reflect.ParameterizedType)) {
+        throw new RandoopBug(
+            String.format("Bad boundType %s [%s]", boundType, boundType.getClass()));
+      }
   }
 
   /**
@@ -91,7 +97,9 @@ class LazyParameterBound extends ParameterBound {
     }
 
     throw new RandoopBug(
-        "lazy parameter bounds should be either a type variable or parameterized type");
+        String.format(
+            "substitute(this=%s, substitution=%s): boundType=%s [%s] (should be type variable or parameterized type)%n",
+            this, substitution, boundType, boundType.getClass()));
   }
 
   /**
@@ -292,6 +300,6 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public TypeVariableUse classifyTypeVariableUse() {
-    throw new RandoopBug("Not yet implemented");
+    return TypeVariableUse.LAZY_BOUND;
   }
 }
