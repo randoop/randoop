@@ -231,17 +231,17 @@ public class MethodSignature implements Comparable<MethodSignature> {
     String currentClassname = classname;
     while (true) {
       // Check that the class exists
-      JavaClass jc;
+      JavaClass currentClass;
       try {
-        jc = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
+        currentClass = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
       } catch (Throwable e) {
         throw new IllegalClassFormatException("Unable to read: " + currentClassname);
       }
-      if (jc == null) {
+      if (currentClass == null) {
         throw new ClassNotFoundException("Class " + currentClassname + " not found");
       }
 
-      for (Method m : jc.getMethods()) {
+      for (Method m : currentClass.getMethods()) {
         if (m.getName().equals(this.name) && Arrays.equals(m.getArgumentTypes(), this.paramTypes)) {
           // we have a match
           this.method = m;
@@ -250,11 +250,11 @@ public class MethodSignature implements Comparable<MethodSignature> {
       }
 
       // method not found; perhaps inherited from superclass
-      if (jc.getSuperclassNameIndex() == 0) {
+      if (currentClass.getSuperclassNameIndex() == 0) {
         // The current class is Object; the search completed without finding a matching method.
         throw new NoSuchMethodException("Method " + this.name + " not found");
       }
-      currentClassname = jc.getSuperclassName();
+      currentClassname = currentClass.getSuperclassName();
     }
   }
 
