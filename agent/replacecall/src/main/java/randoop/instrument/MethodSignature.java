@@ -249,13 +249,13 @@ public class MethodSignature implements Comparable<MethodSignature> {
         }
       }
 
-      // method not found; perhaps inherited from superclass
+      // Method not found; perhaps inherited from superclass.
+      // Cannot use "currentClass = currentClass.getSuperClass()" because the superclass might
+      // not have been loaded into BCEL yet.
       if (currentClass.getSuperclassNameIndex() == 0) {
         // The current class is Object; the search completed without finding a matching method.
         throw new NoSuchMethodException("Method " + this.name + " not found");
       }
-      // Cannot use "currentClass = currentClass.getSuperClass()" because the superclass might
-      // not have been loaded into BCEL yet.
       currentClassname = currentClass.getSuperclassName();
     }
   }
