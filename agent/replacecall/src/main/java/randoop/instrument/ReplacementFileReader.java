@@ -283,11 +283,11 @@ public class ReplacementFileReader {
 
     for (Method m : replacementJC.getMethods()) {
       if (m.getName().equals("<init>")) {
-        // We do not want to replace the original class constructor with the Mock class constructor.
+        // Do not to replace the original class constructor with the replacement class constructor.
         continue;
       }
       if (m.isPrivate()) {
-        // A mock class may have private helper methods; quietly ignore them.
+        // A replacement class may have private helper methods; quietly ignore them.
         continue;
       }
       if (!m.isStatic()) {
@@ -467,7 +467,8 @@ public class ReplacementFileReader {
   private static Map<String, JavaClass> javaClasses = new ConcurrentHashMap<String, JavaClass>();
 
   /**
-   * Tries to find class file and load into a JavaClass object.
+   * Returns a JavaClass object for the given class name. Works by trying to find a class file and
+   * loading it into a JavaClass object.
    *
    * @param classname name of class to find and load
    * @return JavaClass object or null if not found

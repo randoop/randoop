@@ -205,12 +205,14 @@ public class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
-   * Tries to locate a class file whose name is contained in the field {@code classname}. If found,
-   * it then searches that class file for a method whose name matches the field {@code name} and
-   * whose argument types match the field {@code paramTypes}. If it finds a matching method it
-   * returns the corresponding {@code org.apache.bcel.classfile.Method} object for this {@link
-   * MethodSignature}. If the class exists, but the method is not found, it checks to see if there
-   * is a superclass and repeats the search process.
+   * Returns the {@code java.lang.reflect.Method} object for this {@link MethodSignature}.
+   *
+   * <p>Tries to locate a class file whose name is contained in {@code this.classname}. If found, it
+   * then searches that class file for a method whose name matches {@code this.name} and whose
+   * argument types match {@code this.paramTypes}. If it finds a matching method it returns the
+   * corresponding {@code org.apache.bcel.classfile.Method} object for this {@link MethodSignature}.
+   * If the class exists, but the method is not found, it checks to see if there is a superclass and
+   * repeats the search process.
    *
    * @return the Method object for this {@link MethodSignature}
    * @throws ClassNotFoundException if the containing class of this {@link MethodSignature} is not
@@ -227,9 +229,9 @@ public class MethodSignature implements Comparable<MethodSignature> {
     }
 
     String currentClassname = classname;
-    JavaClass jc = null;
     while (true) {
       // Check that the class exists
+      JavaClass jc;
       try {
         jc = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
       } catch (Throwable e) {
@@ -248,15 +250,12 @@ public class MethodSignature implements Comparable<MethodSignature> {
       }
 
       // method not found; perhaps inherited from superclass
-      // A superclass index of 0 indicates that the current class is {@code Object} and
-      // we have completed the search process without finding a matching method.
       if (jc.getSuperclassNameIndex() == 0) {
-        break;
+        // The current class is Object; the search completed without finding a matching method.
+        throw new NoSuchMethodException("Method " + this.name + " not found");
       }
       currentClassname = jc.getSuperclassName();
     }
-
-    throw new NoSuchMethodException("Method " + this.name + " not found");
   }
 
   /**
