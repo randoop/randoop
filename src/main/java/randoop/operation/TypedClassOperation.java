@@ -163,7 +163,7 @@ public class TypedClassOperation extends TypedOperation {
    * Returns the fully-qualified signature for this operation if it is a method or constructor call.
    *
    * @return this operation's fully qualified signature if it is a method or constructor call, null
-   *     otherwise.
+   *     otherwise
    */
   public String getFullyQualifiedSignature() {
     if (!this.isConstructorCall() && !this.isMethodCall()) {
