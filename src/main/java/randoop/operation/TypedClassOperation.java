@@ -182,7 +182,6 @@ public class TypedClassOperation extends TypedOperation {
     for (int i = 0; inputTypeIterator.hasNext(); i++) {
       String typeName = inputTypeIterator.next().getName();
       if (!isStatic() && i == 0) {
-        System.out.println("Skipped ");
         continue;
       }
       typeNames.add(typeName);
