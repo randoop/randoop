@@ -14,7 +14,7 @@ plugins {
 
   // https://github.com/tbroyer/gradle-errorprone-plugin
   // To run the Error Prone linter, do:  ./gradlew compileJava
-  id "net.ltgt.errorprone-base" version "0.0.16" apply false
+  id "net.ltgt.errorprone-base" version "0.6.1" apply false
 
   // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
   // ./gradlew compileJava -PuseCheckerFramework=true
