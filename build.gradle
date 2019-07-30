@@ -18,7 +18,7 @@ plugins {
 
   // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
   // ./gradlew compileJava -PuseCheckerFramework=true
-  id 'org.checkerframework' version '0.3.4' apply false
+  id 'org.checkerframework' version '0.3.16' apply false
 
   // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
   id 'se.patrikerdes.use-latest-versions' version '0.2.12'
