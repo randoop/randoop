@@ -152,7 +152,7 @@ dependencies {
   implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.13.10'
 
   /* Jacoco measures coverage of classes and methods under test. */
-  implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
+  implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.4'
   implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.4', classifier: 'runtime'
 
   /* sourceSet test uses JUnit and some use testInput source set */
