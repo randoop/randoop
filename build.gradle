@@ -22,7 +22,7 @@ plugins {
 
   // To update version numbers of dependencies in this file, run: ./gradlew useLatestVersions
   id 'se.patrikerdes.use-latest-versions' version '0.2.12'
-  id 'com.github.ben-manes.versions' version '0.21.0'
+  id 'com.github.ben-manes.versions' version '0.22.0'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.3'
 
