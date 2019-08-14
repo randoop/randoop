@@ -45,6 +45,3 @@ jobs:
     fetchDepth: 25
   - bash: ./scripts/test-misc.sh
     displayName: test-misc.sh
-
-trigger:
-  batch: true
