@@ -1,5 +1,9 @@
 package randoop.compile;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import javax.tools.DiagnosticCollector;
@@ -10,6 +14,7 @@ import javax.tools.ToolProvider;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import randoop.main.RandoopBug;
 
 /**
  * Compiles a Java class given as a {@code String}.
@@ -136,7 +141,59 @@ public class SequenceCompiler {
       @DotSeparatedIdentifiers String packageName, @BinaryNameInUnnamedPackage String classname)
       throws ClassNotFoundException {
     @SuppressWarnings("signature") // string concatenation
-    @BinaryName String qualifiedName = (packageName == null ? "" : (packageName + ".")) + classname;
+    @BinaryName String qualifiedName = fullyQualifiedName(packageName, classname);
     return (Class<T>) classLoader.loadClass(qualifiedName);
+  }
+
+  /**
+   * Compiles the given class, leads it, and returns the Class object.. If this method returns
+   * normally, compilation was successful.
+   *
+   * @param packageName the package of the class, null if default package
+   * @param classname the simple name of the class
+   * @param javaSource the source text of the class
+   * @throws SequenceCompilerException if the compilation fails
+   * @return the loaded Class object
+   */
+  public Class<?> compileAndLoad(
+      final String packageName, final String classname, final String javaSource)
+      throws SequenceCompilerException {
+    compile(packageName, classname, javaSource);
+    String fqName = fullyQualifiedName(packageName, classname);
+    String filename = fqName.replace('.', '/');
+    return loadClassFile(filename, fqName);
+  }
+
+  /**
+   * Given a .class file, returns the corresponding Class object.
+   *
+   * @param classFileName the name of the .class file
+   * @param className the fully-qualified name of the class defined in the file
+   * @return the loaded Class object
+   */
+  private static Class<?> loadClassFile(String classFileName, String className) {
+    File file = new File(classFileName);
+    try {
+      URL url = file.toURI().toURL();
+      URL[] urls = new URL[] {url};
+      ClassLoader cl = new URLClassLoader(urls);
+      Class<?> cls = cl.loadClass(className);
+
+      return cls;
+    } catch (MalformedURLException | ClassNotFoundException e) {
+      throw new RandoopBug(e);
+    }
+  }
+
+  /**
+   * Constructs a fully-qualified class name from the given package and unqualified class name
+   *
+   * @param packageName the package of the class, null if default package
+   * @param classname the name of the class, without the package
+   * @return the fully-qualified class name constructed from the arguments
+   */
+  @BinaryName String fullyQualifiedName(
+      @DotSeparatedIdentifiers String packageName, @BinaryNameInUnnamedPackage String classname) {
+    return (packageName == null ? "" : (packageName + ".")) + classname;
   }
 }

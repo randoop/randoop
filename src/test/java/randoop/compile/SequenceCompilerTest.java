@@ -48,8 +48,7 @@ public class SequenceCompilerTest {
 
     Class<?> compiledClass = null;
     try {
-      compiler.compile("", "Simple", simpleClass);
-      compiledClass = classLoader.loadClass("Simple");
+      compiledClass = compiler.compileAndLoad("", "Simple", simpleClass);
     } catch (SequenceCompilerException e) {
       System.out.print(e.getMessage());
       if (e.getCause() != null) System.out.print(": " + e.getCause().getMessage());
