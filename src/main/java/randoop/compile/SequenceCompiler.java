@@ -160,7 +160,11 @@ public class SequenceCompiler {
       throws SequenceCompilerException {
     compile(packageName, classname, javaSource);
     String fqName = fullyQualifiedName(packageName, classname);
-    String filename = fqName.replace('.', '/');
+    String filename = fqName.replace('.', '/') + ".class";
+    System.out.printf(
+        "exists? %s %s%n", new File(filename).getAbsoluteFile(), new File(filename).exists());
+    System.err.printf(
+        "exists? %s %s%n", new File(filename).getAbsoluteFile(), new File(filename).exists());
     return loadClassFile(filename, fqName);
   }
 
@@ -175,6 +179,7 @@ public class SequenceCompiler {
     File file = new File(classFileName);
     try {
       URL url = file.toURI().toURL();
+      System.out.printf("url: %s%n", url);
       URL[] urls = new URL[] {url};
       ClassLoader cl = new URLClassLoader(urls);
       Class<?> cls = cl.loadClass(className);
