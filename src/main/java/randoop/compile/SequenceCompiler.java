@@ -6,7 +6,6 @@ import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
-import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.BinaryNameInUnnamedPackage;
@@ -31,7 +30,7 @@ public class SequenceCompiler {
   private final JavaCompiler compiler;
 
   /** The {@code FileManager} for this compiler. */
-  private final SequenceJavaFileManager fileManager;
+  private final JavaFileManager fileManager;
 
   /**
    * Creates a {@link SequenceCompiler}.
@@ -59,8 +58,7 @@ public class SequenceCompiler {
           "Cannot find the Java compiler. Check that classpath includes tools.jar");
     }
 
-    JavaFileManager standardFileManager = compiler.getStandardFileManager(null, null, null);
-    this.fileManager = new SequenceJavaFileManager(standardFileManager, classLoader);
+    this.fileManager = compiler.getStandardFileManager(null, null, null);
   }
 
   /**
@@ -108,6 +106,7 @@ public class SequenceCompiler {
    *     use a new diagnostics collector each compilation to avoid accumulating errors.
    * @return true if the class source is successfully compiled, false otherwise
    */
+  @SuppressWarnings("UnusedVariable") // TODO: remove `packageName` formal parameter
   private boolean compile(
       final String packageName,
       final String classname,
@@ -117,7 +116,6 @@ public class SequenceCompiler {
     List<JavaFileObject> sources = new ArrayList<>();
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
-    fileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, classFileName, source);
     JavaCompiler.CompilationTask task =
         compiler.getTask(null, fileManager, diagnostics, compilerOptions, null, sources);
     Boolean succeeded = task.call();
