@@ -160,25 +160,21 @@ public class SequenceCompiler {
       throws SequenceCompilerException {
     compile(packageName, classname, javaSource);
     String fqName = fullyQualifiedName(packageName, classname);
-    String filename = fqName.replace('.', '/') + ".class";
-    System.out.printf(
-        "exists? %s %s%n", new File(filename).getAbsoluteFile(), new File(filename).exists());
-    System.err.printf(
-        "exists? %s %s%n", new File(filename).getAbsoluteFile(), new File(filename).exists());
-    return loadClassFile(filename, fqName);
+    File dir = new File("").getAbsoluteFile();
+    return loadClassFile(dir, fqName);
   }
 
   /**
    * Given a .class file, returns the corresponding Class object.
    *
-   * @param classFileName the name of the .class file
+   * @param directory the directory containing the .class file (possibly in package-named
+   *     subdirectories)
    * @param className the fully-qualified name of the class defined in the file
    * @return the loaded Class object
    */
-  private static Class<?> loadClassFile(String classFileName, String className) {
-    File file = new File(classFileName);
+  private static Class<?> loadClassFile(File directory, String className) {
     try {
-      URL url = file.toURI().toURL();
+      URL url = directory.toURI().toURL();
       System.out.printf("url: %s%n", url);
       URL[] urls = new URL[] {url};
       ClassLoader cl = new URLClassLoader(urls);
