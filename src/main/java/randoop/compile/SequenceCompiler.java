@@ -46,9 +46,9 @@ public class SequenceCompiler {
    */
   public SequenceCompiler(List<String> compilerOptions) {
     this.compilerOptions = new ArrayList<>(compilerOptions);
-    compilerOptions.add("-XDuseUnsharedTable");
-    compilerOptions.add("-d");
-    compilerOptions.add(".");
+    this.compilerOptions.add("-XDuseUnsharedTable");
+    this.compilerOptions.add("-d");
+    this.compilerOptions.add(".");
     this.compiler = ToolProvider.getSystemJavaCompiler();
 
     if (this.compiler == null) {
