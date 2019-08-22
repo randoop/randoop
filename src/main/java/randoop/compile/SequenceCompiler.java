@@ -124,7 +124,8 @@ public class SequenceCompiler {
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
     JavaCompiler.CompilationTask task =
-        compiler.getTask(null, fileManager, diagnostics, compilerOptions, null, sources);
+        compiler.getTask(
+            null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
     Boolean succeeded = task.call();
     return (succeeded != null && succeeded);
   }
