@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
@@ -44,7 +43,6 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
    * @param genTests the {@link GenTests} instance to report compilation failures
    */
   public CompilableTestPredicate(JUnitCreator junitCreator, GenTests genTests) {
-    SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> compilerOptions = new ArrayList<>();
     // only need to know an error exists:
     compilerOptions.add("-Xmaxerrs");
@@ -57,7 +55,7 @@ public class CompilableTestPredicate implements Predicate<ExecutableSequence> {
     compilerOptions.add("-g:none");
     // no warnings:
     compilerOptions.add("-Xlint:none");
-    this.compiler = new SequenceCompiler(sequenceClassLoader, compilerOptions);
+    this.compiler = new SequenceCompiler(compilerOptions);
     this.junitCreator = junitCreator;
     this.classNameGenerator = new NameGenerator("RandoopTemporarySeqTest");
     this.methodNameGenerator = new NameGenerator("test");
