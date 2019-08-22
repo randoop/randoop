@@ -111,7 +111,6 @@ public class SequenceCompiler {
    *     use a new diagnostics collector each compilation to avoid accumulating errors.
    * @return true if the class source is successfully compiled, false otherwise
    */
-  @SuppressWarnings("UnusedVariable") // TODO: remove `packageName` formal parameter
   private boolean compile(
       final String packageName,
       final String classname,
