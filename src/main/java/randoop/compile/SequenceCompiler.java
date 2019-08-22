@@ -79,7 +79,7 @@ public class SequenceCompiler {
    * @param javaSource the source text of the class
    * @throws SequenceCompilerException if the compilation fails
    */
-  public void compile(final String packageName, final String classname, final String javaSource)
+  private void compile(final String packageName, final String classname, final String javaSource)
       throws SequenceCompilerException {
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
