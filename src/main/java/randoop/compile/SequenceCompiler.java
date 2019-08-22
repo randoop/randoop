@@ -180,8 +180,7 @@ public class SequenceCompiler {
    * @param className the fully-qualified name of the class defined in the file
    * @return the loaded Class object
    */
-  private static Class<?> loadClassFile(
-      File directory, @BinaryNameInUnnamedPackage String className) {
+  private static Class<?> loadClassFile(File directory, @BinaryName String className) {
     try {
       ClassLoader cl = new URLClassLoader(new URL[] {directory.toURI().toURL()});
       Class<?> cls = cl.loadClass(className);
@@ -201,7 +200,7 @@ public class SequenceCompiler {
    */
   @BinaryName String fullyQualifiedName(
       @DotSeparatedIdentifiers String packageName, @BinaryNameInUnnamedPackage String classname) {
-    @SuppressWarnings("signature:return.type.incompatible") // string concatenation
+    @SuppressWarnings("signature:assignment.type.incompatible") // string concatenation
     @BinaryName String result = (packageName == null ? "" : (packageName + ".")) + classname;
     return result;
   }
