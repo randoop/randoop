@@ -56,6 +56,8 @@ public class SequenceCompiler {
     this.classLoader = classLoader;
     this.compilerOptions = new ArrayList<>(compilerOptions);
     compilerOptions.add("-XDuseUnsharedTable");
+    compilerOptions.add("-d");
+    compilerOptions.add(".");
     this.compiler = ToolProvider.getSystemJavaCompiler();
 
     if (this.compiler == null) {
@@ -121,12 +123,8 @@ public class SequenceCompiler {
     List<JavaFileObject> sources = new ArrayList<>();
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
-    List<String> compilerOptionsWithDirectory = new ArrayList<String>(compilerOptions);
-    compilerOptionsWithDirectory.add("-d");
-    compilerOptionsWithDirectory.add(".");
     JavaCompiler.CompilationTask task =
-        compiler.getTask(
-            null, fileManager, diagnostics, compilerOptionsWithDirectory, null, sources);
+        compiler.getTask(null, fileManager, diagnostics, compilerOptions, null, sources);
     Boolean succeeded = task.call();
     return (succeeded != null && succeeded);
   }
