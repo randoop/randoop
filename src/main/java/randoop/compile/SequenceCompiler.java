@@ -25,9 +25,6 @@ import randoop.main.RandoopBug;
  */
 public class SequenceCompiler {
 
-  /** The {@code ClassLoader} for this compiler. */
-  private final SequenceClassLoader classLoader;
-
   /** The options to the compiler. */
   private final List<String> compilerOptions;
 
@@ -37,23 +34,17 @@ public class SequenceCompiler {
   /** The {@code FileManager} for this compiler. */
   private final JavaFileManager fileManager;
 
-  /**
-   * Creates a {@link SequenceCompiler}.
-   *
-   * @param classLoader the class loader for this compiler
-   */
-  public SequenceCompiler(SequenceClassLoader classLoader) {
-    this(classLoader, new ArrayList<String>());
+  /** Creates a {@link SequenceCompiler}. */
+  public SequenceCompiler() {
+    this(new ArrayList<String>());
   }
 
   /**
    * Creates a {@link SequenceCompiler}.
    *
-   * @param classLoader the class loader for this compiler
    * @param compilerOptions the compiler options
    */
-  public SequenceCompiler(SequenceClassLoader classLoader, List<String> compilerOptions) {
-    this.classLoader = classLoader;
+  public SequenceCompiler(List<String> compilerOptions) {
     this.compilerOptions = new ArrayList<>(compilerOptions);
     compilerOptions.add("-XDuseUnsharedTable");
     compilerOptions.add("-d");
@@ -90,7 +81,7 @@ public class SequenceCompiler {
    * @param javaSource the source text of the class
    * @throws SequenceCompilerException if the compilation fails
    */
-  public void compile(final String packageName, final String classname, final String javaSource)
+  private void compile(final String packageName, final String classname, final String javaSource)
       throws SequenceCompilerException {
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -128,23 +119,6 @@ public class SequenceCompiler {
             null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
     Boolean succeeded = task.call();
     return (succeeded != null && succeeded);
-  }
-
-  /**
-   * Loads the {@code Class<T>} object for the named class.
-   *
-   * @param packageName the package of the class, null if default package
-   * @param classname the name of the class, without the package
-   * @param <T> the class type
-   * @return the {@code Class<T>} object with the class name
-   * @throws ClassNotFoundException if the class cannot be loaded
-   */
-  @SuppressWarnings("unchecked")
-  public <T> Class<T> loadClass(
-      @DotSeparatedIdentifiers String packageName, @BinaryNameInUnnamedPackage String classname)
-      throws ClassNotFoundException {
-    @BinaryName String qualifiedName = fullyQualifiedName(packageName, classname);
-    return (Class<T>) classLoader.loadClass(qualifiedName);
   }
 
   /**
