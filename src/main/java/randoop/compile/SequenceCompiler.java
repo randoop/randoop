@@ -111,6 +111,7 @@ public class SequenceCompiler {
    *     use a new diagnostics collector each compilation to avoid accumulating errors.
    * @return true if the class source is successfully compiled, false otherwise
    */
+  @SuppressWarnings("UnusedVariable") // TODO: remove packageName formal parameter
   private boolean compile(
       final String packageName,
       final String classname,
@@ -121,12 +122,8 @@ public class SequenceCompiler {
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
     List<String> compilerOptionsWithDirectory = new ArrayList<String>(compilerOptions);
-    if (packageName != null) {
-      String dirName = packageName.replace('.', '/');
-      new File(dirName).mkdirs();
-      compilerOptionsWithDirectory.add("-d");
-      compilerOptionsWithDirectory.add(".");
-    }
+    compilerOptionsWithDirectory.add("-d");
+    compilerOptionsWithDirectory.add(".");
     JavaCompiler.CompilationTask task =
         compiler.getTask(
             null, fileManager, diagnostics, compilerOptionsWithDirectory, null, sources);
