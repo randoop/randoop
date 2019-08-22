@@ -97,7 +97,7 @@ public class SequenceCompilerTest {
     SequenceCompiler compiler = getSequenceCompiler();
     String classSource = createUncompilableClass();
     try {
-      compiler.compileJava("", "SimplyBad", classSource);
+      compiler.compile("", "SimplyBad", classSource);
       fail("should not compile");
     } catch (SequenceCompilerException e) {
       if (e.getCause() != null) System.out.print(": " + e.getCause().getMessage());

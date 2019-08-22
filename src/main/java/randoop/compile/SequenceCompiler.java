@@ -79,7 +79,7 @@ public class SequenceCompiler {
    * @param javaSource the source text of the class
    * @throws SequenceCompilerException if the compilation fails
    */
-  public void compileJava(final String packageName, final String classname, final String javaSource)
+  public void compile(final String packageName, final String classname, final String javaSource)
       throws SequenceCompilerException {
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -140,7 +140,7 @@ public class SequenceCompiler {
       final @BinaryNameInUnnamedPackage String classname,
       final String javaSource)
       throws SequenceCompilerException {
-    compileJava(packageName, classname, javaSource);
+    compile(packageName, classname, javaSource);
     String fqName = fullyQualifiedName(packageName, classname);
     File dir = new File("").getAbsoluteFile();
     return loadClassFile(dir, fqName);
