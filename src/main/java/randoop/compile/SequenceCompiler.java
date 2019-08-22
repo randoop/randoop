@@ -121,8 +121,16 @@ public class SequenceCompiler {
     List<JavaFileObject> sources = new ArrayList<>();
     JavaFileObject source = new SequenceJavaFileObject(classFileName, javaSource);
     sources.add(source);
+    List<String> compilerOptionsWithDirectory = new ArrayList<String>(compilerOptions);
+    if (packageName != null) {
+      String dirName = packageName.replace('.', '/');
+      new File(dirName).mkdirs();
+      compilerOptionsWithDirectory.add("-d");
+      compilerOptionsWithDirectory.add(".");
+    }
     JavaCompiler.CompilationTask task =
-        compiler.getTask(null, fileManager, diagnostics, compilerOptions, null, sources);
+        compiler.getTask(
+            null, fileManager, diagnostics, compilerOptionsWithDirectory, null, sources);
     Boolean succeeded = task.call();
     return (succeeded != null && succeeded);
   }
