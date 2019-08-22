@@ -148,7 +148,6 @@ public class SequenceCompiler {
   public <T> Class<T> loadClass(
       @DotSeparatedIdentifiers String packageName, @BinaryNameInUnnamedPackage String classname)
       throws ClassNotFoundException {
-    @SuppressWarnings("signature") // string concatenation
     @BinaryName String qualifiedName = fullyQualifiedName(packageName, classname);
     return (Class<T>) classLoader.loadClass(qualifiedName);
   }
@@ -164,7 +163,9 @@ public class SequenceCompiler {
    * @return the loaded Class object
    */
   public Class<?> compileAndLoad(
-      final String packageName, final String classname, final String javaSource)
+      final @DotSeparatedIdentifiers String packageName,
+      final @BinaryNameInUnnamedPackage String classname,
+      final String javaSource)
       throws SequenceCompilerException {
     compile(packageName, classname, javaSource);
     String fqName = fullyQualifiedName(packageName, classname);
@@ -180,12 +181,10 @@ public class SequenceCompiler {
    * @param className the fully-qualified name of the class defined in the file
    * @return the loaded Class object
    */
-  private static Class<?> loadClassFile(File directory, String className) {
+  private static Class<?> loadClassFile(
+      File directory, @BinaryNameInUnnamedPackage String className) {
     try {
-      URL url = directory.toURI().toURL();
-      System.out.printf("url: %s%n", url);
-      URL[] urls = new URL[] {url};
-      ClassLoader cl = new URLClassLoader(urls);
+      ClassLoader cl = new URLClassLoader(new URL[] {directory.toURI().toURL()});
       Class<?> cls = cl.loadClass(className);
 
       return cls;
@@ -203,6 +202,8 @@ public class SequenceCompiler {
    */
   @BinaryName String fullyQualifiedName(
       @DotSeparatedIdentifiers String packageName, @BinaryNameInUnnamedPackage String classname) {
-    return (packageName == null ? "" : (packageName + ".")) + classname;
+    @SuppressWarnings("signature:return.type.incompatible") // string concatenation
+    @BinaryName String result = (packageName == null ? "" : (packageName + ".")) + classname;
+    return result;
   }
 }
