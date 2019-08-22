@@ -152,7 +152,7 @@ public class SequenceCompiler {
   }
 
   /**
-   * Compiles the given class, leads it, and returns the Class object.. If this method returns
+   * Compiles the given class, leads it, and returns the Class object. If this method returns
    * normally, compilation was successful.
    *
    * @param packageName the package of the class, null if default package
@@ -175,8 +175,8 @@ public class SequenceCompiler {
   /**
    * Given a .class file, returns the corresponding Class object.
    *
-   * @param directory the directory containing the .class file (possibly in package-named
-   *     subdirectories)
+   * @param directory the directory containing the .class file (possibly in a package-named
+   *     subdirectory)
    * @param className the fully-qualified name of the class defined in the file
    * @return the loaded Class object
    */
@@ -184,7 +184,6 @@ public class SequenceCompiler {
     try {
       ClassLoader cl = new URLClassLoader(new URL[] {directory.toURI().toURL()});
       Class<?> cls = cl.loadClass(className);
-
       return cls;
     } catch (MalformedURLException | ClassNotFoundException e) {
       throw new RandoopBug(e);
@@ -192,7 +191,7 @@ public class SequenceCompiler {
   }
 
   /**
-   * Constructs a fully-qualified class name from the given package and unqualified class name
+   * Constructs a fully-qualified class name from the given package and unqualified class name.
    *
    * @param packageName the package of the class, null if default package
    * @param classname the name of the class, without the package
