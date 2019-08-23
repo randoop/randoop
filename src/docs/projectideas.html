@@ -466,12 +466,12 @@ problem for Randoop; effort would probably be better invested elsewhere.
 <h2 id="side-effect-analysis">Side effect analysis</h2>
 
 <p>
-  Randoop's <a href="https://randoop.github.io/randoop/manual/index.html#option:observers"><code>--observers</code></a>
+  Randoop's <a href="https://randoop.github.io/randoop/manual/index.html#option:side-effect-free-methods"><code>--side-effect-free-methods</code></a>
   command-line argument informs Randoop which
   methods are pure (perform no side effects).
-  Here are two distinct benefits:
 </p>
 
+<!--
 <ol>
 <li>
   <p>
@@ -521,14 +521,10 @@ and do not contain mysterious, useless calls to pure methods.
   arguments.
 </li>
 </ol>
+-->
 
 <p>
-The goal of this project is to improve how Randoop utilizes pure methods for
-both of the purposes outlined above.
-</p>
-
-<p>
-There are some other enhancements that would make this project even more
+There are some enhancements that would make Randoop's use of it even more
 compelling.
 </p>
 <ul>
@@ -547,7 +543,7 @@ compelling.
     directly useful to their industrial users. -->
   </li>
   <li>
-    Make Randoop support manually-written null and reference immutability
+    Make Randoop support programmer-written null and reference immutability
     annotations.
     For example, Randoop should read the Checker Framework's annotated JDK.
     This could both cut down the search space and possibly allow more
