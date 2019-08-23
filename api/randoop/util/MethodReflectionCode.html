@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>MethodReflectionCode (randoop 4.1.2 API)</title>
+<title>MethodReflectionCode (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="MethodReflectionCode (randoop 4.1.2 API)";
+            parent.document.title="MethodReflectionCode (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -151,16 +151,20 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#inputs">inputs</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#inputs">inputs</a></span></code>
+<div class="block">The arguments that the method is applied to.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#method">method</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#method">method</a></span></code>
+<div class="block">The method to be called.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#receiver">receiver</a></span></code>
-<div class="block">May be null.</div>
+<div class="block">The receiver, or null for a static method.</div>
 </td>
 </tr>
 </table>
@@ -187,7 +191,9 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/util/MethodReflectionCode.html#MethodReflectionCode-java.lang.reflect.Method-java.lang.Object-java.lang.Object:A-">MethodReflectionCode</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&nbsp;method,
                     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;receiver,
-                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]&nbsp;inputs)</code>&nbsp;</td>
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]&nbsp;inputs)</code>
+<div class="block">Create a new MethodReflectionCode to represent a method invocation.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -254,6 +260,7 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <li class="blockList">
 <h4>method</h4>
 <pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a> method</pre>
+<div class="block">The method to be called.</div>
 </li>
 </ul>
 <a name="receiver">
@@ -263,7 +270,7 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <li class="blockList">
 <h4>receiver</h4>
 <pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a> receiver</pre>
-<div class="block">May be null.</div>
+<div class="block">The receiver, or null for a static method.</div>
 </li>
 </ul>
 <a name="inputs">
@@ -273,6 +280,7 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <li class="blockList">
 <h4>inputs</h4>
 <pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[] inputs</pre>
+<div class="block">The arguments that the method is applied to.</div>
 </li>
 </ul>
 </li>
@@ -292,6 +300,13 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <pre>public&nbsp;MethodReflectionCode(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</a>&nbsp;method,
                             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;receiver,
                             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]&nbsp;inputs)</pre>
+<div class="block">Create a new MethodReflectionCode to represent a method invocation.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>method</code> - the method to be called</dd>
+<dd><code>receiver</code> - the receiver, or null for a static method</dd>
+<dd><code>inputs</code> - the arguments that the method is applied to</dd>
+</dl>
 </li>
 </ul>
 </li>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ParameterType (randoop 4.1.2 API)</title>
+<title>ParameterType (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ParameterType (randoop 4.1.2 API)";
+            parent.document.title="ParameterType (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -237,7 +237,7 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterType.html#hasWildcard--">hasWildcard</a></span>()</code>
-<div class="block">Indicates whether this <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> has a wildcard.</div>
+<div class="block">Indicates whether this type has a wildcard anywhere within it.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
@@ -258,7 +258,7 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></h3>
-<code><a href="../../randoop/types/ReferenceType.html#apply-randoop.types.Substitution-">apply</a>, <a href="../../randoop/types/ReferenceType.html#applyCaptureConversion--">applyCaptureConversion</a>, <a href="../../randoop/types/ReferenceType.html#forClass-java.lang.Class-">forClass</a>, <a href="../../randoop/types/ReferenceType.html#forType-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/ReferenceType.html#getInstantiatingSubstitution-randoop.types.ReferenceType-">getInstantiatingSubstitution</a>, <a href="../../randoop/types/ReferenceType.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a>, <a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">isCaptureVariable</a>, <a href="../../randoop/types/ReferenceType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf</a>, <a href="../../randoop/types/ReferenceType.html#isReferenceType--">isReferenceType</a>, <a href="../../randoop/types/ReferenceType.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></code></li>
+<code><a href="../../randoop/types/ReferenceType.html#applyCaptureConversion--">applyCaptureConversion</a>, <a href="../../randoop/types/ReferenceType.html#forClass-java.lang.Class-">forClass</a>, <a href="../../randoop/types/ReferenceType.html#forType-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/ReferenceType.html#getInstantiatingSubstitution-randoop.types.ReferenceType-">getInstantiatingSubstitution</a>, <a href="../../randoop/types/ReferenceType.html#getInstantiatingSubstitutionforTypeVariable-randoop.types.ReferenceType-randoop.types.ReferenceType-">getInstantiatingSubstitutionforTypeVariable</a>, <a href="../../randoop/types/ReferenceType.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a>, <a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">isCaptureVariable</a>, <a href="../../randoop/types/ReferenceType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf</a>, <a href="../../randoop/types/ReferenceType.html#isReferenceType--">isReferenceType</a>, <a href="../../randoop/types/ReferenceType.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a>, <a href="../../randoop/types/ReferenceType.html#substitute-randoop.types.Substitution-">substitute</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.randoop.types.Type">
@@ -487,11 +487,11 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <li class="blockList">
 <h4>hasWildcard</h4>
 <pre>public&nbsp;boolean&nbsp;hasWildcard()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ReferenceType.html#hasWildcard--">ReferenceType</a></code></span></div>
-<div class="block">Indicates whether this <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> has a wildcard.</div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#hasWildcard--">Type</a></code></span></div>
+<div class="block">Indicates whether this type has a wildcard anywhere within it.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../randoop/types/ReferenceType.html#hasWildcard--">hasWildcard</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></dd>
+<dd><code><a href="../../randoop/types/Type.html#hasWildcard--">hasWildcard</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this type has a wildcard, false otherwise</dd>
 </dl>

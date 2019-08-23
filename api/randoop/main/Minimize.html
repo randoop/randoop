@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Minimize (randoop 4.1.2 API)</title>
+<title>Minimize (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Minimize (randoop 4.1.2 API)";
+            parent.document.title="Minimize (randoop 4.2.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":10,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9,"i17":9,"i18":9,"i19":9,"i20":9,"i21":9,"i22":9,"i23":9,"i24":9,"i25":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":10,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9,"i17":9,"i18":9,"i19":9,"i20":9,"i21":9,"i22":9,"i23":9,"i24":9,"i25":9,"i26":9,"i27":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -156,7 +156,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <tr class="altColor">
 <td class="colFirst"><code>private static class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.ClassOrInterfaceTypeComparator.html" title="class in randoop.main">Minimize.ClassOrInterfaceTypeComparator</a></span></code>
-<div class="block">Sorts a type by its name.</div>
+<div class="block">Sorts a type by its simple name.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -190,7 +190,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <tr class="altColor">
 <td class="colFirst"><code>private static <a href="../../randoop/main/Minimize.ClassOrInterfaceTypeComparator.html" title="class in randoop.main">Minimize.ClassOrInterfaceTypeComparator</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#classOrInterfaceTypeComparator">classOrInterfaceTypeComparator</a></span></code>
-<div class="block">Sorts a type by its name.</div>
+<div class="block">Sorts a type by its simple name.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -200,43 +200,49 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>private static com.github.javaparser.JavaParser</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#javaParser">javaParser</a></span></code>
+<div class="block">An instance of a Java parser.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#minimizetimeout">minimizetimeout</a></span></code>
 <div class="block">The maximum number of seconds allowed for the entire minimization process.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#PATH_SEPARATOR">PATH_SEPARATOR</a></span></code>
 <div class="block">Path separator as defined by the system, used to separate elements of the classpath.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#SUFFIX">SUFFIX</a></span></code>
 <div class="block">The suffix to postpend onto the name of the minimized file and class.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#suiteclasspath">suiteclasspath</a></span></code>
 <div class="block">Classpath that includes dependencies needed to compile and run the JUnit test suite being
  minimized.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#suitepath">suitepath</a></span></code>
 <div class="block">The Java file whose failing tests will be minimized.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#testsuitetimeout">testsuitetimeout</a></span></code>
 <div class="block">The maximum number of seconds allowed for the entire test suite to run.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#verboseminimizer">verboseminimizer</a></span></code>
 <div class="block">Output verbose output to standard output if true.</div>
@@ -264,7 +270,9 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#Minimize--">Minimize</a></span>()</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#Minimize--">Minimize</a></span>()</code>
+<div class="block">Create the handler for Randoop's <code>minimize</code> command.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -341,6 +349,14 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr id="i8" class="altColor">
+<td class="colFirst"><code>private static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#getOrphanCommentsBeforeThisChildNode-com.github.javaparser.ast.Node-java.util.List-">getOrphanCommentsBeforeThisChildNode</a></span>(com.github.javaparser.ast.Node&nbsp;node,
+                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;com.github.javaparser.ast.comments.Comment&gt;&nbsp;result)</code>
+<div class="block">This is stolen from JavaParser's PrettyPrintVisitor.printOrphanCommentsBeforeThisChildNode,
+ with light modifications.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;com.github.javaparser.ast.stmt.Statement&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#getStatementReplacements-com.github.javaparser.ast.stmt.Statement-java.util.Map-">getStatementReplacements</a></span>(com.github.javaparser.ast.stmt.Statement&nbsp;currStmt,
                         <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;primitiveValues)</code>
@@ -348,20 +364,20 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  to least minimized.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#handle-java.lang.String:A-">handle</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;args)</code>
 <div class="block">Check that the required parameters have been specified by the command-line options and then
  call the mainMinimize method.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>private static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#isTestMethod-com.github.javaparser.ast.body.MethodDeclaration-">isTestMethod</a></span>(com.github.javaparser.ast.body.MethodDeclaration&nbsp;methodDeclaration)</code>
 <div class="block">Check if the method is a JUnit test method.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#mainMinimize-java.nio.file.Path-java.lang.String-int-boolean-">mainMinimize</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classPath,
@@ -370,7 +386,14 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">Minimize the input test file.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#minimizedClassName-java.nio.file.Path-">minimizedClassName</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)</code>
+<div class="block">Given a .java filename for non-minimized tests, returns the simple name of the class containing
+ the minimized tests.</div>
+</td>
+</tr>
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>private static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#minimizeMethod-com.github.javaparser.ast.body.MethodDeclaration-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.nio.file.Path-java.lang.String-java.util.Map-int-">minimizeMethod</a></span>(com.github.javaparser.ast.body.MethodDeclaration&nbsp;method,
               com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
@@ -382,7 +405,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">Minimize a method by minimizing each statement in turn.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>private static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#minimizeTestSuite-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.nio.file.Path-java.lang.String-java.util.Map-int-">minimizeTestSuite</a></span>(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
@@ -393,27 +416,27 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">Visit and minimize every JUnit test method within a compilation unit.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#normalizeJUnitOutput-java.lang.String-">normalizeJUnitOutput</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;input)</code>
 <div class="block">Normalize the standard output obtained from running a JUnit test suite.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#printProgress-int-int-java.lang.String-">printProgress</a></span>(int&nbsp;currentTestIndex,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#printProgress-int-int-com.github.javaparser.ast.expr.SimpleName-">printProgress</a></span>(int&nbsp;currentTestIndex,
              int&nbsp;totalTests,
-             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;testName)</code>
+             com.github.javaparser.ast.expr.SimpleName&nbsp;testName)</code>
 <div class="block">Output the minimizer's current progress.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>private static com.github.javaparser.ast.stmt.Statement</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#removeLeftHandSideSimplification-com.github.javaparser.ast.expr.VariableDeclarationExpr-">removeLeftHandSideSimplification</a></span>(com.github.javaparser.ast.expr.VariableDeclarationExpr&nbsp;vdExpr)</code>
 <div class="block">Return a statement that contains only the right hand side of a given statement.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>private static com.github.javaparser.ast.stmt.Statement</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#rhsAssignValueFromPassingAssertion-com.github.javaparser.ast.expr.VariableDeclarationExpr-java.util.Map-">rhsAssignValueFromPassingAssertion</a></span>(com.github.javaparser.ast.expr.VariableDeclarationExpr&nbsp;vdExpr,
                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;primitiveValues)</code>
@@ -421,7 +444,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  value for primitive types.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>private static com.github.javaparser.ast.stmt.Statement</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#rhsAssignWithValue-com.github.javaparser.ast.expr.VariableDeclarationExpr-com.github.javaparser.ast.type.Type-java.lang.String-">rhsAssignWithValue</a></span>(com.github.javaparser.ast.expr.VariableDeclarationExpr&nbsp;vdExpr,
                   com.github.javaparser.ast.type.Type&nbsp;exprType,
@@ -430,14 +453,14 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  to the value that is passed in.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;com.github.javaparser.ast.stmt.Statement&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#rhsAssignZeroValue-com.github.javaparser.ast.expr.VariableDeclarationExpr-">rhsAssignZeroValue</a></span>(com.github.javaparser.ast.expr.VariableDeclarationExpr&nbsp;vdExpr)</code>
 <div class="block">Return a list of variable declaration statements that could replace the right hand side by 0,
  false, or null, whichever is type correct.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#runJavaFile-java.nio.file.Path-java.lang.String-java.lang.String-int-">runJavaFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;userClassPath,
@@ -446,7 +469,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">Run a Java file and return the standard output.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/main/Minimize.Outputs.html" title="class in randoop.main">Minimize.Outputs</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#runProcess-java.lang.String-java.nio.file.Path-int-">runProcess</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;command,
           <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;executionDir,
@@ -454,7 +477,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">Run a command given as a String and return the output and error results in an Outputs object.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>private static com.github.javaparser.ast.CompilationUnit</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#simplifyTypeNames-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.nio.file.Path-java.lang.String-java.util.Map-int-boolean-">simplifyTypeNames</a></span>(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
@@ -466,13 +489,13 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">Simplify the type names in a compilation unit.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>private static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#sortImports-com.github.javaparser.ast.CompilationUnit-">sortImports</a></span>(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit)</code>
 <div class="block">Sort a compilation unit's imports by name.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>private static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#storeValueFromAssertion-com.github.javaparser.ast.stmt.Statement-java.util.Map-java.util.Set-">storeValueFromAssertion</a></span>(com.github.javaparser.ast.stmt.Statement&nbsp;currStmt,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;primitiveValues,
@@ -481,8 +504,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  store the value associated with the variable in the <code>primitiveValues</code> map.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
-<td class="colFirst"><code>private static void</code></td>
+<tr id="i27" class="rowColor">
+<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Minimize.html#writeToFile-com.github.javaparser.ast.CompilationUnit-java.nio.file.Path-">writeToFile</a></span>(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
            <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)</code>
 <div class="block">Write a compilation unit to a Java file.</div>
@@ -568,6 +591,16 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">Output verbose output to standard output if true.</div>
 </li>
 </ul>
+<a name="javaParser">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>javaParser</h4>
+<pre>private static final&nbsp;com.github.javaparser.JavaParser javaParser</pre>
+<div class="block">An instance of a Java parser.</div>
+</li>
+</ul>
 <a name="PATH_SEPARATOR">
 <!--   -->
 </a>
@@ -599,7 +632,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>classOrInterfaceTypeComparator</h4>
 <pre>private static&nbsp;<a href="../../randoop/main/Minimize.ClassOrInterfaceTypeComparator.html" title="class in randoop.main">Minimize.ClassOrInterfaceTypeComparator</a> classOrInterfaceTypeComparator</pre>
-<div class="block">Sorts a type by its name.</div>
+<div class="block">Sorts a type by its simple name.</div>
 </li>
 </ul>
 <a name="importDeclarationComparator">
@@ -627,6 +660,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>Minimize</h4>
 <pre>Minimize()</pre>
+<div class="block">Create the handler for Randoop's <code>minimize</code> command.</div>
 </li>
 </ul>
 </li>
@@ -637,6 +671,23 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="minimizedClassName-java.nio.file.Path-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>minimizedClassName</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;minimizedClassName(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)</pre>
+<div class="block">Given a .java filename for non-minimized tests, returns the simple name of the class containing
+ the minimized tests.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>file</code> - the .java filename for non-minimized tests</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the simple class name for the minimized tests</dd>
+</dl>
+</li>
+</ul>
 <a name="handle-java.lang.String:A-">
 <!--   -->
 </a>
@@ -913,7 +964,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <h4>removeLeftHandSideSimplification</h4>
 <pre>private static&nbsp;com.github.javaparser.ast.stmt.Statement&nbsp;removeLeftHandSideSimplification(com.github.javaparser.ast.expr.VariableDeclarationExpr&nbsp;vdExpr)</pre>
 <div class="block">Return a statement that contains only the right hand side of a given statement. Returns null if
- there are multiple variable declarations in a single statement, such as <code>int i, j, k; </code>.</div>
+ there are multiple variable declarations in a single statement, such as <code>int i=1, j=2,
+ k=3; </code>, or if there are no initializers, as in <code>int i;</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>vdExpr</code> - variable declaration expression that represents the statement to simplify</dd>
@@ -1101,9 +1153,9 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>writeToFile</h4>
-<pre>private static&nbsp;void&nbsp;writeToFile(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
-                                <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)
-                         throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+<pre>public static&nbsp;void&nbsp;writeToFile(com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
+                               <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)
+                        throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
 <div class="block">Write a compilation unit to a Java file.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -1198,21 +1250,39 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="printProgress-int-int-java.lang.String-">
+<a name="printProgress-int-int-com.github.javaparser.ast.expr.SimpleName-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>printProgress</h4>
 <pre>private static&nbsp;void&nbsp;printProgress(int&nbsp;currentTestIndex,
                                   int&nbsp;totalTests,
-                                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;testName)</pre>
+                                  com.github.javaparser.ast.expr.SimpleName&nbsp;testName)</pre>
 <div class="block">Output the minimizer's current progress.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>currentTestIndex</code> - the number of tests that have been minimized so far</dd>
 <dd><code>totalTests</code> - the total number of tests in the input test suite</dd>
 <dd><code>testName</code> - the current test method being minimized</dd>
+</dl>
+</li>
+</ul>
+<a name="getOrphanCommentsBeforeThisChildNode-com.github.javaparser.ast.Node-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getOrphanCommentsBeforeThisChildNode</h4>
+<pre>private static&nbsp;void&nbsp;getOrphanCommentsBeforeThisChildNode(com.github.javaparser.ast.Node&nbsp;node,
+                                                         <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;com.github.javaparser.ast.comments.Comment&gt;&nbsp;result)</pre>
+<div class="block">This is stolen from JavaParser's PrettyPrintVisitor.printOrphanCommentsBeforeThisChildNode,
+ with light modifications.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>node</code> - the node whose orphan comments to collect</dd>
+<dd><code>result</code> - the list to add orphan comments to. Is side-effected by this method. The
+     implementation uses this to minimize the diffs against upstream.</dd>
 </dl>
 </li>
 </ul>

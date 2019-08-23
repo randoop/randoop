@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ComponentManager (randoop 4.1.2 API)</title>
+<title>ComponentManager (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ComponentManager (randoop 4.1.2 API)";
+            parent.document.title="ComponentManager (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -263,7 +263,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                    int&nbsp;i,
                    boolean&nbsp;onlyReceivers)</code>
 <div class="block">Returns component sequences that create values of the type required by the i-th input value of
- the given statement.</div>
+ a statement that invokes the given operation.</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
@@ -485,10 +485,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getSequencesForType</h4>
 <pre><a href="../../randoop/util/SimpleList.html" title="interface in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getSequencesForType(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;cls)</pre>
-<div class="block">Returns all the general component sequences that create values of the given class. If
- exactMatch==true returns only sequences that declare values of the exact class specified; if
- exactMatch==false returns sequences declaring values of cls or any other class that can be used
- as a cls (i.e. a subclass of cls).</div>
+<div class="block">Returns all the general component sequences that create values of the given class.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>cls</code> - the query type</dd>
@@ -507,7 +504,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                          int&nbsp;i,
                                          boolean&nbsp;onlyReceivers)</pre>
 <div class="block">Returns component sequences that create values of the type required by the i-th input value of
- the given statement. Also includes any applicable class- or package-level literals.</div>
+ a statement that invokes the given operation. Also includes any applicable class- or
+ package-level literals.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>operation</code> - the statement</dd>

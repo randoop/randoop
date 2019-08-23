@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ListEnumerator (randoop 4.1.2 API)</title>
+<title>ListIterator (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ListEnumerator (randoop 4.1.2 API)";
+            parent.document.title="ListIterator (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -52,8 +52,8 @@ var activeTableTab = "activeTableTab";
 <li><a href="../../randoop/reflection/LiteralFileReader.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../index.html?randoop/reflection/ListEnumerator.html" target="_top">Frames</a></li>
-<li><a href="ListEnumerator.html" target="_top">No&nbsp;Frames</a></li>
+<li><a href="../../index.html?randoop/reflection/ListIterator.html" target="_top">Frames</a></li>
+<li><a href="ListIterator.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
 <li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
@@ -92,14 +92,14 @@ var activeTableTab = "activeTableTab";
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">randoop.reflection</div>
-<h2 title="Class ListEnumerator" class="title">Class ListEnumerator&lt;T&gt;</h2>
+<h2 title="Class ListIterator" class="title">Class ListIterator&lt;T&gt;</h2>
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
 <li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li>randoop.reflection.ListEnumerator&lt;T&gt;</li>
+<li>randoop.reflection.ListIterator&lt;T&gt;</li>
 </ul>
 </li>
 </ul>
@@ -112,12 +112,15 @@ var activeTableTab = "activeTableTab";
 </dl>
 <hr>
 <br>
-<pre>class <span class="typeNameLabel">ListEnumerator&lt;T&gt;</span>
+<pre>class <span class="typeNameLabel">ListIterator&lt;T&gt;</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
 implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;T&gt;&gt;</pre>
 <div class="block">Enumerates the set of lists formed by selecting values sequentially from a list of candidates,
- such that each generlist has a value from each candidate list. the length of the lists . For
- instance, given <code>[["a1", "a2"], ["b1"], ["c1", "c2", "c3"]]</code> enumerates
+ such that each generated list has a value from each candidate list. Each generated list's length
+ is the same as the length of the candidates passed to the constructor.
+
+ <p>For instance, given <code>[["a1", "a2"], ["b1"], ["c1", "c2", "c3"]]</code>, this class yields in
+ turn:
 
  <pre>
    ["a1", "b1", "c1"]
@@ -126,9 +129,7 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
    ["a2", "b1", "c1"]
    ["a2", "b1", "c2"]
    ["a2", "b1", "c3"]
- </pre>
-
- by successive calls to <a href="../../randoop/reflection/ListEnumerator.html#next--"><code>next()</code></a>.</div>
+ </pre></div>
 </li>
 </ul>
 </div>
@@ -148,26 +149,26 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListEnumerator.html#candidates">candidates</a></span></code>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListIterator.html#candidates">candidates</a></span></code>
 <div class="block">Lists of candidate values for each position in generated lists.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListEnumerator.html#currentTypes">currentTypes</a></span></code>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListIterator.html#currentTypes">currentTypes</a></span></code>
 <div class="block">The partially constructed next value.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListEnumerator.html#iterators">iterators</a></span></code>
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListIterator.html#iterators">iterators</a></span></code>
 <div class="block">Iterators for each list of candidate values.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListEnumerator.html#nextList">nextList</a></span></code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListIterator.html#nextList">nextList</a></span></code>
 <div class="block">The current position for which to select a value.</div>
 </td>
 </tr>
@@ -186,8 +187,8 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListEnumerator.html#ListEnumerator-java.util.List-">ListEnumerator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;&gt;&nbsp;candidates)</code>
-<div class="block">Creates a <a href="../../randoop/reflection/ListEnumerator.html" title="class in randoop.reflection"><code>ListEnumerator</code></a> for lists constructed from the given candidates.</div>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListIterator.html#ListIterator-java.util.List-">ListIterator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;&gt;&nbsp;candidates)</code>
+<div class="block">Creates a <a href="../../randoop/reflection/ListIterator.html" title="class in randoop.reflection"><code>ListIterator</code></a> for lists constructed from the given candidates.</div>
 </td>
 </tr>
 </table>
@@ -207,15 +208,15 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListEnumerator.html#hasNext--">hasNext</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListIterator.html#hasNext--">hasNext</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListEnumerator.html#next--">next</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListIterator.html#next--">next</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListEnumerator.html#remove--">remove</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ListIterator.html#remove--">remove</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -252,7 +253,7 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
 <ul class="blockList">
 <li class="blockList">
 <h4>candidates</h4>
-<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;&gt; candidates</pre>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;&gt; candidates</pre>
 <div class="block">Lists of candidate values for each position in generated lists.</div>
 </li>
 </ul>
@@ -262,7 +263,7 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
 <ul class="blockList">
 <li class="blockList">
 <h4>iterators</h4>
-<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;&gt; iterators</pre>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;&gt; iterators</pre>
 <div class="block">Iterators for each list of candidate values.</div>
 </li>
 </ul>
@@ -272,7 +273,7 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
 <ul class="blockList">
 <li class="blockList">
 <h4>currentTypes</h4>
-<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt; currentTypes</pre>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt; currentTypes</pre>
 <div class="block">The partially constructed next value.</div>
 </li>
 </ul>
@@ -294,15 +295,15 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ListEnumerator-java.util.List-">
+<a name="ListIterator-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>ListEnumerator</h4>
-<pre>ListEnumerator(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;&gt;&nbsp;candidates)</pre>
-<div class="block">Creates a <a href="../../randoop/reflection/ListEnumerator.html" title="class in randoop.reflection"><code>ListEnumerator</code></a> for lists constructed from the given candidates. Each
- generated list will be the same length as the given list.</div>
+<h4>ListIterator</h4>
+<pre>ListIterator(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;&gt;&nbsp;candidates)</pre>
+<div class="block">Creates a <a href="../../randoop/reflection/ListIterator.html" title="class in randoop.reflection"><code>ListIterator</code></a> for lists constructed from the given candidates. Each generated
+ list will be the same length as the given list.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>candidates</code> - lists of candidate values for each position in generated lists</dd>
@@ -326,7 +327,7 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
 <pre>public&nbsp;boolean&nbsp;hasNext()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true#hasNext--" title="class or interface in java.util">hasNext</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;&gt;</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true#hasNext--" title="class or interface in java.util">hasNext</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -336,10 +337,10 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
 <ul class="blockList">
 <li class="blockList">
 <h4>next</h4>
-<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;&nbsp;next()</pre>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;&nbsp;next()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true#next--" title="class or interface in java.util">next</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;&gt;</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true#next--" title="class or interface in java.util">next</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -352,7 +353,7 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
 <pre>public&nbsp;void&nbsp;remove()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true#remove--" title="class or interface in java.util">remove</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;&gt;</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true#remove--" title="class or interface in java.util">remove</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/reflection/ListIterator.html" title="type parameter in ListIterator">T</a>&gt;&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -387,8 +388,8 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator
 <li><a href="../../randoop/reflection/LiteralFileReader.html" title="class in randoop.reflection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../index.html?randoop/reflection/ListEnumerator.html" target="_top">Frames</a></li>
-<li><a href="ListEnumerator.html" target="_top">No&nbsp;Frames</a></li>
+<li><a href="../../index.html?randoop/reflection/ListIterator.html" target="_top">Frames</a></li>
+<li><a href="ListIterator.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
 <li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>

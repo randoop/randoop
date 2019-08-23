@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>NonreceiverTerm (randoop 4.1.2 API)</title>
+<title>NonreceiverTerm (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="NonreceiverTerm (randoop 4.1.2 API)";
+            parent.document.title="NonreceiverTerm (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -206,7 +206,7 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>(package private) static <a href="../../randoop/operation/NonreceiverTerm.html" title="class in randoop.operation">NonreceiverTerm</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/NonreceiverTerm.html#createNullOrZeroTerm-randoop.types.Type-">createNullOrZeroTerm</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</code>
-<div class="block">Returns a NonreceiverTerm holding the zero value for the specified class c.</div>
+<div class="block">Returns a NonreceiverTerm holding the zero/false value for the specified class c.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -371,7 +371,7 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>c</code> - the <code>Class&lt;?&gt;</code> object</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true iff the given type is primitive, boxed primitive, <code>String</code>, or <code>Class</code></dd>
+<dd>true iff the type is primitive, boxed primitive, <code>String</code>, or <code>Class</code></dd>
 </dl>
 </li>
 </ul>
@@ -521,8 +521,13 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <li class="blockList">
 <h4>createNullOrZeroTerm</h4>
 <pre>static&nbsp;<a href="../../randoop/operation/NonreceiverTerm.html" title="class in randoop.operation">NonreceiverTerm</a>&nbsp;createNullOrZeroTerm(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</pre>
-<div class="block">Returns a NonreceiverTerm holding the zero value for the specified class c. In the case of
- characters there is no natural zero, so the value 'a' is used. Also, returns null for <a href="../../randoop/types/JavaTypes.html#CLASS_TYPE"><code>JavaTypes.CLASS_TYPE</code></a>.</div>
+<div class="block">Returns a NonreceiverTerm holding the zero/false value for the specified class c.
+
+ <ul>
+   <li>Returns 'a' for characters.
+   <li>Returns null for <a href="../../randoop/types/JavaTypes.html#CLASS_TYPE"><code>JavaTypes.CLASS_TYPE</code></a>.
+   <li>Returns "" (empty string) for <a href="../../randoop/types/JavaTypes.html#STRING_TYPE"><code>JavaTypes.STRING_TYPE</code></a>.
+ </ul></div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the type of value desired</dd>

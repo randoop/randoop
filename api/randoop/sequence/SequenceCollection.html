@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceCollection (randoop 4.1.2 API)</title>
+<title>SequenceCollection (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceCollection (randoop 4.1.2 API)";
+            parent.document.title="SequenceCollection (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -471,7 +471,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                                 boolean&nbsp;exactMatch,
                                                 boolean&nbsp;onlyReceivers)</pre>
 <div class="block">Searches through the set of active sequences to find all sequences whose types match with the
- parameter type.</div>
+ parameter type.
+
+ <p>If exactMatch==true returns only sequences that declare values of the exact class specified;
+ if exactMatch==false returns sequences declaring values of cls or any other class that can be
+ used as a cls (i.e. a subclass of cls).</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the type desired for the sequences being sought</dd>

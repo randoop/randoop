@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeVariable (randoop 4.1.2 API)</title>
+<title>TypeVariable (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeVariable (randoop 4.1.2 API)";
+            parent.document.title="TypeVariable (randoop 4.2.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":6,"i3":9,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":10,"i1":6,"i2":9,"i3":10,"i4":9,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -178,61 +178,55 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#apply-randoop.types.Substitution-">apply</a></span>(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#canBeInstantiatedBy-randoop.types.ReferenceType-">canBeInstantiatedBy</a></span>(<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;otherType)</code>
 <div class="block">Indicates whether this <a href="../../randoop/types/TypeVariable.html" title="class in randoop.types"><code>TypeVariable</code></a> can be instantiated by the <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#createCopyWithBounds-randoop.types.ParameterBound-randoop.types.ParameterBound-">createCopyWithBounds</a></span>(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;lowerBound,
                     <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;upperBound)</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#forType-java.lang.reflect.Type-">forType</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html?is-external=true" title="class or interface in java.lang.reflect">Type</a>&nbsp;type)</code>
 <div class="block">Creates a <code>TypeVariable</code> object for a given <code>java.lang.reflect.Type</code> reference,
  which must be a <code>java.lang.reflect.TypeVariable</code>.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#getRawtype--">getRawtype</a></span>()</code>
 <div class="block">Returns the raw type for this type, which is this type except for generic types.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>private static <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>private static <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#getSubstitution-randoop.types.TypeVariable-randoop.types.ReferenceType-">getSubstitution</a></span>(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;variable,
                <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;otherType)</code>
 <div class="block">Creates a substitution of the given <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> for the <a href="../../randoop/types/TypeVariable.html" title="class in randoop.types"><code>TypeVariable</code></a>.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#getTypeParameters--">getTypeParameters</a></span>()</code>
 <div class="block">Returns the type parameters in this type, which is this variable.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;sourceType)</code>
 <div class="block">Indicates whether there is an assignment conversion from a source <code>Type</code> to this type.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf</a></span>(<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;otherType)</code>
 <div class="block">Indicates whether this type is an instantiation of a more general type.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</code>
 <div class="block">Test whether this type is a subtype of the given type according to transitive closure of
@@ -241,10 +235,16 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
  JLS for Java SE 8</a>.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#isVariable--">isVariable</a></span>()</code>
 <div class="block">Indicates whether this type is a type variable.</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#substitute-randoop.types.Substitution-">substitute</a></span>(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&nbsp;substitution)</code>
+<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -260,7 +260,7 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></h3>
-<code><a href="../../randoop/types/ReferenceType.html#applyCaptureConversion--">applyCaptureConversion</a>, <a href="../../randoop/types/ReferenceType.html#forClass-java.lang.Class-">forClass</a>, <a href="../../randoop/types/ReferenceType.html#getInstantiatingSubstitution-randoop.types.ReferenceType-">getInstantiatingSubstitution</a>, <a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">isCaptureVariable</a>, <a href="../../randoop/types/ReferenceType.html#isReferenceType--">isReferenceType</a></code></li>
+<code><a href="../../randoop/types/ReferenceType.html#applyCaptureConversion--">applyCaptureConversion</a>, <a href="../../randoop/types/ReferenceType.html#forClass-java.lang.Class-">forClass</a>, <a href="../../randoop/types/ReferenceType.html#getInstantiatingSubstitution-randoop.types.ReferenceType-">getInstantiatingSubstitution</a>, <a href="../../randoop/types/ReferenceType.html#getInstantiatingSubstitutionforTypeVariable-randoop.types.ReferenceType-randoop.types.ReferenceType-">getInstantiatingSubstitutionforTypeVariable</a>, <a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">isCaptureVariable</a>, <a href="../../randoop/types/ReferenceType.html#isReferenceType--">isReferenceType</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.randoop.types.Type">
@@ -342,14 +342,14 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 </dl>
 </li>
 </ul>
-<a name="apply-randoop.types.Substitution-">
+<a name="substitute-randoop.types.Substitution-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>apply</h4>
-<pre>public&nbsp;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ReferenceType.html#apply-randoop.types.Substitution-">ReferenceType</a></code></span></div>
+<h4>substitute</h4>
+<pre>public&nbsp;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;substitute(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&nbsp;substitution)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ReferenceType.html#substitute-randoop.types.Substitution-">ReferenceType</a></code></span></div>
 <div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>. If the type is parameterized then replaces
  type variables that occur, otherwise returns this type.
 
@@ -357,7 +357,7 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
  without an explicit cast.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/types/ReferenceType.html#apply-randoop.types.Substitution-">apply</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></dd>
+<dd><code><a href="../../randoop/types/ReferenceType.html#substitute-randoop.types.Substitution-">substitute</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>substitution</code> - the type substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -462,8 +462,8 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>getSubstitution</h4>
-<pre>private static&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;getSubstitution(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;variable,
-                                                           <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;otherType)</pre>
+<pre>private static&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&nbsp;getSubstitution(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;variable,
+                                            <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;otherType)</pre>
 <div class="block">Creates a substitution of the given <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> for the <a href="../../randoop/types/TypeVariable.html" title="class in randoop.types"><code>TypeVariable</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ForwardGenerator (randoop 4.1.2 API)</title>
+<title>ForwardGenerator (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ForwardGenerator (randoop 4.1.2 API)";
+            parent.document.title="ForwardGenerator (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -183,20 +183,22 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#instantiator">instantiator</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#observers">observers</a></span></code>
-<div class="block">The side-effect-free observer methods.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/generation/TypedOperationSelector.html" title="interface in randoop.generation">TypedOperationSelector</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#operationSelector">operationSelector</a></span></code>
 <div class="block">How to select the method to use for creating a new sequence.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#runtimePrimitivesSeen">runtimePrimitivesSeen</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#runtimePrimitivesSeen">runtimePrimitivesSeen</a></span></code>
+<div class="block">The set of all primitive values seen during generation and execution of sequences.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#sideEffectFreeMethods">sideEffectFreeMethods</a></span></code>
+<div class="block">The side-effect-free methods.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
@@ -227,20 +229,24 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#ForwardGenerator-java.util.List-java.util.Set-randoop.main.GenInputsAbstract.Limits-randoop.generation.ComponentManager-randoop.generation.IStopper-randoop.generation.RandoopListenerManager-java.util.Set-">ForwardGenerator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;operations,
-                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;observers,
+                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;sideEffectFreeMethods,
                 <a href="../../randoop/main/GenInputsAbstract.Limits.html" title="class in randoop.main">GenInputsAbstract.Limits</a>&nbsp;limits,
                 <a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation">ComponentManager</a>&nbsp;componentManager,
                 <a href="../../randoop/generation/IStopper.html" title="interface in randoop.generation">IStopper</a>&nbsp;stopper,
                 <a href="../../randoop/generation/RandoopListenerManager.html" title="class in randoop.generation">RandoopListenerManager</a>&nbsp;listenerManager,
-                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;classesUnderTest)</code>&nbsp;</td>
+                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;classesUnderTest)</code>
+<div class="block">Create a forward generator.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#ForwardGenerator-java.util.List-java.util.Set-randoop.main.GenInputsAbstract.Limits-randoop.generation.ComponentManager-randoop.generation.RandoopListenerManager-java.util.Set-">ForwardGenerator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;operations,
-                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;observers,
+                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;sideEffectFreeMethods,
                 <a href="../../randoop/main/GenInputsAbstract.Limits.html" title="class in randoop.main">GenInputsAbstract.Limits</a>&nbsp;limits,
                 <a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation">ComponentManager</a>&nbsp;componentManager,
                 <a href="../../randoop/generation/RandoopListenerManager.html" title="class in randoop.generation">RandoopListenerManager</a>&nbsp;listenerManager,
-                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;classesUnderTest)</code>&nbsp;</td>
+                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;classesUnderTest)</code>
+<div class="block">Create a forward generator.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -390,14 +396,14 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
  <p>This must be ordered by insertion to allow for flaky test history collection in <a href="../../randoop/main/GenTests.html#printSequenceExceptionError-randoop.generation.AbstractGenerator-randoop.sequence.SequenceExceptionError-"><code>GenTests.printSequenceExceptionError(AbstractGenerator, SequenceExceptionError)</code></a>.</div>
 </li>
 </ul>
-<a name="observers">
+<a name="sideEffectFreeMethods">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>observers</h4>
-<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt; observers</pre>
-<div class="block">The side-effect-free observer methods.</div>
+<h4>sideEffectFreeMethods</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt; sideEffectFreeMethods</pre>
+<div class="block">The side-effect-free methods.</div>
 </li>
 </ul>
 <a name="subsumed_sequences">
@@ -468,6 +474,8 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <li class="blockList">
 <h4>runtimePrimitivesSeen</h4>
 <pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&gt; runtimePrimitivesSeen</pre>
+<div class="block">The set of all primitive values seen during generation and execution of sequences. This set is
+ used to tell if a new primitive value has been generated, to add the value to the components.</div>
 </li>
 </ul>
 </li>
@@ -485,11 +493,21 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <li class="blockList">
 <h4>ForwardGenerator</h4>
 <pre>public&nbsp;ForwardGenerator(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;operations,
-                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;observers,
+                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;sideEffectFreeMethods,
                         <a href="../../randoop/main/GenInputsAbstract.Limits.html" title="class in randoop.main">GenInputsAbstract.Limits</a>&nbsp;limits,
                         <a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation">ComponentManager</a>&nbsp;componentManager,
                         <a href="../../randoop/generation/RandoopListenerManager.html" title="class in randoop.generation">RandoopListenerManager</a>&nbsp;listenerManager,
                         <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;classesUnderTest)</pre>
+<div class="block">Create a forward generator.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>operations</code> - list of operations under test</dd>
+<dd><code>sideEffectFreeMethods</code> - side-effect-free methods</dd>
+<dd><code>limits</code> - limits for generation, after which the generator will stop</dd>
+<dd><code>componentManager</code> - stores previously-generated sequences</dd>
+<dd><code>listenerManager</code> - manages notifications for listeners</dd>
+<dd><code>classesUnderTest</code> - set of classes under test</dd>
+</dl>
 </li>
 </ul>
 <a name="ForwardGenerator-java.util.List-java.util.Set-randoop.main.GenInputsAbstract.Limits-randoop.generation.ComponentManager-randoop.generation.IStopper-randoop.generation.RandoopListenerManager-java.util.Set-">
@@ -499,12 +517,23 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <li class="blockList">
 <h4>ForwardGenerator</h4>
 <pre>public&nbsp;ForwardGenerator(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;operations,
-                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;observers,
+                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;sideEffectFreeMethods,
                         <a href="../../randoop/main/GenInputsAbstract.Limits.html" title="class in randoop.main">GenInputsAbstract.Limits</a>&nbsp;limits,
                         <a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation">ComponentManager</a>&nbsp;componentManager,
                         <a href="../../randoop/generation/IStopper.html" title="interface in randoop.generation">IStopper</a>&nbsp;stopper,
                         <a href="../../randoop/generation/RandoopListenerManager.html" title="class in randoop.generation">RandoopListenerManager</a>&nbsp;listenerManager,
                         <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;classesUnderTest)</pre>
+<div class="block">Create a forward generator.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>operations</code> - list of operations under test</dd>
+<dd><code>sideEffectFreeMethods</code> - side-effect-free methods</dd>
+<dd><code>limits</code> - limits for generation, after which the generator will stop</dd>
+<dd><code>componentManager</code> - stores previously-generated sequences</dd>
+<dd><code>stopper</code> - optional, additional stopping criterion for the generator. Can be null.</dd>
+<dd><code>listenerManager</code> - manages notifications for listeners</dd>
+<dd><code>classesUnderTest</code> - set of classes under test</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -709,7 +738,8 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <div class="block">Return a variable of the given type.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>candidates</code> - the list to choose from (I think?)</dd>
+<dd><code>candidates</code> - sequences, each of which produces the given type; that is, each would be a
+     legal return value</dd>
 <dd><code>inputType</code> - the type of the chosen variable/sequence</dd>
 <dd><code>isReceiver</code> - whether the value will be used as a receiver</dd>
 <dt><span class="returnLabel">Returns:</span></dt>

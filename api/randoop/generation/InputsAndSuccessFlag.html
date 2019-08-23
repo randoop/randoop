@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>InputsAndSuccessFlag (randoop 4.1.2 API)</title>
+<title>InputsAndSuccessFlag (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="InputsAndSuccessFlag (randoop 4.1.2 API)";
+            parent.document.title="InputsAndSuccessFlag (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -104,8 +104,10 @@
 <br>
 <pre>class <span class="typeNameLabel">InputsAndSuccessFlag</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">Return type for ForwardGenerator's private selectInputs method, which is responsible for
- selecting a set of component sequences to be concatenated into a longer sequence.</div>
+<div class="block">Represents a set of inputs, plus a boolean that is true if this is a good set of inputs.
+
+ <p>This is the return type for ForwardGenerator's private <code>selectInputs</code> method, which is
+ responsible for selecting a set of component sequences to be concatenated into a longer sequence.</div>
 </li>
 </ul>
 </div>
@@ -126,11 +128,15 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/InputsAndSuccessFlag.html#indices">indices</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/InputsAndSuccessFlag.html#indices">indices</a></span></code>
+<div class="block">Same length as <code>sequences</code>.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/InputsAndSuccessFlag.html#sequences">sequences</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/InputsAndSuccessFlag.html#sequences">sequences</a></span></code>
+<div class="block">The sequences that create the inputs.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -206,6 +212,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>sequences</h4>
 <pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt; sequences</pre>
+<div class="block">The sequences that create the inputs.</div>
 </li>
 </ul>
 <a name="indices">
@@ -215,6 +222,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>indices</h4>
 <pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt; indices</pre>
+<div class="block">Same length as <code>sequences</code>. Each integer is an index into the corresponding sequence, and
+ is a statement that creates/returns a value.</div>
 </li>
 </ul>
 </li>

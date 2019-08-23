@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OmitMethodsPredicate (randoop 4.1.2 API)</title>
+<title>OmitMethodsPredicate (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OmitMethodsPredicate (randoop 4.1.2 API)";
+            parent.document.title="OmitMethodsPredicate (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -138,12 +138,18 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>private static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OmitMethodsPredicate.html#logOmit">logOmit</a></span></code>
+<div class="block">Set to true to produce very voluminous debugging regarding omission.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection">OmitMethodsPredicate</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OmitMethodsPredicate.html#NO_OMISSION">NO_OMISSION</a></span></code>
 <div class="block">An OmitMethodsPredicate that does no omission.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OmitMethodsPredicate.html#omitPatterns">omitPatterns</a></span></code>
 <div class="block"><code>Pattern</code>s to match operations that should be omitted.</div>
@@ -184,7 +190,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>(package private) boolean</code></td>
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OmitMethodsPredicate.html#shouldOmit-randoop.operation.TypedClassOperation-">shouldOmit</a></span>(<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&nbsp;operation)</code>
 <div class="block">Indicates whether an omit pattern matches the raw signature of the method in either the
  declaring class of the method or a supertype.</div>
@@ -223,6 +229,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Field Detail</h3>
+<a name="logOmit">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>logOmit</h4>
+<pre>private static&nbsp;boolean logOmit</pre>
+<div class="block">Set to true to produce very voluminous debugging regarding omission.</div>
+</li>
+</ul>
 <a name="NO_OMISSION">
 <!--   -->
 </a>
@@ -299,7 +315,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>shouldOmit</h4>
-<pre>boolean&nbsp;shouldOmit(<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&nbsp;operation)</pre>
+<pre>public&nbsp;boolean&nbsp;shouldOmit(<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&nbsp;operation)</pre>
 <div class="block">Indicates whether an omit pattern matches the raw signature of the method in either the
  declaring class of the method or a supertype.</div>
 <dl>

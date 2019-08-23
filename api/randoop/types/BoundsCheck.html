@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeCheck (randoop 4.1.2 API)</title>
+<title>BoundsCheck (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,14 +12,14 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeCheck (randoop 4.1.2 API)";
+            parent.document.title="BoundsCheck (randoop 4.2.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -48,12 +48,12 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/types/TypeTuple.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/ArrayType.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/CaptureTypeVariable.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../index.html?randoop/types/TypeCheck.html" target="_top">Frames</a></li>
-<li><a href="TypeCheck.html" target="_top">No&nbsp;Frames</a></li>
+<li><a href="../../index.html?randoop/types/BoundsCheck.html" target="_top">Frames</a></li>
+<li><a href="BoundsCheck.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
 <li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
@@ -92,14 +92,14 @@ var activeTableTab = "activeTableTab";
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">randoop.types</div>
-<h2 title="Class TypeCheck" class="title">Class TypeCheck</h2>
+<h2 title="Class BoundsCheck" class="title">Class BoundsCheck</h2>
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
 <li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li>randoop.types.TypeCheck</li>
+<li>randoop.types.BoundsCheck</li>
 </ul>
 </li>
 </ul>
@@ -108,7 +108,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <hr>
 <br>
-<pre>public class <span class="typeNameLabel">TypeCheck</span>
+<pre>public class <span class="typeNameLabel">BoundsCheck</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Predicate to check the type of a substitution for a list of type variables.</div>
 </li>
@@ -131,7 +131,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeCheck.html#parameters">parameters</a></span></code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/BoundsCheck.html#typeParameters">typeParameters</a></span></code>
 <div class="block">The type variables to check against.</div>
 </td>
 </tr>
@@ -147,13 +147,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colFirst" scope="col">Modifier</th>
-<th class="colLast" scope="col">Constructor and Description</th>
+<th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private </code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeCheck.html#TypeCheck-java.util.List-">TypeCheck</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</code>
-<div class="block">Builds a <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types"><code>TypeCheck</code></a> object for the parameters.</div>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/types/BoundsCheck.html#BoundsCheck-java.util.List-">BoundsCheck</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</code>
+<div class="block">Creates a <a href="../../randoop/types/BoundsCheck.html" title="class in randoop.types"><code>BoundsCheck</code></a> predicate for a given list of type parameters.</div>
 </td>
 </tr>
 </table>
@@ -166,22 +164,17 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types">TypeCheck</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeCheck.html#forParameters-java.util.List-">forParameters</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</code>
-<div class="block">Creates a <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types"><code>TypeCheck</code></a> predicate for a given list of type parameters.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeCheck.html#test-java.util.List-randoop.types.Substitution-">test</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;tuple,
-    <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Checks if the list of types satisfies the bounds of the type parameters given the substitution.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/BoundsCheck.html#test-java.util.List-randoop.types.Substitution-">test</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;tuple,
+    <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&nbsp;substitution)</code>
+<div class="block">Checks if each type argument is within the bounds of the corresponding type parameter, after
+ both arguments and parameters have been substituted.</div>
 </td>
 </tr>
 </table>
@@ -206,13 +199,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="parameters">
+<a name="typeParameters">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>parameters</h4>
-<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt; parameters</pre>
+<h4>typeParameters</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt; typeParameters</pre>
 <div class="block">The type variables to check against.</div>
 </li>
 </ul>
@@ -224,17 +217,17 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="TypeCheck-java.util.List-">
+<a name="BoundsCheck-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>TypeCheck</h4>
-<pre>private&nbsp;TypeCheck(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</pre>
-<div class="block">Builds a <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types"><code>TypeCheck</code></a> object for the parameters.</div>
+<h4>BoundsCheck</h4>
+<pre>public&nbsp;BoundsCheck(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</pre>
+<div class="block">Creates a <a href="../../randoop/types/BoundsCheck.html" title="class in randoop.types"><code>BoundsCheck</code></a> predicate for a given list of type parameters.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>parameters</code> - the list of of type parameters to be checked by the predicate</dd>
+<dd><code>typeParameters</code> - the list of of type parameters to be checked by the predicate</dd>
 </dl>
 </li>
 </ul>
@@ -246,22 +239,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="forParameters-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>forParameters</h4>
-<pre>public static&nbsp;<a href="../../randoop/types/TypeCheck.html" title="class in randoop.types">TypeCheck</a>&nbsp;forParameters(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</pre>
-<div class="block">Creates a <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types"><code>TypeCheck</code></a> predicate for a given list of type parameters.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>parameters</code> - the list of type parameters checked by the predicate</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types"><code>TypeCheck</code></a> object for the given parameters</dd>
-</dl>
-</li>
-</ul>
 <a name="test-java.util.List-randoop.types.Substitution-">
 <!--   -->
 </a>
@@ -269,17 +246,20 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>test</h4>
 <pre>public&nbsp;boolean&nbsp;test(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;tuple,
-                    <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block">Checks if the list of types satisfies the bounds of the type parameters given the substitution.
- Requires that the list of types be the same length as the parameters. (Generally, the
+                    <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&nbsp;substitution)</pre>
+<div class="block">Checks if each type argument is within the bounds of the corresponding type parameter, after
+ both arguments and parameters have been substituted.
+
+ <p>Requires that the list of types be the same length as the parameters. Generally, the
  substitution is constructed from the tuple instantiating the type parameters of this object,
- but all that is require is that it instantiate any generic bounds of the the type parameters.)</div>
+ but all that is required is that it instantiate any generic bounds of the the type parameters.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>tuple</code> - the list of instantiating types</dd>
 <dd><code>substitution</code> - substitution for checking bounds</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if instantiation of the parameters by the tuple is valid, false otherwise</dd>
+<dd>true if each argument's instantiation is within the bounds of the corresponding type
+     parameter, after both have been substituted</dd>
 </dl>
 </li>
 </ul>
@@ -310,12 +290,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/types/TypeTuple.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/ArrayType.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/CaptureTypeVariable.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../index.html?randoop/types/TypeCheck.html" target="_top">Frames</a></li>
-<li><a href="TypeCheck.html" target="_top">No&nbsp;Frames</a></li>
+<li><a href="../../index.html?randoop/types/BoundsCheck.html" target="_top">Frames</a></li>
+<li><a href="BoundsCheck.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
 <li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>

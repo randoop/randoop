@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OperationModel (randoop 4.1.2 API)</title>
+<title>OperationModel (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OperationModel (randoop 4.1.2 API)";
+            parent.document.title="OperationModel (randoop 4.2.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":9,"i7":9,"i8":10,"i9":10,"i10":10,"i11":10,"i12":9,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":9,"i22":9};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":9,"i7":9,"i8":10,"i9":10,"i10":10,"i11":10,"i12":9,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":9,"i23":9,"i24":9,"i25":9,"i26":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -183,6 +183,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection">OmitMethodsPredicate</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#omitMethodsPredicate">omitMethodsPredicate</a></span></code>
+<div class="block">User-supplied predicate for methods that should not be used during test generation.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#operations">operations</a></span></code>
 <div class="block">Set of concrete operations extracted from classes.</div>
@@ -251,20 +257,18 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#addOperationsFromClasses-java.util.Set-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-randoop.reflection.OmitMethodsPredicate-randoop.condition.SpecificationCollection-">addOperationsFromClasses</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;classTypes,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#addOperationsFromClasses-java.util.Set-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-randoop.condition.SpecificationCollection-">addOperationsFromClasses</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;classTypes,
                         <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
                         <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate,
-                        <a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection">OmitMethodsPredicate</a>&nbsp;omitPredicate,
                         <a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition">SpecificationCollection</a>&nbsp;operationSpecifications)</code>
 <div class="block">Adds operations to this <a href="../../randoop/reflection/OperationModel.html" title="class in randoop.reflection"><code>OperationModel</code></a> from all of the given classes.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>private void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#addOperationsUsingSignatures-java.nio.file.Path-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-randoop.reflection.OmitMethodsPredicate-">addOperationsUsingSignatures</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;methodSignatures_file,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#addOperationsUsingSignatures-java.nio.file.Path-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-">addOperationsUsingSignatures</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;methodSignatures_file,
                             <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
-                            <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate,
-                            <a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection">OmitMethodsPredicate</a>&nbsp;omitPredicate)</code>
+                            <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate)</code>
 <div class="block">Adds an operation to this <a href="../../randoop/reflection/OperationModel.html" title="class in randoop.reflection"><code>OperationModel</code></a> for each of the method signatures.</div>
 </td>
 </tr>
@@ -326,7 +330,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getAnnotatedTestValues--">getAnnotatedTestValues</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getAnnotatedTestValues--">getAnnotatedTestValues</a></span>()</code>
+<div class="block">Returns the set of singleton sequences for values from <code>@TestValue</code> annotated fields.</div>
+</td>
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>private static @Nullable <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;</code></td>
@@ -360,35 +366,62 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr id="i17" class="rowColor">
+<td class="colFirst"><code><a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection">OmitMethodsPredicate</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getOmitMethodsPredicate--">getOmitMethodsPredicate</a></span>()</code>
+<div class="block">Returns the user-specified predicate for methods that should not be called.</div>
+</td>
+</tr>
+<tr id="i18" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getOperations--">getOperations</a></span>()</code>
 <div class="block">Return the operations of this model as a list.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#log--">log</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#logOperations-java.io.PrintStream-">logOperations</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html?is-external=true" title="class or interface in java.io">PrintStream</a>&nbsp;out)</code>
 <div class="block">Output the operations of this model to <code>out</code>, if logging is enabled.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#logOperations-java.io.Writer-">logOperations</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/Writer.html?is-external=true" title="class or interface in java.io">Writer</a>&nbsp;out)</code>
 <div class="block">Output the operations of this model, if logging is enabled.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
-<td class="colFirst"><code>static <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#readOperations-java.nio.file.Path-boolean-">readOperations</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
-              boolean&nbsp;onlyMethods)</code>
-<div class="block">Given a file containing signatures, returns the operations for them.</div>
+<tr id="i22" class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#nonInstantiable-java.lang.Class-randoop.reflection.VisibilityPredicate-">nonInstantiable</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;c,
+               <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility)</code>
+<div class="block">Is this type instantiable? It must be visible, non-abstract, and not an interface.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
+<td class="colFirst"><code>private static <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#readOperations-org.plumelib.util.EntryReader-">readOperations</a></span>(org.plumelib.util.EntryReader&nbsp;er)</code>
+<div class="block">Returns operations read from the given EntryReader, which contains fully-qualified method
+ signatures.</div>
+</td>
+</tr>
+<tr id="i24" class="altColor">
+<td class="colFirst"><code>static <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#readOperations-java.io.InputStream-java.lang.String-">readOperations</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;is,
+              <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;filename)</code>
+<div class="block">Returns operations read from the given stream, which contains fully-qualified method
+ signatures.</div>
+</td>
+</tr>
+<tr id="i25" class="rowColor">
+<td class="colFirst"><code>static <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#readOperations-java.nio.file.Path-">readOperations</a></span>(@Nullable <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)</code>
+<div class="block">Given a file containing fully-qualified method signatures, returns the operations for them.</div>
+</td>
+</tr>
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#signatureToOperation-java.lang.String-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-">signatureToOperation</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;signature,
                     <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
@@ -491,11 +524,21 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a name="omitMethods">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>omitMethods</h4>
 <pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a>&gt; omitMethods</pre>
 <div class="block">For debugging only.</div>
+</li>
+</ul>
+<a name="omitMethodsPredicate">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>omitMethodsPredicate</h4>
+<pre>private&nbsp;<a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection">OmitMethodsPredicate</a> omitMethodsPredicate</pre>
+<div class="block">User-supplied predicate for methods that should not be used during test generation.</div>
 </li>
 </ul>
 </li>
@@ -651,24 +694,59 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="readOperations-java.nio.file.Path-boolean-">
+<a name="readOperations-java.nio.file.Path-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>readOperations</h4>
-<pre>public static&nbsp;<a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;readOperations(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
-                                                           boolean&nbsp;onlyMethods)
-                                                    throws <a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></pre>
-<div class="block">Given a file containing signatures, returns the operations for them.</div>
+<pre>public static&nbsp;<a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&gt;&nbsp;readOperations(@Nullable <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)
+                                                         throws <a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></pre>
+<div class="block">Given a file containing fully-qualified method signatures, returns the operations for them.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>file</code> - a file that contains method or constructor signatures, one per line</dd>
-<dd><code>onlyMethods</code> - if true, throw an exception if a constructor is read</dd>
+<dd><code>file</code> - a file that contains method or constructor signatures, one per line. If null, this
+     method returns an empty map.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a map from each class type to the set of methods/constructors in it</dd>
+<dd>a map from each class type to the set of methods and constructors in it</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></code> - if a method signature cannot be parsed</dd>
+</dl>
+</li>
+</ul>
+<a name="readOperations-org.plumelib.util.EntryReader-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>readOperations</h4>
+<pre>private static&nbsp;<a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&gt;&nbsp;readOperations(org.plumelib.util.EntryReader&nbsp;er)</pre>
+<div class="block">Returns operations read from the given EntryReader, which contains fully-qualified method
+ signatures.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>er</code> - the EntryReader to read from</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>contents of the file, as a map of operations</dd>
+</dl>
+</li>
+</ul>
+<a name="readOperations-java.io.InputStream-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>readOperations</h4>
+<pre>public static&nbsp;<a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&gt;&nbsp;readOperations(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;is,
+                                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;filename)</pre>
+<div class="block">Returns operations read from the given stream, which contains fully-qualified method
+ signatures.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>is</code> - the stream from which to read</dd>
+<dd><code>filename</code> - the file name to use in diagnostic messages</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>contents of the file, as a map of operations</dd>
 </dl>
 </li>
 </ul>
@@ -745,6 +823,20 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
+<a name="getOmitMethodsPredicate--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getOmitMethodsPredicate</h4>
+<pre>public&nbsp;<a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection">OmitMethodsPredicate</a>&nbsp;getOmitMethodsPredicate()</pre>
+<div class="block">Returns the user-specified predicate for methods that should not be called.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the user-specified predicate for methods that should not be called</dd>
+</dl>
+</li>
+</ul>
 <a name="getAnnotatedTestValues--">
 <!--   -->
 </a>
@@ -752,6 +844,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getAnnotatedTestValues</h4>
 <pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getAnnotatedTestValues()</pre>
+<div class="block">Returns the set of singleton sequences for values from <code>@TestValue</code> annotated fields.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>sequences that get fields annotated with <code>@TestValue</code></dd>
+</dl>
 </li>
 </ul>
 <a name="log--">
@@ -857,6 +954,24 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
+<a name="nonInstantiable-java.lang.Class-randoop.reflection.VisibilityPredicate-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>nonInstantiable</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;nonInstantiable(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;c,
+                                     <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility)</pre>
+<div class="block">Is this type instantiable? It must be visible, non-abstract, and not an interface.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>c</code> - the type to test for instantiability</dd>
+<dd><code>visibility</code> - the visibility predicate</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>null if this class is instantiable to test, otherwise a string with a discard reason</dd>
+</dl>
+</li>
+</ul>
 <a name="getClass-java.lang.String-randoop.main.ClassNameErrorHandler-">
 <!--   -->
 </a>
@@ -876,7 +991,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="addOperationsFromClasses-java.util.Set-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-randoop.reflection.OmitMethodsPredicate-randoop.condition.SpecificationCollection-">
+<a name="addOperationsFromClasses-java.util.Set-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-randoop.condition.SpecificationCollection-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -885,7 +1000,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre>private&nbsp;void&nbsp;addOperationsFromClasses(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;classTypes,
                                       <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
                                       <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate,
-                                      <a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection">OmitMethodsPredicate</a>&nbsp;omitPredicate,
                                       <a href="../../randoop/condition/SpecificationCollection.html" title="class in randoop.condition">SpecificationCollection</a>&nbsp;operationSpecifications)</pre>
 <div class="block">Adds operations to this <a href="../../randoop/reflection/OperationModel.html" title="class in randoop.reflection"><code>OperationModel</code></a> from all of the given classes.</div>
 <dl>
@@ -893,12 +1007,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>classTypes</code> - the set of declaring class types for the operations, must be non-null</dd>
 <dd><code>visibility</code> - the visibility predicate</dd>
 <dd><code>reflectionPredicate</code> - the reflection predicate</dd>
-<dd><code>omitPredicate</code> - the predicate for omitting operations</dd>
 <dd><code>operationSpecifications</code> - the collection of <a href="../../randoop/condition/specification/OperationSpecification.html" title="class in randoop.condition.specification"><code>OperationSpecification</code></a></dd>
 </dl>
 </li>
 </ul>
-<a name="addOperationsUsingSignatures-java.nio.file.Path-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-randoop.reflection.OmitMethodsPredicate-">
+<a name="addOperationsUsingSignatures-java.nio.file.Path-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -906,8 +1019,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <h4>addOperationsUsingSignatures</h4>
 <pre>private&nbsp;void&nbsp;addOperationsUsingSignatures(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;methodSignatures_file,
                                           <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
-                                          <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate,
-                                          <a href="../../randoop/reflection/OmitMethodsPredicate.html" title="class in randoop.reflection">OmitMethodsPredicate</a>&nbsp;omitPredicate)
+                                          <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate)
                                    throws <a href="../../randoop/reflection/SignatureParseException.html" title="class in randoop.reflection">SignatureParseException</a></pre>
 <div class="block">Adds an operation to this <a href="../../randoop/reflection/OperationModel.html" title="class in randoop.reflection"><code>OperationModel</code></a> for each of the method signatures.</div>
 <dl>
@@ -915,7 +1027,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>methodSignatures_file</code> - the file containing the signatures; if null, do nothing</dd>
 <dd><code>visibility</code> - the visibility predicate</dd>
 <dd><code>reflectionPredicate</code> - the reflection predicate</dd>
-<dd><code>omitPredicate</code> - the predicate for omitting operations</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../randoop/reflection/SignatureParseException.html" title="class in randoop.reflection">SignatureParseException</a></code> - if any signature is syntactically invalid</dd>
 </dl>

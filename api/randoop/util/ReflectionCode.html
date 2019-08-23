@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ReflectionCode (randoop 4.1.2 API)</title>
+<title>ReflectionCode (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ReflectionCode (randoop 4.1.2 API)";
+            parent.document.title="ReflectionCode (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -382,11 +382,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Runs the reflection code that this object represents.
 
  <ol>
-   <li>If System.getSecurityManager() returns a RandoopSecurityManager, this method sets the
-       security manager's status to ON.
    <li>This method calls <a href="../../randoop/util/ReflectionCode.html#runReflectionCodeRaw--"><code>runReflectionCodeRaw()</code></a> to perform the actual work. <a href="../../randoop/util/ReflectionCode.html#runReflectionCodeRaw--"><code>runReflectionCodeRaw()</code></a> sets the <code>.retVal</code> or <code>exceptionThrown</code> field, or
        throws an exception if there is a bug in Randoop.
-   <li>This method sets the security manager's status to its status before this call.
  </ol></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>

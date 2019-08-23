@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CompilableTestPredicate (randoop 4.1.2 API)</title>
+<title>CompilableTestPredicate (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CompilableTestPredicate (randoop 4.1.2 API)";
+            parent.document.title="CompilableTestPredicate (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -209,7 +209,7 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/CompilableTestPredicate.html#testSource-java.lang.String-com.github.javaparser.ast.CompilationUnit-java.lang.String-">testSource</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;testClassName,
           com.github.javaparser.ast.CompilationUnit&nbsp;source,
           <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName)</code>
-<div class="block">Test the source text directly.</div>
+<div class="block">Return true if the given source code compiles without error.</div>
 </td>
 </tr>
 </table>
@@ -351,9 +351,8 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function
 <pre>boolean&nbsp;testSource(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;testClassName,
                    com.github.javaparser.ast.CompilationUnit&nbsp;source,
                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName)</pre>
-<div class="block">Test the source text directly. This is here to allow the mechanics of the predicate to be
- tested directly. Otherwise, we have to create a broken <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>, which may
- not always be possible.</div>
+<div class="block">Return true if the given source code compiles without error. This is here to allow the
+ mechanics of the predicate to be tested directly. Otherwise, we have to create a broken <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>, which may not always be possible.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>testClassName</code> - the name of the test class</dd>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>GenInputsAbstract.FlakyTestAction (randoop 4.1.2 API)</title>
+<title>GenInputsAbstract.FlakyTestAction (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="GenInputsAbstract.FlakyTestAction (randoop 4.1.2 API)";
+            parent.document.title="GenInputsAbstract.FlakyTestAction (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -157,7 +157,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html?i
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.FlakyTestAction.html#OUTPUT">OUTPUT</a></span></code>
-<div class="block">Output the flaky test; the resulting test suite may fail when it is run.</div>
+<div class="block">Output the flaky test, but with flaky assertions commented out.</div>
 </td>
 </tr>
 </table>
@@ -224,7 +224,8 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>HALT</h4>
 <pre>public static final&nbsp;<a href="../../randoop/main/GenInputsAbstract.FlakyTestAction.html" title="enum in randoop.main">GenInputsAbstract.FlakyTestAction</a> HALT</pre>
-<div class="block">Randoop halts with a diagnostic message.</div>
+<div class="block">Randoop halts with a diagnostic message. You can determine the responsible methods, fix or
+ exclude them, and re-run Randoop.</div>
 </li>
 </ul>
 <a name="DISCARD">
@@ -234,8 +235,8 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>DISCARD</h4>
 <pre>public static final&nbsp;<a href="../../randoop/main/GenInputsAbstract.FlakyTestAction.html" title="enum in randoop.main">GenInputsAbstract.FlakyTestAction</a> DISCARD</pre>
-<div class="block">Discard the flaky test. If Randoop produces any flaky tests, this option might slow Randoop
- down by a factor of 2 or more.</div>
+<div class="block">Discard the flaky test. This option should be a last resort. It is inefficient and
+ unproductive for Randoop to produce and discard a lot of flaky tests.</div>
 </li>
 </ul>
 <a name="OUTPUT">
@@ -245,7 +246,10 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>OUTPUT</h4>
 <pre>public static final&nbsp;<a href="../../randoop/main/GenInputsAbstract.FlakyTestAction.html" title="enum in randoop.main">GenInputsAbstract.FlakyTestAction</a> OUTPUT</pre>
-<div class="block">Output the flaky test; the resulting test suite may fail when it is run.</div>
+<div class="block">Output the flaky test, but with flaky assertions commented out. When the value is <code>OUTPUT</code>, Randoop also suggests methods under test that might have caused the flakiness. You
+ should <a
+ href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">investigate</a>
+ them, fix or exclude them, then re-run Randoop.</div>
 </li>
 </ul>
 </li>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypedTermOperation (randoop 4.1.2 API)</title>
+<title>TypedTermOperation (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypedTermOperation (randoop 4.1.2 API)";
+            parent.document.title="TypedTermOperation (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/operation/TypedOperation.RankedTypeOperation.html" title="class in randoop.operation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../randoop/operation/UncheckedCast.html" title="class in randoop.operation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -73,8 +73,8 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.randoop.operation.TypedOperation">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.randoop.operation.TypedOperation">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
@@ -127,6 +127,36 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.randoop.operation.TypedOperation">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;randoop.operation.<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></h3>
+<code><a href="../../randoop/operation/TypedOperation.RankedTypeOperation.html" title="class in randoop.operation">TypedOperation.RankedTypeOperation</a></code></li>
+</ul>
+</li>
+</ul>
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.randoop.operation.TypedOperation">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;randoop.operation.<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></h3>
+<code><a href="../../randoop/operation/TypedOperation.html#compareRankedTypeOperation">compareRankedTypeOperation</a>, <a href="../../randoop/operation/TypedOperation.html#inputTypes">inputTypes</a></code></li>
+</ul>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -169,23 +199,23 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation">TypedTermOperation</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedTermOperation.html#apply-randoop.types.Substitution-">apply</a></span>(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Applies the given substitution to the generic types in this operation, and returns a new
- operation with the instantiated types.</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedTermOperation.html#applyCaptureConversion--">applyCaptureConversion</a></span>()</code>
 <div class="block">Applies a capture conversion to the wildcard types of this operation, and returns a new
  operation with new type variables for the wildcard types.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedTermOperation.html#hasWildcardTypes--">hasWildcardTypes</a></span>()</code>
 <div class="block">Indicates whether this operation has a type that is a wildcard type.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation">TypedTermOperation</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/TypedTermOperation.html#substitute-randoop.types.Substitution-">substitute</a></span>(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&nbsp;substitution)</code>
+<div class="block">Applies the given substitution to the generic types in this operation, and returns a new
+ operation with the instantiated types.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -201,7 +231,7 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.operation.<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></h3>
-<code><a href="../../randoop/operation/TypedOperation.html#checkPrestate-java.lang.Object:A-">checkPrestate</a>, <a href="../../randoop/operation/TypedOperation.html#compareTo-randoop.operation.TypedOperation-">compareTo</a>, <a href="../../randoop/operation/TypedOperation.html#createArrayCreation-randoop.types.ArrayType-">createArrayCreation</a>, <a href="../../randoop/operation/TypedOperation.html#createArrayElementAssignment-randoop.types.ArrayType-">createArrayElementAssignment</a>, <a href="../../randoop/operation/TypedOperation.html#createCast-randoop.types.Type-randoop.types.Type-">createCast</a>, <a href="../../randoop/operation/TypedOperation.html#createGetterForField-java.lang.reflect.Field-randoop.types.ClassOrInterfaceType-">createGetterForField</a>, <a href="../../randoop/operation/TypedOperation.html#createInitializedArrayCreation-randoop.types.ArrayType-int-">createInitializedArrayCreation</a>, <a href="../../randoop/operation/TypedOperation.html#createNonreceiverInitialization-randoop.operation.NonreceiverTerm-">createNonreceiverInitialization</a>, <a href="../../randoop/operation/TypedOperation.html#createNullOrZeroInitializationForType-randoop.types.Type-">createNullOrZeroInitializationForType</a>, <a href="../../randoop/operation/TypedOperation.html#createPrimitiveInitialization-randoop.types.Type-java.lang.Object-">createPrimitiveInitialization</a>, <a href="../../randoop/operation/TypedOperation.html#createSetterForField-java.lang.reflect.Field-randoop.types.ClassOrInterfaceType-">createSetterForField</a>, <a href="../../randoop/operation/TypedOperation.html#equals-java.lang.Object-">equals</a>, <a href="../../randoop/operation/TypedOperation.html#execute-java.lang.Object:A-">execute</a>, <a href="../../randoop/operation/TypedOperation.html#forConstructor-java.lang.reflect.Constructor-">forConstructor</a>, <a href="../../randoop/operation/TypedOperation.html#forMethod-java.lang.reflect.Method-">forMethod</a>, <a href="../../randoop/operation/TypedOperation.html#getInputTypes--">getInputTypes</a>, <a href="../../randoop/operation/TypedOperation.html#getName--">getName</a>, <a href="../../randoop/operation/TypedOperation.html#getOperation--">getOperation</a>, <a href="../../randoop/operation/TypedOperation.html#getOutputType--">getOutputType</a>, <a href="../../randoop/operation/TypedOperation.html#getSignatureString--">getSignatureString</a>, <a href="../../randoop/operation/TypedOperation.html#getTypeParameters--">getTypeParameters</a>, <a href="../../randoop/operation/TypedOperation.html#getValue--">getValue</a>, <a href="../../randoop/operation/TypedOperation.html#hashCode--">hashCode</a>, <a href="../../randoop/operation/TypedOperation.html#isConstantField--">isConstantField</a>, <a href="../../randoop/operation/TypedOperation.html#isConstructorCall--">isConstructorCall</a>, <a href="../../randoop/operation/TypedOperation.html#isGeneric--">isGeneric</a>, <a href="../../randoop/operation/TypedOperation.html#isMessage--">isMessage</a>, <a href="../../randoop/operation/TypedOperation.html#isMethodCall--">isMethodCall</a>, <a href="../../randoop/operation/TypedOperation.html#isNonreceiverType-randoop.types.Type-">isNonreceiverType</a>, <a href="../../randoop/operation/TypedOperation.html#isNonreceivingValue--">isNonreceivingValue</a>, <a href="../../randoop/operation/TypedOperation.html#isStatic--">isStatic</a>, <a href="../../randoop/operation/TypedOperation.html#isUncheckedCast--">isUncheckedCast</a>, <a href="../../randoop/operation/TypedOperation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a>, <a href="../../randoop/operation/TypedOperation.html#setExecutableSpecification-randoop.condition.ExecutableSpecification-">setExecutableSpecification</a>, <a href="../../randoop/operation/TypedOperation.html#toString--">toString</a></code></li>
+<code><a href="../../randoop/operation/TypedOperation.html#checkPrestate-java.lang.Object:A-">checkPrestate</a>, <a href="../../randoop/operation/TypedOperation.html#compareTo-randoop.operation.TypedOperation-">compareTo</a>, <a href="../../randoop/operation/TypedOperation.html#createArrayCreation-randoop.types.ArrayType-">createArrayCreation</a>, <a href="../../randoop/operation/TypedOperation.html#createArrayElementAssignment-randoop.types.ArrayType-">createArrayElementAssignment</a>, <a href="../../randoop/operation/TypedOperation.html#createCast-randoop.types.Type-randoop.types.Type-">createCast</a>, <a href="../../randoop/operation/TypedOperation.html#createGetterForField-java.lang.reflect.Field-randoop.types.ClassOrInterfaceType-">createGetterForField</a>, <a href="../../randoop/operation/TypedOperation.html#createInitializedArrayCreation-randoop.types.ArrayType-int-">createInitializedArrayCreation</a>, <a href="../../randoop/operation/TypedOperation.html#createNonreceiverInitialization-randoop.operation.NonreceiverTerm-">createNonreceiverInitialization</a>, <a href="../../randoop/operation/TypedOperation.html#createNullOrZeroInitializationForType-randoop.types.Type-">createNullOrZeroInitializationForType</a>, <a href="../../randoop/operation/TypedOperation.html#createPrimitiveInitialization-randoop.types.Type-java.lang.Object-">createPrimitiveInitialization</a>, <a href="../../randoop/operation/TypedOperation.html#createSetterForField-java.lang.reflect.Field-randoop.types.ClassOrInterfaceType-">createSetterForField</a>, <a href="../../randoop/operation/TypedOperation.html#equals-java.lang.Object-">equals</a>, <a href="../../randoop/operation/TypedOperation.html#execute-java.lang.Object:A-">execute</a>, <a href="../../randoop/operation/TypedOperation.html#forConstructor-java.lang.reflect.Constructor-">forConstructor</a>, <a href="../../randoop/operation/TypedOperation.html#forMethod-java.lang.reflect.Method-">forMethod</a>, <a href="../../randoop/operation/TypedOperation.html#getInputTypes--">getInputTypes</a>, <a href="../../randoop/operation/TypedOperation.html#getName--">getName</a>, <a href="../../randoop/operation/TypedOperation.html#getOperation--">getOperation</a>, <a href="../../randoop/operation/TypedOperation.html#getOutputType--">getOutputType</a>, <a href="../../randoop/operation/TypedOperation.html#getSignatureString--">getSignatureString</a>, <a href="../../randoop/operation/TypedOperation.html#getTypeParameters--">getTypeParameters</a>, <a href="../../randoop/operation/TypedOperation.html#getValue--">getValue</a>, <a href="../../randoop/operation/TypedOperation.html#hashCode--">hashCode</a>, <a href="../../randoop/operation/TypedOperation.html#isConstantField--">isConstantField</a>, <a href="../../randoop/operation/TypedOperation.html#isConstructorCall--">isConstructorCall</a>, <a href="../../randoop/operation/TypedOperation.html#isGeneric--">isGeneric</a>, <a href="../../randoop/operation/TypedOperation.html#isMessage--">isMessage</a>, <a href="../../randoop/operation/TypedOperation.html#isMethodCall--">isMethodCall</a>, <a href="../../randoop/operation/TypedOperation.html#isNonreceivingValue--">isNonreceivingValue</a>, <a href="../../randoop/operation/TypedOperation.html#isStatic--">isStatic</a>, <a href="../../randoop/operation/TypedOperation.html#isUncheckedCast--">isUncheckedCast</a>, <a href="../../randoop/operation/TypedOperation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a>, <a href="../../randoop/operation/TypedOperation.html#setExecutableSpecification-randoop.condition.ExecutableSpecification-">setExecutableSpecification</a>, <a href="../../randoop/operation/TypedOperation.html#toString--">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -287,19 +317,19 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 </dl>
 </li>
 </ul>
-<a name="apply-randoop.types.Substitution-">
+<a name="substitute-randoop.types.Substitution-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>apply</h4>
-<pre>public&nbsp;<a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation">TypedTermOperation</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/operation/TypedOperation.html#apply-randoop.types.Substitution-">TypedOperation</a></code></span></div>
+<h4>substitute</h4>
+<pre>public&nbsp;<a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation">TypedTermOperation</a>&nbsp;substitute(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&nbsp;substitution)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/operation/TypedOperation.html#substitute-randoop.types.Substitution-">TypedOperation</a></code></span></div>
 <div class="block">Applies the given substitution to the generic types in this operation, and returns a new
  operation with the instantiated types.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/operation/TypedOperation.html#apply-randoop.types.Substitution-">apply</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></dd>
+<dd><code><a href="../../randoop/operation/TypedOperation.html#substitute-randoop.types.Substitution-">substitute</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>substitution</code> - the substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -371,7 +401,7 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/operation/TypedOperation.RankedTypeOperation.html" title="class in randoop.operation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../randoop/operation/UncheckedCast.html" title="class in randoop.operation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -396,8 +426,8 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.randoop.operation.TypedOperation">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.randoop.operation.TypedOperation">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeTuple (randoop 4.1.2 API)</title>
+<title>TypeTuple (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeTuple (randoop 4.1.2 API)";
+            parent.document.title="TypeTuple (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/types/TypeCheck.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../randoop/types/TypeTuple.TypeIterator.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -115,7 +115,7 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">TypeTuple</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
 implements <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html?is-external=true" title="class or interface in java.lang">Comparable</a>&lt;<a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&gt;</pre>
-<div class="block"><code>TypeTuple</code> represents an immutable ordered tuple of <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> objects. Type tuples
+<div class="block"><code>TypeTuple</code> represents an immutable ordered tuple of <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> objects. Type tuples are
  primarily used to represent the input types of operations.</div>
 </li>
 </ul>
@@ -201,66 +201,66 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#apply-randoop.types.Substitution-">apply</a></span>(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Applies a substitution to a type tuple, replacing any occurrences of type variables.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#applyCaptureConversion--">applyCaptureConversion</a></span>()</code>
 <div class="block">Applies a capture conversion to each component of this type type tuple.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#compareTo-randoop.types.TypeTuple-">compareTo</a></span>(<a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;tuple)</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#equals-java.lang.Object-">equals</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;obj)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#get-int-">get</a></span>(int&nbsp;i)</code>
 <div class="block">Return the ith component type of this tuple.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#getTypeParameters--">getTypeParameters</a></span>()</code>
 <div class="block">Returns the type parameters that occur in any component of this type tuple.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#hasWildcard--">hasWildcard</a></span>()</code>
 <div class="block">Indicates whether any of the types in this type tuple contains a wildcard.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#isEmpty--">isEmpty</a></span>()</code>
 <div class="block">Indicates whether the tuple is empty.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#isGeneric--">isGeneric</a></span>()</code>
 <div class="block">Indicates whether the tuple has any generic components.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#iterator--">iterator</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#size--">size</a></span>()</code>
 <div class="block">Return the number of components of the tuple.</div>
+</td>
+</tr>
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code><a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeTuple.html#substitute-randoop.types.Substitution-">substitute</a></span>(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&nbsp;substitution)</code>
+<div class="block">Applies a substitution to a type tuple, replacing any occurrences of type variables.</div>
 </td>
 </tr>
 <tr id="i12" class="altColor">
@@ -385,13 +385,13 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable
 </dl>
 </li>
 </ul>
-<a name="apply-randoop.types.Substitution-">
+<a name="substitute-randoop.types.Substitution-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>apply</h4>
-<pre>public&nbsp;<a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
+<h4>substitute</h4>
+<pre>public&nbsp;<a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;substitute(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&nbsp;substitution)</pre>
 <div class="block">Applies a substitution to a type tuple, replacing any occurrences of type variables. Resulting
  tuple may only be partially instantiated. Returns a new TypeTuple; the receiver is not
  side-effected.</div>
@@ -557,7 +557,7 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/types/TypeCheck.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../randoop/types/TypeTuple.TypeIterator.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">

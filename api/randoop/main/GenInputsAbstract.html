@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>GenInputsAbstract (randoop 4.1.2 API)</title>
+<title>GenInputsAbstract (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="GenInputsAbstract (randoop 4.1.2 API)";
+            parent.document.title="GenInputsAbstract (randoop 4.2.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":9,"i3":9};
+var methods = {"i0":10,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -372,7 +372,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#junit_output_dir">junit_output_dir</a></span></code>
-<div class="block">Name of the directory to which JUnit files should be written.</div>
+<div class="block">Name of the directory in which JUnit files should be written.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -388,41 +388,47 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#jvm_max_memory">jvm_max_memory</a></span></code>
+<div class="block">How much memory Randoop should use when starting new JVMs.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>private static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#LIMIT_DEFAULT">LIMIT_DEFAULT</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#literals_file">literals_file</a></span></code>
 <div class="block">A file containing literal values to be used as inputs to methods under test, or "CLASSES".</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/main/GenInputsAbstract.ClassLiteralsMode.html" title="enum in randoop.main">GenInputsAbstract.ClassLiteralsMode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#literals_level">literals_level</a></span></code>
 <div class="block">How to use literal values that are specified via the <code>--literals-file</code> command-line
  option.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static org.plumelib.util.FileWriterWithName</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#log">log</a></span></code>
 <div class="block">A file to which to log lots of information.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#maxsize">maxsize</a></span></code>
 <div class="block">Do not generate tests with more than this many statements.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/main/GenInputsAbstract.MethodSelectionMode.html" title="enum in randoop.main">GenInputsAbstract.MethodSelectionMode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#method_selection">method_selection</a></span></code>
 <div class="block">Randoop generates new tests by choosing from a set of methods under test.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#methodlist">methodlist</a></span></code>
 <div class="block">A file containing a list of methods and constructors to test, each given as a <a
@@ -430,13 +436,13 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  signature</a> on a separate line.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#minimize_error_test">minimize_error_test</a></span></code>
 <div class="block">If true, Randoop outputs both original error-revealing tests and a minimized version.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main">GenInputsAbstract.BehaviorType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#ncdf_exception">ncdf_exception</a></span></code>
 <div class="block">If a test throws a <code>NoClassDefFoundError</code> exception, should it be included in the
@@ -444,22 +450,29 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  it be discarded (value: INVALID)?</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#no_error_revealing_tests">no_error_revealing_tests</a></span></code>
 <div class="block">Whether to output error-revealing tests.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#no_regression_assertions">no_regression_assertions</a></span></code>
 <div class="block">Whether to include assertions in regression tests.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#no_regression_tests">no_regression_tests</a></span></code>
 <div class="block">Whether to output regression tests.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#nondeterministic_methods_to_output">nondeterministic_methods_to_output</a></span></code>
+<div class="block">How many suspected side-effecting or nondeterministic methods (from the program under test) to
+ print.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -485,36 +498,47 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#observers">observers</a></span></code>
-<div class="block">File containing side-effect-free observer methods, each given as a <a
- href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
- signature</a> on a separate line.</div>
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#omit_classes">omit_classes</a></span></code>
+<div class="block">A regex that indicates classes that should not be classes to test, even if included by some
+ other command-line option.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#omit_classes_file">omit_classes_file</a></span></code>
+<div class="block">A file containing a list of regular expressions that indicate classes not to test.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#omit_field">omit_field</a></span></code>
 <div class="block">A fully-qualified field name of a field to be excluded from test generation.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#omit_field_list">omit_field_list</a></span></code>
 <div class="block">File that contains fully-qualified field names to be excluded from test generation.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#omitmethods">omitmethods</a></span></code>
 <div class="block">A regex that indicates methods that should not be called directly in generated tests.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#omitmethods_file">omitmethods_file</a></span></code>
 <div class="block">A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#omitmethods_no_defaults">omitmethods_no_defaults</a></span></code>
+<div class="block">Include methods that are otherwise omitted by default.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -545,7 +569,9 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#print_erroneous_file">print_erroneous_file</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#print_non_compiling_file">print_non_compiling_file</a></span></code>
+<div class="block">True if Randoop should print generated tests that do not compile, which indicate Randoop bugs.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
@@ -588,7 +614,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#require_covered_classes">require_covered_classes</a></span></code>
-<div class="block">File containing fully-qualified names of classes that the tests must use.</div>
+<div class="block">File containing fully-qualified names of classes that the tests must use, directly or
+ indirectly.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -598,10 +625,18 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#side_effect_free_methods">side_effect_free_methods</a></span></code>
+<div class="block">File containing side-effect-free methods, each given as a <a
+ href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
+ signature</a> on a separate line.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#silently_ignore_bad_class_names">silently_ignore_bad_class_names</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main">GenInputsAbstract.BehaviorType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#sof_exception">sof_exception</a></span></code>
 <div class="block">If a test throws a <code>StackOverflowError</code> exception, should it be included in the
@@ -609,32 +644,40 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  it be discarded (value: INVALID)?</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#specifications">specifications</a></span></code>
 <div class="block">Read file of specifications; see manual section "Specifying expected code behavior".</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#stop_on_error_test">stop_on_error_test</a></span></code>
 <div class="block">Stop generation as soon as one error-revealing test has been generated.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#string_maxlen">string_maxlen</a></span></code>
 <div class="block">Maximum length of strings in generated tests, including in assertions.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#system_props">system_props</a></span></code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#system_props">system_props</a></span></code>
+<div class="block">System properties that Randoop will set similarly to <code>java -D</code>, of the form "x=y".</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#testclass">testclass</a></span></code>
 <div class="block">The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#testjar">testjar</a></span></code>
+<div class="block">Treat every class in the given jar file as a class to test.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -728,18 +771,31 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getClassnamesFromArgs--">getClassnamesFromArgs</a></span>()</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getClassnamesFromArgs-randoop.reflection.VisibilityPredicate-">getClassnamesFromArgs</a></span>(<a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility)</code>
 <div class="block">Read names of classes under test, as provided with the --classlist command-line argument.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getClassNamesFromFile-java.nio.file.Path-">getClassNamesFromFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)</code>
+<div class="block">Returns the class names listed in the file.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getClassnamesFromJarFile-java.nio.file.Path-randoop.reflection.VisibilityPredicate-">getClassnamesFromJarFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;jarFile,
+                        <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility)</code>
+<div class="block">Read names of classes from a jar file.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getStringSetFromFile-java.nio.file.Path-java.lang.String-">getStringSetFromFile</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;listFile,
                     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fileDescription)</code>
 <div class="block">Returns a set consisting of the lines of the file, except those starting with "#".</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#getStringSetFromFile-java.nio.file.Path-java.lang.String-java.lang.String-java.lang.String-">getStringSetFromFile</a></span>(@Nullable <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;listFile,
                     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fileDescription,
@@ -785,8 +841,19 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <h4>testclass</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt; testclass</pre>
 <div class="block">The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
- in addition to any specified using <code>--classlist</code>, and must be accessible from the package
- of the tests (set with <code>--junit-package-name</code>).</div>
+ in addition to any specified using <code>--testjar</code> or <code>--classlist</code>, and must be
+ accessible from the package of the tests (set with <code>--junit-package-name</code>).</div>
+</li>
+</ul>
+<a name="testjar">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>testjar</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt; testjar</pre>
+<div class="block">Treat every class in the given jar file as a class to test. The jarfile must be on the
+ classpath.</div>
 </li>
 </ul>
 <a name="classlist">
@@ -804,6 +871,30 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  All classes must be accessible from the package of the tests (set with <code>--junit-package-name</code>).</div>
 </li>
 </ul>
+<a name="omit_classes">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>omit_classes</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a>&gt; omit_classes</pre>
+<div class="block">A regex that indicates classes that should not be classes to test, even if included by some
+ other command-line option. The regex is matched against fully-qualified class names. If the
+ regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the beginning and
+ the end of the class name.</div>
+</li>
+</ul>
+<a name="omit_classes_file">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>omit_classes_file</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a> omit_classes_file</pre>
+<div class="block">A file containing a list of regular expressions that indicate classes not to test. These
+ patterns are used along with those provided with <code>--omit-classes</code>.</div>
+</li>
+</ul>
 <a name="methodlist">
 <!--   -->
 </a>
@@ -815,7 +906,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
  signature</a> on a separate line.
 
- <p>These methods augment any methods from classes given by the <code>--testclass</code> or <code>--classlist</code> options.
+ <p>These methods augment any methods from classes given by the <code>--testclass</code>, <code>--testjar</code>, and <code>--classlist</code> options.
 
  <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">example
  file</a>.</div>
@@ -836,7 +927,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  signature</a> matches the regular expression, or a method inherited from a superclass or
  interface whose signature matches the regular expression.
 
- <p>If the regular expression contains anchors "<code>^</code>" and "<code>$</code>", they refer to the
+ <p>If the regular expression contains anchors "<code>^</code>" or "<code>$</code>", they refer to the
  beginning and the end of the signature string.</div>
 </li>
 </ul>
@@ -846,9 +937,21 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <ul class="blockList">
 <li class="blockList">
 <h4>omitmethods_file</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a> omitmethods_file</pre>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt; omitmethods_file</pre>
 <div class="block">A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>--omitmethods</code>, and the default omissions.</div>
+</li>
+</ul>
+<a name="omitmethods_no_defaults">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>omitmethods_no_defaults</h4>
+<pre>public static&nbsp;boolean omitmethods_no_defaults</pre>
+<div class="block">Include methods that are otherwise omitted by default. Unless you set this to true, every
+ method replaced by the <code>replacecall</code> agent is treated as if it had been supplied as an
+ argument to <code>--omitmethods</code>.</div>
 </li>
 </ul>
 <a name="dont_omit_replaced_methods">
@@ -927,11 +1030,21 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
  different executions.
 
- <p>Setting this option to <code>DISCARD</code> or <code>OUTPUT</code> should be considered a last resort.
- Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic methods,
- and a better solution is not to call Randoop on such methods; see section <a
+ <p>Flaky tests are usually due to calling Randoop on side-effecting or nondeterministic
+ methods, and ultimately, the solution is not to call Randoop on such methods; see section <a
  href="https://randoop.github.io/randoop/manual/index.html#nondeterminism">Nondeterminism</a> in
  the Randoop manual.</div>
+</li>
+</ul>
+<a name="nondeterministic_methods_to_output">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>nondeterministic_methods_to_output</h4>
+<pre>public static&nbsp;int nondeterministic_methods_to_output</pre>
+<div class="block">How many suspected side-effecting or nondeterministic methods (from the program under test) to
+ print.</div>
 </li>
 </ul>
 <a name="no_error_revealing_tests">
@@ -1001,8 +1114,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>require_covered_classes</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a> require_covered_classes</pre>
-<div class="block">File containing fully-qualified names of classes that the tests must use. This option only
- works if Randoop is run using the <a
+<div class="block">File containing fully-qualified names of classes that the tests must use, directly or
+ indirectly. This option only works if Randoop is run using the <a
  href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
  javaagent</a> to instrument the classes. A test is output only if it uses at least one of the
  class names in the file. A test uses a class if it invokes any constructor or method of the
@@ -1022,7 +1135,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  100 error-revealing tests; consider using <a
  href="https://randoop.github.io/randoop/manual/index.html#option:stop-on-error-test"><code>
  --stop-on-error-test=true</code></a>. Also see the <a
- href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization-options">test
+ href="https://randoop.github.io/randoop/manual/index.html#optiongroup:Test-case-minimization">test
  case minimization options</a>.</div>
 </li>
 </ul>
@@ -1171,17 +1284,17 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  &amp;&amp; x.f == 22</code>. If false, Randoop halts when a specification throws an exception.</div>
 </li>
 </ul>
-<a name="observers">
+<a name="side_effect_free_methods">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>observers</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a> observers</pre>
-<div class="block">File containing side-effect-free observer methods, each given as a <a
+<h4>side_effect_free_methods</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a> side_effect_free_methods</pre>
+<div class="block">File containing side-effect-free methods, each given as a <a
  href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
- signature</a> on a separate line. Specifying observers has two benefits: it makes regression
- tests stronger, and it helps Randoop create smaller tests.</div>
+ signature</a> on a separate line. Specifying side-effect-free methods has two benefits: it
+ makes regression tests stronger, and it helps Randoop create smaller tests.</div>
 </li>
 </ul>
 <a name="time_limit">
@@ -1522,7 +1635,7 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>junit_output_dir</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> junit_output_dir</pre>
-<div class="block">Name of the directory to which JUnit files should be written.</div>
+<div class="block">Name of the directory in which JUnit files should be written.</div>
 </li>
 </ul>
 <a name="dont_output_tests">
@@ -1560,6 +1673,18 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <li class="blockList">
 <h4>system_props</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt; system_props</pre>
+<div class="block">System properties that Randoop will set similarly to <code>java -D</code>, of the form "x=y".</div>
+</li>
+</ul>
+<a name="jvm_max_memory">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>jvm_max_memory</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> jvm_max_memory</pre>
+<div class="block">How much memory Randoop should use when starting new JVMs. This only affects new JVMs; you
+ still need to supply <code>-Xmx...</code> when starting Randoop itself.</div>
 </li>
 </ul>
 <a name="capture_output">
@@ -1673,13 +1798,14 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">A file to which to log the operation usage history.</div>
 </li>
 </ul>
-<a name="print_erroneous_file">
+<a name="print_non_compiling_file">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>print_erroneous_file</h4>
-<pre>public static&nbsp;boolean print_erroneous_file</pre>
+<h4>print_non_compiling_file</h4>
+<pre>public static&nbsp;boolean print_non_compiling_file</pre>
+<div class="block">True if Randoop should print generated tests that do not compile, which indicate Randoop bugs.</div>
 </li>
 </ul>
 <a name="dontexecute">
@@ -1756,17 +1882,54 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">Check that the options given satisfy any specified constraints, and fail if they do not.</div>
 </li>
 </ul>
-<a name="getClassnamesFromArgs--">
+<a name="getClassnamesFromArgs-randoop.reflection.VisibilityPredicate-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getClassnamesFromArgs</h4>
-<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getClassnamesFromArgs()</pre>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getClassnamesFromArgs(<a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility)</pre>
 <div class="block">Read names of classes under test, as provided with the --classlist command-line argument.</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>visibility</code> - the visibility predicate</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the classes provided via the --classlist command-line argument</dd>
+</dl>
+</li>
+</ul>
+<a name="getClassnamesFromJarFile-java.nio.file.Path-randoop.reflection.VisibilityPredicate-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getClassnamesFromJarFile</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getClassnamesFromJarFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;jarFile,
+                                                   <a href="../../randoop/reflection/VisibilityPredicate.html" title="class in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility)</pre>
+<div class="block">Read names of classes from a jar file. Ignores interfaces, abstract classes, and non-visible
+ classes.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>jarFile</code> - the jar file from which to read classes</dd>
+<dd><code>visibility</code> - the visibility predicate</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the names of classes in the jar file</dd>
+</dl>
+</li>
+</ul>
+<a name="getClassNamesFromFile-java.nio.file.Path-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getClassNamesFromFile</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getClassNamesFromFile(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file)</pre>
+<div class="block">Returns the class names listed in the file.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>file</code> - the file containing the strings</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the lines in the file, or null if listFile is null</dd>
 </dl>
 </li>
 </ul>

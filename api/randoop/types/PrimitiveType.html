@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>PrimitiveType (randoop 4.1.2 API)</title>
+<title>PrimitiveType (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,14 +12,14 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="PrimitiveType (randoop 4.1.2 API)";
+            parent.document.title="PrimitiveType (randoop 4.2.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -141,6 +141,12 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;,<a href="../../randoop/types/PrimitiveType.html" title="class in randoop.types">PrimitiveType</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#cache">cache</a></span></code>
+<div class="block">All the PrimitiveTypes that have been created.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#runtimeClass">runtimeClass</a></span></code>
 <div class="block">The runtime class of the primitive type.</div>
@@ -158,10 +164,12 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colOne" scope="col">Constructor and Description</th>
+<th class="colFirst" scope="col">Modifier</th>
+<th class="colLast" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#PrimitiveType-java.lang.Class-">PrimitiveType</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;runtimeClass)</code>
+<td class="colFirst"><code>private </code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#PrimitiveType-java.lang.Class-">PrimitiveType</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;runtimeClass)</code>
 <div class="block">Creates a primitive type from the given runtime class.</div>
 </td>
 </tr>
@@ -175,7 +183,7 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -185,47 +193,53 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#equals-java.lang.Object-">equals</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;obj)</code></td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>static <a href="../../randoop/types/PrimitiveType.html" title="class in randoop.types">PrimitiveType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#forClass-java.lang.Class-">forClass</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;runtimeClass)</code>
+<div class="block">Creates a primitive type from the given runtime class.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#getName--">getName</a></span>()</code>
 <div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
  parameterized type.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#getRuntimeClass--">getRuntimeClass</a></span>()</code>
 <div class="block">Returns the runtime <code>Class</code> object for this type.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#getSimpleName--">getSimpleName</a></span>()</code>
 <div class="block">Returns the name of this type without type arguments or package qualifiers.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;sourceType)</code>
 <div class="block">Indicates whether there is an assignment conversion from a source <code>Type</code> to this type.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#isNonreceiverType--">isNonreceiverType</a></span>()</code>
-<div class="block">Indicates whether this is a primitive type.</div>
+<div class="block">Indicates whether this is the type of a non-receiver term: primitive, boxed primitive, <code>String</code>, or <code>Class</code>.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#isPrimitive--">isPrimitive</a></span>()</code>
 <div class="block">Indicates whether this is a primitive type.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</code>
 <div class="block">Test whether this type is a subtype of the given type according to transitive closure of
@@ -234,13 +248,13 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
  JLS for Java SE 8</a>.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#toBoxedPrimitive--">toBoxedPrimitive</a></span>()</code>
 <div class="block">Returns the boxed type for this primitive type.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveType.html#toString--">toString</a></span>()</code></td>
 </tr>
@@ -250,7 +264,7 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></h3>
-<code><a href="../../randoop/types/Type.html#apply-randoop.types.Substitution-">apply</a>, <a href="../../randoop/types/Type.html#applyCaptureConversion--">applyCaptureConversion</a>, <a href="../../randoop/types/Type.html#compareTo-randoop.types.Type-">compareTo</a>, <a href="../../randoop/types/Type.html#forClass-java.lang.Class-">forClass</a>, <a href="../../randoop/types/Type.html#forFullyQualifiedName-java.lang.String-">forFullyQualifiedName</a>, <a href="../../randoop/types/Type.html#forName-java.lang.String-">forName</a>, <a href="../../randoop/types/Type.html#forType-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/Type.html#forValue-java.lang.Object-">forValue</a>, <a href="../../randoop/types/Type.html#getCanonicalName--">getCanonicalName</a>, <a href="../../randoop/types/Type.html#getRawtype--">getRawtype</a>, <a href="../../randoop/types/Type.html#getTypeforFullyQualifiedName-java.lang.String-">getTypeforFullyQualifiedName</a>, <a href="../../randoop/types/Type.html#getUnqualifiedName--">getUnqualifiedName</a>, <a href="../../randoop/types/Type.html#isArray--">isArray</a>, <a href="../../randoop/types/Type.html#isAssignableFromTypeOf-T-">isAssignableFromTypeOf</a>, <a href="../../randoop/types/Type.html#isBoxedPrimitive--">isBoxedPrimitive</a>, <a href="../../randoop/types/Type.html#isClass--">isClass</a>, <a href="../../randoop/types/Type.html#isClassOrInterfaceType--">isClassOrInterfaceType</a>, <a href="../../randoop/types/Type.html#isEnum--">isEnum</a>, <a href="../../randoop/types/Type.html#isGeneric--">isGeneric</a>, <a href="../../randoop/types/Type.html#isInterface--">isInterface</a>, <a href="../../randoop/types/Type.html#isObject--">isObject</a>, <a href="../../randoop/types/Type.html#isParameterized--">isParameterized</a>, <a href="../../randoop/types/Type.html#isRawtype--">isRawtype</a>, <a href="../../randoop/types/Type.html#isReferenceType--">isReferenceType</a>, <a href="../../randoop/types/Type.html#isString--">isString</a>, <a href="../../randoop/types/Type.html#isVariable--">isVariable</a>, <a href="../../randoop/types/Type.html#isVoid--">isVoid</a>, <a href="../../randoop/types/Type.html#runtimeClassIs-java.lang.Class-">runtimeClassIs</a></code></li>
+<code><a href="../../randoop/types/Type.html#applyCaptureConversion--">applyCaptureConversion</a>, <a href="../../randoop/types/Type.html#compareTo-randoop.types.Type-">compareTo</a>, <a href="../../randoop/types/Type.html#forFullyQualifiedName-java.lang.String-">forFullyQualifiedName</a>, <a href="../../randoop/types/Type.html#forName-java.lang.String-">forName</a>, <a href="../../randoop/types/Type.html#forType-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/Type.html#forValue-java.lang.Object-">forValue</a>, <a href="../../randoop/types/Type.html#getCanonicalName--">getCanonicalName</a>, <a href="../../randoop/types/Type.html#getRawtype--">getRawtype</a>, <a href="../../randoop/types/Type.html#getTypeforFullyQualifiedName-java.lang.String-">getTypeforFullyQualifiedName</a>, <a href="../../randoop/types/Type.html#getUnqualifiedName--">getUnqualifiedName</a>, <a href="../../randoop/types/Type.html#hasWildcard--">hasWildcard</a>, <a href="../../randoop/types/Type.html#isArray--">isArray</a>, <a href="../../randoop/types/Type.html#isAssignableFromTypeOf-T-">isAssignableFromTypeOf</a>, <a href="../../randoop/types/Type.html#isBoxedPrimitive--">isBoxedPrimitive</a>, <a href="../../randoop/types/Type.html#isClass--">isClass</a>, <a href="../../randoop/types/Type.html#isClassOrInterfaceType--">isClassOrInterfaceType</a>, <a href="../../randoop/types/Type.html#isEnum--">isEnum</a>, <a href="../../randoop/types/Type.html#isGeneric--">isGeneric</a>, <a href="../../randoop/types/Type.html#isInterface--">isInterface</a>, <a href="../../randoop/types/Type.html#isObject--">isObject</a>, <a href="../../randoop/types/Type.html#isParameterized--">isParameterized</a>, <a href="../../randoop/types/Type.html#isRawtype--">isRawtype</a>, <a href="../../randoop/types/Type.html#isReferenceType--">isReferenceType</a>, <a href="../../randoop/types/Type.html#isString--">isString</a>, <a href="../../randoop/types/Type.html#isVariable--">isVariable</a>, <a href="../../randoop/types/Type.html#isVoid--">isVoid</a>, <a href="../../randoop/types/Type.html#runtimeClassIs-java.lang.Class-">runtimeClassIs</a>, <a href="../../randoop/types/Type.html#substitute-randoop.types.Substitution-">substitute</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -276,11 +290,21 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <a name="runtimeClass">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>runtimeClass</h4>
 <pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt; runtimeClass</pre>
 <div class="block">The runtime class of the primitive type.</div>
+</li>
+</ul>
+<a name="cache">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>cache</h4>
+<pre>private static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;,<a href="../../randoop/types/PrimitiveType.html" title="class in randoop.types">PrimitiveType</a>&gt; cache</pre>
+<div class="block">All the PrimitiveTypes that have been created.</div>
 </li>
 </ul>
 </li>
@@ -297,7 +321,7 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <ul class="blockListLast">
 <li class="blockList">
 <h4>PrimitiveType</h4>
-<pre>public&nbsp;PrimitiveType(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;runtimeClass)</pre>
+<pre>private&nbsp;PrimitiveType(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;runtimeClass)</pre>
 <div class="block">Creates a primitive type from the given runtime class.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -313,6 +337,22 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="forClass-java.lang.Class-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>forClass</h4>
+<pre>public static&nbsp;<a href="../../randoop/types/PrimitiveType.html" title="class in randoop.types">PrimitiveType</a>&nbsp;forClass(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;runtimeClass)</pre>
+<div class="block">Creates a primitive type from the given runtime class.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>runtimeClass</code> - the runtime class</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the PrimitiveType for the given runtime class</dd>
+</dl>
+</li>
+</ul>
 <a name="equals-java.lang.Object-">
 <!--   -->
 </a>
@@ -485,15 +525,12 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <li class="blockList">
 <h4>isNonreceiverType</h4>
 <pre>public&nbsp;boolean&nbsp;isNonreceiverType()</pre>
-<div class="block">Indicates whether this is a primitive type.</div>
+<div class="block">Indicates whether this is the type of a non-receiver term: primitive, boxed primitive, <code>String</code>, or <code>Class</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#isNonreceiverType--">isNonreceiverType</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true since this object represents a non-receiver type</dd>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../randoop/operation/NonreceiverTerm.html" title="class in randoop.operation"><code>NonreceiverTerm</code></a>, 
-<a href="../../randoop/operation/NonreceiverTerm.html#isNonreceiverType-java.lang.Class-"><code>NonreceiverTerm.isNonreceiverType(java.lang.Class&lt;?&gt;)</code></a></dd>
 </dl>
 </li>
 </ul>

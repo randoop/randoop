@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RawSignature (randoop 4.1.2 API)</title>
+<title>RawSignature (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RawSignature (randoop 4.1.2 API)";
+            parent.document.title="RawSignature (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -332,7 +332,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Create a <a href="../../randoop/reflection/RawSignature.html" title="class in randoop.reflection"><code>RawSignature</code></a> object with the name and parameterTypes.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>packageName</code> - the package name of the class; null for the unnamed package</dd>
+<dd><code>packageName</code> - the package name of the class. An unnamed package is indicated by a null in
+     Java 8 and an emptry string in Java 9.</dd>
 <dd><code>classname</code> - the name of the class</dd>
 <dd><code>name</code> - the method name; for a constructor, same as the classname</dd>
 <dd><code>parameterTypes</code> - the method parameter types, including the receiver type if any</dd>

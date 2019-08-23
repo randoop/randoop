@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ProgressDisplay (randoop 4.1.2 API)</title>
+<title>ProgressDisplay (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ProgressDisplay (randoop 4.1.2 API)";
+            parent.document.title="ProgressDisplay (randoop 4.2.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -254,52 +254,44 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html
 </td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#display-boolean-">display</a></span>(boolean&nbsp;withTime)</code>
+<div class="block">Displays the current status.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#display-java.lang.String-">display</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message)</code>
 <div class="block">Displays the given message.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#displayWithoutTime--">displayWithoutTime</a></span>()</code>
-<div class="block">Displays the current status.</div>
-</td>
-</tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#displayWithTime--">displayWithTime</a></span>()</code>
-<div class="block">Displays the current status.</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#exitDueToNoSteps--">exitDueToNoSteps</a></span>()</code>
 <div class="block">Exit due to too much time without taking a step.</div>
 </td>
 </tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#message-boolean-">message</a></span>(boolean&nbsp;withTime)</code>
+<div class="block">Return the progress message.</div>
+</td>
+</tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#messageWithoutTime--">messageWithoutTime</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#messageWithTime--">messageWithTime</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#noProgressOutput--">noProgressOutput</a></span>()</code>
 <div class="block">Return true iff no progress output should be displayed.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#printAllStackTraces--">printAllStackTraces</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#run--">run</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#updateLastStepTime--">updateLastStepTime</a></span>()</code>
 <div class="block">Set <code>lastStepTime</code> to when the most recent step completed.</div>
@@ -440,22 +432,20 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="messageWithoutTime--">
+<a name="message-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>messageWithoutTime</h4>
-<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;messageWithoutTime()</pre>
-</li>
-</ul>
-<a name="messageWithTime--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>messageWithTime</h4>
-<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;messageWithTime()</pre>
+<h4>message</h4>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message(boolean&nbsp;withTime)</pre>
+<div class="block">Return the progress message.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>withTime</code> - whether to include time and memory usage</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the progress message</dd>
+</dl>
 </li>
 </ul>
 <a name="run--">
@@ -526,26 +516,19 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html
 <div class="block">Clear the display; good to do before printing to System.out.</div>
 </li>
 </ul>
-<a name="displayWithTime--">
+<a name="display-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>displayWithTime</h4>
-<pre>public&nbsp;void&nbsp;displayWithTime()</pre>
+<h4>display</h4>
+<pre>public&nbsp;void&nbsp;display(boolean&nbsp;withTime)</pre>
 <div class="block">Displays the current status. Call this if you don't want to wait until the next automatic
  display.</div>
-</li>
-</ul>
-<a name="displayWithoutTime--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>displayWithoutTime</h4>
-<pre>public&nbsp;void&nbsp;displayWithoutTime()</pre>
-<div class="block">Displays the current status. Call this if you don't want to wait until the next automatic
- display.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>withTime</code> - whether to print time and memory usage</dd>
+</dl>
 </li>
 </ul>
 <a name="display-java.lang.String-">

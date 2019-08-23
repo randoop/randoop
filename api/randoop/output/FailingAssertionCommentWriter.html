@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>FailingAssertionCommentWriter (randoop 4.1.2 API)</title>
+<title>FailingAssertionCommentWriter (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="FailingAssertionCommentWriter (randoop 4.1.2 API)";
+            parent.document.title="FailingAssertionCommentWriter (randoop 4.2.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -120,10 +120,16 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
  command line. The whole test is not commented or removed, because the test might have side
  effects that later tests depend upon.
 
- <p>Writes the class, and then compiles and runs the tests to determine whether there are failing
- assertions. Each failing assertion is replaced by a comment containing the code for the failing
- assertion. Creates a clean temporary directory for each compilation/run of a test class to avoid
- state effects due to files in the working directory.</div>
+ <p>Iteratively does the following:
+
+ <ul>
+   <li>Writes the class.
+   <li>Compiles and runs the tests to determine whether there are failing assertions.
+   <li>Replaces each failing assertion by a comment containing the code for the failing assertion.
+ </ul>
+
+ Creates a clean temporary directory for each compilation/run of a test class to avoid state
+ effects due to files in the working directory.</div>
 </li>
 </ul>
 </div>
@@ -178,22 +184,30 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html?is-external=true" title="class or interface in java.util">HashSet</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#flakyTestNames">flakyTestNames</a></span></code>
+<div class="block">Method names for flaky tests (e.g., "test005").</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/output/JavaFileWriter.html" title="class in randoop.output">JavaFileWriter</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#javaFileWriter">javaFileWriter</a></span></code>
 <div class="block">The underlying <a href="../../randoop/output/JavaFileWriter.html" title="class in randoop.output"><code>JavaFileWriter</code></a> for writing a test class.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/execution/TestEnvironment.html" title="class in randoop.execution">TestEnvironment</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#testEnvironment">testEnvironment</a></span></code>
 <div class="block">The <a href="../../randoop/execution/TestEnvironment.html" title="class in randoop.execution"><code>TestEnvironment</code></a> for running the test classes.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#TYPE_REGEX">TYPE_REGEX</a></span></code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
+<td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#TYPE_REGEX">TYPE_REGEX</a></span></code>
+<div class="block">Matches a type: a class name, optional generics, optional array brackets.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>private static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#VARIABLE_DECLARATION_LINE">VARIABLE_DECLARATION_LINE</a></span></code>
 <div class="block">Matches a variable declaration.</div>
@@ -216,8 +230,7 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#FailingAssertionCommentWriter-randoop.execution.TestEnvironment-randoop.output.JavaFileWriter-">FailingAssertionCommentWriter</a></span>(<a href="../../randoop/execution/TestEnvironment.html" title="class in randoop.execution">TestEnvironment</a>&nbsp;testEnvironment,
                              <a href="../../randoop/output/JavaFileWriter.html" title="class in randoop.output">JavaFileWriter</a>&nbsp;javaFileWriter)</code>
-<div class="block">Create a <a href="../../randoop/output/FailingAssertionCommentWriter.html" title="class in randoop.output"><code>FailingAssertionCommentWriter</code></a> for which tests will be run in the environment
- and which uses the given <a href="../../randoop/output/JavaFileWriter.html" title="class in randoop.output"><code>JavaFileWriter</code></a> to output test classes.</div>
+<div class="block">Create a <a href="../../randoop/output/FailingAssertionCommentWriter.html" title="class in randoop.output"><code>FailingAssertionCommentWriter</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -247,10 +260,11 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#commentFailingAssertions-java.lang.String-java.lang.String-java.lang.String-randoop.execution.RunCommand.Status-">commentFailingAssertions</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#commentFailingAssertions-java.lang.String-java.lang.String-java.lang.String-randoop.execution.RunCommand.Status-java.util.HashSet-">commentFailingAssertions</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
                         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname,
                         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;javaCode,
-                        <a href="../../randoop/execution/RunCommand.Status.html" title="class in randoop.execution">RunCommand.Status</a>&nbsp;status)</code>
+                        <a href="../../randoop/execution/RunCommand.Status.html" title="class in randoop.execution">RunCommand.Status</a>&nbsp;status,
+                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html?is-external=true" title="class or interface in java.util">HashSet</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;flakyTests)</code>
 <div class="block">Comments out lines with failing assertions.</div>
 </td>
 </tr>
@@ -289,6 +303,12 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 </td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/TreeSet.html?is-external=true" title="class or interface in java.util">TreeSet</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#getFlakyTestNames--">getFlakyTestNames</a></span>()</code>
+<div class="block">Returns the set of flaky test names.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#numJunitFailures-java.util.Iterator-randoop.execution.RunCommand.Status-java.lang.String-java.lang.String-">numJunitFailures</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;lineIterator,
                 <a href="../../randoop/execution/RunCommand.Status.html" title="class in randoop.execution">RunCommand.Status</a>&nbsp;status,
@@ -297,7 +317,7 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 <div class="block">Return the number of JUnit failures, parsed from the JUnit output.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/output/FailingAssertionCommentWriter.Match.html" title="class in randoop.output">FailingAssertionCommentWriter.Match</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#readUntilMatch-java.util.Iterator-java.util.regex.Pattern-">readUntilMatch</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;lineIterator,
               <a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a>&nbsp;pattern)</code>
@@ -305,7 +325,7 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
  then returns a pair containing the line and the text matching the first group of the pattern.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#writeClassCode-java.lang.String-java.lang.String-java.lang.String-">writeClassCode</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname,
@@ -313,7 +333,7 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 <div class="block">Writes the given class using this <a href="../../randoop/output/CodeWriter.html" title="interface in randoop.output"><code>CodeWriter</code></a>.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/FailingAssertionCommentWriter.html#writeUnmodifiedClassCode-java.lang.String-java.lang.String-java.lang.String-">writeUnmodifiedClassCode</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
                         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname,
@@ -370,10 +390,22 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 <li class="blockList">
 <h4>TYPE_REGEX</h4>
 <pre>private static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> TYPE_REGEX</pre>
+<div class="block">Matches a type: a class name, optional generics, optional array brackets.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../constant-values.html#randoop.output.FailingAssertionCommentWriter.TYPE_REGEX">Constant Field Values</a></dd>
 </dl>
+</li>
+</ul>
+<a name="VARIABLE_DECLARATION_LINE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>VARIABLE_DECLARATION_LINE</h4>
+<pre>private static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a> VARIABLE_DECLARATION_LINE</pre>
+<div class="block">Matches a variable declaration. Capturing group 1 is through the "=", 2 is the type, 3 is the
+ initializer.</div>
 </li>
 </ul>
 <a name="testEnvironment">
@@ -396,15 +428,14 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 <div class="block">The underlying <a href="../../randoop/output/JavaFileWriter.html" title="class in randoop.output"><code>JavaFileWriter</code></a> for writing a test class.</div>
 </li>
 </ul>
-<a name="VARIABLE_DECLARATION_LINE">
+<a name="flakyTestNames">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>VARIABLE_DECLARATION_LINE</h4>
-<pre>private static final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html?is-external=true" title="class or interface in java.util.regex">Pattern</a> VARIABLE_DECLARATION_LINE</pre>
-<div class="block">Matches a variable declaration. Capturing group 1 is through the "=", 2 is the type, 3 is the
- initializer.</div>
+<h4>flakyTestNames</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html?is-external=true" title="class or interface in java.util">HashSet</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt; flakyTestNames</pre>
+<div class="block">Method names for flaky tests (e.g., "test005").</div>
 </li>
 </ul>
 </li>
@@ -423,8 +454,7 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 <h4>FailingAssertionCommentWriter</h4>
 <pre>public&nbsp;FailingAssertionCommentWriter(<a href="../../randoop/execution/TestEnvironment.html" title="class in randoop.execution">TestEnvironment</a>&nbsp;testEnvironment,
                                      <a href="../../randoop/output/JavaFileWriter.html" title="class in randoop.output">JavaFileWriter</a>&nbsp;javaFileWriter)</pre>
-<div class="block">Create a <a href="../../randoop/output/FailingAssertionCommentWriter.html" title="class in randoop.output"><code>FailingAssertionCommentWriter</code></a> for which tests will be run in the environment
- and which uses the given <a href="../../randoop/output/JavaFileWriter.html" title="class in randoop.output"><code>JavaFileWriter</code></a> to output test classes.</div>
+<div class="block">Create a <a href="../../randoop/output/FailingAssertionCommentWriter.html" title="class in randoop.output"><code>FailingAssertionCommentWriter</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>testEnvironment</code> - the <a href="../../randoop/execution/TestEnvironment.html" title="class in randoop.execution"><code>TestEnvironment</code></a> for executing tests during filtering</dd>
@@ -440,6 +470,21 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getFlakyTestNames--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFlakyTestNames</h4>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/TreeSet.html?is-external=true" title="class or interface in java.util">TreeSet</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getFlakyTestNames()</pre>
+<div class="block">Returns the set of flaky test names. Each element has the form testNNN where N are digits; for
+ example, "test002".</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the flaky test names</dd>
+</dl>
+</li>
+</ul>
 <a name="writeClassCode-java.lang.String-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
@@ -544,7 +589,7 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 </dl>
 </li>
 </ul>
-<a name="commentFailingAssertions-java.lang.String-java.lang.String-java.lang.String-randoop.execution.RunCommand.Status-">
+<a name="commentFailingAssertions-java.lang.String-java.lang.String-java.lang.String-randoop.execution.RunCommand.Status-java.util.HashSet-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -553,7 +598,8 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 <pre>private&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;commentFailingAssertions(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;packageName,
                                         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;classname,
                                         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;javaCode,
-                                        <a href="../../randoop/execution/RunCommand.Status.html" title="class in randoop.execution">RunCommand.Status</a>&nbsp;status)</pre>
+                                        <a href="../../randoop/execution/RunCommand.Status.html" title="class in randoop.execution">RunCommand.Status</a>&nbsp;status,
+                                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/HashSet.html?is-external=true" title="class or interface in java.util">HashSet</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;flakyTests)</pre>
 <div class="block">Comments out lines with failing assertions. Uses the failures in the <code>status</code> from
  running JUnit with <code>javaCode</code> to identify lines with failing assertions.</div>
 <dl>
@@ -561,7 +607,9 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 <dd><code>packageName</code> - the package name of the test class</dd>
 <dd><code>classname</code> - the simple (unqualified) name of the test class</dd>
 <dd><code>javaCode</code> - the source code for the test class; each assertion must be on its own line</dd>
-<dd><code>status</code> - the <a href="../../randoop/execution/RunCommand.Status.html" title="class in randoop.execution"><code>RunCommand.Status</code></a> from running the test with JUnit</dd>
+<dd><code>status</code> - the result of running the test with JUnit</dd>
+<dd><code>flakyTests</code> - names of flaky tests, e.g. "test005". This is an output parameter that is
+     augmented by this method.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the class source edited so that failing assertions are replaced by comments</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -588,7 +636,7 @@ implements <a href="../../randoop/output/CodeWriter.html" title="interface in ra
 <dd><code>qualifiedClassname</code> - the name of the JUnit class, used only for debugging output</dd>
 <dd><code>javaCode</code> - the JUnit class source code, used only for debugging output</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the number of JUnit failures</dd>
+<dd>the number of JUnit failures, a non-negative integer</dd>
 </dl>
 </li>
 </ul>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ClassRenamingVisitor (randoop 4.1.2 API)</title>
+<title>ClassRenamingVisitor (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,14 +12,14 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ClassRenamingVisitor (randoop 4.1.2 API)";
+            parent.document.title="ClassRenamingVisitor (randoop 4.2.0 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":9,"i1":9,"i2":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -74,13 +74,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -99,7 +99,7 @@ var activeTableTab = "activeTableTab";
 <li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li>com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&gt;</li>
+<li>com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</li>
 <li>
 <ul class="inheritance">
 <li>randoop.output.ClassRenamingVisitor</li>
@@ -113,12 +113,12 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>com.github.javaparser.ast.visitor.VoidVisitor&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&gt;</dd>
+<dd>com.github.javaparser.ast.visitor.VoidVisitor&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">ClassRenamingVisitor</span>
-extends com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&gt;</pre>
+extends com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</pre>
 <div class="block">JavaParser visitor to rename classes.</div>
 </li>
 </ul>
@@ -126,6 +126,39 @@ extends com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https:/
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private static com.github.javaparser.JavaParser</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/ClassRenamingVisitor.html#javaParser">javaParser</a></span></code>
+<div class="block">An instance of a Java parser.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/ClassRenamingVisitor.html#newName">newName</a></span></code>
+<div class="block">The new name.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/ClassRenamingVisitor.html#oldName">oldName</a></span></code>
+<div class="block">The new name.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -138,7 +171,10 @@ extends com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https:/
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/output/ClassRenamingVisitor.html#ClassRenamingVisitor--">ClassRenamingVisitor</a></span>()</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/output/ClassRenamingVisitor.html#ClassRenamingVisitor-java.lang.String-java.lang.String-">ClassRenamingVisitor</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;oldName,
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;newName)</code>
+<div class="block">Create a ClassRenamingVisitor.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -150,16 +186,32 @@ extends com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https:/
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/ClassRenamingVisitor.html#copyAndRename-java.nio.file.Path-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.lang.String-">copyAndRename</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
+             com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
+             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;oldClassName,
+             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;newClassName)</code>
+<div class="block">Copies a file to a new name, renaming the class.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/ClassRenamingVisitor.html#copyAndRename-java.nio.file.Path-java.lang.String-">copyAndRename</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
+             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;newClassName)</code>
+<div class="block">Copies a file to a new name, renaming the class.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/ClassRenamingVisitor.html#visit-com.github.javaparser.ast.body.ClassOrInterfaceDeclaration-java.lang.String:A-">visit</a></span>(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration&nbsp;n,
-     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;arg)</code>
-<div class="block">Rename the overall class to class name + suffix.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/output/ClassRenamingVisitor.html#visit-com.github.javaparser.ast.body.ClassOrInterfaceDeclaration-java.lang.Void-">visit</a></span>(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration&nbsp;n,
+     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&nbsp;arg)</code>
+<div class="block">Rename the class.</div>
 </td>
 </tr>
 </table>
@@ -168,7 +220,7 @@ extends com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https:/
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.github.javaparser.ast.visitor.VoidVisitorAdapter</h3>
-<code>visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit</code></li>
+<code>visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit, visit</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -185,19 +237,64 @@ extends com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https:/
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="oldName">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>oldName</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> oldName</pre>
+<div class="block">The new name.</div>
+</li>
+</ul>
+<a name="newName">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>newName</h4>
+<pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> newName</pre>
+<div class="block">The new name.</div>
+</li>
+</ul>
+<a name="javaParser">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>javaParser</h4>
+<pre>private static final&nbsp;com.github.javaparser.JavaParser javaParser</pre>
+<div class="block">An instance of a Java parser.</div>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ClassRenamingVisitor--">
+<a name="ClassRenamingVisitor-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ClassRenamingVisitor</h4>
-<pre>public&nbsp;ClassRenamingVisitor()</pre>
+<pre>public&nbsp;ClassRenamingVisitor(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;oldName,
+                            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;newName)</pre>
+<div class="block">Create a ClassRenamingVisitor.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>oldName</code> - the old name</dd>
+<dd><code>newName</code> - the new name</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -208,23 +305,62 @@ extends com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https:/
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="visit-com.github.javaparser.ast.body.ClassOrInterfaceDeclaration-java.lang.String:A-">
+<a name="visit-com.github.javaparser.ast.body.ClassOrInterfaceDeclaration-java.lang.Void-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>visit</h4>
+<pre>public&nbsp;void&nbsp;visit(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration&nbsp;n,
+                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&nbsp;arg)</pre>
+<div class="block">Rename the class.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>visit</code>&nbsp;in interface&nbsp;<code>com.github.javaparser.ast.visitor.VoidVisitor&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></dd>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>visit</code>&nbsp;in class&nbsp;<code>com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>arg</code> - the old and new class names</dd>
+</dl>
+</li>
+</ul>
+<a name="copyAndRename-java.nio.file.Path-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>copyAndRename</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;copyAndRename(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
+                                 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;newClassName)</pre>
+<div class="block">Copies a file to a new name, renaming the class. Does not affect the original file.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>file</code> - the original Java file</dd>
+<dd><code>newClassName</code> - the new class name</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the newly-created file</dd>
+</dl>
+</li>
+</ul>
+<a name="copyAndRename-java.nio.file.Path-com.github.javaparser.ast.CompilationUnit-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>visit</h4>
-<pre>public&nbsp;void&nbsp;visit(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration&nbsp;n,
-                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;arg)</pre>
-<div class="block">Rename the overall class to class name + suffix.</div>
+<h4>copyAndRename</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;copyAndRename(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;file,
+                                 com.github.javaparser.ast.CompilationUnit&nbsp;compilationUnit,
+                                 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;oldClassName,
+                                 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;newClassName)</pre>
+<div class="block">Copies a file to a new name, renaming the class. Does not affect the original file.</div>
 <dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>visit</code>&nbsp;in interface&nbsp;<code>com.github.javaparser.ast.visitor.VoidVisitor&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&gt;</code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>visit</code>&nbsp;in class&nbsp;<code>com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&gt;</code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>arg</code> - a String array where the first element is the class name and the second element is
-     the suffix that we will append</dd>
+<dd><code>file</code> - the original Java file</dd>
+<dd><code>compilationUnit</code> - the original Java file, parsed</dd>
+<dd><code>oldClassName</code> - the old class name</dd>
+<dd><code>newClassName</code> - the new class name</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the newly-created file</dd>
 </dl>
 </li>
 </ul>
@@ -281,13 +417,13 @@ extends com.github.javaparser.ast.visitor.VoidVisitorAdapter&lt;<a href="https:/
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

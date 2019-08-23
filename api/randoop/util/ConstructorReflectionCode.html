@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ConstructorReflectionCode (randoop 4.1.2 API)</title>
+<title>ConstructorReflectionCode (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ConstructorReflectionCode (randoop 4.1.2 API)";
+            parent.document.title="ConstructorReflectionCode (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -151,12 +151,14 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect">Constructor</a>&lt;?&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ConstructorReflectionCode.html#constructor">constructor</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ConstructorReflectionCode.html#constructor">constructor</a></span></code>
+<div class="block">The constructor to be called.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ConstructorReflectionCode.html#inputs">inputs</a></span></code>
-<div class="block">If an inner class has a receiver, it is the first element of this array.</div>
+<div class="block">The arguments that the constructor is applied to.</div>
 </td>
 </tr>
 </table>
@@ -182,7 +184,9 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/util/ConstructorReflectionCode.html#ConstructorReflectionCode-java.lang.reflect.Constructor-java.lang.Object:A-">ConstructorReflectionCode</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect">Constructor</a>&lt;?&gt;&nbsp;constructor,
-                         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]&nbsp;inputs)</code>&nbsp;</td>
+                         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]&nbsp;inputs)</code>
+<div class="block">Create a new ConstructorReflectionCode to represent a constructor invocation.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -245,6 +249,7 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <li class="blockList">
 <h4>constructor</h4>
 <pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect">Constructor</a>&lt;?&gt; constructor</pre>
+<div class="block">The constructor to be called.</div>
 </li>
 </ul>
 <a name="inputs">
@@ -254,7 +259,8 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <li class="blockList">
 <h4>inputs</h4>
 <pre>private final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[] inputs</pre>
-<div class="block">If an inner class has a receiver, it is the first element of this array.</div>
+<div class="block">The arguments that the constructor is applied to. If an inner class constructor has a receiver,
+ it is the first element of this array.</div>
 </li>
 </ul>
 </li>
@@ -273,6 +279,13 @@ extends <a href="../../randoop/util/ReflectionCode.html" title="class in randoop
 <h4>ConstructorReflectionCode</h4>
 <pre>public&nbsp;ConstructorReflectionCode(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html?is-external=true" title="class or interface in java.lang.reflect">Constructor</a>&lt;?&gt;&nbsp;constructor,
                                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[]&nbsp;inputs)</pre>
+<div class="block">Create a new ConstructorReflectionCode to represent a constructor invocation.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>constructor</code> - the constructor to be called</dd>
+<dd><code>inputs</code> - the arguments that the constructor is applied to. If an inner class constructor
+     has a receiver, it is the first element of this array.</dd>
+</dl>
 </li>
 </ul>
 </li>

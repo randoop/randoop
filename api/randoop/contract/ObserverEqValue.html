@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ObserverEqValue (randoop 4.1.2 API)</title>
+<title>ObserverEqValue (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ObserverEqValue (randoop 4.1.2 API)";
+            parent.document.title="ObserverEqValue (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -116,8 +116,7 @@ var activeTableTab = "activeTableTab";
 <pre>public final class <span class="typeNameLabel">ObserverEqValue</span>
 extends <a href="../../randoop/contract/ObjectContract.html" title="class in randoop.contract">ObjectContract</a></pre>
 <div class="block">A check recording the value that an observer method returned during execution, e.g. a check
- recording that a collection's <code>size()</code> method returned <code>3</code> when called in particular
- sequence.
+ recording that a collection's <code>size()</code> method returned <code>3</code>.
 
  <p>ObserverEqValue checks are not checks that must hold of all objects of a given class (unlike a
  check like <a href="../../randoop/contract/EqualsReflexive.html" title="class in randoop.contract"><code>EqualsReflexive</code></a>, which must hold for any objects, no matter its execution

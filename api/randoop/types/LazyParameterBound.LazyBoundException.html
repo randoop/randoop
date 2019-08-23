@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RandoopClassNameError (randoop 4.2.0 API)</title>
+<title>LazyParameterBound.LazyBoundException (randoop 4.2.0 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RandoopClassNameError (randoop 4.2.0 API)";
+            parent.document.title="LazyParameterBound.LazyBoundException (randoop 4.2.0 API)";
         }
     }
     catch(err) {
@@ -42,12 +42,12 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/main/RandoopBug.html" title="class in randoop.main"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/main/RandoopCommandError.html" title="class in randoop.main"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/LazyParameterBound.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/LazyReferenceBound.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../index.html?randoop/main/RandoopClassNameError.html" target="_top">Frames</a></li>
-<li><a href="RandoopClassNameError.html" target="_top">No&nbsp;Frames</a></li>
+<li><a href="../../index.html?randoop/types/LazyParameterBound.LazyBoundException.html" target="_top">Frames</a></li>
+<li><a href="LazyParameterBound.LazyBoundException.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
 <li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
@@ -85,8 +85,8 @@
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">randoop.main</div>
-<h2 title="Class RandoopClassNameError" class="title">Class RandoopClassNameError</h2>
+<div class="subTitle">randoop.types</div>
+<h2 title="Class LazyParameterBound.LazyBoundException" class="title">Class LazyParameterBound.LazyBoundException</h2>
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
@@ -96,10 +96,15 @@
 <li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">java.lang.Throwable</a></li>
 <li>
 <ul class="inheritance">
-<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Error.html?is-external=true" title="class or interface in java.lang">java.lang.Error</a></li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">java.lang.Exception</a></li>
 <li>
 <ul class="inheritance">
-<li>randoop.main.RandoopClassNameError</li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/RuntimeException.html?is-external=true" title="class or interface in java.lang">java.lang.RuntimeException</a></li>
+<li>
+<ul class="inheritance">
+<li>randoop.types.LazyParameterBound.LazyBoundException</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -114,15 +119,15 @@
 <dt>All Implemented Interfaces:</dt>
 <dd><a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</a></dd>
 </dl>
+<dl>
+<dt>Enclosing class:</dt>
+<dd><a href="../../randoop/types/LazyParameterBound.html" title="class in randoop.types">LazyParameterBound</a></dd>
+</dl>
 <hr>
 <br>
-<pre>public class <span class="typeNameLabel">RandoopClassNameError</span>
-extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Error.html?is-external=true" title="class or interface in java.lang">Error</a></pre>
-<div class="block">Exception for classname errors.</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../serialized-form.html#randoop.main.RandoopClassNameError">Serialized Form</a></dd>
-</dl>
+<pre>static class <span class="typeNameLabel">LazyParameterBound.LazyBoundException</span>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/RuntimeException.html?is-external=true" title="class or interface in java.lang">RuntimeException</a></pre>
+<div class="block">There was an attempt to perform an operation, such as capture conversion, on a lazy bound.</div>
 </li>
 </ul>
 </div>
@@ -142,12 +147,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Error.html?
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#className">className</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>private static long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#serialVersionUID">serialVersionUID</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/LazyParameterBound.LazyBoundException.html#serialVersionUID">serialVersionUID</a></span></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -164,13 +165,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Error.html?
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-java.lang.String-">RandoopClassNameError</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;className,
-                     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-java.lang.String-java.lang.Throwable-">RandoopClassNameError</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;className,
-                     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message,
-                     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;cause)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/types/LazyParameterBound.LazyBoundException.html#LazyBoundException--">LazyBoundException</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -212,23 +207,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Error.html?
 <a name="serialVersionUID">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>serialVersionUID</h4>
 <pre>private static final&nbsp;long serialVersionUID</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../constant-values.html#randoop.main.RandoopClassNameError.serialVersionUID">Constant Field Values</a></dd>
+<dd><a href="../../constant-values.html#randoop.types.LazyParameterBound.LazyBoundException.serialVersionUID">Constant Field Values</a></dd>
 </dl>
-</li>
-</ul>
-<a name="className">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>className</h4>
-<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> className</pre>
 </li>
 </ul>
 </li>
@@ -239,25 +225,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Error.html?
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="RandoopClassNameError-java.lang.String-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>RandoopClassNameError</h4>
-<pre>public&nbsp;RandoopClassNameError(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;className,
-                             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message)</pre>
-</li>
-</ul>
-<a name="RandoopClassNameError-java.lang.String-java.lang.String-java.lang.Throwable-">
+<a name="LazyBoundException--">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>RandoopClassNameError</h4>
-<pre>public&nbsp;RandoopClassNameError(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;className,
-                             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message,
-                             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;cause)</pre>
+<h4>LazyBoundException</h4>
+<pre>LazyBoundException()</pre>
 </li>
 </ul>
 </li>
@@ -287,12 +261,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Error.html?
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/main/RandoopBug.html" title="class in randoop.main"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/main/RandoopCommandError.html" title="class in randoop.main"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/LazyParameterBound.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/LazyReferenceBound.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../index.html?randoop/main/RandoopClassNameError.html" target="_top">Frames</a></li>
-<li><a href="RandoopClassNameError.html" target="_top">No&nbsp;Frames</a></li>
+<li><a href="../../index.html?randoop/types/LazyParameterBound.LazyBoundException.html" target="_top">Frames</a></li>
+<li><a href="LazyParameterBound.LazyBoundException.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
 <li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
