@@ -771,8 +771,9 @@ NEWVERSION=<em>4.2.1</em></pre>
     Undo undesirable changes (such to version number in old entry)
     in <code>src/docs/CHANGES.txt</code>.<br/>
     Update OLDVERSION and NEWVERSION for <em>next</em> release in <code>src/docs/dev.html</code>.<br/>
-    Update the date in <code>docs/manual/index.html</code>.<br/>
-    Double-check all changes.<br/>
+    Update the date in <code>docs/manual/index.html</code>;
+    double-check against <code>docs/CHANGES.txt</code>.<br/>
+    Double-check all uncommitted changes.<br/>
     Don't commit your changes yet.
     </li>
     <li>Add two exceptions for the Randoop zip file
@@ -822,10 +823,12 @@ NEWVERSION=<em>4.2.1</em></pre>
     <a href="https://help.github.com/en/articles/creating-releases">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
-    click "Draft a new release", in the "Tag" text field, choose v<em>4.2.0</em>,
-    name it "Randoop version <em>4.2.0</em>", use the changelog entry as the
-    description (but remove any line breaks and check the preview), upload the
-    the zip file from <code>build/distributions</code>,
+    click "Draft a new release",
+    in the "Tag" text field, choose v<em>4.2.0</em>,
+    name it "Randoop version <em>4.2.0</em>",
+    use the changelog entry as the description (but remove any line breaks,
+    change to Markdown,  and check the preview),
+    upload the the zip file from <code>build/distributions</code>,
     upload the jar files from <code>build/libs</code>,
     and, finally, click "publish release".
   </li>
