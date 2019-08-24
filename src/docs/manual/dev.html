@@ -785,11 +785,13 @@ NEWVERSION=<em>4.2.1</em></pre>
 <li>Create the distribution files, commit, and push.  This takes
   a while because it runs all the tests.  It also updates the project site in
   the <code>gh-pages</code> branch.
+  <!-- I had a problem where this only succeeded if I ran the first gradle command on its own.
+    I'm not sure why.  If it persists, update the instructions. -->
 <pre>
-  ./gradlew clean buildRelease \
-  && git add -A . && git commit . -m "Update version to $NEWVERSION" && git push \
-  && (cd ../randoop-branch-gh-pages \
-  && git add -A . && git commit . -m "Update version to $NEWVERSION" && git push)</pre>
+  ./gradlew clean buildRelease && \
+  git add -A . && git commit . -m "Update version to $NEWVERSION" && git push && \
+  (cd ../randoop-branch-gh-pages && \
+  git add -A . && git commit . -m "Update version to $NEWVERSION" && git push)</pre>
   This runs the tests again, so it takes about half an hour.
   </li>
   <li>
@@ -805,7 +807,7 @@ NEWVERSION=<em>4.2.1</em></pre>
         buildRelease</code> step.
   </li>
   <li>
-    Wait for the <a href="https://travis-ci.org/randoop/randoop">Travis CI</a>
+    Wait for the <a href="https://dev.azure.com/randoop/randoop/_build">Azure Pipelines</a> CI
     build to succeed.  (This takes about half an hour.)
     If it fails, commit fixes, then wait again.
   </li>
