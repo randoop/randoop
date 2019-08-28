@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import randoop.DummyVisitor;
-import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Identifiers;
 import randoop.condition.specification.OperationSpecification;
@@ -47,10 +46,7 @@ public class SpecificationTranslatorTest {
     Identifiers identifiers = new Identifiers(parameterList);
     OperationSpecification opSpec = new OperationSpecification(null, identifiers);
     SpecificationTranslator sig =
-        SpecificationTranslator.createTranslator(
-            method,
-            opSpec,
-            new SequenceCompiler(new SequenceClassLoader(getClass().getClassLoader())));
+        SpecificationTranslator.createTranslator(method, opSpec, new SequenceCompiler());
 
     assertEquals(
         "presignature is just receiver and parameters",

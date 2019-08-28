@@ -1,5 +1,6 @@
 package randoop.util;
 
+import java.io.File;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -130,6 +131,10 @@ public class ProgressDisplay extends Thread {
     System.out.println(AbstractGenerator.currSeq);
     System.out.println();
     System.out.println("Will dump a heap profile to randoop-slow.hprof.");
+    File hprofFile = new File("randoop-slow.hprof");
+    if (hprofFile.exists()) {
+      hprofFile.delete();
+    }
     DumpHeap.dumpHeap("randoop-slow.hprof");
     System.out.println("Will print all thread stack traces (twice) and exit with code 1.");
     System.out.println();

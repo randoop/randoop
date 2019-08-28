@@ -18,7 +18,7 @@ plugins {
 
   // To do Checker Framework pluggable type-checking (and disable Error Prone), run:
   // ./gradlew compileJava -PuseCheckerFramework=true
-  id 'org.checkerframework' version '0.3.22' apply false
+  id 'org.checkerframework' version '0.3.25' apply false
 
   id 'org.aim42.htmlSanityCheck' version '1.1.3'
 
@@ -54,7 +54,7 @@ allprojects {
   }
 
   /* Randoop version number - added to generated jar files */
-  version = '4.1.2'
+  version = '4.2.0'
 
   configurations {
     // A collection of all plumelib dependencies required, so that all
@@ -145,7 +145,7 @@ dependencies {
   implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
 
-  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.14.10'
+  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.14.12'
 
   /* Jacoco measures coverage of classes and methods under test. */
   implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.4'
