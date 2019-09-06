@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import javax.tools.Diagnostic;
-import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 
 /** Utilities for compiler classes. */
@@ -19,7 +18,6 @@ class CompileUtil {
    *
    * @param pathString the path to a file as a string
    * @return the {@code URI} for the path
-   * @see SequenceJavaFileManager#uri(JavaFileManager.Location, String, String)
    */
   static URI toURI(String pathString) {
     try {

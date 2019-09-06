@@ -41,15 +41,13 @@ public class SequenceCompilerTest {
   @Test
   public void compilableTest() throws ClassNotFoundException {
 
-    SequenceClassLoader classLoader = new SequenceClassLoader(getClass().getClassLoader());
-    SequenceCompiler compiler = getSequenceCompiler(classLoader);
+    SequenceCompiler compiler = getSequenceCompiler();
 
     String simpleClass = createCompilableClass();
 
     Class<?> compiledClass = null;
     try {
-      compiler.compile("", "Simple", simpleClass);
-      compiledClass = classLoader.loadClass("Simple");
+      compiledClass = compiler.compileAndLoad(null, "Simple", simpleClass);
     } catch (SequenceCompilerException e) {
       System.out.print(e.getMessage());
       if (e.getCause() != null) System.out.print(": " + e.getCause().getMessage());
@@ -96,11 +94,10 @@ public class SequenceCompilerTest {
 
   @Test
   public void uncompilableTest() {
-    SequenceClassLoader classLoader = new SequenceClassLoader(getClass().getClassLoader());
-    SequenceCompiler compiler = getSequenceCompiler(classLoader);
+    SequenceCompiler compiler = getSequenceCompiler();
     String classSource = createUncompilableClass();
     try {
-      compiler.compile("", "SimplyBad", classSource);
+      compiler.compileAndLoad(null, "SimplyBad", classSource);
       fail("should not compile");
     } catch (SequenceCompilerException e) {
       if (e.getCause() != null) System.out.print(": " + e.getCause().getMessage());
@@ -165,12 +162,12 @@ public class SequenceCompilerTest {
     return compilationUnit.toString();
   }
 
-  private SequenceCompiler getSequenceCompiler(SequenceClassLoader classLoader) {
+  private SequenceCompiler getSequenceCompiler() {
     List<String> compilerOptions = new ArrayList<>();
     // These are javac compilerOptions
     compilerOptions.add("-Xmaxerrs");
     compilerOptions.add("1000");
-    return new SequenceCompiler(classLoader, compilerOptions);
+    return new SequenceCompiler(compilerOptions);
   }
 
   private void printDiagnostics(

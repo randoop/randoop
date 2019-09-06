@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.ClassGetName;
-import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
 import randoop.condition.specification.OperationSpecification;
@@ -80,8 +79,7 @@ public class SpecificationCollection {
     this.signatureToMethods = signatureToMethods;
     this.overridden = overridden;
     this.getExecutableSpecificationCache = new HashMap<>();
-    SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
-    this.compiler = new SequenceCompiler(sequenceClassLoader);
+    this.compiler = new SequenceCompiler();
   }
 
   /**
