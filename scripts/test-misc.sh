@@ -13,7 +13,7 @@ export SHELLOPTS
 ./gradlew checkstyle checkstyleMain checkstyleCoveredTest checkstyleReplacecallTest
 ./gradlew manual
 
-(./gradlew requireJavadocPrivate > /tmp/warnings.txt 2>&1) || true
 git -C /tmp/plume-scripts pull > /dev/null 2>&1 \
   || git -C /tmp clone --depth 1 -q https://github.com/plume-lib/plume-scripts.git
+(./gradlew requireJavadocPrivate > /tmp/warnings.txt 2>&1) || true
 /tmp/plume-scripts/ci-lint-diff /tmp/warnings.txt
