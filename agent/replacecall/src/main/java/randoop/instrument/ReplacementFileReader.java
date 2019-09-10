@@ -22,6 +22,7 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
+import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
 
 /**
@@ -64,7 +65,7 @@ public class ReplacementFileReader {
 
   /**
    * Pattern to match class or package replacements consisting of a pair of class or package name
-   * signatures. Groups 1 and 2 correspond to each of the package or class names.
+   * signatures. Group 1 is the package name, and group 2 is the class name.
    */
   private static final Pattern PACKAGE_OR_CLASS_LINE =
       Pattern.compile("(" + DOT_DELIMITED_IDS + ")[ \\t]+" + "(" + DOT_DELIMITED_IDS + ")");
@@ -126,10 +127,11 @@ public class ReplacementFileReader {
           Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(line);
           if (packageOrClassLineMatcher.matches()) {
             try {
-              addReplacementsForClassOrPackage(
-                  replacementMap,
-                  packageOrClassLineMatcher.group(1),
-                  packageOrClassLineMatcher.group(2));
+              @SuppressWarnings("signature") // string parsing
+              @ClassGetName String packageName = packageOrClassLineMatcher.group(1);
+              @SuppressWarnings("signature") // string parsing
+              @ClassGetName String className = packageOrClassLineMatcher.group(2);
+              addReplacementsForClassOrPackage(replacementMap, packageName, className);
             } catch (ReplacementException | IOException | ClassNotFoundException e) {
               throw new ReplacementFileException(
                   e.getMessage(), filename, reader.getLineNumber(), line);
@@ -237,7 +239,9 @@ public class ReplacementFileReader {
    * @throws ClassNotFoundException if no class corresponding to the replacement is found
    */
   private static void addReplacementsForClassOrPackage(
-      HashMap<MethodSignature, MethodSignature> replacementMap, String original, String replacement)
+      HashMap<MethodSignature, MethodSignature> replacementMap,
+      @ClassGetName String original,
+      String replacement)
       throws ReplacementException, IOException, ClassNotFoundException {
 
     String replacementClassPath = replacement.replace('.', java.io.File.separatorChar) + ".class";
@@ -271,7 +275,7 @@ public class ReplacementFileReader {
    */
   private static void addReplacementsForClass(
       HashMap<MethodSignature, MethodSignature> replacementMap,
-      String originalClassname,
+      @ClassGetName String originalClassname,
       String replacementClassname)
       throws ClassNotFoundException, ReplacementException {
 
@@ -413,7 +417,8 @@ public class ReplacementFileReader {
     for (String filename : replacementDirectory.toFile().list()) {
       if (filename.endsWith(".class")) {
         final String classname = filename.substring(0, filename.length() - 6);
-        final String originalClassname = originalPackage + "." + classname;
+        @SuppressWarnings("signature") // string concatenation
+        final @ClassGetName String originalClassname = originalPackage + "." + classname;
         final String replacementClassname = replacementPackage + "." + classname;
         addReplacementsForClass(replacementMap, originalClassname, replacementClassname);
       } else {
@@ -457,7 +462,8 @@ public class ReplacementFileReader {
       if (filename.endsWith(".class") && filename.startsWith(replacementPath)) {
         final String classname =
             filename.substring(replacementPackage.length() + 1, filename.lastIndexOf(".class"));
-        final String originalClassname = originalPackage + "." + classname;
+        @SuppressWarnings("signature") // string concatenation
+        final @ClassGetName String originalClassname = originalPackage + "." + classname;
         final String replacementClassname = replacementPackage + "." + classname;
         addReplacementsForClass(replacementMap, originalClassname, replacementClassname);
       }
