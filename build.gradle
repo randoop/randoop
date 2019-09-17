@@ -145,7 +145,7 @@ dependencies {
   implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
 
-  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.14.13'
+  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.14.14'
 
   /* Jacoco measures coverage of classes and methods under test. */
   implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.4'
