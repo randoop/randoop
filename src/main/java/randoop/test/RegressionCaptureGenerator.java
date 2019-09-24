@@ -213,7 +213,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                           + m
                           + " on "
                           + var
-                          + "["
+                          + " ["
                           + var.getType()
                           + "]"
                           + " with value "
