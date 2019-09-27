@@ -132,7 +132,7 @@ public class Minimize extends CommandHandler {
   @Option("Timeout, in seconds, for the whole test suite")
   public static int testsuitetimeout = 30;
 
-  /** Output verbose output to standard output if true. */
+  /** Produce verbose diagnostics to standard output if true. */
   @SuppressWarnings("WeakerAccess")
   @Option("Verbose, flag for verbose output")
   public static boolean verboseminimizer = false;
