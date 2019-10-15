@@ -145,11 +145,11 @@ dependencies {
   implementation configurations.junit.dependencies
   implementation files(project(':replacecall').sourceSets.main.output)
 
-  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.14.159265359'
+  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.15.0'
 
   /* Jacoco measures coverage of classes and methods under test. */
   implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.4'
-  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.4', classifier: 'runtime'
+  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.5', classifier: 'runtime'
 
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation group: 'commons-codec', name: 'commons-codec', version: '1.13'
@@ -168,7 +168,7 @@ dependencies {
 
   replacecallTestImplementation files(project(':replacecall').sourceSets.main.output)
 
-  jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.3'
+  jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.5'
 
   /*
    * source set systemTest
