@@ -10,7 +10,6 @@ import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
-import randoop.Globals;
 import randoop.MultiVisitor;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
@@ -304,7 +303,7 @@ public abstract class AbstractGenerator {
       ExecutableSequence eSeq = step();
 
       if (dump_sequences) {
-        Log.logPrintf("seq before run: %s%n", eSeq);
+        Log.logPrintf("%nseq before run:%n%s%n", eSeq);
       }
 
       // Notify listeners we just completed generation step.
@@ -339,7 +338,7 @@ public abstract class AbstractGenerator {
       }
 
       if (dump_sequences) {
-        Log.logPrintf("Sequence after execution: %s%n", Globals.lineSep + eSeq.toString());
+        Log.logPrintf("Sequence after execution:%n%s%n", eSeq);
         Log.logPrintf("allSequences.size()=%s%n", numGeneratedSequences());
         // componentManager.log();
       }
@@ -364,6 +363,7 @@ public abstract class AbstractGenerator {
                 + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
         System.out.println("Approximate memory usage " + Util.usedMemory(false) + "MB");
       }
+      System.out.println("Explorer = " + this);
     }
 
     // Notify listeners that exploration is ending.
