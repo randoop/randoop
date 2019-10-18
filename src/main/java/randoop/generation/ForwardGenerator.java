@@ -383,7 +383,7 @@ public class ForwardGenerator extends AbstractGenerator {
           }
         } else {
           operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-          Log.logPrintf("Instantiation error for operation%n %s%n", operation);
+          Log.logPrintf("Sequence discarded: Instantiation error for operation%n %s%n", operation);
           Log.logStackTrace(e);
           System.out.printf("Instantiation error for operation%n %s%n", operation);
           return null;
@@ -404,7 +404,7 @@ public class ForwardGenerator extends AbstractGenerator {
         throw new RandoopGenerationError(operation, e);
       } else {
         operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-        Log.logPrintf("Error selecting inputs for operation: %s%n", operation);
+        Log.logPrintf("Sequence discarded: Error selecting inputs for operation: %s%n", operation);
         Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
         e.printStackTrace();
@@ -449,7 +449,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (newSequence.size() > GenInputsAbstract.maxsize) {
       operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
       Log.logPrintf(
-          "Sequence discarded because size %d exceeds maximum allowed size %d%n",
+          "Sequence discarded: size %d exceeds maximum allowed size %d%n",
           newSequence.size(), GenInputsAbstract.maxsize);
       return null;
     }
@@ -459,7 +459,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // Discard if sequence is a duplicate.
     if (this.allSequences.contains(newSequence)) {
       operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-      Log.logPrintf("Sequence discarded because the same sequence was previously created.%n");
+      Log.logPrintf("Sequence discarded: the same sequence was previously created.%n");
       return null;
     }
 
