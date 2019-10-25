@@ -182,7 +182,8 @@ public class SequenceCollection {
       set = new SimpleArrayList<>();
       this.sequenceMap.put(type, set);
     }
-    Log.logPrintf("Adding sequence of type %s of length %d%n", type, sequence.size());
+    Log.logPrintf(
+        "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
     boolean added = set.add(sequence);
     assert added;
     sequenceCount++;
