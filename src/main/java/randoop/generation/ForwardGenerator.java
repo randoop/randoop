@@ -470,8 +470,8 @@ public class ForwardGenerator extends AbstractGenerator {
     Log.logPrintf("Successfully created new unique sequence:%n%s%n", newSequence.toString());
 
     // Keep track of any input sequences that are used in this sequence.
-
-    // A test that is a subsequence of the new one is redundant.
+    // A test that is a subsequence of the new one is redundant -- but only if the new sequence gets
+    // output!
     subsumed_sequences.addAll(inputs.sequences);
 
     return new ExecutableSequence(newSequence);
@@ -896,13 +896,29 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public String toString() {
     return "ForwardGenerator("
-        + ("allSequences:" + allSequences.size())
-        + ", "
-        + ("sideEffectFreeMethods:" + sideEffectFreeMethods.size())
-        + ", "
-        + ("subsumed_sequences:" + subsumed_sequences.size())
-        + ", "
-        + ("runtimePrimitivesSeen:" + runtimePrimitivesSeen.size())
+        + String.join(
+            "; ",
+            String.join(
+                ", ",
+                "steps: " + num_steps,
+                "null steps: " + null_steps,
+                "num_sequences_generated: " + num_sequences_generated),
+            String.join(
+                ", ",
+                "allSequences: " + allSequences.size(),
+                "regresson seqs: " + outRegressionSeqs.size(),
+                "error seqs: "
+                    + outErrorSeqs.size()
+                    + "="
+                    + num_failing_sequences
+                    + "="
+                    + getErrorTestSequences().size(),
+                "invalid seqs: " + invalidSequenceCount,
+                "subsumed_sequences: " + subsumed_sequences.size(),
+                "num_failed_output_test: " + num_failed_output_test),
+            String.join(
+                "sideEffectFreeMethods:" + sideEffectFreeMethods.size(),
+                "runtimePrimitivesSeen:" + runtimePrimitivesSeen.size()))
         + ")";
   }
 }
