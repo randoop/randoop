@@ -10,7 +10,6 @@ import org.plumelib.options.OptionGroup;
 import org.plumelib.options.Unpublicized;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
-import randoop.Globals;
 import randoop.MultiVisitor;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
@@ -46,6 +45,9 @@ public abstract class AbstractGenerator {
    */
   public int num_steps = 0;
 
+  /** Number of steps that returned null. */
+  public int null_steps = 0;
+
   /** Number of sequences generated. */
   public int num_sequences_generated = 0;
 
@@ -54,6 +56,9 @@ public abstract class AbstractGenerator {
 
   /** Number of invalid sequences generated. */
   public int invalidSequenceCount = 0;
+
+  /** Number of sequences that failed the output test. */
+  public int num_failed_output_test = 0;
 
   /** When the generator started (millisecond-based system timestamp). */
   private long startTime = -1;
@@ -304,7 +309,7 @@ public abstract class AbstractGenerator {
       ExecutableSequence eSeq = step();
 
       if (dump_sequences) {
-        Log.logPrintf("seq before run: %s%n", eSeq);
+        Log.logPrintf("%nseq before run:%n%s%n", eSeq);
       }
 
       // Notify listeners we just completed generation step.
@@ -319,6 +324,7 @@ public abstract class AbstractGenerator {
       }
 
       if (eSeq == null) {
+        null_steps++;
         continue;
       }
 
@@ -336,10 +342,12 @@ public abstract class AbstractGenerator {
           outRegressionSeqs.add(eSeq);
           newRegressionTestHook(eSeq.sequence);
         }
+      } else {
+        num_failed_output_test++;
       }
 
       if (dump_sequences) {
-        Log.logPrintf("Sequence after execution: %s%n", Globals.lineSep + eSeq.toString());
+        Log.logPrintf("Sequence after execution:%n%s%n", eSeq);
         Log.logPrintf("allSequences.size()=%s%n", numGeneratedSequences());
         // componentManager.log();
       }
@@ -364,6 +372,7 @@ public abstract class AbstractGenerator {
                 + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
         System.out.println("Approximate memory usage " + Util.usedMemory(false) + "MB");
       }
+      System.out.println("Explorer = " + this);
     }
 
     // Notify listeners that exploration is ending.
@@ -401,11 +410,11 @@ public abstract class AbstractGenerator {
     List<ExecutableSequence> unique_seqs = new ArrayList<>();
     Set<Sequence> subsumed_seqs = this.getSubsumedSequences();
     for (ExecutableSequence es : outRegressionSeqs) {
-      if (!subsumed_seqs.contains(es.sequence)) {
+      if (subsumed_seqs.contains(es.sequence)) {
+        operationHistory.add(es.getOperation(), OperationOutcome.SUBSUMED);
+      } else {
         operationHistory.add(es.getOperation(), OperationOutcome.REGRESSION_SEQUENCE);
         unique_seqs.add(es);
-      } else {
-        operationHistory.add(es.getOperation(), OperationOutcome.SUBSUMED);
       }
     }
     return unique_seqs;
