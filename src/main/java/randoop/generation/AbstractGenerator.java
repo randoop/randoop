@@ -410,11 +410,11 @@ public abstract class AbstractGenerator {
     List<ExecutableSequence> unique_seqs = new ArrayList<>();
     Set<Sequence> subsumed_seqs = this.getSubsumedSequences();
     for (ExecutableSequence es : outRegressionSeqs) {
-      if (!subsumed_seqs.contains(es.sequence)) {
+      if (subsumed_seqs.contains(es.sequence)) {
+        operationHistory.add(es.getOperation(), OperationOutcome.SUBSUMED);
+      } else {
         operationHistory.add(es.getOperation(), OperationOutcome.REGRESSION_SEQUENCE);
         unique_seqs.add(es);
-      } else {
-        operationHistory.add(es.getOperation(), OperationOutcome.SUBSUMED);
       }
     }
     return unique_seqs;
