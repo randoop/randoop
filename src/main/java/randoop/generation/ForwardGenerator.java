@@ -884,11 +884,29 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public String toString() {
     return "ForwardGenerator("
-        + ("allSequences:" + allSequences.size())
-        + ", "
-        + ("sideEffectFreeMethods:" + sideEffectFreeMethods.size())
-        + ", "
-        + ("runtimePrimitivesSeen:" + runtimePrimitivesSeen.size())
+        + String.join(
+            ";" + Globals.lineSep + "    ",
+            String.join(
+                ", ",
+                "steps: " + num_steps,
+                "null steps: " + null_steps,
+                "num_sequences_generated: " + num_sequences_generated),
+            String.join(
+                ", ",
+                "allSequences: " + allSequences.size(),
+                "regresson seqs: " + outRegressionSeqs.size(),
+                "error seqs: "
+                    + outErrorSeqs.size()
+                    + "="
+                    + num_failing_sequences
+                    + "="
+                    + getErrorTestSequences().size(),
+                "invalid seqs: " + invalidSequenceCount,
+                // "subsumed_sequences: " + subsumed_sequences.size(),
+                "num_failed_output_test: " + num_failed_output_test),
+            String.join(
+                "sideEffectFreeMethods:" + sideEffectFreeMethods.size(),
+                "runtimePrimitivesSeen:" + runtimePrimitivesSeen.size()))
         + ")";
   }
 }
