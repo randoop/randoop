@@ -52,9 +52,6 @@ public class ForwardGenerator extends AbstractGenerator {
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
 
-  /** Sequences that are used in other sequences (and are thus redundant) */
-  private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
-
   /**
    * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This set contains the same
    * set of components as the set "allsequences" above, but stores them as strings obtained via the
@@ -469,12 +466,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
     Log.logPrintf("Successfully created new unique sequence:%n%s%n", newSequence.toString());
 
+    ExecutableSequence result = new ExecutableSequence(newSequence);
+
     // Keep track of any input sequences that are used in this sequence.
+    result.componentSequences = inputs.sequences;
 
-    // A test that is a subsequence of the new one is redundant.
-    subsumed_sequences.addAll(inputs.sequences);
-
-    return new ExecutableSequence(newSequence);
+    return result;
   }
 
   /**
@@ -879,15 +876,6 @@ public class ForwardGenerator extends AbstractGenerator {
     return Randomness.randomMember(validResults);
   }
 
-  /**
-   * Returns the set of sequences that are included in other sequences to generate inputs (and, so,
-   * are subsumed by another sequence).
-   */
-  @Override
-  public Set<Sequence> getSubsumedSequences() {
-    return subsumed_sequences;
-  }
-
   @Override
   public int numGeneratedSequences() {
     return allSequences.size();
@@ -899,8 +887,6 @@ public class ForwardGenerator extends AbstractGenerator {
         + ("allSequences:" + allSequences.size())
         + ", "
         + ("sideEffectFreeMethods:" + sideEffectFreeMethods.size())
-        + ", "
-        + ("subsumed_sequences:" + subsumed_sequences.size())
         + ", "
         + ("runtimePrimitivesSeen:" + runtimePrimitivesSeen.size())
         + ")";
