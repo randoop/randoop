@@ -45,6 +45,9 @@ public abstract class AbstractGenerator {
    */
   public int num_steps = 0;
 
+  /** Number of steps that returned null. */
+  public int null_steps = 0;
+
   /** Number of sequences generated. */
   public int num_sequences_generated = 0;
 
@@ -53,6 +56,9 @@ public abstract class AbstractGenerator {
 
   /** Number of invalid sequences generated. */
   public int invalidSequenceCount = 0;
+
+  /** Number of sequences that failed the output test. */
+  public int num_failed_output_test = 0;
 
   /** When the generator started (millisecond-based system timestamp). */
   private long startTime = -1;
@@ -318,6 +324,7 @@ public abstract class AbstractGenerator {
       }
 
       if (eSeq == null) {
+        null_steps++;
         continue;
       }
 
@@ -335,6 +342,8 @@ public abstract class AbstractGenerator {
           outRegressionSeqs.add(eSeq);
           newRegressionTestHook(eSeq.sequence);
         }
+      } else {
+        num_failed_output_test++;
       }
 
       if (dump_sequences) {
