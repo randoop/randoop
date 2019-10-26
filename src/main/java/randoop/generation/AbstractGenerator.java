@@ -63,6 +63,9 @@ public abstract class AbstractGenerator {
   /** When the generator started (millisecond-based system timestamp). */
   private long startTime = -1;
 
+  /** Sequences that are used in other sequences (and are thus redundant) */
+  protected Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
+
   /**
    * Elapsed time since the generator started.
    *
@@ -389,28 +392,19 @@ public abstract class AbstractGenerator {
   public abstract LinkedHashSet<Sequence> getAllSequences();
 
   /**
-   * Returns the set of sequences that are used as inputs in other sequences (and can thus be
-   * thought of as subsumed by another sequence). This should only be called for subclasses that
-   * support this.
-   *
-   * @return the set of sequences subsumed by other sequences
-   */
-  public Set<Sequence> getSubsumedSequences() {
-    throw new Error("subsumed_sequences not supported for " + this.getClass());
-  }
-
-  /**
-   * Returns the generated regression test sequences for output. Filters out subsequences, which can
-   * be retrieved using {@link #getSubsumedSequences()}
+   * Returns the generated regression test sequences for output. Filters out subsequences.
    *
    * @return regression test sequences that do not occur in a longer sequence
    */
   // TODO replace this with filtering during generation
   public List<ExecutableSequence> getRegressionSequences() {
     List<ExecutableSequence> unique_seqs = new ArrayList<>();
-    Set<Sequence> subsumed_seqs = this.getSubsumedSequences();
+    subsumed_sequences = new LinkedHashSet<Sequence>();
     for (ExecutableSequence es : outRegressionSeqs) {
-      if (subsumed_seqs.contains(es.sequence)) {
+      subsumed_sequences.addAll(es.componentSequences);
+    }
+    for (ExecutableSequence es : outRegressionSeqs) {
+      if (subsumed_sequences.contains(es.sequence)) {
         operationHistory.add(es.getOperation(), OperationOutcome.SUBSUMED);
       } else {
         operationHistory.add(es.getOperation(), OperationOutcome.REGRESSION_SEQUENCE);
