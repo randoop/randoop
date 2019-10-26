@@ -63,6 +63,9 @@ public abstract class AbstractGenerator {
   /** When the generator started (millisecond-based system timestamp). */
   private long startTime = -1;
 
+  /** Sequences that are used in other sequences (and are thus redundant) */
+  protected Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
+
   /**
    * Elapsed time since the generator started.
    *
@@ -396,12 +399,12 @@ public abstract class AbstractGenerator {
   // TODO replace this with filtering during generation
   public List<ExecutableSequence> getRegressionSequences() {
     List<ExecutableSequence> unique_seqs = new ArrayList<>();
-    Set<Sequence> subsumed_seqs = new LinkedHashSet<Sequence>();
+    subsumed_sequences = new LinkedHashSet<Sequence>();
     for (ExecutableSequence es : outRegressionSeqs) {
-      subsumed_seqs.addAll(es.componentSequences);
+      subsumed_sequences.addAll(es.componentSequences);
     }
     for (ExecutableSequence es : outRegressionSeqs) {
-      if (subsumed_seqs.contains(es.sequence)) {
+      if (subsumed_sequences.contains(es.sequence)) {
         operationHistory.add(es.getOperation(), OperationOutcome.SUBSUMED);
       } else {
         operationHistory.add(es.getOperation(), OperationOutcome.REGRESSION_SEQUENCE);

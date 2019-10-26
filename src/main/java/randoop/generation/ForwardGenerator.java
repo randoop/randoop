@@ -902,7 +902,7 @@ public class ForwardGenerator extends AbstractGenerator {
                     + "="
                     + getErrorTestSequences().size(),
                 "invalid seqs: " + invalidSequenceCount,
-                // "subsumed_sequences: " + subsumed_sequences.size(),
+                "subsumed_sequences: " + subsumed_sequences.size(),
                 "num_failed_output_test: " + num_failed_output_test),
             String.join(
                 "sideEffectFreeMethods:" + sideEffectFreeMethods.size(),
