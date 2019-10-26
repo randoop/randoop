@@ -90,30 +90,25 @@ public final class ObserverEqValue extends ObjectContract {
         .append(Globals.lineSep);
 
     String methodname = observer.getOperation().getName();
+    String call = String.format("x0.%s()", methodname); // WRONG for static methods!
     if (value == null) {
-      b.append(String.format("assertNull(\"x0.%s() == null\", x0.%s());", methodname, methodname));
+      b.append(String.format("assertNull(\"%s == null\", %s);", call, call));
+    } else if (observer.getOutputType().runtimeClassIs(boolean.class)) {
+      assert value.equals(true) || value.equals(false);
+      if (value.equals(true)) {
+        b.append(String.format("org.junit.Assert.assertTrue(%s);", call));
+      } else {
+        b.append(String.format("org.junit.Assert.assertFalse(%s);", call));
+      }
     } else if (observer.getOutputType().isPrimitive()
         && !value.equals(Double.NaN)
         && !value.equals(Float.NaN)) {
-      if (observer.getOutputType().runtimeClassIs(boolean.class)) {
-        assert value.equals(true) || value.equals(false);
-        if (value.equals(true)) {
-          b.append(String.format("org.junit.Assert.assertTrue(x0.%s());", methodname));
-        } else {
-          b.append(String.format("org.junit.Assert.assertFalse(x0.%s());", methodname));
-        }
-      } else {
-        b.append(
-            String.format(
-                "org.junit.Assert.assertTrue(x0.%s() == %s);",
-                methodname, Value.toCodeString(value)));
-      }
+      b.append(
+          String.format("org.junit.Assert.assertTrue(%s == %s);", call, Value.toCodeString(value)));
     } else { // string
       // System.out.printf("value = %s - %s%n", value, value.getClass());
       b.append(
-          String.format(
-              "org.junit.Assert.assertEquals(x0.%s(), %s);",
-              methodname, Value.toCodeString(value)));
+          String.format("org.junit.Assert.assertEquals(%s, %s);", call, Value.toCodeString(value)));
     }
     return b.toString();
   }
